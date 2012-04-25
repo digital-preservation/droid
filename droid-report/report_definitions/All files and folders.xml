@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportSpec>
+	<Name>All files and folders</Name>
+    <Items>
+    	<Item>
+		    <Field>FILE_SIZE</Field>
+    	</Item>
+    </Items>
+</ReportSpec>

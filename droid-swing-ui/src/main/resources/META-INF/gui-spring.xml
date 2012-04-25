@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" default-autowire="no"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+	<import resource="classpath*:/META-INF/cxf/cxf.xml" />
+	<import resource="classpath*:/META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath*:/META-INF/cxf/cxf-servlet.xml" />     
+	
+	<import resource="classpath*:/META-INF/spring-signature.xml"/>
+    <import resource="classpath*:/META-INF/report-spring.xml"/>
+
+    <bean id="signatureManager" class="uk.gov.nationalarchives.droid.signature.SignatureManagerImpl" init-method="init">
+        <property name="signatureUpdateServices">
+            <map>
+                <entry key="BINARY" value-ref="binarySignatureUpdateService"/>
+                <entry key="CONTAINER" value-ref="containerSignatureUpdateService"/>
+                <!-- <entry key="TEXT" value-ref="textSignatureUpdateService"/> -->
+            </map>
+        </property>
+        <property name="config" ref="globalConfig"/>
+    </bean>
+    
+    <bean id="exportManager" class="uk.gov.nationalarchives.droid.export.ExportManagerImpl">
+        <property name="profileContextLocator" ref="profileContextLocator"/>
+        <property name="itemWriter" ref="itemWriter"/>
+    </bean>
+    
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.export.CsvItemWriter">
+        <property name="config" ref="globalConfig"/>
+    </bean>
+    
+    <bean id="actionFactory" class="uk.gov.nationalarchives.droid.gui.action.ActionFactory">
+        <lookup-method name="newSignaureUpdateAction" bean="updateSignatureAction"/>
+        <lookup-method name="newExportAction" bean="exportAction"/>
+        <lookup-method name="newReportAction" bean="reportAction"/>
+        <lookup-method name="newListSignatureFilesAction" bean="listSignatureFilesAction"/>
+        <lookup-method name="newCheckSignatureUpdateAction" bean="checkSignatureUpdateAction"/>
+        <lookup-method name="newUploadSignatureFileAction" bean="uploadSignatureFileAction"/>
+    </bean>
+    
+    <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
+        
+    <bean id="updateSignatureAction" class="uk.gov.nationalarchives.droid.gui.signature.UpdateSignatureAction" scope="prototype">
+        <property name="signatureManager" ref="signatureManager"/>
+    </bean>
+    
+    <bean id="checkSignatureUpdateAction" class="uk.gov.nationalarchives.droid.gui.signature.CheckSignatureUpdateAction" scope="prototype">
+        <property name="signatureManager" ref="signatureManager"/>
+    </bean>
+
+    <bean id="listSignatureFilesAction" class="uk.gov.nationalarchives.droid.gui.config.ListSignatureFilesAction" scope="prototype">
+        <property name="signatureManager" ref="signatureManager"/>
+    </bean>
+
+    <bean id="uploadSignatureFileAction" class="uk.gov.nationalarchives.droid.gui.config.UploadSignatureFileAction" scope="prototype">
+        <property name="signatureManager" ref="signatureManager"/>
+    </bean>
+
+    <bean id="exportAction" class="uk.gov.nationalarchives.droid.gui.export.ExportAction" scope="prototype">
+        <property name="exportManager" ref="exportManager"/>
+    </bean>
+
+    <bean id="reportAction" class="uk.gov.nationalarchives.droid.gui.report.ReportAction" scope="prototype">
+        <property name="reportManager" ref="reportManager"/>
+        <property name="reportXmlWriter" ref="reportXmlWriter"/>
+        <property name="config" ref="globalConfig"/>
+        <property name="exportReportAction" ref="exportReportAction"/>
+    </bean>
+
+    <bean id="exportReportAction" class="uk.gov.nationalarchives.droid.gui.report.ExportReportAction" scope="prototype"
+        init-method="init">
+        <property name="reportTransformer" ref="reportTransformer"/>
+    </bean>
+
+    <bean id="reportTransformer" class="uk.gov.nationalarchives.droid.report.ReportTransformerImpl" scope="singleton">
+        <property name="config" ref="globalConfig"/>
+    </bean>
+
+    <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileManagerImpl">
+        <!-- <property name="profileInstanceFactory" ref="profileInstanceFactory"/> -->
+        <property name="profileContextLocator" ref="profileContextLocator"/>
+        <property name="profileSpecDao" ref="profileSpecDao"/>
+        <property name="profileDiskAction" ref="profileDiskAction"/>
+        <property name="signatureManager" ref="signatureManager"/>
+        <property name="config" ref="globalConfig"/>
+    </bean>
+    
+    <!--    
+    <bean id="reportManager" class="uk.gov.nationalarchives.droid.report.ReportManagerImpl">
+        <property name="profileContextLocator" ref="profileContextLocator"/>
+    </bean>
+    -->    
+    
+    <bean id="profileSpecDao" class="uk.gov.nationalarchives.droid.profile.JaxbProfileSpecDao"/>
+    
+    <bean id="uuidGenerator" class="uk.gov.nationalarchives.droid.profile.ProfileUuidGeneratorImpl"/>
+    
+    <bean id="profileInstanceFactory" class="uk.gov.nationalarchives.droid.profile.SpringProfileInstanceFactory"/>
+    
+    <bean id="profileContextLocator" class="uk.gov.nationalarchives.droid.profile.ProfileContextLocator">
+        <property name="profileInstanceLocator" ref="profileInstanceFactory"/>
+        <property name="globalConfig" ref="globalConfig"/>
+    </bean>
+    
+    <bean id="profileDiskAction" class="uk.gov.nationalarchives.droid.profile.ProfileDiskAction"/>
+    
+</beans>

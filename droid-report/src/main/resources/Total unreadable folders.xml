@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportSpec>
+	<Name>Total unreadable folders</Name>
+    <Items>
+    	<Item>
+    		<Description>Total unreadable folders</Description>
+		    <Field>FILE_NAME</Field>
+			<Filter>
+				<Enabled>true</Enabled>
+				<Narrowed>true</Narrowed>
+				<Criteria>
+					<FieldName>RESOURCE_TYPE</FieldName>
+					<Operator>ANY_OF</Operator>
+					<Value>"Folder" </Value>
+					<Parameter>
+						<Id>0</Id>
+						<Description>Folder</Description>
+						<Value>0</Value>
+					</Parameter>
+					<RowNumber>0</RowNumber>
+				</Criteria>
+		        <Criteria>
+		            <FieldName>JOB_STATUS</FieldName>
+		            <Operator>ANY_OF</Operator>
+		            <Value>&quot;Not found&quot; &quot;Access denied&quot; &quot;Error&quot; </Value>
+		            <Parameter>
+		                <Id>2</Id>
+		                <Description>Not found</Description>
+		                <Value>2</Value>
+		            </Parameter>
+		            <Parameter>
+		                <Id>3</Id>
+		                <Description>Access denied</Description>
+		                <Value>3</Value>
+		            </Parameter>
+		            <Parameter>
+		                <Id>4</Id>
+		                <Description>Error</Description>
+		                <Value>4</Value>
+		            </Parameter>
+		            <RowNumber>1</RowNumber>
+		        </Criteria>
+			</Filter>
+    	</Item>
+    </Items>
+</ReportSpec>

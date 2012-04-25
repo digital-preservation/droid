@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reportSpec:reportSpecification xmlns:reportSpec="http://www.nationalarchives.gov.uk/pronom/droidReportSpecification" xmlns:p1="http://www.nationalarchives.gov.uk/pronom/droidFilterSpecification" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.nationalarchives.gov.uk/pronom/droidReportSpecification droidReportSpecification.xsd ">
+  <title>title</title>
+  <description>description</description>
+  <includeProfileDetails>true</includeProfileDetails>
+  <includeProfileTopLevelResourceDetails>true</includeProfileTopLevelResourceDetails>
+  <summaries>
+    <summary>
+      <description>description</description>
+      <fieldName>fieldName</fieldName>
+      <groupFields>
+        <groupField>
+          <fieldName>fieldName</fieldName>
+          <function>Year</function>
+        </groupField>
+      </groupFields>
+      <filter>
+        <enabled>true</enabled>
+        <combinationMethod>allCriterionAreMet</combinationMethod>
+        <criteria>
+          <criterion>
+            <fieldName>fieldName</fieldName>
+            <operator>equals</operator>
+            <valueFreeText>valueFreeText</valueFreeText>
+            <selectedValues>
+              <selectedValue>
+                <id>0</id>
+                <description>description</description>
+                <queryParameter>queryParameter</queryParameter>
+              </selectedValue>
+            </selectedValues>
+            <rowNumber>0</rowNumber>
+          </criterion>
+        </criteria>
+      </filter>
+    </summary>
+  </summaries>
+</reportSpec:reportSpecification>

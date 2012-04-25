@@ -1,0 +1,293 @@
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="Helen" name="generator">
+    <title>Exporting profiles</title>
+  </head>
+  <body>
+    <table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="399">
+          <img src="../Images/droidlogo.gif"> 
+        </td>
+        <td bgcolor="#555555" width="100%">
+          <h5 align="center">
+             <img src="../Images/Export.png">&nbsp;&nbsp;&nbsp;<b><font color="#ffffff" size="5"
+            face="SansSerif, Verdana, Arial, Helvetica">Exporting profiles</font></b>
+          </h5>
+        </td>
+      </tr>
+    </table>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="25%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="25%">
+          &nbsp;&nbsp;<img src="../Images/Open file small.png">&nbsp;<a href=
+          "Load and save profiles.html">Load and save profiles</a> 
+        </td>
+        <td align="center" width="25%">
+          <img src="../Images/Filter small.png"><a href="Explore the results.html">Filter your
+          results</a> 
+        </td>
+        <td align="right" width="25%">
+          <img src="../Images/3d bar chart small.png"> &nbsp;<a href=
+          "Summary reporting.html">Summary reporting</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       DROID can export all open profiles (which are not currently running) to a CSV file. &nbsp;To
+      export a profile, press the <img src="../Images/Export small.png"> <b><font style=
+      " background-color: #c0c0c0;" size="4">&nbsp;&nbsp;&nbsp;Export
+      &nbsp;</font></b>&nbsp;button, or select the<b><font size="4"> File / Export
+      all...</font></b> menu item. &nbsp;This will bring up the export dialog window:
+    </p>
+    <p align="center">
+       <img src="../Images/Export dialog.png">
+    </p>
+    <p>
+       The profiles you have open are listed in the export window. &nbsp;If a profile is empty, or
+      in the process of running, it will be greyed out. &nbsp;Select all the profiles you want to
+      export into a single CSV file by checking the boxes next to them. &nbsp;&nbsp;If any of your
+      profiles have active <a href="Explore the results.html">filters</a>, then the results will
+      also be filtered. &nbsp;Each profile can have different filters defined and enabled.
+    </p>
+    <p>
+       You can also select whether the export should produce one row per file, or one row per
+      format. &nbsp;When exporting one row per file, each row in the CSV file will represent a
+      single file, folder or archival file profiled with DROID. &nbsp;If exporting one row per
+      format, each row in the CSV file will be a single format identificaiton made by DROID.
+      &nbsp;Since a file can be identified as being more than one possible format, this option will
+      produce CSV files with multiple rows for the same file (but with different identifications
+      for it).
+    </p>
+    <p>
+       When you are happy you want to export your profiles, press the <b><font style=
+      " background-color: #c0c0c0;" size="4">&nbsp;&nbsp;&nbsp;Export
+      profiles...&nbsp;</font></b>&nbsp; button. &nbsp;This will bring up a standard file-save
+      dialog, in which&nbsp;you can specify where you want your CSV file to be saved. &nbsp;
+    </p>
+    <h2>
+       CSV File Columns
+    </h2>
+    <h3>
+       ID
+    </h3>
+    <p>
+       This is a unique number assigned to each file, folder or archival file processed by DROID.
+    </p>
+    <h3>
+       <b>PARENT_ID</b>
+    </h3>
+    <p>
+       This is the id of the archival file or folder in which this file is contained.
+    </p>
+    <h3>
+       URI (Uniform Resource Identifier)
+    </h3>
+    <p>
+       This provides a standard, cross-platform way of describing where resources are located.
+      &nbsp;URIs are described in more detail in "<a href=
+      "Information collected by DROID.html#Location">Information collected by DROID</a>".
+    </p>
+    <h3>
+       File path
+    </h3>
+    <p>
+       The file system&nbsp;location of the resource being profiled, if the resource was directly
+      in a file system. &nbsp;Some files are not inside a file system - for example, files inside a
+      zip file. In this case, the file path will be blank, as there is no file path to the
+      resource. &nbsp;
+    </p>
+    <p>
+       Please note that file paths are platform dependent (they are different on windows and unix).
+      &nbsp;DROID will write out file paths for the system on which it is currently running.
+      &nbsp;This means that if you profile files on a unix machine, then export the profiles on a
+      windows machine, the file paths will be written out as if they were windows file paths, and
+      vice versa.
+    </p>
+    <h3>
+       Name
+    </h3>
+    <p>
+       The file name of the resource being profiled.
+    </p>
+    <h3>
+       <a id="Method" name="Method">Method</a>
+    </h3>
+    <p>
+       This field gives the method by which a resource identification has been made. &nbsp;DROID
+      can recognise resources by several methods:
+    </p>
+    <ul>
+      <li>
+        <b>Extension</b> - the file format was identified only by its filename <a href=
+        "#Extension">extension</a>. &nbsp;This method may not be very reliable, as the filename
+        extension may be wrong. &nbsp;It is only used when DROID cannot identify a resource by
+        another method, and cannot usually identify what the version of a file format is, only its
+        broad type.
+      </li>
+      <li>
+        <b>Signature</b> - the file format was identified by finding a file format signature inside
+        the file itself. &nbsp;This method is more reliable than filename extensions, and can
+        identify the precise version of a file format.
+      </li>
+      <li>
+        <b>Container</b> - the file format was identified by finding embedded files and patterns
+        within them. &nbsp;This method is as reliable as signature identifications, and can be more
+        reliable.
+      </li>
+    </ul>
+    <h3>
+       <a id="Job status" name="Job status">Job status</a>
+    </h3>
+    <p>
+       This field gives the identification status of a resource. &nbsp;It can have several values:
+    </p>
+    <ul>
+      <li>
+        <b>Not done</b> - the resource has not yet been profiled.
+      </li>
+      <li>
+        <b>Done</b> - the resource was processed with no errors.
+      </li>
+      <li>
+        <b>Access denied</b> - the operating system refused to give DROID read permissions to the
+        resource.
+      </li>
+      <li>
+        <b>Not found</b> - the resource was moved or deleted before DROID could read it.
+      </li>
+      <li>
+        <b>Error</b> - an error occurred while trying to profile a resource. &nbsp;For example, if
+        DROID is prevented from reading a file due to the user not having read permissions to it,
+        this will result in a profiling error for that file.
+      </li>
+    </ul>
+    <h3>
+       <a id="Size" name="Size">Size (bytes)</a>
+    </h3>
+    <p>
+       The size in bytes of a file. &nbsp;Only files have a size - folders do not. &nbsp;However,
+      note that some files can contain other&nbsp;files inside them, for example zip files.
+      &nbsp;In this case, the zip file has a size (as it is a file), and so do the files inside it.
+      &nbsp;The size reported in all cases is the uncompressed size of each file, as it would
+      appear if extracted from the container file.
+    </p>
+    <h3>
+       Type
+    </h3>
+    <p>
+       DROID categorises the files and folders it profiles as being one of three types:
+    </p>
+    <ul>
+      <li>
+        <img src="../Images/fileResourceType.gif">
+        &nbsp;File&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </li>
+      <li>
+        <img src="../Images/folderResourceType.gif">
+        &nbsp;Folder&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </li>
+      <li>
+        <img src="../Images/containerResourceType.gif"> &nbsp;Archival file&nbsp;(e.g. zip)
+      </li>
+    </ul>
+    <h3>
+       <a id="Extension" name="Extension">Extension</a>
+    </h3>
+    <p>
+       The filename extension of a file, which is the last part of a filename following a full
+      stop.&nbsp;&nbsp;Only files have extensions, as they indicate the type of the file.
+      &nbsp;Even if a folder has a full stop in its name, it will not be assigned an extension.
+    </p>
+    <h3>
+       <a id="Last Modified" name="Last Modified">Last modified</a>
+    </h3>
+    <p>
+       The date and time on which a resource was last modified. &nbsp;This is the only resource
+      date-time available to DROID, as the Java 6 platform on which it runs will not report any
+      others (e.g. creation date-time). &nbsp;More file system&nbsp;information will be available
+      via the Java 7 platform, which is not yet available at the time of writing. &nbsp;This would
+      also require DROID to be modified to take advantage of the new file system interfaces in Java
+      7.
+    </p>
+    <h3>
+       MD5 hash
+    </h3>
+    <p>
+       If you have enabled <a href="Change preferences.html#GenerateHash">hash generation</a> in
+      the preferences, then this column will contain the MD5 hash for each file and archival file
+      processed. &nbsp;See "<a href="Detecting duplicate files.html">Detecting duplicate files</a>"
+      for more information on hashes.
+    </p>
+    <h3>
+       <a id="PUID" name="PUID">PUID</a>
+    </h3>
+    <p>
+       The&nbsp;PRONOM Unique IDentifier (PUID) identifies the precise file format of a profiled
+      file. When a resource has been identified, it is assigned a PUID. &nbsp;&nbsp;A unique
+      identifier exists for every file format that DROID can recognise, and these identifiers are
+      maintained in the <a href="http://www.nationalarchives.gov.uk/pronom">PRONOM</a><img src=
+      "../Images/Icon_External_Link.png">&nbsp;technical registry database, hosted at the UK
+      National Archives.
+    </p>
+    <h3>
+       <a id="Mime type" name="Mime type">Mime type</a>
+    </h3>
+    <p>
+       The mime-type of an identified file format is a high level format identifier assigned by the
+      <a href="http://www.iana.org/assignments/media-types/">Internet Assigned Numbers</a><img src=
+      "../Images/Icon_External_Link.png">. &nbsp;It is widely used in email and other internet
+      protocols to identify the type of resource. &nbsp;Not all file formats identified by DROID
+      have an assigned mime-type, and different <a href="#PUID">PUIDs</a> assigned by DROID can
+      have the same mime-type
+    </p>
+    <h3>
+       <a id="Format" name="Format">Format</a> Name
+    </h3>
+    <p>
+       The name of an identified&nbsp;file format, as listed in the <a href=
+      "http://www.nationalarchives.gov.uk/pronom">PRONOM</a><img src=
+      "../Images/Icon_External_Link.png">&nbsp;technical registry against its <a href=
+      "#PUID">PUID</a>.
+    </p>
+    <h3>
+       <a id="Version" name="Version">Format Version</a>
+    </h3>
+    <p>
+       The version of an identified file format, as listed in the <a href=
+      "http://www.nationalarchives.gov.uk/pronom">PRONOM</a><img src=
+      "../Images/Icon_External_Link.png">&nbsp;technical registry against its <a href=
+      "#PUID">PUID</a>. &nbsp;Not all file formats have a defined version, so this field can be
+      blank even when a file has a PUID.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="25%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="25%">
+          &nbsp;&nbsp;<img src="../Images/Open file small.png">&nbsp;<a href=
+          "Load and save profiles.html">Load and save profiles</a> 
+        </td>
+        <td align="center" width="25%">
+          <img src="../Images/Filter small.png"><a href="Explore the results.html">Filter your
+          results</a> 
+        </td>
+        <td align="right" width="25%">
+          <img src="../Images/3d bar chart small.png"> &nbsp;<a href=
+          "Summary reporting.html">Summary reporting</a> 
+        </td>
+      </tr>
+    </table>
+    <h6>
+       &nbsp;&nbsp;&nbsp;
+    </h6>
+  </body>
+</html>

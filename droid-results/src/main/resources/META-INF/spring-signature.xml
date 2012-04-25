@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    
+    <bean id="pronomClient" class="uk.gov.nationalarchives.pronom.PronomService" 
+      factory-bean="pronomClientFactory" factory-method="create"/>
+    
+    <bean id="pronomClientFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
+      <property name="serviceClass" value="uk.gov.nationalarchives.pronom.PronomService"/>
+      <property name="address" value="http://www.nationalarchives.gov.uk/pronom/service.asmx"/>
+    </bean>
+    
+    <bean id="binarySignatureUpdateService" class="uk.gov.nationalarchives.droid.signature.PronomSignatureService">
+        <property name="filenamePattern" value="DROID_SignatureFile_V%s.xml"/>
+        <property name="pronomService" ref="pronomClient"/>
+    </bean>
+    
+    <bean id="containerSignatureUpdateService" class="uk.gov.nationalarchives.droid.container.httpservice.ContainerSignatureHttpService">
+    </bean>
+    
+</beans>

@@ -1,0 +1,338 @@
+/**
+ * <p>Copyright (c) The National Archives 2005-2010.  All rights reserved.
+ * See Licence.txt for full licence details.
+ * <p/>
+ *
+ * <p>DROID DCS Profile Tool
+ * <p/>
+ */
+package uk.gov.nationalarchives.droid.core.interfaces.config;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Map.Entry;
+
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import static uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig.DROID_USER;
+import static uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig.DROID_TEMP_DIR;
+
+/**
+ * @author rflitcroft
+ * 
+ */
+public class DroidGlobalConfig {
+
+    /** The name of the DROID properties file. */
+    public static final String DROID_PROPERTIES = "droid.properties";    
+    
+    /**
+     * 
+     */
+    private static final String DEFAULT_DROID_PROPERTIES = "default_droid.properties";
+
+    //FIXME: update to latest signature file before release.
+    private static final String DROID_SIGNATURE_FILE_V45 = "DROID_SignatureFile_V45.xml";
+    private static final String CONTAINER_SIGNATURE_FILE = "container-signature-20110114.xml";
+    private static final String TEXT_SIGNATURE_FILE = "text-signature-20101101.xml";
+    
+    private static final String DATABASE_DURABILITY = "database.durability";
+    
+    // UPDATE THIS SCHEMA VERSION IF THE DATABASE SCHEMA CHANGES.
+    private static final String TEMPLATE_SCHEMA_VERSION = "schema 6.03";
+
+
+    
+    
+    private final Log log = LogFactory.getLog(getClass());
+    
+    private File droidWorkDir;
+    private File signatureFilesDir;
+    private File profileTemplateDir;
+    private File containerSignatureDir;
+    private File textSignatureFileDir;
+    private File reportDefinitionDir;
+    private File filterDir;
+    
+    private PropertiesConfiguration props;
+
+    private File profilesDir;
+    private File tempDir;
+
+    /**
+     * Default Constructor. Initialises the droid home directory.
+     * @throws IOException if there was an error writing the signature file.
+     */
+    public DroidGlobalConfig() throws IOException {
+        String droidHomePath = System.getProperty(DROID_USER);
+
+        droidWorkDir = new File(droidHomePath);
+        droidWorkDir.mkdirs();
+        
+        // always recreate the signature files if they don't exist:
+        signatureFilesDir = new File(droidWorkDir, "signature_files");
+        signatureFilesDir.mkdir();
+        createResourceFile(signatureFilesDir, DROID_SIGNATURE_FILE_V45, DROID_SIGNATURE_FILE_V45);
+
+        containerSignatureDir = new File(droidWorkDir, "container_sigs");
+        containerSignatureDir.mkdir();
+        createResourceFile(containerSignatureDir, CONTAINER_SIGNATURE_FILE, CONTAINER_SIGNATURE_FILE);
+        
+        /*
+        signatureFilesDir = new File(droidWorkDir, "signature_files");
+        if (signatureFilesDir.mkdir()) {
+            createResourceFile(signatureFilesDir, DROID_SIGNATURE_FILE_V45, DROID_SIGNATURE_FILE_V45);
+        }
+
+        containerSignatureDir = new File(droidWorkDir, "container_sigs");
+        if (containerSignatureDir.mkdir()) {
+            createResourceFile(containerSignatureDir, CONTAINER_SIGNATURE_FILE, CONTAINER_SIGNATURE_FILE);
+        }
+        
+        textSignatureFileDir = new File(droidWorkDir, "text_sigs");
+        textSignatureFileDir.mkdir();
+        //if (textSignatureFileDir.mkdir()) {
+            //createResourceFile(textSignatureFileDir, TEXT_SIGNATURE_FILE);
+        //}
+        */
+
+        reportDefinitionDir = new File(droidWorkDir, "report_definitions");
+        reportDefinitionDir.mkdir();
+
+        filterDir = new File(droidWorkDir, "filter_definitions");
+        filterDir.mkdir();
+        
+        // Ensure base directory is created.
+        profileTemplateDir = new File(droidWorkDir, "profile_templates");
+        profileTemplateDir.mkdir();
+        
+        // Now create the schema version sub-directory:
+        profileTemplateDir = new File(profileTemplateDir, TEMPLATE_SCHEMA_VERSION);
+        profileTemplateDir.mkdir();
+        
+        // Get the default temporary area:
+        String droidTempPath = System.getProperty(DROID_TEMP_DIR);
+        
+        profilesDir = new File(droidTempPath, "profiles");
+        profilesDir.mkdirs();
+        
+        tempDir = new File(droidTempPath, "tmp");
+        tempDir.mkdirs();
+    }
+
+    /**
+     * Initialises the droid config bean.
+     * 
+     * @throws ConfigurationException
+     *             if the config could not be intialised
+     */
+    public void init() throws ConfigurationException {
+
+        File droidProperties = new File(droidWorkDir, DROID_PROPERTIES);
+        props = new PropertiesConfiguration(droidProperties);
+
+        URL defaultPropsUrl = getClass().getClassLoader().getResource(
+                DEFAULT_DROID_PROPERTIES);
+        PropertiesConfiguration defaultProps = new PropertiesConfiguration(
+                defaultPropsUrl);
+
+        /**
+        if (!droidProperties.exists()) {
+            try {
+                createResourceFile(droidProperties, DROID_PROPERTIES, DEFAULT_DROID_PROPERTIES);
+            } catch (IOException e) {
+                final String message = String.format("Could not create default property file at: %s",
+                        droidProperties.getAbsolutePath());
+                log.error(message, e);
+            }
+        }
+        */
+        
+        // Adds any new properties from the defaults into the existing
+        // properties file, or creates it if it was not there to begin 
+        // with.
+        boolean saveProperties = false;
+        for (Iterator<String> it = defaultProps.getKeys(); it.hasNext();) {
+            String key = it.next();
+            if (!props.containsKey(key)) {
+                props.addProperty(key, defaultProps.getProperty(key));
+                saveProperties = true;
+            }
+        }
+
+        if (saveProperties) {
+            props.save();
+        }
+        
+        if (props.containsKey(DATABASE_DURABILITY)) {
+            boolean durability = props.getBoolean(DATABASE_DURABILITY);
+            if (!durability) {
+                System.setProperty("derby.system.durability", "test");
+            }
+        }
+    }
+
+    /**
+     * @return the droidHomeDir
+     */
+    public File getDroidWorkDir() {
+        return droidWorkDir;
+    }
+
+    /**
+     * @return all profile-realted properties
+     */
+    public Properties getProfileProperties() {
+        Properties profileProperties = new Properties();
+        
+        final Configuration profilePropsConfig = props.subset("profile");
+        for (Iterator<String> it = profilePropsConfig.getKeys(); it.hasNext();) {
+            String key = it.next();
+            profileProperties.setProperty(key, profilePropsConfig.getProperty(key).toString());
+        }
+        
+        return profileProperties;
+    }
+
+    /**
+     * @return the property configuration;
+     */
+    public PropertiesConfiguration getProperties() {
+        return props;
+    }
+
+    /**
+     * Updates the config with the properties given and persists. 
+     * @param properties the changed properties
+     * @throws ConfigurationException if the config could not be saved.
+     */
+    public void update(Map<String, Object> properties) throws ConfigurationException {
+        for (Entry<String, Object> entry : properties.entrySet()) {
+            props.setProperty(entry.getKey(), entry.getValue());
+        }
+        
+        props.save();
+    }
+
+    /**
+     * @return all settings in a map
+     */
+    public Map<String, Object> getPropertiesMap() {
+        final Map<String, Object> allSettings = new HashMap<String, Object>();
+        for (Iterator<String> it = props.getKeys(); it.hasNext();) {
+            String key = it.next();
+            DroidGlobalProperty property = DroidGlobalProperty.forName(key);
+            if (property != null) {
+                allSettings.put(key, property.getType().getTypeSafeValue(props, key));
+            }
+        }
+        
+        return allSettings;
+    }
+    
+    /**
+     * 
+     * @return the directory where droid signature files reside.
+     */
+    public File getSignatureFileDir() {
+        return signatureFilesDir;
+    }
+    
+    /**
+     * 
+     * @return the directory where droid profile templates reside.
+     */
+    public File getProfileTemplateDir() {
+        return profileTemplateDir;
+    }
+    
+    /**
+     * @return the containerSignatureDir
+     */
+    public File getContainerSignatureDir() {
+        return containerSignatureDir;
+    }
+    
+    /**
+     * @return the textSignatureFileDir
+     */
+    public File getTextSignatureFileDir() {
+        return textSignatureFileDir;
+    }
+    
+    /**
+     * 
+     * @return the reportDefinitionDir
+     */
+    public File getReportDefinitionDir() {
+        return reportDefinitionDir;
+    }
+    
+    /**
+     * @return the profilesDir
+     */
+    public File getProfilesDir() {
+        return profilesDir;
+    }
+
+    /**
+     * 
+     * @return the filterDir.
+     */
+    public File getFilterDir() {
+        return filterDir;
+    }
+    
+    /**
+     * @return the directory for droid temporary files
+     */
+    public File getTempDir() {
+        return tempDir;
+    }
+    
+    private void createResourceFile(File resourceDir, String fileName, String resourceName) throws IOException {
+        InputStream in = getClass().getClassLoader().getResourceAsStream(resourceName);
+        if (in == null) {
+            log.warn("Resource not found: " + resourceName);
+        } else {
+            File resourcefile = new File(resourceDir, fileName);
+            if (resourcefile.createNewFile()) {
+                OutputStream out = new FileOutputStream(resourcefile);
+                try {
+                    IOUtils.copy(in, out);
+                } finally {
+                    if (out != null) {
+                        out.close();
+                    }
+                    if (in != null) {
+                        in.close();
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Returns the value of the boolean property specified.
+     * The runtime exception will be thrown if the specified property has no boolean representation.
+     * @param propertyKey the property
+     * @return the boolean value
+     */
+    public boolean getBooleanProperty(DroidGlobalProperty propertyKey) {
+        return props.getBoolean(propertyKey.getName());
+    }
+    
+}

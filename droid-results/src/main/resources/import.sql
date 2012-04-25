@@ -1,0 +1,1 @@
+alter table identification add primary key (node_id, puid)

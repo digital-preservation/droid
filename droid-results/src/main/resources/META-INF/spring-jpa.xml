@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" default-autowire="no"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+  <!-- 
+  To permit separation of profile runs and sets of profile results, 
+  each open profile will have its own Spring context.
+  -->
+
+  <!--
+  <bean id="dataSource" class="uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSource" destroy-method="shutdown">
+    <property name="maxIdle" value="${datasource.minIdle}"/>
+    <property name="maxActive" value="${datasource.maxActive}"/>
+    <property name="connectionPoolDataSource" ref="connectionPoolDataSource"/>
+  </bean>
+  
+  <bean id="connectionPoolDataSource" class="org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource40">
+    <property name="user" value="${datasource.username}"/>
+    <property name="password" value="${datasource.password}"/>
+    <property name="databaseName" value="${datasource.databaseName}"/>
+    <property name="createDatabase" value="${datasource.createDatabase}"/>
+  </bean>
+  -->
+
+  <bean id="dataSource" class="uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSource" destroy-method="shutdown" init-method="init">
+    <property name="driverClassName" value="${datasource.driverClassName}"/>
+    <property name="url" value="${datasource.url}"/>
+    <property name="username" value="${datasource.username}"/>
+    <property name="password" value="${datasource.password}"/>
+    <property name="minIdle" value="${datasource.minIdle}"/>
+    <property name="maxActive" value="${datasource.maxActive}"/>
+    <property name="initialSize" value="${datasource.initialSize}"/>
+    <property name="createUrl" value="${datasource.createUrl}"/>
+  </bean>
+  
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    <property name="dataSource" ref="dataSource"/>
+  </bean>
+
+  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" primary="true">
+      <property name="persistenceUnitName" value="droid"/>
+      <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+      <property name="dataSource" ref="dataSource"/>
+      <property name="jpaPropertyMap" ref="jpaProperties"/>
+  </bean>
+  
+  <bean id="jpaProperties" class="java.util.HashMap" scope="singleton">
+  	<constructor-arg>
+        <map>
+            <entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}"/>
+            <entry key="hibernate.show_sql" value="${hibernate.showSql}"/>
+            <entry key="hibernate.format_sql" value="${hibernate.formatSql}"/>
+            <entry key="hibernate.max_fetch_depth" value="50"/>
+            <entry key="hibernate.jdbc.batch_size" value="50"/>
+            <entry key="hibernate.order_inserts" value="true"/>
+            <entry key="hibernate.order_updates" value="true"/>
+            <entry key="hibernate.jdbc.batch_versioned_data" value="true"/>
+            <entry key="hibernate.connection.isolation" value="1"/>
+        </map>
+  	</constructor-arg>
+  </bean>
+  
+  <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+    <property name="showSql" value="${hibernate.showSql}"/>
+    <property name="generateDdl" value="${hibernate.generateDdl}"/>
+    <!-- <property name="database" value="DERBY"/> -->
+    <property name="database" value="${hibernate.vendoradaptor.database}"/>
+  </bean>
+  
+  <bean id="entityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+  </bean>
+
+</beans>

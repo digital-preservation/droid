@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+	targetNamespace="http://www.nationalarchives.gov.uk/pronom/droidReportSpecification"
+	elementFormDefault="unqualified"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.nationalarchives.gov.uk/pronom/droidReportSpecification"
+	xmlns:filter="http://www.nationalarchives.gov.uk/pronom/droidFilterSpecification">
+
+	<xsd:import schemaLocation="droidFilterSpecification.xsd" namespace="http://www.nationalarchives.gov.uk/pronom/droidFilterSpecification"></xsd:import>
+
+	<xsd:element name="reportSpecification"	type="reportSpecificationType"></xsd:element>
+
+	<xsd:complexType name="reportSpecificationType">
+		<xsd:sequence>
+			<xsd:element name="title" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="description" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+			<xsd:element name="includeProfileDetails" type="xsd:boolean" maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="includeProfileTopLevelResourceDetails" type="xsd:boolean" maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="summaries" type="reportSummaryListType" maxOccurs="1" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="reportSummaryListType">
+		<xsd:sequence>
+			<xsd:element name="summary" type="reportSummaryType" maxOccurs="unbounded" minOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="reportSummaryType">
+		<xsd:sequence>
+			<xsd:element name="description" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+			<xsd:element name="fieldName" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="groupFields" type="groupFieldListType" maxOccurs="1" minOccurs="0"></xsd:element>
+			<xsd:element name="filter" type="filter:filterSpecificationType" maxOccurs="1" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="groupFieldListType">
+		<xsd:sequence>
+			<xsd:element name="groupField" type="groupFieldType" maxOccurs="unbounded" minOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="groupFieldType">
+		<xsd:sequence>
+			<xsd:element name="fieldName" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="function" type="groupFieldFunctionEnum" maxOccurs="1" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="groupFieldFunctionEnum">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Year"></xsd:enumeration>
+			<xsd:enumeration value="Month"></xsd:enumeration>
+			<xsd:enumeration value="Day"></xsd:enumeration>
+			<xsd:enumeration value="LowerCase"></xsd:enumeration>
+			<xsd:enumeration value="UpperCase"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

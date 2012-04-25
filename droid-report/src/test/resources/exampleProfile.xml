@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profileSpec:profile xmlns:profileSpec="http://www.nationalarchives.gov.uk/pronom/droidProfileSpecification" xmlns:p1="http://www.nationalarchives.gov.uk/pronom/droidFilterSpecification" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.nationalarchives.gov.uk/pronom/droidProfileSpecification droidProfileSpecification.xsd ">
+  <createdDate>2001-12-31T12:00:00</createdDate>
+  <profileStartDate>2001-12-31T12:00:00</profileStartDate>
+  <profileEndDate>2001-12-31T12:00:00</profileEndDate>
+  <signatureFileVersion>signatureFileVersion</signatureFileVersion>
+  <signatureFileName>signatureFileName</signatureFileName>
+  <state>not done</state>
+  <throttle>0</throttle>
+  <resources>
+    <resources>
+      <file>
+        <name>name</name>
+        <uri>uri</uri>
+        <size>0</size>
+        <extension>extension</extension>
+      </file>
+    </resources>
+  </resources>
+  <filter>
+    <enabled>true</enabled>
+    <combinationMethod>allCriterionAreMet</combinationMethod>
+    <criteria>
+      <criterion>
+        <fieldName>fieldName</fieldName>
+        <operator>equals</operator>
+        <valueFreeText>valueFreeText</valueFreeText>
+        <selectedValues>
+          <selectedValue>
+            <id>0</id>
+            <description>description</description>
+            <queryParameter>queryParameter</queryParameter>
+          </selectedValue>
+        </selectedValues>
+        <rowNumber>0</rowNumber>
+      </criterion>
+    </criteria>
+  </filter>
+</profileSpec:profile>

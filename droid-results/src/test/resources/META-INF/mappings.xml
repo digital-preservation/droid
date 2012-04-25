@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" "http://castor.org/mapping.dtd">
+
+<mapping>
+    <description>Description of the mapping</description>
+    <!-- mapping for class 'A' -->
+    <class name="uk.gov.nationalarchives.droid.signature.ws.SignatureFileImportRequest">
+	   <map-to xml="getSignatureFileV1"/>
+    </class>
+    
+    <class name="uk.gov.nationalarchives.droid.signature.ws.SignatureFileImportResponse">
+       <map-to xml="getSignatureFileV1Response" />
+       <field name="signatureFile" type="string">
+           <bind-xml name="SignatureFile" type="element"></bind-xml>
+       </field>
+    </class>
+
+</mapping>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<ContainerSignatureMapping> 
+  <ContainerSignatures>
+    <ContainerSignature Id="1000" ContainerType="ZIP">
+      <Description>Microsoft Word OOXML</Description>
+      <Files>
+        <File Required="true">
+          <Path>[Content_Types].xml</Path>
+          <BinarySignature>
+			  <InternalSignature ID="302" Specificity="Specific">
+				  <ByteSequence Reference="BOFoffset">
+					  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024" MinFragLength="0">
+						  <Sequence>436F6E74656E74547970653D226170706C69636174696F6E2F766E642E6F70656E786D6C666F726D6174732D6F6666696365646F63756D656E742E776F726470726F63657373696E676D6C2E646F63756D656E742E6D61696E2B786D6C22</Sequence>
+						  <DefaultShift>95</DefaultShift>
+						  <Shift Byte="22">1</Shift>
+						  <Shift Byte="2B">5</Shift>
+						  <Shift Byte="2D">51</Shift>
+						  <Shift Byte="2E">10</Shift>
+						  <Shift Byte="2F">70</Shift>
+						  <Shift Byte="3D">83</Shift>
+						  <Shift Byte="43">94</Shift>
+						  <Shift Byte="54">87</Shift>
+						  <Shift Byte="61">8</Shift>
+						  <Shift Byte="63">16</Shift>
+						  <Shift Byte="64">18</Shift>
+						  <Shift Byte="65">13</Shift>
+						  <Shift Byte="66">48</Shift>
+						  <Shift Byte="67">22</Shift>
+						  <Shift Byte="69">7</Shift>
+						  <Shift Byte="6C">2</Shift>
+						  <Shift Byte="6D">3</Shift>
+						  <Shift Byte="6E">6</Shift>
+						  <Shift Byte="6F">17</Shift>
+						  <Shift Byte="70">31</Shift>
+						  <Shift Byte="72">30</Shift>
+						  <Shift Byte="73">25</Shift>
+						  <Shift Byte="74">11</Shift>
+						  <Shift Byte="75">15</Shift>
+						  <Shift Byte="76">69</Shift>
+						  <Shift Byte="77">35</Shift>
+						  <Shift Byte="78">4</Shift>
+						  <Shift Byte="79">86</Shift>
+					  </SubSequence>
+				  </ByteSequence>
+			  </InternalSignature>
+		  </BinarySignature>
+        </File>
+      </Files>
+    </ContainerSignature> 
+    <ContainerSignature Id="1002" ContainerType="OLE2">
+      <Description>Word 97 OLE2</Description>
+      <Files>
+        <File Required="true">
+          <Path>WordDocument</Path>
+        </File>
+        <File Required="false">
+          <Path>CompObj</Path>
+          <BinarySignature>
+			  <InternalSignature ID="300" Specificity="Specific">
+				  <ByteSequence Reference="BOFoffset">
+					  <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+						  <Sequence>10000000576F72642E446F63756D656E742E3800</Sequence>
+						  <DefaultShift>21</DefaultShift>
+						  <Shift Byte="00">1</Shift>
+						  <Shift Byte="10">20</Shift>
+						  <Shift Byte="2E">3</Shift>
+						  <Shift Byte="38">2</Shift>
+						  <Shift Byte="44">11</Shift>
+						  <Shift Byte="57">16</Shift>
+						  <Shift Byte="63">9</Shift>
+						  <Shift Byte="64">13</Shift>
+						  <Shift Byte="65">6</Shift>
+						  <Shift Byte="6D">7</Shift>
+						  <Shift Byte="6E">5</Shift>
+						  <Shift Byte="6F">10</Shift>
+						  <Shift Byte="72">14</Shift>
+						  <Shift Byte="74">4</Shift>
+						  <Shift Byte="75">8</Shift>
+					  </SubSequence>
+				  </ByteSequence>
+			  </InternalSignature>
+		  </BinarySignature>
+        </File>
+      </Files>
+    </ContainerSignature> 
+    <ContainerSignature Id="1004" ContainerType="OLE2">
+      <Description>Excel 97 OLE2</Description>
+      <Files>
+        <File Required="true">
+          <Path>Workbook</Path>
+        </File>
+        <File Required="false">
+          <Path>CompObj</Path>
+          <BinarySignature>
+			  <InternalSignature ID="301" Specificity="Specific">
+				  <ByteSequence Reference="BOFoffset">
+					  <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+						  <Sequence>0E000000457863656C2E53686565742E3800</Sequence>
+						  <DefaultShift>19</DefaultShift>
+						  <Shift Byte="00">1</Shift>
+						  <Shift Byte="0E">18</Shift>
+						  <Shift Byte="2E">3</Shift>
+						  <Shift Byte="38">2</Shift>
+						  <Shift Byte="45">14</Shift>
+						  <Shift Byte="53">8</Shift>
+						  <Shift Byte="63">12</Shift>
+						  <Shift Byte="65">5</Shift>
+						  <Shift Byte="68">7</Shift>
+						  <Shift Byte="6C">10</Shift>
+						  <Shift Byte="74">4</Shift>
+						  <Shift Byte="78">13</Shift>
+					  </SubSequence>
+				  </ByteSequence>
+			  </InternalSignature>
+		  </BinarySignature>
+        </File>
+      </Files>
+    </ContainerSignature> 
+  </ContainerSignatures>
+  
+  <FileFormatMappings>
+    <FileFormatMapping signatureId="1000" Puid="fmt/39"/>
+    <FileFormatMapping signatureId="1002" Puid="fmt/40"/>
+    <FileFormatMapping signatureId="1004" Puid="fmt/61"/>
+  </FileFormatMappings>
+  
+  <TriggerPuids>
+    <TriggerPuid ContainerType="OLE2" Puid="fmt/111"/> 
+    <TriggerPuid ContainerType="ZIP" Puid="fmt/189"/> 
+    <TriggerPuid ContainerType="ZIP" Puid="x-fmt/263"/> 
+  </TriggerPuids>
+
+</ContainerSignatureMapping>

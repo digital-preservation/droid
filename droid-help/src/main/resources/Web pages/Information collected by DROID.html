@@ -1,0 +1,785 @@
+<html>
+  <head>
+    <meta content="text/html; charset=Cp1252" http-equiv="Content-Type">
+    <meta content="Helen" name="generator">
+    <title>Information collected by DROID</title>
+  </head>
+  <body>
+    <table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="396">
+          <a id="Information" name="Information"><img src="../Images/droidlogo.gif"></a> 
+        </td>
+        <td bgcolor="#555555" width="100%">
+          <h5 align="center">
+             <b><font size="5" color="#ffffff" face=
+            "SansSerif, Verdana, Arial, Helvetica">Information collected by DROID</font></b>
+          </h5>
+        </td>
+      </tr>
+    </table>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="50%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="50%">
+          <img src="../Images/Filter small.png"><a href="Explore the results.html">Filter your
+          results</a> 
+        </td>
+        <td align="right" width="33%">
+          <img src="../Images/3d bar chart small.png"> <a href="Summary reporting.html">Report on
+          your results</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       DROID collects a variety of <a id="Information" name="Information">information</a> about
+      your files and folders, including:
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="0" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="34%">
+          <a href="Information collected by DROID.html#Type">Type</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Information collected by DROID.html#Filename">File name</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Information collected by DROID.html#FilenameExtension">File name extension</a> 
+        </td>
+      </tr>
+      <tr>
+        <td align="center" width="34%">
+          <a href="Information collected by DROID.html#ExtensionMismatch">Extension mismatch
+          warning</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Information collected by DROID.html#Location">Location</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Information collected by DROID.html#FileSize">File size</a> 
+        </td>
+      </tr>
+      <tr>
+        <td align="center" width="34%">
+          <a href="Information collected by DROID.html#LastModified">Last modified date</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Information collected by DROID.html#NumberIdentifications">Number of format
+          identifications</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Information collected by DROID.html#FileFormats">File formats</a> 
+        </td>
+      </tr>
+      <tr>
+        <td align="center" width="34%">
+          <a href="Information collected by DROID.html#Method">Identification method</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Information collected by DROID.html#Hash">Content hash</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Information collected by DROID.html#Status">Status</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="Type" name="Type"><font size="5">Type</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       DROID categorises the files and folders it profiles as being one of three types:
+    </p>
+    <ul>
+      <li>
+        <img src="../Images/fileResourceType.gif">
+        &nbsp;file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </li>
+      <li>
+        <img src="../Images/folderResourceType.gif">
+        &nbsp;folder&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </li>
+      <li>
+        <img src="../Images/containerResourceType.gif"> &nbsp;archival file
+      </li>
+    </ul>
+    <p>
+       <b>Files</b> have format identifications, but do not have other files or folders inside
+      them. <b>Folders</b> do not have any format identifications or sizes, but can contain other
+      folders, files and archival files inside them. <b>Archival files</b> are like folders, in
+      that they can contain other folders, files and archival files inside them, but they are also
+      files, so they have format identifications and a file size. In this version, DROID can look
+      inside zip, tar and gzip archival files. &nbsp;Archival files may have other archival files
+      nested inside them. &nbsp;DROID will also profile inside these, and in any further nested
+      archival files.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="Filename" name="Filename"><font size="5">File name</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       The name of a file, folder or archival file is its name, independent of its location on a
+      disk or inside an archival file. The file name extension (if any) is part of its name. DROID
+      treats all filenames as <a href=
+      "Information collected by DROID.html#CaseSensitive">case-sensitive</a>. For example,
+      “MYDOCUMENT.DOC” and “mydocument.doc” are regarded as different file names.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="FilenameExtension" name="FilenameExtension"><font size="5">File name
+          extension</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       File extensions are a convention to indicate the broad type of a file (or archival file) by
+      appending a short string to a file name, separated by a full stop. &nbsp;On Microsoft
+      Windows, the filename extension is used to indicate to the operating system what application
+      to run when double-clicking on the file. &nbsp;Other operating systems do not use the
+      filename extension to determine which application to use. &nbsp;However, filename extensions
+      have become a de-facto standard for indicating the broad type of a file format, and are
+      usually appended to filenames, even when a file is created on other platforms.
+    </p>
+    <p>
+       DROID extracts the file extension (if any) from a file name or archival file name and stores
+      it separately, to facilitate reporting, sorting and filtering on the extension alone.&nbsp;
+    </p>
+    <p>
+       File names which begin with a full stop and have no other full stops in them are not
+      regarded as having an extension. For example, a file called “.myfile” has a filename of
+      “.myfile” and a blank extension, whereas “.myfile.doc” has a file name of “.myfile.doc” and
+      an extension of “.doc”.&nbsp;&nbsp; This is because file names starting with a full stop are
+      hidden files in unix&nbsp;file systems, and also because it is not likely that a file name
+      would be entirely composed of a file extension, with no name before it.
+    </p>
+    <p>
+       DROID treats file extensions as <a href=
+      "Information collected by DROID.html#CaseSensitive">case sensitive</a>. However, it converts
+      all file extensions to lower-case to facilitate filtering and reporting.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <img src="../Images/severity_small_WARN.png"> &nbsp;<b><a id="ExtensionMismatch" name=
+          "ExtensionMismatch"><font size="5">File name extension mismatch warning</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       Sometimes file extensions are incorrect for the type of the file, or are missing where there
+      should be one. If DROID detects that the file extension for a file name does not match the
+      formats it has identified, it will issue a file extension mismatch warning. For example, if a
+      file called “myfile.doc” is identified as a spreadsheet, then a file extension mismatch
+      warning will be issued.
+    </p>
+    <p>
+       In the graphical user interface, extension mismatch warnings appear as a warning symbol <img
+      src="../Images/severity_small_WARN.png">&nbsp;against the file extension itself. &nbsp;When
+      exported to a CSV file, it will appear as a True or False value&nbsp;in its own column.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="Location" name="Location"><font size="5">Location</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       DROID records the location of every file and folder it profiles. It records location in two
+      ways, using a file <a href="http://en.wikipedia.org/wiki/File_URI_scheme">Uniform Resource
+      Indicator</a> (URI) <img src="../Images/Icon_External_Link.png">, and a file path where one
+      exists. Like file names and extensions, DROID treats file paths and URIs as case sensitive.
+    </p>
+    <p>
+       There are two ways of recording location because not all files and folders have a file path,
+      although this is the usual method of identifying location in a file system. Any file, folder
+      or archival file which is inside another archival file does not have a defined file path, as
+      it is inside the archival file, not directly in the file system.&nbsp;
+    </p>
+    <p>
+       For example, if we have:
+    </p>
+    <ol type="1" start="1">
+      <li>
+        a folder called “Folder” on the “C:\” drive of a Windows computer
+      </li>
+      <li>
+        a file called “Document.doc” inside “Folder”,
+      </li>
+      <li>
+        an archival file called “Archive.zip” inside “Folder”
+      </li>
+      <li>
+        a spreadsheet called “Spreadsheet.xls” inside “Archive.zip”
+      </li>
+      <li>
+        a folder called “Another folder” inside “Archive.zip”
+      </li>
+      <li>
+        a picture called “Large picture.jpg” inside “Another folder”
+      </li>
+    </ol>
+    <p>
+       Then we have the following file paths and URIs:
+    </p>
+    <p align="center">
+       &nbsp;
+    </p>
+    <table cellpadding="0" bgcolor="#eeeeee" border="0" cellspacing="0" align="center" width="619">
+      <tr>
+        <td valign="top" align="center" width="25">
+          <p>
+             <b>&nbsp;</b>
+          </p>
+        </td>
+        <td valign="top" width="162">
+          <p>
+             <b>File path</b>
+          </p>
+        </td>
+        <td valign="top" width="432">
+          <p>
+             <b>Uniform Resource Indicator (URI)</b>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" align="center" width="25">
+          <p>
+             <b>1</b>
+          </p>
+        </td>
+        <td width="162">
+          <p>
+             C:\Folder
+          </p>
+        </td>
+        <td width="432">
+          <p>
+             <font color="#0000ff">file:/</font>C:/Folder/
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" align="center" width="25">
+          <p>
+             <b>2</b>
+          </p>
+        </td>
+        <td width="162">
+          <p>
+             C:\Folder\Document.doc
+          </p>
+        </td>
+        <td width="432">
+          <p>
+             <font color="#0000ff">file:/</font>C:/Folder/Document.doc
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" align="center" width="25">
+          <p>
+             <b>3</b>
+          </p>
+        </td>
+        <td width="162">
+          <p>
+             C:\Folder\Archive.zip
+          </p>
+        </td>
+        <td width="432">
+          <p>
+             <font color="#0000ff">file:/</font>C:/Folder/Archive.zip
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td height="31" valign="top" align="center" width="25">
+          <p>
+             <b>4</b>
+          </p>
+        </td>
+        <td height="31" width="162">
+          <p>
+             &nbsp;
+          </p>
+        </td>
+        <td height="31" width="432">
+          <p>
+             <font color="#800080">zip:/</font><font color=
+            "#0000ff">file:/</font>C:/Folder/Archive.zip<font color=
+            "#ff0000">!</font>Spreadsheet.xls
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td height="31" valign="top" align="center" width="25">
+          <p>
+             <b>5</b>
+          </p>
+        </td>
+        <td height="31" width="162">
+          <p>
+             &nbsp;
+          </p>
+        </td>
+        <td height="31" width="432">
+          <p>
+             <font color="#800080">zip:/</font><font color=
+            "#0000ff">file:/</font>C:/Folder/Archive.zip<font color="#ff0000">!</font>Another<font
+            color="#808080">%20</font>folder/
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" align="center" width="25">
+          <p>
+             <b>6</b>
+          </p>
+        </td>
+        <td width="162">
+          <p>
+             &nbsp;
+          </p>
+        </td>
+        <td width="432">
+          <p>
+             <font color="#800080">zip:/</font><font color=
+            "#0000ff">file:/</font>C:/Folder/Archive.zip<font color="#ff0000">!</font>Another<font
+            color="#808080">%20</font>folder/Large<font color="#808080">%20</font>picture.jpg
+          </p>
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <p>
+       Only files, archival files or folders which are directly accessible in the file system have
+      a file path. Those files and folders which are inside the zip file do not have a file path,
+      but do have a URI, which tells you that they are inside the zip file, where they can be found
+      in it, and where the zip file they are inside is to be found.
+    </p>
+    <p>
+       The prefixes of a URI tell you what sort of resource is being described by the URI, and the
+      exclamation marks indicate where one type of resource is contained by another. For example,
+      for “Spreadsheet.xls”, we can see that there is a file, C:/Folder/Archive.zip, with the
+      prefix <font color="#0000ff">file:/</font>. The exclamation mark (<font color=
+      "#ff0000">!</font>) tells us that the spreadsheet is contained by the Archive.zip file, and
+      the first prefix <font color="#800080">zip:/</font> tells us the type of the containment is a
+      zip file. Note that spaces in URIs are encoded by “<font color="#808080">%20</font>”, and
+      folder separators are always forward slashes. &nbsp;If zip files are contained inside zip
+      files, inside zip files, more prefixes and exclamation marks are added as needed.
+    </p>
+    <p>
+       URIs mean that all resources profiled by DROID&nbsp;have a unique reference which tells you
+      where the resource is, even if it is inside an archival file, inside another archival file,
+      and so on. &nbsp;This is something that file paths cannot do. &nbsp;However, both are
+      provided, as working with file paths is easier, where they exist for a resource.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="FileSize" name="FileSize"><font size="5">File size</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       The size of a file or archival file is recorded as the number of bytes used by the file.
+      Files can have a size of zero (no content, just a record in the file system). Folders do not
+      have a size.
+    </p>
+    <p>
+       The size of an archival file is the size of the archival file itself, not the sum of the
+      sizes of its contents. For example, zip files compress their contents, so the sum of the
+      sizes of the files inside a zip file will be bigger than the size of the archival file
+      itself.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="LastModified" name="LastModified"><font size="5">Last modified date and
+          time</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       Most files, folders and archival files record the date and time on which they were last
+      modified. This is not the same as the date a file was originally created, or the date on
+      which a file was last read. Unfortunately, due to limitations in Java 6, DROID can only
+      acquire the last modified date, even though the other dates may be present on the file
+      system.
+    </p>
+    <p>
+       It is possible that not every file, folder or archival file will have a last modified date.
+      For example, in some cases, resources inside archival files may not record this date.
+    </p>
+    <p>
+       It is important to note that last-modified dates can be changed when files are copied from
+      one server to another, so this date may not reflect the last date a user actively modified
+      the content of a file. Also, the content of a file (the data within it) may actually be older
+      than the file itself – if a file was copied, or simply typed up manually from an older piece
+      of content.
+    </p>
+    <p>
+       Some files may have noticeably inaccurate dates, e.g. 1 Jan 1970. In this case, the files
+      will be newer than indicated. This error will likely be caused by the battery failing on the
+      internal clock of the computer from which the document was uploaded, or some other error
+      which caused the date to be set incorrectly. &nbsp;
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="NumberIdentifications" name="NumberIdentifications"><font size="5">Number of
+          format identifications</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       DROID attempts to identify the format of files, including archival files, but not folders.
+      The number of identifications DROID records for a file can vary. It can have
+    </p>
+    <ul>
+      <li>
+        <img src="../Images/format_count_small_ZERO.png"> &nbsp;zero, if DROID can’t identify a
+        format at all.
+      </li>
+      <li>
+        <img src="../Images/format_count_small_ONE.png"> &nbsp;one, if it is unambiguously
+        identified as a single format.
+      </li>
+      <li>
+        <u><b><font color="#0000ff">(2)</font></b></u> &nbsp;more than one, if DROID can’t
+        unambiguously decide what format it is in.
+      </li>
+    </ul>
+    <p>
+       In the user interface, the number in brackets indicates the number of possible format
+      identifications made. &nbsp;Clicking on the link will bring up a window showing all the
+      identifications in a table. &nbsp;&nbsp;Multiple possible identifications can happen for
+      three reasons.
+    </p>
+    <ol type="1" start="1">
+      <li>
+        A format is identified purely on the basis of its file extension, so multiple versions of a
+        file format may match the same extension.
+      </li>
+      <li>
+        A format has several versions which are very similar and hard for DROID to distinguish
+        between, so DROID will simply report all the possible versions.
+      </li>
+      <li>
+        A file may contain patterns, purely by chance, which appear in more than one file
+        format.&nbsp;
+      </li>
+    </ol>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="FileFormats" name="FileFormats"><font size="5">File formats</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       When DROID identifies a file format, it records four pieces of information:
+    </p>
+    <ul type="disc">
+      <li>
+        format name
+      </li>
+      <li>
+        format version
+      </li>
+      <li>
+        PRONOM Unique Identifier (PUID)
+      </li>
+      <li>
+        mime-type.
+      </li>
+    </ul>
+    <p>
+       The format name is simply a human-readable name given to a file format or family of file
+      formats, for example, “Microsoft Word”. The format version is the version of the format, for
+      example “97-2003”. The PUID is a globally unique, persistent identifier for a file format and
+      version, assigned by the National Archives through its <a href=
+      "http://www.nationalarchives.gov.uk/pronom">PRONOM file format registry</a><img src=
+      "../Images/Icon_External_Link.png">. For example, the PUID for the “Microsoft Word 97-2003”
+      file format is “fmt/40”.
+    </p>
+    <p>
+       PUIDs are guaranteed never to change, although new PUIDs may be defined. Clicking on a PUID
+      in DROID will take you to the relevant page for that file format on the National Archives
+      PRONOM website.&nbsp; The website will also help you with some file format names that you may
+      be unfamiliar with. In particular, you may see files identified as 'OLE2 Compound Document
+      Format' (PUID fmt/111) which you can interpret as 'Microsoft Office generic'&nbsp;. In these
+      cases, the file is a Microsoft Office file which DROID could not identify any more closely,
+      but the file extension may indicate more precisely.&nbsp;
+    </p>
+    <p>
+       Finally, the mime-type is another scheme for identifying broad types of files in use on the
+      internet. They are assigned by a body called the <a href=
+      "http://www.iana.org/assignments/media-types/">Internet Assigned Numbers Authority</a><img
+      src="../Images/Icon_External_Link.png">.&nbsp; Mime-types are quite broad classifications, so
+      many different file formats will have the same mime-type. For example, the mime-type for
+      “fmt/40” is “application/msword” – which is shared by all other binary Microsoft word
+      formats.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="Method" name="Method"><font size="5">Identification method</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       DROID has three different methods of identifying file formats:
+    </p>
+    <ul type="disc">
+      <li>
+        extension
+      </li>
+      <li>
+        signature
+      </li>
+      <li>
+        container.
+      </li>
+    </ul>
+    <p>
+       An “<b>extension</b>” identification means that a format was identified purely on the basis
+      of its file extension. Such an identification may not be reliable, as files can be named in
+      any way, and extensions do not identify formats down to the version level, so such
+      identifications can be quite broad, and may result in multiple identifications.
+    </p>
+    <p>
+       A “<b>signature</b>” identification means that a format was identified by finding signature
+      patterns inside the file which are known to occur in particular file formats and versions.
+      This method is quite reliable, as it is fairly unlikely that by chance a file will happen to
+      have a pattern belonging to a different file format than its own.
+    </p>
+    <p>
+       A “<b>container</b>” identification means that a format was identified by finding embedded
+      files (possibly with signatures of their own) inside the main file. For example, Microsoft
+      Office 2007&nbsp;word processing files are actually zip files containing xml files, images or
+      other resources used in the document. A container identification would identify the main file
+      as a Microsoft Office 2007 file, not a zip file. This method is very reliable, as not only
+      does the broad type of container have to be identified (e.g. zip), but the zip file must then
+      be opened, and files inside scanned for further identifications to be made. &nbsp;The
+      original zip identification is removed, and replaced by the Office 2007 identification, on
+      the basis of the files discovered within it.
+    </p>
+    <p>
+       Note that this is not the same as profiling files inside Archival files, even though
+      container-format files may be based on an archival format like zip. &nbsp;A container-format
+      is a single file format, whose specification relies on specific files being&nbsp;inside it to
+      define the overarching format. An archival file format is a format whose only purpose is to
+      contain other files, and the particular files inside it has no effect on its identification
+      as an&nbsp;archival format.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="Hash" name="Hash"><font size="5">Content hash</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       DROID can optionally generate a content hash of the contents of each file and archival file,
+      using the industry standard “MD5” algorithm. A content hash is a short signature&nbsp;that
+      can be used to identify the content of the file. It is extremely unlikely that two different
+      files will have the same content hash (although this is a remote possibility).&nbsp;&nbsp;
+    </p>
+    <p>
+       Content hashes can be used to detect files with duplicate content, or can be linked to
+      forensic hash databases to find or exclude files which are widely used (and therefore not
+      unique to your organisation) or which contain illegal content. &nbsp;See "<a href=
+      "Detecting duplicate files.html">Detecting duplicate files</a>" for more information.
+    </p>
+    <p>
+       Content hashing is turned off by default, as producing a hash requires reading the entire
+      file, which will slow down DROID significantly.&nbsp;
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="Status" name="Status"><font size="5">Status</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       As DROID profiles your files and folders, it records whether the profiling was successful or
+      not. There are four different statuses which a file or folder can have:
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="0" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="left" width="20%">
+          <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Done</b> 
+        </td>
+        <td align="left" width="80%">
+          The file or folder was read successfully and any results found recorded.
+        </td>
+      </tr>
+      <tr>
+        <td height="18" align="left" width="20%">
+          <img src="../Images/Delete small.png"> &nbsp;<b>Not found</b> 
+        </td>
+        <td height="18" align="left" width="80%">
+          The file or folder was moved or deleted before it could be profiled.
+        </td>
+      </tr>
+      <tr>
+        <td height="37" align="left" width="20%">
+          <img src="../Images/Status Access Denied Small.png"> &nbsp;<b>Access denied</b> 
+        </td>
+        <td height="37" align="left" width="80%">
+          The operating system refused read access to DROID. &nbsp;You will have to grant read
+          permission to those files or folders if you want DROID to profile them.
+        </td>
+      </tr>
+      <tr>
+        <td align="left" width="20%">
+          <img src="../Images/Problem small.png"> &nbsp;<b>Error</b> 
+        </td>
+        <td width="80%">
+          An error occurred while trying to read the file. &nbsp;You may be able to determine the
+          cause of the error by examining DROID's log files.
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <p>
+       In the user interface, these status icons are overlaid on the files, folders and archival
+      files as needed. &nbsp;
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="CaseSensitive" name="CaseSensitive"><font size="5">Case
+          Sensitivity</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Information collected by DROID.html#Information">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       All text collected by DROID is treated case sensitively, so upper case and lower case text
+      is regarded as different. &nbsp;This is due to limitations of the underlying database, which
+      must either be entirely case sensitive, or entirely case insensitive. &nbsp;DROID requires
+      some fields in its database to be case sensitive in order to operate properly, which means we
+      cannot make only some information case insensitive, even where it&nbsp;might be more useful
+      to do so.&nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="50%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="50%">
+          <img src="../Images/Filter small.png"><a href="Explore the results.html">Filter your
+          results</a> 
+        </td>
+        <td align="right" width="33%">
+          <img src="../Images/3d bar chart small.png"> <a href="Summary reporting.html">Report on
+          your results</a> 
+        </td>
+      </tr>
+    </table>
+    <h6>
+       &nbsp;&nbsp;&nbsp;
+    </h6>
+  </body>
+</html>

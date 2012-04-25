@@ -1,0 +1,38 @@
+----------------------------------------------------------------
+Sun Jan 30 22:43:51 GMT 2011:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.7.1.1 - (1040133): instance a816c00e-012d-d918-b589-000000be08c0 
+on database directory /home/matt/dev/droid/droid6latest/droid-results/droid-test-db  with class loader sun.misc.Launcher$AppClassLoader@7d772e 
+Loaded from file:/home/matt/.m2/repository/org/apache/derby/derby/10.7.1.1/derby-10.7.1.1.jar
+java.vendor=Sun Microsystems Inc.
+java.runtime.version=1.6.0_22-b04
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Jan 30 22:44:27 GMT 2011:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.7.1.1 - (1040133): instance df2180fd-012d-d918-b589-000000be08c0 
+on database directory /home/matt/.droid6/profiles/1296427466815/db  with class loader sun.misc.Launcher$AppClassLoader@7d772e 
+Loaded from file:/home/matt/.m2/repository/org/apache/derby/derby/10.7.1.1/derby-10.7.1.1.jar
+java.vendor=Sun Microsystems Inc.
+java.runtime.version=1.6.0_22-b04
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Jan 30 22:44:34 GMT 2011:
+Shutting down instance df2180fd-012d-d918-b589-000000be08c0 on database directory /home/matt/.droid6/profiles/1296427466815/db with class loader sun.misc.Launcher$AppClassLoader@7d772e 
+----------------------------------------------------------------
+Sun Jan 30 22:44:35 GMT 2011:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.7.1.1 - (1040133): instance a0200101-012d-d918-b589-000000be08c0 
+on database directory /home/matt/.droid6/profiles/1296427466815/db  with class loader sun.misc.Launcher$AppClassLoader@7d772e 
+Loaded from file:/home/matt/.m2/repository/org/apache/derby/derby/10.7.1.1/derby-10.7.1.1.jar
+java.vendor=Sun Microsystems Inc.
+java.runtime.version=1.6.0_22-b04
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Jan 30 22:44:36 GMT 2011:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.7.1.1 - (1040133): instance 65548115-012d-d918-b589-000000be08c0 
+on database directory /home/matt/.droid6/profiles/1296427476240/db  with class loader sun.misc.Launcher$AppClassLoader@7d772e 
+Loaded from file:/home/matt/.m2/repository/org/apache/derby/derby/10.7.1.1/derby-10.7.1.1.jar
+java.vendor=Sun Microsystems Inc.
+java.runtime.version=1.6.0_22-b04
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Jan 30 22:45:11 GMT 2011:
+Shutting down instance a816c00e-012d-d918-b589-000000be08c0 on database directory /home/matt/dev/droid/droid6latest/droid-results/droid-test-db with class loader sun.misc.Launcher$AppClassLoader@7d772e 

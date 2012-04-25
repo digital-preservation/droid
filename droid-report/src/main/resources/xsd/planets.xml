@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<st:FileProfile xmlns:st="http://www.nationalarchives.gov.uk/CollectionProfile" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.nationalarchives.gov.uk/CollectionProfile planets.xsd ">
+  <st:profilingStartDate>2001-12-31T12:00:00</st:profilingStartDate>
+  <st:profilingEndDate>2001-12-31T12:00:00</st:profilingEndDate>
+  <st:profilingSaveDate>2001-12-31T12:00:00</st:profilingSaveDate>
+  <st:totalReadableFiles>0</st:totalReadableFiles>
+  <st:totalUnreadableFiles>0</st:totalUnreadableFiles>
+  <st:totalUnreadableFolders>0</st:totalUnreadableFolders>
+  <st:totalSize>0.0</st:totalSize>
+  <st:smallestSize>0.0</st:smallestSize>
+  <st:largestSize>0.0</st:largestSize>
+  <st:meanSize>0.0</st:meanSize>
+  <st:pathsProcessed>
+    <st:pathItem>st:pathItem</st:pathItem>
+  </st:pathsProcessed>
+  <st:byYear>
+    <st:yearItem>
+      <st:year>2001</st:year>
+      <st:numFiles>0</st:numFiles>
+      <st:totalFileSize>0.0</st:totalFileSize>
+    </st:yearItem>
+  </st:byYear>
+  <st:byFormat>
+    <st:formatItem>
+      <st:PUID>st:PUID</st:PUID>
+      <st:MIME>st:MIME</st:MIME>
+      <st:FormatName>st:FormatName</st:FormatName>
+      <st:FormatVersion>st:FormatVersion</st:FormatVersion>
+      <st:numFiles>0</st:numFiles>
+      <st:totalFileSize>0.0</st:totalFileSize>
+    </st:formatItem>
+  </st:byFormat>
+</st:FileProfile>

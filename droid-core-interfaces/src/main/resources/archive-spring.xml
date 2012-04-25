@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <bean id="properties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>classpath*:archive-puids.properties</value>
+        </property>
+    </bean>
+
+    <bean id="archiveHandlerLocator" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactoryImpl">
+        <property name="handlers">
+            <map>
+                <entry key="ZIP" value-ref="zipHandler"/>
+                <entry key="TAR" value-ref="tarHandler"/>
+                <entry key="GZ"  value-ref="gzHandler"/>
+            </map>
+        </property>
+    </bean>
+    <!-- 
+    <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipArchiveHandler"/>
+     -->
+    <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler"/> 
+    <bean id="tarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarArchiveHandler"/>
+    <bean id="gzHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipArchiveHandler"/>
+           
+    <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
+        <property name="puids">
+            <map>
+                <entry key="ZIP" value="${archive.zip}"/>
+                <entry key="TAR" value="${archive.tar}"/>
+                <entry key="GZ" value="${archive.gz}"/>
+            </map>
+        </property>
+    </bean>
+           
+</beans>

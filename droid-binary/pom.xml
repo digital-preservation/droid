@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>uk.gov.nationalarchives</groupId>
+  <artifactId>droid-binary</artifactId>
+  <packaging>pom</packaging>
+  <version>6.0</version>
+  <name>droid-binaries</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <descriptors>
+            <descriptor>assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- append to the packaging phase. -->
+            <goals>
+              <goal>single</goal> <!-- goals == mojos -->
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+  	<dependency>
+  		<groupId>uk.gov.nationalarchives</groupId>
+  		<artifactId>droid-command-line</artifactId>
+  		<version>6.0</version>
+  		<type>jar</type>
+  		<scope>runtime</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>uk.gov.nationalarchives</groupId>
+  		<artifactId>droid-ui</artifactId>
+  		<version>6.0</version>
+  		<scope>runtime</scope>
+  	</dependency>
+  </dependencies>
+</project>

@@ -1,0 +1,477 @@
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="Helen" name="generator">
+    <title>Command line control</title>
+  </head>
+  <body>
+    <table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="397">
+          <img src="../Images/droidlogo.gif"> 
+        </td>
+        <td bgcolor="#555555" width="100%">
+          <h5 align="center">
+             <b><font color="#ffffff" size="5" face="SansSerif, Verdana, Arial, Helvetica">Command
+            line control</font></b>
+          </h5>
+        </td>
+      </tr>
+    </table>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="34%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="33%">
+          &nbsp;
+        </td>
+        <td align="right" width="33%">
+          &nbsp;
+        </td>
+      </tr>
+    </table>
+    <p>
+       DROID can be controlled via the the command line. &nbsp;It is a little more limited than the
+      full control offered by the graphical user interface (GUI).&nbsp;Only a single filter can be
+      specified via the command line to apply to profiles for export or reporting, whereas in the
+      GUI, each profile can have a separate filter. &nbsp;
+    </p>
+    <p>
+       Command line control allows DROID to be scripted into batch processes or automated
+      work-flows. The following following command-line options are available:
+    </p>
+    <ul>
+      <li>
+        <a href="#General">General options</a>
+      </li>
+      <li>
+        <a href="#Profiling">Profiles</a>
+      </li>
+      <li>
+        <a href="#Filtering">Filtering</a>
+      </li>
+      <li>
+        <a href="#Exporting">Exporting</a>
+      </li>
+      <li>
+        <a href="#Reporting">Reporting</a>
+      </li>
+      <li>
+        <a href="#Signatures">Signatures</a>
+      </li>
+    </ul>
+    <p>
+       Command line usage does not currently allow all operations to be combined in a single
+      command-line. &nbsp;Some options simply print information to the screen, such as the version
+      of DROID. &nbsp;For the others, you can create new profiles and save the results in one step.
+      &nbsp;To filter, report or export a profile requires a second step, opening a previously
+      saved profile to process.
+    </p>
+    <h2>
+       <a id="General" name="General">General</a>
+    </h2>
+    <h3>
+       -h, --help
+    </h3>
+    <p>
+       Display this help. More help is available using the help menu in the graphical user
+      interface.
+    </p>
+    <h3>
+       -v, --version
+    </h3>
+    <p>
+       Displays the version of the DROID software.
+    </p>
+    <h3>
+       -q, --quiet
+    </h3>
+    <p>
+       DROID will limit its console output to the requested information and errors
+      only.&nbsp;&nbsp;&nbsp;Errors will be sent to the standard error output of the console.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <h2>
+       <img src="../Images/Add.png">&nbsp;<img src="../Images/Play.png">&nbsp;<img src=
+      "../Images/Open file.png">&nbsp;<img src="../Images/Save.png"> <a id="Profiling" name=
+      "Profiling">Profil</a>es
+    </h2>
+    <h3>
+       -a,--profile-resources &lt;resources...&gt;
+    </h3>
+    <p>
+       Adds resources to a new profile and runs it. Resources are the file path of any file or
+      folder you want to profile. The file paths should be given surrounded in double quotes, and
+      separated by spaces from each other. The profile results will be saved to a single file
+      specified using the –p option. For example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" size="3" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –a “C:\Files\A Folder”
+          “C:\Files\file.xxx” –p “C:\Results\result1.droid”</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       Note: You cannot use reporting, filtering and exporting when using the –a option.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <h3>
+       -R,--recurse
+    </h3>
+    <p>
+       Recurse into all subfolders of any folder specified using the –a option. This means that the
+      contents of all sub-folders of the original folder will be processed, and any sub-folders in
+      them, and so on.
+    </p>
+    <p>
+       If this option is not specified, only the files directly under a folder will be processed.
+      If –R is specified, files in all sub-folders (and their sub-folders, and so on) will be
+      processed as well. &nbsp;Note that in the Graphical User Interface, processing sub-folders is
+      the default, whereas in the command-line.
+    </p>
+    <p>
+       For example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" size="3" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –R –a “C:\Files\Another Folder”–p
+          “C:\Results\result3.droid</font><font style=" background-color: #000000;" size="3" color=
+          "#ffffff" face="Monospaced, Courier New, Courier, mono">”</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <h3>
+       &nbsp;-p,--profile &lt;filename ...&gt;
+    </h3>
+    <p>
+       When used in conjunction with reporting, filtering or exporting, -p specifies a list of
+      profiles to open. The file paths of the profiles should be given surrounded in double quotes,
+      and separated by spaces from each other. When used in conjunction with the –a option, the
+      results of the new profile will be saved to that file, and you can only specify a single
+      file. For example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" size="3" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid”
+          “C:\Results\result2.droid” –e “C:\Exports\combinedResults.csv”</font> 
+        </td>
+      </tr>
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" size="3" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –a “C:\Files\A Folder”
+          “C:\Files\file.xxx” –p “C:\Results\result1.droid”</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <h2>
+       <img src="../Images/Filter.png"><a id="Filtering" name="Filtering">Filtering</a>
+    </h2>
+    <h3>
+       -f, --filter-all &lt;filter ...&gt;
+    </h3>
+    <p>
+       Filter all&nbsp;the profiles specified using the –p option. Only results which match ALL
+      filter criteria specified will appear. Filter criteria are specified using the following
+      method:
+    </p>
+    <p>
+       <font face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;“&lt;field&gt;
+      &lt;operator&gt; &lt;values&gt;”</font>
+    </p>
+    <p>
+       where &lt;field&gt; is the name of a filterable field, &lt;operator&gt; is the type of
+      comparison to use, and &lt;values&gt; are the value or values against which the field value
+      should be compared. The –k option provides information on the available fields and operators.
+      You can specify more than one filter criteria, surrounded in double quotes and separated by
+      spaces from each other. For example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result3.droid” –f
+          “PUID any_of fmt/111 fmt/112” –e “C:\Exports\filteredResults.csv”</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
+        </td>
+      </tr>
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid”
+          “C:\Results\result2.droid” –f “file_size &gt; 0” –e
+          “C:\Exports\filteredCombinedResults.csv”</font><font style=" background-color: #000000;"
+          color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
+        </td>
+      </tr>
+    </table>
+    <h3>
+       -F, --filter-any &lt;filter ...&gt;
+    </h3>
+    <p>
+       Filter profiles as the –f option does, except results which match ANY of the specified
+      filter criteria will appear.
+    </p>
+    <h3>
+       -k, --filter-fields
+    </h3>
+    <p>
+       Lists the available fields to use in filters and the operators which can be used with them.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <h2>
+       <img src="../Images/Export.png"> <a id="Exporting" name="Exporting">Exporting</a>
+    </h2>
+    <h3>
+       -e, --export &lt;filename&gt;
+    </h3>
+    <p>
+       Export the specified profiles as a single CSV file, with one row for each file profiled.
+      This means that if a file has multiple identifications, only a single row for that file will
+      be written out, with the identifications added as additional columns at the right of the row.
+      &nbsp;If any filters are specified, then they will apply to the exported file. For example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid”
+          “C:\Results\result2.droid” –e “C:\Exports\combinedResults.csv”</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;</font> 
+        </td>
+      </tr>
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result3.droid” –f
+          “PUID any_of fmt/111 fmt/112” –e “C:\Exports\filteredResults.csv</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">”</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <h3>
+       -E, --export &lt;filename&gt;
+    </h3>
+    <p>
+       Export the specified profiles as a single CSV file, with one row for each format for each
+      file&nbsp;profiled. This means that if a file has multiple identifications, then a separate
+      row will be written out for each file and separate identification made.&nbsp;If any filters
+      are specified, then they will apply to the exported file. For example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid”
+          “C:\Results\result2.droid” -E “C:\Exports\combinedResults.csv”</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;</font> 
+        </td>
+      </tr>
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result3.droid” –f
+          “PUID any_of fmt/111 fmt/112” –E “C:\Exports\filteredResults.csv</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">”</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <h2>
+       <img src="../Images/3d bar chart.png"> <a id="Reporting" name="Reporting">Reporting</a>
+    </h2>
+    <h3>
+       -n, --report-name &lt;report name&gt;
+    </h3>
+    <p>
+       Runs the report with the <a href="Summary reporting.html#AvailableReports">specified
+      name</a> on any profiles opened using the <a href="Command line control.html#Profiling">–p
+      option</a>. If any filters are specified, then they will apply to all the profiles specified
+      to report against. &nbsp;For example, this command would load the profile from the "<font
+      face="Monospaced, Courier New, Courier, mono">C:\Results\result1.droid</font>" file, run the
+      "File count and sizes" report, and save the results to a PDF file: "<font face=
+      "Monospaced, Courier New, Courier, mono">C:\Reports\result1Report.pdf</font>":
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;droid –p “C:\Results\result1.droid”
+          –n “File count and sizes” –r “C:\Reports\result1Report.pdf”</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <h3>
+       -t, --report-output-type &lt;output type&gt;
+    </h3>
+    <p>
+       Sets the <a href="Summary reporting.html#ExportTypes">output file format</a> of the
+      generated report. &nbsp;If not specified, reports default to writing out as a PDF file.
+      &nbsp;For example, this command would would load the profile from the "<font face=
+      "Monospaced, Courier New, Courier, mono">C:\Results\result1.droid</font>" file, run the
+      "Comprehensive Breakdown" report, and save the results in Planets&nbsp;XML format to
+      the&nbsp;file: "<font face=
+      "Monospaced, Courier New, Courier, mono">C:\Reports\result1Report.xml</font>":
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid” –n
+          “Comprehensive breakdown” -t "Planets&nbsp;XML" –r “C:\Reports\result1Report.xml”</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <h3>
+       -r, --report &lt;filename&gt;
+    </h3>
+    <p>
+       Saves the report generated to the file specified. For example, this command would would load
+      the profile from the "<font face=
+      "Monospaced, Courier New, Courier, mono">C:\Results\result1.droid</font>" file, run the
+      "Total unreadable files" report, and save the results in DROID XML&nbsp;format to
+      the&nbsp;file: "<font face=
+      "Monospaced, Courier New, Courier, mono">C:\Reports\result1Report.xml</font>":
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          &nbsp;&nbsp;<font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">droid –p “C:\Results\result1.droid” –n “Total
+          unreadable files” -t "DROID Report&nbsp;XML" –r “C:\Reports\result1Report.xml"</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <h3>
+       -l, --list-reports &lt;filename&gt;
+    </h3>
+    <p>
+       Lists the available reports, and the output formats each report can be saved in. For
+      example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">droid –l</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <h2>
+       <a id="Signatures" name="Signatures">Signatures</a>
+    </h2>
+    <h3>
+       -c, --check-signature-update
+    </h3>
+    <p>
+       Check for signature updates, but does not download them.
+    </p>
+    <h3>
+       -d, --download-signature-update
+    </h3>
+    <p>
+       Download the latest signature updates, if a newer version is available.
+    </p>
+    <h3>
+       -X, --list-signature-files
+    </h3>
+    <p>
+       Lists all locally available signature files.
+    </p>
+    <h3>
+       -x, --display-signature-file
+    </h3>
+    <p>
+       Displays the current default signature file.
+    </p>
+    <h3>
+       -s, --configure-signature-file &lt;version&gt;
+    </h3>
+    <p>
+       Sets the current default signature file version. For example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;</font><font style=
+          " background-color: #000000;" size="3" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">droid –s 42</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;</font> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="34%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="33%">
+          &nbsp;
+        </td>
+        <td align="right" width="33%">
+          &nbsp;
+        </td>
+      </tr>
+    </table>
+    <h6>
+       &nbsp;&nbsp;&nbsp;
+    </h6>
+  </body>
+</html>

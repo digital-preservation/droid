@@ -1,0 +1,145 @@
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="Helen" name="generator">
+    <title>Update file format signatures</title>
+  </head>
+  <body>
+    <table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="399">
+          <img src="../Images/droidlogo.gif"> 
+        </td>
+        <td bgcolor="#555555" width="100%">
+          <h5 align="center">
+             <img src="../Images/Sync.png">&nbsp;&nbsp;&nbsp;<b><font color="#ffffff" size="5"
+            face="SansSerif, Verdana, Arial, Helvetica">Update file format signatures</font></b>
+          </h5>
+        </td>
+      </tr>
+    </table>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="34%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Startup configuration.html">Startup configuration</a> 
+        </td>
+        <td align="right" width="33%">
+          <a href="Change preferences.html">Change preferences</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       &nbsp;
+    </p>
+    <p>
+       DROID can update its file format signatures using the <a href=
+      "http://www.nationalarchives.gov.uk/pronom">PRONOM</a><img src=
+      "../Images/Icon_External_Link.png">&nbsp;technical registry service hosted at the National
+      Archives. &nbsp;To manually update your file format signatures, select the <b><font size=
+      "4">Tools / Check for signature updates...</font></b> menu item. &nbsp;
+    </p>
+    <p align="center">
+       <img src="../Images/Upload signature.png">
+    </p>
+    <p>
+       Either enter the file name and path of the signature file you want to upload, or press the
+      <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Browse... &nbsp;</font></b>
+      button to bring up a file selection dialog. &nbsp;If you check the "Use this signature file
+      as default", it will become the default for new profiles. &nbsp;If not, the signature will be
+      available to select in the preferences should you want to use it at some point in the future,
+      but will not be used by default. &nbsp;When you have selected the file to upload, press the
+      <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Upload &nbsp;&nbsp;</font></b>
+      button, or <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Cancel
+      &nbsp;</font></b> to exit the dialog making no changes.
+    </p>
+    <p>
+       It is also possible for DROID to automatically check for and update its signatures on a
+      regular schedule. &nbsp;This can be configured in the <a href=
+      "Change preferences.html#Signature">preferences</a> section.
+    </p>
+    <p>
+       If you have a <a href="Update file format signatures.html#BinarySigs">binary signature</a>
+      file locally that you want to use, you can upload this file into DROID using the <b><font
+      size="4">Tools / Upload signature file...</font></b> menu item. &nbsp;This will bring up a
+      file open dialog from which you can select the signature file that you want DROID to use.
+      &nbsp;Currently this feature cannot be used to upload <a href=
+      "Update file format signatures.html#ContainerSigs">container signatures</a>, only binary
+      signature files.
+    </p>
+    <p>
+       Alternatively, you can manually copy a binary or container signature file into your droid
+      working area (which is by default located in a folder called <font face=
+      "Monospaced, Courier New, Courier, mono">".droid"</font>, underneath your home folder).
+      &nbsp;For binary signature files, place them in the "<font face=
+      "Monospaced, Courier New, Courier, mono">signature_files</font>" sub-folder. &nbsp;For
+      container signature files, place them in the "<font face=
+      "Monospaced, Courier New, Courier, mono">container_sigs</font>" sub folder. &nbsp;Note that
+      container signature files have a number appended to them, which is the date on which they are
+      updated, in the format year, month date. &nbsp;For example, the file "<font face=
+      "Monospaced, Courier New, Courier, mono">container-signature-20110114.xml</font>" is the
+      container signature file last updated on January 14th, 2011.
+    </p>
+    <h3>
+       <a id="BinarySigs" name="BinarySigs">Binary signatures</a>
+    </h3>
+    <p>
+       Most file formats have either "<a href=
+      "http://en.wikipedia.org/wiki/File_format#Magic_number">magic numbers</a>" <img src=
+      "../Images/Icon_External_Link.png">&nbsp;embedded within them, or they have regular
+      structures which always appear in files of that format. &nbsp;The binary signatures define
+      what patterns to find in order to identify a file format. &nbsp;The signatures can specify
+      simple sequences of bytes, alternate sequences, or several different possible bytes at the
+      same position in the file. &nbsp;These patterns may be found at known positions (e.g. at the
+      start or 20 bytes in from the end of the file), or they may appear at variable positions,
+      either within a known range of possible positions, or anywhere in the file at all.
+      &nbsp;Signatures can combine all of these features, sometimes more than one in the same
+      signature. &nbsp;
+    </p>
+    <p>
+       Taking a very contrived example, a signature may specify that there are three bytes at the
+      start of the file: 01, 02 and 03. &nbsp;Then 5 bytes on there is either 04 or 05. After that,
+      somewhere between 10 and 1000 bytes on is either 06 07 08 09, or 10, 11, 12, 13.
+      &nbsp;Finally, the bytes ff, ee, dd are found right at the end of the file.
+    </p>
+    <h3>
+       <a id="ContainerSigs" name="ContainerSigs">Container signatures</a>
+    </h3>
+    <p>
+       Some file formats are actually collections of embedded files, each with their own
+      formats.&nbsp;&nbsp;For example, Microsoft Office 2007 files are actually zip files, which
+      contain various other files. &nbsp;Taken together, they define an Office 2007 file.
+      &nbsp;Binary signatures are not very good at identifying files like this, as the contents of
+      the embedded files are obscured by the containing format (in this case, zip). &nbsp;In order
+      to provide more accurate identifications, DROID can open files which use either the ZIP
+      format, or the OLE2 format, and look inside them to see what embedded files are present.
+    </p>
+    <p>
+       Container signatures are just specifications of which files to look for inside the
+      containing formats, and optionally, one or more <a href=
+      "Update file format signatures.html#BinarySigs">binary signatures</a> to run against those
+      files if they are found.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="34%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Startup configuration.html">Startup configuration</a> 
+        </td>
+        <td align="right" width="33%">
+          <a href="Change preferences.html">Change preferences</a> 
+        </td>
+      </tr>
+    </table>
+    <h6>
+       &nbsp;&nbsp;
+    </h6>
+  </body>
+</html>

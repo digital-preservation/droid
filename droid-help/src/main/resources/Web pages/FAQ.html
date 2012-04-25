@@ -1,0 +1,417 @@
+<html>
+  <head>
+    <meta content="text/html; charset=Cp1252" http-equiv="Content-Type">
+    <meta content="Helen" name="generator">
+    <title>FAQ</title>
+  </head>
+  <body>
+    <table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="396">
+          <a id="Information" name="Information"><img src="../Images/droidlogo.gif"></a> 
+        </td>
+        <td bgcolor="#555555" width="100%">
+          <h5 align="center">
+             <b><font color="#ffffff" size="5" face=
+            "SansSerif, Verdana, Arial, Helvetica">Frequently Asked Questions</font></b>
+          </h5>
+        </td>
+      </tr>
+    </table>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="50%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="right" width="50%">
+          &nbsp;
+        </td>
+      </tr>
+    </table>
+    <ul>
+      <li>
+        <a href="FAQ.html#JavaVersion">What version of Java do I need?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#EarlierVersions">Can I open profiles created in earlier versions of
+        DROID?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#NotRecognising">Why isn't DROID&nbsp;recognising certain formats?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#FileTimes">Why are some file times an hour different to those on my
+        system?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#MoreAccurate">Can I configure DROID to give more accurate results?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#UseWhileProfiling">Can I continue to use information in the file system
+        while I&nbsp;am profiling it?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#HowLong">How long does profiling take?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#LeaveRunning">Can I set it up and just leave DROID running?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#PerformanceImpact">Will DROID 6 impact on the performance of my
+        systems?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#DiskSpace" id="DiskSpace" name="DiskSpace">How much disk space do I need
+        to run DROID?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#WhereLimits">Are there any limitations to where DROID can profile?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#StoreCopies">Does DROID 6 store copies of the files that it is
+        profiling?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#WhyStopped">Why has DROID stopped profiling before completion?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#CantResume">Why can't I resume a paused profile?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#NotDoneFilter" id="NotDoneFilter" name="NotDoneFilter">Why does filtering
+        on a "Not Done" status give no results?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#FilterSpeed">Why does opening some filtered folders take a long time?</a>
+      </li>
+      <li>
+        <a href="FAQ.html#StartFailure">What can I do if DROID fails to start up?</a>
+      </li>
+    </ul>
+    <h3>
+       <a id="JavaVersion" name="JavaVersion">What</a> version of Java do I need?
+    </h3>
+    <p>
+       You will need to have Java 6 installed on your machine in order to run DROID 6.
+    </p>
+    <p>
+       Please note that DROID will not run on early versions of Java 6 and requires versions that
+      fully support JAXB 2.1. Testing was carried out on Java 6 update 17 and beyond. The latest
+      JAVA updates can be obtained from <a href=
+      "http://www.oracle.com/technetwork/java/index.html">oracle.com/technetwork/java/index.html</a>.
+    </p>
+    <h3>
+       <a id="EarlierVersions" name="EarlierVersions">Can I open profiles created in earlier
+      versions of DROID?</a>
+    </h3>
+    <p>
+       No. Because of the expanded functionality incorporated in to DROID 6, you will not be able
+      to load profiles from previous versions in DROID 6 – and vice-versa. &nbsp;If you need to
+      re-analyse results in DROID 6 which were already obtained in earlier versions of DROID, you
+      will have to re-profile your files using DROID 6.
+    </p>
+    <h3>
+       <a id="NotRecognising" name="NotRecognising">Why isn’t DROID recognising certain
+      formats?</a>
+    </h3>
+    <p>
+       DROID can only recognise files for which there is a defined signature or known extension.
+      &nbsp;Signatures are regularly updated by the National Archives, and DROID can download them
+      to improve the range of formats it can identify. &nbsp;In some cases, an existing signature
+      may fail to recognise a file because the file is unusual in some way. &nbsp;If you know of
+      such files, please email <i>droid-users@lists.sourceforge.net</i> so we can develop better
+      signatures. &nbsp;Note that we usually require&nbsp;a sample of a failing file to find out
+      why it is not being recognised. &nbsp;Please make sure that there is no sensitive or personal
+      content in such files before sending them.
+    </p>
+    <h3>
+       <a id="FileTimes" name="FileTimes">Why are some file times an hour different to those on my
+      system?</a>
+    </h3>
+    <p>
+       DROID&nbsp;does not record or&nbsp;display dates and times using local daylight savings
+      time, if any is configured on your system. &nbsp;The underlying dates and times are correct,
+      but represented as universal time. &nbsp;This means that, if your operating system is
+      configured to display times using daylight savings time settings, then some times can appear
+      to be one hour different to those displayed in DROID.
+    </p>
+    <h3>
+       <a id="MoreAccurate" name="MoreAccurate">Can I configure DROID to give more accurate
+      results?</a>
+    </h3>
+    <p>
+       Yes. DROID 6 currently makes identifications of files based on scanning a limited amount of
+      the file. The default configuration is set to 64kb (you can change this in the
+      Tools&gt;Preferences menu). This is sufficient to return accurate identifications for most
+      file-types. There are some exceptions, for example in order to identify some uncommon formats
+      (e.g.SIARD files), you will need to scan more or all of the file. If you choose to increase
+      the amount of the file that you scan, this is likely to significantly affect the performance
+      of DROID, particularly if you have numerous large files.
+    </p>
+    <p>
+       You can also configure whether DROID should match file extensions on all known formats for a
+      given file extension, or only on file extensions for which there is no other signature.
+      &nbsp;By default, DROID will only match a file extension if there is no other signature
+      defined, on the grounds that if the other (usually more accurate) signature failed, it is
+      unlikely to be the file format with that extension. &nbsp;Sometimes the more accurate
+      signatures will fail to identify a format (e.g. if a newer version has recently become
+      available). &nbsp;In these cases, you may want to turn on matching for all extensions.
+      &nbsp;This will tend to produce more identifications for&nbsp;a larger number of&nbsp;files.
+      &nbsp;More files will have identifications where they did not before, and more files will
+      have multiple identifications, instead of a single identification. &nbsp;Whether this is more
+      accurate is debatable and will depend on the files and signatures you currently have.
+    </p>
+    <h3>
+       <a id="UseWhileProfiling" name="UseWhileProfiling">Can I continue to use the information in
+      the file system whilst I am profiling it?</a>
+    </h3>
+    <p>
+       Yes. If you are running DROID over large file stores, it is conceivable that you may need to
+      leave it running for a number of days or weeks. DROID will profile what is there at the time,
+      and so over large active locations the results will be gradually built up even while change
+      is happening. The eventual profile will therefore not reflect the entire state of your system
+      at any one time, but rather the state of each file or folder at the time DROID&nbsp;profiled
+      it.
+    </p>
+    <p>
+       You don’t need to worry about users then changing files in the location that DROID is
+      profiling; if a file is identified in the file tree but then deleted or moved, it will be
+      recorded as an error.
+    </p>
+    <h3>
+       <a id="HowLong" name="HowLong">How long does profiling take?</a>
+    </h3>
+    <p>
+       DROID 6 is much faster than earlier versions of DROID. &nbsp;However, it depends on how much
+      and what type of information you are profiling, what level of accuracy you choose and what
+      information you need to get from the results. &nbsp;As a general rule, the larger the volume
+      of data you profile the longer it will take for the profile to complete. However DROID will
+      also take longer to complete if you chose to:
+    </p>
+    <ul type="disc">
+      <li>
+        Analyse the contents of archive files (e.g. zip, gzip, tar)
+      </li>
+      <li>
+        Create an <a href="http://en.wikipedia.org/wiki/MD5">MD5 hash</a> <img src=
+        "../Images/Icon_External_Link.png">&nbsp;for each file
+      </li>
+      <li>
+        Increase the number of bytes that DROID scans in order to return an identification
+      </li>
+      <li>
+        Set a delay between identifying files using the throttle (to reduce the&nbsp;load on your
+        network or servers).
+      </li>
+    </ul>
+    <p>
+       You will need to weigh up your requirements for accuracy, speed and what use you want to
+      make of the profiling information, setting your preferences accordingly before you begin to
+      profile your information.
+    </p>
+    <h3>
+       <a id="LeaveRunning" name="LeaveRunning">Can I set it up and just leave DROID running?</a>
+    </h3>
+    <p>
+       Yes. Although you need to ensure that DROID has the correct access permissions to profile
+      the locations that you have identified. Also, it is good practice to pause and save your
+      profiling at regular intervals, to ensure that if you experience an unexpected problem (such
+      as power shortage or the area that DROID is running in is affected) you can pick up your
+      profiling again without losing all your results so far.
+    </p>
+    <p>
+       It is also possible to set up batch files or shell scripts to automate the process and
+      produce reports when running DROID through the <a href="Command line control.html">command
+      line</a>. You should speak to technical specialist in your organisation for more information
+      about this.
+    </p>
+    <h3>
+       <a id="PerformanceImpact" name="PerformanceImpact">Will DROID 6 impact on the performance of
+      my systems?</a>
+    </h3>
+    <p>
+       Yes, there will be some impact, but this depends on a number of factors. &nbsp;DROID does
+      not typically&nbsp;exert a high load on the file systems and networks it is running over, but
+      this will obviously depend on your particular environment and usages.
+    </p>
+    <p>
+       DROID 6 has dynamic throttling (configurable only&nbsp;in the GUI), so if you want to limit
+      the impact on your systems you can increase the amount of time that DROID pauses between
+      identifying each file. Because it is dynamic, you can for example slow down the rate at which
+      DROID works during the day, to reduce the load on your network, then increase its speed in
+      the evening. Remember that the more you ask DROID to pause, the longer it will take to
+      complete profiling.
+    </p>
+    <h3>
+       <a id="DiskSpace" name="DiskSpace">How much disk space do I need to run DROID?</a>
+    </h3>
+    <p>
+       DROID needs disk space in its working area to process <a href=
+      "FAQ.html#StoreCopies">temporary files</a>, and to record the database of results it builds
+      up as it profiles. &nbsp;Profiles can require up to a gigabyte per two million files
+      processed.
+    </p>
+    <h3>
+       <a id="WhereLimits" name="WhereLimits">Are there any limitations to where DROID can
+      profile?</a>
+    </h3>
+    <p>
+       You will need to ensure that DROID 6 has the appropriate access permissions to scan the
+      repositories that it is you have requested. DROID can only profile files held in file systems
+      or systems which provide a file-system view of its files to your operating system (e.g. a
+      network share). &nbsp;
+    </p>
+    <h3>
+       <a id="StoreCopies" name="StoreCopies">Does DROID 6 store copies of the files that it is
+      profiling?</a>
+    </h3>
+    <p>
+       DROID 6 creates temporary files when profiling inside archival files, such as zip, tar or
+      gzip files. &nbsp;These are written out by default as ~tmp files in the <b>.droid6</b> tmp
+      directory, unless the <a href="Startup configuration.html#TempFiles">temporary folder
+      area</a> has been configured to be somewhere else. &nbsp;There are automatic cleanup
+      processes to remove information from this directory when the temporary file is no longer
+      needed, however on some occasions (such as if DROID stops unexpectedly), some files may not
+      be deleted. It is good practice to check this location regularly and remove any ~tmp files
+      that are no longer required by DROID. &nbsp;DROID&nbsp;will log a warning if it cannot delete
+      a temporary file.
+    </p>
+    <p>
+       It is not possible to say how much space is required for temporary files while processing,
+      as this will depend on the size of your archival files and their contents. &nbsp;DROID also
+      profiles more than one file at a time, so more than one archival file may be being processed
+      simultaneously. &nbsp;It is prudent to ensure that you have enough space in your droid
+      working area to handle decompressing several archival files at any one point in time.
+      &nbsp;If processing very large file systems, we would recommend that at least
+      10&nbsp;gigabytes of disk space should be reserved for temporary file processing, but you may
+      require more or less depending on your files.
+    </p>
+    <h3>
+       <b><a id="WhyStopped" name="WhyStopped">Why has DROID stopped profiling before
+      completion?</a></b>
+    </h3>
+    <p>
+       This may be for a number of reasons. DROID 6 has crash recovery built in, which means as
+      long as DROID has sufficient warning that a file system has become unavailable (which it may
+      not have in some instances, such as a power shortage) it will pause the current profile ready
+      to be saved and / or resumed at a later date.
+    </p>
+    <p>
+       It is good practice to pause and save your profiling at regular intervals, to ensure that if
+      you experience an unexpected problem (such as power shortage or the area that DROID is
+      running in is affected) you can pick up your profiling again without losing data.
+    </p>
+    <h3>
+       <a id="CantResume" name="CantResume">Why can't I resume a paused profile?</a>
+    </h3>
+    <p>
+       Because of the crash-recovery capability built in to DROID, it is important that any of the
+      top level folders&nbsp;that are selected are not deleted, removed or renamed either during
+      profiling (if the profile is paused) or before DROID has begun to profile them. This will
+      cause the profile to pause and you will not be able to be resume it. &nbsp;This is because
+      DROID interprets a missing top-level folder as a missing file system, and it automatically
+      puts the profile into a pause mode to enable you to save your work and to resume when the
+      file system becomes available again.
+    </p>
+    <p>
+       It is best practice to select the highest folder possible when selecting the top-level
+      folders&nbsp;that you intend to profile and ensure that these are not moved, deleted or
+      renamed during or before profiling. &nbsp;If you do experience your profile stopping for this
+      reason, you can still interrogate the data that you do have. &nbsp;You can also create a new
+      profile that contains the remaining top-level items which were not profiled. &nbsp;Multiple
+      profiles can be reported on and exported together, so you will achieve the same results.
+    </p>
+    <h3>
+       <a id="NotDoneFilter" name="NotDoneFilter">Why does filtering on a "Not Done" status give no
+      results?</a>
+    </h3>
+    <p>
+       Files or folders which have not yet been processed have a Not Done status in DROID.
+      &nbsp;These files and folders have not yet been recorded in the database, only in the
+      specification of what to eventually profile. &nbsp;Filtering works by querying the underlying
+      database in which DROID records its results, therefore filtering on the Not Done status
+      returns no results, even if there are files and folders visible in the main view which have
+      not yet been processed.
+    </p>
+    <h3>
+       <a id="FilterSpeed" name="FilterSpeed">Why does opening some filtered folders take a long
+      time?</a>
+    </h3>
+    <p>
+       When a filter is applied to a profile, the user interface has to do a lot of work
+      determining the status of each file or folder in the opening folder. &nbsp;Folders with lots
+      of direct files or other folders in them (i.e. many thousands) can take quite a long time to
+      open. &nbsp;This does not affect the filtering speed for exporting or reporting, so if you
+      are having problems opening a large folder with a filter, consider exporting the profile to a
+      CSV file, or running a report over it, rather than trying to open it in the user interface.
+    </p>
+    <h3>
+       <a id="StartFailure" name="StartFailure">What can I do if DROID fails to start up?</a>
+    </h3>
+    <ul>
+      <li>
+        If DROID fails to start up, you may be running the wrong <a href=
+        "FAQ.html#JavaVersion">version of Java</a>.
+      </li>
+      <li>
+        You can try moving, deleting or renaming your <b>.droid6</b> folder, as described below.
+        &nbsp;DROID will recreate a new working folder with all the default files it needs when it
+        starts up again.
+      </li>
+      <li>
+        Ensure that your installed version of Java is accessible from where DROID is installed.
+        &nbsp;From a command-line in your droid installation folder, type "java -version". &nbsp;If
+        you don't see the Java version being displayed, you may have to configure the path to your
+        Java installation. &nbsp;Please consult the installation instructions for Java for your
+        operating system for details on how to do this.
+      </li>
+    </ul>
+    <p>
+       <b>&nbsp;Deleting your .droid6 folder</b>
+    </p>
+    <p>
+       By default, your <b>.droid6</b> folder is set to be created in your home directory. &nbsp;On
+      Windows, this is often found at <font face=
+      "Monospaced, Courier New, Courier, mono">C:\Documents and Settings\USERNAME\.droid6</font>,
+      or <font face="Monospaced, Courier New, Courier, mono">C:\Users\USERNAME\.droid6</font>.
+      &nbsp;&nbsp;On unix systems, this may be found under <font face=
+      "Monospaced, Courier New, Courier, mono">/home/USERNAME/.droid6</font>
+    </p>
+    <p>
+       If you are running DROID on a Mac or other Linux based system, please note that the
+      <b>.droid6</b> folder will be in the same location but will be ‘hidden’. Note that Mac
+      systems do not make hidden files easily accessible from your computer. You can delete the
+      folder&nbsp;from your machine using the command line. &nbsp;Please refer to your operating
+      system instructions for doing this.
+    </p>
+    <p>
+       &nbsp;(Please note: the location of the <b>.droid6</b> folder is <a href=
+      "Startup configuration.html">configurable using a batch file or shell script</a>, and may
+      have been set to a different location on your machine)
+    </p>
+    <p>
+       By default, the <b>.droid6</b> folder contains any downloaded&nbsp;binary and container
+      signature files, log files, settings, report definitions, and temporary working area,
+      although some of these can be <a href="Startup configuration.html">configured to be in
+      different locations</a>. Please make sure you no longer require any of this information
+      before deleting. &nbsp;However, DROID will recreate all the default&nbsp;information it needs
+      by default when it runs again, effectively resetting to a new installation.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="50%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="right" width="50%">
+          &nbsp;
+        </td>
+      </tr>
+    </table>
+    <h6>
+       &nbsp;&nbsp;
+    </h6>
+  </body>
+</html>

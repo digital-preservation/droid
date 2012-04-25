@@ -1,0 +1,252 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Cp1252">
+    <meta name="generator" content="Helen">
+    <title>Startup configuration</title>
+  </head>
+  <body>
+    <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#555555" border="0">
+      <tr>
+        <td width="399">
+          <img src="../Images/droidlogo.gif"> 
+        </td>
+        <td width="100%" bgcolor="#555555">
+          <h5 align="center">
+             <b><font color="#ffffff" size="5" face="SansSerif, Verdana, Arial, Helvetica">Startup
+            configuration</font></b>
+          </h5>
+        </td>
+      </tr>
+    </table>
+    <table width="100%" cellpadding="8" cellspacing="0" bgcolor="#eeeeee" border="0">
+      <tr>
+        <td width="34%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td width="33%" align="center">
+          <a href="Update file format signatures.html">Update file format signatures</a> 
+        </td>
+        <td width="33%" align="right">
+          <a href="Change preferences.html">Change preferences</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       There are some <a href="Startup configuration.html#Settings">settings</a> which
+      DROID&nbsp;needs to be told at the point it&nbsp;starts up. &nbsp;These either relate to how
+      Java is started in the first place, or to fundamental settings which DROID&nbsp;needs to know
+      before it can do anything else. &nbsp;You can configure these settings in several ways, by <a
+      href="Startup configuration.html#EditScripts">editing the startup scripts</a>, or by <a href=
+      "Startup configuration.html#EnvironmentVars">setting system environment variables</a>.
+      &nbsp;&nbsp;If any of the settings are not configured at all, they have defaults in each
+      case.
+    </p>
+    <h3>
+       <a name="EditScripts" id="EditScripts">Editing startup scripts</a>
+    </h3>
+    <p>
+       There are two startup scripts which can be used to run DROID:
+    </p>
+    <ul>
+      <li>
+        <font face="Monospaced, Courier New, Courier, mono">droid.bat</font> on Windows
+      </li>
+      <li>
+        <font face="Monospaced, Courier New, Courier, mono">droid.sh</font> on Mac or Linux
+      </li>
+    </ul>
+    <p>
+       Each of these files is a simple text file, which has documented sections to configure each
+      of the settings near the start of the file. &nbsp;Settings provided by the scripts&nbsp;will
+      override any system environment variables you have set in the system as a whole.
+    </p>
+    <p>
+       Note: be very careful if you edit the Mac or Linux startup scripts on Microsoft Windows
+      systems, as this will often add Windows-specific line-endings to the file which may prevent
+      it from working correctly on Mac or Linux systems. &nbsp;Some text editors let you specify
+      the type of line-ending to write out.
+    </p>
+    <h3>
+       <a name="EnvironmentVars" id="EnvironmentVars">System environment variables</a>
+    </h3>
+    <p>
+       DROID will attempt to pick up settings from system environment variables if they are not
+      provided by a startup script. To configure system environment variables, please see the
+      documentation for your operating system. &nbsp;&nbsp;The environment variables to use are
+      documented against each of the settings below.
+    </p>
+    <h3>
+       <a name="Settings" id="Settings">Settings</a>
+    </h3>
+    <ul>
+      <li>
+        <a href="Startup configuration.html#MaxMemory">Maximum memory to use</a>
+      </li>
+      <li>
+        <a href="Startup configuration.html#UserSettings">User settings folder</a>
+      </li>
+      <li>
+        <a href="Startup configuration.html#TempFiles">Temporary files folder</a>
+      </li>
+      <li>
+        <a href="Startup configuration.html#LogFolder">Logging folder</a>
+      </li>
+      <li>
+        <a href="Startup configuration.html#LogConfig">Log configuration</a>
+      </li>
+      <li>
+        <a href="Startup configuration.html#LogLevel">Console log level</a>
+      </li>
+    </ul>
+    <h3>
+       <a name="MaxMemory" id="MaxMemory">Maximum memory to use</a>
+    </h3>
+    <p>
+       Java programs can only use as much memory as the&nbsp;Java Runtime Environment sets aside
+      for them. &nbsp;By default, this value is often quite low. &nbsp;We recommend that DROID runs
+      with up to 512Mb of memory potentially available, which is the default when DROID runs if no
+      further configuration is done. &nbsp;
+    </p>
+    <p>
+       This is the only setting which will only take effect if DROID is run using the startup
+      scripts. &nbsp;This is because it is a setting Java itself needs to know, before DROID is
+      even run. &nbsp;
+    </p>
+    <ul>
+      <li>
+        Default value (running through scripts and the DROID.exe file): <b><font face=
+        "Monospaced, Courier New, Courier, mono">512Mb</font></b>
+      </li>
+      <li>
+        Environment variable: <i><b><font face=
+        "Monospaced, Courier New, Courier, mono">droidMemory</font></b></i>
+      </li>
+    </ul>
+    <h3>
+       <a name="UserSettings" id="UserSettings">User settings folder</a>
+    </h3>
+    <p>
+       The user settings folder is where DROID stores user settings, including preferences, report
+      definitions, filter definitions and file format signatures. &nbsp;If not otherwise
+      configured, all the other folders and files configurable below are also stored under this
+      folder.
+    </p>
+    <ul>
+      <li>
+        Default value: a folder called "<b><font face=
+        "Monospaced, Courier New, Courier, mono">.droid6</font></b>" directly under the user's home
+        directory,
+      </li>
+      <li>
+        Environment variable: <i><b><font face=
+        "Monospaced, Courier New, Courier, mono">droidUserDir</font></b></i>
+      </li>
+    </ul>
+    <h3>
+       <a name="TempFiles" id="TempFiles">Temporary files folder</a>
+    </h3>
+    <p>
+       The temporary files folder is where DROID creates and deletes temporary files required
+      during processing. &nbsp;Two sub-folders are created underneath this folder:
+    </p>
+    <ol>
+      <li>
+        <b>/tmp</b> - for decompressing archival files to be further processed, and any other
+        temporary files required. &nbsp;These are deleted when no longer required during
+        processing.
+      </li>
+      <li>
+        <b>/profiles</b> - to store temporary copies of profiles DROID currently has open.
+        &nbsp;Each temporary profile is deleted when it is closed.
+      </li>
+    </ol>
+    <p>
+       Normally there should be no files left in these areas after closing DROID down, but in case
+      of any problems, any files in these areas can be safely deleted if DROID is not
+      running.&nbsp;
+    </p>
+    <ul>
+      <li>
+        Default value: the droid user settings folder.
+      </li>
+      <li>
+        Environment variable:<i><b><font face="Monospaced, Courier New, Courier, mono">
+        droidTempDir</font></b></i>
+      </li>
+    </ul>
+    <h3>
+       <a name="LogFolder" id="LogFolder">Logging folder</a>
+    </h3>
+    <p>
+       The logging folder is where DROID writes its log files out during operation.
+    </p>
+    <ul>
+      <li>
+        Default value: a folder called "<b><font face=
+        "Monospaced, Courier New, Courier, mono">logs</font></b>" under the droid user settings
+        folder.
+      </li>
+      <li>
+        Environment variable:<i><b><font face="Monospaced, Courier New, Courier, mono">
+        droidLogDir</font></b></i>
+      </li>
+    </ul>
+    <h3>
+       <a name="LogConfig" id="LogConfig">Log configuration</a>
+    </h3>
+    <p>
+       DROID uses a logging system called <a href="http://logging.apache.org/log4j/">log4j</a> <img
+      src="../Images/Icon_External_Link.png">. &nbsp;You can configure different log settings by
+      providing the path to a log configuration file, or by editing the settings in the default log
+      configuration file.
+    </p>
+    <ul>
+      <li>
+        Default value: a file called "<b><font face=
+        "Monospaced, Courier New, Courier, mono">log4j.properties</font></b>" under the droid user
+        settings folder.
+      </li>
+      <li>
+        Environment variable:<i><b><font face="Monospaced, Courier New, Courier, mono">
+        log4j.configuration</font></b></i>
+      </li>
+    </ul>
+    <h3>
+       <a name="LogLevel" id="LogLevel">Console log level</a>
+    </h3>
+    <p>
+       DROID&nbsp;logs events to the console by default at an INFO&nbsp;level. &nbsp;If
+      DROID&nbsp;is running in quiet mode from the command line, then this property is overridden
+      to be at an ERROR&nbsp;level. &nbsp;You can configure the default log level to the console
+      using this property in the start up scripts. Valid logging levels, from most verbose to least
+      verbose,&nbsp;are DEBUG, INFO, WARN, ERROR, FATAL.
+    </p>
+    <ul>
+      <li>
+        Default value: INFO
+      </li>
+      <li>
+        Environment variable: <i><b>consoleLogThreshold</b></i>
+      </li>
+    </ul>
+    <p>
+       &nbsp;
+    </p>
+    <table>
+      <tr>
+        <td width="34%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td width="33%" align="center">
+          <a href="Update file format signatures.html">Update file format signatures</a> 
+        </td>
+        <td width="33%" align="right">
+          <a href="Change preferences.html">Change preferences</a> 
+        </td>
+      </tr>
+    </table>
+    <h6>
+       &nbsp;&nbsp;
+    </h6>
+  </body>
+</html>

@@ -1,0 +1,370 @@
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="Helen" name="generator">
+    <title>Change preferences</title>
+  </head>
+  <body>
+    <table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="399">
+          <a id="Top" name="Top"><img src="../Images/droidlogo.gif"></a> 
+        </td>
+        <td bgcolor="#555555" width="100%">
+          <h5 align="center">
+             <b><font color="#ffffff" size="5" face="SansSerif, Verdana, Arial, Helvetica">Change
+            preferences</font></b>
+          </h5>
+        </td>
+      </tr>
+    </table>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="34%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Startup configuration.html">Startup configuration</a> 
+        </td>
+        <td align="right" width="33%">
+          <a href="Update file format signatures.html">Update file format signatures</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       <a id="Top" name="Top">The</a> preferences window allows you to configure various settings
+      used by DROID after it has started up. &nbsp;There are also some settings which control <a
+      href="Startup configuration.html">how DROID starts up</a>, which are not configured through
+      this window. There are three main tabs in the preferences window:
+    </p>
+    <ul>
+      <li>
+        <a href="Change preferences.html#Profile">Profile Defaults</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#Signature">Signature Updates</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#ExportDefaults">Export Defaults</a>
+      </li>
+    </ul>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="Profile" name="Profile"><font size="5">Profile defaults</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Change preferences.html#Top">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       The Profile Defaults tab contains the settings used when creating a new profile.&nbsp;
+    </p>
+    <ul>
+      <li>
+        <a href="Change preferences.html#BinarySignature">Binary Signature File</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#ContainerSignature">Container Signature File</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#AnalyseArchive">Analyse contents of archive files</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#GenerateHash">Generate MD5 hash for each file</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#MaxBytes">Maximum bytes to scan</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#ExtensionsNoSignatures">Match extensions if no other
+        signatures defined</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#AllExtensions">Match extensions against all known
+        extensions</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#Throttle">Default throttle</a>
+      </li>
+    </ul>
+    <p align="center">
+       <img src="../Images/Profile Defaults.PNG">
+    </p>
+    <p align="center">
+       &nbsp;
+    </p>
+    <p align="left">
+       <b><a id="BinarySignature" name="BinarySignature">Binary Signature File</a></b>
+    </p>
+    <p align="left">
+       The binary signature file is the version of the binary signatures to use when trying to
+      identify file formats. &nbsp;Binary signatures are patterns to find inside the file in order
+      to identify its file format. &nbsp;Once a profile has been created, you cannot change the
+      binary signature file it uses. &nbsp;It is recorded with the profile when you save it.
+    </p>
+    <p align="left">
+       <b><a id="ContainerSignature" name="ContainerSignature">Container Signature File</a></b>
+    </p>
+    <p align="left">
+       The container signature file is the version of the container signatures to use when trying
+      to identify file formats. &nbsp;Container signatures identify file formats by looking for
+      embedded files inside the main files. &nbsp;Binary signatures can be applied to these
+      embedded files. &nbsp;This improves the accuracy of recognition for these types of file
+      formats, as the search is confined to the specified embedded files, not to the entire
+      containing file. &nbsp;Once a profile has been created, you cannot change the container
+      signature file it uses. &nbsp;It is recorded with the profile when you save it.
+    </p>
+    <p align="left">
+       <b><a id="AnalyseArchive" name="AnalyseArchive">Analyse contents of archive files.</a></b>
+    </p>
+    <p align="left">
+       If this option is checked, then DROID will look inside zip, tar and gzip files and profile
+      the files it finds inside them.
+    </p>
+    <p align="left">
+       <b><a id="GenerateHash" name="GenerateHash">Generate MD5 hash for each file</a></b>
+    </p>
+    <p align="left">
+       If this option is checked, then DROID will produce an MD5 hash for the content of the file.
+      &nbsp;By default this option is off, as generating hashes slows down profiling significantly.
+      &nbsp;Read "<a href="Detecting duplicate files.html">Detecting duplicate files</a>" for more
+      information on why you may want to generate hashes.
+    </p>
+    <p>
+       <b><a id="MaxBytes" name="MaxBytes">Maximum bytes to scan</a></b>
+    </p>
+    <p>
+       When DROID is trying to identify files, it looks inside the files for common patterns. This
+      setting allows you to configure how far from the beginning or end of the file DROID&nbsp;will
+      scan before it stops trying to identify the file. This has a large effect on the performance
+      of DROID, and a smaller effect on the accuracy of its identifications.
+    </p>
+    <p>
+       Almost all&nbsp;patterns which identify the format of&nbsp;files are found fairly close to
+      the start or end of the file. By default, this setting is 65536 bytes (64KB). &nbsp;You can
+      make it smaller, and DROID's performance will increase, but the accuracy of identifications
+      may go down. &nbsp;Alternatively, you can make it bigger, and the performance of DROID will
+      go down, and the&nbsp;identification accuracy may go up.&nbsp;
+    </p>
+    <p>
+       Setting this value to a negative number (e.g. -1), will cause DROID&nbsp;to scan the entire
+      file (possibly more than once, if different patterns trigger those scans). &nbsp;This setting
+      gives the maximum possible accuracy DROID can achieve, but can cause DROID to profile very
+      slowly, particularly if you have large files.
+    </p>
+    <p>
+       If you do have files which are not being identified, you can increase this value, or set it
+      to -1,&nbsp;to see if this has any effect on identification accuracy. &nbsp;If it still can't
+      identify those files on a large setting (or the unlimited -1 setting), then you should
+      probably choose a smaller value to increase the identification performance.
+    </p>
+    <p>
+       <b><a id="ExtensionsNoSignatures" name="ExtensionsNoSignatures">Match extensions if no other
+      signatures defined</a></b>
+    </p>
+    <p>
+       If this option is selected, DROID&nbsp;will only attempt to match file extensions for
+      formats for which no other binary or container signatures are defined. &nbsp;The thinking
+      here is that, if a presumably more accurate signature failed to match the file format, then
+      matching against the extension alone would give potentially misleading results. &nbsp;This is
+      the default behavior, &nbsp;and is the same as previous versions of DROID.
+    </p>
+    <p>
+       <b><a id="AllExtensions" name="AllExtensions">Match extensions against all known
+      extensions</a></b>
+    </p>
+    <p>
+       If this option is selected, DROID will attempt to match a file extensions against all known
+      extensions. &nbsp;This may be helpful if you find you have files in newer formats, for which
+      there is currently no good binary or container signature, or you have unusual files for which
+      the existing signatures fail to match. &nbsp;Using this option will produce identifications
+      for more files, and more multiple identifications for files. &nbsp;
+    </p>
+    <p align="left">
+       <b><a id="Throttle" name="Throttle">Default throttle</a></b>
+    </p>
+    <p align="left">
+       This is the delay in milliseconds that DROID should pause between identifying files read
+      from the file system. &nbsp;Specifying a higher delay will cause DROID to work slower,
+      placing less load on your computer, network or disk storage. &nbsp;It does not cause a pause
+      between identifying files inside archival files. &nbsp;
+    </p>
+    <p align="left">
+       Unless you need to slow DROID down, this should be set to zero. &nbsp;Unlike the other
+      profile preferences, this value can be dynamically adjusted while running using the throttle
+      slider control on the main window. &nbsp;The throttle setting can be different for each
+      profile, and will be saved with the profile.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table bgcolor="#eeeeee" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="Signature" name="Signature"><font size="5">Signature updates</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Change preferences.html#Top">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p align="left">
+       This tab allows you to configure where DROID should try to update its signatures from, and
+      how often.
+    </p>
+    <ul>
+      <li>
+        <a href="Change preferences.html#BinaryURL">Binary Signatures&nbsp;URL</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#ContainerURL">Container Signatures URL</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#Proxy">Proxy settings</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#AutomaticUpdate">Automatically check for updates</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#UpdateSettings">Update settings</a>
+      </li>
+      <li>
+        <a href="Change preferences.html#URL">PUID URL pattern</a>
+      </li>
+    </ul>
+    <p align="center">
+       <img src="../Images/Signature Updates.PNG">
+    </p>
+    <p align="center">
+       &nbsp;
+    </p>
+    <p>
+       <b><a id="BinaryURL" name="BinaryURL">Binary Signatures URL</a></b>
+    </p>
+    <p>
+       The web address where DROID can find a PRONOM-compatible web service to download binary
+      signature updates.
+    </p>
+    <p>
+       <b><a id="ContainerURL" name="ContainerURL">Container signatures URL</a></b>
+    </p>
+    <p>
+       The web address where DROID&nbsp;can find the container signature file. &nbsp;Container
+      signature files do not require specialised PRONOM&nbsp;web services to download from - a file
+      available on a standard web server is sufficient.
+    </p>
+    <p>
+       <b><a id="Proxy" name="Proxy">Proxy settings</a></b>
+    </p>
+    <p>
+       Clicking this button will allow you to configure network proxy settings if your network has
+      a proxy. &nbsp;Please consult your network administrator for details of any proxy settings
+      you may need to make.
+    </p>
+    <p>
+       <b><a id="AutomaticUpdate" name="AutomaticUpdate">Automatically check for updates</a></b>
+    </p>
+    <p>
+       If this box is checked, then DROID will automatically attempt to look for updated signatures
+      according to the schedule you specify:
+    </p>
+    <p>
+       <b><a id="UpdateSettings" name="UpdateSettings">Update settings</a></b>
+    </p>
+    <ul>
+      <li>
+        <b>Every time DROID starts up</b> - DROID will try to check for signature updates when it
+        starts.
+      </li>
+      <li>
+        <b>Every X days</b> - on starting up, DROID will check for signature updates after the
+        number of days since the last check. &nbsp;Note that if you leave DROID running for more
+        days than is specified, it will not automatically try to update its signatures. &nbsp;The
+        check is still only made on startup, but only if the number of days since the last time it
+        checked has elapsed.
+      </li>
+      <li>
+        <b>Prompt before downloading</b> - If this box is checked, DROID will prompt you before
+        downloading new signatures.
+      </li>
+      <li>
+        <b>Use updated signature files by default</b> - If this box is checked, DROID will
+        automatically use a newer signature file by default. &nbsp;If it isn't checked, it will
+        still download the file, so it is available for selection in the profile default tab, but
+        it will not automatically make it the default signature file to use.
+      </li>
+    </ul>
+    <p>
+       <b><a id="URL" name="URL">PUID URL pattern</a></b>
+    </p>
+    <p>
+       The PUID URL pattern&nbsp;is the web&nbsp;location which DROID will connect to when clicking
+      on a PUID hyperlink in the profile tab. &nbsp;This should contain the URL to connect to, and
+      the place into which the PUID should be inserted is indicated by <font face=
+      "Monospaced, Courier New, Courier, mono">%s</font>. &nbsp;For example, if we were to click on
+      a hyperlinked PUID of "<font face="Monospaced, Courier New, Courier, mono">fmt/111</font>" in
+      the main profile results, DROID would launch your web browser at the address: "<font face=
+      "Monospaced, Courier New, Courier, mono">http://www.nationalarchives.gov.uk/pronom/fmt/111</font>".
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center" width="95%">
+          <b><a id="ExportDefaults" name="ExportDefaults"><font size="5">Export
+          Defaults</font></a></b> 
+        </td>
+        <td align="center" width="5%">
+          <a href="Change preferences.html#Top">top</a> 
+        </td>
+      </tr>
+    </table>
+    <p>
+       The Export Defaults&nbsp;tab contains miscellaneous settings, to configure how DROID exports
+      CSV files by default.
+    </p>
+    <ul>
+      <li>
+        <a href="Change preferences.html#CSVOptions">Default CSV export options</a>
+      </li>
+    </ul>
+    <p align="center">
+       &nbsp;<img src="../Images/Export Defaults.png">
+    </p>
+    <p>
+       <b><a id="CSVOptions" name="CSVOptions">Default CSV export options</a></b>
+    </p>
+    <p>
+       DROID can export profiles to CSV files in two ways: one row per file, and one row per
+      format. &nbsp;See <a href="Exporting profiles.html">exporting profiles</a> for more
+      information on each of these options. &nbsp;The settings here only configure the
+      <i>default</i> for export. &nbsp;When you export, you can select which you prefer on a
+      per-export basis.
+    </p>
+    <p>
+       &nbsp;
+    </p>
+    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="34%">
+          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+        </td>
+        <td align="center" width="33%">
+          <a href="Startup configuration.html">Startup configuration</a> 
+        </td>
+        <td align="right" width="33%">
+          <a href="Update file format signatures.html">Update file format signatures</a> 
+        </td>
+      </tr>
+    </table>
+    <h6>
+       &nbsp;&nbsp;&nbsp;
+    </h6>
+  </body>
+</html>

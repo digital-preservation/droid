@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" default-autowire="no"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileManagerImpl">
+        <!-- <property name="profileInstanceFactory" ref="profileInstanceFactory"/> -->
+        <property name="profileContextLocator" ref="profileContextLocator"/>
+        <property name="profileSpecDao" ref="profileSpecDao"/>
+        <property name="profileDiskAction" ref="profileDiskAction"/>
+        <property name="config" ref="globalConfig"/>
+    </bean>
+    
+    <bean id="profileSpecDao" class="uk.gov.nationalarchives.droid.profile.JaxbProfileSpecDao"/>
+    
+    <bean id="uuidGenerator" class="uk.gov.nationalarchives.droid.profile.ProfileUuidGeneratorImpl"/>
+    
+    <bean id="profileInstanceFactory" class="uk.gov.nationalarchives.droid.profile.SpringProfileInstanceFactory"/>
+    <bean id="profileContextLocator" class="uk.gov.nationalarchives.droid.profile.ProfileContextLocator">
+        <property name="profileInstanceLocator" ref="profileInstanceFactory"/>
+        <property name="globalConfig" ref="globalConfig"/>
+    </bean>
+    
+    <bean id="profileDiskAction" class="uk.gov.nationalarchives.droid.profile.ProfileDiskAction"/>
+    
+    <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
+
+</beans>

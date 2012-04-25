@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:batch="http://www.springframework.org/schema/batch" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+           http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
+
+    <bean id="globalConfig" class="uk.gov.nationalarchives.droid.profile.config.DroidGlobalConfig" init-method="init"/>
+
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.export.CsvItemWriter">
+        <property name="config" ref="globalConfig"/>
+    </bean>
+    
+    <bean id="exportManager" class="uk.gov.nationalarchives.droid.export.ExportManagerImpl">
+        <property name="profileContextLocator" ref="profileContextLocator"/>
+        <property name="itemWriter" ref="itemWriter"/>
+    </bean>
+    
+    <bean id="profileInstanceFactory" class="uk.gov.nationalarchives.droid.profile.SpringProfileInstanceFactory"/>
+    
+    <bean id="profileContextLocator" class="uk.gov.nationalarchives.droid.profile.ProfileContextLocator">
+        <property name="profileInstanceLocator" ref="profileInstanceFactory"/>
+        <property name="globalConfig" ref="globalConfig"/>
+    </bean>
+    
+</beans>

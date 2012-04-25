@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+	targetNamespace="http://www.nationalarchives.gov.uk/pronom/droidReport"
+	elementFormDefault="unqualified" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:profile="http://www.nationalarchives.gov.uk/pronom/droidProfileSpecification"
+	xmlns="http://www.nationalarchives.gov.uk/pronom/droidReport"
+	xmlns:reportSpec="http://www.nationalarchives.gov.uk/pronom/droidReportSpecification" xmlns:Q1="http://www.nationalarchives.gov.uk/pronom/droidFilterSpecification">
+	
+    <xsd:import schemaLocation="droidReportSpecification.xsd" namespace="http://www.nationalarchives.gov.uk/pronom/droidReportSpecification"></xsd:import>
+    <xsd:import schemaLocation="droidProfileSpecification.xsd" namespace="http://www.nationalarchives.gov.uk/pronom/droidProfileSpecification"></xsd:import>
+	<xsd:import schemaLocation="droidFilterSpecification.xsd" namespace="http://www.nationalarchives.gov.uk/pronom/droidFilterSpecification"></xsd:import>
+	<xsd:import schemaLocation="droidReportSpecification.xsd" namespace="http://www.nationalarchives.gov.uk/pronom/droidReportSpecification"></xsd:import>
+
+	<xsd:element name="report" type="reportType"></xsd:element>
+
+	<xsd:complexType name="reportType">
+		<xsd:sequence>
+			<xsd:element name="title" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="description" type="xsd:string" maxOccurs="1"	minOccurs="0"></xsd:element>
+			<xsd:element name="createdDate" type="xsd:dateTime" maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="profileSpecifications" type="profileSpecificationListType" maxOccurs="1" minOccurs="0"></xsd:element>
+			<xsd:element name="reportItems" type="reportItemListType" maxOccurs="1" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="profileSpecificationListType">
+		<xsd:sequence>
+			<xsd:element name="profileSpecification" type="profile:profileSpecificationType" maxOccurs="unbounded" minOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="reportItemListType">
+		<xsd:sequence>
+			<xsd:element name="reportItem" type="reportItemType" maxOccurs="unbounded"	minOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+    <xsd:complexType name="groupListType">
+        <xsd:sequence>
+            <xsd:element name="group" type="groupType" maxOccurs="unbounded"  minOccurs="1"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="groupType">
+        <xsd:sequence>
+            <xsd:element name="groupValue" type="xsd:string" maxOccurs="1"  minOccurs="1"></xsd:element>
+            <xsd:element name="profileSummaries" type="profileSummaryType" maxOccurs="unbounded"  minOccurs="1"></xsd:element>
+            <xsd:element name="profileAggregateSummary" type="dataSummaryType" maxOccurs="1"  minOccurs="1"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:complexType name="dataSummaryType">
+		<xsd:sequence>
+			<xsd:element name="count" type="xsd:long" maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="sum" type="xsd:long" maxOccurs="1" minOccurs="0"></xsd:element>
+			<xsd:element name="minimum" type="xsd:long" maxOccurs="1" minOccurs="0"></xsd:element>
+			<xsd:element name="maximum" type="xsd:long" maxOccurs="1" minOccurs="0"></xsd:element>
+			<xsd:element name="average" type="xsd:long" maxOccurs="1" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="reportItemType">
+		<xsd:complexContent>
+			<xsd:extension base="dataSummaryType">
+				<xsd:sequence>
+					<xsd:element name="specification" type="reportSpec:groupFieldType"></xsd:element>
+					<xsd:element name="groups" type="groupListType" maxOccurs="1" minOccurs="1"></xsd:element>
+         			<xsd:element name="reportItemAggregateSummary" type="dataSummaryType" maxOccurs="1" minOccurs="1"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="profileSummaryType">
+		<xsd:complexContent>
+			<xsd:extension base="dataSummaryType">
+				<xsd:sequence>
+					<xsd:element name="name" type="xsd:string"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+</xsd:schema>

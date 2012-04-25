@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<filterSpec:filter xmlns:filterSpec="http://www.nationalarchives.gov.uk/pronom/droidFilterSpecification" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.nationalarchives.gov.uk/pronom/droidFilterSpecification droidFilterSpecification.xsd ">
+  <enabled>true</enabled>
+  <combinationMethod>allCriterionAreMet</combinationMethod>
+  <criteria>
+    <criterion>
+      <fieldName>fieldName</fieldName>
+      <operator>equals</operator>
+      <valueFreeText>valueFreeText</valueFreeText>
+      <selectedValues>
+        <selectedValue>
+          <id>0</id>
+          <description>description</description>
+          <queryParameter>queryParameter</queryParameter>
+        </selectedValue>
+      </selectedValues>
+      <rowNumber>0</rowNumber>
+    </criterion>
+  </criteria>
+</filterSpec:filter>

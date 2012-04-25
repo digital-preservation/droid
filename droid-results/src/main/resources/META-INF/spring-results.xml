@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+    <bean id="archiveHandlerLocator" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactoryImpl">
+        <property name="handlers">
+            <map>
+                <entry key="ZIP" value-ref="zipHandler"/>
+                <entry key="TAR" value-ref="tarHandler"/>
+                <entry key="GZ" value-ref="gzHandler"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="containerIdentifierLocator" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactoryImpl">
+    </bean>
+
+    <bean id="containerIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
+        <property name="tempDirLocation" value="${tempDirLocation}"/>
+    </bean>
+    
+    <bean id="zipContainerHandler" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifier" init-method="init">
+        <property name="signatureFileParser">
+            <bean class="uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser"/>
+        </property>
+        <property name="signatureFilePath" value="${containerSigPath}"/>
+        <property name="containerType" value="ZIP"/>
+        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
+        <property name="containerFormatResolver" ref="containerPuidResolver"/>
+        <property name="droidCore" ref="droid"/>
+        <property name="requestFactory" ref="containerIdentificationRequestFactory"/>
+    </bean>
+
+    <bean id="ole2ContainerHandler" class="uk.gov.nationalarchives.droid.container.ole2.Ole2Identifier" init-method="init">
+        <property name="signatureFileParser">
+            <bean class="uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser"/>
+        </property>
+        <property name="signatureFilePath" value="${containerSigPath}"/>
+        <property name="containerType" value="OLE2"/>
+        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
+        <property name="containerFormatResolver" ref="containerPuidResolver"/>
+        <property name="droidCore" ref="droid"/>
+        <property name="requestFactory" ref="containerIdentificationRequestFactory"/>
+    </bean>
+
+    <bean id="archiveRequestFactory" abstract="true">
+        <property name="tempDirLocation" value="${tempDirLocation}"/>
+    </bean>
+    <!-- 
+    <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory" parent="archiveRequestFactory">
+            </bean>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
+     -->
+    <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory" parent="archiveRequestFactory">
+            </bean>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
+     
+     
+    <bean id="tarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarEntryRequestFactory" parent="archiveRequestFactory"/>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
+    <bean id="gzHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipRequestFactory" parent="archiveRequestFactory"/>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+    </bean>
+    
+    <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
+        <property name="puids">
+            <map>
+                <entry key="ZIP" value="${archive.zip}"/>
+                <entry key="TAR" value="${archive.tar}"/>
+                <entry key="GZ" value="${archive.gz}"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="containerPuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
+    </bean>
+
+    <bean id="profileDao" class="uk.gov.nationalarchives.droid.profile.JpaProfileDaoImpl"/>
+    <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JpaPlanetsXMLDaoImpl"/>
+    <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl"/>
+    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandlerDao"/>
+    <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl"/>
+    
+    <bean id="referenceDataService" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataServiceImpl"/>
+    
+    <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileInstanceManagerImpl">
+        <property name="profileDao" ref="profileDao"/>
+        <property name="planetsDao" ref="planetsDao"/>        
+        <property name="referenceDataService" ref="referenceDataService"/>
+        <property name="pauseControl" ref="pauseControl"/>
+        <property name="submissionGateway" ref="submissionGateway"/>
+        <property name="specWalker" ref="profileSpecWalker"/>
+        <property name="reportDao" ref="reportDao"/>
+        <property name="profileWalkerDao" ref="profileWalkerDao"/>
+        <lookup-method name="getNodeItemReader" bean="nodeItemReader"/>
+    </bean>
+    
+    <bean id="profileSpecWalker" class="uk.gov.nationalarchives.droid.submitter.ProfileSpecWalkerImpl">
+        <property name="fileEventHandler" ref="fileEventHandler"/>
+        <property name="directoryEventHandler" ref="dirEventHandler"/>
+        <property name="progressMonitor" ref="progressMonitor"/>
+    </bean>
+    
+    <bean id="profileWalkerDao" class="uk.gov.nationalarchives.droid.submitter.ProfileWalkerDao">
+        <property name="profileHomeDir" value="${profileHome}"/>
+    </bean>
+    
+     <!-- Hibernate item reader.  Replace with sql item reader.
+    <bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.HibernateItemReader" scope="prototype">
+       <property name="sessionFactory" ref="sessionFactory"/>
+       <property name="fetchSize" value="200"/>
+       <property name="chunkSize" value="1000"/>
+    </bean>
+	-->
+
+    <bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.SqlItemReader" scope="prototype">
+       <property name="sessionFactory" ref="sessionFactory"/>
+       <property name="fetchSize" value="200"/>
+       <property name="chunkSize" value="1000"/>
+    </bean>
+
+	
+    <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
+    
+    <bean id="sessionFactory" class="uk.gov.nationalarchives.droid.profile.export.HibernateSessionFactoryLocator"
+        factory-method="getSessionFactory" lazy-init="true">
+        <constructor-arg ref="entityManagerFactory"/>
+    </bean>
+    
+    <bean id="droid" class="uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier" init-method="init">
+        <property name="signatureFile" value="${signatureFilePath}"/>
+    </bean>
+    
+    <bean id="coreExecutorService" factory-bean="pausableExecutorServiceFactory" factory-method="newInstance"/>
+    
+    <bean id="pausableExecutorServiceFactory" class="uk.gov.nationalarchives.droid.core.interfaces.BlockingThreadPoolExecutorFactory"/>
+    
+    <bean id="fileEventHandler" class="uk.gov.nationalarchives.droid.submitter.FileEventHandler">
+        <property name="submissionThrottle" ref="submissionThrottle"/>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+        <property name="requestFactory">
+            <bean class="uk.gov.nationalarchives.droid.submitter.FileIdentificationRequestFactory">
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="dirEventHandler" class="uk.gov.nationalarchives.droid.submitter.DirectoryEventHandler">
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
+
+    <bean id="submissionThrottle" class="uk.gov.nationalarchives.droid.profile.throttle.SimpleSubmissionThrottle">
+        <property name="waitMilliseconds" value="${defaultThrottle}"/>
+    </bean>
+
+
+	<!-- database result handler commits on every node  -->
+    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.ResultHandlerImpl" init-method="init">
+        <property name="resultHandlerDao" ref="resultsDao"/>
+        <property name="progressMonitor" ref="progressMonitor"/>
+    </bean>
+    
+    <!--  experimental batching database result handler commits in batches.
+    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.BatchResultHandler" init-method="init">
+        <property name="progressMonitor" ref="progressMonitor"/>
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+    -->
+    
+    <bean id="progressMonitor" class="uk.gov.nationalarchives.droid.results.handlers.ProgressMonitorImpl"/>
+    
+    <bean id="submissionGateway" class="uk.gov.nationalarchives.droid.submitter.SubmissionGateway" destroy-method="close">
+        <property name="resultHandler" ref="databaseResultHandler"/>
+        <property name="archiveFormatResolver" ref="archivePuidResolver"/>
+        <property name="containerFormatResolver" ref="containerPuidResolver"/>
+        <property name="archiveHandlerFactory" ref="archiveHandlerLocator"/>
+        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
+        <property name="executorService" ref="coreExecutorService"/>
+        <property name="processArchives" value="${processArchives}"/>
+        <property name="generateHash" value="${generateHash}"/>
+        <property name="matchAllExtensions" value="${matchAllExtensions}"/>
+        <property name="maxBytesToScan" value="${maxBytesToScan}"/>
+        <property name="droidCore" ref="droid"/>
+        <property name="submissionQueue" ref="submissionQueue"/>
+        <property name="replaySubmitter" ref="replaySubmitter"/>
+        <property name="hashGenerator" ref="hashGenerator"/>
+    </bean>
+    
+    <bean id="hashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator"/>
+    
+    <bean id="submissionQueue" class="uk.gov.nationalarchives.droid.submitter.JaxBSubmissionQueueDao">
+        <property name="targetFileName" value="${submissionQueueFile}"/>
+    </bean>
+    
+    <bean id="replaySubmitter" class="uk.gov.nationalarchives.droid.submitter.ReplaySubmitter">
+        <property name="fileEventHandler" ref="fileEventHandler"/>
+        <property name="submissionQueue" ref="submissionQueue"/>    
+        <property name="resultHandlerDao" ref="resultsDao"/>
+    </bean>
+    
+    <context:annotation-config />
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+    <aop:aspectj-autoproxy/>
+    
+</beans>

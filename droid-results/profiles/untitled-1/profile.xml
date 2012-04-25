@@ -1,0 +1,39 @@
+<Profile>
+  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>
+  <Location>untitled-1</Location>
+  <State>STOPPED</State>
+  <Throttle>120</Throttle>
+  <SignatureFileVersion>26</SignatureFileVersion>
+  <ProfileSpec>
+    <Name>untitled-1</Name>
+    <Resources>
+     <File>
+      <Uri>file:/home/rspencer/Desktop/droid-src/droid-results/file/1</Uri>
+      <Size></Size>
+      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>
+      <Extension></Extension>
+      <Name></Name>
+     </File>
+     <File>
+      <Uri>file:/home/rspencer/Desktop/droid-src/droid-results/file/2</Uri>
+      <Size></Size>
+      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>
+      <Extension></Extension>
+      <Name></Name>
+     </File>
+     <Dir Recursive="false">
+      <Uri>file:/home/rspencer/Desktop/droid-src/droid-results/dir/1</Uri>
+      <Size></Size>
+      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>
+      <Extension></Extension>
+      <Name></Name>
+     </Dir>
+     <Dir Recursive="true">
+      <Uri>file:/home/rspencer/Desktop/droid-src/droid-results/dir/2</Uri>
+      <Size></Size>
+      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>
+      <Extension></Extension>
+      <Name></Name>
+     </Dir>
+    </Resources>
+  </ProfileSpec></Profile>

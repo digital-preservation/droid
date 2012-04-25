@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportSpec>
+	<Name>File count and sizes by year last modified</Name>
+    <Items>
+    	<Item>
+    		<Description>File count and sizes by year last modified</Description>
+		    <Field>FILE_SIZE</Field>
+		    <GroupByFields>
+		    	<GroupByField><Field>LAST_MODIFIED_DATE</Field><Function>Year</Function></GroupByField>
+		    </GroupByFields>		    
+		    <Filter>
+				<Enabled>true</Enabled>
+				<Narrowed>true</Narrowed>
+				<Criteria>
+					<FieldName>RESOURCE_TYPE</FieldName>
+					<Operator>NONE_OF</Operator>
+					<Value>"Folder"</Value>
+					<Parameter>
+						<Id>0</Id>
+						<Description>Folder</Description>
+						<Value>0</Value>
+					</Parameter>
+					<RowNumber>0</RowNumber>
+				</Criteria>
+			</Filter>
+    	</Item>
+    </Items>
+</ReportSpec>

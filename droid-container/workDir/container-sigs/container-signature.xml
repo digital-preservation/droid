@@ -1,0 +1,1720 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<ContainerSignatureMapping> 
+    <ContainerSignatures>
+        <ContainerSignature Id="1003" ContainerType="ZIP">
+            <Description>Microsoft Excel OOXML</Description>
+            <Files>
+                <File Required="true">
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="317" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>436F6E74656E74547970653D226170706C69636174696F6E2F766E642E6F70656E786D6C666F726D6174732D6F6666696365646F63756D656E742E73707265616473686565746D6C2E73686565742E6D61696E2B786D6C22</Sequence>
+                                    <DefaultShift>89</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2B">5</Shift>
+                                    <Shift Byte="2D">45</Shift>
+                                    <Shift Byte="2E">10</Shift>
+                                    <Shift Byte="2F">64</Shift>
+                                    <Shift Byte="3D">77</Shift>
+                                    <Shift Byte="43">88</Shift>
+                                    <Shift Byte="54">81</Shift>
+                                    <Shift Byte="61">8</Shift>
+                                    <Shift Byte="63">36</Shift>
+                                    <Shift Byte="64">24</Shift>
+                                    <Shift Byte="65">12</Shift>
+                                    <Shift Byte="66">42</Shift>
+                                    <Shift Byte="68">14</Shift>
+                                    <Shift Byte="69">7</Shift>
+                                    <Shift Byte="6C">2</Shift>
+                                    <Shift Byte="6D">3</Shift>
+                                    <Shift Byte="6E">6</Shift>
+                                    <Shift Byte="6F">37</Shift>
+                                    <Shift Byte="70">28</Shift>
+                                    <Shift Byte="72">27</Shift>
+                                    <Shift Byte="73">15</Shift>
+                                    <Shift Byte="74">11</Shift>
+                                    <Shift Byte="75">35</Shift>
+                                    <Shift Byte="76">63</Shift>
+                                    <Shift Byte="78">4</Shift>
+                                    <Shift Byte="79">80</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature> 
+        <ContainerSignature Id="1000" ContainerType="ZIP">
+            <Description>Microsoft Word OOXML</Description>
+            <Files>
+                <File Required="true">
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="302" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>436F6E74656E74547970653D226170706C69636174696F6E2F766E642E6F70656E786D6C666F726D6174732D6F6666696365646F63756D656E742E776F726470726F63657373696E676D6C2E646F63756D656E742E6D61696E2B786D6C22</Sequence>
+                                    <DefaultShift>95</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2B">5</Shift>
+                                    <Shift Byte="2D">51</Shift>
+                                    <Shift Byte="2E">10</Shift>
+                                    <Shift Byte="2F">70</Shift>
+                                    <Shift Byte="3D">83</Shift>
+                                    <Shift Byte="43">94</Shift>
+                                    <Shift Byte="54">87</Shift>
+                                    <Shift Byte="61">8</Shift>
+                                    <Shift Byte="63">16</Shift>
+                                    <Shift Byte="64">18</Shift>
+                                    <Shift Byte="65">13</Shift>
+                                    <Shift Byte="66">48</Shift>
+                                    <Shift Byte="67">22</Shift>
+                                    <Shift Byte="69">7</Shift>
+                                    <Shift Byte="6C">2</Shift>
+                                    <Shift Byte="6D">3</Shift>
+                                    <Shift Byte="6E">6</Shift>
+                                    <Shift Byte="6F">17</Shift>
+                                    <Shift Byte="70">31</Shift>
+                                    <Shift Byte="72">30</Shift>
+                                    <Shift Byte="73">25</Shift>
+                                    <Shift Byte="74">11</Shift>
+                                    <Shift Byte="75">15</Shift>
+                                    <Shift Byte="76">69</Shift>
+                                    <Shift Byte="77">35</Shift>
+                                    <Shift Byte="78">4</Shift>
+                                    <Shift Byte="79">86</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature> 
+        <ContainerSignature Id="1001" ContainerType="ZIP">
+            <Description>Open Office Text 1.0</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="319" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E7465787422</Sequence>
+                                    <DefaultShift>62</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">47</Shift>
+                                    <Shift Byte="2E">6</Shift>
+                                    <Shift Byte="2F">29</Shift>
+                                    <Shift Byte="3A">53</Shift>
+                                    <Shift Byte="3D">42</Shift>
+                                    <Shift Byte="61">23</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="64">14</Shift>
+                                    <Shift Byte="65">4</Shift>
+                                    <Shift Byte="66">57</Shift>
+                                    <Shift Byte="69">21</Shift>
+                                    <Shift Byte="6C">37</Shift>
+                                    <Shift Byte="6D">10</Shift>
+                                    <Shift Byte="6E">8</Shift>
+                                    <Shift Byte="6F">13</Shift>
+                                    <Shift Byte="70">17</Shift>
+                                    <Shift Byte="73">20</Shift>
+                                    <Shift Byte="74">2</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                    <Shift Byte="76">28</Shift>
+                                    <Shift Byte="78">3</Shift>
+                                    <Shift Byte="79">45</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="323" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3022</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3027</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature> 
+        <ContainerSignature Id="1002" ContainerType="OLE2">
+            <Description>Word 97 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>WordDocument</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="300" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>10000000576F72642E446F63756D656E742E3800</Sequence>
+                                    <DefaultShift>21</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="10">20</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="38">2</Shift>
+                                    <Shift Byte="44">11</Shift>
+                                    <Shift Byte="57">16</Shift>
+                                    <Shift Byte="63">9</Shift>
+                                    <Shift Byte="64">13</Shift>
+                                    <Shift Byte="65">6</Shift>
+                                    <Shift Byte="6D">7</Shift>
+                                    <Shift Byte="6E">5</Shift>
+                                    <Shift Byte="6F">10</Shift>
+                                    <Shift Byte="72">14</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                    <Shift Byte="75">8</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature> 
+        <ContainerSignature Id="1004" ContainerType="OLE2">
+            <Description>Excel 97 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Workbook</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="301" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0E000000457863656C2E53686565742E3800</Sequence>
+                                    <DefaultShift>19</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0E">18</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="38">2</Shift>
+                                    <Shift Byte="45">14</Shift>
+                                    <Shift Byte="53">8</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="65">5</Shift>
+                                    <Shift Byte="68">7</Shift>
+                                    <Shift Byte="6C">10</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                    <Shift Byte="78">13</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1005" ContainerType="ZIP">
+            <Description>Microsoft Powerpoint OOXML</Description>
+            <Files>
+                <File Required="true">
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="318" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>436F6E74656E74547970653D226170706C69636174696F6E2F766E642E6F70656E786D6C666F726D6174732D6F6666696365646F63756D656E742E70726573656E746174696F6E6D6C2E70726573656E746174696F6E2E6D61696E2B786D6C22</Sequence>
+                                    <DefaultShift>97</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2B">5</Shift>
+                                    <Shift Byte="2D">53</Shift>
+                                    <Shift Byte="2E">10</Shift>
+                                    <Shift Byte="2F">72</Shift>
+                                    <Shift Byte="3D">85</Shift>
+                                    <Shift Byte="43">96</Shift>
+                                    <Shift Byte="54">89</Shift>
+                                    <Shift Byte="61">8</Shift>
+                                    <Shift Byte="63">44</Shift>
+                                    <Shift Byte="64">46</Shift>
+                                    <Shift Byte="65">18</Shift>
+                                    <Shift Byte="66">50</Shift>
+                                    <Shift Byte="69">7</Shift>
+                                    <Shift Byte="6C">2</Shift>
+                                    <Shift Byte="6D">3</Shift>
+                                    <Shift Byte="6E">6</Shift>
+                                    <Shift Byte="6F">12</Shift>
+                                    <Shift Byte="70">22</Shift>
+                                    <Shift Byte="72">21</Shift>
+                                    <Shift Byte="73">19</Shift>
+                                    <Shift Byte="74">14</Shift>
+                                    <Shift Byte="75">43</Shift>
+                                    <Shift Byte="76">71</Shift>
+                                    <Shift Byte="78">4</Shift>
+                                    <Shift Byte="79">88</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1006" ContainerType="OLE2">
+            <Description>Word 95 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>WordDocument</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="306" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>10000000576F72642E446F63756D656E742E3700</Sequence>
+                                    <DefaultShift>21</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="10">20</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="37">2</Shift>
+                                    <Shift Byte="44">11</Shift>
+                                    <Shift Byte="57">16</Shift>
+                                    <Shift Byte="63">9</Shift>
+                                    <Shift Byte="64">13</Shift>
+                                    <Shift Byte="65">6</Shift>
+                                    <Shift Byte="6D">7</Shift>
+                                    <Shift Byte="6E">5</Shift>
+                                    <Shift Byte="6F">10</Shift>
+                                    <Shift Byte="72">14</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                    <Shift Byte="75">8</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1007" ContainerType="OLE2">
+            <Description>Word 6.0 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>WordDocument</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="307" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>10000000576F72642E446F63756D656E742E3600</Sequence>
+                                    <DefaultShift>21</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="10">20</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="36">2</Shift>
+                                    <Shift Byte="44">11</Shift>
+                                    <Shift Byte="57">16</Shift>
+                                    <Shift Byte="63">9</Shift>
+                                    <Shift Byte="64">13</Shift>
+                                    <Shift Byte="65">6</Shift>
+                                    <Shift Byte="6D">7</Shift>
+                                    <Shift Byte="6E">5</Shift>
+                                    <Shift Byte="6F">10</Shift>
+                                    <Shift Byte="72">14</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                    <Shift Byte="75">8</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1004" ContainerType="OLE2">
+            <Description>Excel 97 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Workbook</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="301" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0E000000457863656C2E53686565742E3800</Sequence>
+                                    <DefaultShift>19</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0E">18</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="38">2</Shift>
+                                    <Shift Byte="45">14</Shift>
+                                    <Shift Byte="53">8</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="65">5</Shift>
+                                    <Shift Byte="68">7</Shift>
+                                    <Shift Byte="6C">10</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                    <Shift Byte="78">13</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+    <ContainerSignature Id="1004" ContainerType="OLE2">
+            <Description>Excel 97 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Workbook</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="301" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0E000000457863656C2E53686565742E3800</Sequence>
+                                    <DefaultShift>19</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0E">18</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="38">2</Shift>
+                                    <Shift Byte="45">14</Shift>
+                                    <Shift Byte="53">8</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="65">5</Shift>
+                                    <Shift Byte="68">7</Shift>
+                                    <Shift Byte="6C">10</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                    <Shift Byte="78">13</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1004" ContainerType="OLE2">
+            <Description>Excel 97 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Workbook</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="301" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0E000000457863656C2E53686565742E3800</Sequence>
+                                    <DefaultShift>19</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0E">18</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="38">2</Shift>
+                                    <Shift Byte="45">14</Shift>
+                                    <Shift Byte="53">8</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="65">5</Shift>
+                                    <Shift Byte="68">7</Shift>
+                                    <Shift Byte="6C">10</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                    <Shift Byte="78">13</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1008" ContainerType="OLE2">
+            <Description>Excel 7.0 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Workbook</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="308" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0E000000457863656C2E53686565742E3500</Sequence>
+                                    <DefaultShift>19</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0E">18</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="35">2</Shift>
+                                    <Shift Byte="45">14</Shift>
+                                    <Shift Byte="53">8</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="65">5</Shift>
+                                    <Shift Byte="68">7</Shift>
+                                    <Shift Byte="6C">10</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                    <Shift Byte="78">13</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1009" ContainerType="OLE2">
+            <Description>Powerpoint 2000 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>PowerPoint Document</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="309" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>12000000506F776572506F696E742E53686F772E3800</Sequence>
+                                    <DefaultShift>23</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="12">22</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="38">2</Shift>
+                                    <Shift Byte="50">13</Shift>
+                                    <Shift Byte="53">7</Shift>
+                                    <Shift Byte="65">15</Shift>
+                                    <Shift Byte="68">6</Shift>
+                                    <Shift Byte="69">11</Shift>
+                                    <Shift Byte="6E">10</Shift>
+                                    <Shift Byte="6F">5</Shift>
+                                    <Shift Byte="72">14</Shift>
+                                    <Shift Byte="74">9</Shift>
+                                    <Shift Byte="77">4</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1010" ContainerType="OLE2">
+            <Description>Project 4.0/95 OLE2</Description>
+            <Files>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="310" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>140000004D5350726F6A6563742E446F6366696C652E3400</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="14">24</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="34">2</Shift>
+                                    <Shift Byte="44">10</Shift>
+                                    <Shift Byte="4D">20</Shift>
+                                    <Shift Byte="50">18</Shift>
+                                    <Shift Byte="53">19</Shift>
+                                    <Shift Byte="63">8</Shift>
+                                    <Shift Byte="65">4</Shift>
+                                    <Shift Byte="66">7</Shift>
+                                    <Shift Byte="69">6</Shift>
+                                    <Shift Byte="6A">15</Shift>
+                                    <Shift Byte="6C">5</Shift>
+                                    <Shift Byte="6F">9</Shift>
+                                    <Shift Byte="72">17</Shift>
+                                    <Shift Byte="74">12</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1011" ContainerType="OLE2">
+            <Description>Project 98 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Props8</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="312" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0C0000004D5350726F6A6563742E3800</Sequence>
+                                    <DefaultShift>17</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0C">16</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="38">2</Shift>
+                                    <Shift Byte="4D">12</Shift>
+                                    <Shift Byte="50">10</Shift>
+                                    <Shift Byte="53">11</Shift>
+                                    <Shift Byte="63">5</Shift>
+                                    <Shift Byte="65">6</Shift>
+                                    <Shift Byte="6A">7</Shift>
+                                    <Shift Byte="6F">8</Shift>
+                                    <Shift Byte="72">9</Shift>
+                                    <Shift Byte="74">4</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1012" ContainerType="OLE2">
+            <Description>Project 2000-2007 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Props9</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="313" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1064" MinFragLength="0">
+                                    <Sequence>0F0000004D5350726F6A6563742E4D50503900</Sequence>
+                                    <DefaultShift>20</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0F">19</Shift>
+                                    <Shift Byte="2E">6</Shift>
+                                    <Shift Byte="39">2</Shift>
+                                    <Shift Byte="4D">5</Shift>
+                                    <Shift Byte="50">3</Shift>
+                                    <Shift Byte="53">14</Shift>
+                                    <Shift Byte="63">8</Shift>
+                                    <Shift Byte="65">9</Shift>
+                                    <Shift Byte="6A">10</Shift>
+                                    <Shift Byte="6F">11</Shift>
+                                    <Shift Byte="72">12</Shift>
+                                    <Shift Byte="74">7</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1013" ContainerType="OLE2">
+            <Description>Publisher 1.0 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Contents</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="314" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0E0000004D535075626C69736865722E3100</Sequence>
+                                    <DefaultShift>19</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0E">18</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="31">2</Shift>
+                                    <Shift Byte="4D">14</Shift>
+                                    <Shift Byte="50">12</Shift>
+                                    <Shift Byte="53">13</Shift>
+                                    <Shift Byte="62">10</Shift>
+                                    <Shift Byte="65">5</Shift>
+                                    <Shift Byte="68">6</Shift>
+                                    <Shift Byte="69">8</Shift>
+                                    <Shift Byte="6C">9</Shift>
+                                    <Shift Byte="72">4</Shift>
+                                    <Shift Byte="73">7</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1014" ContainerType="OLE2">
+            <Description>Publisher 2.0-95 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Contents</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="315" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0E0000004D535075626C69736865722E3200</Sequence>
+                                    <DefaultShift>19</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0E">18</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="32">2</Shift>
+                                    <Shift Byte="4D">14</Shift>
+                                    <Shift Byte="50">12</Shift>
+                                    <Shift Byte="53">13</Shift>
+                                    <Shift Byte="62">10</Shift>
+                                    <Shift Byte="65">5</Shift>
+                                    <Shift Byte="68">6</Shift>
+                                    <Shift Byte="69">8</Shift>
+                                    <Shift Byte="6C">9</Shift>
+                                    <Shift Byte="72">4</Shift>
+                                    <Shift Byte="73">7</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1015" ContainerType="OLE2">
+            <Description>Publisher 97-2007 OLE2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>Contents</Path>
+                </File>
+                <File Required="false">
+                    <Path>CompObj</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="316" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024" MinFragLength="0">
+                                    <Sequence>0E0000004D535075626C69736865722E3300</Sequence>
+                                    <DefaultShift>19</DefaultShift>
+                                    <Shift Byte="00">1</Shift>
+                                    <Shift Byte="0E">18</Shift>
+                                    <Shift Byte="2E">3</Shift>
+                                    <Shift Byte="33">2</Shift>
+                                    <Shift Byte="4D">14</Shift>
+                                    <Shift Byte="50">12</Shift>
+                                    <Shift Byte="53">13</Shift>
+                                    <Shift Byte="62">10</Shift>
+                                    <Shift Byte="65">5</Shift>
+                                    <Shift Byte="68">6</Shift>
+                                    <Shift Byte="69">8</Shift>
+                                    <Shift Byte="6C">9</Shift>
+                                    <Shift Byte="72">4</Shift>
+                                    <Shift Byte="73">7</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1016" ContainerType="ZIP">
+            <Description>Open Office Spreadsheet 1.0</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="320" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E737072656164736865657422</Sequence>
+                                    <DefaultShift>69</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">54</Shift>
+                                    <Shift Byte="2E">13</Shift>
+                                    <Shift Byte="2F">36</Shift>
+                                    <Shift Byte="3A">60</Shift>
+                                    <Shift Byte="3D">49</Shift>
+                                    <Shift Byte="61">8</Shift>
+                                    <Shift Byte="63">19</Shift>
+                                    <Shift Byte="64">7</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">64</Shift>
+                                    <Shift Byte="68">5</Shift>
+                                    <Shift Byte="69">28</Shift>
+                                    <Shift Byte="6C">44</Shift>
+                                    <Shift Byte="6D">17</Shift>
+                                    <Shift Byte="6E">15</Shift>
+                                    <Shift Byte="6F">20</Shift>
+                                    <Shift Byte="70">11</Shift>
+                                    <Shift Byte="72">10</Shift>
+                                    <Shift Byte="73">6</Shift>
+                                    <Shift Byte="74">2</Shift>
+                                    <Shift Byte="75">18</Shift>
+                                    <Shift Byte="76">35</Shift>
+                                    <Shift Byte="79">52</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="323" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3022</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3027</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1017" ContainerType="ZIP">
+            <Description>Open Office Presentation 1.0</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="321" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E70726573656E746174696F6E22</Sequence>
+                                    <DefaultShift>70</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">55</Shift>
+                                    <Shift Byte="2E">14</Shift>
+                                    <Shift Byte="2F">37</Shift>
+                                    <Shift Byte="3A">61</Shift>
+                                    <Shift Byte="3D">50</Shift>
+                                    <Shift Byte="61">6</Shift>
+                                    <Shift Byte="63">20</Shift>
+                                    <Shift Byte="64">22</Shift>
+                                    <Shift Byte="65">9</Shift>
+                                    <Shift Byte="66">65</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6C">45</Shift>
+                                    <Shift Byte="6D">18</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="70">13</Shift>
+                                    <Shift Byte="72">12</Shift>
+                                    <Shift Byte="73">10</Shift>
+                                    <Shift Byte="74">5</Shift>
+                                    <Shift Byte="75">19</Shift>
+                                    <Shift Byte="76">36</Shift>
+                                    <Shift Byte="79">53</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="323" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3022</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3027</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1018" ContainerType="ZIP">
+            <Description>Open Office Database 1.0</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="322" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E6261736522</Sequence>
+                                    <DefaultShift>62</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">47</Shift>
+                                    <Shift Byte="2E">6</Shift>
+                                    <Shift Byte="2F">29</Shift>
+                                    <Shift Byte="3A">53</Shift>
+                                    <Shift Byte="3D">42</Shift>
+                                    <Shift Byte="61">4</Shift>
+                                    <Shift Byte="62">5</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="64">14</Shift>
+                                    <Shift Byte="65">2</Shift>
+                                    <Shift Byte="66">57</Shift>
+                                    <Shift Byte="69">21</Shift>
+                                    <Shift Byte="6C">37</Shift>
+                                    <Shift Byte="6D">10</Shift>
+                                    <Shift Byte="6E">8</Shift>
+                                    <Shift Byte="6F">13</Shift>
+                                    <Shift Byte="70">17</Shift>
+                                    <Shift Byte="73">3</Shift>
+                                    <Shift Byte="74">7</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                    <Shift Byte="76">28</Shift>
+                                    <Shift Byte="79">45</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="323" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3022</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3027</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1019" ContainerType="ZIP">
+            <Description>Open Office Text 1.1</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="319" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E7465787422</Sequence>
+                                    <DefaultShift>62</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">47</Shift>
+                                    <Shift Byte="2E">6</Shift>
+                                    <Shift Byte="2F">29</Shift>
+                                    <Shift Byte="3A">53</Shift>
+                                    <Shift Byte="3D">42</Shift>
+                                    <Shift Byte="61">23</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="64">14</Shift>
+                                    <Shift Byte="65">4</Shift>
+                                    <Shift Byte="66">57</Shift>
+                                    <Shift Byte="69">21</Shift>
+                                    <Shift Byte="6C">37</Shift>
+                                    <Shift Byte="6D">10</Shift>
+                                    <Shift Byte="6E">8</Shift>
+                                    <Shift Byte="6F">13</Shift>
+                                    <Shift Byte="70">17</Shift>
+                                    <Shift Byte="73">20</Shift>
+                                    <Shift Byte="74">2</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                    <Shift Byte="76">28</Shift>
+                                    <Shift Byte="78">3</Shift>
+                                    <Shift Byte="79">45</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="324" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3122</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3127</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1020" ContainerType="ZIP">
+            <Description>Open Office Spreadsheet 1.1</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="320" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E737072656164736865657422</Sequence>
+                                    <DefaultShift>69</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">54</Shift>
+                                    <Shift Byte="2E">13</Shift>
+                                    <Shift Byte="2F">36</Shift>
+                                    <Shift Byte="3A">60</Shift>
+                                    <Shift Byte="3D">49</Shift>
+                                    <Shift Byte="61">8</Shift>
+                                    <Shift Byte="63">19</Shift>
+                                    <Shift Byte="64">7</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">64</Shift>
+                                    <Shift Byte="68">5</Shift>
+                                    <Shift Byte="69">28</Shift>
+                                    <Shift Byte="6C">44</Shift>
+                                    <Shift Byte="6D">17</Shift>
+                                    <Shift Byte="6E">15</Shift>
+                                    <Shift Byte="6F">20</Shift>
+                                    <Shift Byte="70">11</Shift>
+                                    <Shift Byte="72">10</Shift>
+                                    <Shift Byte="73">6</Shift>
+                                    <Shift Byte="74">2</Shift>
+                                    <Shift Byte="75">18</Shift>
+                                    <Shift Byte="76">35</Shift>
+                                    <Shift Byte="79">52</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="324" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3122</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3127</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1021" ContainerType="ZIP">
+            <Description>Open Office Presentation 1.1</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="321" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E70726573656E746174696F6E22</Sequence>
+                                    <DefaultShift>70</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">55</Shift>
+                                    <Shift Byte="2E">14</Shift>
+                                    <Shift Byte="2F">37</Shift>
+                                    <Shift Byte="3A">61</Shift>
+                                    <Shift Byte="3D">50</Shift>
+                                    <Shift Byte="61">6</Shift>
+                                    <Shift Byte="63">20</Shift>
+                                    <Shift Byte="64">22</Shift>
+                                    <Shift Byte="65">9</Shift>
+                                    <Shift Byte="66">65</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6C">45</Shift>
+                                    <Shift Byte="6D">18</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="70">13</Shift>
+                                    <Shift Byte="72">12</Shift>
+                                    <Shift Byte="73">10</Shift>
+                                    <Shift Byte="74">5</Shift>
+                                    <Shift Byte="75">19</Shift>
+                                    <Shift Byte="76">36</Shift>
+                                    <Shift Byte="79">53</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="324" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3122</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3127</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1022" ContainerType="ZIP">
+            <Description>Open Office Database 1.1</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="322" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E6261736522</Sequence>
+                                    <DefaultShift>62</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">47</Shift>
+                                    <Shift Byte="2E">6</Shift>
+                                    <Shift Byte="2F">29</Shift>
+                                    <Shift Byte="3A">53</Shift>
+                                    <Shift Byte="3D">42</Shift>
+                                    <Shift Byte="61">4</Shift>
+                                    <Shift Byte="62">5</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="64">14</Shift>
+                                    <Shift Byte="65">2</Shift>
+                                    <Shift Byte="66">57</Shift>
+                                    <Shift Byte="69">21</Shift>
+                                    <Shift Byte="6C">37</Shift>
+                                    <Shift Byte="6D">10</Shift>
+                                    <Shift Byte="6E">8</Shift>
+                                    <Shift Byte="6F">13</Shift>
+                                    <Shift Byte="70">17</Shift>
+                                    <Shift Byte="73">3</Shift>
+                                    <Shift Byte="74">7</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                    <Shift Byte="76">28</Shift>
+                                    <Shift Byte="79">45</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="324" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3122</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3127</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1023" ContainerType="ZIP">
+            <Description>Open Office Text 1.2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="319" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E7465787422</Sequence>
+                                    <DefaultShift>62</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">47</Shift>
+                                    <Shift Byte="2E">6</Shift>
+                                    <Shift Byte="2F">29</Shift>
+                                    <Shift Byte="3A">53</Shift>
+                                    <Shift Byte="3D">42</Shift>
+                                    <Shift Byte="61">23</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="64">14</Shift>
+                                    <Shift Byte="65">4</Shift>
+                                    <Shift Byte="66">57</Shift>
+                                    <Shift Byte="69">21</Shift>
+                                    <Shift Byte="6C">37</Shift>
+                                    <Shift Byte="6D">10</Shift>
+                                    <Shift Byte="6E">8</Shift>
+                                    <Shift Byte="6F">13</Shift>
+                                    <Shift Byte="70">17</Shift>
+                                    <Shift Byte="73">20</Shift>
+                                    <Shift Byte="74">2</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                    <Shift Byte="76">28</Shift>
+                                    <Shift Byte="78">3</Shift>
+                                    <Shift Byte="79">45</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="325" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3222</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3227</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1024" ContainerType="ZIP">
+            <Description>Open Office Spreadsheet 1.2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="320" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E737072656164736865657422</Sequence>
+                                    <DefaultShift>69</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">54</Shift>
+                                    <Shift Byte="2E">13</Shift>
+                                    <Shift Byte="2F">36</Shift>
+                                    <Shift Byte="3A">60</Shift>
+                                    <Shift Byte="3D">49</Shift>
+                                    <Shift Byte="61">8</Shift>
+                                    <Shift Byte="63">19</Shift>
+                                    <Shift Byte="64">7</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">64</Shift>
+                                    <Shift Byte="68">5</Shift>
+                                    <Shift Byte="69">28</Shift>
+                                    <Shift Byte="6C">44</Shift>
+                                    <Shift Byte="6D">17</Shift>
+                                    <Shift Byte="6E">15</Shift>
+                                    <Shift Byte="6F">20</Shift>
+                                    <Shift Byte="70">11</Shift>
+                                    <Shift Byte="72">10</Shift>
+                                    <Shift Byte="73">6</Shift>
+                                    <Shift Byte="74">2</Shift>
+                                    <Shift Byte="75">18</Shift>
+                                    <Shift Byte="76">35</Shift>
+                                    <Shift Byte="79">52</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="325" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3222</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3227</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1025" ContainerType="ZIP">
+            <Description>Open Office Presentation 1.2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="321" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E70726573656E746174696F6E22</Sequence>
+                                    <DefaultShift>70</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">55</Shift>
+                                    <Shift Byte="2E">14</Shift>
+                                    <Shift Byte="2F">37</Shift>
+                                    <Shift Byte="3A">61</Shift>
+                                    <Shift Byte="3D">50</Shift>
+                                    <Shift Byte="61">6</Shift>
+                                    <Shift Byte="63">20</Shift>
+                                    <Shift Byte="64">22</Shift>
+                                    <Shift Byte="65">9</Shift>
+                                    <Shift Byte="66">65</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6C">45</Shift>
+                                    <Shift Byte="6D">18</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="70">13</Shift>
+                                    <Shift Byte="72">12</Shift>
+                                    <Shift Byte="73">10</Shift>
+                                    <Shift Byte="74">5</Shift>
+                                    <Shift Byte="75">19</Shift>
+                                    <Shift Byte="76">36</Shift>
+                                    <Shift Byte="79">53</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="325" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3222</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3227</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="1026" ContainerType="ZIP">
+            <Description>Open Office Database 1.2</Description>
+            <Files>
+                <File Required="true">
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="322" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>6D616E69666573743A6D656469612D747970653D226170706C69636174696F6E2F766E642E6F617369732E6F70656E646F63756D656E742E6261736522</Sequence>
+                                    <DefaultShift>62</DefaultShift>
+                                    <Shift Byte="22">1</Shift>
+                                    <Shift Byte="2D">47</Shift>
+                                    <Shift Byte="2E">6</Shift>
+                                    <Shift Byte="2F">29</Shift>
+                                    <Shift Byte="3A">53</Shift>
+                                    <Shift Byte="3D">42</Shift>
+                                    <Shift Byte="61">4</Shift>
+                                    <Shift Byte="62">5</Shift>
+                                    <Shift Byte="63">12</Shift>
+                                    <Shift Byte="64">14</Shift>
+                                    <Shift Byte="65">2</Shift>
+                                    <Shift Byte="66">57</Shift>
+                                    <Shift Byte="69">21</Shift>
+                                    <Shift Byte="6C">37</Shift>
+                                    <Shift Byte="6D">10</Shift>
+                                    <Shift Byte="6E">8</Shift>
+                                    <Shift Byte="6F">13</Shift>
+                                    <Shift Byte="70">17</Shift>
+                                    <Shift Byte="73">3</Shift>
+                                    <Shift Byte="74">7</Shift>
+                                    <Shift Byte="75">11</Shift>
+                                    <Shift Byte="76">28</Shift>
+                                    <Shift Byte="79">45</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="64">6D616E69666573743A66756C6C2D706174683D222F22</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+                <File Required="true">
+                    <Path>content.xml</Path>
+                    <BinarySignature>
+                        <InternalSignature ID="325" Specificity="Specific">
+                            <ByteSequence Reference="BOFoffset">
+                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128" MinFragLength="0">
+                                    <Sequence>3C6F66666963653A646F63756D656E742D636F6E74656E74</Sequence>
+                                    <DefaultShift>25</DefaultShift>
+                                    <Shift Byte="2D">8</Shift>
+                                    <Shift Byte="3A">17</Shift>
+                                    <Shift Byte="3C">24</Shift>
+                                    <Shift Byte="63">7</Shift>
+                                    <Shift Byte="64">16</Shift>
+                                    <Shift Byte="65">3</Shift>
+                                    <Shift Byte="66">21</Shift>
+                                    <Shift Byte="69">20</Shift>
+                                    <Shift Byte="6D">12</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">6</Shift>
+                                    <Shift Byte="74">1</Shift>
+                                    <Shift Byte="75">13</Shift>
+                                </SubSequence>
+                                <SubSequence Position="2" SubSeqMinOffset="0" MinFragLength="0">
+                                    <Sequence>6F66666963653A76657273696F6E3D</Sequence>
+                                    <DefaultShift>16</DefaultShift>
+                                    <Shift Byte="3A">9</Shift>
+                                    <Shift Byte="3D">1</Shift>
+                                    <Shift Byte="63">11</Shift>
+                                    <Shift Byte="65">7</Shift>
+                                    <Shift Byte="66">13</Shift>
+                                    <Shift Byte="69">4</Shift>
+                                    <Shift Byte="6E">2</Shift>
+                                    <Shift Byte="6F">3</Shift>
+                                    <Shift Byte="72">6</Shift>
+                                    <Shift Byte="73">5</Shift>
+                                    <Shift Byte="76">8</Shift>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">22312E3222</RightFragment>
+                                    <RightFragment Position="1" MinOffset="0" MaxOffset="0">27312E3227</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                        </InternalSignature>
+                    </BinarySignature>
+                </File>
+            </Files>
+        </ContainerSignature>
+    </ContainerSignatures>
+  
+    <FileFormatMappings>
+        <FileFormatMapping signatureId="1000" Puid="fmt/189"/>
+        <FileFormatMapping signatureId="1001" Puid="fmt/136"/>
+        <FileFormatMapping signatureId="1002" Puid="fmt/40"/>
+        <FileFormatMapping signatureId="1003" Puid="fmt/214"/>
+        <FileFormatMapping signatureId="1004" Puid="fmt/61"/>
+        <FileFormatMapping signatureId="1005" Puid="fmt/215"/>
+        <FileFormatMapping signatureId="1006" Puid="fmt/39"/>
+        <FileFormatMapping signatureId="1007" Puid="fmt/39"/>
+        <FileFormatMapping signatureId="1008" Puid="fmt/60"/>
+        <FileFormatMapping signatureId="1009" Puid="fmt/126"/>
+        <FileFormatMapping signatureId="1010" Puid="x-fmt/243"/>
+        <FileFormatMapping signatureId="1011" Puid="x-fmt/245"/>
+        <FileFormatMapping signatureId="1012" Puid="x-fmt/247"/>
+        <FileFormatMapping signatureId="1013" Puid="x-fmt/252"/>
+        <FileFormatMapping signatureId="1014" Puid="x-fmt/253"/>
+        <FileFormatMapping signatureId="1015" Puid="x-fmt/257"/>
+        <FileFormatMapping signatureId="1016" Puid="fmt/137"/>
+        <FileFormatMapping signatureId="1017" Puid="fmt/138"/>
+        <FileFormatMapping signatureId="1018" Puid="fmt/140"/>
+        <FileFormatMapping signatureId="1019" Puid="fmt/136"/>
+        <FileFormatMapping signatureId="1020" Puid="fmt/137"/>
+        <FileFormatMapping signatureId="1021" Puid="fmt/138"/>
+        <FileFormatMapping signatureId="1022" Puid="fmt/140"/>
+        <FileFormatMapping signatureId="1023" Puid="fmt/136"/>
+        <FileFormatMapping signatureId="1024" Puid="fmt/137"/>
+        <FileFormatMapping signatureId="1025" Puid="fmt/138"/>
+        <FileFormatMapping signatureId="1026" Puid="fmt/140"/>
+    </FileFormatMappings>
+  
+    <TriggerPuids>
+        <TriggerPuid ContainerType="OLE2" Puid="fmt/111"/> 
+        <TriggerPuid ContainerType="ZIP" Puid="fmt/189"/> 
+        <TriggerPuid ContainerType="ZIP" Puid="x-fmt/263"/> 
+    </TriggerPuids>
+
+</ContainerSignatureMapping>

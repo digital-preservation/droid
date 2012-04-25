@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+                     "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="Welcome to DROID" target="Welcome to DROID">
+		<tocitem text="Whats New" target="Whats New" />
+		<tocitem text="License" target="License" />
+		<tocitem text="Third-party components" target="Third-party components" />
+		<tocitem text="Project team" target="Project team" />
+		<tocitem text="FAQ" target="FAQ" />
+	</tocitem>
+	<tocitem text="Profiling your files">
+		<tocitem text="Create a new profile" target="Create a new profile" />
+		<tocitem text="Choose files and folders" target="Choose files and folders" />
+		<tocitem text="Running a profile" target="Running a profile" />
+		<tocitem text="Open and save profiles" target="Load and save profiles" />
+		<tocitem text="Command line control" target="Command line control" />
+	</tocitem>
+	<tocitem text="Exploring your results">
+		<tocitem text="Information collected by DROID" target="Information collected by DROID" />
+		<tocitem text="Explore the results" target="Explore the results" />
+		<tocitem text="Summary reporting" target="Summary reporting" />
+		<tocitem text="Exporting profiles" target="Exporting profiles" />
+		<tocitem text="Detecting duplicate files" target="Detecting duplicate files" />
+	</tocitem>
+	<tocitem text="Configuring DROID">
+		<tocitem text="Change preferences" target="Change preferences" />
+		<tocitem text="Update file format signatures" target="Update file format signatures" />
+		<tocitem text="Startup configuration" target="Startup configuration" />
+	</tocitem>
+</toc>

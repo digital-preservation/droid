@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportSpec>
+	<Name>Total count of files and folders</Name>
+    <Items>
+    	<Item>
+    		<Description>Total count of files and folders</Description>
+		    <Field>FILE_NAME</Field>
+    	</Item>
+    </Items>
+</ReportSpec>

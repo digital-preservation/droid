@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN"
+                       "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+	<indexitem text="Welcome to DROID" target="Welcome to DROID">
+		<indexitem text="Whats New" target="Whats New" />
+		<indexitem text="License" target="License" />
+		<indexitem text="Third-party components.html" target="Third-party components" />
+		<indexitem text="Project team" target="Project team" />
+		<indexitem text="FAQ" target="FAQ" />
+	</indexitem>
+	<indexitem text="Profiling your files">
+		<indexitem text="Create a new profile" target="Create a new profile" />
+		<indexitem text="Choose files and folders" target="Choose files and folders" />
+		<indexitem text="Running a profile" target="Running a profile" />
+		<indexitem text="Open and save profiles" target="Load and save profiles" />
+		<indexitem text="Command line control" target="Command line control" />
+	</indexitem>
+	<indexitem text="Exploring your results">
+		<indexitem text="Information collected by DROID" target="Information collected by DROID" />
+		<indexitem text="Explore your results" target="Explore the results" />
+		<indexitem text="Summary reporting" target="Summary reporting" />
+		<indexitem text="Exporting profiles" target="Exporting profiles" />
+		<indexitem text="Detecting duplicate files" target="Detecting duplicate files" />
+	</indexitem>
+	<indexitem text="Configuring DROID">
+		<indexitem text="Change preferences" target="Change preferences" />
+		<indexitem text="Update file format signatures" target="Update file format signatures" />
+		<indexitem text="Startup configuration" target="Startup configuration" />
+	</indexitem>
+</index>

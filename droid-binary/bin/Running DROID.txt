@@ -1,0 +1,20 @@
+Running DROID
+=============
+
+It is recommended that you run DROID via the startup scripts provided: droid.bat or droid.sh.  These scripts configure Java to run with sufficient memory for DROID, and provide other useful configurable settings.
+
+To run DROID on Windows, use the "droid.bat" file.  You can either double-click on this file, or run it from the command-line console, by typing "droid" when you are in the droid installation folder.
+
+To run DROID on Linux or Mac, use the "droid.sh" file.  You can either double-click on this file, or run it from the command-line console, by typing "./droid.sh" when you are in the droid installation folder.
+
+
+Executable permissions
+======================
+
+On Linux or Mac platforms, you may have to set "executable" permissions to be allowed to run DROID by your operating system.  You should set the executable permission on the "droid.sh" file.  You may have to also set executable permissions on the two .jar files: "droid-ui-6.0.jar" and "droid-command-line-6.0.jar", depending on your system.  If you are running from a command-line console, you can set the executable permission by using these commands:
+
+  chmod +x droid.sh
+  chmod +x droid-ui-6.0.jar
+  chmod +x droid-command-line-6.0.jar
+
+To set executable permissions from your graphical file manager, please refer to the help for your particular system.
