@@ -136,6 +136,23 @@ public enum CommandLineParam {
         }
     },
     
+    /** Runs without a profile and with the specified resources. */
+    RUN_NO_PROFILE("Nr", "no-profile-resources", true, -1, I18N.RUN_NO_PROFILE_HELP, "resources...") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
+            throws CommandLineSyntaxException {
+            return commandFactory.getNoProfileCommand(cli);
+        }
+    },
+    
+    /** Signature file. */
+    SIGNATURE_FILE("Ns", "signature-file", I18N.SIGNATURE_FILE_HELP) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+    
     /** Recursive operation flag. */
     RECURSIVE("R", "recurse", I18N.RECURSE_HELP) {
         @Override
@@ -208,6 +225,7 @@ public enum CommandLineParam {
         addTopLevelCommand(REPORT);
         addTopLevelCommand(LIST_FILTER_FIELD);
         addTopLevelCommand(RUN_PROFILE);
+        addTopLevelCommand(RUN_NO_PROFILE);
         addTopLevelCommand(CHECK_SIGNATURE_UPDATE);
         addTopLevelCommand(DOWNLOAD_SIGNATURE_UPDATE);
         addTopLevelCommand(DEFAULT_SIGNATURE_VERSION);
@@ -302,6 +320,7 @@ public enum CommandLineParam {
         options.addOption(PROFILES.newOption());
         options.addOption(REPORT_NAME.newOption());
         options.addOption(REPORT_OUTPUT_TYPE.newOption());
+        options.addOption(SIGNATURE_FILE.newOption());
         
         OptionGroup filterOptions = new OptionGroup();
         filterOptions.addOption(ALL_FILTER.newOption());
