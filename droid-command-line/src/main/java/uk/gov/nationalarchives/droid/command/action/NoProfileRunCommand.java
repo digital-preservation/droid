@@ -18,10 +18,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileExce
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
-import uk.gov.nationalarchives.droid.profile.ProfileInstance;
-import uk.gov.nationalarchives.droid.profile.ProfileManager;
-import uk.gov.nationalarchives.droid.profile.ProfileManagerException;
-import uk.gov.nationalarchives.droid.profile.ProfileState;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
 /**
@@ -30,12 +26,10 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  */
 public class NoProfileRunCommand implements DroidCommand {
     
-    private String destination;
+    private String signatureFile;
     private String[] resources;
     private boolean recursive;
     
-    private ProfileManager profileManager;
-    private SignatureManager signatureManager;
     private LocationResolver locationResolver;
     
     /**
@@ -43,7 +37,10 @@ public class NoProfileRunCommand implements DroidCommand {
      */
     @Override
     public void execute() throws CommandExecutionException {
-        try {
+        System.out.println("Will run without a profile as soon as there's code to do it");
+        System.out.println("Resources: " + resources);
+        System.out.println("Signature file: " + signatureFile);
+/*        try {
             Map<SignatureType, SignatureFileInfo> sigs = signatureManager.getDefaultSignatures();
             ProfileInstance profile = profileManager.createProfile(sigs);
             profile.changeState(ProfileState.VIRGIN);
@@ -74,16 +71,9 @@ public class NoProfileRunCommand implements DroidCommand {
         } catch (SignatureFileException e) {
             throw new CommandExecutionException(e);
         }
-        
+*/        
     }
 
-    /**
-     * @param destination the destination to set
-     */
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-    
     /**
      * @param resources the resources to set
      */
@@ -92,17 +82,10 @@ public class NoProfileRunCommand implements DroidCommand {
     }
     
     /**
-     * @param profileManager the profileManager to set
-     */
-    public void setProfileManager(ProfileManager profileManager) {
-        this.profileManager = profileManager;
-    }
-    
-    /**
      * @param signatureManager the signatureManager to set
      */
-    public void setSignatureManager(SignatureManager signatureManager) {
-        this.signatureManager = signatureManager;
+    public void setSignatureFile(String signatureFile) {
+        this.signatureFile = signatureFile;
     }
 
     /**
