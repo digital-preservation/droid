@@ -181,13 +181,36 @@ public class CommandFactoryImpl implements CommandFactory {
         
         String[] destination = cli.getOptionValues(CommandLineParam.PROFILES.toString());
         if (destination == null || destination.length > 1) {
-            throw new CommandLineSyntaxException("Must specifiy exactly one profile.");
+            throw new CommandLineSyntaxException("Must specify exactly one profile.");
         }
         
         ProfileRunCommand command = context.getProfileRunCommand();
         command.setDestination(destination[0]);
         command.setResources(resources);
         
+        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+        
+        return command;
+        
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getNoProfileCommand(CommandLine cli) throws CommandLineSyntaxException {
+        String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
+        if (resources.length == 0) {
+            throw new CommandLineSyntaxException("No resources specified.");
+        }
+        if (!cli.hasOption(CommandLineParam.SIGNATURE_FILE.toString())) {
+            throw new CommandLineSyntaxException("No signature file specified.");
+        } 
+        String signatureFile = cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString());
+        
+        NoProfileRunCommand command = context.getNoProfileRunCommand();
+        command.setResources(resources);
+        command.setSignatureFile(signatureFile);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
         
         return command;
