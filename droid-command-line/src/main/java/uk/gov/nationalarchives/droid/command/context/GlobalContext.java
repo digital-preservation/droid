@@ -15,6 +15,7 @@ import uk.gov.nationalarchives.droid.command.action.DownloadSignatureUpdateComma
 import uk.gov.nationalarchives.droid.command.action.ExportCommand;
 import uk.gov.nationalarchives.droid.command.action.ListAllSignatureFilesCommand;
 import uk.gov.nationalarchives.droid.command.action.ListReportsCommand;
+import uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
@@ -37,6 +38,11 @@ public interface GlobalContext {
      * @return a profile run command
      */
     ProfileRunCommand getProfileRunCommand();
+
+    /**
+     * @return a no-profile run command
+     */
+    NoProfileRunCommand getNoProfileRunCommand();
 
     /**
      * @param opt the Export options to use when exporting.
