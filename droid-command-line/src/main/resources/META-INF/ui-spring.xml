@@ -79,6 +79,12 @@
 	    </property>
     </bean>
     
+    <bean id="noProfileRunCommand" class="uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand" scope="prototype">
+	<property name="locationResolver">
+    	    <bean class="uk.gov.nationalarchives.droid.command.action.LocationResolver"/>
+	</property>
+    </bean>
+    
     <bean id="abstractSignatureCommand" abstract="true" scope="prototype" >
         <property name="signatureManager" ref="signatureManager"/>
     </bean>
