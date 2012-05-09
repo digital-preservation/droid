@@ -58,6 +58,12 @@ public final class I18N {
     /** Run a profile. */
     public static final String RUN_PROFILE_HELP = "profile.run.help";
     
+    /** Run without a profile. */
+    public static final String RUN_NO_PROFILE_HELP = "no_profile.run.help";
+    
+    /** Signature file. */
+    public static final String SIGNATURE_FILE_HELP = "signature_file.help";
+    
     /** Recurse subdirectories. */
     public static final String RECURSE_HELP = "recurse.help";
     
