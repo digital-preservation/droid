@@ -70,6 +70,14 @@ public interface CommandFactory {
 
 
     /**
+     * @param cli the command line;
+     * @return a new {@link RunNoProfileCommand}
+     * @throws CommandLineSyntaxException if the command line args were invalid
+     */
+    DroidCommand getNoProfileCommand(CommandLine cli) throws CommandLineSyntaxException;
+
+
+    /**
      * @return a new check signature update command.
      */
     DroidCommand getCheckSignatureUpdateCommand();
