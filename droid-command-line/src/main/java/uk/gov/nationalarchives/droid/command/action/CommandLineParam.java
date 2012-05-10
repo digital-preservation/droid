@@ -146,7 +146,7 @@ public enum CommandLineParam {
     },
     
     /** Signature file. */
-    SIGNATURE_FILE("Ns", "signature-file", I18N.SIGNATURE_FILE_HELP) {
+    SIGNATURE_FILE("Ns", "signature-file", true, 1, I18N.SIGNATURE_FILE_HELP, "signature file") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
