@@ -9,11 +9,24 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.Collection;
 
+import org.apache.commons.io.FileUtils;
+
+import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
@@ -37,41 +50,76 @@ public class NoProfileRunCommand implements DroidCommand {
      */
     @Override
     public void execute() throws CommandExecutionException {
-        System.out.println("Will run without a profile as soon as there's code to do it");
-        System.out.println("Resources: " + resources);
-        System.out.println("Signature file: " + signatureFile);
-/*        try {
-            Map<SignatureType, SignatureFileInfo> sigs = signatureManager.getDefaultSignatures();
-            ProfileInstance profile = profileManager.createProfile(sigs);
-            profile.changeState(ProfileState.VIRGIN);
+        
+        BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
+	File sigFile = new File(signatureFile);
 
-            for (String resource : resources) {
-                profile.addResource(locationResolver.getResource(resource, recursive));
-            }
-            
-            Future<?> future = profileManager.start(profile.getUuid());
-            future.get();
-            
-            ProgressObserver progressCallback = new ProgressObserver() {
-                @Override
-                public void onProgress(Integer progress) {
+	if (!sigFile.exists())
+	    throw new CommandExecutionException("Signature file not found");
+
+	binarySignatureIdentifier.setSignatureFile(signatureFile);
+	binarySignatureIdentifier.init();
+
+	binarySignatureIdentifier.setMaxBytesToScan(-1);
+	binarySignatureIdentifier.init();
+        
+	File dirToSearch = new File(resources[0]);
+
+	if (!dirToSearch.isDirectory()) {
+	    throw new CommandExecutionException("Resources directory not found");
+	}
+	String[] extensions = null;
+	Collection<File> matchedFiles = FileUtils.listFiles(dirToSearch,
+					extensions, true);
+        
+	for (File file : matchedFiles) {
+	    URI resourceUri = file.toURI();
+
+	    RequestMetaData metaData = new RequestMetaData(file.length(),
+						file.lastModified(), file.getName());
+	    RequestIdentifier identifier = new RequestIdentifier(resourceUri);
+	    identifier.setParentId(1L);
+
+	    IdentificationRequest request = null;
+	    InputStream in = null;
+	    try {
+		in = new FileInputStream(file);
+                request = new FileSystemIdentificationRequest(metaData, identifier);
+                                        
+		request.open(in);
+					
+		IdentificationResultCollection results =
+                    binarySignatureIdentifier.matchBinarySignatures(request);
+
+		if (results.getResults().size() > 0) {
+		    for (IdentificationResult identResult : results.getResults()) {
+			if (identResult.getPuid() != null) {
+			    System.out.println(file.getAbsolutePath() + "," + identResult.getPuid());
+                        }
+		    }
+		} else {
+		    System.out.println(file.getAbsolutePath() + ",Unknown");
+		}
+	    } catch (IOException e) {
+                throw new CommandExecutionException(e);
+	    } finally {
+                if (request != null) {
+                    try {
+                        request.close();
+                    } catch (IOException e) {
+                        throw new CommandExecutionException(e);
+                    }
                 }
-            };
-            
-            profileManager.save(profile.getUuid(), new File(destination), progressCallback);
-            profileManager.closeProfile(profile.getUuid());
-        } catch (ProfileManagerException e) {
-            throw new CommandExecutionException(e);
-        } catch (InterruptedException e) {
-            throw new CommandExecutionException(e);
-        } catch (ExecutionException e) {
-            throw new CommandExecutionException(e.getCause());
-        } catch (IOException e) {
-            throw new CommandExecutionException(e);
-        } catch (SignatureFileException e) {
-            throw new CommandExecutionException(e);
+                                    
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        throw new CommandExecutionException(e);
+                    }
+                }
+            }
         }
-*/        
     }
 
     /**
@@ -82,7 +130,7 @@ public class NoProfileRunCommand implements DroidCommand {
     }
     
     /**
-     * @param signatureManager the signatureManager to set
+     * @param signatureFile the signatureFile to set
      */
     public void setSignatureFile(String signatureFile) {
         this.signatureFile = signatureFile;
