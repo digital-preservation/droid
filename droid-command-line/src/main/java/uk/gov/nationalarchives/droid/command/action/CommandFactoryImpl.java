@@ -47,6 +47,7 @@ public class CommandFactoryImpl implements CommandFactory {
      * @throws CommandLineSyntaxException command parse exception. 
      * @return an export command
      */
+    @Override
     public DroidCommand getExportFileCommand(CommandLine cli) throws CommandLineSyntaxException {
         
         if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
@@ -79,6 +80,7 @@ public class CommandFactoryImpl implements CommandFactory {
      * @throws CommandLineSyntaxException command parse exception. 
      * @return an export command
      */
+    @Override
     public DroidCommand getExportFormatCommand(CommandLine cli) throws CommandLineSyntaxException {
         
         if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
@@ -111,6 +113,7 @@ public class CommandFactoryImpl implements CommandFactory {
      * @throws CommandLineSyntaxException command parse exception. 
      * @return an report command
      */
+    @Override
     public DroidCommand getReportCommand(CommandLine cli) throws CommandLineSyntaxException {
         
         if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
@@ -212,7 +215,8 @@ public class CommandFactoryImpl implements CommandFactory {
         command.setResources(resources);
         command.setSignatureFile(signatureFile);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
-        
+        System.out.println("Command resource[0]: " + resources[0]);
+        System.out.println("Command signature file: " + signatureFile);
         return command;
         
     }
