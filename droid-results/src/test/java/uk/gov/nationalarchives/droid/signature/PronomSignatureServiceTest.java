@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
+import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 
 /**
  * @author rflitcroft
@@ -57,14 +57,13 @@ public class PronomSignatureServiceTest {
         sigFileDir = new File("tmp_sig_files");
         FileUtils.deleteQuietly(sigFileDir);
         sigFileDir.mkdir();
-        new File("tmp_sig_files/DROID_SignatureFile_V28.xml").delete();
+        new File("tmp_sig_files/DROID_SignatureFile_V26.xml").delete();
         importer.setEndpointUrl(ENDPOINT_URL);
         ProxySettings proxySettings = new ProxySettings();
         proxySettings.setEnabled(false);
         importer.onProxyChange(proxySettings);
     }
     
-    @Ignore
     @Test
     public void testGetSigFileFromRemoteWebServiceSavesFileLocallyViaProxy() throws SignatureServiceException {
         
@@ -76,25 +75,34 @@ public class PronomSignatureServiceTest {
         
         importer.onProxyChange(proxySettings);
         
+        File[] sigFiles = sigFileDir.listFiles();
+        assertEquals(0, sigFiles.length);
         
         SignatureFileInfo info = importer.importSignatureFile(sigFileDir);
-        File file = new File("tmp_sig_files/DROID_SignatureFile_V" + CURRENT_VER + ".xml");
-        assertTrue(file.exists());
         
-        assertEquals(CURRENT_VER, info.getVersion());
+        sigFiles = sigFileDir.listFiles();
+        assertEquals(1, sigFiles.length);
+        
+//        File file = new File("tmp_sig_files/DROID_SignatureFile_V" + CURRENT_VER + ".xml");
+//        assertTrue(file.exists());
+//        assertEquals(CURRENT_VER, info.getVersion());
+        
+        assertTrue(info.getVersion() > 0);
         assertEquals(false, info.isDeprecated());
+        assertEquals(SignatureType.BINARY, info.getType());
     }
 
-    @Ignore
     @Test
     public void testGetLatestSigFileVersion() {
-        SignatureFileInfo info = importer.getLatestVersion(1);
         
-        assertEquals(CURRENT_VER, info.getVersion());
+        SignatureFileInfo info = importer.getLatestVersion(1);
+       
+//        assertEquals(CURRENT_VER, info.getVersion());
+        assertTrue(info.getVersion() > 0);
         assertEquals(false, info.isDeprecated());
+        assertEquals(SignatureType.BINARY, info.getType());
     }
     
-    @Ignore
     @Test
     public void testGetLatestSigFileVersionViaProxy() {
         
@@ -107,21 +115,29 @@ public class PronomSignatureServiceTest {
         importer.onProxyChange(proxySettings);
         SignatureFileInfo info = importer.getLatestVersion(1);
         
-        assertEquals(CURRENT_VER, info.getVersion());
+//        assertEquals(CURRENT_VER, info.getVersion());
+        assertTrue(info.getVersion() > 0);
         assertEquals(false, info.isDeprecated());
+        assertEquals(SignatureType.BINARY, info.getType());
     }
 
-    @Ignore
     @Test
     public void testGetSigFileFromRemoteWebServiceSavesFileLocally() throws SignatureServiceException {
         
-        SignatureFileInfo info = importer.importSignatureFile(sigFileDir);
-        File file = new File("tmp_sig_files/DROID_SignatureFile_V" + CURRENT_VER + ".xml");
-        assertTrue(file.exists());
+        File[] sigFiles = sigFileDir.listFiles();
+        assertEquals(0, sigFiles.length);
         
-        assertEquals(CURRENT_VER, info.getVersion());
+        SignatureFileInfo info = importer.importSignatureFile(sigFileDir);
+        sigFiles = sigFileDir.listFiles();
+        assertEquals(1, sigFiles.length);
+        
+//        File file = new File("tmp_sig_files/DROID_SignatureFile_V" + CURRENT_VER + ".xml");
+//        assertTrue(file.exists());
+//        assertEquals(CURRENT_VER, info.getVersion());
+        
+        assertTrue(info.getVersion() > 0);
         assertEquals(false, info.isDeprecated());
+        assertEquals(SignatureType.BINARY, info.getType());
     }
-    
 }
 
