@@ -9,6 +9,7 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang.StringUtils;
@@ -209,16 +210,20 @@ public class CommandFactoryImpl implements CommandFactory {
         if (!cli.hasOption(CommandLineParam.SIGNATURE_FILE.toString())) {
             throw new CommandLineSyntaxException("No signature file specified.");
         } 
-        String signatureFile = cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString());
+        
+        String signatureFile = cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString());        
+        String[] extensions = cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString());
         
         NoProfileRunCommand command = context.getNoProfileRunCommand();
         command.setResources(resources);
         command.setSignatureFile(signatureFile);
-        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));     
+        command.setExtensionFilter(extensions);
+                        
         System.out.println("Command resource[0]: " + resources[0]);
         System.out.println("Command signature file: " + signatureFile);
-        return command;
-        
+        System.out.println("Command extension: " + Arrays.toString(extensions));
+        return command;  
     }
     
     /**

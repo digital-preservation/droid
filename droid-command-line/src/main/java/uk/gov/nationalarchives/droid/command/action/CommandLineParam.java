@@ -153,6 +153,14 @@ public enum CommandLineParam {
         }
     },
     
+    /** Extensions to match */
+    EXTENSION_LIST("Nx", "extension-list", true, -1, I18N.EXTENSION_LIST_HELP, "extensions") {
+       @Override
+       public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli){
+          return null;
+       }
+    },
+    
     /** Recursive operation flag. */
     RECURSIVE("R", "recurse", I18N.RECURSE_HELP) {
         @Override
@@ -321,6 +329,7 @@ public enum CommandLineParam {
         options.addOption(REPORT_NAME.newOption());
         options.addOption(REPORT_OUTPUT_TYPE.newOption());
         options.addOption(SIGNATURE_FILE.newOption());
+        options.addOption(EXTENSION_LIST.newOption());
         
         OptionGroup filterOptions = new OptionGroup();
         filterOptions.addOption(ALL_FILTER.newOption());

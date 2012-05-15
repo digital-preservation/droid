@@ -38,88 +38,89 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  *
  */
 public class NoProfileRunCommand implements DroidCommand {
-    
-    private String signatureFile;
-    private String[] resources;
-    private boolean recursive;
-    
-    private LocationResolver locationResolver;
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void execute() throws CommandExecutionException {
-        
-        BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
-	File sigFile = new File(signatureFile);
 
-	if (!sigFile.exists())
-	    throw new CommandExecutionException("Signature file not found");
+   private String signatureFile;
+   private String[] resources;
+   private boolean recursive;
+   private String[] extensions;
 
-	binarySignatureIdentifier.setSignatureFile(signatureFile);
-	binarySignatureIdentifier.init();
+   private LocationResolver locationResolver;
 
-	binarySignatureIdentifier.setMaxBytesToScan(-1);
-	binarySignatureIdentifier.init();
-        
-	File dirToSearch = new File(resources[0]);
+   /**
+   * {@inheritDoc}
+   */
+   @Override
+   public void execute() throws CommandExecutionException {
 
-	if (!dirToSearch.isDirectory()) {
-	    throw new CommandExecutionException("Resources directory not found");
-	}
-	String[] extensions = null;
-	Collection<File> matchedFiles = FileUtils.listFiles(dirToSearch,
-					extensions, true);
-        
-	for (File file : matchedFiles) {
-	    URI resourceUri = file.toURI();
+      BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
+      File sigFile = new File(signatureFile);
 
-	    RequestMetaData metaData = new RequestMetaData(file.length(),
-						file.lastModified(), file.getName());
-	    RequestIdentifier identifier = new RequestIdentifier(resourceUri);
-	    identifier.setParentId(1L);
+      if (!sigFile.exists())
+         throw new CommandExecutionException("Signature file not found");
 
-	    IdentificationRequest request = null;
-	    InputStream in = null;
-	    try {
-		in = new FileInputStream(file);
-                request = new FileSystemIdentificationRequest(metaData, identifier);
-                                        
-		request.open(in);
-					
-		IdentificationResultCollection results =
-                    binarySignatureIdentifier.matchBinarySignatures(request);
+      binarySignatureIdentifier.setSignatureFile(signatureFile);
+      binarySignatureIdentifier.init();
 
-		if (results.getResults().size() > 0) {
-		    for (IdentificationResult identResult : results.getResults()) {
-			if (identResult.getPuid() != null) {
-			    System.out.println(file.getAbsolutePath() + "," + identResult.getPuid());
-                        }
-		    }
-		} else {
-		    System.out.println(file.getAbsolutePath() + ",Unknown");
-		}
-	    } catch (IOException e) {
-                throw new CommandExecutionException(e);
-	    } finally {
-                if (request != null) {
-                    try {
-                        request.close();
-                    } catch (IOException e) {
-                        throw new CommandExecutionException(e);
-                    }
-                }
-                                    
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        throw new CommandExecutionException(e);
-                    }
-                }
+      binarySignatureIdentifier.setMaxBytesToScan(-1);
+      binarySignatureIdentifier.init();
+
+      File dirToSearch = new File(resources[0]);
+
+      if (!dirToSearch.isDirectory()) {
+         throw new CommandExecutionException("Resources directory not found");
+      }
+   
+      Collection<File> matchedFiles = FileUtils.listFiles(dirToSearch,
+                  this.extensions, true);
+
+      for (File file : matchedFiles) {
+         URI resourceUri = file.toURI();
+
+         RequestMetaData metaData = new RequestMetaData(file.length(),
+                     file.lastModified(), file.getName());
+         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
+         identifier.setParentId(1L);
+
+         IdentificationRequest request = null;
+         InputStream in = null;
+         try {
+         in = new FileInputStream(file);
+                  request = new FileSystemIdentificationRequest(metaData, identifier);
+
+         request.open(in);
+
+         IdentificationResultCollection results =
+                     binarySignatureIdentifier.matchBinarySignatures(request);
+
+         if (results.getResults().size() > 0) {
+            for (IdentificationResult identResult : results.getResults()) {
+            if (identResult.getPuid() != null) {
+               System.out.println(file.getAbsolutePath() + "," + identResult.getPuid());
+                           }
             }
-        }
+         } else {
+            System.out.println(file.getAbsolutePath() + ",Unknown");
+         }
+         } catch (IOException e) {
+                  throw new CommandExecutionException(e);
+         } finally {
+                  if (request != null) {
+                     try {
+                           request.close();
+                     } catch (IOException e) {
+                           throw new CommandExecutionException(e);
+                     }
+                  }
+
+                  if (in != null) {
+                     try {
+                           in.close();
+                     } catch (IOException e) {
+                           throw new CommandExecutionException(e);
+                     }
+                  }
+               }
+         }
     }
 
     /**
@@ -142,6 +143,12 @@ public class NoProfileRunCommand implements DroidCommand {
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
     }
+    
+    public void setExtensionFilter(String[] extensions){
+       // No need to normalize extensions arr if empty, listFiles accepts null value 
+       this.extensions = extensions;
+    }
+            
     
     /**
      * @param locationResolver the locationResolver to set

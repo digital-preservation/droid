@@ -64,6 +64,8 @@ public final class I18N {
     /** Signature file. */
     public static final String SIGNATURE_FILE_HELP = "signature_file.help";
     
+    public static final String EXTENSION_LIST_HELP = "extension_list.help";
+    
     /** Recurse subdirectories. */
     public static final String RECURSE_HELP = "recurse.help";
     
