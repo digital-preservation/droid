@@ -36,7 +36,7 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
  * @author rflitcroft
  *
  */
-public final class BinarySignatureIdentifier implements DroidCore {
+public class BinarySignatureIdentifier implements DroidCore {
 
     private final Log log = LogFactory.getLog(getClass());
 
