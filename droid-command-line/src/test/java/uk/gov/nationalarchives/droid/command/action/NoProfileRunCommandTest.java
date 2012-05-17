@@ -56,9 +56,28 @@ public class NoProfileRunCommandTest {
             assertEquals("Signature file not found", x.getMessage());
         }
     }
+    
+    @Test
+    public void testNoProfileRunWithNonexistentResource() throws Exception {
+        
+        File file = new File("sigFile");
+        file.createNewFile();
+        command.setSignatureFile("sigFile");
+        command.setResources(new String[] {
+            "test1.txt",
+            "test2.txt",
+        });
+        try {
+            command.execute();
+            fail("Expected CommandExecutionEception");
+        } catch (CommandExecutionException x) {
+            assertEquals("Resources directory not found", x.getMessage());
+        }
+    }
+    
     @Ignore
     @Test
-    public void testNoRunProfileAndSaveToDefaultExtensionWhenNoExtensionSupplied() throws Exception {
+    public void testNoProfileRunWithExistingSignatureFileAndResource() throws Exception {
         command.setSignatureFile("test");
         command.setResources(new String[] {
             "test1.txt",
