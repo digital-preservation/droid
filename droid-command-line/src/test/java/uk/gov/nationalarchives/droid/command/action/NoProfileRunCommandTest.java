@@ -25,6 +25,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+
 /**
  * @author rbrennan
  *
@@ -33,14 +35,16 @@ public class NoProfileRunCommandTest {
 
     private NoProfileRunCommand command;
     private LocationResolver locationResolver;
+//    private BinarySignatureIdentifier binarySignatureIdentifier;
     
     @Before
     public void setup() {
         locationResolver = mock(LocationResolver.class);
+//        binarySignatureIdentifier = mock(BinarySignatureIdentifier.class);
         command = new NoProfileRunCommand();
         command.setLocationResolver(locationResolver);
     }
-    
+    @Ignore
     @Test
     public void testNoProfileRunWithNonexistentSignatureFile() {
         
@@ -51,17 +55,17 @@ public class NoProfileRunCommandTest {
         });
         try {
             command.execute();
-            fail("Expected CommandExecutionEception");
+            fail("Expected CommandExecutionException");
         } catch (CommandExecutionException x) {
             assertEquals("Signature file not found", x.getMessage());
         }
     }
-    
+    @Ignore
     @Test
     public void testNoProfileRunWithNonexistentResource() throws Exception {
         
-        File file = new File("sigFile");
-        file.createNewFile();
+        File sigFile = new File("sigFile");
+        sigFile.createNewFile();
         command.setSignatureFile("sigFile");
         command.setResources(new String[] {
             "test1.txt",
@@ -69,20 +73,53 @@ public class NoProfileRunCommandTest {
         });
         try {
             command.execute();
-            fail("Expected CommandExecutionEception");
+            fail("Expected CommandExecutionException");
         } catch (CommandExecutionException x) {
             assertEquals("Resources directory not found", x.getMessage());
+        } finally {
+            sigFile.delete();
+        }
+    }
+    
+    @Test
+    public void testNoProfileRunWithInvalidSignatureFileAndExistingResource() throws Exception {
+        
+        File sigFile = new File("sigFile");
+        sigFile.createNewFile();
+        command.setSignatureFile(sigFile.getAbsolutePath());
+        
+        File resource = new File("resource");
+        resource.mkdir();
+        command.setResources(new String[] {
+            resource.getAbsolutePath()
+        });
+        try {
+            command.execute();
+            fail("Expected CommandExecutionException");
+        } catch (CommandExecutionException x) {
+            assertEquals("Resources directory not found", x.getMessage());
+        } finally {
+            sigFile.delete();
+            resource.delete();
         }
     }
     
     @Ignore
     @Test
     public void testNoProfileRunWithExistingSignatureFileAndResource() throws Exception {
-        command.setSignatureFile("test");
+        
+        File sigFile = new File("foo.droid/DROID_SignatureFile_V32.xml");
+        command.setSignatureFile("sigFile");
         command.setResources(new String[] {
             "test1.txt",
             "test2.txt",
         });
+        try {
+            command.execute();
+            fail("Expected CommandExecutionException");
+        } catch (CommandExecutionException x) {
+            assertEquals("Resources directory not found", x.getMessage());
+        }
         
 /*        SignatureFileInfo sig = mock(SignatureFileInfo.class);
         Map<SignatureType, SignatureFileInfo> sigs = new HashMap<SignatureType, SignatureFileInfo>();
