@@ -13,9 +13,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
@@ -27,11 +24,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollect
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
-import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
-import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
-import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
-import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
+import uk.gov.nationalarchives.droid.core.SignatureParseException;
 
 /**
  * @author rbrennan
@@ -43,33 +36,36 @@ public class NoProfileRunCommand implements DroidCommand {
    private String[] resources;
    private boolean recursive;
    private String[] extensions;
-
    private LocationResolver locationResolver;
+   private BinarySignatureIdentifier binarySignatureIdentifier;
 
    /**
    * {@inheritDoc}
    */
    @Override
    public void execute() throws CommandExecutionException {
-
+       
       BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
       File sigFile = new File(signatureFile);
 
       if (!sigFile.exists())
          throw new CommandExecutionException("Signature file not found");
 
-      binarySignatureIdentifier.setSignatureFile(signatureFile);
-      binarySignatureIdentifier.init();
-
-      binarySignatureIdentifier.setMaxBytesToScan(-1);
-      binarySignatureIdentifier.init();
-
       File dirToSearch = new File(resources[0]);
 
       if (!dirToSearch.isDirectory()) {
          throw new CommandExecutionException("Resources directory not found");
       }
-   
+      
+      binarySignatureIdentifier.setSignatureFile(signatureFile);
+      try {
+          binarySignatureIdentifier.init();
+      } catch (SignatureParseException x) {
+          throw new CommandExecutionException ("Can't parse signature file");
+      }
+      binarySignatureIdentifier.setMaxBytesToScan(-1);
+//      binarySignatureIdentifier.init();
+
       Collection<File> matchedFiles = FileUtils.listFiles(dirToSearch,
                   this.extensions, true);
 
@@ -148,12 +144,18 @@ public class NoProfileRunCommand implements DroidCommand {
        // No need to normalize extensions arr if empty, listFiles accepts null value 
        this.extensions = extensions;
     }
-            
     
     /**
      * @param locationResolver the locationResolver to set
      */
     public void setLocationResolver(LocationResolver locationResolver) {
         this.locationResolver = locationResolver;
+    }
+    
+    /**
+     * @param locationResolver the locationResolver to set
+     */
+    public void setBinarySignatureIdentifier(BinarySignatureIdentifier binarySignatureIdentifier) {
+        this.binarySignatureIdentifier = binarySignatureIdentifier;
     }
 }
