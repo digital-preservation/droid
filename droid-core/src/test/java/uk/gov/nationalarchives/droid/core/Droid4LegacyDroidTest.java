@@ -44,7 +44,11 @@ public class Droid4LegacyDroidTest {
 //        droid.setResultHandler(resultHandler);
 //        droid.setExecutorService(Executors.newFixedThreadPool(2));
 //        droid.setProcessArchives(true);
-        droid.init();
+        try {
+            droid.init();
+        } catch (SignatureParseException x) {
+            assertEquals("Can't parse signature file", x.getMessage());
+        }
 //        ArchiveFormatResolver archiveFormatResolver = mock(ArchiveFormatResolver.class);
 //        ArchiveHandlerFactory archiveHandlerFactory = mock(ArchiveHandlerFactory.class);
 //        droid.setArchiveFormatResolver(archiveFormatResolver);
@@ -79,11 +83,15 @@ public class Droid4LegacyDroidTest {
     }
     
     @Test
-    public void testRemovePuidRemovesInterbalSignaturesWithThisPuid() {
+    public void testRemovePuidRemovesInterbalSignaturesWithThisPuid() throws Exception {
         
         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
         droid.setSignatureFile("test_sig_files/DROID_SignatureFile_V26.xml");
-        droid.init();
+        try {
+            droid.init();
+        } catch (SignatureParseException x) {
+            assertEquals("Can't parse signature file", x.getMessage());
+        }
         
         List<InternalSignature> signatures = droid.getSigFile().getSignatures();
         
