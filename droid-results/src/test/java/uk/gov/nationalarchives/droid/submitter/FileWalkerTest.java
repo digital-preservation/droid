@@ -9,6 +9,9 @@
 package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.Assert.assertEquals;
@@ -42,50 +45,56 @@ public class FileWalkerTest {
 
    private static File[] files = new File[30];
    private static final File TEST_ROOT = new File("tmpFileWalker");
+   Set fileSet = new HashSet();
 
    @Before
    public void setup() throws Exception {
 
 
       String[] fileNames = new String[]{
-         "dir1/file11.ext",
-         "dir1/file12.ext",
-         "dir1/file13.ext",
-         "dir1/file14.ext",
-         "dir1/file15.ext",
-         "dir2/file21.ext",
-         "dir2/file22.ext",
-         "dir2/file23.ext",
-         "dir2/file24.ext",
-         "dir2/file25.ext",
-         "dir1/subdir1/file111.ext",
-         "dir1/subdir1/file112.ext",
-         "dir1/subdir1/file113.ext",
-         "dir1/subdir1/file114.ext",
-         "dir1/subdir1/file115.ext",
-         "dir1/subdir2/file121.ext",
-         "dir1/subdir2/file122.ext",
-         "dir1/subdir2/file123.ext",
-         "dir1/subdir2/file124.ext",
-         "dir1/subdir2/file125.ext",
-         "dir2/subdir1/file211.ext",
-         "dir2/subdir1/file212.ext",
-         "dir2/subdir1/file213.ext",
-         "dir2/subdir1/file214.ext",
-         "dir2/subdir1/file215.ext",
-         "dir2/subdir2/file221.ext",
-         "dir2/subdir2/file222.ext",
-         "dir2/subdir2/file223.ext",
-         "dir2/subdir2/file224.ext",
-         "dir2/subdir2/file225.ext",};
+            "dir1/file11.ext",
+            "dir1/file12.ext",
+            "dir1/file13.ext", 
+            "dir1/file14.ext", 
+            "dir1/file15.ext",
+
+            "dir2/file21.ext", 
+            "dir2/file22.ext", 
+            "dir2/file23.ext",
+            "dir2/file24.ext", 
+            "dir2/file25.ext",
+
+            "dir1/subdir1/file111.ext", 
+            "dir1/subdir1/file112.ext",
+            "dir1/subdir1/file113.ext", 
+            "dir1/subdir1/file114.ext",
+            "dir1/subdir1/file115.ext",
+
+            "dir1/subdir2/file121.ext", 
+            "dir1/subdir2/file122.ext",
+            "dir1/subdir2/file123.ext", 
+            "dir1/subdir2/file124.ext",
+            "dir1/subdir2/file125.ext",
+
+            "dir2/subdir1/file211.ext", 
+            "dir2/subdir1/file212.ext",
+            "dir2/subdir1/file213.ext", 
+            "dir2/subdir1/file214.ext",
+            "dir2/subdir1/file215.ext",
+
+            "dir2/subdir2/file221.ext", 
+            "dir2/subdir2/file222.ext",
+            "dir2/subdir2/file223.ext", 
+            "dir2/subdir2/file224.ext",
+            "dir2/subdir2/file225.ext",};
 
       TEST_ROOT.mkdir();
-
 
       for (int i = 0; i < fileNames.length; i++) {
          files[i] = new File(TEST_ROOT, fileNames[i]).getAbsoluteFile();
          files[i].getParentFile().mkdirs();
          files[i].createNewFile();
+         fileSet.add(files[i]);
       }
    }
 
@@ -95,16 +104,17 @@ public class FileWalkerTest {
    }
 
    /**
-    * WARNING: platform specific behaviour in this test. On windows and unix,
-    * the files are walked in a reverse order to each other. For example, the
-    * verification of 7 times on Windows comes in as 23 times on unix (and vice
-    * versa), as there are 30 files in total.
+    * testFastForwardFromUnprocessedFile. Tests to see if DROID pauses and then
+    * resumes successfully from unprocessed file. We ask DROID to stop at an
+    * arbitrary file and then return. Platform dependent behaviour removed by
+    * use of a hash set. 
     *
     * @throws Exception
     */
    @Test
-   @Ignore
    public void testFastForwardFromUnprocessedFile() throws Exception {
+
+      final int FILES_TO_WALK = 23;
 
       final AtomicLong nextId = new AtomicLong(0);
       FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
@@ -119,12 +129,16 @@ public class FileWalkerTest {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[23];
+            File breakFile = files[FILES_TO_WALK];
             File thisFile = (File) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
                throw new DirectoryWalker.CancelException(thisFile, depth);
             }
+            if(fileSet.contains(thisFile))
+               fileSet.remove(thisFile);
+            else
+               fail("File not found within set.");
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
@@ -137,27 +151,32 @@ public class FileWalkerTest {
          }
       });
 
-
       try {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[23], e.getFile());
+         assertEquals(files[FILES_TO_WALK], e.getFile());
       }
 
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenReturn(new ResourceId(nextId.incrementAndGet(), ""));
+      
+      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+         
+         @Override
+         public ResourceId answer(InvocationOnMock invocation) throws Throwable {
+            File thisFile = (File) invocation.getArguments()[0];
+            if(fileSet.contains(thisFile))
+               fileSet.remove(thisFile);
+            else
+               fail("File not found within set.");
+            return new ResourceId(nextId.incrementAndGet(), "");
+         }
+      });   
+      
       fileWalker.setFileHandler(resumeHandler);
-
       fileWalker.walk();
-
-      ArgumentCaptor<File> fileCaptor = ArgumentCaptor.forClass(File.class);
-      verify(resumeHandler, times(7)).handle(fileCaptor.capture(), anyInt(), any(ProgressEntry.class));
-
-      File[] resumedFiles = fileCaptor.getAllValues().toArray(new File[0]);
-      for (int i = 0; i < resumedFiles.length; i++) {
-         assertEquals(files[23 + i], resumedFiles[i]);
-      }
+      
+      assertEquals(fileSet.isEmpty(), true);
 
    }
 
