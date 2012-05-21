@@ -44,6 +44,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandl
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.SignatureParseException;
 
 /**
  * @author rflitcroft
@@ -139,7 +140,11 @@ public class SubmissionGatewayTest {
         ResultHandler resultHandler = mock(ResultHandler.class);
         submissionGateway.setResultHandler(resultHandler);
         submissionGateway.setExecutorService(Executors.newFixedThreadPool(2));
-        droid.init();
+        try {
+            droid.init();
+        } catch (SignatureParseException e) {
+            assertEquals("Can't parse signature file", e.getCause().getMessage());
+        }
 
         File file = new File("test_sig_files/sample.pdf");
         assertTrue(file.exists());
