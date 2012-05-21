@@ -84,7 +84,11 @@ public class SubmissionGatewayTest {
         submissionGateway.setArchiveFormatResolver(archiveFormatResolver);
         submissionGateway.setArchiveHandlerFactory(archiveHandlerFactory);
         submissionGateway.setContainerFormatResolver(containerFormatResolver);
-        droid.init();
+        try {
+            droid.init();
+        } catch (SignatureParseException x) {
+            assertEquals("Can't parse signature file", x.getMessage());
+        }
 
         File file = new File("test_sig_files/persistence.jar");
         assertTrue(file.exists());
