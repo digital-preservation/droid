@@ -9,6 +9,7 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -35,18 +36,16 @@ public class NoProfileRunCommandTest {
 
     private NoProfileRunCommand command;
     private LocationResolver locationResolver;
-//    private BinarySignatureIdentifier binarySignatureIdentifier;
     
     @Before
     public void setup() {
         locationResolver = mock(LocationResolver.class);
-//        binarySignatureIdentifier = mock(BinarySignatureIdentifier.class);
         command = new NoProfileRunCommand();
         command.setLocationResolver(locationResolver);
     }
-    @Ignore
+    
     @Test
-    public void testNoProfileRunWithNonexistentSignatureFile() {
+    public void testNoProfileRunWithNoSignatureFile() {
         
         command.setSignatureFile("test");
         command.setResources(new String[] {
@@ -60,9 +59,9 @@ public class NoProfileRunCommandTest {
             assertEquals("Signature file not found", x.getMessage());
         }
     }
-    @Ignore
+    
     @Test
-    public void testNoProfileRunWithNonexistentResource() throws Exception {
+    public void testNoProfileRunWithNoResource() throws Exception {
         
         File sigFile = new File("sigFile");
         sigFile.createNewFile();
@@ -82,7 +81,7 @@ public class NoProfileRunCommandTest {
     }
     
     @Test
-    public void testNoProfileRunWithInvalidSignatureFileAndExistingResource() throws Exception {
+    public void testNoProfileRunWithInvalidSignatureFileAndResource() throws Exception {
         
         File sigFile = new File("sigFile");
         sigFile.createNewFile();
@@ -97,58 +96,20 @@ public class NoProfileRunCommandTest {
             command.execute();
             fail("Expected CommandExecutionException");
         } catch (CommandExecutionException x) {
-            assertEquals("Resources directory not found", x.getMessage());
+            assertEquals("Can't parse signature file", x.getMessage());
         } finally {
             sigFile.delete();
             resource.delete();
         }
     }
     
-    @Ignore
     @Test
-    public void testNoProfileRunWithExistingSignatureFileAndResource() throws Exception {
+    public void testNoProfileRunWithValidSignatureFileAndResource() throws Exception {
         
-        File sigFile = new File("foo.droid/DROID_SignatureFile_V32.xml");
-        command.setSignatureFile("sigFile");
+        command.setSignatureFile("../droid-core/test_sig_files/DROID_SignatureFile_V26.xml");
         command.setResources(new String[] {
-            "test1.txt",
-            "test2.txt",
+            "../droid-core/test_sig_files"
         });
-        try {
-            command.execute();
-            fail("Expected CommandExecutionException");
-        } catch (CommandExecutionException x) {
-            assertEquals("Resources directory not found", x.getMessage());
-        }
-        
-/*        SignatureFileInfo sig = mock(SignatureFileInfo.class);
-        Map<SignatureType, SignatureFileInfo> sigs = new HashMap<SignatureType, SignatureFileInfo>();
-        sigs.put(SignatureType.BINARY, sig);
-        
-        when(signatureManager.getDefaultSignatures()).thenReturn(sigs);
-        
-        ProfileInstance profileInstance = mock(ProfileInstance.class);
-        when(profileInstance.getUuid()).thenReturn("abcde");
-        when(profileManager.createProfile(sigs)).thenReturn(profileInstance);
-        
-        Future future = mock(Future.class);
-        when(profileManager.start("abcde")).thenReturn(future);
-        
-        FileProfileResource resource1 = new FileProfileResource(new File("test1.txt"));
-        FileProfileResource resource2 = new FileProfileResource(new File("test2.txt"));
-        
-        when(locationResolver.getResource("test1.txt", false)).thenReturn(resource1);
-        when(locationResolver.getResource("test2.txt", false)).thenReturn(resource2);
-        
         command.execute();
-        
-        verify(profileInstance).addResource(resource1);
-        verify(profileInstance).addResource(resource2);
-        verify(profileManager).createProfile(sigs);
-        verify(profileManager).start("abcde");
-        verify(future).get();
-        verify(profileManager).save(eq("abcde"), eq(new File("test")), any(ProgressObserver.class));
-        verify(profileManager).closeProfile("abcde"); */
     }
-    
 }
