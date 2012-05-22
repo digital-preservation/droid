@@ -69,7 +69,7 @@ public class NoProfileRunCommandTest {
     }
     
     @Test
-    public void testNoProfileRunWithInvalidSignatureFileAndResource() throws Exception {
+    public void testNoProfileRunWithInvalidSignatureFile() throws Exception {
         
         File sigFile = new File("sigFile");
         sigFile.createNewFile();
@@ -92,12 +92,23 @@ public class NoProfileRunCommandTest {
     }
     
     @Test
-    public void testNoProfileRunWithValidSignatureFileAndResource() throws Exception {
+    public void testNoProfileRunWithNoExtensionFilter() throws Exception {
         
         command.setSignatureFile("../droid-core/test_sig_files/DROID_SignatureFile_V26.xml");
         command.setResources(new String[] {
             "../droid-core/test_sig_files"
         });
+        command.execute();
+    }
+    
+    @Test
+    public void testNoProfileRunWithExtensionFilter() throws Exception {
+        
+        command.setSignatureFile("../droid-core/test_sig_files/DROID_SignatureFile_V26.xml");
+        command.setResources(new String[] {
+            "../droid-core/test_sig_files"
+        });
+        command.setExtensionFilter(new String[] {"oojah", "maflip"});
         command.execute();
     }
 }
