@@ -9,24 +9,13 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 
 /**
  * @author rbrennan
@@ -39,7 +28,6 @@ public class NoProfileRunCommandTest {
     
     @Before
     public void setup() {
-        locationResolver = mock(LocationResolver.class);
         command = new NoProfileRunCommand();
         command.setLocationResolver(locationResolver);
     }
