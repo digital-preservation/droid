@@ -45,7 +45,7 @@ public class NoProfileRunCommand implements DroidCommand {
    @Override
    public void execute() throws CommandExecutionException {
        
-      BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
+      binarySignatureIdentifier = new BinarySignatureIdentifier();
       File sigFile = new File(signatureFile);
 
       if (!sigFile.exists())
@@ -64,7 +64,6 @@ public class NoProfileRunCommand implements DroidCommand {
           throw new CommandExecutionException ("Can't parse signature file");
       }
       binarySignatureIdentifier.setMaxBytesToScan(-1);
-//      binarySignatureIdentifier.init();
 
       Collection<File> matchedFiles = FileUtils.listFiles(dirToSearch,
                   this.extensions, true);
@@ -150,12 +149,5 @@ public class NoProfileRunCommand implements DroidCommand {
      */
     public void setLocationResolver(LocationResolver locationResolver) {
         this.locationResolver = locationResolver;
-    }
-    
-    /**
-     * @param locationResolver the locationResolver to set
-     */
-    public void setBinarySignatureIdentifier(BinarySignatureIdentifier binarySignatureIdentifier) {
-        this.binarySignatureIdentifier = binarySignatureIdentifier;
     }
 }
