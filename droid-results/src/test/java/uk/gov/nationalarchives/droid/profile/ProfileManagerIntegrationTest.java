@@ -137,7 +137,6 @@ public class ProfileManagerIntegrationTest {
     }
 
     @Test
-    @Ignore
     public void testStartProfileSpecPersistsJobsForEachFileInANonRecursiveDirResourceNode() throws Exception {
         try {
             FileUtils.forceDelete(new File("profiles/integration-test2"));
