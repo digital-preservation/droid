@@ -181,16 +181,17 @@ public class FileWalkerTest {
    }
 
    /**
-    * WARNING: platform specific behaviour in this test. On windows and unix,
-    * the files are walked in a reverse order to each other. This test was
-    * written and works on Windows.
+    * testFastForwardFromMissingUnprocessedFile. Tests to see if DROID can 
+    * be paused and recover from an unprocessed file being deleted while paused.
     *
     * @throws Exception
     */
    @Test
-   @Ignore
    public void testFastForwardFromMissingUnprocessedFile() throws Exception {
 
+      final int FILES_TO_WALK = 23;
+      final int NEXT_FILE_AFTER_MISSING = 24;
+      
       final AtomicLong nextId = new AtomicLong(0);
       FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
 
@@ -204,12 +205,16 @@ public class FileWalkerTest {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[23];
+            File breakFile = files[FILES_TO_WALK];
             File thisFile = (File) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
                throw new DirectoryWalker.CancelException(thisFile, depth);
             }
+            if(fileSet.contains(thisFile))
+               fileSet.remove(thisFile);
+            else
+               fail("File not found within set.");
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
@@ -221,30 +226,40 @@ public class FileWalkerTest {
          }
       });
 
-
       try {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[23], e.getFile());
+         assertEquals(files[FILES_TO_WALK], e.getFile());
       }
-
-      files[23].delete();
-
+      
+      if(files[FILES_TO_WALK].delete()) {
+         if(fileSet.contains(files[FILES_TO_WALK]))
+            fileSet.remove(files[FILES_TO_WALK]);
+         else
+            fail("File not found within set.");
+      }
+      else
+         fail("Error deleting test file: " + files[FILES_TO_WALK].toURI());
+      
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenReturn(new ResourceId(nextId.incrementAndGet(), ""));
+      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+         
+         @Override
+         public ResourceId answer(InvocationOnMock invocation) throws Throwable {
+            File thisFile = (File) invocation.getArguments()[0];
+            if(fileSet.contains(thisFile))
+               fileSet.remove(thisFile);
+            else
+               fail("File not found within set.");
+            return new ResourceId(nextId.incrementAndGet(), "");
+         }
+      });   
+      
       fileWalker.setFileHandler(resumeHandler);
-
       fileWalker.walk();
 
-      ArgumentCaptor<File> fileCaptor = ArgumentCaptor.forClass(File.class);
-      verify(resumeHandler, times(6)).handle(fileCaptor.capture(), anyInt(), any(ProgressEntry.class));
-
-      File[] resumedFiles = fileCaptor.getAllValues().toArray(new File[0]);
-      for (int i = 0; i < resumedFiles.length; i++) {
-         assertEquals(files[24 + i], resumedFiles[i]);
-      }
-
+      assertEquals(fileSet.isEmpty(), true);
    }
 
    /**
