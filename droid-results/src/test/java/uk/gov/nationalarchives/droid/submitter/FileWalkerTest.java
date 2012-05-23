@@ -9,9 +9,7 @@
 package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.Assert.assertEquals;
@@ -263,16 +261,18 @@ public class FileWalkerTest {
    }
 
    /**
-    * WARNING: platform specific behaviour in this test. On windows and unix,
-    * the files are walked in a reverse order to each other. This test was
-    * written and works on Windows.
+    * testFastForwardFromMissingButPartiallyProcessedDirectory. test the handling
+    * of resume functionality from the point where a directory is only partially
+    * processed and then deleted. File counts that DROID expects are the main
+    * point of interest here. 
     *
     * @throws Exception
     */
    @Test
-   @Ignore
    public void testFastForwardFromMissingButPartiallyProcessedDirectory() throws Exception {
 
+      final int FILES_TO_WALK = 23;
+      
       final AtomicLong nextId = new AtomicLong(0);
       FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
 
@@ -286,15 +286,20 @@ public class FileWalkerTest {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[23];
+            File breakFile = files[FILES_TO_WALK];
             File thisFile = (File) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
                throw new DirectoryWalker.CancelException(thisFile, depth);
             }
+            if(fileSet.contains(thisFile))
+               fileSet.remove(thisFile);
+            else
+               fail("File not found within set.");
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
+      
       when(directoryHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
@@ -303,30 +308,49 @@ public class FileWalkerTest {
          }
       });
 
-
       try {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[23], e.getFile());
+         assertEquals(files[FILES_TO_WALK], e.getFile());
       }
 
-      FileUtils.deleteDirectory(files[23].getParentFile());
+      File parentDir = files[FILES_TO_WALK].getParentFile();
+            
+      // List files in directory that still exist to remove from the set
+      // Simulating deletion of the files via the next deleteDirectory() call
+      List<File> dirList = new ArrayList(FileUtils.listFiles(parentDir, null, true));
+            
+      Iterator dirListIterator = dirList.iterator();
 
+      while(dirListIterator.hasNext())
+      {
+         // remove any files we haven't scanned yet from hashset
+         File tmpFile = (File) dirListIterator.next();
+         if(fileSet.contains(tmpFile))
+            fileSet.remove(tmpFile);
+      }
+      
+      FileUtils.deleteDirectory(parentDir);
+      
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenReturn(new ResourceId(nextId.incrementAndGet(), ""));
+      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+         
+         @Override
+         public ResourceId answer(InvocationOnMock invocation) throws Throwable {
+            File thisFile = (File) invocation.getArguments()[0];
+            if(fileSet.contains(thisFile))
+               fileSet.remove(thisFile);
+            else
+               fail("File not found within set.");
+            return new ResourceId(nextId.incrementAndGet(), "");
+         }
+      });  
+      
       fileWalker.setFileHandler(resumeHandler);
-
       fileWalker.walk();
-
-      ArgumentCaptor<File> fileCaptor = ArgumentCaptor.forClass(File.class);
-      verify(resumeHandler, times(5)).handle(fileCaptor.capture(), anyInt(), any(ProgressEntry.class));
-
-      File[] resumedFiles = fileCaptor.getAllValues().toArray(new File[0]);
-      for (int i = 0; i < resumedFiles.length; i++) {
-         assertEquals(files[25 + i], resumedFiles[i]);
-      }
-
+      
+      assertEquals(fileSet.isEmpty(), true);
    }
 
    /**
