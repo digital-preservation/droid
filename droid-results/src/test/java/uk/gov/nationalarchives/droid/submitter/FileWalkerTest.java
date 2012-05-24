@@ -436,16 +436,21 @@ public class FileWalkerTest {
    }
 
    /**
-    * WARNING: platform specific behaviour in this test. On windows and unix,
-    * the files are walked in a reverse order to each other. This test was
-    * written and works on Windows.
+    * testFastForwardFromPartiallyProcessedDirectoryWithANewFile. Ensure DROID
+    * can handle the addition of a file mid scan. Note: This test is written 
+    * specifically so it is added to the directory after the pause point and 
+    * so the file is expected to be processed. It is not clear how effective 
+    * this test is for DROIDs mode of operation and so will need amending in 
+    * time. 
     *
     * @throws Exception
     */
    @Test
-   @Ignore
    public void testFastForwardFromPartiallyProcessedDirectoryWithANewFile() throws Exception {
 
+      final int FILES_TO_WALK = 23;
+      final int POSITION_FOR_NEW_FILE = 24;
+      
       final AtomicLong nextId = new AtomicLong(0);
       FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
 
@@ -459,12 +464,16 @@ public class FileWalkerTest {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[23];
+            File breakFile = files[FILES_TO_WALK];
             File thisFile = (File) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
                throw new DirectoryWalker.CancelException(thisFile, depth);
             }
+            if(fileSet.contains(thisFile))
+               fileSet.remove(thisFile);
+            else
+               fail("File not found within set.");
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
@@ -476,31 +485,35 @@ public class FileWalkerTest {
          }
       });
 
-
       try {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[23], e.getFile());
+         assertEquals(files[FILES_TO_WALK], e.getFile());
       }
 
-      final File newFile = new File(files[21].getPath() + "a");
+      final File newFile = new File(files[POSITION_FOR_NEW_FILE].getPath() + "a");
       assertTrue(newFile.createNewFile());
+      fileSet.add(newFile);   // represent the new file in the HashSet
 
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenReturn(new ResourceId(nextId.incrementAndGet(), ""));
+      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+         
+         @Override
+         public ResourceId answer(InvocationOnMock invocation) throws Throwable {
+            File thisFile = (File) invocation.getArguments()[0];
+            if(fileSet.contains(thisFile))
+               fileSet.remove(thisFile);
+            else
+               fail("File not found within set.");
+            return new ResourceId(nextId.incrementAndGet(), "");
+         }
+      }); 
+      
       fileWalker.setFileHandler(resumeHandler);
-
       fileWalker.walk();
-
-      ArgumentCaptor<File> fileCaptor = ArgumentCaptor.forClass(File.class);
-      verify(resumeHandler, times(7)).handle(fileCaptor.capture(), anyInt(), any(ProgressEntry.class));
-
-      File[] resumedFiles = fileCaptor.getAllValues().toArray(new File[0]);
-      for (int i = 0; i < resumedFiles.length; i++) {
-         assertEquals(files[23 + i], resumedFiles[i]);
-      }
-
+      
+      assertEquals(fileSet.isEmpty(), true);
    }
 
    /**
