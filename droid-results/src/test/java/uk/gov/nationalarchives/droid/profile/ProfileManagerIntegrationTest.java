@@ -22,6 +22,7 @@ import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
@@ -148,10 +149,20 @@ public class ProfileManagerIntegrationTest {
       } catch (IOException e) {
       }
 
-      final int EXPECTED_RESOURCES = isLinux() ? 9 : 8;
-      final int CHECK_VALUE = 8;
-
       File testFile = new File("test_sig_files");
+      
+      int folderSize = testFile.listFiles().length;
+
+      // Test affected because hard coded folder may be in version control
+      // If in older versions of subversion .svn will exist. This is the most
+      // pragmatic check to ensure this test works. Hard coded folder should
+      // only ever be eight files or nine if including .svn
+      assertTrue((folderSize == 8 || folderSize == 9));
+      
+      final int EXPECTED_RESOURCES = folderSize;
+      final int CHECK_VALUE = 8;
+      final int PROGRESS_CHECK = 100;
+      
       FileProfileResource fileResource = new DirectoryProfileResource(testFile, false);
       assertNotNull(profileManager);
       ProfileSpec profileSpec = new ProfileSpec();
@@ -214,6 +225,6 @@ public class ProfileManagerIntegrationTest {
 
       // check the progress listener was invoked properly.
       verify(progressObserver, atLeast(CHECK_VALUE)).onProgress(anyInt());
-      verify(progressObserver).onProgress(100);
+      verify(progressObserver).onProgress(PROGRESS_CHECK);
    }
 }
