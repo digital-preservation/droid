@@ -68,7 +68,7 @@
   	<dependency>
   		<groupId>byteseek</groupId>
   		<artifactId>byteseek</artifactId>
-  		<version>1.1</version>
+  		<version>1.2</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
