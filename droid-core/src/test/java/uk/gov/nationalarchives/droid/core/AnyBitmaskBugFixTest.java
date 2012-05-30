@@ -22,42 +22,29 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * @author rbrennan
  */
 public class AnyBitmaskBugFixTest {
+    private final String TESTAREA = "test_sig_files/";
+    private final String SIGFILE = "AnyBitmask_SignatureFile.xml";
+    private final String SCANFILE = "AnyBitmask.bit";
     
-    public AnyBitmaskBugFixTest() {
-    }
+    private final int EXPECTED_HITS = 0;         // change to 1 for byteseek 1.2
+    private final String EXPECTED_PUID = "dev/1";
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
     @Test
     public void testAnyBitmask() throws Exception {
     
         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
-        droid.setSignatureFile("test_sig_files/AnyBitmask_SignatureFile.xml");
+        droid.setSignatureFile(TESTAREA + SIGFILE);
         try {
             droid.init();
         } catch (SignatureParseException x) {
             assertEquals("Can't parse signature file", x.getMessage());
         }
-        File file = new File("test_sig_files/test80.bit");
+        File file = new File(TESTAREA + SCANFILE);
         assertTrue(file.exists());
         URI resourceUri = file.toURI();
   
         InputStream in = new FileInputStream(file);
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), "test80.bit");
+        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), SCANFILE);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
         
@@ -67,13 +54,11 @@ public class AnyBitmaskBugFixTest {
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
         List<IdentificationResult> results = resultsCollection.getResults();
         
-        //byteseek 1.1
-        assertEquals(0, results.size());
+        assertEquals(EXPECTED_HITS, results.size());
         
-        //byteseek 1.2
-//        assertEquals(1, results.size());
-        
-//        IdentificationResult result = results.getResults().iterator().next();
-//        assertEquals("any/1", result.getPuid());
+        while (results.iterator().hasNext()) {
+            IdentificationResult result = results.iterator().next();
+            assertEquals(EXPECTED_PUID, result.getPuid());
+        }
       }
 }
