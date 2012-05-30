@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FFSignatureFile xmlns="http://www.nationalarchives.gov.uk/pronom/SignatureFile" Version="2" DateCreated="2012-05-29T17:57:10+01:00">
+  <InternalSignatureCollection>
+  <InternalSignature ID="2" Specificity="Specific">
+  <ByteSequence Reference="BOFoffset">
+   <SubSequence MinFragLength="9" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+     <Sequence>3F</Sequence>
+     <DefaultShift>2</DefaultShift>
+     <Shift Byte="3F">1</Shift>
+     <LeftFragment MaxOffset="1" MinOffset="0" Position="1">FE</LeftFragment>
+     <LeftFragment MaxOffset="1" MinOffset="0" Position="1">FF</LeftFragment>
+     <LeftFragment MaxOffset="4" MinOffset="4" Position="2">[00:0F]</LeftFragment>
+     <LeftFragment MaxOffset="2" MinOffset="2" Position="3">01</LeftFragment>
+     <LeftFragment MaxOffset="2" MinOffset="2" Position="3">03</LeftFragment>
+     <RightFragment MaxOffset="1" MinOffset="1" Position="1">00</RightFragment>
+     <RightFragment MaxOffset="1" MinOffset="1" Position="2">00</RightFragment>
+     <RightFragment MaxOffset="1" MinOffset="1" Position="3">00</RightFragment>
+   </SubSequence>
+  </ByteSequence>
+  </InternalSignature>
+</InternalSignatureCollection>
+<FileFormatCollection>
+  <FileFormat ID="2" Name="EndNote Test Signature" PUID="dev/2" Version="1.0" MIMEType="text/x-endnote-test">
+    <InternalSignatureID>2</InternalSignatureID>
+    <Extension>enl</Extension>
+  </FileFormat>
+</FileFormatCollection></FFSignatureFile>
