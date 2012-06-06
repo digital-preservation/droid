@@ -66,11 +66,11 @@
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
-  		<groupId>byteseek</groupId>
-  		<artifactId>byteseek</artifactId>
-  		<version>1.1</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
+            <groupId>byteseek</groupId>
+            <artifactId>byteseek-tna</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
   	</dependency>
   </dependencies>
 </project>
