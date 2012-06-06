@@ -26,12 +26,12 @@ public class AnyBitmaskBugFixTest {
     private final String SIGFILE = "AnyBitmask_SignatureFile.xml";
     private final String SCANFILE = "AnyBitmask.bit";
     
-    private final int EXPECTED_HITS = 0;         // change to 1 for byteseek 1.2
+    private final int EXPECTED_HITS = 1;
     private final String EXPECTED_PUID = "dev/1";
 
     @Test
     public void testAnyBitmask() throws Exception {
-    
+        System.out.println("Running our very own AnyBitmask test");
         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
         droid.setSignatureFile(TESTAREA + SIGFILE);
         try {
