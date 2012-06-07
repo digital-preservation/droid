@@ -10,7 +10,7 @@
 </InternalSignature>
 </InternalSignatureCollection>
 <FileFormatCollection>
-  <FileFormat ID="1" Name="Test: Any Bitmask" PUID="any/1" Version="1.0" MIMEType="text/x-test-signature">
+  <FileFormat ID="1" Name="Test: Any Bitmask" PUID="dev/1" Version="1.0" MIMEType="text/x-test-signature">
     <InternalSignatureID>1</InternalSignatureID>
     <Extension>ext</Extension>
   </FileFormat>
