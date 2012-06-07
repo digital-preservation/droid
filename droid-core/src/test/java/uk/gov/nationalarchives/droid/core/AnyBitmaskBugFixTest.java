@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Iterator;
 import java.util.List;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -55,9 +56,9 @@ public class AnyBitmaskBugFixTest {
         List<IdentificationResult> results = resultsCollection.getResults();
         
         assertEquals(EXPECTED_HITS, results.size());
-        
-        while (results.iterator().hasNext()) {
-            IdentificationResult result = results.iterator().next();
+        Iterator<IdentificationResult> iter = results.iterator();
+        while (iter.hasNext()) {
+            IdentificationResult result = iter.next();
             assertEquals(EXPECTED_PUID, result.getPuid());
         }
       }
