@@ -264,13 +264,13 @@
   	<dependency>
   		<groupId>org.apache.derby</groupId>
   		<artifactId>derby-project</artifactId>
-  		<version>10.7.1.1</version>
+  		<version>10.8.2.2</version>
   		<type>pom</type>
   	</dependency>
   	<dependency>
   		<groupId>org.apache.derby</groupId>
   		<artifactId>derby</artifactId>
-  		<version>10.7.1.1</version>
+  		<version>10.8.2.2</version>
   		<scope>runtime</scope>
   	</dependency>
   	<dependency>
