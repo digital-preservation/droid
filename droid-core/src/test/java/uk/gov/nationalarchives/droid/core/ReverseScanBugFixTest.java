@@ -1,5 +1,10 @@
-/*
- * Test byteseek handles senior bit of ~bitmask correctly
+/**
+ * <p>Copyright (c) The National Archives 2005-2010.  All rights reserved.
+ * See Licence.txt for full licence details.
+ * <p/>
+ *
+ * <p>DROID DCS Profile Tool
+ * <p/>
  */
 package uk.gov.nationalarchives.droid.core;
 
@@ -7,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Iterator;
 import java.util.List;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -17,7 +23,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
-/**
+/*
+ * Test reverse scan bug has been fixed
  *
  * @author rbrennan
  */
@@ -57,8 +64,9 @@ public class ReverseScanBugFixTest {
         
         assertEquals(EXPECTED_HITS, results.size());
         
-        while (results.iterator().hasNext()) {
-            IdentificationResult result = results.iterator().next();
+        Iterator<IdentificationResult> iter = results.iterator();
+        while (iter.hasNext()) {
+            IdentificationResult result = iter.next();
             assertEquals(EXPECTED_PUID, result.getPuid());
         }
       }
