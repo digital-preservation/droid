@@ -38,7 +38,7 @@ public class AnyBitmaskBugFixTest {
 
     @Test
     public void testAnyBitmask() throws Exception {
-        System.out.println("Running our very own AnyBitmask test");
+        
         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
         droid.setSignatureFile(TESTAREA + SIGFILE);
         try {
