@@ -576,7 +576,7 @@ public class SubSequence extends SimpleElement {
      */
     //CHECKSTYLE:OFF - far too complex method.
     public final boolean findSequenceFromPosition(final long position, 
-            final ByteReader targetFile, final long maxBytesToScan, ByteSequence byteSequence) {
+            final ByteReader targetFile, final long maxBytesToScan, final ByteSequence byteSequence) {
 //            final ByteReader targetFile, final long maxBytesToScan) {
     //CHECKSTYLE:ON
         System.out.println("findSequenceFromPosition started");
