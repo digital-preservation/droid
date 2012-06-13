@@ -160,6 +160,13 @@
     	<scope>compile</scope>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+        <id>wb-d-tfs2.web.local</id>
+        <name>wb-d-tfs2.web.local-releases</name>
+        <url>http://wb-d-tfs2.web.local:8081/artifactory/ext-release-local</url>
+    </repository>
+  </repositories>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
