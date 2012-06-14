@@ -25,6 +25,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 /*
  * Test byteseek handles senior bit of ~bitmask correctly
+ * 
+ * The "Any bitmask" operator, ~, was ignoring the value high bit, when set
  *
  * @author rbrennan
  */
