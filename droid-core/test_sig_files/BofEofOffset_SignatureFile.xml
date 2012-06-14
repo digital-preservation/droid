@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FFSignatureFile DateCreated="2012-06-07T19:04:02" Version="0" xmlns="http://www.nationalarchives.gov.uk/pronom/SignatureFile">
+    <InternalSignatureCollection>
+        <InternalSignature ID="735" Specificity="Specific">
+            <ByteSequence Reference="BOFoffset">
+                <SubSequence MinFragLength="3" Position="1"
+                    SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                    <Sequence>65666768</Sequence>
+                    <DefaultShift>5</DefaultShift>
+                    <Shift Byte="65">4</Shift>
+                    <Shift Byte="66">3</Shift>
+                    <Shift Byte="67">2</Shift>
+                    <Shift Byte="68">1</Shift>
+                    <LeftFragment MaxOffset="7" MinOffset="0" Position="1">626364</LeftFragment>
+                </SubSequence>
+            </ByteSequence>
+        </InternalSignature>
+    </InternalSignatureCollection>
+    <FileFormatCollection>
+        <FileFormat ID="1237" Name="TestSmallerxbigger" PUID="x-fmt/752">
+            <InternalSignatureID>735</InternalSignatureID>
+        </FileFormat>
+    </FileFormatCollection>
+</FFSignatureFile>
