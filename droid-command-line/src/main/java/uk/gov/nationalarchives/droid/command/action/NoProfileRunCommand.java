@@ -16,6 +16,7 @@ import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
 
@@ -164,7 +165,8 @@ public class NoProfileRunCommand implements DroidCommand {
     
     private void outputRuntimeInformation()
     {
-       System.out.println("DROID " + "6.01" + " No Profile mode: Runtime Information");
+       String versionString = ResourceBundle.getBundle("options").getString("version_no");
+       System.out.println("DROID " + versionString + " No Profile mode: Runtime Information");
        System.out.println("Binary signature file: " + this.signatureFile);
        if(this.extensions == null)
           System.out.println("Extension filter: No filter set");

@@ -9,8 +9,8 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
-
 import org.apache.commons.cli.HelpFormatter;
+import java.util.ResourceBundle;
 
 /**
  * @author rflitcroft
@@ -39,17 +39,7 @@ public class VersionCommand implements DroidCommand {
     @Override
     public void execute() throws CommandExecutionException {
         HelpFormatter formatter = new HelpFormatter();
-        String versionString = "6.01";
-        // For some reason, it's hard to make the build server 
-        // take account of the changes to the version numbers in the POM files.
-        // Changing from 5.03 to 6.0 was challenging in this regard.
-        // Hence, hard-coding the version number here.
-//        try {
-        //versionString = getClass().getPackage().getImplementationVersion();
-            //ManifestUtils.getImplementationVersion();
-//        } catch (IOException e) {
-//            throw new CommandExecutionException(e);
-//        }
+        String versionString = ResourceBundle.getBundle("options").getString("version_no");
         formatter.printWrapped(writer, WRAP_WIDTH, versionString);
     }
 
