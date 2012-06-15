@@ -170,9 +170,15 @@ public class NoProfileRunCommand implements DroidCommand {
        String versionString = ResourceBundle.getBundle("options").getString("version_no");
        System.out.println("DROID " + versionString + " No Profile mode: Runtime Information");
        System.out.println("Binary signature file: " + this.signatureFile);
+       
+       if(this.containerSignatureFile == null)
+          System.out.println("Container signature file: None");
+       else
+          System.out.println("Container signature file: " + this.containerSignatureFile);
+       
        if(this.extensions == null)
           System.out.println("Extension filter: No filter set");
        else
-         System.out.println("Extension filter: " + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
+          System.out.println("Extension filter: " + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
     }
 }
