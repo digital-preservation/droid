@@ -36,6 +36,7 @@ import uk.gov.nationalarchives.droid.core.SignatureParseException;
 public class NoProfileRunCommand implements DroidCommand {
 
    private String signatureFile;
+   private String containerSignatureFile;
    private String[] resources;
    private boolean recursive;
    private String[] extensions;
@@ -132,11 +133,12 @@ public class NoProfileRunCommand implements DroidCommand {
         this.resources = resources;
     }
     
-    /**
-     * @param signatureFile the signatureFile to set
-     */
     public void setSignatureFile(String signatureFile) {
         this.signatureFile = signatureFile;
+    }
+
+    public void setContainerSignatureFile(String containerSignatureFile) {
+        this.containerSignatureFile = containerSignatureFile;
     }
 
     /**

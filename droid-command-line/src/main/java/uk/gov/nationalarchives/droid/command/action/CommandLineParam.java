@@ -153,6 +153,15 @@ public enum CommandLineParam {
         }
     },
     
+    /** Container signature file. */
+    CONTAINER_SIGNATURE_FILE("Nc", "container-signature-file", true, 1,
+            I18N.CONTAINER_SIGNATURE_FILE_HELP, "container signature file") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+    
     /** Extensions to match */
     EXTENSION_LIST("Nx", "extension-list", true, -1, I18N.EXTENSION_LIST_HELP, "extensions") {
        @Override
@@ -329,6 +338,7 @@ public enum CommandLineParam {
         options.addOption(REPORT_NAME.newOption());
         options.addOption(REPORT_OUTPUT_TYPE.newOption());
         options.addOption(SIGNATURE_FILE.newOption());
+        options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption());
         
         OptionGroup filterOptions = new OptionGroup();

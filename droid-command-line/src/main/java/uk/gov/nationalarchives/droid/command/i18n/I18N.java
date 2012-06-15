@@ -61,8 +61,9 @@ public final class I18N {
     /** Run without a profile. */
     public static final String RUN_NO_PROFILE_HELP = "no_profile.run.help";
     
-    /** Signature file. */
     public static final String SIGNATURE_FILE_HELP = "signature_file.help";
+    
+    public static final String CONTAINER_SIGNATURE_FILE_HELP = "container_signature_file.help";
     
     public static final String EXTENSION_LIST_HELP = "extension_list.help";
     

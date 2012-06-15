@@ -210,11 +210,13 @@ public class CommandFactoryImpl implements CommandFactory {
       }
 
       String signatureFile = cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString());
+      String containerSignatureFile = cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString());        
       String[] extensions = cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString());
-
+     
       NoProfileRunCommand command = context.getNoProfileRunCommand();
       command.setResources(resources);
       command.setSignatureFile(signatureFile);
+      command.setContainerSignatureFile(containerSignatureFile);
       command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
       command.setExtensionFilter(extensions);
 
