@@ -274,7 +274,7 @@ public enum CommandLineParam {
         this.argName = argName;
         this.argsRequired = argsRequired;
     }
-
+    
     private static String filename() {
         return FILENAME;
     }
@@ -340,12 +340,12 @@ public enum CommandLineParam {
         options.addOption(SIGNATURE_FILE.newOption());
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption());
+        options.addOption(RECURSIVE.newOption());
+        options.addOption(QUIET.newOption());
         
         OptionGroup filterOptions = new OptionGroup();
         filterOptions.addOption(ALL_FILTER.newOption());
         filterOptions.addOption(ANY_FILTER.newOption());
-        filterOptions.addOption(RECURSIVE.newOption());
-        filterOptions.addOption(QUIET.newOption());
         
         options.addOptionGroup(filterOptions);
         options.addOptionGroup(topGroup);

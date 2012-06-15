@@ -219,11 +219,8 @@ public class CommandFactoryImpl implements CommandFactory {
       command.setContainerSignatureFile(containerSignatureFile);
       command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
       command.setExtensionFilter(extensions);
-
-      if (cli.hasOption(CommandLineParam.QUIET.toString())) {
-         command.setQuiet();
-      }
-
+      command.setQuiet(cli.hasOption(CommandLineParam.QUIET.toString()));
+      
       return command;
    }
 

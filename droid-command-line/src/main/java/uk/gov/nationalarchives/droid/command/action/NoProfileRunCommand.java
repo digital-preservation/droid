@@ -72,10 +72,10 @@ public class NoProfileRunCommand implements DroidCommand {
           throw new CommandExecutionException ("Can't parse signature file");
       }
       binarySignatureIdentifier.setMaxBytesToScan(-1);
-
+      
       Collection<File> matchedFiles = FileUtils.listFiles(dirToSearch,
-                  this.extensions, true);
-
+                  this.extensions, this.recursive);
+      
       for (File file : matchedFiles) {
          URI resourceUri = file.toURI();
 
@@ -153,9 +153,9 @@ public class NoProfileRunCommand implements DroidCommand {
        this.extensions = extensions;
     }
     
-    public void setQuiet()
+    public void setQuiet(boolean quiet)
     {
-       this.quietFlag = true;
+       this.quietFlag = quiet;
     }
     
     /**
