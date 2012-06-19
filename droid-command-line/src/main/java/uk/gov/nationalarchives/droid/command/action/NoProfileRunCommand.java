@@ -15,10 +15,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
+import uk.gov.nationalarchives.droid.container.ContainerSignature;
 
+import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
@@ -41,6 +44,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private String[] extensions;
     private LocationResolver locationResolver;
     private BinarySignatureIdentifier binarySignatureIdentifier;
+    private ContainerSignatureSaxParser contSigParser;
     private boolean quietFlag = false;  // default quiet flag value
 
     /**
@@ -61,19 +65,30 @@ public class NoProfileRunCommand implements DroidCommand {
         if (!sigFile.exists())
             throw new CommandExecutionException("Signature file not found");
 
-        if (this.containerSignatureFile != null) {
-            File contSigFile = new File(containerSignatureFile);
-            if (!contSigFile.exists())
-                throw new CommandExecutionException("Container signature file not found");
-        }
         binarySignatureIdentifier.setSignatureFile(signatureFile);
         try {
             binarySignatureIdentifier.init();
-        } catch (SignatureParseException x) {
+        } catch (SignatureParseException e) {
             throw new CommandExecutionException ("Can't parse signature file");
         }
         binarySignatureIdentifier.setMaxBytesToScan(-1);
       
+        if (this.containerSignatureFile != null) {
+            File contSigFile = new File(containerSignatureFile);
+            if (!contSigFile.exists())
+                throw new CommandExecutionException("Container signature file not found");
+
+            try {
+                InputStream in = new FileInputStream(contSigFile);
+                contSigParser = new ContainerSignatureSaxParser();
+                List<ContainerSignature> containerSignatures =
+                    contSigParser.parse(in).getContainerSignatures();
+            } catch (SignatureParseException e) {
+                throw new CommandExecutionException ("Can't parse container signature file");
+            } catch (Exception e) {
+                throw new CommandExecutionException(e);
+            }
+        }
         Collection<File> matchedFiles = FileUtils.listFiles(dirToSearch,
                   this.extensions, this.recursive);
       
