@@ -360,7 +360,7 @@ public class SubSequence extends SimpleElement {
     //CHECKSTYLE:OFF - this method is far too long.
     private void processSequenceFragments() {
     //CHECKSTYLE:ON
-        //System.out.println("processSequenceFragments started");
+//        System.out.println("processSequenceFragments started");
         /* Left fragments */
         //Determine the number of fragment subsequences there are
         int numPositions = 0;
@@ -370,7 +370,7 @@ public class SubSequence extends SimpleElement {
                 numPositions = currentPosition;
             }
         }
-        //System.out.println("left fragment numPositions: " + numPositions);
+//        System.out.println("left fragment numPositions: " + numPositions);
 
         //initialise all necessary fragment lists (one for each position)
         for (int i = 0; i < numPositions; i++) { //loop through fragment positions
@@ -390,6 +390,7 @@ public class SubSequence extends SimpleElement {
         for (int fragPos = 0; fragPos < orderedLeftFragments.size(); fragPos++) { // loop through all positions:
             final List<SideFragment> fragmentsToMatch = orderedLeftFragments.get(fragPos);
             final int noOfFragments = fragmentsToMatch.size();
+//            System.out.println("noOfFragments: " + noOfFragments);
             if (noOfFragments > 1) {
                 boolean allFragmentsLengthOne = true;
                 SideFragment frag = null;
@@ -427,7 +428,9 @@ public class SubSequence extends SimpleElement {
             for (int fragmentIndex = 0; fragmentIndex < fragmentList.size(); fragmentIndex++) {
                 final SideFragment frag = fragmentList.get(fragmentIndex);
                 final int fragMinSpace = frag.getNumBytes() + frag.getMinOffset();
+//                System.out.println("fragMinSpace: " + fragMinSpace);
                 final int fragMaxSpace = frag.getNumBytes() + frag.getMaxOffset();
+//                System.out.println("fragMaxSpace: " + fragMaxSpace);
                 if (fragMinSpace < minFragSize) {
                     minFragSize = fragMinSpace;
                 }
@@ -453,7 +456,6 @@ public class SubSequence extends SimpleElement {
                 numPositions = currentPosition;
             }
         }
-        //System.out.println("right fragment numPositions: " + numPositions);
 
         //initialise all necessary fragment lists (one for each position)
         for (int i = 0; i < numPositions; i++) { //loop through fragment positions
@@ -790,7 +792,11 @@ public class SubSequence extends SimpleElement {
     private long[] bytePosForLeftFragments(final net.domesdaybook.reader.ByteReader bytes, final long leftBytePos, final long rightBytePos,
             final int searchDirection, final int offsetRange) {
     //CHECKSTYLE:ON
-        //System.out.println("bytePosForLeftFragments started");
+//        System.out.println("bytePosForLeftFragments started with...");
+//        System.out.println("...leftBytePos: " + leftBytePos);
+//        System.out.println("...rightBytePos: " + rightBytePos);
+//        System.out.println("...searchDirection: " + searchDirection);
+//        System.out.println("...offsetRange: " + offsetRange);
         final boolean leftFrag = true;
         
         // set up loop start and end depending on search order:
@@ -809,8 +815,10 @@ public class SubSequence extends SimpleElement {
         //TODO: can most of this calculation be done up front?
         int totalNumOptions = offsetRange + 1;
         for (int iFragPos = 1; iFragPos <= numFragPos; iFragPos++) {
+//            System.out.println("numAlternativeFragments: " + this.getNumAlternativeFragments(leftFrag, iFragPos));
             totalNumOptions = totalNumOptions * this.getNumAlternativeFragments(leftFrag, iFragPos);
         }
+//        System.out.println("totalNumOptions: " + totalNumOptions);
         
         //now set up the array so that it can potentially hold all possibilities
         long[] markerPos = new long[totalNumOptions];
@@ -818,6 +826,7 @@ public class SubSequence extends SimpleElement {
             markerPos[iOffset] = startPos + iOffset * searchDirection;
         }
         int numOptions = 1 + offsetRange;
+//        System.out.println("numOptions: " + numOptions);
 
         // Search for the fragments:
         boolean seqNotFound = false;
@@ -825,6 +834,7 @@ public class SubSequence extends SimpleElement {
             iFragPos -= searchDirection) {
             final List<SideFragment> fragmentsAtPosition = orderedLeftFragments.get(iFragPos - 1);
             final int numAltFrags = fragmentsAtPosition.size();
+//            System.out.println("numAltFrags: " + numAltFrags);
             //array to store possible end positions after this fragment position has been examined
             long[] tempEndPos = new long[numAltFrags * numOptions]; 
 
