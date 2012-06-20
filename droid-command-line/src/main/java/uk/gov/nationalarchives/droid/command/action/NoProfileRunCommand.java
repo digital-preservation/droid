@@ -111,6 +111,8 @@ public class NoProfileRunCommand implements DroidCommand {
                 IdentificationResultCollection results =
                      binarySignatureIdentifier.matchBinarySignatures(request);
 
+                binarySignatureIdentifier.removeLowerPriorityHits(results);
+                
                 if (results.getResults().size() > 0) {
                     for (IdentificationResult identResult : results.getResults()) {
                         if (identResult.getPuid() != null) {
