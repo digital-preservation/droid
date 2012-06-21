@@ -7,7 +7,8 @@ DROID uses internal signatures to identify and report the specific file format v
 
 DROID is a platform-independent Java application. It can be invoked from two interfaces:
 
-Java Swing GUI Command line interface
+* Java Swing GUI
+* Command line interface
 
 DROID allows files and folders to be selected from a file system for identification. This file list can be saved at any point. After the identification process had been run, the results can be output in various report formats, including CSV.
 
