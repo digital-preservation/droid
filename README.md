@@ -11,17 +11,9 @@ Java Swing GUI Command line interface
 
 DROID allows files and folders to be selected from a file system for identification. This file list can be saved at any point. After the identification process had been run, the results can be output in various report formats, including CSV.
 
-Signature Files
+DROID is available under the New BSD License: https://raw.github.com/digital-preservation/droid/master/license.md
 
-http://www.nationalarchives.gov.uk/aboutapps/pronom/droid-signature-files.htm
-
-Signature file release notes
-
-http://www.nationalarchives.gov.uk/aboutapps/pronom/release-notes.xml
-
-DROID is licensed under the New BSD License: https://raw.github.com/digital-preservation/droid/master/license.md
-
-More information can be found on the DROID github pages: http://digital-preservation.github.com/droid/
+More information can be found on the DROID github pages here: http://digital-preservation.github.com/droid/
 
 
 
