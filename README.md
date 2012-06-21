@@ -12,7 +12,7 @@ DROID is a platform-independent Java application. It can be invoked from two int
 
 DROID allows files and folders to be selected from a file system for identification. This file list can be saved at any point. After the identification process had been run, the results can be output in various report formats, including CSV.
 
-DROID is available under the New BSD License: https://raw.github.com/digital-preservation/droid/master/license.md
+DROID is made available under the New BSD License: https://raw.github.com/digital-preservation/droid/master/license.md
 
 More information can be found on the DROID github pages here: http://digital-preservation.github.com/droid/
 
