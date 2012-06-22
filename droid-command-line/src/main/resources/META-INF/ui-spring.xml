@@ -83,6 +83,7 @@
 	<property name="locationResolver">
     	    <bean class="uk.gov.nationalarchives.droid.command.action.LocationResolver"/>
 	</property>
+        <property name="containerContentIdentifierFactory" ref="containerContentIdentifierFactory"/>
     </bean>
     
     <bean id="abstractSignatureCommand" abstract="true" scope="prototype" >
@@ -110,5 +111,17 @@
     <bean id="listReportsCommand" class="uk.gov.nationalarchives.droid.command.action.ListReportsCommand">
         <property name="reportManager" ref="reportManager"/>        
     </bean>
+
+    <!-- container identifiers for command line only! -->
+    <bean id="containerContentIdentifierFactory" class="uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifierFactory">
+        <!-- define available identifiers -->
+        <property name="containerContentIdentifiers">
+            <map>
+                <entry key="ZIP" value-ref="zipContainerContentIdentifier"/>
+            </map>
+	</property>
+    </bean>
+    
+    <bean id="zipContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier"/>
 
 </beans>
