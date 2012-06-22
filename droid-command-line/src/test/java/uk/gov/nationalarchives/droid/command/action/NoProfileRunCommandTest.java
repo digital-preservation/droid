@@ -33,27 +33,11 @@ public class NoProfileRunCommandTest {
     }
     
     @Test
-    public void testNoProfileRunWithNoSignatureFile() {
-        
-        command.setSignatureFile("test");
-        command.setResources(new String[] {
-            "test1.txt",
-            "test2.txt",
-        });
-        try {
-            command.execute();
-            fail("Expected CommandExecutionException");
-        } catch (CommandExecutionException x) {
-            assertEquals("Signature file not found", x.getMessage());
-        }
-    }
-    
-    @Test
     public void testNoProfileRunWithNoResource() throws Exception {
         
-        File sigFile = new File("sigFile");
-        sigFile.createNewFile();
-        command.setSignatureFile("sigFile");
+//        File sigFile = new File("sigFile");
+//        sigFile.createNewFile();
+//        command.setSignatureFile("sigFile");
         command.setResources(new String[] {
             "test1.txt",
             "test2.txt",
@@ -64,7 +48,24 @@ public class NoProfileRunCommandTest {
         } catch (CommandExecutionException x) {
             assertEquals("Resources directory not found", x.getMessage());
         } finally {
-            sigFile.delete();
+//            sigFile.delete();
+        }
+    }
+    
+    @Test
+    public void testNoProfileRunWithNoSignatureFile() {
+        
+        File resource = new File("resource");
+        resource.mkdir();
+        command.setResources(new String[] {
+            resource.getAbsolutePath()
+        });
+        command.setSignatureFile("test");
+        try {
+            command.execute();
+            fail("Expected CommandExecutionException");
+        } catch (CommandExecutionException x) {
+            assertEquals("Signature file not found", x.getMessage());
         }
     }
     
