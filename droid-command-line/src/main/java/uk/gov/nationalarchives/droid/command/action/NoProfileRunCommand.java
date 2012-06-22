@@ -231,6 +231,13 @@ public class NoProfileRunCommand implements DroidCommand {
             System.out.println("Extension filter: No filter set");
         else
             System.out.println("Extension filter: " + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
+        
+        
+        if (this.recursive == false)
+           System.out.println("Recurse folders: False");
+        else
+           System.out.println("Recurse folders: True");
+        
     }
 
     public ContainerContentIdentifierFactory getContainerContentIdentifierFactory() {
