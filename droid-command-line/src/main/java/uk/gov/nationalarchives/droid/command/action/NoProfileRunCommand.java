@@ -19,14 +19,19 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
+import uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifierFactory;
+import uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
-
+import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
+import uk.gov.nationalarchives.droid.container.FileFormatMapping;
+import uk.gov.nationalarchives.droid.container.TriggerPuid;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
@@ -41,18 +46,25 @@ public class NoProfileRunCommand implements DroidCommand {
     private String containerSignatureFile;
     private String[] resources;
     private boolean recursive;
+    private boolean openContainers;
     private String[] extensions;
     private LocationResolver locationResolver;
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureSaxParser contSigParser;
+    private ArchiveFormatResolverImpl containerFormatResolver = new ArchiveFormatResolverImpl();
     private boolean quietFlag = false;  // default quiet flag value
+    private List<ContainerSignature> containerSignatures;
+    private List<FileFormatMapping> fileFormatMapping;
+    private List<TriggerPuid> triggerPuid;
+    private ContainerSignatureDefinitions containerSignatureDefinitions;
+    private ContainerContentIdentifierFactory containerContentIdentifierFactory;
 
     /**
     * {@inheritDoc}
     */
     @Override
     public void execute() throws CommandExecutionException {
-
+        
         if(!this.quietFlag)
             this.outputRuntimeInformation();
       
@@ -73,6 +85,7 @@ public class NoProfileRunCommand implements DroidCommand {
         }
         binarySignatureIdentifier.setMaxBytesToScan(-1);
       
+        openContainers = false;
         if (this.containerSignatureFile != null) {
             File contSigFile = new File(containerSignatureFile);
             if (!contSigFile.exists())
@@ -81,8 +94,11 @@ public class NoProfileRunCommand implements DroidCommand {
             try {
                 InputStream in = new FileInputStream(contSigFile);
                 contSigParser = new ContainerSignatureSaxParser();
-                List<ContainerSignature> containerSignatures =
-                    contSigParser.parse(in).getContainerSignatures();
+                containerSignatureDefinitions = contSigParser.parse(in);
+                containerSignatures = containerSignatureDefinitions.getContainerSignatures();
+                fileFormatMapping = containerSignatureDefinitions.getFormats();
+                triggerPuid = containerSignatureDefinitions.getTiggerPuids();
+                openContainers = true;
             } catch (SignatureParseException e) {
                 throw new CommandExecutionException ("Can't parse container signature file");
             } catch (Exception e) {
@@ -91,7 +107,6 @@ public class NoProfileRunCommand implements DroidCommand {
         }
         Collection<File> matchedFiles = FileUtils.listFiles(dirToSearch,
                   this.extensions, this.recursive);
-      
         for (File file : matchedFiles) {
             URI resourceUri = file.toURI();
 
@@ -115,8 +130,22 @@ public class NoProfileRunCommand implements DroidCommand {
                 
                 if (results.getResults().size() > 0) {
                     for (IdentificationResult identResult : results.getResults()) {
-                        if (identResult.getPuid() != null) {
-                            System.out.println(file.getAbsolutePath() + "," + identResult.getPuid());
+                        String puid = identResult.getPuid();
+                        if (puid != null) {
+                            if (openContainers) {
+                                final TriggerPuid containerPuid = getTriggerPuidByPuid(puid);
+                                if (containerPuid != null) {
+                                    System.out.println(file.getAbsolutePath() + "," + containerPuid.getContainerType() + "(container)");
+                            
+                                    //e.g.
+                                    final ContainerContentIdentifier containerIdentifier = getContainerContentIdentifierFactory().getContainerContentIdentifier(containerPuid.getContainerType());
+                                    containerIdentifier.process(in);
+                                }
+                                else
+                                    System.out.println(file.getAbsolutePath() + "," + puid);
+                            }
+                            else
+                                System.out.println(file.getAbsolutePath() + "," + puid);
                         }
                     }
                 } else {
@@ -144,6 +173,15 @@ public class NoProfileRunCommand implements DroidCommand {
         }
     }
 
+    private TriggerPuid getTriggerPuidByPuid(final String puid) {
+        for (final TriggerPuid tp : triggerPuid) {
+            if (tp.getPuid().equals(puid)) {
+                return tp;
+            }
+        }
+        return null;
+    }
+    
     /**
      * @param resources the resources to set
      */
@@ -193,5 +231,13 @@ public class NoProfileRunCommand implements DroidCommand {
             System.out.println("Extension filter: No filter set");
         else
             System.out.println("Extension filter: " + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
+    }
+
+    public ContainerContentIdentifierFactory getContainerContentIdentifierFactory() {
+        return containerContentIdentifierFactory;
+    }
+
+    public void setContainerContentIdentifierFactory(ContainerContentIdentifierFactory containerContentIdentifierFactory) {
+        this.containerContentIdentifierFactory = containerContentIdentifierFactory;
     }
 }
