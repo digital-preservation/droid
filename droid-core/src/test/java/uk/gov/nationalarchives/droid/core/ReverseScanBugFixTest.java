@@ -34,11 +34,11 @@ public class ReverseScanBugFixTest {
     private final String SIGFILE = "ReverseScan_SignatureFile.xml";
     private final String SCANFILE = "ReverseScan.enl";
 
-    private final int EXPECTED_HITS = 0;         // change to 1 for byteseek 1.2
-    private final String EXPECTED_PUID = "dev/2";
+    private final int EXPECTED_HITS = 0;
+    private final String EXPECTED_PUID = "x-fmt/757";
 
     @Test
-    public void testAnyBitmask() throws Exception {
+    public void testReverseScan() throws Exception {
     
         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
         droid.setSignatureFile(TESTAREA + SIGFILE);
