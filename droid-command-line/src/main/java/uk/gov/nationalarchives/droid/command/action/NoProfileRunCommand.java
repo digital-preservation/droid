@@ -154,12 +154,12 @@ public class NoProfileRunCommand implements DroidCommand {
                             
                                     final ContainerContentIdentifier containerIdentifier =
                                             getContainerContentIdentifierFactory()
-                                            .getContainerContentIdentifier(containerPuid.getContainerType());
+                                            .getContainerContentIdentifier(containerPuid.getContainerType(), containerSignatureDefinitions);
                                     
                                     
 //                                     try {
 //                                        in = new FileInputStream(file);
-                                        containerIdentifier.process(containerSignatureDefinitions, file, tempDir);
+                                        containerIdentifier.process(file, tempDir);
 //                                    } finally {
 //                                        if (in != null) {
 //                                            try {

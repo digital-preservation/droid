@@ -10,12 +10,9 @@ package uk.gov.nationalarchives.droid.container;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
@@ -26,7 +23,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ErrorCode;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 
@@ -48,10 +44,12 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     private ArchiveFormatResolver containerFormatResolver;
     private DroidCore droidCore;
     private String signatureFilePath;
+    
+    private ContainerIdentifierInit init;
 
-    private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
+    //private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
     private Map<Integer, List<FileFormatMapping>> formats = new HashMap<Integer, List<FileFormatMapping>>(); 
-    private List<String> uniqueFileEntries;
+    //private List<String> uniqueFileEntries;
     
     private long maxBytesToScan = -1;
     private IdentifierEngine identifierEngine;
@@ -63,7 +61,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     @Override
     public final IdentificationResultCollection submit(IdentificationRequest request) throws IOException {
         ContainerSignatureMatchCollection matches =
-            new ContainerSignatureMatchCollection(getContainerSignatures(), uniqueFileEntries, maxBytesToScan);
+            new ContainerSignatureMatchCollection(getContainerSignatures(), init.getUniqueFileEntries(), maxBytesToScan);
 
         process(request, matches);
         
@@ -105,7 +103,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
      * @param containerSignature the containerSignature to add.
      */
     public void addContainerSignature(ContainerSignature containerSignature) {
-        containerSignatures.add(containerSignature);
+        init.addContainerSignature(containerSignature);
     }
     
     /**
@@ -119,7 +117,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
      * @return all container signatures.
      */
     public List<ContainerSignature> getContainerSignatures() {
-        return containerSignatures;
+        return init.getContainerSignatures();
     }
     
     /**
@@ -138,6 +136,10 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
             FileInputStream sigFile = new FileInputStream(signatureFilePath);
             ContainerSignatureDefinitions defs = signatureFileParser.parse(sigFile);
             
+            init = new ContainerIdentifierInit();
+            init.init(defs, containerType, formats, droidCore);
+            
+            /*
             Set<String> uniqueFileSet = new HashSet<String>();
             
             for (ContainerSignature sig : defs.getContainerSignatures()) {
@@ -157,6 +159,8 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
                 mappings.add(fmt);
                 droidCore.removeSignatureForPuid(fmt.getPuid());
             }
+            */
+            
             
             for (TriggerPuid triggerPuid : defs.getTiggerPuids()) {
                 if (triggerPuid.getContainerType().equals(containerType)) {

@@ -2,26 +2,6 @@ package uk.gov.nationalarchives.droid.command.container;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-
-import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ZipArchiveHandler;
-import uk.gov.nationalarchives.droid.core.signature.ByteReader;
-
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentificationRequest;
 
 /**
  *
@@ -30,7 +10,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentifica
 public class ZipContainerContentIdentifier extends AbstractContainerContentIdentifier {
 
     @Override
-    public void process (ContainerSignatureDefinitions defs, File file, File tmpDir) throws IOException {
+    public void process (File file, File tmpDir) throws IOException {
         System.out.println("WE NEED TO DO ZIP YET");
 /*        try {
             final ZipArchiveInputStream zin = new ZipArchiveInputStream(in);

@@ -1,6 +1,7 @@
 package uk.gov.nationalarchives.droid.command.container;
 
 import java.util.Map;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 
 /**
  *
@@ -15,7 +16,9 @@ public class ContainerContentIdentifierFactory {
         this.containerContentIdentifiers = containerContentIdentifiers;
     }
     
-    public ContainerContentIdentifier getContainerContentIdentifier(final String contentType) {
-        return containerContentIdentifiers.get(contentType);
+    public ContainerContentIdentifier getContainerContentIdentifier(final String containerType, final ContainerSignatureDefinitions containerSignatureDefinitions) {
+        final ContainerContentIdentifier containerContentIdentifier = containerContentIdentifiers.get(containerType);
+        containerContentIdentifier.init(containerSignatureDefinitions, containerType);
+        return containerContentIdentifier;
     }
 }
