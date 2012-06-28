@@ -130,7 +130,7 @@ public class Ole2RootFileTest {
         IdentificationRequestFactory requestFactory = mock(IdentificationRequestFactory.class);
         when(requestFactory.newRequest(null, null))
             .thenReturn(request);
-        ole2Identifier.setRequestFactory(requestFactory);
+//        ole2Identifier.setRequestFactory(requestFactory);
         
         IdentificationResultCollection results = ole2Identifier.submit(request);
         
@@ -188,7 +188,7 @@ public class Ole2RootFileTest {
         
         IdentificationRequestFactory requestFactory = mock(IdentificationRequestFactory.class);
         when(requestFactory.newRequest(null, null)).thenReturn(request);
-        ole2Identifier.setRequestFactory(requestFactory);
+//        ole2Identifier.setRequestFactory(requestFactory);
         
         IdentificationResultCollection results = ole2Identifier.submit(request);
         
@@ -218,7 +218,7 @@ public class Ole2RootFileTest {
         IdentificationRequest request = mock(IdentificationRequest.class);
         when(requestFactory.newRequest(null, null))
             .thenReturn(request);
-        ole2Identifier.setRequestFactory(requestFactory);
+//        ole2Identifier.setRequestFactory(requestFactory);
 
         ole2Identifier.init();
         

@@ -10,7 +10,6 @@ package uk.gov.nationalarchives.droid.container;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
@@ -31,7 +29,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ErrorCode;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
-import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
  * @author rflitcroft
@@ -51,13 +48,13 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     private ArchiveFormatResolver containerFormatResolver;
     private DroidCore droidCore;
     private String signatureFilePath;
-    private IdentificationRequestFactory requestFactory;
 
     private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
     private Map<Integer, List<FileFormatMapping>> formats = new HashMap<Integer, List<FileFormatMapping>>(); 
     private List<String> uniqueFileEntries;
     
     private long maxBytesToScan = -1;
+    private IdentifierEngine identifierEngine;
     
     /**
      * {@inheritDoc}
@@ -96,23 +93,19 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     protected abstract void process(IdentificationRequest request, 
             ContainerSignatureMatchCollection matches) throws IOException;
     
+    public IdentifierEngine getIdentifierEngine() {
+        return identifierEngine;
+    }
+    
+    public void setIdentifierEngine(final IdentifierEngine identifierEngine) {
+        this.identifierEngine = identifierEngine;
+    }
+    
     /**
      * @param containerSignature the containerSignature to add.
      */
     public void addContainerSignature(ContainerSignature containerSignature) {
         containerSignatures.add(containerSignature);
-    }
-    
-    /**
-     * Returns a ByteReader for the input stream supplied.
-     * @param in an input stream
-     * @return a Byte reader
-     * @throws IOException if the input stream could not be read
-     */
-    protected ByteReader newByteReader(InputStream in) throws IOException {
-        IdentificationRequest request = getRequestFactory().newRequest(null, null);
-        request.open(in);
-        return new IdentificationRequestByteReaderAdapter(request);
     }
     
     /**
@@ -220,21 +213,6 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     public void setSignatureFilePath(String signatureFilePath) {
         this.signatureFilePath = signatureFilePath;
     }
-    
-    /**
-     * @param requestFactory the requestFactory to set
-     */
-    public void setRequestFactory(IdentificationRequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
-    }
-    
-    /**
-     * @return the requestFactory
-     */
-    protected IdentificationRequestFactory getRequestFactory() {
-        return requestFactory;
-    }
-  
 
     @Override
     public void setMaxBytesToScan(long maxBytesToScan) {

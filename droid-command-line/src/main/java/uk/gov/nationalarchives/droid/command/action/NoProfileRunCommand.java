@@ -23,6 +23,7 @@ import uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifie
 import uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.container.FileFormatMapping;
 import uk.gov.nationalarchives.droid.container.TriggerPuid;
@@ -51,7 +52,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private LocationResolver locationResolver;
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureSaxParser contSigParser;
-    private ArchiveFormatResolverImpl containerFormatResolver = new ArchiveFormatResolverImpl();
+    private ContainerSignatureMatchCollection matches;
     private boolean quietFlag = false;  // default quiet flag value
     private List<ContainerSignature> containerSignatures;
     private List<FileFormatMapping> fileFormatMapping;
@@ -64,6 +65,9 @@ public class NoProfileRunCommand implements DroidCommand {
     */
     @Override
     public void execute() throws CommandExecutionException {
+        
+        File tempDir = new File("tmp");
+        tempDir.mkdirs();
         
         if(!this.quietFlag)
             this.outputRuntimeInformation();
@@ -118,10 +122,20 @@ public class NoProfileRunCommand implements DroidCommand {
             IdentificationRequest request = null;
             InputStream in = null;
             try {
-                in = new FileInputStream(file);
                 request = new FileSystemIdentificationRequest(metaData, identifier);
-
-                request.open(in);
+                
+                try {
+                    in = new FileInputStream(file);
+                    request.open(in);
+                } finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            throw new CommandExecutionException(e);
+                        }
+                    }
+                }
 
                 IdentificationResultCollection results =
                      binarySignatureIdentifier.matchBinarySignatures(request);
@@ -135,11 +149,27 @@ public class NoProfileRunCommand implements DroidCommand {
                             if (openContainers) {
                                 final TriggerPuid containerPuid = getTriggerPuidByPuid(puid);
                                 if (containerPuid != null) {
-                                    System.out.println(file.getAbsolutePath() + "," + containerPuid.getContainerType() + "(container)");
+                                    System.out.println(file.getAbsolutePath() + "," +
+                                            containerPuid.getContainerType() + "(container)");
                             
-                                    //e.g.
-                                    final ContainerContentIdentifier containerIdentifier = getContainerContentIdentifierFactory().getContainerContentIdentifier(containerPuid.getContainerType());
-                                    containerIdentifier.process(in);
+                                    final ContainerContentIdentifier containerIdentifier =
+                                            getContainerContentIdentifierFactory()
+                                            .getContainerContentIdentifier(containerPuid.getContainerType());
+                                    
+                                    
+//                                     try {
+//                                        in = new FileInputStream(file);
+                                        containerIdentifier.process(containerSignatureDefinitions, file, tempDir);
+//                                    } finally {
+//                                        if (in != null) {
+//                                            try {
+//                                                in.close();
+//                                            } catch (IOException e) {
+//                                                throw new CommandExecutionException(e);
+//                                            }
+//                                        }
+//                                    }
+                                    
                                 }
                                 else
                                     System.out.println(file.getAbsolutePath() + "," + puid);
@@ -157,14 +187,6 @@ public class NoProfileRunCommand implements DroidCommand {
                 if (request != null) {
                     try {
                         request.close();
-                    } catch (IOException e) {
-                        throw new CommandExecutionException(e);
-                    }
-                }
-
-                if (in != null) {
-                    try {
-                        in.close();
                     } catch (IOException e) {
                         throw new CommandExecutionException(e);
                     }

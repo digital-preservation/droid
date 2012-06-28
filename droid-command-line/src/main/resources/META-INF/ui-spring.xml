@@ -117,11 +117,30 @@
         <!-- define available identifiers -->
         <property name="containerContentIdentifiers">
             <map>
+                <entry key="OLE2" value-ref="ole2ContainerContentIdentifier"/>
                 <entry key="ZIP" value-ref="zipContainerContentIdentifier"/>
             </map>
 	</property>
     </bean>
     
-    <bean id="zipContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier"/>
+    <bean id="ole2ContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.Ole2ContainerContentIdentifier">
+        <property name="identifierEngine" ref="ole2IdentifierEngine"/>
+    </bean>
+
+    <bean id="zipContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier">
+        <property name="identifierEngine" ref="zipIdentifierEngine"/>
+    </bean>
+
+    <bean id="containerIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
+        <property name="tempDirLocation" value="${tempDirLocation}"/>
+    </bean>
+
+    <bean id="zipIdentifierEngine" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine">
+        <property name="requestFactory" ref="containerIdentificationRequestFactory"/>
+    </bean>
+    
+    <bean id="ole2IdentifierEngine" class="uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine">
+        <property name="requestFactory" ref="containerIdentificationRequestFactory"/>
+    </bean>
 
 </beans>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>run</actionName>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-classpath %classpath uk.gov.nationalarchives.droid.command.DroidCommandLine -Nr X:rbrennan\container-test -Ns X:rbrennan\DROID_SignatureFile_V60.xml -Nc X:rbrennan\container-signature-20120612.xml -R</exec.args>
+                <exec.executable>java</exec.executable>
+                <exec.classpathScope>runtime</exec.classpathScope>
+            </properties>
+        </action>
+        <action>
+            <actionName>debug</actionName>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.gov.nationalarchives.droid.command.DroidCommandLine -Nr X:rbrennan\container-test -Ns X:rbrennan\DROID_SignatureFile_V60.xml -Nc X:rbrennan\container-signature-20120612.xml -R</exec.args>
+                <exec.executable>java</exec.executable>
+                <exec.classpathScope>runtime</exec.classpathScope>
+                <jpda.listen>true</jpda.listen>
+            </properties>
+        </action>
+        <action>
+            <actionName>profile</actionName>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>${profiler.args} -classpath %classpath uk.gov.nationalarchives.droid.command.DroidCommandLine -Nr X:rbrennan\container-test -Ns X:rbrennan\DROID_SignatureFile_V60.xml -Nc X:rbrennan\container-signature-20120612.xml -R</exec.args>
+                <exec.executable>${profiler.java}</exec.executable>
+                <profiler.action>profile</profiler.action>
+            </properties>
+        </action>
+    </actions>

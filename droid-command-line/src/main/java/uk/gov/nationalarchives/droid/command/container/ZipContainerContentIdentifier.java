@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ZipArchiveHandler;
@@ -26,11 +27,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentifica
  *
  * @author rbrennan
  */
-public class ZipContainerContentIdentifier implements ContainerContentIdentifier {
+public class ZipContainerContentIdentifier extends AbstractContainerContentIdentifier {
 
     @Override
-    public void process (InputStream in) throws IOException {
-        System.out.println("WE NEED TO DO THIS YET");
+    public void process (ContainerSignatureDefinitions defs, File file, File tmpDir) throws IOException {
+        System.out.println("WE NEED TO DO ZIP YET");
 /*        try {
             final ZipArchiveInputStream zin = new ZipArchiveInputStream(in);
             //ZipArchiveEntry zae = zin.getNextZipEntry();
