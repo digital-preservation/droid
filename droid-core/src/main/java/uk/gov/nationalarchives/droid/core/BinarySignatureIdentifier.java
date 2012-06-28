@@ -52,15 +52,9 @@ public class BinarySignatureIdentifier implements DroidCore {
     /**
      * Initialises this droid core with its signature file.
      */
-//    public void init() throws Exception {
     public void init() throws SignatureParseException {
-//        try {
-            sigFile = sigFileParser.parseSigFile(signatureFile.getPath());
-            sigFile.prepareForUse();
-//        } catch (SignatureParseException e) {
-//            String message = String.format("Could not parse the binary signature file at: %s", signatureFile.getPath());
-//            log.warn(message);
-//        }
+        sigFile = sigFileParser.parseSigFile(signatureFile.getPath());
+        sigFile.prepareForUse();
     }
     
     /**
