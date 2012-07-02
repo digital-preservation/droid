@@ -23,12 +23,12 @@
     <bean id="containerIdentifierLocator" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactoryImpl">
     </bean>
 
-    <bean id="containerIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
-        <property name="tempDirLocation" value="${tempDirLocation}"/>
+    <bean id="containerFileIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
+    <!--    <property name="tempDirLocation" value="${tempDirLocation}"/> -->
     </bean>
 
     <bean id="zipIdentifierEngine" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine">
-        <property name="requestFactory" ref="containerIdentificationRequestFactory"/>
+        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
     </bean>
     
     <bean id="zipContainerHandler" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifier" init-method="init">
@@ -44,7 +44,7 @@
     </bean>
 
     <bean id="ole2IdentifierEngine" class="uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine">
-        <property name="requestFactory" ref="containerIdentificationRequestFactory"/>
+        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
     </bean>
 
     <bean id="ole2ContainerHandler" class="uk.gov.nationalarchives.droid.container.ole2.Ole2Identifier" init-method="init">
