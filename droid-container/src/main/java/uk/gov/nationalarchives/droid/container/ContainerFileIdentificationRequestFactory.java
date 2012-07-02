@@ -28,7 +28,7 @@ public class ContainerFileIdentificationRequestFactory implements Identification
      */
     @Override
     public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
-        return new ContainerFileIdentificationRequest(tempDirLocation);
+        return new ContainerFileIdentificationRequest(getTempDirLocation());
     }
     
     /**
@@ -36,5 +36,14 @@ public class ContainerFileIdentificationRequestFactory implements Identification
      */
     public void setTempDirLocation(File tempDir) {
         this.tempDirLocation = tempDir;
+    }
+
+    public File getTempDirLocation() {
+        synchronized(this) {
+            if(tempDirLocation == null) {
+                tempDirLocation = new File(System.getProperty("java.io.tmpdir"));
+            }
+        }
+        return tempDirLocation;
     }
 }
