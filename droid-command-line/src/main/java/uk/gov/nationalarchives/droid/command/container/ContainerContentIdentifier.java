@@ -12,5 +12,5 @@ public interface ContainerContentIdentifier {
     
     public void init(ContainerSignatureDefinitions defs, String containerType);
     
-    public void process(File file, File tmpDir) throws IOException ;
+    public void process(File file, String filePuid, File tmpDir) throws IOException ;
 }
