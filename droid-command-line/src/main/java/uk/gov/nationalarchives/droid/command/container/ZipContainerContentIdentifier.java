@@ -1,7 +1,17 @@
 package uk.gov.nationalarchives.droid.command.container;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequest;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
+import uk.gov.nationalarchives.droid.container.FileFormatMapping;
+import uk.gov.nationalarchives.droid.core.interfaces.*;
 
 /**
  *
@@ -9,40 +19,49 @@ import java.io.IOException;
  */
 public class ZipContainerContentIdentifier extends AbstractContainerContentIdentifier {
 
+    private IdentificationRequest request;
+    private Map<String, IdentificationResult> puidMap = new HashMap<String, IdentificationResult>();
+
     @Override
-    public void process (File file, File tmpDir) throws IOException {
-        System.out.println("WE NEED TO DO ZIP YET");
-/*        try {
-            final ZipArchiveInputStream zin = new ZipArchiveInputStream(in);
-            //ZipArchiveEntry zae = zin.getNextZipEntry();
-            ArchiveEntry ae = zin.getNextEntry();
-            RequestMetaData metaData = new RequestMetaData(ae.getSize(),
-                     ae.getLastModifiedDate().getTime(), ae.getName());
-            RequestIdentifier identifier = new RequestIdentifier("oojah");
-            IdentificationRequest request = new ZipEntryIdentificationRequest
-                    (metaData, identifier, "");
-            
-            for (ZipArchiveEntry zae : zin.getNextZipEntry()){}
-            try {
-                Iterable<ZipArchiveEntry> iterable = new Iterable<ZipArchiveEntry>(); // {
-                    @Override
-                    public final Iterator<ZipArchiveEntry> iterator() {
-                        return new ZipArchiveHandler.ZipInputStreamIterator(zin);
-                    }
-                };
-                 
+    public IdentificationResultCollection process (File file, String filePuid, IdentificationResultCollection containerResults) throws IOException {
+        request = new ContainerFileIdentificationRequest(null);
+
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
         
-                ZipArchiveHandler.ZipArchiveWalker walker = new ZipArchiveHandler.ZipArchiveWalker(zin, request.getIdentifier());  
-                walker.walk(iterable);
-            } finally {
-                if (zin != null) {
-                    zin.close();
+            request.open(in);
+            
+            int maxBytesToScan = -1; //TODO dont hardcode this either! 
+            ContainerSignatureMatchCollection matches =
+                new ContainerSignatureMatchCollection(getContainerIdentifierInit().getContainerSignatures(),
+                    getContainerIdentifierInit().getUniqueFileEntries(), maxBytesToScan);
+        
+            getIdentifierEngine().process(request, matches);
+        
+            puidMap.clear();        
+            for (ContainerSignatureMatch match : matches.getContainerSignatureMatches()) {
+                if (match.isMatch()) {
+                    List<FileFormatMapping> mappings = getFormats().get(match.getSignature().getId());
+                    for (FileFormatMapping mapping : mappings) {
+                        IdentificationResultImpl result = new IdentificationResultImpl();
+                        result.setMethod(IdentificationMethod.CONTAINER);
+                        result.setRequestMetaData(request.getRequestMetaData());
+                        String puid = mapping.getPuid();
+                        result.setPuid(mapping.getPuid());
+                        if (!puidMap.containsKey(puid)) {
+                            puidMap.put(puid, result);
+                            containerResults.addResult(result);
+                        }
+                    }
                 }
             }
+            request.close();
         } finally {
             if (in != null) {
                 in.close();
             }
-        }*/
+        }
+        return containerResults;
     }
 }
