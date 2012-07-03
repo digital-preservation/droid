@@ -23,9 +23,9 @@ public class Ole2ContainerContentIdentifier extends AbstractContainerContentIden
     private Map<String, IdentificationResult> puidMap = new HashMap<String, IdentificationResult>();
     
     @Override
-    public void process (File file, String filePuid, File tmpDir) throws IOException {
+    public IdentificationResultCollection process (File file, String filePuid, IdentificationResultCollection containerResults) throws IOException {
         
-        request = new ContainerFileIdentificationRequest(tmpDir);
+        request = new ContainerFileIdentificationRequest(null);
         
         InputStream in = null;
         try {
@@ -52,19 +52,17 @@ public class Ole2ContainerContentIdentifier extends AbstractContainerContentIden
                         result.setPuid(mapping.getPuid());
                         if (!puidMap.containsKey(puid)) {
                             puidMap.put(puid, result);
-                            System.out.println(file.getAbsolutePath() + "," + puid + ",OLE2 container");
+                            containerResults.addResult(result);
                         }
                     }
                 }
             }
             request.close();
-            if (puidMap.isEmpty()) {
-                System.out.println(file.getAbsolutePath() + "," + filePuid +",OLE2 container not further identified");
-            }
         } finally {
             if (in != null) {
                 in.close();
             }
         }
+        return containerResults;
     }
 }
