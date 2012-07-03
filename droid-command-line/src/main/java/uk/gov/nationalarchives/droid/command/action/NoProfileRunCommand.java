@@ -35,6 +35,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
 
 /**
  * @author rbrennan
@@ -58,16 +60,13 @@ public class NoProfileRunCommand implements DroidCommand {
     private List<TriggerPuid> triggerPuid;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private ContainerContentIdentifierFactory containerContentIdentifierFactory;
-    private File tempDir;
+    private ArchiveFormatResolver containerFormatResolver;
 
     /**
     * {@inheritDoc}
     */
     @Override
     public void execute() throws CommandExecutionException {
-        
-        tempDir = new File("tmp");
-        tempDir.mkdirs();
         
         if(!this.quietFlag)
             this.outputRuntimeInformation();
@@ -99,7 +98,6 @@ public class NoProfileRunCommand implements DroidCommand {
                 InputStream in = new FileInputStream(contSigFile);
                 contSigParser = new ContainerSignatureSaxParser();
                 containerSignatureDefinitions = contSigParser.parse(in);
-                containerSignatures = containerSignatureDefinitions.getContainerSignatures();
                 fileFormatMapping = containerSignatureDefinitions.getFormats();
                 triggerPuid = containerSignatureDefinitions.getTiggerPuids();
                 openContainers = true;
@@ -136,11 +134,10 @@ public class NoProfileRunCommand implements DroidCommand {
                         }
                     }
                 }
-
                 IdentificationResultCollection results =
                      binarySignatureIdentifier.matchBinarySignatures(request);
 
-                binarySignatureIdentifier.removeLowerPriorityHits(results);
+                IdentificationResultCollection containerResults = new IdentificationResultCollection(request);
                 
                 if (results.getResults().size() > 0) {
                     for (IdentificationResult identResult : results.getResults()) {
@@ -152,16 +149,25 @@ public class NoProfileRunCommand implements DroidCommand {
                                     final ContainerContentIdentifier containerIdentifier =
                                             getContainerContentIdentifierFactory()
                                             .getContainerContentIdentifier(containerPuid.getContainerType(), containerSignatureDefinitions);
-  //                                  containerIdentifier.process(file, puid, tempDir);
-                                    containerIdentifier.process(file, puid, null);
+                                    containerResults = containerIdentifier.process(file, puid, containerResults);
                                 }
-                                else
-                                    System.out.println(file.getAbsolutePath() + "," + puid);
                             }
-                            else
-                                System.out.println(file.getAbsolutePath() + "," + puid);
                         }
                     }
+                }
+                IdentificationResultCollection finalResults = new IdentificationResultCollection(request);
+                if (containerResults.getResults().size() > 0) {
+                    finalResults = containerResults;
+                } else if (results.getResults().size() > 0) {
+                    finalResults = results;
+                }
+                if (finalResults.getResults().size() > 0) {
+                    binarySignatureIdentifier.removeLowerPriorityHits(finalResults);
+                }
+                if (finalResults.getResults().size() > 0) {
+                    for (IdentificationResult identResult : finalResults.getResults()) {
+                        System.out.println(file.getAbsolutePath() + "," + identResult.getPuid());
+                    }   
                 } else {
                     System.out.println(file.getAbsolutePath() + ",Unknown");
                 }
@@ -176,11 +182,6 @@ public class NoProfileRunCommand implements DroidCommand {
                     }
                 }
             }
-        }
-        try {
-            FileUtils.deleteDirectory(tempDir);
-        } catch (IOException e) {
-            System.out.println("Could not delete temporary directory: " + tempDir);
         }
     }
 
