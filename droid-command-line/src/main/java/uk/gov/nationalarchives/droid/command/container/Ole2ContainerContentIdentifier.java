@@ -20,10 +20,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.*;
 public class Ole2ContainerContentIdentifier extends AbstractContainerContentIdentifier {
     
     private IdentificationRequest request;
-    private Map<String, IdentificationResult> puidMap = new HashMap<String, IdentificationResult>();
+    private Map<String, String> puidMap = new HashMap<String, String>();
     
     @Override
-    public IdentificationResultCollection process (File file, String filePuid, IdentificationResultCollection containerResults) throws IOException {
+    public IdentificationResultCollection process (File file, IdentificationResultCollection containerResults) throws IOException {
         
         request = new ContainerFileIdentificationRequest(null);
         
@@ -51,7 +51,7 @@ public class Ole2ContainerContentIdentifier extends AbstractContainerContentIden
                         String puid = mapping.getPuid();
                         result.setPuid(mapping.getPuid());
                         if (!puidMap.containsKey(puid)) {
-                            puidMap.put(puid, result);
+                            puidMap.put(puid, "");
                             containerResults.addResult(result);
                         }
                     }
