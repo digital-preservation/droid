@@ -74,15 +74,12 @@
     <bean id="profileRunCommand" class="uk.gov.nationalarchives.droid.command.action.ProfileRunCommand" scope="prototype">
         <property name="signatureManager" ref="signatureManager"/>
         <property name="profileManager" ref="profileManager"/>
-	    <property name="locationResolver">
-    	    <bean class="uk.gov.nationalarchives.droid.command.action.LocationResolver"/>
-	    </property>
-    </bean>
-    
-    <bean id="noProfileRunCommand" class="uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand" scope="prototype">
 	<property name="locationResolver">
     	    <bean class="uk.gov.nationalarchives.droid.command.action.LocationResolver"/>
 	</property>
+    </bean>
+    
+    <bean id="noProfileRunCommand" class="uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand" scope="prototype">
         <property name="containerContentIdentifierFactory" ref="containerContentIdentifierFactory"/>
     </bean>
     
@@ -131,16 +128,16 @@
         <property name="identifierEngine" ref="zipIdentifierEngine"/>
     </bean>
 
-    <bean id="containerIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
-        <property name="tempDirLocation" value="${tempDirLocation}"/>
+    <bean id="containerFileIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
+        <!-- property name="tempDirLocation" value="${tempDirLocation}"/ -->
     </bean>
 
     <bean id="zipIdentifierEngine" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine">
-        <property name="requestFactory" ref="containerIdentificationRequestFactory"/>
+        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
     </bean>
     
     <bean id="ole2IdentifierEngine" class="uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine">
-        <property name="requestFactory" ref="containerIdentificationRequestFactory"/>
+        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
     </bean>
 
 </beans>
