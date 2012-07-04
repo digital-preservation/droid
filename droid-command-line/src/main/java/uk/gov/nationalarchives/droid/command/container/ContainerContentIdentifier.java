@@ -13,5 +13,5 @@ public interface ContainerContentIdentifier {
     
     public void init(ContainerSignatureDefinitions defs, String containerType);
     
-    public IdentificationResultCollection process(File file, String filePuid, IdentificationResultCollection containerResults) throws IOException ;
+    public IdentificationResultCollection process(File file, IdentificationResultCollection containerResults) throws IOException ;
 }
