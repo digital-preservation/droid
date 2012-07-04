@@ -24,12 +24,10 @@ import org.junit.Test;
 public class NoProfileRunCommandTest {
 
     private NoProfileRunCommand command;
-    private LocationResolver locationResolver;
     
     @Before
     public void setup() {
         command = new NoProfileRunCommand();
-        command.setLocationResolver(locationResolver);
     }
     
     @Test
