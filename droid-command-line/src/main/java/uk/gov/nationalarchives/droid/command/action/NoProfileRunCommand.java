@@ -19,13 +19,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
+
 import uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifierFactory;
 import uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifier;
-import uk.gov.nationalarchives.droid.container.ContainerSignature;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
-import uk.gov.nationalarchives.droid.container.FileFormatMapping;
 import uk.gov.nationalarchives.droid.container.TriggerPuid;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -36,7 +34,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentifi
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
 
 /**
  * @author rbrennan
@@ -47,20 +44,14 @@ public class NoProfileRunCommand implements DroidCommand {
     private String signatureFile;
     private String containerSignatureFile;
     private String[] resources;
-    private boolean recursive;
-    private boolean openContainers;
     private String[] extensions;
-    private LocationResolver locationResolver;
+    private boolean quietFlag = false;  // default quiet flag value
+    private boolean recursive;
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureSaxParser contSigParser;
-    private ContainerSignatureMatchCollection matches;
-    private boolean quietFlag = false;  // default quiet flag value
-    private List<ContainerSignature> containerSignatures;
-    private List<FileFormatMapping> fileFormatMapping;
     private List<TriggerPuid> triggerPuid;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private ContainerContentIdentifierFactory containerContentIdentifierFactory;
-    private ArchiveFormatResolver containerFormatResolver;
 
     /**
     * {@inheritDoc}
@@ -88,19 +79,16 @@ public class NoProfileRunCommand implements DroidCommand {
         }
         binarySignatureIdentifier.setMaxBytesToScan(-1);
       
-        openContainers = false;
         if (this.containerSignatureFile != null) {
             File contSigFile = new File(containerSignatureFile);
-            if (!contSigFile.exists())
+            if (!contSigFile.exists()) {
                 throw new CommandExecutionException("Container signature file not found");
-
+            }
             try {
                 InputStream in = new FileInputStream(contSigFile);
                 contSigParser = new ContainerSignatureSaxParser();
                 containerSignatureDefinitions = contSigParser.parse(in);
-                fileFormatMapping = containerSignatureDefinitions.getFormats();
                 triggerPuid = containerSignatureDefinitions.getTiggerPuids();
-                openContainers = true;
             } catch (SignatureParseException e) {
                 throw new CommandExecutionException ("Can't parse container signature file");
             } catch (Exception e) {
@@ -143,13 +131,13 @@ public class NoProfileRunCommand implements DroidCommand {
                     for (IdentificationResult identResult : results.getResults()) {
                         String puid = identResult.getPuid();
                         if (puid != null) {
-                            if (openContainers) {
+                            if (this.containerSignatureFile != null) {
                                 final TriggerPuid containerPuid = getTriggerPuidByPuid(puid);
                                 if (containerPuid != null) {
                                     final ContainerContentIdentifier containerIdentifier =
                                             getContainerContentIdentifierFactory()
                                             .getContainerContentIdentifier(containerPuid.getContainerType(), containerSignatureDefinitions);
-                                    containerResults = containerIdentifier.process(file, puid, containerResults);
+                                    containerResults = containerIdentifier.process(file, containerResults);
                                 }
                             }
                         }
@@ -220,13 +208,6 @@ public class NoProfileRunCommand implements DroidCommand {
     
     public void setQuiet(boolean quiet) {
         this.quietFlag = quiet;
-    }
-    
-    /**
-     * @param locationResolver the locationResolver to set
-     */
-    public void setLocationResolver(LocationResolver locationResolver) {
-        this.locationResolver = locationResolver;
     }
     
     private void outputRuntimeInformation() {
