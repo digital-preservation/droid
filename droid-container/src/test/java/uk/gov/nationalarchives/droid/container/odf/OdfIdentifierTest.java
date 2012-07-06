@@ -47,6 +47,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class OdfIdentifierTest {
 
     private ZipIdentifier odfIdentifier;
+    public static final String CONTAINER_SIGNATUE_FILE = "container-signature-20120706.xml";
+    
     
     @Before
     public void setup() {
@@ -110,7 +112,7 @@ public class OdfIdentifierTest {
     @Test
     public void testInitialiseRegistersZipContainerIdentifierWithContainerIdentifierResolver() throws Exception {
         
-        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20110114.xml");
+        URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATUE_FILE);
         String path = containerSignatureUrl.getPath();
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
@@ -135,7 +137,7 @@ public class OdfIdentifierTest {
     @Test
     public void testInitialiseRegistersZipContainerFormatsAgainstOdfPuid() throws Exception {
         
-        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20110114.xml");
+        URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATUE_FILE);
         String path = containerSignatureUrl.getPath();
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
