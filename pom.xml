@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.gov.nationalarchives</groupId>
   <artifactId>droid</artifactId>
-  <version>6.0</version>
+  <version>6.1RC</version>
   <packaging>pom</packaging>
   <name>droid</name>
   <url>http://maven.apache.org</url>
