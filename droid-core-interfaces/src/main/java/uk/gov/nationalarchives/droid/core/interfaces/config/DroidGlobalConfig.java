@@ -45,7 +45,7 @@ public class DroidGlobalConfig {
     private static final String DEFAULT_DROID_PROPERTIES = "default_droid.properties";
 
     //FIXME: update to latest signature file before release.
-    private static final String DROID_SIGNATURE_FILE_V45 = "DROID_SignatureFile_V45.xml";
+    private static final String DROID_SIGNATURE_FILE = "DROID_SignatureFile_V61.xml";
     private static final String CONTAINER_SIGNATURE_FILE = "container-signature-20110114.xml";
     private static final String TEXT_SIGNATURE_FILE = "text-signature-20101101.xml";
     
@@ -85,7 +85,7 @@ public class DroidGlobalConfig {
         // always recreate the signature files if they don't exist:
         signatureFilesDir = new File(droidWorkDir, "signature_files");
         signatureFilesDir.mkdir();
-        createResourceFile(signatureFilesDir, DROID_SIGNATURE_FILE_V45, DROID_SIGNATURE_FILE_V45);
+        createResourceFile(signatureFilesDir, DROID_SIGNATURE_FILE, DROID_SIGNATURE_FILE);
 
         containerSignatureDir = new File(droidWorkDir, "container_sigs");
         containerSignatureDir.mkdir();
@@ -94,7 +94,7 @@ public class DroidGlobalConfig {
         /*
         signatureFilesDir = new File(droidWorkDir, "signature_files");
         if (signatureFilesDir.mkdir()) {
-            createResourceFile(signatureFilesDir, DROID_SIGNATURE_FILE_V45, DROID_SIGNATURE_FILE_V45);
+            createResourceFile(signatureFilesDir, DROID_SIGNATURE_FILE, DROID_SIGNATURE_FILE);
         }
 
         containerSignatureDir = new File(droidWorkDir, "container_sigs");
