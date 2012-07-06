@@ -60,7 +60,7 @@ public enum CommandLineParam {
     
     
     /** List of profiles to be worked on. */
-    PROFILES("p", "profile", true, -1, I18N.PROFILES_HELP, "filename ...") {
+    PROFILES("p", "profile(s)", true, -1, I18N.PROFILES_HELP, "filename(s)") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -102,7 +102,7 @@ public enum CommandLineParam {
     },
     
     /** Set the report output type. */
-    REPORT_OUTPUT_TYPE("t", "report-output-type", true, 1, I18N.REPORT_TYPE_HELP, "report output type") {
+    REPORT_OUTPUT_TYPE("t", "report-type", true, 1, I18N.REPORT_TYPE_HELP, "report type") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -128,7 +128,7 @@ public enum CommandLineParam {
     },
     
     /** Runs a profile with the specified resources. */
-    RUN_PROFILE("a", "profile-resources", true, -1, I18N.RUN_PROFILE_HELP, "resources...") {
+    RUN_PROFILE("a", "profile-resources", true, -1, I18N.RUN_PROFILE_HELP, "resources") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
             throws CommandLineSyntaxException {
@@ -137,7 +137,7 @@ public enum CommandLineParam {
     },
     
     /** Runs without a profile and with the specified resources. */
-    RUN_NO_PROFILE("Nr", "no-profile-resources", true, -1, I18N.RUN_NO_PROFILE_HELP, "resources...") {
+    RUN_NO_PROFILE("Nr", "no-profile-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "folder") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
             throws CommandLineSyntaxException {
@@ -146,7 +146,7 @@ public enum CommandLineParam {
     },
     
     /** Signature file. */
-    SIGNATURE_FILE("Ns", "signature-file", true, 1, I18N.SIGNATURE_FILE_HELP, "signature file") {
+    SIGNATURE_FILE("Ns", "signature-file", true, 1, I18N.SIGNATURE_FILE_HELP, "filename") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -154,8 +154,8 @@ public enum CommandLineParam {
     },
     
     /** Container signature file. */
-    CONTAINER_SIGNATURE_FILE("Nc", "container-signature-file", true, 1,
-            I18N.CONTAINER_SIGNATURE_FILE_HELP, "container signature file") {
+    CONTAINER_SIGNATURE_FILE("Nc", "container-file", true, 1,
+            I18N.CONTAINER_SIGNATURE_FILE_HELP, "filename") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -220,7 +220,7 @@ public enum CommandLineParam {
     },
 
     /** Display the default signature update. */
-    CONFIGURE_DEFAULT_SIGNATURE_VERSION("s", "configure-signature-file", true, 1,
+    CONFIGURE_DEFAULT_SIGNATURE_VERSION("s", "set-signature-file", true, 1,
             I18N.CONFIGURE_DEFAULT_SIGNATURE_VERSION_HELP, I18N.getResource(I18N.VERSION)) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) 
@@ -354,4 +354,67 @@ public enum CommandLineParam {
 
     }
     
+    public static Options singleOptions() {
+        Options options = new Options();
+        
+        options.addOption(CHECK_SIGNATURE_UPDATE.newOption());
+        options.addOption(DOWNLOAD_SIGNATURE_UPDATE.newOption());
+        options.addOption(HELP.newOption());
+        options.addOption(LIST_REPORTS.newOption());
+        options.addOption(CONFIGURE_DEFAULT_SIGNATURE_VERSION.newOption());
+        options.addOption(VERSION.newOption());
+        options.addOption(DEFAULT_SIGNATURE_VERSION.newOption());
+        options.addOption(LIST_SIGNATURE_VERSIONS.newOption());
+        
+        return options;
+    }
+    
+    public static Options noProfileRunSubOptions() {
+        Options options = new Options();
+        
+        options.addOption(SIGNATURE_FILE.newOption());
+        options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
+        options.addOption(EXTENSION_LIST.newOption());
+        options.addOption(RECURSIVE.newOption());
+        options.addOption(QUIET.newOption());
+        
+        return options;
+    }
+    
+    public static Options profileRunSubOptions() {
+        Options options = new Options();
+        
+        options.addOption(PROFILES.newOption());
+        options.addOption(RECURSIVE.newOption());
+        options.addOption(QUIET.newOption());
+        
+        return options;
+    }
+    
+    public static Options exportSubOptions() {
+        Options options = new Options();
+        
+        options.addOption(PROFILES.newOption());
+        options.addOption(ANY_FILTER.newOption());
+        options.addOption(ALL_FILTER.newOption());
+        
+        return options;
+    }
+    
+    public static Options reportSubOptions() {
+        Options options = new Options();
+        
+        options.addOption(PROFILES.newOption());
+        options.addOption(REPORT_NAME.newOption());
+        options.addOption(REPORT_OUTPUT_TYPE.newOption());
+        
+        return options;
+    }
+    
+    public static Options getOptions(CommandLineParam commandLineParam) {
+        Options options = new Options();
+        
+        options.addOption(commandLineParam.newOption());
+        return options;
+    }
 }
