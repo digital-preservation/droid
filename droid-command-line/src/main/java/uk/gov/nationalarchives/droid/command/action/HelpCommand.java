@@ -27,7 +27,7 @@ public class HelpCommand implements DroidCommand {
     /** Options message. */
     public static final String USAGE = "droid [options]";
     /** Wrap width. */
-    public static final int WRAP_WIDTH = 80;
+    public static final int WRAP_WIDTH = 79;
 
     private PrintWriter writer;
     
