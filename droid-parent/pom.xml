@@ -10,6 +10,7 @@
     <name>droid</name>
     <description>A tool developed by the UK National Archives to perform automated batch identification of file formats.</description>
     <url>http://digital-preservation.github.com/droid/</url>
+    <inceptionYear>2012</inceptionYear>
   
     <organization>
         <name>The National Archives</name>
@@ -68,6 +69,7 @@
         <project.build.source>1.6</project.build.source>
         <project.build.target>1.6</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
         <spring.version>2.5.6.SEC01</spring.version>
     </properties>
   
@@ -136,6 +138,12 @@
                 <artifactId>maven-license-plugin</artifactId>
                 <configuration>
                     <header>header.txt</header>
+                    <properties>
+                        <year>${project.inceptionYear}</year>
+                        <organisation>${project.organization.name}</organisation>
+                        <email>${project.email}</email>
+                    </properties>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -309,19 +317,6 @@
     </dependencies>
     
     <!--
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.8.4</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
