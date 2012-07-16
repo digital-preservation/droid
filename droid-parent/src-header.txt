@@ -1,6 +1,6 @@
 /**
- * <p>Copyright The National Archives 2005-2010.  All rights reserved.
- * See Licence.txt for full licence details.
+ * <p>Copyright The National Archives 2005-2012.  All rights reserved.
+ * See the file LICENSE for full licence details.
  * <p/>
  *
  * <p>DROID DCS Profile Tool

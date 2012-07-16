@@ -579,8 +579,6 @@ public class SubSequence extends SimpleElement {
     //CHECKSTYLE:OFF - far too complex method.
     public final boolean findSequenceFromPosition(final long position, 
             final ByteReader targetFile, final long maxBytesToScan, final ByteSequence byteSequence) {
-//            final ByteReader targetFile, final long maxBytesToScan) {
-    //CHECKSTYLE:ON
         //System.out.println("findSequenceFromPosition started");
         boolean entireSequenceFound = false;
         try {
@@ -728,9 +726,9 @@ public class SubSequence extends SimpleElement {
                             matchFound = leftFragmentPositions.length > 0;
                             
                             // check BOF max seq offset
-                            if (matchFound &&
-                                byteSequence.isAnchoredToBOF() &&
-                                leftFragmentPositions[0] > this.maxSeqOffset) {
+                            if (matchFound
+                                    && byteSequence.isAnchoredToBOF()
+                                    && leftFragmentPositions[0] > this.maxSeqOffset) {
                                 matchFound = false;
                             }
                             
@@ -746,9 +744,9 @@ public class SubSequence extends SimpleElement {
                                 matchFound = rightFragmentPositions.length > 0;
                             
                                 // check EOF max seq offset
-                                if (matchFound &&
-                                    byteSequence.isAnchoredToEOF() &&
-                                    rightFragmentPositions[0] > this.maxSeqOffset) {
+                                if (matchFound
+                                        && byteSequence.isAnchoredToEOF()
+                                        && rightFragmentPositions[0] > this.maxSeqOffset) {
                                     matchFound = false;
                                 }
                             
@@ -772,6 +770,7 @@ public class SubSequence extends SimpleElement {
         } catch (IndexOutOfBoundsException e) {
             getLog().debug(e.getMessage());
         }
+        //CHECKSTYLE:ON
         return entireSequenceFound;
     }
 
