@@ -58,6 +58,9 @@
         <a href="#Reporting">Reporting</a>
       </li>
       <li>
+        <a href="#No-profile-mode">No-profile mode</a>
+      </li>
+      <li>
         <a href="#Signatures">Signatures</a>
       </li>
     </ul>
@@ -91,6 +94,35 @@
        DROID will limit its console output to the requested information and errors
       only.&nbsp;&nbsp;&nbsp;Errors will be sent to the standard error output of the console.
     </p>
+    <h3>
+       -R,--recurse
+    </h3>
+    <p>
+       Recurse into all subfolders of any folder specified using the –a option. This means that the
+      contents of all sub-folders of the original folder will be processed, and any sub-folders in
+      them, and so on.
+    </p>
+    <p>
+       If this option is not specified, only the files directly under a folder will be processed.
+      If –R is specified, files in all sub-folders (and their sub-folders, and so on) will be
+      processed as well. &nbsp;Note that in the Graphical User Interface, processing sub-folders is
+      the default setting.
+    </p>
+    <p>
+       For example:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" size="3" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;droid –R –a “C:\Files\Another Folder”–p
+          “C:\Results\result3.droid</font><font style=" background-color: #000000;" size="3" color=
+          "#ffffff" face="Monospaced, Courier New, Courier, mono">”</font><font style=
+          " background-color: #000000;" color="#ffffff" face=
+          "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
+        </td>
+      </tr>
+    </table>    
     <p>
        &nbsp;
     </p>
@@ -120,38 +152,6 @@
     <p>
        Note: You cannot use reporting, filtering and exporting when using the –a option.
     </p>
-    <p>
-       &nbsp;
-    </p>
-    <h3>
-       -R,--recurse
-    </h3>
-    <p>
-       Recurse into all subfolders of any folder specified using the –a option. This means that the
-      contents of all sub-folders of the original folder will be processed, and any sub-folders in
-      them, and so on.
-    </p>
-    <p>
-       If this option is not specified, only the files directly under a folder will be processed.
-      If –R is specified, files in all sub-folders (and their sub-folders, and so on) will be
-      processed as well. &nbsp;Note that in the Graphical User Interface, processing sub-folders is
-      the default, whereas in the command-line.
-    </p>
-    <p>
-       For example:
-    </p>
-    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
-      <tr>
-        <td width="100%">
-          <font style=" background-color: #000000;" size="3" color="#ffffff" face=
-          "Monospaced, Courier New, Courier, mono">&nbsp;droid –R –a “C:\Files\Another Folder”–p
-          “C:\Results\result3.droid</font><font style=" background-color: #000000;" size="3" color=
-          "#ffffff" face="Monospaced, Courier New, Courier, mono">”</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
-          "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
-        </td>
-      </tr>
-    </table>
     <p>
        &nbsp;
     </p>
@@ -209,20 +209,20 @@
     <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result3.droid” –f
           “PUID any_of fmt/111 fmt/112” –e “C:\Exports\filteredResults.csv”</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
         </td>
       </tr>
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid”
           “C:\Results\result2.droid” –f “file_size &gt; 0” –e
           “C:\Exports\filteredCombinedResults.csv”</font><font style=" background-color: #000000;"
-          color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
+          color="#ffffff" size="3" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
         </td>
       </tr>
     </table>
@@ -257,21 +257,21 @@
     <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid”
           “C:\Results\result2.droid” –e “C:\Exports\combinedResults.csv”</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;</font> 
         </td>
       </tr>
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result3.droid” –f
           “PUID any_of fmt/111 fmt/112” –e “C:\Exports\filteredResults.csv</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">”</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;</font> 
         </td>
       </tr>
@@ -291,21 +291,21 @@
     <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid”
           “C:\Results\result2.droid” -E “C:\Exports\combinedResults.csv”</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;</font> 
         </td>
       </tr>
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result3.droid” –f
           “PUID any_of fmt/111 fmt/112” –E “C:\Exports\filteredResults.csv</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">”</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;</font> 
         </td>
       </tr>
@@ -331,10 +331,10 @@
     <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;droid –p “C:\Results\result1.droid”
           –n “File count and sizes” –r “C:\Reports\result1Report.pdf”</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font> 
         </td>
       </tr>
@@ -357,9 +357,9 @@
     <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;</font><font style=
-          " background-color: #000000;" color="#ffffff" face=
+          " background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">&nbsp;droid –p “C:\Results\result1.droid” –n
           “Comprehensive breakdown” -t "Planets&nbsp;XML" –r “C:\Reports\result1Report.xml”</font> 
         </td>
@@ -382,7 +382,7 @@
     <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
       <tr>
         <td width="100%">
-          &nbsp;&nbsp;<font style=" background-color: #000000;" color="#ffffff" face=
+          &nbsp;&nbsp;<font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">droid –p “C:\Results\result1.droid” –n “Total
           unreadable files” -t "DROID Report&nbsp;XML" –r “C:\Reports\result1Report.xml"</font> 
         </td>
@@ -401,11 +401,89 @@
     <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
       <tr>
         <td width="100%">
-          <font style=" background-color: #000000;" color="#ffffff" face=
+          <font style=" background-color: #000000;" color="#ffffff" size="3" face=
           "Monospaced, Courier New, Courier, mono">droid –l</font> 
         </td>
       </tr>
     </table>
+    <p>
+       &nbsp;
+    </p>
+    <h2>
+       <a id="No-profile-mode" name="No-profile-mode">No-profile mode</a>
+    </h2>
+    <p>
+       'No-profile' mode provides a mechanism to use DROID without the overhead
+       of it starting up a database to store intermediate results for reporting.
+    </p>
+    <h3>
+       -Nr,&nbsp;--no-profile-resource &nbsp; &lt;folder&gt;
+    </h3>
+    <p>
+      Identify files in a folder without the use of a profile.  The folder path should
+      be bounded by double quotes.  The scan results will be sent to standard output.
+      For example:
+      <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+         <td width="100%">
+            <font style=" background-color: #000000;" color="#ffffff" size="3" face=
+            "Monospaced, Courier New, Courier, mono">droid -Nr "C:\Files\A Folder"</font> 
+         </td>
+      </tr>
+      </table>
+    </p>
+    <h3>
+       -Ns,&nbsp;--signature-file &nbsp; &lt;filename&gt;
+    </h3>
+    <p>
+       Specify the signature file to be used for identification. This must be used
+       each time no-profile mode is called. 
+    </p>
+    <p>
+      <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+         <td width="100%">
+            <font style=" background-color: #000000;" color="#ffffff" size="3" face=
+            "Monospaced, Courier New, Courier, mono">droid -Nr "C:\Files\A Folder" -Ns DROID_SignatureFile_V42.xml</font> 
+         </td>
+      </tr>
+      </table>
+    </p>
+    <h3>
+       -Nc,&nbsp;--container-file &nbsp; &lt;filename&gt;
+    </h3>
+    <p>
+      [optional] The container signature file to be used for identification.  If
+      omitted, container-format files may be identified by container type only. 
+    </p>
+    <p>
+      For example:
+      <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+         <td width="100%">
+            <font style=" background-color: #000000;" color="#ffffff" size="3" face=
+            "Monospaced, Courier New, Courier, mono">droid -Nr "C:\Files\A Folder" -Ns DROID_SignatureFile_V42.xml -Nc container-signature-20120706.xml</font> 
+         </td>
+      </tr>
+      </table>
+    </p>
+    <h3>
+       -Nx,&nbsp;--extension-list &nbsp; &lt;extensions&gt;
+    </h3>
+    <p>
+       [optional] Only identify files with the given extensions
+    </p>
+    <p>
+       For example:
+      <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+         <td width="100%">
+            <font style=" background-color: #000000;" color="#ffffff" size="3" face=
+            "Monospaced, Courier New, Courier, mono">droid -Nr "C:\Files\A Folder" -Ns DROID_SignatureFile_V42.xml -Nc container-signature-20120706.xml -Nx csv jp2</font> 
+         </td>
+      </tr>
+      </table>
+    </p>
     <p>
        &nbsp;
     </p>
