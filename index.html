@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Droid by digital-preservation</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Droid</h1>
+        <p>DROID (Digital Record and Object Identification)</p>
+
+        <p class="view"><a href="https://github.com/digital-preservation/droid">View the Project on GitHub <small>digital-preservation/droid</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/digital-preservation/droid/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/digital-preservation/droid/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/digital-preservation/droid">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>DROID is a software tool developed by <a href="http://www.nationalarchives.gov.uk/" title="The National Archives Website">The National Archives</a> to perform automated batch identification of file formats. Developed by its Digital Preservation Department as part of its broader digital preservation activities, DROID is designed to meet the fundamental requirement of any digital repository to be able to identify the precise format of all stored digital objects, and to link that identification to a central registry of technical information about that format and its dependencies.</p>
+
+<p>DROID uses internal signatures to identify and report the specific file format versions of digital files. These signatures are stored in an XML signature file, generated from information recorded in the <a href="http://www.nationalarchives.gov.uk/PRONOM/Default.aspx" title="PRONOM Technical Registry">PRONOM technical registry</a>. New and updated signatures are regularly added to PRONOM, and DROID can be configured to automatically download updated signature files.</p>
+
+<p>DROID is a platform-independent Java application. It can be invoked from two interfaces:</p>
+
+<ul>
+<li>Java Swing GUI</li>
+<li>Command line interface</li>
+</ul><p>DROID allows files and folders to be selected from a file system for identification. This file list can be saved at any point. After the identification process had been run, the results can be output in various report formats, including CSV.</p>
+
+<h3>User requirements</h3>
+
+<p>DROID requires Java 6 Standard Edition (SE). DROID was built and tested on Java 1.6 update 30. DROID <strong>will not</strong> function in a Java 7 environment. </p>
+
+<p>Signature Files and their release notes can be found at the following links: </p>
+
+<h3>Signature files</h3>
+
+<p><a href="http://www.nationalarchives.gov.uk/aboutapps/pronom/droid-signature-files.htm">http://www.nationalarchives.gov.uk/aboutapps/pronom/droid-signature-files.htm</a></p>
+
+<h3>Signature file release notes</h3>
+
+<p><a href="http://www.nationalarchives.gov.uk/aboutapps/pronom/release-notes.xml">http://www.nationalarchives.gov.uk/aboutapps/pronom/release-notes.xml</a></p>
+
+<h3>Code structure</h3>
+
+<p>The DROID code base is split up into separate projects, to facilitate only using parts of the DROID code that are required, and to enhance and enforce modularity in its construction:</p>
+
+<pre><code>Droid-binary                          Additional files required in a release build
+Droid-build-tools-TRUNK               A maven project to package the release
+Droid-command-line                    Command-line control over DROID
+Droid-container                       Container signature processing
+Droid-core                            Binary signature processing
+Droid-core-interfaces                 Resource processing &amp; format recognition
+Droid-export                          Export droid profiles to CSV
+Droid-export-interfaces               Interfaces for export of DROID profiles
+Droid-help                            JavaHelp for DROID
+Droid-parent                          An empty parent project for the other projects
+Droid-report                          Reporting for DROID profiles
+Droid-report-interfaces               Interfaces for DROID reporting
+Droid-results                         Profile handling, database and filtering
+Droid-swing-ui                        Swing GUI control over DROID
+</code></pre>
+
+<h3>Third-party dependencies</h3>
+
+<pre><code>beansbinding-1.2.1                    Binds data to GUI controls
+org.openide.util-1                    Netbeans platform support
+swing-outline-1.4.1                   Netbeans Swing GUI tree table control, part of the Netbeans platform
+</code></pre>
+
+<p>The required jars can be found in the binary distribution of DROID. </p>
+
+<h3>Building DROID</h3>
+
+<p>DROID was built using Apache Maven 3. First make sure that this is installed
+and if behind a proxy, edit the Maven settings.xml file to reflec the proxy
+server details. </p>
+
+<p>There are an additional three jar files required, as listed in the dependencies
+section above. </p>
+
+<p>These can be installed to your Maven repository from their respective locations 
+using the following commands:</p>
+
+<pre><code>mvn install:install-file -Dfile=beansbinding-1.2.1.jar -DgroupId=beansbinding -DartifactId=beansbinding -Dversion=1.2.1 -Dpackaging=jar 
+mvn install:install-file -Dfile=org-openide-util-1.jar -DgroupId=org.openide -DartifactId=org-openide-util -Dversion=1 -Dpackaging=jar 
+mvn install:install-file -Dfile=swing-outline-1.4.1.jar -DgroupId=org.openide -DartifactId=swing-outline -Dversion=1.4.1 -Dpackaging=jar 
+</code></pre>
+
+<p>Once this is complete you can use the master build file under the main DROID
+project folder to build the project. This is the pom.xml that sits under
+the main DROID folder containing all the sub projects. </p>
+
+<p>Simply run, "mvn install" from the command line when in this directory and DROID
+will build. Follow the Maven output to see where Maven has placed the binaries.</p>
+
+<h3>Release Notes</h3>
+
+<h4>DROID 6.1</h4>
+
+<p>The largest change to DROID in this release is the addition of a 'No-profile' mode which can also be read into as a 'No Database' mode for quicker identification of resources provided to DROID for identification. The focus of the output of this mode is to provide a no-frills CSV output to form part of workflow stages in preservation systems or elsewhere. </p>
+
+<pre><code>CLI:           - No-profile mode added to command line
+               - No-profile mode standard file signature matching
+               - No-profile mode container file signature matching
+               - No-profile mode extension matching to pre-filter contents of folders for identification
+               - CLI options reordered for usability
+
+Unit Tests:    - Fixed to enable build on Windows/Linux
+
+Byteseek:      - Library forked to remove external dependency in DROID
+               - 'Any' bit mask bug fixed in byteseek code
+
+Bug fixes:     - BOF/EOF bug where DROID wasn't respecting anchors as part of it's matching 
+                 attempts has been fixed
+
+Maven:         - Builds using Maven 3.0
+
+Derby:         - Updated from version 10.7.1.1 to 10.8.2.2
+
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/digital-preservation">digital-preservation</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
