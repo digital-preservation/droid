@@ -83,17 +83,19 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
      */
     @Override
     public final IdentificationResultCollection submit(IdentificationRequest request) throws IOException {
-        ContainerSignatureMatchCollection matches =
-            new ContainerSignatureMatchCollection(getContainerSignatures(), init.getUniqueFileEntries(), maxBytesToScan);
+        final ContainerSignatureMatchCollection matches = new ContainerSignatureMatchCollection(
+            getContainerSignatures(),
+            init.getUniqueFileEntries(),
+            maxBytesToScan);
 
         process(request, matches);
         
-        IdentificationResultCollection results = new IdentificationResultCollection(request);
-        for (ContainerSignatureMatch match : matches.getContainerSignatureMatches()) {
+        final IdentificationResultCollection results = new IdentificationResultCollection(request);
+        for (final ContainerSignatureMatch match : matches.getContainerSignatureMatches()) {
             if (match.isMatch()) {
                 List<FileFormatMapping> mappings = formats.get(match.getSignature().getId());
-                for (FileFormatMapping mapping : mappings) {
-                    IdentificationResultImpl result = new IdentificationResultImpl();
+                for (final FileFormatMapping mapping : mappings) {
+                    final IdentificationResultImpl result = new IdentificationResultImpl();
                     result.setMethod(IdentificationMethod.CONTAINER);
                     result.setRequestMetaData(request.getRequestMetaData());
                     result.setPuid(mapping.getPuid());
@@ -114,10 +116,20 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     protected abstract void process(IdentificationRequest request, 
             ContainerSignatureMatchCollection matches) throws IOException;
     
+    /**
+     * Get the Identifier Engine.
+     * 
+     * @return The Identifier Engine
+     */
     public IdentifierEngine getIdentifierEngine() {
         return identifierEngine;
     }
     
+    /**
+     * Set the Identifier Engine.
+     * 
+     * @param identifierEngine The Identifier Engine
+     */
     public void setIdentifierEngine(final IdentifierEngine identifierEngine) {
         this.identifierEngine = identifierEngine;
     }

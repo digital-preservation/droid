@@ -29,14 +29,11 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.gov.nationalarchives.droid.container;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;

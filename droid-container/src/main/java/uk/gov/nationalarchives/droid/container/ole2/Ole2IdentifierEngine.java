@@ -34,10 +34,12 @@ package uk.gov.nationalarchives.droid.container.ole2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
 import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;

@@ -61,9 +61,14 @@ public class ContainerFileIdentificationRequestFactory implements Identification
         this.tempDirLocation = tempDir;
     }
 
+    /**
+     * Get the location of the temporary folder.
+     * 
+     * @return The location of the temporary folder
+     */
     public File getTempDirLocation() {
-        synchronized(this) {
-            if(tempDirLocation == null) {
+        synchronized (this) {
+            if (tempDirLocation == null) {
                 tempDirLocation = new File(System.getProperty("java.io.tmpdir"));
             }
         }

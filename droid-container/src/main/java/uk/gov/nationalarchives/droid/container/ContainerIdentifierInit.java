@@ -31,7 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.container;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
 
 /**
@@ -44,23 +49,25 @@ public class ContainerIdentifierInit {
     private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
     
     /**
-     * @param defs
-     * @param containerType
+     * @param defs The definitions from the container signature
+     * @param containerType The type of the container
+     * @param formats The formats to use for identification
      * @param droidCore if not null, then removeSignatureForPuid will be called for each container signature match
      */
-    public void init(final ContainerSignatureDefinitions defs, final String containerType, final Map<Integer, List<FileFormatMapping>> formats, final DroidCore droidCore) {
+    public void init(final ContainerSignatureDefinitions defs, final String containerType,
+            final Map<Integer, List<FileFormatMapping>> formats, final DroidCore droidCore) {
         
         final Set<String> uniqueFileSet = new HashSet<String>();
         
-        for(final ContainerSignature sig : defs.getContainerSignatures()) {
-            if(sig.getContainerType().equals(containerType)) {
+        for (final ContainerSignature sig : defs.getContainerSignatures()) {
+            if (sig.getContainerType().equals(containerType)) {
                 addContainerSignature(sig);
                 uniqueFileSet.addAll(sig.getFiles().keySet());
             }
         }
         uniqueFileEntries = new ArrayList<String>(uniqueFileSet); 
         
-        for(final FileFormatMapping fmt : defs.getFormats()) {
+        for (final FileFormatMapping fmt : defs.getFormats()) {
             List<FileFormatMapping> mappings = formats.get(fmt.getSignatureId());
             if (mappings == null) {
                 mappings = new ArrayList<FileFormatMapping>();
@@ -68,20 +75,35 @@ public class ContainerIdentifierInit {
             }
             mappings.add(fmt);
 
-            if(droidCore != null) {
+            if (droidCore != null) {
                 droidCore.removeSignatureForPuid(fmt.getPuid());
             }
         }
     }
     
+    /**
+     * Add a container signature to use for identification.
+     * 
+     * @param containerSignature The container signature
+     */
     public void addContainerSignature(final ContainerSignature containerSignature) {
         containerSignatures.add(containerSignature);
     }
 
+    /**
+     * Get all container signatures used for identification.
+     * 
+     * @return all container signatures
+     */
     public List<ContainerSignature> getContainerSignatures() {
         return containerSignatures;
     }
     
+    /**
+     * Get the unique file entries.
+     * 
+     * @return the unique file entries
+     */
     public List<String> getUniqueFileEntries() {
         return uniqueFileEntries;
     }   

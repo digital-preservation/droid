@@ -31,11 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.container.zip;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.List;
+
 import de.schlichtherle.util.zip.BasicZipFile;
 import de.schlichtherle.util.zip.ZipEntry;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
+
 import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
