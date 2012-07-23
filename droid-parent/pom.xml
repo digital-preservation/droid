@@ -175,36 +175,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>basicstyles</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>checkstyle</goal>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <configLocation>/checkstyle-main.xml</configLocation>
-                    <failOnViolation>true</failOnViolation>
-                    <enableFilesSummary>true</enableFilesSummary>
-                    <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
-                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>uk.gov.nationalarchives</groupId>
-                        <artifactId>droid-build-tools</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin> -->
-            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
