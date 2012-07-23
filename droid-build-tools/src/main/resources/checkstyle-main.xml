@@ -8,16 +8,16 @@
     modification, are permitted provided that the following
     conditions are met:
 
-    	* Redistributions of source code must retain the above copyright
-    	  notice, this list of conditions and the following disclaimer.
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
 
-    	* Redistributions in binary form must reproduce the above copyright
-    	  notice, this list of conditions and the following disclaimer in the
-    	  documentation and/or other materials provided with the distribution.
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
 
-    	* Neither the name of the The National Archives nor the
-    	  names of its contributors may be used to endorse or promote products
-    	  derived from this software without specific prior written permission.
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
     AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -216,9 +216,12 @@
     <property name="commentFormat" value="GEN-"/>
     <property name="influenceFormat" value="-3"/>
   </module>
-  <module name="Header">
+  
+  <!-- now managed by the maven licence plugin -->
+  <!-- module name="Header">
     <property name="header" value="/**\n * &lt;p&gt;Copyright (c) The National Archives 2005-2010.  All rights reserved.\n * See Licence.txt for full licence details.\n * &lt;p/&gt;\n *\n * &lt;p&gt;DROID DCS Profile Tool\n * &lt;p/&gt;\n */"/>
-  </module>
+  </module -->
+  
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.suppressions.file}"/>
   </module>
