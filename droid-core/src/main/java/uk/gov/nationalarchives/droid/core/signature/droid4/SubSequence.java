@@ -1,62 +1,33 @@
-/*
- * � The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
+/**
+ * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * All rights reserved.
  *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
+ * conditions are met:
  *
- * Tessella/NPD/4305
- * PRONOM 4
+ * 	* Redistributions of source code must retain the above copyright
+ * 	  notice, this list of conditions and the following disclaimer.
  *
- * $Id: SubSequence.java,v 1.8 2006/03/13 15:15:29 linb Exp $
+ * 	* Redistributions in binary form must reproduce the above copyright
+ * 	  notice, this list of conditions and the following disclaimer in the
+ * 	  documentation and/or other materials provided with the distribution.
  *
- * $Log: SubSequence.java,v $
- * Revision 1.8  2006/03/13 15:15:29  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
+ * 	* Neither the name of the The National Archives nor the
+ * 	  names of its contributors may be used to endorse or promote products
+ * 	  derived from this software without specific prior written permission.
  *
- * Revision 1.7  2006/02/13 10:29:40  gaur
- * Fixed bug in searching a short file for a byte sequence at a large offset from BOF
- *
- * Revision 1.6  2006/02/13 09:26:16  gaur
- * Fixed bug in searching files from EOF, after first STS round
- *
- * Revision 1.5  2006/02/09 15:04:37  gaur
- * Corrected formatting
- *
- * Revision 1.4  2006/02/07 17:16:23  linb
- * - Change fileReader to ByteReader in formal parameters of methods
- * - use new static constructors
- * - Add detection of if a filePath is a URL or not
- *
- * Revision 1.3  2006/02/07 11:30:04  gaur
- * Added support for endianness of signature
- *
- *
- * $History: SubSequence.java $
- *
- * *****************  Version 6  *****************
- * User: Walm         Date: 29/09/05   Time: 9:16
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * Bug fix in response to JIRA issue PRON-29.
- * changed startPosInFile to an array + some changes to the way start
- * position options are dealt with.
- *
- * *****************  Version 5  *****************
- * User: Walm         Date: 17/05/05   Time: 12:47
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * added more error trapping
- *
- * *****************  Version 4  *****************
- * User: Walm         Date: 5/04/05    Time: 18:08
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * review headers
- *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package uk.gov.nationalarchives.droid.core.signature.droid4;
 

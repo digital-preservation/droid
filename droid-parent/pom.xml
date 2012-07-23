@@ -136,15 +136,34 @@
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
+                <inherited>true</inherited>
                 <configuration>
-                    <header>header.txt</header>
+                    <header>${basedir}/../droid-parent/header.txt</header>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>true</aggregate> <!-- if this module references other modules, then check those too -->
+                    <strictCheck>true</strictCheck>
                     <properties>
                         <year>${project.inceptionYear}</year>
                         <organisation>${project.organization.name}</organisation>
                         <email>${project.email}</email>
                     </properties>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <excludes>
+                        <exclude>header.txt</exclude>
+                        <exclude>LICENSE</exclude>
+                        <exclude>src-header.txt</exclude>
+                        <exclude>**/test_sig_files/**</exclude> <!-- TODO move test sig files to the src/test/resources folder -->
+                    </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>check-headers</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -1,61 +1,33 @@
-/*
- * � The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
+/**
+ * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * All rights reserved.
  *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
+ * conditions are met:
  *
- * Tessella/NPD/4305
- * PRONOM 4
+ * 	* Redistributions of source code must retain the above copyright
+ * 	  notice, this list of conditions and the following disclaimer.
  *
- * $Id: FFSignatureFile.java,v 1.6 2006/03/13 15:15:29 linb Exp $
+ * 	* Redistributions in binary form must reproduce the above copyright
+ * 	  notice, this list of conditions and the following disclaimer in the
+ * 	  documentation and/or other materials provided with the distribution.
  *
- * $Log: FFSignatureFile.java,v $
- * Revision 1.6  2006/03/13 15:15:29  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
+ * 	* Neither the name of the The National Archives nor the
+ * 	  names of its contributors may be used to endorse or promote products
+ * 	  derived from this software without specific prior written permission.
  *
- * Revision 1.5  2006/02/07 17:16:22  linb
- * - Change fileReader to ByteReader in formal parameters of methods
- * - use new static constructors
- * - Add detection of if a filePath is a URL or not
- *
- * Revision 1.4  2006/02/07 12:34:57  gaur
- * Removed restriction on priority relationships so that they can be applied between any combination of generic and specific signatures (second recommit because of missing logging)
- *
- *
- * $History: FFSignatureFile.java $
- * 
- * *****************  Version 7  *****************
- * User: Walm         Date: 19/04/05   Time: 18:24
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * Provide initial values for version and dateCreated
- * 
- * *****************  Version 6  *****************
- * User: Walm         Date: 18/03/05   Time: 12:39
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * add some more exception handling
- * 
- * *****************  Version 5  *****************
- * User: Walm         Date: 15/03/05   Time: 14:39
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * fileReader class now holds reference to identificationFile object
- * 
- * *****************  Version 4  *****************
- * User: Mals         Date: 14/03/05   Time: 15:08
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * Takes into account of IdentificationFile objects in checkExtension
- * 
- * *****************  Version 3  *****************
- * User: Mals         Date: 14/03/05   Time: 14:30
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * runFileIdentification accepts IdentificationFile parameter
- *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package uk.gov.nationalarchives.droid.core.signature.droid4;
 

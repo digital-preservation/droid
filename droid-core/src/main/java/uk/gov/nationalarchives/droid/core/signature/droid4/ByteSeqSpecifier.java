@@ -1,49 +1,34 @@
-/*
- ** ByteSeqSpecifier.java
+/**
+ * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * All rights reserved.
  *
- * � The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
+ * conditions are met:
  *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
+ * 	* Redistributions of source code must retain the above copyright
+ * 	  notice, this list of conditions and the following disclaimer.
  *
- * Tessella/NPD/4826
- * PRONOM 4
+ * 	* Redistributions in binary form must reproduce the above copyright
+ * 	  notice, this list of conditions and the following disclaimer in the
+ * 	  documentation and/or other materials provided with the distribution.
  *
- * $Id: ByteSeqSpecifier.java,v 1.7 2006/03/13 15:15:28 linb Exp $
+ * 	* Neither the name of the The National Archives nor the
+ * 	  names of its contributors may be used to endorse or promote products
+ * 	  derived from this software without specific prior written permission.
  *
- * $Log: ByteSeqSpecifier.java,v $
- * Revision 1.7  2006/03/13 15:15:28  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.6  2006/02/13 09:26:16  gaur
- * Fixed bug in searching files from EOF, after first STS round
- *
- * Revision 1.5  2006/02/09 15:04:37  gaur
- * Corrected formatting
- *
- * Revision 1.4  2006/02/07 17:16:22  linb
- * - Change fileReader to ByteReader in formal parameters of methods
- * - use new static constructors
- * - Add detection of if a filePath is a URL or not
- *
- * Revision 1.3  2006/02/07 11:30:04  gaur
- * Added support for endianness of signature
- *
- * Revision 1.2  2006/02/03 16:54:41  gaur
- * We now allow general wildcards of arbitrary endianness: e.g., [!~A1B1:C1D1]
- *
- * Revision 1.1  2006/02/02 17:17:04  gaur
- * Initial version.  Functionality not yet complete, but should be sufficient to emulate the old behaviour.
- *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package uk.gov.nationalarchives.droid.core.signature.droid4;
 
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
