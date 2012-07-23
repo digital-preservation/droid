@@ -1,3 +1,36 @@
+<!--
+
+    Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
 <html>
   <head>
     <meta content="text/html; charset=Cp1252" http-equiv="Content-Type">
@@ -145,7 +178,7 @@
       disk or inside an archival file. The file name extension (if any) is part of its name. DROID
       treats all filenames as <a href=
       "Information collected by DROID.html#CaseSensitive">case-sensitive</a>. For example,
-      “MYDOCUMENT.DOC” and “mydocument.doc” are regarded as different file names.
+      ï¿½MYDOCUMENT.DOCï¿½ and ï¿½mydocument.docï¿½ are regarded as different file names.
     </p>
     <p>
        &nbsp;
@@ -176,9 +209,9 @@
     </p>
     <p>
        File names which begin with a full stop and have no other full stops in them are not
-      regarded as having an extension. For example, a file called “.myfile” has a filename of
-      “.myfile” and a blank extension, whereas “.myfile.doc” has a file name of “.myfile.doc” and
-      an extension of “.doc”.&nbsp;&nbsp; This is because file names starting with a full stop are
+      regarded as having an extension. For example, a file called ï¿½.myfileï¿½ has a filename of
+      ï¿½.myfileï¿½ and a blank extension, whereas ï¿½.myfile.docï¿½ has a file name of ï¿½.myfile.docï¿½ and
+      an extension of ï¿½.docï¿½.&nbsp;&nbsp; This is because file names starting with a full stop are
       hidden files in unix&nbsp;file systems, and also because it is not likely that a file name
       would be entirely composed of a file extension, with no name before it.
     </p>
@@ -205,7 +238,7 @@
        Sometimes file extensions are incorrect for the type of the file, or are missing where there
       should be one. If DROID detects that the file extension for a file name does not match the
       formats it has identified, it will issue a file extension mismatch warning. For example, if a
-      file called “myfile.doc” is identified as a spreadsheet, then a file extension mismatch
+      file called ï¿½myfile.docï¿½ is identified as a spreadsheet, then a file extension mismatch
       warning will be issued.
     </p>
     <p>
@@ -243,22 +276,22 @@
     </p>
     <ol type="1" start="1">
       <li>
-        a folder called “Folder” on the “C:\” drive of a Windows computer
+        a folder called ï¿½Folderï¿½ on the ï¿½C:\ï¿½ drive of a Windows computer
       </li>
       <li>
-        a file called “Document.doc” inside “Folder”,
+        a file called ï¿½Document.docï¿½ inside ï¿½Folderï¿½,
       </li>
       <li>
-        an archival file called “Archive.zip” inside “Folder”
+        an archival file called ï¿½Archive.zipï¿½ inside ï¿½Folderï¿½
       </li>
       <li>
-        a spreadsheet called “Spreadsheet.xls” inside “Archive.zip”
+        a spreadsheet called ï¿½Spreadsheet.xlsï¿½ inside ï¿½Archive.zipï¿½
       </li>
       <li>
-        a folder called “Another folder” inside “Archive.zip”
+        a folder called ï¿½Another folderï¿½ inside ï¿½Archive.zipï¿½
       </li>
       <li>
-        a picture called “Large picture.jpg” inside “Another folder”
+        a picture called ï¿½Large picture.jpgï¿½ inside ï¿½Another folderï¿½
       </li>
     </ol>
     <p>
@@ -406,11 +439,11 @@
     <p>
        The prefixes of a URI tell you what sort of resource is being described by the URI, and the
       exclamation marks indicate where one type of resource is contained by another. For example,
-      for “Spreadsheet.xls”, we can see that there is a file, C:/Folder/Archive.zip, with the
+      for ï¿½Spreadsheet.xlsï¿½, we can see that there is a file, C:/Folder/Archive.zip, with the
       prefix <font color="#0000ff">file:/</font>. The exclamation mark (<font color=
       "#ff0000">!</font>) tells us that the spreadsheet is contained by the Archive.zip file, and
       the first prefix <font color="#800080">zip:/</font> tells us the type of the containment is a
-      zip file. Note that spaces in URIs are encoded by “<font color="#808080">%20</font>”, and
+      zip file. Note that spaces in URIs are encoded by ï¿½<font color="#808080">%20</font>ï¿½, and
       folder separators are always forward slashes. &nbsp;If zip files are contained inside zip
       files, inside zip files, more prefixes and exclamation marks are added as needed.
     </p>
@@ -473,7 +506,7 @@
        It is important to note that last-modified dates can be changed when files are copied from
       one server to another, so this date may not reflect the last date a user actively modified
       the content of a file. Also, the content of a file (the data within it) may actually be older
-      than the file itself – if a file was copied, or simply typed up manually from an older piece
+      than the file itself ï¿½ if a file was copied, or simply typed up manually from an older piece
       of content.
     </p>
     <p>
@@ -502,7 +535,7 @@
     </p>
     <ul>
       <li>
-        <img src="../Images/format_count_small_ZERO.png"> &nbsp;zero, if DROID can’t identify a
+        <img src="../Images/format_count_small_ZERO.png"> &nbsp;zero, if DROID canï¿½t identify a
         format at all.
       </li>
       <li>
@@ -510,7 +543,7 @@
         identified as a single format.
       </li>
       <li>
-        <u><b><font color="#0000ff">(2)</font></b></u> &nbsp;more than one, if DROID can’t
+        <u><b><font color="#0000ff">(2)</font></b></u> &nbsp;more than one, if DROID canï¿½t
         unambiguously decide what format it is in.
       </li>
     </ul>
@@ -566,12 +599,12 @@
     </ul>
     <p>
        The format name is simply a human-readable name given to a file format or family of file
-      formats, for example, “Microsoft Word”. The format version is the version of the format, for
-      example “97-2003”. The PUID is a globally unique, persistent identifier for a file format and
+      formats, for example, ï¿½Microsoft Wordï¿½. The format version is the version of the format, for
+      example ï¿½97-2003ï¿½. The PUID is a globally unique, persistent identifier for a file format and
       version, assigned by the National Archives through its <a href=
       "http://www.nationalarchives.gov.uk/pronom">PRONOM file format registry</a><img src=
-      "../Images/Icon_External_Link.png">. For example, the PUID for the “Microsoft Word 97-2003”
-      file format is “fmt/40”.
+      "../Images/Icon_External_Link.png">. For example, the PUID for the ï¿½Microsoft Word 97-2003ï¿½
+      file format is ï¿½fmt/40ï¿½.
     </p>
     <p>
        PUIDs are guaranteed never to change, although new PUIDs may be defined. Clicking on a PUID
@@ -588,7 +621,7 @@
       "http://www.iana.org/assignments/media-types/">Internet Assigned Numbers Authority</a><img
       src="../Images/Icon_External_Link.png">.&nbsp; Mime-types are quite broad classifications, so
       many different file formats will have the same mime-type. For example, the mime-type for
-      “fmt/40” is “application/msword” – which is shared by all other binary Microsoft word
+      ï¿½fmt/40ï¿½ is ï¿½application/mswordï¿½ ï¿½ which is shared by all other binary Microsoft word
       formats.
     </p>
     <p>
@@ -619,19 +652,19 @@
       </li>
     </ul>
     <p>
-       An “<b>extension</b>” identification means that a format was identified purely on the basis
+       An ï¿½<b>extension</b>ï¿½ identification means that a format was identified purely on the basis
       of its file extension. Such an identification may not be reliable, as files can be named in
       any way, and extensions do not identify formats down to the version level, so such
       identifications can be quite broad, and may result in multiple identifications.
     </p>
     <p>
-       A “<b>signature</b>” identification means that a format was identified by finding signature
+       A ï¿½<b>signature</b>ï¿½ identification means that a format was identified by finding signature
       patterns inside the file which are known to occur in particular file formats and versions.
       This method is quite reliable, as it is fairly unlikely that by chance a file will happen to
       have a pattern belonging to a different file format than its own.
     </p>
     <p>
-       A “<b>container</b>” identification means that a format was identified by finding embedded
+       A ï¿½<b>container</b>ï¿½ identification means that a format was identified by finding embedded
       files (possibly with signatures of their own) inside the main file. For example, Microsoft
       Office 2007&nbsp;word processing files are actually zip files containing xml files, images or
       other resources used in the document. A container identification would identify the main file
@@ -664,7 +697,7 @@
     </table>
     <p>
        DROID can optionally generate a content hash of the contents of each file and archival file,
-      using the industry standard “MD5” algorithm. A content hash is a short signature&nbsp;that
+      using the industry standard ï¿½MD5ï¿½ algorithm. A content hash is a short signature&nbsp;that
       can be used to identify the content of the file. It is extremely unlikely that two different
       files will have the same content hash (although this is a remote possibility).&nbsp;&nbsp;
     </p>
