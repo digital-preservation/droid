@@ -34,6 +34,7 @@
         <developer>
             <name>Matt Palmer</name>
         </developer>
+        <!-- TODO add others - ask Ross -->
     </developers>
   
     <licenses>
@@ -113,18 +114,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <!-- commented out as this is the default -->
-        <!-- resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <targetPath>test-classes</targetPath>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
