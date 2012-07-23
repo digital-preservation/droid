@@ -78,15 +78,13 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils-core</artifactId>
   	</dependency>
-  	<dependency>
+        <dependency>
             <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-            <version>3.2</version>
+            <artifactId>antlr</artifactId>
   	</dependency>
   	<dependency>
             <groupId>org.antlr</groupId>
-            <artifactId>antlr</artifactId>
-            <version>3.2</version>
+            <artifactId>antlr-runtime</artifactId>
   	</dependency>
   	<dependency>
             <groupId>byteseek</groupId>
