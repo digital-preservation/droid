@@ -137,12 +137,12 @@ public class TarArchiveHandlerTest {
     @Test
     public void testZipEntryRequestHandlerGeneratesCorrectRequestMetaData() throws IOException {
         
-        String jarFileName = getClass().getResource("/persistence.jar").getFile();
+        String jarFileName = getClass().getResource("/persistence.tar").getFile();
         
         File jarFile = new File(jarFileName);
         assertTrue(jarFile.exists());
         
-        ZipArchiveHandler handler = new ZipArchiveHandler();
+        TarArchiveHandler handler = new TarArchiveHandler();
         handler.setFactory(new TarEntryRequestFactory());
         
         AsynchDroid droidCore = mock(AsynchDroid.class); 

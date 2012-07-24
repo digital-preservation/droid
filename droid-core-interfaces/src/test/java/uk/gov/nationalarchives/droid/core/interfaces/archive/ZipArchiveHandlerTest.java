@@ -158,7 +158,7 @@ public class ZipArchiveHandlerTest {
     @Test
     public void testZipEntryRequestHandlerGeneratesCorrectRequestMetaData() throws IOException {
         
-        String jarFileName = getClass().getResource("/persistence.jar").getFile();
+        String jarFileName = getClass().getResource("/persistence.zip").getFile();
         
         File jarFile = new File(jarFileName);
         assertTrue(jarFile.exists());
