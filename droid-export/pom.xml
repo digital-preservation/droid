@@ -9,6 +9,8 @@
     </parent>
     
     <artifactId>droid-export</artifactId>
+    <packaging>jar</packaging>
+    
     <name>droid-export</name>
   
     <build>
