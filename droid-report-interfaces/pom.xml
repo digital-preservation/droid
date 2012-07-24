@@ -13,7 +13,6 @@
   
     <name>droid-report-interfaces</name>
   
-  
     <build>
         <plugins>
             <plugin>
@@ -84,13 +83,18 @@
     
     <dependencies>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
+            <groupId>uk.gov.nationalarchives</groupId>
+            <artifactId>droid-core-interfaces</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-results</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
