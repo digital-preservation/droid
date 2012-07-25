@@ -14,6 +14,12 @@
     <import resource="classpath*:/META-INF/report-spring.xml"/>
 	
 
+    <bean id="properties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>classpath*:archive-puids.properties</value>
+        </property>
+    </bean>
+
     <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
 
     <bean id="exportManager" class="uk.gov.nationalarchives.droid.export.ExportManagerImpl" destroy-method="destroy">
@@ -80,9 +86,10 @@
     </bean>
     
     <bean id="noProfileRunCommand" class="uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand" scope="prototype">
-        <property name="containerContentIdentifierFactory" ref="containerContentIdentifierFactory"/>
+        <!-- <property name="containerContentIdentifierFactory" ref="containerContentIdentifierFactory"/>
+        <property name="archiveFormatResolver" ref="archivePuidResolver"/> -->
     </bean>
-    
+
     <bean id="abstractSignatureCommand" abstract="true" scope="prototype" >
         <property name="signatureManager" ref="signatureManager"/>
     </bean>
@@ -110,27 +117,27 @@
     </bean>
 
     <!-- container identifiers for command line only! -->
-    <bean id="containerContentIdentifierFactory" class="uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifierFactory">
-        <!-- define available identifiers -->
+    <!-- <bean id="containerContentIdentifierFactory" class="uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifierFactory">
+        <!- - define available identifiers - ->
         <property name="containerContentIdentifiers">
             <map>
                 <entry key="OLE2" value-ref="ole2ContainerContentIdentifier"/>
                 <entry key="ZIP" value-ref="zipContainerContentIdentifier"/>
             </map>
 	</property>
-    </bean>
+    </bean> -->
     
-    <bean id="ole2ContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.Ole2ContainerContentIdentifier">
+    <!-- <bean id="ole2ContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.Ole2ContainerContentIdentifier">
         <property name="identifierEngine" ref="ole2IdentifierEngine"/>
-    </bean>
+    </bean> -->
 
-    <bean id="zipContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier">
+    <!-- <bean id="zipContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier">
         <property name="identifierEngine" ref="zipIdentifierEngine"/>
-    </bean>
+    </bean> -->
 
-    <bean id="containerFileIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
-        <!-- property name="tempDirLocation" value="${tempDirLocation}"/ -->
-    </bean>
+    <!-- <bean id="containerFileIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
+        <!- - property name="tempDirLocation" value="${tempDirLocation}"/ - ->
+    </bean> -->
 
     <bean id="zipIdentifierEngine" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine">
         <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
@@ -140,4 +147,54 @@
         <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
     </bean>
 
+    <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
+        <property name="puids">
+            <map>
+                <entry key="ZIP" value="${archive.zip}"/>
+                <entry key="TAR" value="${archive.tar}"/>
+                <entry key="GZ" value="${archive.gz}"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="archiveHandlerLocator" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactoryImpl">
+        <property name="handlers">
+            <map>
+                <entry key="ZIP" value-ref="zipHandler"/>
+                <entry key="TAR" value-ref="tarHandler"/>
+                <entry key="GZ" value-ref="gzHandler"/>
+            </map>
+        </property>
+    </bean>
+<!--    
+    <bean id="archiveRequestFactory" abstract="true">
+        <property name="tempDirLocation" value="${tempDirLocation}"/>
+    </bean>
+-->
+    <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler">
+        <property name="factory">
+            <!-- <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory" parent="archiveRequestFactory"> -->
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory">
+            </bean>
+        </property>
+        <!-- <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/> -->
+    </bean>
+     
+    <bean id="tarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarArchiveHandler">
+        <property name="factory">
+            <!-- <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarEntryRequestFactory" parent="archiveRequestFactory"/> -->
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarEntryRequestFactory"/>
+        </property>
+        <!-- <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/> -->
+    </bean>
+
+    <bean id="gzHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipArchiveHandler">
+        <property name="factory">
+            <!-- <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipRequestFactory" parent="archiveRequestFactory"/> -->
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipRequestFactory"/>
+        </property>
+        <!-- <property name="droidCore" ref="submissionGateway"/> -->
+    </bean>
 </beans>
