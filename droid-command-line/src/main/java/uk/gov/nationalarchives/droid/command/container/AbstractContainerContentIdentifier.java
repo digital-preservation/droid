@@ -1,7 +1,5 @@
 package uk.gov.nationalarchives.droid.command.container;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -47,13 +45,10 @@ public abstract class AbstractContainerContentIdentifier implements ContainerCon
     }
     
     @Override
-    public IdentificationResultCollection process (File file, IdentificationResultCollection containerResults) throws IOException {
+    public IdentificationResultCollection process (InputStream in, IdentificationResultCollection containerResults) throws IOException {
         final IdentificationRequest request = new ContainerFileIdentificationRequest(null);
 
-        InputStream in = null;
         try {
-            in = new FileInputStream(file);
-        
             request.open(in);
             
             int maxBytesToScan = -1;
