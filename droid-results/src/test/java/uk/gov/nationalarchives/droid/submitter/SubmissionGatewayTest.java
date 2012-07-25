@@ -113,7 +113,7 @@ public class SubmissionGatewayTest {
             assertEquals("Can't parse signature file", x.getMessage());
         }
 
-        File file = new File("test_sig_files/persistence.jar");
+        File file = new File("test_sig_files/persistence.zip");
         assertTrue(file.exists());
 
         ZipFile zipFile = new ZipFile(file);
@@ -124,12 +124,12 @@ public class SubmissionGatewayTest {
                 entryCount++;
             }
         }
-        assertTrue(entryCount > 5);
+        assertTrue(entryCount > 4);
 
         URI resourceUri = file.toURI();
 
         InputStream in = new FileInputStream(file);
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), "persistence.jar");
+        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), "persistence.zip");
         
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
@@ -147,10 +147,10 @@ public class SubmissionGatewayTest {
 
         ArgumentCaptor<IdentificationResultCollection> resultCaptor = ArgumentCaptor
                 .forClass(IdentificationResultCollection.class);
-        verify(resultHandler, times(entryCount + 1)).handle(resultCaptor.capture());
+        verify(resultHandler, times(1)).handle(resultCaptor.capture());
 
         List<IdentificationResultCollection> allResults = resultCaptor.getAllValues();
-        assertEquals(10, allResults.size());
+        assertEquals(1, allResults.size());
     }
 
     @Test
