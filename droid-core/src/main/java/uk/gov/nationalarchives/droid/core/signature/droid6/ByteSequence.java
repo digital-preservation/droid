@@ -84,7 +84,6 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -402,26 +401,30 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
 
         // Use a local reference to the sequence list for better performance:
         final SubSequence[] seq = this.sequences;
+        boolean fixedSubsequence;
         if (reverseOrder) {
+            fixedSubsequence = this.anchoredToEOF;
             final long fileSize = targetFile.getNumBytes() - 1L;
             targetFile.setFileMarker(fileSize);
             for (int subSequenceIndex = seq.length - 1; matchResult && subSequenceIndex >= 0; subSequenceIndex--) {
                 final SubSequence subseq = seq[subSequenceIndex];
                 final long currentFilePos = targetFile.getFileMarker();
-//                matchResult = subseq.findSequenceFromPosition(currentFilePos, targetFile, maxBytesToScan);
-                matchResult = subseq.findSequenceFromPosition(currentFilePos, targetFile, maxBytesToScan, this);
+                matchResult = subseq.findSequenceFromPosition
+                        (currentFilePos, targetFile, maxBytesToScan, false, fixedSubsequence);
+                fixedSubsequence = false;
             }
         } else {
+            fixedSubsequence = this.anchoredToBOF;
             final long offset = getIndirectOffset(targetFile);
             targetFile.setFileMarker(offset);
             for (int subSequenceIndex = 0; matchResult && subSequenceIndex < seq.length; subSequenceIndex++) {
                 final SubSequence subseq = seq[subSequenceIndex];
                 final long currentFilePos = targetFile.getFileMarker();
-//                matchResult = subseq.findSequenceFromPosition(currentFilePos, targetFile, maxBytesToScan);
-                matchResult = subseq.findSequenceFromPosition(currentFilePos, targetFile, maxBytesToScan, this);
+                matchResult = subseq.findSequenceFromPosition
+                        (currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
+                fixedSubsequence = false;
             }
         }
-
         return matchResult;
     }
 
