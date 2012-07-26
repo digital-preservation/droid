@@ -112,6 +112,7 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import net.domesdaybook.expression.compiler.sequence.SequenceMatcherCompiler;
 import net.domesdaybook.expression.parser.ParseException;
 import net.domesdaybook.matcher.sequence.SequenceMatcher;
@@ -598,7 +599,6 @@ public class SubSequence extends SimpleElement {
     public final boolean findSequenceFromPosition(final long position, 
             final ByteReader targetFile, final long maxBytesToScan,
             final boolean bofSubsequence, final boolean eofSubsequence) {
-    //CHECKSTYLE:ON
         boolean entireSequenceFound = false;
         try {
             // Local variables to speed up commonly used arrays and decisions:
@@ -726,8 +726,9 @@ public class SubSequence extends SimpleElement {
                             matchFound = leftFragmentPositions.length > 0;
                             
 //                            // check BOF max seq offset (bugfix)
-                            if (matchFound && bofSubsequence &&
-                                leftFragmentPositions[0] > this.maxSeqOffset) {
+                            if (matchFound
+                                    && bofSubsequence
+                                    && leftFragmentPositions[0] > this.maxSeqOffset) {
                                 matchFound = false;
                             }
                         }
@@ -738,8 +739,9 @@ public class SubSequence extends SimpleElement {
                                 matchFound = rightFragmentPositions.length > 0;
                             
                                 // check EOF max seq offset (bugfix)
-                                if (matchFound && eofSubsequence &&
-                                    rightFragmentPositions[0] > this.maxSeqOffset) {
+                                if (matchFound
+                                        && eofSubsequence
+                                        && rightFragmentPositions[0] > this.maxSeqOffset) {
                                     matchFound = false;
                                 }
                             
