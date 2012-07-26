@@ -65,7 +65,6 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 /**
  * @author Alok Kumar Dash
  */
-//@Ignore("these tests take too long")
 public class ReportCommandTest {
 
     private ReportCommand reportCommand;
@@ -85,11 +84,11 @@ public class ReportCommandTest {
         
     }
 
-
     @Test
     public void testReportCommandWithNonExistentCustomReportName() throws Exception {
         final String profileLocation = "profiles/12345.droid";
-        final String destination = "destination.xml";
+        final String destination = "tmp/destination.xml";
+        new File("tmp").mkdirs();
         final String profileId = "12345";
         
         final ProfileInstance profile = mock(ProfileInstance.class);
@@ -115,8 +114,10 @@ public class ReportCommandTest {
     @Test
     public void testReportCommandWithCustomReportName() throws Exception {
         final String profileLocation = "profiles/12345.droid";
-        final String destination = "destination.xml";
+        final String destination = "tmp/destination.xml";
+        new File("tmp").mkdirs();
         final String profileId = "12345";
+        
         
         final ProfileInstance profile = mock(ProfileInstance.class);
         when(profile.getUuid()).thenReturn(profileId);
