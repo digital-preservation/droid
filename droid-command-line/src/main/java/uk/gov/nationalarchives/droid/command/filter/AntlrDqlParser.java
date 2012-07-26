@@ -51,8 +51,6 @@ public class AntlrDqlParser implements DqlFilterParser {
 
     /**
      * {@inheritDoc}
-     * @throws IOException 
-     * @throws  
      */
     @Override
     public FilterCriterion parse(String dql) {

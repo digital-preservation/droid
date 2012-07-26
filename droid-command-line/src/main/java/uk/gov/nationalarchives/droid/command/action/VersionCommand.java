@@ -32,8 +32,9 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
-import org.apache.commons.cli.HelpFormatter;
 import java.util.ResourceBundle;
+
+import org.apache.commons.cli.HelpFormatter;
 
 /**
  * @author rflitcroft

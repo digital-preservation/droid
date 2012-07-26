@@ -32,10 +32,8 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
-import java.util.Comparator;
 
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
 
 import static uk.gov.nationalarchives.droid.command.i18n.I18N.getResource;
 
@@ -75,6 +73,9 @@ public class HelpCommand implements DroidCommand {
                     return opt2.getKey().compareToIgnoreCase(opt1.getKey()); 
                 }
         }); */
+        
+        //CHECKSTYLE:OFF
+        
         formatter.printHelp(writer, WRAP_WIDTH, USAGE, 
                 getResource(I18N.OPTIONS_HEADER), CommandLineParam.singleOptions(), 2, 3, null);
         formatter.printOptions(writer, WRAP_WIDTH,
@@ -97,5 +98,7 @@ public class HelpCommand implements DroidCommand {
                 CommandLineParam.getOptions(CommandLineParam.REPORT), 2, 14);
         formatter.printOptions(writer, WRAP_WIDTH,
                 CommandLineParam.reportSubOptions(), 5, 6);
+        
+        //CHECKSTYLE:ON
     }
 }

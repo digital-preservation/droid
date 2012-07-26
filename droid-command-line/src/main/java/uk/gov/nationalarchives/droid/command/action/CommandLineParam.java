@@ -169,7 +169,7 @@ public enum CommandLineParam {
     },
     
     /** Signature file. */
-    SIGNATURE_FILE("Ns", "signature-file", true, 1, I18N.SIGNATURE_FILE_HELP, "filename") {
+    SIGNATURE_FILE("Ns", "signature-file", true, 1, I18N.SIGNATURE_FILE_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -178,19 +178,19 @@ public enum CommandLineParam {
     
     /** Container signature file. */
     CONTAINER_SIGNATURE_FILE("Nc", "container-file", true, 1,
-            I18N.CONTAINER_SIGNATURE_FILE_HELP, "filename") {
+            I18N.CONTAINER_SIGNATURE_FILE_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
     
-    /** Extensions to match */
+    /** Extensions to match. */
     EXTENSION_LIST("Nx", "extension-list", true, -1, I18N.EXTENSION_LIST_HELP, "extensions") {
-       @Override
-       public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli){
-          return null;
-       }
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
     },
     
     /** Recursive operation flag. */
@@ -377,6 +377,11 @@ public enum CommandLineParam {
 
     }
     
+    /**
+     * Single Options.
+     * 
+     * @return the Single Options
+     */
     public static Options singleOptions() {
         Options options = new Options();
         
@@ -392,6 +397,11 @@ public enum CommandLineParam {
         return options;
     }
     
+    /**
+     * No Profile Run sub-options.
+     * 
+     * @return sub-options for no-profile run
+     */
     public static Options noProfileRunSubOptions() {
         Options options = new Options();
         
@@ -404,6 +414,11 @@ public enum CommandLineParam {
         return options;
     }
     
+    /**
+     * Profile Run sub-options.
+     * 
+     * @return sub-options for profile run
+     */
     public static Options profileRunSubOptions() {
         Options options = new Options();
         
@@ -414,6 +429,11 @@ public enum CommandLineParam {
         return options;
     }
     
+    /**
+     * Export sub-options.
+     * 
+     * @return sub-options for Export
+     */
     public static Options exportSubOptions() {
         Options options = new Options();
         
@@ -424,6 +444,11 @@ public enum CommandLineParam {
         return options;
     }
     
+    /**
+     * Report sub-options.
+     * 
+     * @return sub-options for Report
+     */
     public static Options reportSubOptions() {
         Options options = new Options();
         
@@ -434,7 +459,14 @@ public enum CommandLineParam {
         return options;
     }
     
-    public static Options getOptions(CommandLineParam commandLineParam) {
+    /**
+     * Gets Options from Command Line parameter.
+     * 
+     * @param commandLineParam The command line parameter
+     * 
+     * @return options for Command Line parameter
+     */
+    public static Options getOptions(final CommandLineParam commandLineParam) {
         Options options = new Options();
         
         options.addOption(commandLineParam.newOption());

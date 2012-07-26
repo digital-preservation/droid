@@ -39,7 +39,11 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ResourceBundle;
+
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.io.FileUtils;
+
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
@@ -56,42 +60,48 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  *
  */
 public class NoProfileRunCommand implements DroidCommand {
-
+    
+    private static final String FORWARD_SLASH = "/";
+    
     private String fileSignaturesFileName;
     private String containerSignaturesFileName;
     private String[] resources;
     private String[] extensions;
     private int maxBytesToScan = -1;
-    private boolean quietFlag = false;  // default quiet flag value
+    private boolean quietFlag;
     private boolean recursive;
 
+    //CHECKSTYLE:OFF
     /**
     * {@inheritDoc}
     */
     @Override
     public void execute() throws CommandExecutionException {
         
-        if (!this.quietFlag)
+        if (!this.quietFlag) {
             this.outputRuntimeInformation();
+        }
       
         File dirToSearch = new File(resources[0]);
-        if (!dirToSearch.isDirectory())
+        if (!dirToSearch.isDirectory()) {
             throw new CommandExecutionException("Resources directory not found");
+        }
 
         BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
         File fileSignaturesFile = new File(fileSignaturesFileName);
-        if (!fileSignaturesFile.exists())
+        if (!fileSignaturesFile.exists()) {
             throw new CommandExecutionException("Signature file not found");
+        }
 
         binarySignatureIdentifier.setSignatureFile(fileSignaturesFileName);
         try {
             binarySignatureIdentifier.init();
         } catch (SignatureParseException e) {
-            throw new CommandExecutionException ("Can't parse signature file");
+            throw new CommandExecutionException("Can't parse signature file");
         }
         binarySignatureIdentifier.setMaxBytesToScan(maxBytesToScan);
         String path = fileSignaturesFile.getAbsolutePath();
-        String slash = path.contains("/") ? "/" : "\\";
+        String slash = path.contains(FORWARD_SLASH) ? FORWARD_SLASH : "\\";
       
         ContainerSignatureDefinitions containerSignatureDefinitions = null;
         if (containerSignaturesFileName != null) {
@@ -100,13 +110,15 @@ public class NoProfileRunCommand implements DroidCommand {
                 throw new CommandExecutionException("Container signature file not found");
             }
             try {
-                InputStream in = new FileInputStream(containerSignaturesFileName);
-                ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
+                final InputStream in = new FileInputStream(containerSignaturesFileName);
+                final ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
                 containerSignatureDefinitions = parser.parse(in);
             } catch (SignatureParseException e) {
-                throw new CommandExecutionException ("Can't parse container signature file");
-            } catch (Exception e) {
-                throw new CommandExecutionException(e);
+                throw new CommandExecutionException("Can't parse container signature file");
+            } catch (IOException ioe) {
+                throw new CommandExecutionException(ioe);
+            } catch (JAXBException jaxbe) {
+                throw new CommandExecutionException(jaxbe);
             }
         }
         path = "";
@@ -157,53 +169,81 @@ public class NoProfileRunCommand implements DroidCommand {
             }
         }
     }
+    //CHECKSTYLE:ON
 
     private void outputRuntimeInformation() {
         String versionString = ResourceBundle.getBundle("options").getString("version_no");
         System.out.println("DROID " + versionString + " No Profile mode: Runtime Information");
         System.out.println("Binary signature file: " + this.fileSignaturesFileName);
        
-        if (this.containerSignaturesFileName == null)
+        if (this.containerSignaturesFileName == null) {
             System.out.println("Container signature file: None");
-        else
+        } else {
             System.out.println("Container signature file: " + this.containerSignaturesFileName);
-       
-        if (this.extensions == null)
-            System.out.println("Extension filter: No filter set");
-        else
-            System.out.println("Extension filter: " + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
+        }
         
-        if (this.recursive == false)
-           System.out.println("Recurse folders: False");
-        else
-           System.out.println("Recurse folders: True");
+        if (this.extensions == null) {
+            System.out.println("Extension filter: No filter set");
+        } else {
+            System.out.println("Extension filter: "
+                + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
+        }
+        
+        System.out.println("Recurse folders: " + this.recursive);
     }
 
     /**
+     * Set the resources.
+     * 
      * @param resources the resources to set
      */
-    public void setResources(String[] resources) {
+    public void setResources(final String[] resources) {
         this.resources = resources;
     }
     
-    public void setSignatureFile(String signatureFile) {
+    /**
+     * Set the signature file.
+     * 
+     * @param signatureFile The signature file
+     */
+    public void setSignatureFile(final String signatureFile) {
         this.fileSignaturesFileName = signatureFile;
     }
 
-    public void setContainerSignatureFile(String signatureFile) {
-        this.containerSignaturesFileName = signatureFile;
+    /**
+     * Set the container signature file.
+     * 
+     * @param containerSignatureFile The Container Signature file
+     */
+    public void setContainerSignatureFile(final String containerSignatureFile) {
+        this.containerSignaturesFileName = containerSignatureFile;
     }
 
-    public void setRecursive(boolean recursive) {
+    /**
+     * Set recursive.
+     * 
+     * @param recursive Should we recurse through folders
+     */
+    public void setRecursive(final boolean recursive) {
         this.recursive = recursive;
     }
     
-    public void setExtensionFilter(String[] extensions) {
+    /**
+     * Set the Extension Filter to use.
+     * 
+     * @param extensionsFilter The list of extensions to filter
+     */
+    public void setExtensionFilter(final String[] extensionsFilter) {
         // No need to normalize extensions arr if empty, listFiles accepts null value 
-        this.extensions = extensions;
+        this.extensions = extensionsFilter;
     }
     
-    public void setQuiet(boolean quiet) {
+    /**
+     * Set Quiet flag.
+     * 
+     * @param quiet The quiet flag
+     */
+    public void setQuiet(final boolean quiet) {
         this.quietFlag = quiet;
     }
 }

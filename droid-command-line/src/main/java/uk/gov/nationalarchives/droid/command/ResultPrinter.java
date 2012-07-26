@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.command;
 
 import java.io.IOException;
 import java.util.List;
+
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
@@ -51,10 +52,12 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollect
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 
 /**
- * File identification results printer
+ * File identification results printer.
  * 
  * @author rbrennan
  */
+
+//CHECKSTYLE:OFF
 public class ResultPrinter {
     
     private BinarySignatureIdentifier binarySignatureIdentifier;
@@ -63,15 +66,22 @@ public class ResultPrinter {
     private IdentificationRequestFactory requestFactory;
     private String path;
     private String slash;
-    private boolean processArchives = false; // next release
+    private boolean processArchives; // next release
     
-    /*
-     * Store signature files
+    /**
+     * Store signature files.
+     * 
+     * @param binarySignatureIdentifier The Binary Signature Identifier
+     * @param containerSignatureDefinitions The Container Signature Definitions
+     * @param path The Path to the archive
+     * @param slash The slash character to use
+     * 
+     * @throws CommandExecutionException If an exception occurs during processing
      */
-    public ResultPrinter(BinarySignatureIdentifier binarySignatureIdentifier,
-            ContainerSignatureDefinitions containerSignatureDefinitions,
-            String path, String slash)
-            throws CommandExecutionException {
+    public ResultPrinter(final BinarySignatureIdentifier binarySignatureIdentifier,
+        final ContainerSignatureDefinitions containerSignatureDefinitions,
+        final String path, final String slash)
+        throws CommandExecutionException {
     
         this.binarySignatureIdentifier = binarySignatureIdentifier;
         this.containerSignatureDefinitions = containerSignatureDefinitions;
@@ -82,15 +92,13 @@ public class ResultPrinter {
         }
     }
     
-    /*
-     * Attempt to identify this file
-     */
-    public void print(IdentificationResultCollection results, IdentificationRequest request)
-            throws CommandExecutionException {
+    private IdentificationResultCollection prepareContainerResults(
+        final IdentificationResultCollection results,
+        final IdentificationRequest request) throws CommandExecutionException {
+        
+        IdentificationResultCollection containerResults =
+            new IdentificationResultCollection(request);
         try {
-            IdentificationResultCollection containerResults =
-                new IdentificationResultCollection(request);
-                
             if (results.getResults().size() > 0 && containerSignatureDefinitions != null) {
                 for (IdentificationResult identResult : results.getResults()) {
                     String filePuid = identResult.getPuid();
@@ -100,7 +108,7 @@ public class ResultPrinter {
                             requestFactory = new ContainerFileIdentificationRequestFactory();
                             String containerType = containerPuid.getContainerType();
 
-                            if (containerType.equals("OLE2")) {
+                            if ("OLE2".equals(containerType)) {
                                 Ole2ContainerContentIdentifier ole2Identifier = new Ole2ContainerContentIdentifier();
                                 ole2Identifier.init(containerSignatureDefinitions, containerType);
                                 Ole2IdentifierEngine ole2IdentifierEngine = new Ole2IdentifierEngine();
@@ -109,7 +117,7 @@ public class ResultPrinter {
                                 containerResults =
                                     ole2Identifier.process(request.getSourceInputStream(), containerResults);
 
-                            } else if (containerType.equals("ZIP")) {
+                            } else if ("ZIP".contains(containerType)) {
                                 ZipContainerContentIdentifier zipIdentifier = new ZipContainerContentIdentifier();
                                 zipIdentifier.init(containerSignatureDefinitions, containerType);
                                 ZipIdentifierEngine zipIdentifierEngine = new ZipIdentifierEngine();
@@ -125,44 +133,61 @@ public class ResultPrinter {
                     }
                 }
             }
-            IdentificationResultCollection finalResults = new IdentificationResultCollection(request);
-            if (containerResults.getResults().size() > 0) {
-                finalResults = containerResults;
-            } else if (results.getResults().size() > 0) {
-                finalResults = results;
-            }
-            if (finalResults.getResults().size() > 0) {
-                binarySignatureIdentifier.removeLowerPriorityHits(finalResults);
-            }
-            String fileName = path + request.getFileName();
-            if (finalResults.getResults().size() > 0) {
-                for (IdentificationResult identResult : finalResults.getResults()) {
-                    String puid = identResult.getPuid();
-                    System.out.println(fileName + "," + puid);
-                    if (processArchives) {
-                        if (puid.equals("x-fmt/266")) {
-                            GZipArchiveContentIdentifier gzipArchiveIdentifier = 
-                                new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, path, slash);
-                            gzipArchiveIdentifier.identify(results.getUri(), request);
-                        } else if (puid.equals("x-fmt/265")) {
-                            TarArchiveContentIdentifier tarArchiveIdentifier = 
-                                new TarArchiveContentIdentifier(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, path, slash);
-                            tarArchiveIdentifier.identify(results.getUri(), request);
-                        } else if (puid.equals("x-fmt/263") || puid.equals("x-fmt/412")) {
-                            ZipArchiveContentIdentifier zipArchiveIdentifier = 
-                                new ZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, path, slash);
-                            zipArchiveIdentifier.identify(results.getUri(), request);
-                        }
-                    }
-                }   
-            } else {
-                System.out.println(fileName + ",Unknown");
-            }
         } catch (IOException e) {
             throw new CommandExecutionException(e);
+        }
+        
+        return containerResults;
+    }
+    
+    /**
+     * Attempt to identify this file.
+     * 
+     * @param results The Identification Results
+     * @param request The Identification Request
+     * 
+     * @throws CommandExecutionException If an exception occurs during processing
+     */
+    public void print(final IdentificationResultCollection results, final IdentificationRequest request)
+        throws CommandExecutionException {
+        
+        final IdentificationResultCollection containerResults = prepareContainerResults(results, request);
+        IdentificationResultCollection finalResults = new IdentificationResultCollection(request);
+        if (containerResults.getResults().size() > 0) {
+            finalResults = containerResults;
+        } else if (results.getResults().size() > 0) {
+            finalResults = results;
+        }
+        if (finalResults.getResults().size() > 0) {
+            binarySignatureIdentifier.removeLowerPriorityHits(finalResults);
+        }
+
+        final String fileName = path + request.getFileName();
+        if (finalResults.getResults().size() > 0) {
+            for (final IdentificationResult identResult : finalResults.getResults()) {
+                final String puid = identResult.getPuid();
+                System.out.println(fileName + "," + puid);
+                if (processArchives) {
+                    if ("x-fmt/266".equals(puid)) {
+                        final GZipArchiveContentIdentifier gzipArchiveIdentifier = 
+                            new GZipArchiveContentIdentifier(binarySignatureIdentifier,
+                                containerSignatureDefinitions, path, slash);
+                        gzipArchiveIdentifier.identify(results.getUri(), request);
+                    } else if ("x-fmt/265".equals(puid)) {
+                        final TarArchiveContentIdentifier tarArchiveIdentifier = 
+                            new TarArchiveContentIdentifier(binarySignatureIdentifier,
+                                containerSignatureDefinitions, path, slash);
+                        tarArchiveIdentifier.identify(results.getUri(), request);
+                    } else if ("x-fmt/263".equals(puid) || "x-fmt/412".equals(puid)) {
+                        final ZipArchiveContentIdentifier zipArchiveIdentifier = 
+                            new ZipArchiveContentIdentifier(binarySignatureIdentifier,
+                                containerSignatureDefinitions, path, slash);
+                        zipArchiveIdentifier.identify(results.getUri(), request);
+                    }
+                }
+            }   
+        } else {
+            System.out.println(fileName + ",Unknown");
         }
     }
     
@@ -174,4 +199,5 @@ public class ResultPrinter {
         }
         return null;
     }
+    //CHECKSTYLE:ON
 }

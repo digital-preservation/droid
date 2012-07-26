@@ -32,7 +32,6 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang.StringUtils;
@@ -49,270 +48,271 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
  */
 public class CommandFactoryImpl implements CommandFactory {
 
-   /**
-    *
-    */
-   private static final String NO_PROFILES_SPECIFIED_FOR_EXPORT = "No profiles specified for export.";
-   private GlobalContext context;
-   private PrintWriter printWriter;
+    private static final String NO_RESOURCES_SPECIFIED = "No resources specified.";
+    private static final String NO_PROFILES_SPECIFIED_FOR_EXPORT = "No profiles specified for export.";
+    private GlobalContext context;
+    private PrintWriter printWriter;
 
-   /**
-    *
-    * @param context the global context.
-    * @param printWriter a print writer
-    */
-   public CommandFactoryImpl(GlobalContext context, PrintWriter printWriter) {
-      this.context = context;
-      this.printWriter = printWriter;
-   }
-
-   /**
-    * @param cli the command line
-    * @throws CommandLineSyntaxException command parse exception.
-    * @return an export command
-    */
-   @Override
-   public DroidCommand getExportFileCommand(CommandLine cli) throws CommandLineSyntaxException {
-
-      if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
-         throw new CommandLineSyntaxException(NO_PROFILES_SPECIFIED_FOR_EXPORT);
-      }
-
-      String destination = cli.getOptionValue(CommandLineParam.EXPORT_ONE_ROW_PER_FILE.toString());
-
-      String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
-      ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE);
-      cmd.setDestination(destination);
-      cmd.setProfiles(profiles);
-
-      if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
-         cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
-                 CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
-      }
-
-      if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
-         cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
-                 CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
-      }
-
-      return cmd;
-   }
+    /**
+     *
+     * @param context the global context.
+     * @param printWriter a print writer
+     */
+    public CommandFactoryImpl(final GlobalContext context,
+        final PrintWriter printWriter) {
+        
+        this.context = context;
+        this.printWriter = printWriter;
+    }
 
    /**
     * @param cli the command line
     * @throws CommandLineSyntaxException command parse exception.
     * @return an export command
     */
-   @Override
-   public DroidCommand getExportFormatCommand(CommandLine cli) throws CommandLineSyntaxException {
+    @Override
+    public DroidCommand getExportFileCommand(final CommandLine cli) throws CommandLineSyntaxException {
 
-      if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
-         throw new CommandLineSyntaxException(NO_PROFILES_SPECIFIED_FOR_EXPORT);
-      }
+        if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
+            throw new CommandLineSyntaxException(NO_PROFILES_SPECIFIED_FOR_EXPORT);
+        }
 
-      String destination = cli.getOptionValue(CommandLineParam.EXPORT_ONE_ROW_PER_FORMAT.toString());
+        final String destination = cli.getOptionValue(CommandLineParam.EXPORT_ONE_ROW_PER_FILE.toString());
 
-      String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
-      ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT);
-      cmd.setDestination(destination);
-      cmd.setProfiles(profiles);
+        final String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
+        final ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE);
+        cmd.setDestination(destination);
+        cmd.setProfiles(profiles);
 
-      if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
-         cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
-                 CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
-      }
+        if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
+            cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
+                CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
+        }
 
-      if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
-         cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
-                 CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
-      }
+        if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
+            cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
+                CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
+        }
 
-      return cmd;
-   }
+        return cmd;
+    }
 
-   /**
-    * @param cli the command line
-    * @throws CommandLineSyntaxException command parse exception.
-    * @return an report command
-    */
-   @Override
-   public DroidCommand getReportCommand(CommandLine cli) throws CommandLineSyntaxException {
+    /**
+     * @param cli the command line
+     * @throws CommandLineSyntaxException command parse exception.
+     * @return an export command
+     */
+    @Override
+    public DroidCommand getExportFormatCommand(final CommandLine cli) throws CommandLineSyntaxException {
 
-      if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
-         throw new CommandLineSyntaxException(
-                 "No profiles specified for report.");
-      }
-      if (!cli.hasOption(CommandLineParam.REPORT_NAME.toString())) {
-         throw new CommandLineSyntaxException("No name specified for report.");
-      }
+        if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
+            throw new CommandLineSyntaxException(NO_PROFILES_SPECIFIED_FOR_EXPORT);
+        }
 
-      String reportType = cli.getOptionValue(CommandLineParam.REPORT_NAME.toString());
-      String reportOutputType = cli.getOptionValue(CommandLineParam.REPORT_OUTPUT_TYPE.toString());
-      reportOutputType = reportOutputType == null ? "pdf" : reportOutputType;
-      String destination = cli.getOptionValue(CommandLineParam.REPORT.toString());
-      String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
-      ReportCommand cmd = context.getReportCommand();
-      cmd.setDestination(destination);
-      cmd.setProfiles(profiles);
-      cmd.setReportType(reportType);
-      cmd.setReportOutputType(reportOutputType);
+        final String destination = cli.getOptionValue(CommandLineParam.EXPORT_ONE_ROW_PER_FORMAT.toString());
 
-      if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
-         cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
-                 CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
-      }
+        final String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
+        final ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT);
+        cmd.setDestination(destination);
+        cmd.setProfiles(profiles);
 
-      if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
-         cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
-                 CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
-      }
+        if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
+            cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
+                CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
+        }
 
-      return cmd;
-   }
+        if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
+            cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
+                CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
+        }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public FilterFieldCommand getFilterFieldCommand() {
-      return new FilterFieldCommand(printWriter);
-   }
+        return cmd;
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getHelpCommand() {
-      return new HelpCommand(printWriter);
-   }
+    /**
+     * @param cli the command line
+     * @throws CommandLineSyntaxException command parse exception.
+     * @return an report command
+     */
+    @Override
+    public DroidCommand getReportCommand(final CommandLine cli) throws CommandLineSyntaxException {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getVersionCommand() {
-      return new VersionCommand(printWriter);
-   }
+        if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
+            throw new CommandLineSyntaxException(
+                "No profiles specified for report.");
+        }
+        if (!cli.hasOption(CommandLineParam.REPORT_NAME.toString())) {
+            throw new CommandLineSyntaxException("No name specified for report.");
+        }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getProfileCommand(CommandLine cli) throws CommandLineSyntaxException {
-      String[] resources = cli.getOptionValues(CommandLineParam.RUN_PROFILE.toString());
-      if (resources.length == 0) {
-         throw new CommandLineSyntaxException("No resources specified.");
-      }
+        final String reportType = cli.getOptionValue(CommandLineParam.REPORT_NAME.toString());
+        String reportOutputType = cli.getOptionValue(CommandLineParam.REPORT_OUTPUT_TYPE.toString());
+        reportOutputType = reportOutputType == null ? "pdf" : reportOutputType;
+        final String destination = cli.getOptionValue(CommandLineParam.REPORT.toString());
+        final String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
+        final ReportCommand cmd = context.getReportCommand();
+        cmd.setDestination(destination);
+        cmd.setProfiles(profiles);
+        cmd.setReportType(reportType);
+        cmd.setReportOutputType(reportOutputType);
 
-      String[] destination = cli.getOptionValues(CommandLineParam.PROFILES.toString());
-      if (destination == null || destination.length > 1) {
-         throw new CommandLineSyntaxException("Must specify exactly one profile.");
-      }
+        if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
+            cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
+                CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
+        }
 
-      ProfileRunCommand command = context.getProfileRunCommand();
-      command.setDestination(destination[0]);
-      command.setResources(resources);
+        if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
+            cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
+                CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
+        }
 
-      command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+        return cmd;
+    }
 
-      return command;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FilterFieldCommand getFilterFieldCommand() {
+        return new FilterFieldCommand(printWriter);
+    }
 
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getHelpCommand() {
+        return new HelpCommand(printWriter);
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getNoProfileCommand(CommandLine cli) throws CommandLineSyntaxException {
-      String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
-      if (resources.length == 0) {
-         throw new CommandLineSyntaxException("No resources specified.");
-      }
-      if (!cli.hasOption(CommandLineParam.SIGNATURE_FILE.toString())) {
-         throw new CommandLineSyntaxException("No signature file specified.");
-      }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getVersionCommand() {
+        return new VersionCommand(printWriter);
+    }
 
-      String signatureFile = cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString());
-      String containerSignatureFile = cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString());        
-      String[] extensions = cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString());
-     
-      NoProfileRunCommand command = context.getNoProfileRunCommand();
-      command.setResources(resources);
-      command.setSignatureFile(signatureFile);
-      command.setContainerSignatureFile(containerSignatureFile);
-      command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
-      command.setExtensionFilter(extensions);
-      command.setQuiet(cli.hasOption(CommandLineParam.QUIET.toString()));
-      
-      return command;
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
+        final String[] resources = cli.getOptionValues(CommandLineParam.RUN_PROFILE.toString());
+        if (resources.length == 0) {
+            throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+        }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getCheckSignatureUpdateCommand() {
-      CheckSignatureUpdateCommand command = context.getCheckSignatureUpdateCommand();
-      command.setPrintWriter(printWriter);
-      return command;
-   }
+        final String[] destination = cli.getOptionValues(CommandLineParam.PROFILES.toString());
+        if (destination == null || destination.length > 1) {
+            throw new CommandLineSyntaxException("Must specify exactly one profile.");
+        }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getDownloadSignatureUpdateCommand() {
-      DownloadSignatureUpdateCommand command = context.getDownloadSignatureUpdateCommand();
-      command.setPrintWriter(printWriter);
-      return command;
-   }
+        final ProfileRunCommand command = context.getProfileRunCommand();
+        command.setDestination(destination[0]);
+        command.setResources(resources);
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getDisplayDefaultSignatureVersionCommand() {
-      DisplayDefaultSignatureFileVersionCommand command = context.getDisplayDefaultSignatureFileVersionCommand();
-      command.setPrintWriter(printWriter);
-      return command;
-   }
+        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
 
-   /**
-    * {@inheritDoc}
-    *
-    * @throws CommandLineSyntaxException
-    */
-   @Override
-   public DroidCommand getConfigureDefaultSignatureVersionCommand(CommandLine cli) throws CommandLineException {
-      String newVersion = cli.getOptionValue(CommandLineParam.CONFIGURE_DEFAULT_SIGNATURE_VERSION.toString());
-      ConfigureDefaultSignatureFileVersionCommand command =
-              context.getConfigureDefaultSignatureFileVersionCommand();
-      command.setPrintWriter(printWriter);
-      try {
-         command.setSignatureFileVersion(Integer.parseInt(StringUtils.trimToEmpty(newVersion)));
-         return command;
-      } catch (NumberFormatException e) {
-         throw new CommandLineSyntaxException("Invalid version: " + newVersion);
-      }
-   }
+        return command;
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getListAllSignatureVersionsCommand() {
-      ListAllSignatureFilesCommand command = context.getListAllSignatureFilesCommand();
-      command.setPrintWriter(printWriter);
-      return command;
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getNoProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
+        final String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
+        if (resources.length == 0) {
+            throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+        }
+        if (!cli.hasOption(CommandLineParam.SIGNATURE_FILE.toString())) {
+            throw new CommandLineSyntaxException("No signature file specified.");
+        }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public DroidCommand getListReportCommand() {
-      ListReportsCommand command = context.getListReportsCommand();
-      command.setPrintWriter(printWriter);
-      return command;
-   }
+        final String signatureFile = cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString());
+        final String containerSignatureFile =
+            cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString());        
+        final String[] extensions = cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString());
+
+        final NoProfileRunCommand command = context.getNoProfileRunCommand();
+        command.setResources(resources);
+        command.setSignatureFile(signatureFile);
+        command.setContainerSignatureFile(containerSignatureFile);
+        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+        command.setExtensionFilter(extensions);
+        command.setQuiet(cli.hasOption(CommandLineParam.QUIET.toString()));
+
+        return command;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getCheckSignatureUpdateCommand() {
+        final CheckSignatureUpdateCommand command = context.getCheckSignatureUpdateCommand();
+        command.setPrintWriter(printWriter);
+        return command;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getDownloadSignatureUpdateCommand() {
+        final DownloadSignatureUpdateCommand command = context.getDownloadSignatureUpdateCommand();
+        command.setPrintWriter(printWriter);
+        return command;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getDisplayDefaultSignatureVersionCommand() {
+        final DisplayDefaultSignatureFileVersionCommand command = 
+            context.getDisplayDefaultSignatureFileVersionCommand();
+        command.setPrintWriter(printWriter);
+        return command;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws CommandLineSyntaxException
+     */
+    @Override
+    public DroidCommand getConfigureDefaultSignatureVersionCommand(final CommandLine cli) throws CommandLineException {
+        final String newVersion = cli.getOptionValue(CommandLineParam.CONFIGURE_DEFAULT_SIGNATURE_VERSION.toString());
+        final ConfigureDefaultSignatureFileVersionCommand command =
+               context.getConfigureDefaultSignatureFileVersionCommand();
+        command.setPrintWriter(printWriter);
+        try {
+            command.setSignatureFileVersion(Integer.parseInt(StringUtils.trimToEmpty(newVersion)));
+            return command;
+        } catch (NumberFormatException e) {
+            throw new CommandLineSyntaxException("Invalid version: " + newVersion);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getListAllSignatureVersionsCommand() {
+        final ListAllSignatureFilesCommand command = context.getListAllSignatureFilesCommand();
+        command.setPrintWriter(printWriter);
+        return command;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DroidCommand getListReportCommand() {
+        final ListReportsCommand command = context.getListReportsCommand();
+        command.setPrintWriter(printWriter);
+        return command;
+    }
 }
