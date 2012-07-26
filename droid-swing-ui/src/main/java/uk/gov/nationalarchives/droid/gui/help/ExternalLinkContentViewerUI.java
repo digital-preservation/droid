@@ -73,12 +73,13 @@ public class ExternalLinkContentViewerUI extends BasicContentViewerUI {
      *            hiperlik Event.
      * @see javax.help.plaf.basic.BasicContentViewerUI#hyperlinkUpdate(javax.swing.event.HyperlinkEvent)
      */
-    public void hyperlinkUpdate(HyperlinkEvent he) {
+    @Override
+    public void hyperlinkUpdate(final HyperlinkEvent he) {
 
         if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             URL u = he.getURL();
-            if (u.getProtocol().equalsIgnoreCase("mailto") || u.getProtocol().equalsIgnoreCase("http")
-                    || u.getProtocol().equalsIgnoreCase("ftp")) {
+            if ("mailto".equalsIgnoreCase(u.getProtocol()) || "http".equalsIgnoreCase(u.getProtocol())
+                    || "ftp".equalsIgnoreCase(u.getProtocol())) {
                 Desktop desktop = null;
                 if (Desktop.isDesktopSupported()) {
                     desktop = Desktop.getDesktop();

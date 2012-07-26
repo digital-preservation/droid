@@ -226,7 +226,7 @@ public class ButtonManager implements ProfileEventListener {
         reportAction.add(c);
     }
 
-    private static interface ProfileStateMachine {
+    private interface ProfileStateMachine {
         void onEnter(ProfileForm profileForm);
     }
 
