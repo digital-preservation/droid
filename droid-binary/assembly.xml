@@ -66,5 +66,11 @@
       <directory>bin</directory>
       <outputDirectory>/</outputDirectory>
     </fileSet>
+    <fileSet>
+    	<includes>
+    		<include>LICENSE</include>
+    	</includes>
+    	<outputDirectory>/</outputDirectory>
+    </fileSet>
   </fileSets>
 </assembly>
