@@ -32,7 +32,7 @@
                     <configLocation>/checkstyle-main.xml</configLocation>
                     <failOnViolation>true</failOnViolation>
                     <enableFilesSummary>true</enableFilesSummary>
-                    <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
+                    <suppressionsLocation>${basedir}/checkstyle/suppressions.xml</suppressionsLocation>
                     <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
                 </configuration>
                 <dependencies>
