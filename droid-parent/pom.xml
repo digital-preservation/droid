@@ -443,6 +443,14 @@
         </dependency>
     </dependencies>
     
+    <repositories>
+        <repository>
+            <id>wb-d-tfs2.web.local</id>
+            <name>wb-d-tfs2.web.local-releases</name>
+            <url>http://wb-d-tfs2.web.local:8081/artifactory/ext-release-local</url>
+        </repository>
+    </repositories>
+    
     <pluginRepositories>
         <pluginRepository>
             <id>mc-release</id>
@@ -456,4 +464,18 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+    
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>wb-d-tfs2.web.local-releases</name>
+            <url>http://wb-d-tfs2.web.local:8081/artifactory/libs-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>wb-d-tfs2.web.local-snapshots</name>
+            <url>http://wb-d-tfs2.web.local:8081/artifactory/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
