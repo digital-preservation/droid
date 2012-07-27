@@ -5,7 +5,6 @@
         <artifactId>droid</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
         <version>6.1-SNAPSHOT</version>
-        <relativePath>../droid-parent/pom.xml</relativePath>
     </parent>
   
   <artifactId>droid-build-tools</artifactId>
