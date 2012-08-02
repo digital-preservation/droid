@@ -32,10 +32,8 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang.StringUtils;
-
 import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
@@ -240,6 +238,7 @@ public class CommandFactoryImpl implements CommandFactory {
         command.setSignatureFile(signatureFile);
         command.setContainerSignatureFile(containerSignatureFile);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+        command.setArchives(cli.hasOption(CommandLineParam.ARCHIVES.toString()));
         command.setExtensionFilter(extensions);
         command.setQuiet(cli.hasOption(CommandLineParam.QUIET.toString()));
 
