@@ -33,12 +33,10 @@ package uk.gov.nationalarchives.droid.command.action;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
-
 import uk.gov.nationalarchives.droid.command.i18n.I18N;
 
 /**
@@ -201,7 +199,15 @@ public enum CommandLineParam {
         }
     },
     
-    /** Recursive operation flag. */
+    /** Open archives flag. */
+    ARCHIVES("A", "open-archives", I18N.ARCHIVES_HELP) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+    
+    /** Quiet operation flag. */
     QUIET("q", "quiet", I18N.QUIET_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -363,6 +369,7 @@ public enum CommandLineParam {
         options.addOption(SIGNATURE_FILE.newOption());
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption());
+        options.addOption(ARCHIVES.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
         
@@ -408,6 +415,7 @@ public enum CommandLineParam {
         options.addOption(SIGNATURE_FILE.newOption());
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption());
+        options.addOption(ARCHIVES.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
         
