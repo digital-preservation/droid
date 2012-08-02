@@ -62,6 +62,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class NoProfileRunCommand implements DroidCommand {
     
     private static final String FORWARD_SLASH = "/";
+    private static final String BACKWARD_SLASH = "\\";
     
     private String fileSignaturesFileName;
     private String containerSignaturesFileName;
@@ -70,6 +71,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private int maxBytesToScan = -1;
     private boolean quietFlag;
     private boolean recursive;
+    private boolean archives;
 
     //CHECKSTYLE:OFF
     /**
@@ -101,7 +103,8 @@ public class NoProfileRunCommand implements DroidCommand {
         }
         binarySignatureIdentifier.setMaxBytesToScan(maxBytesToScan);
         String path = fileSignaturesFile.getAbsolutePath();
-        String slash = path.contains(FORWARD_SLASH) ? FORWARD_SLASH : "\\";
+        String slash = path.contains(FORWARD_SLASH) ? FORWARD_SLASH : BACKWARD_SLASH;
+        String slash1 = slash;
       
         ContainerSignatureDefinitions containerSignatureDefinitions = null;
         if (containerSignaturesFileName != null) {
@@ -122,14 +125,9 @@ public class NoProfileRunCommand implements DroidCommand {
             }
         }
         path = "";
- /*       try {
-            path = dirToSearch.getCanonicalPath() + slash;
-        } catch (IOException e) {
-            throw new CommandExecutionException(e);
-        } */
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
-                path, slash);
+                path, slash, slash1, archives);
         
         Collection<File> matchedFiles =
                 FileUtils.listFiles(dirToSearch, this.extensions, this.recursive);
@@ -146,9 +144,8 @@ public class NoProfileRunCommand implements DroidCommand {
             RequestIdentifier identifier = new RequestIdentifier(uri);
             identifier.setParentId(1L);
             
-            IdentificationRequest request = null;
             InputStream in = null;
-            request = new FileSystemIdentificationRequest(metaData, identifier);
+            IdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
             try {
                 in = new FileInputStream(file);
                 request.open(in);
@@ -190,6 +187,8 @@ public class NoProfileRunCommand implements DroidCommand {
         }
         
         System.out.println("Recurse folders: " + this.recursive);
+        
+        System.out.println("Open archives: " + (this.archives ? "True" : "False"));
     }
 
     /**
@@ -218,7 +217,10 @@ public class NoProfileRunCommand implements DroidCommand {
     public void setContainerSignatureFile(final String containerSignatureFile) {
         this.containerSignaturesFileName = containerSignatureFile;
     }
-
+    public void setArchives(boolean archives) {
+        this.archives = archives;
+    }
+    
     /**
      * Set recursive.
      * 
