@@ -35,10 +35,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -50,7 +48,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.TarEntryIdentificationRequest;
 
 /**
- * Identifier for files held in a TAR archive.
+ * Identifier for files held in a TAR archive
  * 
  * @author rbrennan
  */
@@ -60,23 +58,28 @@ public class TarArchiveContentIdentifier {
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String path;
     private String slash;
+    private String slash1;
     private File tmpDir;
     
     /**
-     * @param binarySignatureIdentifier The Binary Signature Identifier
-     * @param containerSignatureDefinitions The Container Signature Definitions
-     * @param path The Path to the archive
-     * @param slash The slash character to use
+     * 
+     * @param binarySignatureIdentifier     binary signature identifier
+     * @param containerSignatureDefinitions container signatures
+     * @param path                          current archive path 
+     * @param slash                         local path element delimiter
+     * @param slash1                        local first container prefix delimiter
      */
-    public TarArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
-            final ContainerSignatureDefinitions containerSignatureDefinitions, final String path, final String slash) {
+    public TarArchiveContentIdentifier (final BinarySignatureIdentifier binarySignatureIdentifier,
+            final ContainerSignatureDefinitions containerSignatureDefinitions,
+            final String path, final String slash, final String slash1) {
     
-        synchronized (this) {
+        synchronized(this) {
             this.binarySignatureIdentifier = binarySignatureIdentifier;
             this.containerSignatureDefinitions = containerSignatureDefinitions;
             this.path = path;
             this.slash = slash;
-            if (tmpDir == null) {
+            this.slash1 = slash1;
+            if(tmpDir == null) {
                 tmpDir = new File(System.getProperty("java.io.tmpdir"));
             }
         }
@@ -86,19 +89,20 @@ public class TarArchiveContentIdentifier {
      * @param uri The URI of the file to identify
      * @param request The Identification Request
      * @throws CommandExecutionException When an exception happens during execution
+     * @throws IOException When an exception happens during archive access
      */
     public void identify(final URI uri, final IdentificationRequest request)
-        throws CommandExecutionException {
+            throws CommandExecutionException, IOException {
         
-        final String newPath = "tar:" + path + request.getFileName() + "!" + slash;
-        
-        InputStream tarIn = null;
+        final String newPath = "tar:" + slash1 + path + request.getFileName() + "!" + slash;
+        slash1 = "";
+        InputStream tarIn = null; 
         try {
             tarIn = request.getSourceInputStream(); 
             final TarArchiveInputStream in = new TarArchiveInputStream(tarIn);
             try {
                 TarArchiveEntry entry = null; 
-                while ((entry = (TarArchiveEntry) in.getNextTarEntry()) != null) {
+                while ((entry = (TarArchiveEntry)in.getNextTarEntry()) != null) {
                     String name = entry.getName();
                     if (!entry.isDirectory()) {
                         final RequestMetaData metaData = new RequestMetaData(1L, 2L, name);
@@ -107,30 +111,22 @@ public class TarArchiveContentIdentifier {
                             new TarEntryIdentificationRequest(metaData, identifier, tmpDir);
                         tarRequest.open(in);
                         final IdentificationResultCollection tarResults =
-                            binarySignatureIdentifier.matchBinarySignatures(tarRequest);
+                                binarySignatureIdentifier.matchBinarySignatures(tarRequest);
                         final ResultPrinter resultPrinter =
-                            new ResultPrinter(binarySignatureIdentifier,
-                                containerSignatureDefinitions, newPath, slash);
+                                new ResultPrinter(binarySignatureIdentifier,
+                                    containerSignatureDefinitions, newPath, slash, slash1, true);
                         resultPrinter.print(tarResults, tarRequest);
                     }
-                    
                 }
             } finally {
                 if (in != null) {
                     in.close();
                 }
             }
-        } catch (IOException e) {
-            throw new CommandExecutionException(e);
         } finally {
             if (tarIn != null) {
-                try {
-                    tarIn.close();
-                } catch (IOException ioe) {
-                    throw new CommandExecutionException(ioe);
-                }
+                tarIn.close();
             }
         }
-        
     }
 }
