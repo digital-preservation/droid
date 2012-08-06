@@ -32,8 +32,10 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang.StringUtils;
+
 import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;

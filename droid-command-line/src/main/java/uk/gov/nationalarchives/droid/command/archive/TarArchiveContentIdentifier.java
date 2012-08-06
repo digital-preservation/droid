@@ -35,8 +35,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -48,7 +50,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.TarEntryIdentificationRequest;
 
 /**
- * Identifier for files held in a TAR archive
+ * Identifier for files held in a TAR archive.
  * 
  * @author rbrennan
  */
@@ -69,17 +71,17 @@ public class TarArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public TarArchiveContentIdentifier (final BinarySignatureIdentifier binarySignatureIdentifier,
+    public TarArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
-        synchronized(this) {
+        synchronized (this) {
             this.binarySignatureIdentifier = binarySignatureIdentifier;
             this.containerSignatureDefinitions = containerSignatureDefinitions;
             this.path = path;
             this.slash = slash;
             this.slash1 = slash1;
-            if(tmpDir == null) {
+            if (tmpDir == null) {
                 tmpDir = new File(System.getProperty("java.io.tmpdir"));
             }
         }
@@ -89,10 +91,10 @@ public class TarArchiveContentIdentifier {
      * @param uri The URI of the file to identify
      * @param request The Identification Request
      * @throws CommandExecutionException When an exception happens during execution
-     * @throws IOException When an exception happens during archive access
+     * @throws CommandExecutionException When an exception happens during archive access
      */
     public void identify(final URI uri, final IdentificationRequest request)
-            throws CommandExecutionException, IOException {
+        throws CommandExecutionException {
         
         final String newPath = "tar:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
@@ -102,7 +104,7 @@ public class TarArchiveContentIdentifier {
             final TarArchiveInputStream in = new TarArchiveInputStream(tarIn);
             try {
                 TarArchiveEntry entry = null; 
-                while ((entry = (TarArchiveEntry)in.getNextTarEntry()) != null) {
+                while ((entry = (TarArchiveEntry) in.getNextTarEntry()) != null) {
                     String name = entry.getName();
                     if (!entry.isDirectory()) {
                         final RequestMetaData metaData = new RequestMetaData(1L, 2L, name);
@@ -123,9 +125,15 @@ public class TarArchiveContentIdentifier {
                     in.close();
                 }
             }
+        } catch (IOException ioe) {
+            throw new CommandExecutionException(ioe.getMessage(), ioe);
         } finally {
             if (tarIn != null) {
-                tarIn.close();
+                try {
+                    tarIn.close();
+                } catch (IOException ioe) {
+                    throw new CommandExecutionException(ioe.getMessage(), ioe);
+                }
             }
         }
     }

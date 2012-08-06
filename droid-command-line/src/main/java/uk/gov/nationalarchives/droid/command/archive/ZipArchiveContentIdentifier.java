@@ -35,8 +35,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -48,7 +50,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentificationRequest;
 
 /**
- * Identifier for files held in a ZIP archive
+ * Identifier for files held in a ZIP archive.
  * 
  * @author rbrennan
  */
@@ -69,17 +71,17 @@ public class ZipArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public ZipArchiveContentIdentifier (final BinarySignatureIdentifier binarySignatureIdentifier,
+    public ZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
-        synchronized(this) {
+        synchronized (this) {
             this.binarySignatureIdentifier = binarySignatureIdentifier;
             this.containerSignatureDefinitions = containerSignatureDefinitions;
             this.path = path;
             this.slash = slash;
             this.slash1 = slash1;
-            if(tmpDir == null) {
+            if (tmpDir == null) {
                 tmpDir = new File(System.getProperty("java.io.tmpdir"));
             }
         }
@@ -89,10 +91,10 @@ public class ZipArchiveContentIdentifier {
      * @param uri The URI of the file to identify
      * @param request The Identification Request
      * @throws CommandExecutionException When an exception happens during execution
-     * @throws IOException When an exception happens during archive file access
+     * @throws CommandExecutionException When an exception happens during archive file access
      */
     public void identify(final URI uri, final IdentificationRequest request)
-            throws CommandExecutionException, IOException {
+        throws CommandExecutionException {
         
         final String newPath = "zip:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
@@ -102,7 +104,7 @@ public class ZipArchiveContentIdentifier {
             final ZipArchiveInputStream in = new ZipArchiveInputStream(zipIn);
             try {
                 ZipArchiveEntry entry = null; 
-                while ((entry = (ZipArchiveEntry)in.getNextZipEntry()) != null) {
+                while ((entry = (ZipArchiveEntry) in.getNextZipEntry()) != null) {
                     final String name = entry.getName();
                     if (!entry.isDirectory()) {
                         final RequestMetaData metaData = new RequestMetaData(1L, 2L, name);
@@ -124,9 +126,15 @@ public class ZipArchiveContentIdentifier {
                     in.close();
                 }
             }
+        } catch (IOException ioe) {
+            throw new CommandExecutionException(ioe.getMessage(), ioe);
         } finally {
             if (zipIn != null) {
-                zipIn.close();
+                try {
+                    zipIn.close();
+                } catch (IOException ioe) {
+                    throw new CommandExecutionException(ioe.getMessage(), ioe);
+                }
             }
         }
     }

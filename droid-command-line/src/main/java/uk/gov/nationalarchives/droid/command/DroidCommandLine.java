@@ -32,10 +32,22 @@
 package uk.gov.nationalarchives.droid.command;
 
 import java.io.PrintWriter;
-import org.apache.commons.cli.*;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.gov.nationalarchives.droid.command.action.*;
+
+import uk.gov.nationalarchives.droid.command.action.CommandFactory;
+import uk.gov.nationalarchives.droid.command.action.CommandFactoryImpl;
+import uk.gov.nationalarchives.droid.command.action.CommandLineException;
+import uk.gov.nationalarchives.droid.command.action.CommandLineParam;
+import uk.gov.nationalarchives.droid.command.action.CommandLineSyntaxException;
+import uk.gov.nationalarchives.droid.command.action.HelpCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.context.SpringUiContext;
 import uk.gov.nationalarchives.droid.command.i18n.I18N;

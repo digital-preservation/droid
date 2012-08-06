@@ -217,6 +217,12 @@ public class NoProfileRunCommand implements DroidCommand {
     public void setContainerSignatureFile(final String containerSignatureFile) {
         this.containerSignaturesFileName = containerSignatureFile;
     }
+    
+    /**
+     * Set whether this examines Archives.
+     * 
+     * @param archives true if we should examine archives, false otherwise
+     */
     public void setArchives(boolean archives) {
         this.archives = archives;
     }

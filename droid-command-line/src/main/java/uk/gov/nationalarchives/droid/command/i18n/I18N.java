@@ -93,6 +93,7 @@ public final class I18N {
     /** Help for extension list. */
     public static final String EXTENSION_LIST_HELP = "extension_list.help";
     
+    /** Help for archives. */
     public static final String ARCHIVES_HELP = "archives.help";
     
     /** Recurse subdirectories. */

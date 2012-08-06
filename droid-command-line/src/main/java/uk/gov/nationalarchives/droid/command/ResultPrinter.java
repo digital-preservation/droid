@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.command;
 
 import java.io.IOException;
 import java.util.List;
+
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
@@ -51,13 +52,18 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollect
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 
 /**
- * File identification results printer
+ * File identification results printer.
  *
  * NB: This class is called recursively when archive files are opened 
  * 
  * @author rbrennan
  */
 public class ResultPrinter {
+    
+    private static final String R_SLASH = "/";
+    private static final String L_BRACKET = "(";
+    private static final String R_BRACKET = ")";
+    private static final String SPACE = " ";
     
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
@@ -74,15 +80,15 @@ public class ResultPrinter {
     private final String TAR_ARCHIVE = "x-fmt/265";
     private final String GZIP_ARCHIVE = "x-fmt/266";
     
-    /*
-     * Store signature files
+    /**
+     * Store signature files.
      * 
      * @param binarySignatureIdentifier     binary signature identifier
      * @param containerSignatureDefinitions container signatures
      * @param path                          current file/container path 
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param archives
+     * @param archives                      Should archives be examined?
      */
     public ResultPrinter(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
@@ -93,15 +99,15 @@ public class ResultPrinter {
         this.path = path;
         this.slash = slash;
         this.slash1 = slash1;
-        this.wrongSlash = this.slash.equals("/") ? "\\" : "/";
+        this.wrongSlash = this.slash.equals(R_SLASH) ? "\\" : R_SLASH;
         this.archives = archives;
         if (containerSignatureDefinitions != null) {
             triggerPuids = containerSignatureDefinitions.getTiggerPuids();
         }
     }
     
-    /*
-     * Output identification for this file
+    /**
+     * Output identification for this file.
      * 
      * @param results                       identification Results
      * @param request                       identification Request
@@ -129,25 +135,21 @@ public class ResultPrinter {
                 String puid = identResult.getPuid();
                 System.out.println(fileName + "," + puid);
                 if (archives) {
-                    try {
-                        if (GZIP_ARCHIVE.equals(puid)) {
-                            GZipArchiveContentIdentifier gzipArchiveIdentifier = 
-                                    new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                        containerSignatureDefinitions, path, slash, slash1);
-                            gzipArchiveIdentifier.identify(results.getUri(), request);
-                        } else if (TAR_ARCHIVE.equals(puid)) {
-                            TarArchiveContentIdentifier tarArchiveIdentifier = 
-                                    new TarArchiveContentIdentifier(binarySignatureIdentifier,
-                                        containerSignatureDefinitions, path, slash, slash1);
-                            tarArchiveIdentifier.identify(results.getUri(), request);
-                        } else if (ZIP_ARCHIVE.equals(puid)) {
-                            ZipArchiveContentIdentifier zipArchiveIdentifier = 
-                                    new ZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                        containerSignatureDefinitions, path, slash, slash1);
-                            zipArchiveIdentifier.identify(results.getUri(), request);
-                        }
-                    } catch (IOException e) {   // carry on after archive i/o problems
-                        System.err.println(e + " (" + fileName + ")");
+                    if (GZIP_ARCHIVE.equals(puid)) {
+                        GZipArchiveContentIdentifier gzipArchiveIdentifier = 
+                                new GZipArchiveContentIdentifier(binarySignatureIdentifier,
+                                    containerSignatureDefinitions, path, slash, slash1);
+                        gzipArchiveIdentifier.identify(results.getUri(), request);
+                    } else if (TAR_ARCHIVE.equals(puid)) {
+                        TarArchiveContentIdentifier tarArchiveIdentifier = 
+                                new TarArchiveContentIdentifier(binarySignatureIdentifier,
+                                    containerSignatureDefinitions, path, slash, slash1);
+                        tarArchiveIdentifier.identify(results.getUri(), request);
+                    } else if (ZIP_ARCHIVE.equals(puid)) {
+                        ZipArchiveContentIdentifier zipArchiveIdentifier = 
+                                new ZipArchiveContentIdentifier(binarySignatureIdentifier,
+                                    containerSignatureDefinitions, path, slash, slash1);
+                        zipArchiveIdentifier.identify(results.getUri(), request);
                     }
                 }
             }   
@@ -181,10 +183,10 @@ public class ResultPrinter {
                                 Ole2IdentifierEngine ole2IdentifierEngine = new Ole2IdentifierEngine();
                                 ole2IdentifierEngine.setRequestFactory(requestFactory);
                                 ole2Identifier.setIdentifierEngine(ole2IdentifierEngine);
-                                containerResults = ole2Identifier.process
-                                        (request.getSourceInputStream(), containerResults);
+                                containerResults = ole2Identifier.process(
+                                    request.getSourceInputStream(), containerResults);
                             } catch (IOException e) {   // carry on after container i/o problems
-                                System.err.println(e + " (" + fileName + ")");
+                                System.err.println(e + SPACE + L_BRACKET + fileName + R_BRACKET);
                             }
                         } else if (ZIP_CONTAINER.equals(containerType)) {
                             try {
@@ -194,10 +196,10 @@ public class ResultPrinter {
                                 ZipIdentifierEngine zipIdentifierEngine = new ZipIdentifierEngine();
                                 zipIdentifierEngine.setRequestFactory(requestFactory);
                                 zipIdentifier.setIdentifierEngine(zipIdentifierEngine);
-                                containerResults = zipIdentifier.process
-                                            (request.getSourceInputStream(), containerResults);
+                                containerResults = zipIdentifier.process(
+                                    request.getSourceInputStream(), containerResults);
                             } catch (IOException e) {   // carry on after container i/o problems
-                                System.err.println(e + " (" + fileName + ")");
+                                System.err.println(e + SPACE + L_BRACKET + fileName + R_BRACKET);
                             }
                         } else {
                             throw new CommandExecutionException("Unknown container type: " + containerPuid);

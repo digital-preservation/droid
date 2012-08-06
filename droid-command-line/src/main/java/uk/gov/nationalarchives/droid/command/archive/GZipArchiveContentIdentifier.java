@@ -35,8 +35,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
+
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -48,7 +50,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.GZipIdentification
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 /**
- * Identifier for files held in a GZIP archive
+ * Identifier for files held in a GZIP archive.
  * 
  * @author rbrennan
  */
@@ -72,17 +74,17 @@ public class GZipArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public GZipArchiveContentIdentifier (final BinarySignatureIdentifier binarySignatureIdentifier,
+    public GZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
-        synchronized(this) {
+        synchronized (this) {
             this.binarySignatureIdentifier = binarySignatureIdentifier;
             this.containerSignatureDefinitions = containerSignatureDefinitions;
             this.path = path;
             this.slash = slash;
             this.slash1 = slash1;
-            if(tmpDir == null) {
+            if (tmpDir == null) {
                 tmpDir = new File(System.getProperty("java.io.tmpdir"));
             }
         }
@@ -92,10 +94,10 @@ public class GZipArchiveContentIdentifier {
      * @param uri The URI of the file to identify
      * @param request The Identification Request
      * @throws CommandExecutionException When an exception happens during execution
-     * @throws IOException When an exception happens during archive file input/output
+     * @throws CommandExecutionException When an exception happens during archive file input/output
      */
     public final void identify(final URI uri, final IdentificationRequest request)
-            throws CommandExecutionException, IOException {
+        throws CommandExecutionException {
         
         final String newPath = "gzip:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
@@ -118,9 +120,15 @@ public class GZipArchiveContentIdentifier {
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
                     containerSignatureDefinitions, newPath, slash, slash1, true);
             resultPrinter.print(gzResults, gzRequest);
+        } catch (IOException ioe) {
+            throw new CommandExecutionException(ioe.getMessage(), ioe);
         } finally {
             if (gzin != null) {
-                gzin.close();                
+                try {
+                    gzin.close();
+                } catch (IOException ioe) {
+                    throw new CommandExecutionException(ioe.getMessage(), ioe);
+                }
             }
         }
     }
