@@ -32,26 +32,6 @@
         <name>The National Archives</name>
         <url>http://www.nationalarchives.gov.uk</url>
     </organization>
- 
-    <developers>
-        <developer>
-            <name>Ross Spencer</name>
-            <organization>The National Archives</organization>
-            <organizationUrl>http://www.nationalarchives.gsi.gov.uk</organizationUrl>
-        </developer>
-        <developer>
-            <name>Richard Brennan</name>
-        </developer>
-        <developer>
-            <name>Adam Retter</name>
-            <organization>Adam Retter Consulting</organization>
-            <organizationUrl>http://www.adamretter.org.uk</organizationUrl>
-        </developer>
-        <developer>
-            <name>Matt Palmer</name>
-        </developer>
-        <!-- TODO add others - ask Ross -->
-    </developers>
   
     <licenses>
         <license>
