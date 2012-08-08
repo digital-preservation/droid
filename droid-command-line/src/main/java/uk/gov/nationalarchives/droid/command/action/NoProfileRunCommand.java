@@ -171,6 +171,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private void outputRuntimeInformation() {
         String versionString = ResourceBundle.getBundle("options").getString("version_no");
         System.out.println("DROID " + versionString + " No Profile mode: Runtime Information");
+        System.out.println("Resource folder: " + this.resources[0]);
         System.out.println("Binary signature file: " + this.fileSignaturesFileName);
        
         if (this.containerSignaturesFileName == null) {
@@ -186,7 +187,7 @@ public class NoProfileRunCommand implements DroidCommand {
                 + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
         }
         
-        System.out.println("Recurse folders: " + this.recursive);
+        System.out.println("Recurse folders: " + (this.recursive ? "True" : "False"));
         
         System.out.println("Open archives: " + (this.archives ? "True" : "False"));
     }
