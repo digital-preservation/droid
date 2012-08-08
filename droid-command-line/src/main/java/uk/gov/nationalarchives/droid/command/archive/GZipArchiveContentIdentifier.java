@@ -121,7 +121,7 @@ public class GZipArchiveContentIdentifier {
                     containerSignatureDefinitions, newPath, slash, slash1, true);
             resultPrinter.print(gzResults, gzRequest);
         } catch (IOException ioe) {
-            throw new CommandExecutionException(ioe.getMessage(), ioe);
+            System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 
         } finally {
             if (gzin != null) {
                 try {
