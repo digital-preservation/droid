@@ -127,7 +127,7 @@ public class ZipArchiveContentIdentifier {
                 }
             }
         } catch (IOException ioe) {
-            throw new CommandExecutionException(ioe.getMessage(), ioe);
+            System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 
         } finally {
             if (zipIn != null) {
                 try {
