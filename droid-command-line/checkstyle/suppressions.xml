@@ -65,7 +65,7 @@
     <suppress checks="MagicNumber|ClassFanOutComplexity|Javadoc|IllegalThrows|MultipleStringLiterals|ExecutableStatementCount|EmptyBlock"
               files=".*Test\.java$"/>
 
-    <suppress checks="MemberName|ClassDataAbstractionCoupling" files="ResultPrinter.java"/>
+    <suppress checks="CyclomaticComplexityCheck|MemberName|ClassDataAbstractionCoupling" files="ResultPrinter.java"/>
     
     <!--
       Turn off all checks for Generated and Test code. Fixes issues with using

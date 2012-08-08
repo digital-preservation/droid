@@ -63,6 +63,8 @@ public class NoProfileRunCommand implements DroidCommand {
     
     private static final String FORWARD_SLASH = "/";
     private static final String BACKWARD_SLASH = "\\";
+    private static final String PRINTABLE_TRUE = "True";
+    private static final String PRINTABLE_FALSE = "False";
     
     private String fileSignaturesFileName;
     private String containerSignaturesFileName;
@@ -187,9 +189,9 @@ public class NoProfileRunCommand implements DroidCommand {
                 + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
         }
         
-        System.out.println("Recurse folders: " + (this.recursive ? "True" : "False"));
+        System.out.println("Recurse folders: " + (this.recursive ? PRINTABLE_TRUE : PRINTABLE_FALSE));
         
-        System.out.println("Open archives: " + (this.archives ? "True" : "False"));
+        System.out.println("Open archives: " + (this.archives ? PRINTABLE_TRUE : PRINTABLE_FALSE));
     }
 
     /**
