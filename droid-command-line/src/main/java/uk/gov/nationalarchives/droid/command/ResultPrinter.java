@@ -77,6 +77,7 @@ public class ResultPrinter {
     private final String OLE2_CONTAINER = "OLE2";
     private final String ZIP_CONTAINER = "ZIP";
     private final String ZIP_ARCHIVE = "x-fmt/263";
+    private final String JIP_ARCHIVE = "x-fmt/412";
     private final String TAR_ARCHIVE = "x-fmt/265";
     private final String GZIP_ARCHIVE = "x-fmt/266";
     
@@ -122,7 +123,9 @@ public class ResultPrinter {
                 getContainerResults(results, request, fileName);
 
         IdentificationResultCollection finalResults = new IdentificationResultCollection(request);
+        boolean container = false;
         if (containerResults.getResults().size() > 0) {
+            container = true;
             finalResults = containerResults;
         } else if (results.getResults().size() > 0) {
             finalResults = results;
@@ -133,8 +136,11 @@ public class ResultPrinter {
         if (finalResults.getResults().size() > 0) {
             for (IdentificationResult identResult : finalResults.getResults()) {
                 String puid = identResult.getPuid();
+                if (!container && JIP_ARCHIVE.equals(puid)) {
+                    puid = ZIP_ARCHIVE;
+                }
                 System.out.println(fileName + "," + puid);
-                if (archives) {
+                if (archives && !container) {
                     if (GZIP_ARCHIVE.equals(puid)) {
                         GZipArchiveContentIdentifier gzipArchiveIdentifier = 
                                 new GZipArchiveContentIdentifier(binarySignatureIdentifier,
@@ -145,7 +151,7 @@ public class ResultPrinter {
                                 new TarArchiveContentIdentifier(binarySignatureIdentifier,
                                     containerSignatureDefinitions, path, slash, slash1);
                         tarArchiveIdentifier.identify(results.getUri(), request);
-                    } else if (ZIP_ARCHIVE.equals(puid)) {
+                    } else if (ZIP_ARCHIVE.equals(puid) || JIP_ARCHIVE.equals(puid)) {
                         ZipArchiveContentIdentifier zipArchiveIdentifier = 
                                 new ZipArchiveContentIdentifier(binarySignatureIdentifier,
                                     containerSignatureDefinitions, path, slash, slash1);
