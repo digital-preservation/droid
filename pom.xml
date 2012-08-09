@@ -42,14 +42,9 @@
     </licenses>
  
     <scm>
-        <connection>scm:svn:https://wb-d-tfs2.web.local/svn/dp/trunk/droid</connection>
-        <developerConnection>scm:svn:https://wb-d-tfs2.web.local/svn/dp/trunk/droid</developerConnection>
-        <url>https://github.com/digital-preservation/droid</url>
-        <!--
         <connection>scm:git:git://github.com/digital-preservation/droid.git</connection>
         <developerConnection>scm:git:git://github.com/digital-preservation/droid.git</developerConnection>
         <url>https://github.com/digital-preservation/droid</url>
-        -->
     </scm>
     
     <mailingLists>
