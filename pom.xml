@@ -163,7 +163,7 @@
                 <artifactId>maven-license-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <header>header.txt</header>
+                    <header>/header.txt</header>
                     <failIfMissing>true</failIfMissing>
                     <aggregate>true</aggregate> <!-- if this module references other modules, then check those too -->
                     <strictCheck>true</strictCheck>
