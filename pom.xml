@@ -208,6 +208,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                     <doCheck>true</doCheck>
                     <doUpdate>true</doUpdate>
                 </configuration>
