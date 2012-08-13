@@ -197,24 +197,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Source-Revision>${buildNumber}</Source-Revision>
-                            <Build-Timestamp>${timestamp}</Build-Timestamp>
-                            <Source-Repository>${project.scm.connection}</Source-Repository>
-                            <Implementation-URL>${project.url}</Implementation-URL>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>${project.build.source}</source>
