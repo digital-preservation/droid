@@ -163,7 +163,7 @@
                 <artifactId>maven-license-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <header>header.txt</header>
+                    <header>/header.txt</header>
                     <failIfMissing>true</failIfMissing>
                     <aggregate>true</aggregate> <!-- if this module references other modules, then check those too -->
                     <strictCheck>true</strictCheck>
@@ -186,6 +186,13 @@
                         <exclude>**/droid-test-db/**</exclude>
                     </excludes>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>uk.gov.nationalarchives</groupId>
+                        <artifactId>droid-build-tools</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>check-headers</id>
