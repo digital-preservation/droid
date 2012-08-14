@@ -323,19 +323,43 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <mavenExecutorId>forked-path</mavenExecutorId> <!-- avoid a bug with GPG plugin hanging http://jira.codehaus.org/browse/MGPG-9 -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+          <id>release-sign-artifacts</id>
+          <activation>
+            <property>
+              <!-- performRelease will be true when mvn:release-perform is executed -->
+              <name>performRelease</name>
+              <value>true</value>
+            </property>
+          </activation>
+          <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                      <goal>sign</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
+      </profiles>
     
     <dependencyManagement>
         <dependencies>
