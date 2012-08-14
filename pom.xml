@@ -32,6 +32,27 @@
         <name>The National Archives</name>
         <url>http://www.nationalarchives.gov.uk</url>
     </organization>
+    
+    <developers>
+        <developer>
+            <name>Ross Spencer</name>
+        </developer>
+        <developer>
+            <name>Richard Brennan</name>
+        </developer>
+        <developer>
+            <name>Adam Retter</name>
+        </developer>
+        <developer>
+            <name>Matt Palmer</name>
+        </developer>
+        <developer>
+            <name>Richard Flitcroft</name>
+        </developer>
+        <developer>
+            <name>Alok Dash</name>
+        </developer>
+    </developers>
   
     <licenses>
         <license>
