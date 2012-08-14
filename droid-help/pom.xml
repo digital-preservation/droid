@@ -8,6 +8,8 @@
     </parent>
  
     <artifactId>droid-help</artifactId>
+    <packaging>jar</packaging>
+    
     <name>droid-help</name>
  
 </project>

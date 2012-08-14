@@ -8,6 +8,7 @@
     </parent>
   
     <artifactId>droid-ui</artifactId>
+    <packaging>jar</packaging>
   
     <name>droid-ui</name>
   
