@@ -520,28 +520,6 @@
         </dependency>
     </dependencies>
     
-    <repositories>
-        <repository>
-            <id>wb-d-tfs2.web.local</id>
-            <name>wb-d-tfs2.web.local-releases</name>
-            <url>http://wb-d-tfs2.web.local:8081/artifactory/ext-release-local</url>
-        </repository>
-    </repositories>
-    
-    <pluginRepositories>
-        <pluginRepository>
-            <id>mc-release</id>
-            <name>Local Maven repository of releases</name>
-            <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
-    
     <distributionManagement>
         <repository>
             <id>central</id>
