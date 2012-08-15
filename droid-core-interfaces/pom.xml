@@ -134,8 +134,8 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-            <groupId>byteseek</groupId>
-            <artifactId>byteseek-tna</artifactId>
+            <groupId>com.google.code.byteseek</groupId>
+            <artifactId>byteseek</artifactId>
         </dependency>
   </dependencies>
 </project>
