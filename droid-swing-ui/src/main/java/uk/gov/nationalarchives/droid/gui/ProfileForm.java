@@ -200,15 +200,17 @@ public class ProfileForm extends JPanel {
             }
         } 
         
+        // VITAL! We do not want to recreate columns after we have set them up
+        // with their comparators!
+        resultsOutline.setAutoCreateColumnsFromModel(false);
+        
         // Sort ascending on first resource column by default:
         nodeColumn0 = (ETableColumn) columnModel.getColumn(0);
         int modelIndex = nodeColumn0.getModelIndex();
         resultsOutline.setColumnSorted(modelIndex, true, 1);
         
-        // VITAL! We do not want to recreate columns after we have set them up
-        // with their comparators!
-        resultsOutline.setAutoCreateColumnsFromModel(false);
-        // ((DefaultTreeModel) treeModel).reload();
+        
+        //((DefaultTreeModel) treeModel).reload();
 
         jScrollPane1.addComponentListener(new ComponentAdapter() {
             @Override
