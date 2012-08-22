@@ -83,9 +83,9 @@
             <version>7.2</version>
         </dependency>
         <dependency>
-            <groupId>org.openide</groupId>
+            <groupId>org.netbeans</groupId>
             <artifactId>swing-outline</artifactId>
-            <version>1.4.1</version>
+            <version>7.2</version>
         </dependency>
         <dependency>
             <groupId>org.jdesktop</groupId>
