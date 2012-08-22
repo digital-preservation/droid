@@ -141,8 +141,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            isLinux() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isLinux() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -178,8 +178,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            isLinux() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isLinux() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -214,8 +214,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            isLinux() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isLinux() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -254,8 +254,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry1 = new String[] {
             "", "",
-            isLinux() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isLinux() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -298,8 +298,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry1 = new String[] {
             "", "",
-            isLinux() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isLinux() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -318,8 +318,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry2 = new String[] {
             "", "",
-            isLinux() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isLinux() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -357,13 +357,13 @@ public class CsvItemWriterTest {
         verify(csvWriter, times(10)).writeNext(any(String[].class));
     }
     
-    private static boolean isLinux() {
-        return System.getProperty("os.name").equals("Linux");
+    private static boolean isNotWindows() {
+        return !System.getProperty("os.name").toLowerCase().startsWith("Win");
     }
     
     private static ProfileResourceNode buildProfileResourceNode(int i, Long size) {
         
-        File f = isLinux() ? new File("/my/file" + i + ".txt") : new File("C:/my/file" + i + ".txt");
+        File f = isNotWindows() ? new File("/my/file" + i + ".txt") : new File("C:/my/file" + i + ".txt");
         ProfileResourceNode node = new ProfileResourceNode(f.toURI());
         node.setExtensionMismatch(false);
         NodeMetaData metaData = new NodeMetaData();

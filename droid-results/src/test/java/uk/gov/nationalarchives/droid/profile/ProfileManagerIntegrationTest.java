@@ -94,8 +94,8 @@ public class ProfileManagerIntegrationTest {
       FileUtils.forceDelete(new File("integration-test-files"));
    }
 
-   private boolean isLinux() {
-      return System.getProperty("os.name").equals("Linux");
+   private boolean isNotWindows() {
+      return !System.getProperty("os.name").toLowerCase().startsWith("Win");
    }   
    
    @Before
