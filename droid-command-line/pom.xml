@@ -12,7 +12,13 @@
     <packaging>jar</packaging>
   
     <name>droid-command-line</name>
-  
+ 
+    <scm>
+        <connection>${project.parent.scm.connection}</connection>
+        <developerConnection>${project.parent.scm.developerConnection}</developerConnection>
+        <url>${project.parent.scm.url}</url>
+    </scm>
+ 
     <build>
         <plugins>
             <plugin>

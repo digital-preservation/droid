@@ -8,9 +8,15 @@
         <relativePath>../droid-parent</relativePath>
     </parent>
   
-  <artifactId>droid-build-tools</artifactId>
-  <packaging>jar</packaging>
+    <artifactId>droid-build-tools</artifactId>
+    <packaging>jar</packaging>
   
-  <name>droid-build-tools</name>
+    <name>droid-build-tools</name>
+  
+    <scm>
+        <connection>${project.parent.scm.connection}</connection>
+        <developerConnection>${project.parent.scm.developerConnection}</developerConnection>
+        <url>${project.parent.scm.url}</url>
+    </scm>
   
 </project>
