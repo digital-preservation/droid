@@ -5,6 +5,7 @@
         <groupId>uk.gov.nationalarchives</groupId>
   	<artifactId>droid</artifactId>
   	<version>6.1-SNAPSHOT</version>
+  	<relativePath>../droid-parent</relativePath>
     </parent>
   
     <artifactId>droid-core-interfaces</artifactId>
