@@ -19,19 +19,19 @@
     <inceptionYear>2012</inceptionYear>
   
     <modules>
-        <module>droid-core</module>
-        <module>droid-core-interfaces</module>
-        <module>droid-build-tools</module>
-        <module>droid-command-line</module>
-        <module>droid-binary</module>
-        <module>droid-container</module>
-        <module>droid-export</module>
-        <module>droid-export-interfaces</module>
-        <module>droid-help</module>
-        <module>droid-report</module>
-        <module>droid-report-interfaces</module>
-        <module>droid-results</module>
-        <module>droid-swing-ui</module>
+        <module>../droid-core</module>
+        <module>../droid-core-interfaces</module>
+        <module>../droid-build-tools</module>
+        <module>../droid-command-line</module>
+        <module>../droid-binary</module>
+        <module>../droid-container</module>
+        <module>../droid-export</module>
+        <module>../droid-export-interfaces</module>
+        <module>../droid-help</module>
+        <module>../droid-report</module>
+        <module>../droid-report-interfaces</module>
+        <module>../droid-results</module>
+        <module>../droid-swing-ui</module>
     </modules>
   
     <organization>
