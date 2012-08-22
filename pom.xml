@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+  
+    <parent>
+          <artifactId>droid</artifactId>
+          <groupId>uk.gov.nationalarchives</groupId>
+          <version>6.1-SNAPSHOT</version>
+          <relativePath>droid-parent</relativePath>
+    </parent>
+  
+    <artifactId>droid-distribution</artifactId>
+    <packaging>pom</packaging>
+
+    <name>droid-distribution</name>
+    
+    <scm>
+        <connection>${project.parent.scm.connection}</connection>
+        <developerConnection>${project.parent.scm.developerConnection}</developerConnection>
+        <url>${project.parent.scm.url}</url>
+    </scm>
+    
+    <modules>
+        <module>droid-core</module>
+        <module>droid-core-interfaces</module>
+        <module>droid-build-tools</module>
+        <module>droid-command-line</module>
+        <module>droid-binary</module>
+        <module>droid-container</module>
+        <module>droid-export</module>
+        <module>droid-export-interfaces</module>
+        <module>droid-help</module>
+        <module>droid-report</module>
+        <module>droid-report-interfaces</module>
+        <module>droid-results</module>
+        <module>droid-swing-ui</module>
+    </modules>
+    
+</project>
