@@ -36,4 +36,18 @@
         <module>droid-swing-ui</module>
     </modules>
     
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <header>droid-parent/header.txt</header>
+                    <aggregate>false</aggregate>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>
