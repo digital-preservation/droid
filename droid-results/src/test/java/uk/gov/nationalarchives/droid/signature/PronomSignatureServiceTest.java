@@ -38,6 +38,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,8 @@ public class PronomSignatureServiceTest {
         importer.onProxyChange(proxySettings);
     }
     
+    //TODO this only works inside of TNA! We need to mock out the proxy call!
+    @Ignore
     @Test
     public void testGetSigFileFromRemoteWebServiceSavesFileLocallyViaProxy() throws SignatureServiceException {
         
@@ -126,6 +129,8 @@ public class PronomSignatureServiceTest {
         assertEquals(SignatureType.BINARY, info.getType());
     }
     
+    //TODO this only works inside of TNA! We need to mock out the proxy call!
+    @Ignore
     @Test
     public void testGetLatestSigFileVersionViaProxy() {
         
