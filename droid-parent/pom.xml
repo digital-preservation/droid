@@ -9,11 +9,11 @@
     </parent>
   
     <groupId>uk.gov.nationalarchives</groupId>
-    <artifactId>droid</artifactId>
+    <artifactId>droid-parent</artifactId>
     <version>6.1-SNAPSHOT</version>
     <packaging>pom</packaging>
   
-    <name>droid</name>
+    <name>droid-parent</name>
     <description>A tool developed by the UK National Archives to perform automated batch identification of file formats.</description>
     <url>http://digital-preservation.github.com/droid/</url>
     <inceptionYear>2012</inceptionYear>

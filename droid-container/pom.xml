@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>droid</artifactId>
+        <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
   	<version>6.1-SNAPSHOT</version>
   	<relativePath>../droid-parent</relativePath>

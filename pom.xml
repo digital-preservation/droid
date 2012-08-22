@@ -3,16 +3,16 @@
     <modelVersion>4.0.0</modelVersion>
   
     <parent>
-          <artifactId>droid</artifactId>
+          <artifactId>droid-parent</artifactId>
           <groupId>uk.gov.nationalarchives</groupId>
           <version>6.1-SNAPSHOT</version>
           <relativePath>droid-parent</relativePath>
     </parent>
   
-    <artifactId>droid-distribution</artifactId>
+    <artifactId>droid</artifactId>
     <packaging>pom</packaging>
 
-    <name>droid-distribution</name>
+    <name>droid</name>
     
     <scm>
         <connection>${project.parent.scm.connection}</connection>
