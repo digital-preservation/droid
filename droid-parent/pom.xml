@@ -195,7 +195,7 @@
                 <artifactId>maven-license-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <header>../droid-distribution/header.txt</header>
+                    <header>../droid-parent/header.txt</header>
                     <failIfMissing>true</failIfMissing>
                     <aggregate>true</aggregate> <!-- if this module references other modules, then check those too -->
                     <strictCheck>true</strictCheck>
