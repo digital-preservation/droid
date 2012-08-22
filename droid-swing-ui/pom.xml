@@ -79,8 +79,8 @@
     <dependencies>
         <dependency>
             <groupId>org.openide</groupId>
-            <artifactId>org-openide-util</artifactId>
-            <version>1</version>
+            <artifactId>util</artifactId>
+            <version>7.2</version>
         </dependency>
         <dependency>
             <groupId>org.openide</groupId>
