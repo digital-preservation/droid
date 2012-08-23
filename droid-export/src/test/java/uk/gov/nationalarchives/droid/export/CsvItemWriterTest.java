@@ -49,6 +49,8 @@ import org.junit.Test;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
+import org.apache.commons.lang.SystemUtils;
+
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
@@ -70,6 +72,7 @@ public class CsvItemWriterTest {
     private File destination;
     private CSVWriter csvWriter;
     private DroidGlobalConfig config;
+    private boolean windows;
     
     @Before
     public void setup() {
@@ -83,6 +86,8 @@ public class CsvItemWriterTest {
         
         config = mock(DroidGlobalConfig.class);
         itemWriter.setConfig(config);
+        
+        System.out.println("zzzzzzzzzzzzzz: " + SystemUtils.IS_OS_WINDOWS);
     }
     
     @Test
