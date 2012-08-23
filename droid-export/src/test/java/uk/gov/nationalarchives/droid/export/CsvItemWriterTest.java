@@ -37,6 +37,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -44,12 +46,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Before;
 import org.junit.Test;
-
-import au.com.bytecode.opencsv.CSVWriter;
-
-import org.apache.commons.lang.SystemUtils;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
@@ -144,8 +143,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -181,8 +180,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -217,8 +216,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -257,8 +256,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry1 = new String[] {
             "", "",
-            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -301,8 +300,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry1 = new String[] {
             "", "",
-            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -321,8 +320,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry2 = new String[] {
             "", "",
-            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -361,7 +360,7 @@ public class CsvItemWriterTest {
     }
     
     private static boolean isNotWindows() {
-        return !System.getProperty("os.name").toLowerCase().startsWith("Win");
+        return !SystemUtils.IS_OS_WINDOWS;
     }
     
     private static ProfileResourceNode buildProfileResourceNode(int i, Long size) {
