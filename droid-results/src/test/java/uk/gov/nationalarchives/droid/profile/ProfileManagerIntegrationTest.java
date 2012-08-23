@@ -73,6 +73,16 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  * @author rflitcroft
  *
  */
+
+/* 
+ * TODO this test case has been disabled (@Ignore} because it has side effects.
+ * If you run it once on a clean machine, i.e. delete droid's settings folder
+ * ~/.droid6 and run the test it fails, if you then run the test again it suceeds
+ * the test should not read/write ~/.droid6. It needs to be cleaned up. Also
+ * any state it creates should be destroyed at the end of the test and the test
+ * should run repetitively.
+ */
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:META-INF/spring-profile.xml"})
 public class ProfileManagerIntegrationTest {
@@ -93,10 +103,6 @@ public class ProfileManagerIntegrationTest {
    public static void tearDown() throws IOException {
       FileUtils.forceDelete(new File("integration-test-files"));
    }
-
-   private boolean isNotWindows() {
-      return !System.getProperty("os.name").toLowerCase().startsWith("Win");
-   }   
    
    @Before
    public void setup() {
