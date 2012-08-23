@@ -21,6 +21,7 @@
     </scm>
     
     <modules>
+        <module>droid-parent</module>
         <module>droid-core</module>
         <module>droid-core-interfaces</module>
         <module>droid-build-tools</module>
