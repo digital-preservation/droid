@@ -86,8 +86,6 @@ public class CsvItemWriterTest {
         
         config = mock(DroidGlobalConfig.class);
         itemWriter.setConfig(config);
-        
-        System.out.println("zzzzzzzzzzzzzz: " + SystemUtils.IS_OS_WINDOWS);
     }
     
     @Test
@@ -146,8 +144,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -183,8 +181,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -219,8 +217,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry = new String[] {
             "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -259,8 +257,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry1 = new String[] {
             "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -303,8 +301,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry1 = new String[] {
             "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
@@ -323,8 +321,8 @@ public class CsvItemWriterTest {
         
         String[] expectedEntry2 = new String[] {
             "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+            !SystemUtils.IS_OS_WINDOWS ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
+            !SystemUtils.IS_OS_WINDOWS ? "/my/file1.txt" : "C:\\my\\file1.txt",
             "file1.txt", 
             "Signature", 
             "Done", 
