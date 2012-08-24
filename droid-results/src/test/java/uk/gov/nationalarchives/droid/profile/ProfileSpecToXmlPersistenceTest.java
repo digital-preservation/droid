@@ -76,6 +76,7 @@ public class ProfileSpecToXmlPersistenceTest {
 
     @After
     public void tearDown() throws IOException {
+       FileUtils.deleteDirectory(new File("profiles/"));
        FileUtils.deleteDirectory(new File("tmp/"));
     }
     
