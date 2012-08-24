@@ -31,13 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,6 +46,7 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -70,14 +65,20 @@ public class ProfileSpecToXmlPersistenceTest {
     @BeforeClass
     public static void init() {
         XMLUnit.setIgnoreWhitespace(true);
-        new File("profiles/untitled-1").mkdirs();
     }
 
     @Before
     public void setup() throws JAXBException {
         profileSpecJaxbDao = new JaxbProfileSpecDao();
+        new File("profiles/untitled-1").mkdirs();
+        new File("tmp/").mkdirs();
     }
 
+    @After
+    public void tearDown() throws IOException {
+       FileUtils.deleteDirectory(new File("tmp/"));
+    }
+    
     @Test
     public void testSaveEmptyProfileSpecAsXml() throws Exception {
 
