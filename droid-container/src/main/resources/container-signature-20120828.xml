@@ -242,6 +242,26 @@
             </Files>
         </ContainerSignature> 
 
+<ContainerSignature Id="2060" ContainerType="ZIP">
+            <Description>Microsoft Excel Macro enabled OOXML (big endian)</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="318">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                    <Sequence>'ContentType="application/vnd.ms-excel.sheet.macroEnabled.main+xml"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
         <ContainerSignature Id="3000" ContainerType="OLE2">
             <Description>Microsoft Powerpoint 2000 OLE2</Description>
             <Files>
@@ -1016,8 +1036,8 @@
                 </File>
             </Files>
         </ContainerSignature>        
-  
-        <ContainerSignature Id="13010" ContainerType="OLE2">
+
+  <ContainerSignature Id="13010" ContainerType="OLE2">
             <Description>Microsoft Visio Document 2000</Description>
             <Files>
                 <File>
@@ -1025,38 +1045,20 @@
                     <BinarySignatures>
                        <InternalSignatureCollection>
                            <InternalSignature ID="302" Specificity="Specific">
-							- <ByteSequence Reference="BOFoffset">
-								- <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
-									  <Sequence>566973696F2028544D292044726177696E670D0A</Sequence> 
-									  <DefaultShift>21</DefaultShift> 
-									  <Shift Byte="56">20</Shift> 
-									  <Shift Byte="69">5</Shift> 
-									  <Shift Byte="73">18</Shift> 
-									  <Shift Byte="6F">16</Shift> 
-									  <Shift Byte="20">10</Shift> 
-									  <Shift Byte="28">14</Shift> 
-									  <Shift Byte="54">13</Shift> 
-									  <Shift Byte="4D">12</Shift> 
-									  <Shift Byte="29">11</Shift> 
-									  <Shift Byte="44">9</Shift> 
-									  <Shift Byte="72">8</Shift> 
-									  <Shift Byte="61">7</Shift> 
-									  <Shift Byte="77">6</Shift> 
-									  <Shift Byte="6E">4</Shift> 
-									  <Shift Byte="67">3</Shift> 
-									  <Shift Byte="0D">2</Shift> 
-									  <Shift Byte="0A">1</Shift> 
-									  <RightFragment MaxOffset="6" MinOffset="6" Position="1">06</RightFragment> 
-								  </SubSequence>
-							  </ByteSequence>
-						  </InternalSignature>
+                            - <ByteSequence Reference="BOFoffset">
+                                - <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                                      <Sequence>'Visio (TM) Drawing'0D0A</Sequence> 
+                                      <RightFragment MaxOffset="6" MinOffset="6" Position="1">06</RightFragment> 
+                                  </SubSequence>
+                              </ByteSequence>
+                          </InternalSignature>
                        </InternalSignatureCollection>
                     </BinarySignatures>
                 </File>
             </Files>
         </ContainerSignature>    
 
-	 <ContainerSignature Id="13020" ContainerType="OLE2">
+     <ContainerSignature Id="13020" ContainerType="OLE2">
             <Description>Microsoft Visio Document 2003</Description>
             <Files>
                 <File>
@@ -1064,36 +1066,19 @@
                     <BinarySignatures>
                        <InternalSignatureCollection>
                           <InternalSignature ID="302">
-                          	- <ByteSequence Reference="BOFoffset">
-								- <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
-									  <Sequence>566973696F2028544D292044726177696E670D0A</Sequence> 
-									  <DefaultShift>21</DefaultShift> 
-									  <Shift Byte="56">20</Shift> 
-									  <Shift Byte="69">5</Shift> 
-									  <Shift Byte="73">18</Shift> 
-									  <Shift Byte="6F">16</Shift> 
-									  <Shift Byte="20">10</Shift> 
-									  <Shift Byte="28">14</Shift> 
-									  <Shift Byte="54">13</Shift> 
-									  <Shift Byte="4D">12</Shift> 
-									  <Shift Byte="29">11</Shift> 
-									  <Shift Byte="44">9</Shift> 
-									  <Shift Byte="72">8</Shift> 
-									  <Shift Byte="61">7</Shift> 
-									  <Shift Byte="77">6</Shift> 
-									  <Shift Byte="6E">4</Shift> 
-									  <Shift Byte="67">3</Shift> 
-									  <Shift Byte="0D">2</Shift> 
-									  <Shift Byte="0A">1</Shift> 
-									  <RightFragment MaxOffset="6" MinOffset="6" Position="1">0B</RightFragment> 
-								  </SubSequence>
-							  </ByteSequence>
+                              - <ByteSequence Reference="BOFoffset">
+                                - <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                                      <Sequence>'Visio (TM) Drawing'0D0A</Sequence> 
+                                      <RightFragment MaxOffset="6" MinOffset="6" Position="1">0B</RightFragment> 
+                                  </SubSequence>
+                              </ByteSequence>
                           </InternalSignature>
                        </InternalSignatureCollection>
                     </BinarySignatures>
                 </File>
             </Files>
-        </ContainerSignature>	
+        </ContainerSignature>    
+
         
     </ContainerSignatures>
   
@@ -1122,6 +1107,8 @@
         <FileFormatMapping signatureId="2040" Puid="fmt/214"/>
         <!-- Microsoft Excel OOXML big endian (ZIP)-->
         <FileFormatMapping signatureId="2050" Puid="fmt/214"/>
+	<!-- Microsoft Excel OOXML Macro-Enabled(ZIP)-->
+        <FileFormatMapping signatureId="2060" Puid="x-fmt/760"/>
 
         <!-- Microsoft PowerPoint 2000 (OLE2)-->
         <FileFormatMapping signatureId="3000" Puid="fmt/126"/>        
