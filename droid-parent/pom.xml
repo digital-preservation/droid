@@ -225,7 +225,7 @@
                 </executions>
                 <configuration>
                     <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                    <doCheck>true</doCheck>
+                    <doCheck>false</doCheck>
                     <doUpdate>true</doUpdate>
                 </configuration>
             </plugin>
