@@ -14,9 +14,9 @@
     <name>droid-results</name>
     
     <scm>
-        <connection>${project.parent.scm.connection}</connection>
-        <developerConnection>${project.parent.scm.developerConnection}</developerConnection>
-        <url>${project.parent.scm.url}</url>
+        <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
+        <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
+        <url>scm:git:https://github.com/digital-preservation/droid.git</url>
     </scm>
   
     <build>
