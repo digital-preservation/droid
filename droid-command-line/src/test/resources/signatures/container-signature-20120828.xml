@@ -1108,7 +1108,7 @@
         <!-- Microsoft Excel OOXML big endian (ZIP)-->
         <FileFormatMapping signatureId="2050" Puid="fmt/214"/>
 	<!-- Microsoft Excel OOXML Macro-Enabled(ZIP)-->
-        <FileFormatMapping signatureId="2060" Puid="x-fmt/760"/>
+        <FileFormatMapping signatureId="2060" Puid="fmt/445"/>
 
         <!-- Microsoft PowerPoint 2000 (OLE2)-->
         <FileFormatMapping signatureId="3000" Puid="fmt/126"/>        
