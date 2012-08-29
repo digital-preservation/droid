@@ -58,7 +58,8 @@
 		<url>scm:git:git@github.com:digital-preservation/droid.git</url>
 	</scm>
     
-    <mailingLists>
+    <!-- Mailing list to be replaced with Google Group instead, update to reflect -->
+    <!--<mailingLists>
         <mailingList>
             <name>droid-users</name>
             <post>droid-users@lists.sourceforge.net</post>
@@ -66,7 +67,7 @@
             <unsubscribe>https://lists.sourceforge.net/lists/listinfo/droid-users</unsubscribe>
             <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=droid-users</archive>
         </mailingList>
-    </mailingLists>
+    </mailingLists>-->
   
     <properties>
         <project.build.source>1.6</project.build.source>
@@ -516,7 +517,7 @@
         </dependency>
     </dependencies>
     
-    <distributionManagement>
+    <!--<distributionManagement>
         <repository>
             <id>central</id>
             <name>wb-d-tfs2.web.local-releases</name>
@@ -527,6 +528,6 @@
             <name>wb-d-tfs2.web.local-snapshots</name>
             <url>http://wb-d-tfs2.web.local:8081/artifactory/libs-snapshot-local</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement>-->
 
 </project>
