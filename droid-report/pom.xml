@@ -13,11 +13,11 @@
   
     <name>droid-report</name>
     
-    <scm>
-        <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
-        <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
-        <url>scm:git:https://github.com/digital-preservation/droid.git</url>
-    </scm>
+	<scm>
+		<connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
+		<developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
+		<url>scm:git:git@github.com:digital-preservation/droid.git</url>
+	</scm>
   
     <build>
         <plugins>
