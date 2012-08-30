@@ -49,6 +49,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -75,6 +76,7 @@ public class FileEventHandlerTest {
     private IdentificationRequest request;
     private FileEventHandler fileEventHandler;
     private AsynchDroid identificationEngine;
+    private File tmpDir;
     
     @Before
     public void setup() {
@@ -84,6 +86,16 @@ public class FileEventHandlerTest {
         fileEventHandler = new FileEventHandler(identificationEngine);
         when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class))).thenReturn(request);
         fileEventHandler.setRequestFactory(requestFactory);
+        
+        tmpDir = new File("tmp/");
+        tmpDir.mkdir();
+    }
+    
+    @After
+    public void tearDown() {
+        
+        tmpDir.delete();
+    
     }
     
     @Test
@@ -151,7 +163,7 @@ public class FileEventHandlerTest {
     @Test
     public void testUnreadableFileSubmitsErrorToResultHandler() throws IOException {
         
-        final File file = new File("tmp/unreadable");
+        final File file = new File("tmp/unreadable.file");
         file.createNewFile();
         assertTrue(file.exists());
         
@@ -180,5 +192,7 @@ public class FileEventHandlerTest {
         assertEquals("Can't read me!", thrown.getMessage());
         assertEquals(request, thrown.getRequest());
         assertEquals(IdentificationErrorType.ACCESS_DENIED, thrown.getErrorType());
+        
+        file.delete();
     }
 }
