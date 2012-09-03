@@ -2,10 +2,10 @@
     <modelVersion>4.0.0</modelVersion>
   
     <parent>
-          <artifactId>droid-parent</artifactId>
-          <groupId>uk.gov.nationalarchives</groupId>
-          <version>6.2-SNAPSHOT</version>
-          <relativePath>droid-parent</relativePath>
+        <artifactId>droid-parent</artifactId>
+        <groupId>uk.gov.nationalarchives</groupId>
+        <version>6.2-SNAPSHOT</version>
+        <relativePath>droid-parent</relativePath>
     </parent>
   
     <artifactId>droid</artifactId>
@@ -17,8 +17,7 @@
 		<connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
 		<developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
 		<url>scm:git:git@github.com:digital-preservation/droid.git</url>
-	  <tag>HEAD</tag>
-  </scm>
+    </scm>
     
     <modules>
         <module>droid-parent</module>
