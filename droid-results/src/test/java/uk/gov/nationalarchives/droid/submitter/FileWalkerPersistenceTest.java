@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
@@ -39,7 +41,7 @@ import java.util.Deque;
 
 import javax.xml.bind.JAXBException;
 
-import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,9 +117,8 @@ public class FileWalkerPersistenceTest {
             + "    </FileWalker>" 
             + "</ProfileWalk>"; 
 
-        XMLAssert.assertXMLEqual(new StringReader(control), 
-                new FileReader(new File(testDir, "profile_progress.xml")));
-
+        Diff diff = new Diff(new StringReader(control), new FileReader(new File(testDir, "profile_progress.xml")));
+        assertTrue(diff.similar());
     }
 
     public String getPath(File file) {

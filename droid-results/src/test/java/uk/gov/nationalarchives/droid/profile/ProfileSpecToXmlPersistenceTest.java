@@ -40,8 +40,10 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.FileUtils;
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.joda.time.format.ISODateTimeFormat;
@@ -201,9 +203,8 @@ public class ProfileSpecToXmlPersistenceTest {
                 + "</Profile>";
 
         Reader test = new FileReader(file);
-
-        XMLAssert.assertXMLEqual(new StringReader(control), test);
-
+        Diff diff = new Diff(new StringReader(control), test);
+        assertTrue(diff.similar());
     }
 
     public String getPath(File file) {
