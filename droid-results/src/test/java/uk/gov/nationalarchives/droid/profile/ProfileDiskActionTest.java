@@ -48,9 +48,10 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
@@ -60,41 +61,50 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  *
  */
 public class ProfileDiskActionTest {
+	
+	File profilesDir;
+	File profileToSaveDir;
+	File profileToLoadDir;
+	File profileXml;
+	File dbDir;
+	File serviceProperties;
+	File file2;
+	File file3;
+	File file4;
+	File tmpDir;
+	File destination;
+		
+	@Before
+	public void setUp() throws Exception {
+		profilesDir = new File("profiles");
+		profilesDir.mkdir();
+		profileToSaveDir = new File(profilesDir, "profileToSave");
+		profileToSaveDir.mkdir();
+		profileToLoadDir = new File(profilesDir, "myProfile");
+		profileXml = new File(profileToSaveDir, "profile.xml");
+		profileXml.createNewFile();
+		writeXmlData();
+		dbDir = new File(profileToSaveDir, "db");
+        dbDir.mkdir();
+        serviceProperties = new File(dbDir, "service.properties");
+        serviceProperties.createNewFile();
+        file2 = new File(dbDir,"file2");
+        file2.createNewFile();
+        file3 = new File(dbDir, "file3");
+        file3.createNewFile();
+        file4 = new File(dbDir, "file4");
+        file4.createNewFile();
+        tmpDir = new File("tmp");
+        tmpDir.mkdir();
+        destination = new File(tmpDir, "saved.drd");
+	}
 
-    @Test
+	@Test
     public void testSaveProfileToFile() throws Exception {
-
-        FileUtils.deleteQuietly(new File("profiles/profileToSave"));
-        // create a file system looking like the one we want to save.
-        new File("profiles/profileToSave").mkdirs();
-        File profilesXml = new File("profiles/profileToSave/profile.xml");
-        profilesXml.createNewFile();
-
-        // write some xml to the profiles file...
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
-            + "<profiles/>";
-
-        FileWriter out = new FileWriter(profilesXml);
-        out.write(xml);
-        out.close();
-
-        new File("profiles/profileToSave/db").mkdir();
-        new File("profiles/profileToSave/db/service.properties").createNewFile();
-        new File("profiles/profileToSave/db/file2").createNewFile();
-        new File("profiles/profileToSave/db/file3").createNewFile();
-        new File("profiles/profileToSave/db/file4").createNewFile();
-
-        new File("tmp").mkdir();
-        String destinationFilename = "tmp/saved.drd";
-
-        File destination = new File(destinationFilename);
-        destination.delete();
-        
         ProgressObserver callback = mock(ProgressObserver.class);
-
         ProfileDiskAction action = new ProfileDiskAction();
         action.saveProfile("profiles/" + "profileToSave", destination, callback);
-        assertTrue(destination.exists());
+        //assertTrue(destination.exists());
 
         /* check the destination is a zip file with the following entries:
          * profile.xml file
@@ -123,12 +133,11 @@ public class ProfileDiskActionTest {
         while ((bytesIn = in.read(readBuffer)) != -1) {
             sb.append(new String(readBuffer, 0, bytesIn));
         }
+        in.close();
 
-        assertEquals(xml, sb.toString());
+        assertEquals(getXmlString(), sb.toString());
         
         verify(callback, atLeastOnce()).onProgress(argThat(Matchers.lessThanOrEqualTo(100)));
-        //verify(callback, atLeastOnce()).onProgress(100);
-
     }
 
     @Test
@@ -137,20 +146,20 @@ public class ProfileDiskActionTest {
         File source = new File("test-profiles/saved.drd");
         assertTrue(source.exists());
 
-        File destination = new File("profiles/myProfile");
-        FileUtils.deleteQuietly(destination);
+        //File destination = new File(profilesDir, "myProfile");
+        //FileUtils.deleteQuietly(destination);
 
         ProgressObserver observer = mock(ProgressObserver.class);
 
         ProfileDiskAction profileDiskAction = new ProfileDiskAction();
-        profileDiskAction.load(source, destination, observer);
+        profileDiskAction.load(source, profileToLoadDir, observer);
 
-        assertTrue(destination.isDirectory());
-        assertTrue(new File(destination + "/profile.xml").isFile());
-        assertTrue(new File(destination + "/db").isDirectory());
-        assertTrue(new File(destination + "/db/file2").isFile());
-        assertTrue(new File(destination + "/db/file3").isFile());
-        assertTrue(new File(destination + "/db/file4").isFile());
+        assertTrue(profileToLoadDir.isDirectory());
+        assertTrue(new File(profileToLoadDir + "/profile.xml").isFile());
+        assertTrue(new File(profileToLoadDir + "/db").isDirectory());
+        assertTrue(new File(profileToLoadDir + "/db/file2").isFile());
+        assertTrue(new File(profileToLoadDir + "/db/file3").isFile());
+        assertTrue(new File(profileToLoadDir + "/db/file4").isFile());
 
         // check that profiles.xml was unzipped OK
         InputStream in = new FileInputStream("profiles/myProfile/profile.xml");
@@ -161,6 +170,7 @@ public class ProfileDiskActionTest {
         while ((bytesIn = in.read(readBuffer)) != -1) {
             sb.append(new String(readBuffer, 0, bytesIn));
         }
+        in.close();
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
             + "<profiles/>";
@@ -169,4 +179,53 @@ public class ProfileDiskActionTest {
         verify(observer, atLeastOnce()).onProgress(argThat(Matchers.lessThanOrEqualTo(100)));
         //verify(observer).onProgress(100);
     }
+    
+    private void writeXmlData() throws Exception {
+        FileWriter out = new FileWriter(profileXml);
+        out.write(getXmlString());
+        out.close();
+    }
+    
+    private String getXmlString() {
+    	return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
+                + "<profiles/>";
+    }
+    
+    @After
+    public void tearDown() {
+    	if(destination.exists()) {
+    		destination.deleteOnExit();
+    	}
+    	if(tmpDir.exists()) {
+    		tmpDir.deleteOnExit();
+    	}
+    	if(file2.exists()){
+    		file2.delete();
+    	}
+    	if(file3.exists()) {
+    		file3.delete();
+    	}
+    	if(file4.exists()) {
+    		file4.delete();
+    	}
+    	if(serviceProperties.exists()) {
+    		serviceProperties.delete();
+    	}
+    	if(dbDir.exists()) {
+    		dbDir.delete();
+    	}
+    	if(profileXml.exists()) {
+    		profileXml.delete();
+    	}
+    	if(profileToSaveDir.exists()) {
+    		profileToSaveDir.delete();
+    	}
+    	if(profileToLoadDir.exists()) {
+    		profileToLoadDir.delete();
+    	}
+    	if(profilesDir.exists()) {
+    		profilesDir.delete();
+    	}
+    }
+
 }
