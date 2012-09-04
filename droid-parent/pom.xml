@@ -52,10 +52,10 @@
         </license>
     </licenses>
  
-	<scm>
-		<connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
-		<developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
-		<url>scm:git:git@github.com:digital-preservation/droid.git</url>
+    <scm>
+        <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
+        <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
+        <url>scm:git:https://github.com/digital-preservation/droid.git</url>
     </scm>
     
     <mailingLists>
@@ -226,7 +226,7 @@
                 <configuration>
                     <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                     <doCheck>false</doCheck>
-                    <doUpdate>false</doUpdate>
+                    <doUpdate>true</doUpdate>
                 </configuration>
             </plugin>
             <plugin>
