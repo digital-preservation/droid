@@ -47,6 +47,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.apache.commons.lang.SystemUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,11 +70,13 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
  */
 public class CsvItemWriterTest {
 
+	private static DateTime testDateTime = new DateTime(12345678L);
     private CsvItemWriter itemWriter;
     private File destination;
     private CSVWriter csvWriter;
     private DroidGlobalConfig config;
     private boolean windows;
+    private String testDateTimeString;
     
     @Before
     public void setup() {
@@ -85,6 +90,9 @@ public class CsvItemWriterTest {
         
         config = mock(DroidGlobalConfig.class);
         itemWriter.setConfig(config);
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+        testDateTimeString = dtf.print(testDateTime);
+        
     }
     
     @Test
@@ -150,8 +158,8 @@ public class CsvItemWriterTest {
             "Done", 
             "1001", 
             "File", 
-            "foo", 
-            "1970-01-01T04:25:45",
+            "foo",
+            testDateTimeString,
             "false",
             "11111111111111111111111111111111",
             "1",
@@ -188,7 +196,7 @@ public class CsvItemWriterTest {
             "1001", 
             "File", 
             "foo", 
-            "1970-01-01T04:25:45",
+            testDateTimeString,
             "false",            
             "11111111111111111111111111111111",
             "",
@@ -224,7 +232,7 @@ public class CsvItemWriterTest {
             "", 
             "File", 
             "foo", 
-            "1970-01-01T04:25:45",
+            testDateTimeString,
             "false",            
             "11111111111111111111111111111111",
             "1",
@@ -264,7 +272,7 @@ public class CsvItemWriterTest {
             "1000", 
             "File", 
             "foo", 
-            "1970-01-01T04:25:45",
+            testDateTimeString,
             "false",            
             "11111111111111111111111111111111",
             "2",
@@ -308,7 +316,7 @@ public class CsvItemWriterTest {
             "1000", 
             "File", 
             "foo", 
-            "1970-01-01T04:25:45",
+            testDateTimeString,
             "false",            
             "11111111111111111111111111111111",
             "2",
@@ -328,7 +336,7 @@ public class CsvItemWriterTest {
             "1000", 
             "File", 
             "foo", 
-            "1970-01-01T04:25:45",
+            testDateTimeString,
             "false",            
             "11111111111111111111111111111111",
             "2",
@@ -371,7 +379,7 @@ public class CsvItemWriterTest {
         NodeMetaData metaData = new NodeMetaData();
         metaData.setExtension("foo");
         metaData.setIdentificationMethod(IdentificationMethod.BINARY_SIGNATURE);
-        metaData.setLastModified(12345678L);
+        metaData.setLastModified(testDateTime.getMillis());
         metaData.setName("file" + i + ".txt");
         metaData.setNodeStatus(NodeStatus.DONE);
         metaData.setResourceType(ResourceType.FILE);
