@@ -44,6 +44,9 @@ import javax.xml.bind.JAXBException;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -92,11 +95,13 @@ public class FileWalkerPersistenceTest {
         
         profileWalkerDao.save(state);
         
+        DateTime testDateTime = new DateTime(0L);
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
         String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" 
             + "<ProfileWalk Status=\"NOT_STARTED\">" 
             + "    <Dir Recursive=\"true\">" 
             + "        <Size>0</Size>" 
-            + "        <LastModifiedDate>1970-01-01T01:00:00+01:00</LastModifiedDate>" 
+            + "        <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>" 
             + "        <Extension></Extension>" 
             + "        <Name>root</Name>" 
             + "        <Uri>" + root.toURI() + "</Uri>" 
@@ -119,6 +124,7 @@ public class FileWalkerPersistenceTest {
             + "</ProfileWalk>"; 
 
         FileReader fileReader = new FileReader(new File(testDir, "profile_progress.xml"));
+        
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line;
         System.out.println("Outputting profile_progress.xml");
@@ -126,6 +132,15 @@ public class FileWalkerPersistenceTest {
         	System.out.println(line);
         }
         fileReader.close();
+        
+        StringReader controlReader = new StringReader(control);
+        BufferedReader bufferedControlReader = new BufferedReader(controlReader);
+        String controlLine ;
+        while((controlLine = bufferedControlReader.readLine()) != null) {
+        	System.out.println(controlLine);
+        }
+        bufferedControlReader.close();
+        
         Diff diff = new Diff(new StringReader(control), new FileReader(new File(testDir, "profile_progress.xml")));
         assertTrue(diff.similar());
     }

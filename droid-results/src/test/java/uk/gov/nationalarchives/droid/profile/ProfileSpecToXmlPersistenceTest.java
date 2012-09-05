@@ -46,6 +46,8 @@ import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Before;
 import org.junit.After;
@@ -143,13 +145,15 @@ public class ProfileSpecToXmlPersistenceTest {
 
         profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
 
+        DateTime testDateTime = new DateTime(0L);
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
         String control = "<Profile Id=\"untitled-1\">"
                 + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>"
                 + "  <ProfileSpec>"
                 + "    <Resources>"
                 + "     <File>"
                 + "      <Size>0</Size>"
-                + "      <LastModifiedDate>1970-01-01T01:00:00+01:00</LastModifiedDate>"
+                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
                 + "      <Extension></Extension>"
                 + "      <Name>1</Name>"
                 + "      <Uri>"
@@ -161,7 +165,7 @@ public class ProfileSpecToXmlPersistenceTest {
                 + "     </File>"
                 + "     <File>"
                 + "      <Size>0</Size>"
-                + "      <LastModifiedDate>1970-01-01T01:00:00+01:00</LastModifiedDate>"
+                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
                 + "      <Extension></Extension>"
                 + "      <Name>2</Name>"
                 + "      <Uri>"
@@ -173,7 +177,7 @@ public class ProfileSpecToXmlPersistenceTest {
                 + "     </File>"
                 + "     <Dir Recursive=\"false\">"
                 + "      <Size>0</Size>"
-                + "      <LastModifiedDate>1970-01-01T01:00:00+01:00</LastModifiedDate>"
+                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
                 + "      <Extension></Extension>"
                 + "      <Name>1</Name>"
                 + "      <Uri>"
@@ -185,7 +189,7 @@ public class ProfileSpecToXmlPersistenceTest {
                 + "     </Dir>"
                 + "     <Dir Recursive=\"true\">"
                 + "      <Size>0</Size>"
-                + "      <LastModifiedDate>1970-01-01T01:00:00+01:00</LastModifiedDate>"
+                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
                 + "      <Extension></Extension>"
                 + "      <Name>2</Name>"
                 + "      <Uri>"
