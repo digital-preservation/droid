@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.submitter;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
@@ -117,6 +118,14 @@ public class FileWalkerPersistenceTest {
             + "    </FileWalker>" 
             + "</ProfileWalk>"; 
 
+        FileReader fileReader = new FileReader(new File(testDir, "profile_progress.xml"));
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line;
+        System.out.println("Outputting profile_progress.xml");
+        while((line = bufferedReader.readLine()) != null) {
+        	System.out.println(line);
+        }
+        fileReader.close();
         Diff diff = new Diff(new StringReader(control), new FileReader(new File(testDir, "profile_progress.xml")));
         assertTrue(diff.similar());
     }
