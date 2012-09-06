@@ -63,6 +63,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
  * 
  */
 public class ProfileSpecToXmlPersistenceTest {
+	
+	File tmpDir;
+	File profileFile;
 
     private JaxbProfileSpecDao profileSpecJaxbDao;
 
@@ -75,13 +78,20 @@ public class ProfileSpecToXmlPersistenceTest {
     public void setup() throws JAXBException {
         profileSpecJaxbDao = new JaxbProfileSpecDao();
         new File("profiles/untitled-1").mkdirs();
-        new File("tmp/").mkdirs();
+        tmpDir = new File("tmp");
+        tmpDir.mkdir();
+        profileFile = new File(tmpDir, "profile.xml");
     }
 
     @After
     public void tearDown() throws IOException {
        FileUtils.deleteDirectory(new File("profiles/"));
-       FileUtils.deleteDirectory(new File("tmp/"));
+       if(profileFile.exists()) {
+    	   profileFile.deleteOnExit();
+       }
+       if(tmpDir.exists()) {
+    	   tmpDir.deleteOnExit();
+       }
     }
     
     @Test
@@ -354,7 +364,7 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.changeState(ProfileState.STOPPED);
         profile.setFilter(filter);
         
-        profileSpecJaxbDao.saveProfile(profile, new File("tmp"));
+        profileSpecJaxbDao.saveProfile(profile, tmpDir);
         
         String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" 
             + "<Profile>" 
