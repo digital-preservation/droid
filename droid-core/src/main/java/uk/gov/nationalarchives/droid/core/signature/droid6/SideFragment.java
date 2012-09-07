@@ -116,6 +116,7 @@ public class SideFragment extends SimpleElement {
     private int myPosition;
     private int myMinOffset;
     private int myMaxOffset;
+    private int originalMinOffset;
     private SequenceMatcher matcher;
     private boolean isInvalidFragment;
   
@@ -137,13 +138,14 @@ public class SideFragment extends SimpleElement {
      * A minimum offset is the amount of bytes to skip before
      * looking for this fragment.
      *   
-     * @param theMinOffset The minimum offset to begin looking for this fragment.
+     * @param offset The minimum offset to begin looking for this fragment.
      */
-    public final void setMinOffset(final int theMinOffset) {
-        this.myMinOffset = theMinOffset;
-        // ensure the maximum is never less than then minimum.
+    public final void setMinOffset(final int offset) {
+        this.myMinOffset = offset;
+        this.originalMinOffset = offset;
+        // ensure the maximum is never less than the minimum.
         if (this.myMaxOffset < this.myMinOffset) {
-            this.myMaxOffset = theMinOffset;
+            this.myMaxOffset = offset;
         }
     }
 
@@ -153,14 +155,38 @@ public class SideFragment extends SimpleElement {
      * than the minimum offset, then a range of bytes will be
      * searched for this fragment.
      * 
-     * @param theMaxOffset The maximum offset to begin lookiing for this fragment.
+     * @param offset The maximum offset to begin looking for this fragment.
      */
-    public final void setMaxOffset(final int theMaxOffset) {
-        this.myMaxOffset = theMaxOffset;
+    public final void setMaxOffset(final int offset) {
+        this.myMaxOffset = offset;
+        // ensure the minimum is never greater than the maximum.
+        if (this.originalMinOffset > this.myMaxOffset) {
+            this.originalMinOffset = offset;
+        }
         // ensure the minimum is never greater than the maximum.
         if (this.myMinOffset > this.myMaxOffset) {
-            this.myMinOffset = theMaxOffset;
+            this.myMinOffset = offset;
         }
+    }
+
+    /**
+     * The next offset is the new amount of bytes to skip before looking for
+     * this fragment after a previous match which failed on a subsequent fragment.
+     *   
+     * @param offset The next minimum offset to begin looking for this fragment.
+     */
+    public final void changeMinOffset(final int offset) {
+        if (offset >= this.originalMinOffset && offset <= this.myMaxOffset) {
+            this.myMinOffset = offset;
+        }
+    }
+
+    /**
+     * Reset the minimum offset to the original amount of bytes to skip 
+     * before looking for this fragment.
+     */
+    public final void resetMinOffset() {
+        this.myMinOffset = this.originalMinOffset;
     }
 
     /**
@@ -218,6 +244,16 @@ public class SideFragment extends SimpleElement {
      */
     public final int getMinOffset() {
         return myMinOffset;
+    }
+
+    /**
+     * A next offset is the new amount of bytes to skip before looking for 
+     * this fragment after a previous match failed on a subsequent fragment.
+     * 
+     * @return The next minimum offset to begin looking for this fragment.
+     */
+    public final int getOriginalMinOffset() {
+        return originalMinOffset;
     }
 
     /**
