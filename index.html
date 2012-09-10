@@ -48,10 +48,15 @@
 <p>DROID requires Java 6 Standard Edition (SE) and should work on any platform which supports that.</p>
 <p>DROID has been built and tested on:</p>
 <ul>
+  <li>Ubuntu 11.10 Server 32 bit / OpenJDK Java 1.6.0_24</li>
+  <li>Ubuntu 12.04 Server 32 bit / OpenJDK Java 1.6.0_24</li>
+  <li>Ubuntu 12.04 Desktop 64 bit / Oracle Java 1.6 update 34</li>
+  <li>Red Hat Enterprise Linux Server 6.3 64 bit / OpenJDK 1.6.0_24</li>
+  <li>CentOS 6.2 64 bit / Oracle Java 1.6 update 33</li>
+  <li>Linux Mint 13 Maya 64 bit / OpenJDK Java 1.6.0_24</li>
   <li>Microsoft Windows 7 (64 bit) / Oracle Java 1.6 update 34</li>
+  <li>Microsoft Windows Server 2008 R2 (64 bit) / Oracle Java 1.6 update 32</li>
   <li>Mac OS X 10.8 (Mountain Lion) / Java 1.6.0_29-b11</li>
-  <li>CentOS Linux 6 (64 bit) / Oracle Java 1.6.0 update 33</li>
-  <li>Ubuntu 12.04 (64 bit) / Java 1.6.0_30-b12</li>
 </ul>
 <p><strong>Note:</strong> DROID 6 <strong>will not</strong> function with Java 7.</p>
 
@@ -91,14 +96,19 @@ droid-swing-ui                        Swing GUI control over DROID
 
 <p>DROID is built using Apache Maven 3. First make sure that this is installed
 and if behind a proxy, edit your Maven settings.xml file to reflect the proxy
-server details. On Linux this would be ~/.m2/settings.xml.</p>
+server details. This will be either in the hidden .m2 directory within your home
+folder or within the conf directory of the Maven install directory, depending on your setup.</p>
 
 <p>Once this is complete you can use the master build file under the main DROID
 project folder to build the project. This is the pom.xml that sits under
 the main DROID folder containing all the sub projects. </p>
 
-<p>Simply run, "mvn install" from the command line when in this directory and DROID
+<p>Simply run, "mvn clean install" from the command line when in this directory and DROID
 will build. Follow the Maven output to see where Maven has placed the binaries.</p>
+        
+<p>Note that if building DROID on a headless system it is necessary to instantiate a virtual
+  framebuffer, such as <a href="http://en.wikipedia.org/wiki/Xvfb">Xvfb</a>, prior to running the build,
+  otherwise the graphical unit tests will fail and thereby cause the build itself to fail.</p>
 
 <h3>Release Notes</h3>
 
