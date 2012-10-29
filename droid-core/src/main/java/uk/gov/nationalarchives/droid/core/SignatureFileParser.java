@@ -72,6 +72,7 @@ public class SignatureFileParser {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(theFileName), "UTF-8"));
             parser.parse(new InputSource(in));
+            in.close();
         } catch (IOException e) {
             throw new SignatureParseException(e.getMessage(), e);
         } catch (SAXException e) {
