@@ -42,16 +42,14 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
 import uk.gov.nationalarchives.droid.command.action.CommandFactoryImpl;
 import uk.gov.nationalarchives.droid.command.action.CommandLineException;
 import uk.gov.nationalarchives.droid.command.action.CommandLineParam;
 import uk.gov.nationalarchives.droid.command.action.CommandLineSyntaxException;
-import uk.gov.nationalarchives.droid.command.action.HelpCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.context.SpringUiContext;
-import uk.gov.nationalarchives.droid.command.i18n.I18N;
-import static uk.gov.nationalarchives.droid.command.i18n.I18N.getResource;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 
 /**
@@ -66,25 +64,48 @@ public final class DroidCommandLine {
     public static final String USAGE = "droid [options]";
     /** Wrap width. */
     public static final int WRAP_WIDTH = 120;
+    
+    /**Logger Log4j.*/
+    private Log log = LogFactory.getLog(this.getClass());
+    //private static Logger log = Logger.getLogger(DroidCommandLine.class);
+    
+
 
     private final String[] args;
+    private GlobalContext context = new SpringUiContext();
+    
+
+
+    
     private CommandFactory commandFactory;
     private CommandLine cli;
-    private Log log = LogFactory.getLog(this.getClass());
-
+    
     /**
      * Default constructor.
      * 
      * @param args
      *            the command line arguments
-     * @param commandFactory
-     *            the Command Factory
      */
-    DroidCommandLine(final String[] args, CommandFactory commandFactory) {
+    DroidCommandLine(final String[] args) {
         this.args = args;
-        this.commandFactory = commandFactory;
+    }
+    
+    /**
+     * 
+     * @return GlobalContext object
+     */
+    public GlobalContext getContext() {
+        return context;
     }
 
+    /**
+     * 
+     * @param context object
+     */
+    public void setContext(GlobalContext context) {
+        this.context = context;
+    }
+    
     /**
      * Runs the command line interface.
      * 
@@ -92,18 +113,18 @@ public final class DroidCommandLine {
      *             if the command line failed for any reason
      */
     public void run() throws CommandLineException {
-        //log.info("Starting DROID.");
+        // log.info("Starting DROID.");
         CommandLineParser parser = new GnuParser();
 
         try {
             cli = parser.parse(CommandLineParam.options(), args);
-            
+
             String logThreshold = "INFO";
             if (cli.hasOption(CommandLineParam.QUIET.toString())) {
                 logThreshold = "ERROR";
             }
             System.setProperty("consoleLogThreshold", logThreshold);
-            
+
             CommandLineParam option = null;
             for (Option opt : cli.getOptions()) {
                 option = CommandLineParam.TOP_LEVEL_COMMANDS.get(opt.getOpt());
@@ -115,15 +136,16 @@ public final class DroidCommandLine {
             if (option != null) {
                 option.getCommand(commandFactory, cli).execute();
             } else {
-                throw new CommandLineSyntaxException("No command line options specified");
+                throw new CommandLineSyntaxException(
+                        "No command line options specified");
             }
-            
-        } catch (ParseException e) {
-            throw new CommandLineSyntaxException(e.getMessage());
+        } catch (ParseException pe) {
+            throw new CommandLineSyntaxException(pe);
         }
-        //finally {
-        //    log.info("Closing DROID.");
-        //}
+
+        // finally {
+        // log.info("Closing DROID.");
+        // }
     }
 
     /**
@@ -131,34 +153,84 @@ public final class DroidCommandLine {
      * 
      * @param args
      *            the command line arguments
+     * @throws CommandLineException 
+     * @throws CommandExecutionException 
      */
-    public static void main(final String[] args) {
-        
+    public static void main(final String[] args) throws CommandLineException {
+
         RuntimeConfig.configureRuntimeEnvironment();
 
         GlobalContext context = new SpringUiContext();
+        
+        int returnCode = 0;
+    
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        returnCode = commandLine.processExecution();
+
+
+
+        System.exit(returnCode);
+    }
+
+    /**
+     * 
+     * @return a status code 0 success otherwise 1
+     * @throws CommandLineException 
+     */
+    public int processExecution() throws CommandLineException {
+        
+        RuntimeConfig.configureRuntimeEnvironment();
+        PrintWriter out = new PrintWriter(System.out);
+        
+        final CommandFactoryImpl localCommandFactory = new CommandFactoryImpl(context, out);
+        
+        this.setCommandFactory(localCommandFactory);
+
+        int returnCode = 0;
+
         try {
-            PrintWriter out = new PrintWriter(System.out);
-            CommandFactoryImpl commandFactory = new CommandFactoryImpl(context, out);
-            DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-            commandLine.run();
+
+            run();
+            
             out.close();
-        } catch (CommandLineSyntaxException e) {
-            PrintWriter err = new PrintWriter(System.err);
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printWrapped(err, WRAP_WIDTH, e.getMessage());
-            formatter.printWrapped(err, WRAP_WIDTH, getResource(I18N.BAD_OPTIONS));
-            HelpCommand help = new HelpCommand(err);
-            help.execute();
-            err.close();
-        } catch (CommandLineException e) {
-            PrintWriter err = new PrintWriter(System.err);
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printWrapped(err, WRAP_WIDTH, e.getMessage());
-            err.close();
-        } finally {
             context.close();
+
+        } catch (CommandExecutionException ceex) {
+            returnCode = 1;
+            PrintWriter err = new PrintWriter(System.err);
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printWrapped(err, WRAP_WIDTH, ceex.getMessage());
+            err.close();
+            log.error("Droid Execution Error", ceex);
+            throw ceex;
+
+        } catch (CommandLineException clex) {
+            returnCode = 1;
+            PrintWriter err = new PrintWriter(System.err);
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printWrapped(err, WRAP_WIDTH, clex.getMessage());
+            err.close();
+            log.error("Droid CommandLineException", clex);
+            throw clex;
         }
+
+        return returnCode;
+    }
+
+    /**
+     * 
+     * @return CommandFactory object
+     */
+    public CommandFactory getCommandFactory() {
+        return commandFactory;
+    }
+
+    /**
+     * 
+     * @param commandFactory 
+     */
+    public void setCommandFactory(CommandFactory commandFactory) {
+        this.commandFactory = commandFactory;
     }
 
     /**
