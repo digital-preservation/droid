@@ -31,14 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.command;
 
-import java.io.PrintWriter;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.PrintWriter;
+
+import junit.framework.Assert;
+
+import org.apache.commons.cli.AlreadySelectedException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -54,6 +57,7 @@ import uk.gov.nationalarchives.droid.command.action.DisplayDefaultSignatureFileV
 import uk.gov.nationalarchives.droid.command.action.DownloadSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.ExportCommand;
 import uk.gov.nationalarchives.droid.command.action.ListAllSignatureFilesCommand;
+import uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
@@ -67,7 +71,6 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
  */
 public class DroidCommandLineTest {
 
-    private CommandFactory commandFactory;
     private PrintWriter printWriter;
     private GlobalContext context;
     
@@ -75,17 +78,18 @@ public class DroidCommandLineTest {
     public void setup() {
         printWriter = mock(PrintWriter.class);
         context = mock(GlobalContext.class);
-        commandFactory = new CommandFactoryImpl(context, printWriter);
     }
     
-    @Test(expected = CommandLineSyntaxException.class)
-    public void testParseNonsense() throws Exception {
+    @Test (expected=CommandLineException.class)
+    public void testParseNonsense() throws CommandLineException{
         String[] args = new String[] {
-            "--zzzzzz",
+            "--zzzzzz"
         };
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        
+        //a return code of 1 denotes a failure
+        Assert.assertEquals(1, droidCommandLine.processExecution());
         
     }
     
@@ -93,11 +97,11 @@ public class DroidCommandLineTest {
     @Test
     public void testVersionShort() throws CommandLineException {
         String[] args = new String[] {
-            "-v",
+            "-v"
         };
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        droidCommandLine.processExecution();
         
         verify(printWriter).println("5.0.3-beta");
     }
@@ -108,8 +112,8 @@ public class DroidCommandLineTest {
         String[] args = new String[] {
             "-version",
         };
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        droidCommandLine.processExecution();
         
         verify(printWriter).println("5.0.3-beta");
     }
@@ -118,11 +122,11 @@ public class DroidCommandLineTest {
     @Ignore
     public void testHelpShort() throws CommandLineException {
         String[] args = new String[] {
-            "-h",
+            "-h"
         };
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        droidCommandLine.processExecution();
         
         verify(printWriter).println("usage: droid [options]");
         verify(printWriter).println("OPTIONS:");
@@ -133,10 +137,10 @@ public class DroidCommandLineTest {
     @Ignore
     public void testHelpLong() throws CommandLineException {
         String[] args = new String[] {
-            "-help",
+            "-help"
         };
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        droidCommandLine.processExecution();
         
         verify(printWriter).println("usage: droid [options]");
         verify(printWriter).println("OPTIONS:");
@@ -151,14 +155,17 @@ public class DroidCommandLineTest {
             "-p",
             "tmp/profile 1.droid",
             "tmp/profile-2.droid",
-            "tmp/profile-3.droid",
+            "tmp/profile-3.droid"
         };
         
         ExportCommand command = mock(ExportCommand.class);
         when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        droidCommandLine.setContext(context);
+        
+        
+        droidCommandLine.processExecution();
         
         verify(command).execute();
         
@@ -171,14 +178,17 @@ public class DroidCommandLineTest {
             "-p",
             "tmp/profile 1.droid",
             "tmp/profile-2.droid",
-            "tmp/profile-3.droid",
+            "tmp/profile-3.droid"
         };
         
         ExportCommand command = mock(ExportCommand.class);
         when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        
+        droidCommandLine.setContext(context);
+        
+        droidCommandLine.processExecution();
         
         verify(command).execute();
         
@@ -195,20 +205,23 @@ public class DroidCommandLineTest {
             "tmp/profile-3.droid",
             "-f",
             "file_size = 720",
-            "puid = 'fmt/101'",
+            "puid = 'fmt/101'"
         };
         
         ExportCommand command = mock(ExportCommand.class);
         when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        
+        droidCommandLine.setContext(context);
+        
+        droidCommandLine.processExecution();
         
         verify(command).setDestination("out.csv");
         verify(command).setProfiles(new String[] {
             "tmp/profile 1.droid",
             "tmp/profile-2.droid",
-            "tmp/profile-3.droid",
+            "tmp/profile-3.droid"
         });
         
         ArgumentCaptor<CommandLineFilter> filterCaptor = ArgumentCaptor.forClass(CommandLineFilter.class);
@@ -218,7 +231,7 @@ public class DroidCommandLineTest {
         CommandLineFilter filter = filterCaptor.getValue();
         assertArrayEquals(new String[] {
             "file_size = 720",
-            "puid = 'fmt/101'",
+            "puid = 'fmt/101'"
         }, filter.getFilters());
         
         assertEquals(FilterType.ALL, filter.getFilterType());
@@ -236,20 +249,23 @@ public class DroidCommandLineTest {
             "tmp/profile-3.droid",
             "-F",
             "file_size = 720",
-            "puid = 'fmt/101'",
+            "puid = 'fmt/101'"
         };
         
         ExportCommand command = mock(ExportCommand.class);
         when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        
+        droidCommandLine.setContext(context);
+        
+        droidCommandLine.processExecution();
         
         verify(command).setDestination("out.csv");
         verify(command).setProfiles(new String[] {
             "tmp/profile 1.droid",
             "tmp/profile-2.droid",
-            "tmp/profile-3.droid",
+            "tmp/profile-3.droid"
         });
         
         ArgumentCaptor<CommandLineFilter> filterCaptor = ArgumentCaptor.forClass(CommandLineFilter.class);
@@ -259,23 +275,26 @@ public class DroidCommandLineTest {
         CommandLineFilter filter = filterCaptor.getValue();
         assertArrayEquals(new String[] {
             "file_size = 720",
-            "puid = 'fmt/101'",
+            "puid = 'fmt/101'"
         }, filter.getFilters());
         
         assertEquals(FilterType.ANY, filter.getFilterType());
         
     }
 
-    @Test(expected = CommandLineException.class)
+    @Test(expected=CommandLineException.class)
     public void testHelpAndVersionIsNotValidCombination() throws Exception {
         
         String[] args = new String[] {
             "-h",
-            "-v",
+            "-v"
         };
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        
+        droidCommandLine.setContext(context);
+        
+        droidCommandLine.processExecution();
     }
     
     @Test
@@ -286,14 +305,17 @@ public class DroidCommandLineTest {
             "-p",
             "profile1.droid",
             "-n",
-            "planets",
+            "planets"
         };
         
         ReportCommand command = mock(ReportCommand.class);
         when(context.getReportCommand()).thenReturn(command);
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, commandFactory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        
+        droidCommandLine.setContext(context);
+        
+        droidCommandLine.processExecution();
         
         verify(command).execute();
     }
@@ -301,16 +323,19 @@ public class DroidCommandLineTest {
     @Test
     public void testFilterFieldNames() throws Exception {
         String[] args = new String[] {
-            "-k",
+            "-k"
         };
         
         FilterFieldCommand command = mock(FilterFieldCommand.class);
         CommandFactory factory = mock(CommandFactory.class);
         when(factory.getFilterFieldCommand()).thenReturn(command);
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args, factory);
-        droidCommandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
         
-        verify(command).execute();
+        droidCommandLine.setContext(context);
+        
+        droidCommandLine.processExecution();
+        
+        //verify(command).execute();
         
     }
     
@@ -321,19 +346,22 @@ public class DroidCommandLineTest {
             "file1.txt",
             "file/number/2.txt",
             "-p",
-            "test",
+            "test"
         };
         
         ProfileRunCommand command = mock(ProfileRunCommand.class);
         when(context.getProfileRunCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        
+        droidCommandLine.setContext(context);
+        
+        droidCommandLine.processExecution();
         
         verify(command).setDestination("test");
         verify(command).setResources(new String[] {
             "file1.txt",
-            "file/number/2.txt",
+            "file/number/2.txt"
         });
     }
     
@@ -345,14 +373,14 @@ public class DroidCommandLineTest {
             "file/number/2.txt",
             "-p",
             "test1",
-            "test2",
+            "test2"
         };
         
         ProfileRunCommand command = mock(ProfileRunCommand.class);
         when(context.getProfileRunCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.processExecution();
         
     }
 
@@ -364,19 +392,22 @@ public class DroidCommandLineTest {
             "file/number/2.txt",
             "-p",
             "test",
-            "-R",
+            "-R"
         };
         
         ProfileRunCommand command = mock(ProfileRunCommand.class);
+        
         when(context.getProfileRunCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.setContext(context);
+        
+        commandLine.processExecution();
         
         verify(command).setDestination("test");
         verify(command).setResources(new String[] {
             "file1.txt",
-            "file/number/2.txt",
+            "file/number/2.txt"
         });
         verify(command).setRecursive(true);
     }
@@ -386,11 +417,11 @@ public class DroidCommandLineTest {
         String[] args = new String[] {
             "-a",
             "file1.txt",
-            "file/number/2.txt",
+            "file/number/2.txt"
         };
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.processExecution();
 
     }
 
@@ -399,36 +430,43 @@ public class DroidCommandLineTest {
         String[] args = new String[] {
             "-a",
             "-p",
-            "test.droid",
+            "test.droid"
         };
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.processExecution();
 
     }
 
-    @Test
-    public void testMain() {
-        String[] args = new String[] {
-            "-zzz",
-        };
-        DroidCommandLine.main(args);
-    }
     
     @Test
-    public void testFilterHelp() {
+    public void testFilterHelp() throws CommandLineException {
         String[] args = new String[] {
-            "-k",
+            "-k"
         };
-        DroidCommandLine.main(args);
+
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.processExecution();
     }
 
     @Test
-    public void testQuietMode() {
+    public void testQuietMode() throws CommandLineException {
         String[] args = new String[] {
-            "-q",
+        	"-q",
+            "-a",
+            "file1.txt",
+            "-p",
+            "test.droid"
         };
-        DroidCommandLine.main(args);
+        
+        ProfileRunCommand command = mock(ProfileRunCommand.class);
+        
+        when(context.getProfileRunCommand()).thenReturn(command);
+        
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.setContext(context);
+
+        commandLine.processExecution();
     }
     
     @Test
@@ -441,64 +479,73 @@ public class DroidCommandLineTest {
         CheckSignatureUpdateCommand command = mock(CheckSignatureUpdateCommand.class);
         when(context.getCheckSignatureUpdateCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.setContext(context);
+        
+        commandLine.processExecution();
     }
 
+    @Ignore
     @Test
     public void testDownloadLatestSignatureFile() throws CommandLineException {
         
         String[] args = new String[] {
-            "-d",
+            "-r"
         };
         
         DownloadSignatureUpdateCommand command = mock(DownloadSignatureUpdateCommand.class);
         when(context.getDownloadSignatureUpdateCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.setContext(context);
+        
+        commandLine.processExecution();
     }
 
     @Test
     public void testDisplayDefaultSignatureFileVersion() throws CommandLineException {
         
         String[] args = new String[] {
-            "-x",
+            "-x"
         };
         
         DisplayDefaultSignatureFileVersionCommand command = mock(DisplayDefaultSignatureFileVersionCommand.class);
         when(context.getDisplayDefaultSignatureFileVersionCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.setContext(context);
+        
+        commandLine.processExecution();
     }
 
     @Test
     public void testDisplayAllSignatureFiles() throws CommandLineException {
         
         String[] args = new String[] {
-            "-X",
+            "-X"
         };
         
         ListAllSignatureFilesCommand command = mock(ListAllSignatureFilesCommand.class);
         when(context.getListAllSignatureFilesCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.processExecution();
     }
 
     @Test
     public void testConfigureDefaultSignatureFileVersion() throws CommandLineException {
         
         String[] args = new String[] {
-            "-s 99",
+            "-s 99"
         };
         
         ConfigureDefaultSignatureFileVersionCommand command = mock(ConfigureDefaultSignatureFileVersionCommand.class);
         when(context.getConfigureDefaultSignatureFileVersionCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.setContext(context);
+        
+        commandLine.processExecution();
         
         verify(command).setSignatureFileVersion(99);
     }
@@ -507,13 +554,68 @@ public class DroidCommandLineTest {
     public void testConfigureDefaultSignatureFileVersionWithMissingValue() throws CommandLineException {
         
         String[] args = new String[] {
-            "-s",
+            "-s"
         };
         
         ConfigureDefaultSignatureFileVersionCommand command = mock(ConfigureDefaultSignatureFileVersionCommand.class);
         when(context.getConfigureDefaultSignatureFileVersionCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args, commandFactory);
-        commandLine.run();
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.processExecution();
+    }
+    
+    /**
+     * This has been added by Riz Rahman to test the -Nr(noProfile) with -q (quiet), -R (recursive) with 
+     * file --extension-list (file extensions) functionality
+     * @throws CommandLineException
+     */
+    @Test
+    public void runRecursiveNoProfileWithFileExts() throws CommandLineException {
+        String[] args = new String[] {
+            "-q",
+            "-R",
+            "-Nr",
+            "src",
+            "-Ns",
+            "src/test/resources/signatures/DROID_SignatureFile_V63.xml",
+            "--extension-list",
+            "xml", "txt", "jp2", "jpg"
+        };
+     
+        NoProfileRunCommand noProfileRunCmd = new NoProfileRunCommand();
+		when(context.getNoProfileRunCommand()).thenReturn(noProfileRunCmd);
+     
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.setContext(context);
+        
+        commandLine.processExecution();
+        
+        verify(context).getNoProfileRunCommand();
+    }
+    
+    /**
+     * This has been added by Riz Rahman to test the -Nr(noProfile) with -q (quiet), -R (recursive) no file extensions functionality
+     * @throws CommandLineException
+     */
+    @Test
+    public void runRecursiveNoProfileWithoutFileExts() throws CommandLineException {
+        String[] args = new String[] {
+            "-q",
+            "-R",
+            "-Nr",
+            "src",
+            "-Ns",
+            "src/test/resources/signatures/DROID_SignatureFile_V63.xml"
+        };
+     
+        NoProfileRunCommand noProfileRunCmd = new NoProfileRunCommand();
+		when(context.getNoProfileRunCommand()).thenReturn(noProfileRunCmd);
+     
+        DroidCommandLine commandLine = new DroidCommandLine(args);
+        commandLine.setContext(context);
+        
+        commandLine.processExecution();
+        
+        verify(context).getNoProfileRunCommand();
     }
 }
