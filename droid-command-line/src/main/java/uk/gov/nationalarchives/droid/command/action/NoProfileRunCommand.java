@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -43,6 +44,8 @@ import java.util.ResourceBundle;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -74,6 +77,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private boolean quietFlag;
     private boolean recursive;
     private boolean archives;
+    private Log log = LogFactory.getLog(this.getClass());
 
     //CHECKSTYLE:OFF
     /**
@@ -111,11 +115,12 @@ public class NoProfileRunCommand implements DroidCommand {
         ContainerSignatureDefinitions containerSignatureDefinitions = null;
         if (containerSignaturesFileName != null) {
             File containerSignaturesFile = new File(containerSignaturesFileName);
+            InputStream in = null;
             if (!containerSignaturesFile.exists()) {
                 throw new CommandExecutionException("Container signature file not found");
             }
             try {
-                final InputStream in = new FileInputStream(containerSignaturesFileName);
+                in = new FileInputStream(containerSignaturesFileName);
                 final ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
                 containerSignatureDefinitions = parser.parse(in);
             } catch (SignatureParseException e) {
@@ -124,8 +129,18 @@ public class NoProfileRunCommand implements DroidCommand {
                 throw new CommandExecutionException(ioe);
             } catch (JAXBException jaxbe) {
                 throw new CommandExecutionException(jaxbe);
+            }finally{
+            	if(in!=null){
+            		try {
+						in.close();
+					} catch (IOException e) {
+						throw new CommandExecutionException("Error closing InputStream on signature file");
+					}
+            		
+            	}
             }
         }
+        
         path = "";
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
@@ -155,12 +170,18 @@ public class NoProfileRunCommand implements DroidCommand {
                     binarySignatureIdentifier.matchBinarySignatures(request);
                 
                 resultPrinter.print(results, request);
-            } catch (IOException e) {
-                throw new CommandExecutionException(e);
-            } finally {
+            } catch (FileNotFoundException fnfe) {
+            	log.error("error processing files", fnfe);
+            	throw new CommandExecutionException(fnfe);
+			} catch (IOException e) {
+				throw new CommandExecutionException(e);
+			} finally {
                 if (in != null) {
                     try {
-                        in.close();
+                    	request.close();
+                    	file=null;
+                    	in.close();
+                        
                     } catch (IOException e) {
                         throw new CommandExecutionException(e);
                     }
