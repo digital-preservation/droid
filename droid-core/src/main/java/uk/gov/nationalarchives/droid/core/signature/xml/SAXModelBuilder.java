@@ -191,7 +191,7 @@ public class SAXModelBuilder extends DefaultHandler {
             elem = (SimpleElement) Class.forName(fullName).newInstance();
         //CHECKSTYLE:OFF
         } catch (Exception e) {
-        	log.debug("No class exists for element name:" + elementName);
+        	log.trace("No class exists for element name:" + elementName);
         }
         //CHECKSTYLE:ON
         if (elem == null) {
@@ -308,7 +308,7 @@ public class SAXModelBuilder extends DefaultHandler {
      */
     public void unknownElementWarning(String unknownElement, String containerElement) {
         String warning = "WARNING: Unknown XML element " + unknownElement + " found under " + containerElement + " ";
-        log.debug(warning);
+        log.trace(warning);
     }    
 
 }
