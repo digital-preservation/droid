@@ -56,40 +56,15 @@
   	<dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-core-interfaces</artifactId>
-            <version>6.2-SNAPSHOT</version>
+            <version>${project.version}</version>
   	</dependency>
         <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-  	</dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
   	<dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-  	</dependency>
-  	<dependency>
-            <groupId>commons-digester</groupId>
-            <artifactId>commons-digester</artifactId>
-            <version>2.1</version>
-  	</dependency>
-  	<dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-  	</dependency>
-  	<dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-  	</dependency>
-  	<dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils-core</artifactId>
-  	</dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr</artifactId>
-  	</dependency>
-  	<dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
   	</dependency>
   	<dependency>
             <groupId>com.google.code.byteseek</groupId>

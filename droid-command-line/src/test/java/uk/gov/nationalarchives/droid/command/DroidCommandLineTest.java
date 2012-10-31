@@ -49,7 +49,6 @@ import org.mockito.ArgumentCaptor;
 
 import uk.gov.nationalarchives.droid.command.action.CheckSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
-import uk.gov.nationalarchives.droid.command.action.CommandFactoryImpl;
 import uk.gov.nationalarchives.droid.command.action.CommandLineException;
 import uk.gov.nationalarchives.droid.command.action.CommandLineSyntaxException;
 import uk.gov.nationalarchives.droid.command.action.ConfigureDefaultSignatureFileVersionCommand;

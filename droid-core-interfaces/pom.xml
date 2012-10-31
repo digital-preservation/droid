@@ -5,7 +5,7 @@
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
         <version>6.2-SNAPSHOT</version>
-  	    <relativePath>../droid-parent</relativePath>
+  	<relativePath>../droid-parent</relativePath>
     </parent>
   
     <artifactId>droid-core-interfaces</artifactId>
@@ -108,12 +108,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
