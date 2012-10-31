@@ -13,10 +13,10 @@
 
     <name>droid</name>
     
-	<scm>
-		<connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
-		<developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
-		<url>scm:git:git@github.com:digital-preservation/droid.git</url>
+    <scm>
+        <connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
+        <developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
+        <url>scm:git:git@github.com:digital-preservation/droid.git</url>
     </scm>
     
     <modules>

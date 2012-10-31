@@ -46,13 +46,13 @@
         <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-command-line</artifactId>
-            <version>${project.version}</version>
+            <version>6.2-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
   	<dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-ui</artifactId>
-            <version>${project.version}</version>
+            <version>6.2-SNAPSHOT</version>
             <scope>runtime</scope>
   	</dependency>
   </dependencies>

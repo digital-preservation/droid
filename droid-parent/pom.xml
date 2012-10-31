@@ -334,8 +334,8 @@
                         <link>${project.organization.url}</link>
                     </links>
                     <packagesheader>DROID Packages</packagesheader>
-                    <doctitle>DROID ${project.version}</doctitle>
-                    <windowtitle>DROID ${project.version}</windowtitle>
+                    <doctitle>DROID 6.2-SNAPSHOT</doctitle>
+                    <windowtitle>DROID 6.2-SNAPSHOT</windowtitle>
                     <bottom>
                         <![CDATA[
                             Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organization.url}">${project.organization.name}</a>. All Rights Reserved
