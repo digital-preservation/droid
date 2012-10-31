@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.2-SNAPSHOT</version>
+        <version>6.2</version>
         <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -17,7 +17,8 @@
         <connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
         <developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
         <url>scm:git:git@github.com:digital-preservation/droid.git</url>
-    </scm>
+      <tag>droid-6.2</tag>
+  </scm>
   
     <build>
         <plugins>
@@ -45,7 +46,7 @@
                     <dependency>
                         <groupId>uk.gov.nationalarchives</groupId>
                         <artifactId>droid-build-tools</artifactId>
-                        <version>6.2-SNAPSHOT</version>
+                        <version>6.2</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -56,7 +57,7 @@
   	<dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-core-interfaces</artifactId>
-            <version>6.2-SNAPSHOT</version>
+            <version>6.2</version>
   	</dependency>
         <dependency>
             <groupId>xerces</groupId>
