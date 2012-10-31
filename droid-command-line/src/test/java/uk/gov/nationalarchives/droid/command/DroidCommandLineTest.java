@@ -577,7 +577,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V63.xml",
+            "src/test/resources/signatures/DROID_SignatureFile_V65.xml",
             "--extension-list",
             "xml", "txt", "jp2", "jpg"
         };
@@ -605,7 +605,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V63.xml"
+            "src/test/resources/signatures/DROID_SignatureFile_V65.xml"
         };
      
         NoProfileRunCommand noProfileRunCmd = new NoProfileRunCommand();
