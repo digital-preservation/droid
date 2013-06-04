@@ -31,26 +31,33 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TimeZone;
+
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -96,9 +103,6 @@ public class ProfileSpecToXmlPersistenceTest {
     
     @Test
     public void testSaveEmptyProfileSpecAsXml() throws Exception {
-
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
         File file = new File("profiles/untitled-1/profile.xml");
         FileUtils.deleteQuietly(file);
 
@@ -108,13 +112,14 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.changeState(ProfileState.STOPPED);
         profile.setUuid("untitled-1");
         profile.setProfileSpec(profileSpec);
-        profile.setDateCreated(df.parse("2009-01-01 12:00:00"));
+        profile.setDateCreated(DatatypeConverter.parseDateTime(
+                "2009-01-01T00:00:00Z").getTime());
         profile.setSignatureFileVersion(26);
 
         profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
 
         String control = "<Profile Id=\"untitled-1\">"
-                + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>"
+                        + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>"
                 + "  <State>STOPPED</State>"
                 + "  <Throttle>0</Throttle>"
                 + "  <SignatureFileVersion>26</SignatureFileVersion>"
@@ -150,20 +155,23 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.setSignatureFileVersion(26);
         profile.setUuid("untitled-1");
         profile.setProfileSpec(profileSpec);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        profile.setDateCreated(df.parse("2009-01-01 12:00:00"));
+        profile.setDateCreated(DatatypeConverter.parseDateTime(
+                "2009-01-01T00:00:00Z").getTime());
 
         profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
 
-        DateTime testDateTime = new DateTime(0L);
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date testDateTime = new Date(0L);
+
         String control = "<Profile Id=\"untitled-1\">"
                 + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>"
                 + "  <ProfileSpec>"
                 + "    <Resources>"
                 + "     <File>"
                 + "      <Size>0</Size>"
-                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
+                + "      <LastModifiedDate>" + dateFormat.format(testDateTime) + "</LastModifiedDate>"
                 + "      <Extension></Extension>"
                 + "      <Name>1</Name>"
                 + "      <Uri>"
@@ -175,7 +183,7 @@ public class ProfileSpecToXmlPersistenceTest {
                 + "     </File>"
                 + "     <File>"
                 + "      <Size>0</Size>"
-                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
+                + "      <LastModifiedDate>" + dateFormat.format(testDateTime) + "</LastModifiedDate>"
                 + "      <Extension></Extension>"
                 + "      <Name>2</Name>"
                 + "      <Uri>"
@@ -187,7 +195,7 @@ public class ProfileSpecToXmlPersistenceTest {
                 + "     </File>"
                 + "     <Dir Recursive=\"false\">"
                 + "      <Size>0</Size>"
-                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
+                + "      <LastModifiedDate>" + dateFormat.format(testDateTime) + "</LastModifiedDate>"
                 + "      <Extension></Extension>"
                 + "      <Name>1</Name>"
                 + "      <Uri>"
@@ -199,7 +207,7 @@ public class ProfileSpecToXmlPersistenceTest {
                 + "     </Dir>"
                 + "     <Dir Recursive=\"true\">"
                 + "      <Size>0</Size>"
-                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
+                + "      <LastModifiedDate>" + dateFormat.format(testDateTime) + "</LastModifiedDate>"
                 + "      <Extension></Extension>"
                 + "      <Name>2</Name>"
                 + "      <Uri>"
@@ -325,8 +333,9 @@ public class ProfileSpecToXmlPersistenceTest {
 
         assertEquals("STOPPED", profile.getState().name());
         assertEquals(120, profile.getThrottle());
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        assertEquals(df.parse("2009-01-01 00:00:00"), profile.getDateCreated());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
+        assertEquals(df.parse("2009-01-01 00:00:00 UTC"), profile
+                .getDateCreated());
 
         ProfileSpec profileSpec = profile.getProfileSpec();
 
@@ -349,6 +358,9 @@ public class ProfileSpecToXmlPersistenceTest {
     
     @Test
     public void testSaveProfileSpecWithFilter() throws Exception {
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         
         FilterCriterionImpl criterion = new FilterCriterionImpl();
         criterion.setField(CriterionFieldEnum.PUID);
@@ -368,8 +380,8 @@ public class ProfileSpecToXmlPersistenceTest {
         
         String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" 
             + "<Profile>" 
-            + "    <CreatedDate>" 
-            +          ISODateTimeFormat.dateTime().print(profile.getDateCreated().getTime()) 
+            + "    <CreatedDate>"
+            + dateFormat.format(profile.getDateCreated().getTime())
             + "    </CreatedDate>" 
             + "    <State>STOPPED</State>"
             + "    <Filter>"

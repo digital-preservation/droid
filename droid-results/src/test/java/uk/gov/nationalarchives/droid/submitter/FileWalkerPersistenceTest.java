@@ -37,16 +37,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
+import java.util.Date;
 import java.util.Deque;
+import java.util.TimeZone;
 
 import javax.xml.bind.JAXBException;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -94,14 +94,17 @@ public class FileWalkerPersistenceTest {
         state.setCurrentResource(new DirectoryProfileResource(root, true));
         
         profileWalkerDao.save(state);
+
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date testDateTime = new Date(0L);
         
-        DateTime testDateTime = new DateTime(0L);
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
         String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" 
             + "<ProfileWalk Status=\"NOT_STARTED\">" 
             + "    <Dir Recursive=\"true\">" 
             + "        <Size>0</Size>" 
-            + "        <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>" 
+            + "        <LastModifiedDate>" + dateFormat.format(testDateTime) + "</LastModifiedDate>" 
             + "        <Extension></Extension>" 
             + "        <Name>root</Name>" 
             + "        <Uri>" + root.toURI() + "</Uri>" 
@@ -142,7 +145,7 @@ public class FileWalkerPersistenceTest {
         bufferedControlReader.close();
         
         Diff diff = new Diff(new StringReader(control), new FileReader(new File(testDir, "profile_progress.xml")));
-        assertTrue(diff.similar());
+        assertTrue(diff.toString(), diff.similar());
     }
 
     public String getPath(File file) {
