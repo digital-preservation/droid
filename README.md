@@ -1,6 +1,6 @@
 DROID (Digital Record Object Identification) 
 =====
-The latest binary file can be downloaded from [The National Archives](http://www.nationalarchives.gov.uk/information-management/projects-and-work/droid.htm "The National Archives website").
+The latest binary file can be downloaded from [The National Archives website](http://www.nationalarchives.gov.uk/information-management/projects-and-work/droid.htm "The National Archives website").
 
 [![Build Status](https://secure.travis-ci.org/digital-preservation/droid.png)](http://travis-ci.org/digital-preservation/droid)
 
