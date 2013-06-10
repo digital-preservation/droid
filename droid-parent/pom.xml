@@ -77,7 +77,7 @@
         <derby.version>10.8.2.2</derby.version>
         <antlr.version>3.2</antlr.version>
         <cxf.version>2.2.12</cxf.version> <!-- TODO upgrade? -->
-        <aspectj.version>1.6.1</aspectj.version> <!-- TODO upgrade? -->
+        <aspectj.version>1.7.2</aspectj.version> <!-- TODO upgrade? -->
     </properties>
   
     <build>
@@ -273,7 +273,7 @@
                 <configuration>
                     <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                     <doCheck>false</doCheck>
-                    <doUpdate>true</doUpdate>
+                    <doUpdate>false</doUpdate>
                 </configuration>
             </plugin>
             <plugin>
