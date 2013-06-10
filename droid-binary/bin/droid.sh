@@ -1,5 +1,4 @@
-!/bin/sh
-#
+#!/bin/sh
 # Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
 # All rights reserved.
 #
