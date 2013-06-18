@@ -1,0 +1,1389 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="1"> 
+    <ContainerSignatures>
+
+        <ContainerSignature Id="1000" ContainerType="OLE2">
+            <Description>Microsoft Word 6.0/95 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>WordDocument</Path>
+                </File>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="306">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>10 00 00 00 'Word.Document.' ['6'-'7'] 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="1020" ContainerType="OLE2">
+            <Description>Microsoft Word 97 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>WordDocument</Path>
+                </File>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="300">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>10 00 00 00 'Word.Document.8' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="1030" ContainerType="ZIP">
+            <Description>Microsoft Word OOXML</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="302">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                    <Sequence>'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="1040" ContainerType="ZIP">
+            <Description>Microsoft Word OOXML (little endian unicode)</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="302">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                    <Sequence>'C'00 'o'00 'n'00 't'00 'e'00 'n'00 't'00 'T'00 'y'00 'p'00 'e'00 '='00 '"'00 'a'00 'p'00 'p'00 'l'00 'i'00 'c'00 'a'00 't'00 'i'00 'o'00 'n'00 '/'00 'v'00 'n'00 'd'00 '.'00 'o'00 'p'00 'e'00 'n'00 'x'00 'm'00 'l'00 'f'00 'o'00 'r'00 'm'00 'a'00 't'00 's'00 '-'00 'o'00 'f'00 'f'00 'i'00 'c'00 'e'00 'd'00 'o'00 'c'00 'u'00 'm'00 'e'00 'n'00 't'00 '.'00 'w'00 'o'00 'r'00 'd'00 'p'00 'r'00 'o'00 'c'00 'e'00 's'00 's'00 'i'00 'n'00 'g'00 'm'00 'l'00 '.'00 'd'00 'o'00 'c'00 'u'00 'm'00 'e'00 'n'00 't'00 '.'00 'm'00 'a'00 'i'00 'n'00 '+'00 'x'00 'm'00 'l'00 '"'00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="1050" ContainerType="ZIP">
+            <Description>Microsoft Word OOXML (big endian unicode)</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="302">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                    <Sequence>00'C' 00'o' 00'n' 00't' 00'e' 00'n' 00't' 00'T' 00'y' 00'p' 00'e' 00'=' 00'"' 00'a' 00'p' 00'p' 00'l' 00'i' 00'c' 00'a' 00't' 00'i' 00'o' 00'n' 00'/' 00'v' 00'n' 00'd' 00'.' 00'o' 00'p' 00'e' 00'n' 00'x' 00'm' 00'l' 00'f' 00'o' 00'r' 00'm' 00'a' 00't' 00's' 00'-' 00'o' 00'f' 00'f' 00'i' 00'c' 00'e' 00'd' 00'o' 00'c' 00'u' 00'm' 00'e' 00'n' 00't' 00'.' 00'w' 00'o' 00'r' 00'd' 00'p' 00'r' 00'o' 00'c' 00'e' 00's' 00's' 00'i' 00'n' 00'g' 00'm' 00'l' 00'.' 00'd' 00'o' 00'c' 00'u' 00'm' 00'e' 00'n' 00't' 00'.' 00'm' 00'a' 00'i' 00'n' 00'+' 00'x' 00'm' 00'l' 00'"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+        
+	<ContainerSignature Id="1060" ContainerType="ZIP">
+		<Description>Microsoft Word Macro enabled OOXML</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="1060">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+									<Sequence>'ContentType="application/vnd.ms-word.document.macroEnabled.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+
+        <ContainerSignature Id="2000" ContainerType="OLE2">
+            <Description>Microsoft Excel 5.0/95 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Book</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="308">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>09 08</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="4">
+	                                    <Sequence>00 05 05 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="2010" ContainerType="OLE2">
+            <Description>Microsoft Excel 97 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Workbook</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="308">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>09 08</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="4">
+	                                    <Sequence>00 06 05 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+             </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="2020" ContainerType="OLE2">
+            <Description>Microsoft Excel 97 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Book</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="308">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>09 08</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="4">
+	                                    <Sequence>00 06 05 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="2030" ContainerType="ZIP">
+            <Description>Microsoft Excel OOXML</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="317">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                    <Sequence>'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="2040" ContainerType="ZIP">
+            <Description>Microsoft Excel OOXML (little endian)</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="317">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                    <Sequence>'C'00 'o'00 'n'00 't'00 'e'00 'n'00 't'00 'T'00 'y'00 'p'00 'e'00 '='00 '"'00 'a'00 'p'00 'p'00 'l'00 'i'00 'c'00 'a'00 't'00 'i'00 'o'00 'n'00 '/'00 'v'00 'n'00 'd'00 '.'00 'o'00 'p'00 'e'00 'n'00 'x'00 'm'00 'l'00 'f'00 'o'00 'r'00 'm'00 'a'00 't'00 's'00 '-'00 'o'00 'f'00 'f'00 'i'00 'c'00 'e'00 'd'00 'o'00 'c'00 'u'00 'm'00 'e'00 'n'00 't'00 '.'00 's'00 'p'00 'r'00 'e'00 'a'00 'd'00 's'00 'h'00 'e'00 'e'00 't'00 'm'00 'l'00 '.'00 's'00 'h'00 'e'00 'e'00 't'00 '.'00 'm'00 'a'00 'i'00 'n'00 '+'00 'x'00 'm'00 'l'00 '"'00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="2050" ContainerType="ZIP">
+            <Description>Microsoft Excel OOXML (big endian)</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="317">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                    <Sequence>00'C' 00'o' 00'n' 00't' 00'e' 00'n' 00't' 00'T' 00'y' 00'p' 00'e' 00'=' 00'"' 00'a' 00'p' 00'p' 00'l' 00'i' 00'c' 00'a' 00't' 00'i' 00'o' 00'n' 00'/' 00'v' 00'n' 00'd' 00'.' 00'o' 00'p' 00'e' 00'n' 00'x' 00'm' 00'l' 00'f' 00'o' 00'r' 00'm' 00'a' 00't' 00's' 00'-' 00'o' 00'f' 00'f' 00'i' 00'c' 00'e' 00'd' 00'o' 00'c' 00'u' 00'm' 00'e' 00'n' 00't' 00'.' 00's' 00'p' 00'r' 00'e' 00'a' 00'd' 00's' 00'h' 00'e' 00'e' 00't' 00'm' 00'l' 00'.' 00's' 00'h' 00'e' 00'e' 00't' 00'.' 00'm' 00'a' 00'i' 00'n' 00'+' 00'x' 00'm' 00'l' 00'"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+<ContainerSignature Id="2060" ContainerType="ZIP">
+            <Description>Microsoft Excel Macro enabled OOXML (big endian)</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="318">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                    <Sequence>'ContentType="application/vnd.ms-excel.sheet.macroEnabled.main+xml"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="3000" ContainerType="OLE2">
+            <Description>Microsoft Powerpoint 2000 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>PowerPoint Document</Path>
+                </File>
+                <!--  Some valid files do not have a CombObj stream.
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="309">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>12 00 00 00 'PowerPoint.Show.8' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                 -->
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="3010" ContainerType="ZIP">
+            <Description>Microsoft Powerpoint 2007 OOXML</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="318">
+	                            <ByteSequence>
+	                                <SubSequence Position="1" SubSeqMinOffset="0">
+	                                    <Sequence>'ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="3020" ContainerType="ZIP">
+            <Description>Microsoft Powerpoint 2007 OOXML little endian</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="318">
+	                            <ByteSequence>
+	                                <SubSequence Position="1" SubSeqMinOffset="0">
+	                                    <Sequence>'C'00 'o'00 'n'00 't'00 'e'00 'n'00 't'00 'T'00 'y'00 'p'00 'e'00 '='00 '"'00 'a'00 'p'00 'p'00 'l'00 'i'00 'c'00 'a'00 't'00 'i'00 'o'00 'n'00 '/'00 'v'00 'n'00 'd'00 '.'00 'o'00 'p'00 'e'00 'n'00 'x'00 'm'00 'l'00 'f'00 'o'00 'r'00 'm'00 'a'00 't'00 's'00 '-'00 'o'00 'f'00 'f'00 'i'00 'c'00 'e'00 'd'00 'o'00 'c'00 'u'00 'm'00 'e'00 'n'00 't'00 '.'00 'p'00 'r'00 'e'00 's'00 'e'00 'n'00 't'00 'a'00 't'00 'i'00 'o'00 'n'00 'm'00 'l'00 '.'00 'p'00 'r'00 'e'00 's'00 'e'00 'n'00 't'00 'a'00 't'00 'i'00 'o'00 'n'00 '.'00 'm'00 'a'00 'i'00 'n'00 '+'00 'x'00 'm'00 'l'00 '"'00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="3030" ContainerType="ZIP">
+            <Description>Microsoft Powerpoint 2007 OOXML big endian</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="318">
+	                            <ByteSequence>
+	                                <SubSequence Position="1" SubSeqMinOffset="0">
+	                                    <Sequence>00'C' 00'o' 00'n' 00't' 00'e' 00'n' 00't' 00'T' 00'y' 00'p' 00'e' 00'=' 00'"' 00'a' 00'p' 00'p' 00'l' 00'i' 00'c' 00'a' 00't' 00'i' 00'o' 00'n' 00'/' 00'v' 00'n' 00'd' 00'.' 00'o' 00'p' 00'e' 00'n' 00'x' 00'm' 00'l' 00'f' 00'o' 00'r' 00'm' 00'a' 00't' 00's' 00'-' 00'o' 00'f' 00'f' 00'i' 00'c' 00'e' 00'd' 00'o' 00'c' 00'u' 00'm' 00'e' 00'n' 00't' 00'.' 00'p' 00'r' 00'e' 00's' 00'e' 00'n' 00't' 00'a' 00't' 00'i' 00'o' 00'n' 00'm' 00'l' 00'.' 00'p' 00'r' 00'e' 00's' 00'e' 00'n' 00't' 00'a' 00't' 00'i' 00'o' 00'n' 00'.' 00'm' 00'a' 00'i' 00'n' 00'+' 00'x' 00'm' 00'l' 00'"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+	<ContainerSignature Id="3040" ContainerType="ZIP">
+		<Description>Macro Enabled Microsoft Powerpoint 2007 OOXML</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="3040">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0">
+									<Sequence>'ContentType="application/vnd.ms-powerpoint.presentation.macroEnabled.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+
+	<ContainerSignature Id="3050" ContainerType="ZIP">
+		<Description>Microsoft Office Theme OOXML</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="3050">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+									<Sequence>'ContentType="application/vnd.openxmlformats-officedocument.themeManager+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+
+        <ContainerSignature Id="4000" ContainerType="OLE2">
+            <Description>Microsoft Project 4.0 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="310">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>14 00 00 00 'MSProject.Docfile.4' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+	
+        <ContainerSignature Id="4010" ContainerType="OLE2">
+            <Description>Microsoft Project 98 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Props8</Path>
+                </File>
+            </Files>
+        </ContainerSignature>
+		
+		<ContainerSignature Id="4020" ContainerType="OLE2">
+            <Description>Microsoft Project 98 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="312">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>0F 00 00 00 'MSProject.MPP8' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+			</Files>
+		</ContainerSignature>
+
+        <ContainerSignature Id="4030" ContainerType="OLE2">
+            <Description>Microsoft Project 2000-2003 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Props9</Path>
+				</File>
+			</Files>
+		</ContainerSignature>
+		
+		<ContainerSignature Id="4040" ContainerType="OLE2">
+			<Description>Microsoft Project 2000-2003 OLE2</Description>
+			<Files>	
+				<File>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="313">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1064">
+	                                    <Sequence>0F 00 00 00 'MSProject.MPP9' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+		
+		<ContainerSignature Id="4050" ContainerType="OLE2">
+            <Description>Microsoft Project 2007 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Props12</Path>
+				</File>
+			</Files>
+		</ContainerSignature>
+		
+		<ContainerSignature Id="4060" ContainerType="OLE2">
+			<Description>Microsoft Project 2007 OLE2</Description>
+			<Files>
+				<File>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="313">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1064">
+	                                    <Sequence>0F 00 00 00 'MSProject.MPP12' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="5000" ContainerType="OLE2">
+            <Description>Microsoft Publisher 1.0 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="314">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>0E 00 00 00 'MSPublisher.1' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="5010" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2.0/95 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="315">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>0E 00 00 00 'MSPublisher.2' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="5020" ContainerType="OLE2">
+            <Description>Microsoft Publisher 97-2007 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="316">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>0E 00 00 00 'MSPublisher.3' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="6000" ContainerType="ZIP">
+            <Description>Open Document Text 1.0</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="319">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.text'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="323">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.0' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+        
+        <ContainerSignature Id="6010" ContainerType="ZIP">
+            <Description>Open Document Text 1.1</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="319">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.text'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="324">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <!--  We do not check for the 1.1 version number, as this is the default
+	                                      version in the *absence* of any version specification.  
+	                                      File format precedence rules ensure that other versions take priority
+	                                      over this one, if a version is explicitly defined.
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.1' [22 27]</Sequence>
+	                                </SubSequence>
+	                                -->
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="6020" ContainerType="ZIP">
+            <Description>Open Document Text 1.2</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="319">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.text'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="325">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.2' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+ 
+        <ContainerSignature Id="7000" ContainerType="ZIP">
+            <Description>Open Document Spreadsheet 1.0</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="320">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.spreadsheet'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="323">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.0' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+       <ContainerSignature Id="7010" ContainerType="ZIP">
+            <Description>Open Document Spreadsheet 1.1</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="320">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.spreadsheet'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="324">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <!--  We do not check for the 1.1 version number, as this is the default
+	                                      version in the *absence* of any version specification.  
+	                                      File format precedence rules ensure that other versions take priority
+	                                      over this one, if a version is explicitly defined.
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.1' [22 27]</Sequence>
+	                                </SubSequence>
+	                                -->
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="7020" ContainerType="ZIP">
+            <Description>Open Document Spreadsheet 1.2</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="320">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.spreadsheet'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="325">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.2' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="8000" ContainerType="ZIP">
+            <Description>Open Document Presentation 1.0</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="321">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.presentation'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="323">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.0' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="8010" ContainerType="ZIP">
+            <Description>Open Document Presentation 1.1</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="321">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.presentation'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="324">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <!--  We do not check for the 1.1 version number, as this is the default
+	                                      version in the *absence* of any version specification.  
+	                                      File format precedence rules ensure that other versions take priority
+	                                      over this one, if a version is explicitly defined.
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.1' [22 27]</Sequence>
+	                                </SubSequence>
+	                                -->
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="8020" ContainerType="ZIP">
+            <Description>Open Document Presentation 1.2</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="321">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.presentation'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="325">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.2' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="9000" ContainerType="ZIP">
+            <Description>Open Document Database 1.0</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="322">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.base'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="323">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.0' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="9010" ContainerType="ZIP">
+            <Description>Open Document Database 1.1</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="322">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.base'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="324">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <!--  We do not check for the 1.1 version number, as this is the default
+	                                      version in the *absence* of any version specification.  
+	                                      File format precedence rules ensure that other versions take priority
+	                                      over this one, if a version is explicitly defined.
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.1' [22 27]</Sequence>
+	                                </SubSequence>
+	                                -->
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="9020" ContainerType="ZIP">
+            <Description>Open Document Database 1.2</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="322">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.base'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="325">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.2' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="10000" ContainerType="ZIP">
+        	<Description>Java Archive Format</Description>
+        	<Files>
+				<File>
+                	<Path>META-INF/MANIFEST.MF</Path>
+                	<BinarySignatures>
+                	    <InternalSignatureCollection>
+		                	<InternalSignature ID="400">
+		                		<ByteSequence Reference="BOFoffset">
+		                			<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+		                				<Sequence>'Manifest-Version:'</Sequence>
+		                			</SubSequence>
+		                		</ByteSequence>
+		                	</InternalSignature>
+		                </InternalSignatureCollection>   	
+                	</BinarySignatures>
+                </File>  	
+        	</Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="12000" ContainerType="OLE2">
+        	<Description>Microsoft Outlook Email Message</Description>
+        	<Files>
+        		<File>
+        			<Path>__properties_version1.0</Path>
+        		</File>
+        		<File>
+        			<Path>__nameid_version1.0</Path>
+        		</File>
+        	</Files>
+        </ContainerSignature>
+        
+		<ContainerSignature Id="13000" ContainerType="OLE2">
+            <Description>Microsoft Visio Document (generic) </Description>
+            <Files>
+                <File>
+                    <Path>VisioDocument</Path>
+                    <BinarySignatures>
+                       <InternalSignatureCollection>
+                          <InternalSignature ID="302">
+                          	<ByteSequence Reference="BOFoffset">
+                          		<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                          		   <Sequence>'Visio (TM) Drawing'0D0A</Sequence>
+                          		</SubSequence>
+                          	</ByteSequence>
+                          </InternalSignature>
+                       </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>        
+
+  <ContainerSignature Id="13010" ContainerType="OLE2">
+            <Description>Microsoft Visio Document 2000</Description>
+            <Files>
+                <File>
+                    <Path>VisioDocument</Path>
+                    <BinarySignatures>
+                       <InternalSignatureCollection>
+                           <InternalSignature ID="302" Specificity="Specific">
+                            - <ByteSequence Reference="BOFoffset">
+                                - <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                                      <Sequence>'Visio (TM) Drawing'0D0A</Sequence> 
+                                      <RightFragment MaxOffset="6" MinOffset="6" Position="1">06</RightFragment> 
+                                  </SubSequence>
+                              </ByteSequence>
+                          </InternalSignature>
+                       </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>    
+
+     <ContainerSignature Id="13020" ContainerType="OLE2">
+            <Description>Microsoft Visio Document 2003</Description>
+            <Files>
+                <File>
+                    <Path>VisioDocument</Path>
+                    <BinarySignatures>
+                       <InternalSignatureCollection>
+                          <InternalSignature ID="302">
+                              - <ByteSequence Reference="BOFoffset">
+                                - <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                                      <Sequence>'Visio (TM) Drawing'0D0A</Sequence> 
+                                      <RightFragment MaxOffset="6" MinOffset="6" Position="1">0B</RightFragment> 
+                                  </SubSequence>
+                              </ByteSequence>
+                          </InternalSignature>
+                       </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+         <ContainerSignature Id="14000" ContainerType="ZIP">
+             <Description>Apple iBook Format</Description>
+             <Files>
+                  <File>
+                     <Path>mimetype</Path>
+                     <BinarySignatures>
+                         <InternalSignatureCollection>
+ 	                        <InternalSignature ID="14000">
+ 	                            <ByteSequence Reference="BOFoffset">
+ 	                                <SubSequence Position="0" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+ 	                                    <Sequence>'application/x-ibooks+zip'</Sequence>
+ 	                                </SubSequence>
+ 	                            </ByteSequence>
+ 	                        </InternalSignature>
+                         </InternalSignatureCollection>
+                     </BinarySignatures>
+                 </File>
+             </Files>
+         </ContainerSignature>   
+
+         <ContainerSignature Id="14010" ContainerType="ZIP">
+             <Description>ePub format</Description>
+             <Files>
+                  <File>
+                     <Path>mimetype</Path>
+                     <BinarySignatures>
+                         <InternalSignatureCollection>
+ 	                        <InternalSignature ID="14010">
+ 	                            <ByteSequence Reference="BOFoffset">
+ 	                                <SubSequence Position="0" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+ 	                                    <Sequence>'application/epub+zip'</Sequence>
+ 	                                </SubSequence>
+ 	                            </ByteSequence>
+ 	                        </InternalSignature>
+                         </InternalSignatureCollection>
+                     </BinarySignatures>
+                 </File>
+             </Files>
+         </ContainerSignature>  
+
+     <ContainerSignature Id="15000" ContainerType="OLE2">
+            <Description>Microsoft Works Word Processor for Windows 3-4 Document</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                     <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="5000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="28" SubSeqMaxOffset="1024">
+	                                    <Sequence>00 00 00 'Microsoft Works' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+     <ContainerSignature Id="15010" ContainerType="OLE2">
+            <Description>Microsoft Works Word Processor 5-6 Document</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                     <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="5001">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="28" SubSeqMaxOffset="1024">
+	                                    <Sequence>00 00 00 'Quill96 Story Group Class' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+        
+	<ContainerSignature Id="16000" ContainerType="OLE2">
+		<Description>Microsoft Office 2007 and later encrypted document</Description> 
+		<Files>
+			<File>
+				<Path>EncryptedPackage</Path> 
+			</File>
+		</Files>
+	</ContainerSignature>
+
+        <ContainerSignature Id="17000" ContainerType="OLE2">
+            <Description>Kodak FlashPix Image</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="17000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="12" SubSeqMaxOffset="64">
+	                                    <Sequence>'FlashPix Object'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="18000" ContainerType="OLE2">
+            <Description>Bentley V8 DGN</Description>
+            <Files>
+                <File>
+                    <Path>Dgn~H</Path>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+    </ContainerSignatures>
+  
+    <FileFormatMappings>
+    
+    	<!--  Microsoft Word 6.0/95 (OLE2)-->
+        <FileFormatMapping signatureId="1000" Puid="fmt/39"/>
+        <!--  Microsoft Word 97 (OLE2)-->
+        <FileFormatMapping signatureId="1020" Puid="fmt/40"/>
+        <!-- Microsoft Word OOXML (ZIP)-->
+        <FileFormatMapping signatureId="1030" Puid="fmt/412"/>
+        <!-- Microsoft Word OOXML little endian (ZIP)-->
+        <FileFormatMapping signatureId="1040" Puid="fmt/412"/>
+        <!-- Microsoft Word OOXML big endian (ZIP)-->
+        <FileFormatMapping signatureId="1050" Puid="fmt/412"/>
+	<!--  Macro enabled Microsoft Word Document OOXML (ZIP)-->
+	<FileFormatMapping signatureId="1060" Puid="fmt/523" /> 
+        
+        <!--  Microsoft Excel 5.0/95 (OLE2)-->
+        <FileFormatMapping signatureId="2000" Puid="fmt/59"/>
+        <!--  Microsoft Excel 97 (OLE2)-->
+        <FileFormatMapping signatureId="2010" Puid="fmt/61"/>
+        <!--  Microsoft Excel 97 (OLE2)-->
+        <FileFormatMapping signatureId="2020" Puid="fmt/61"/>
+        <!-- Microsoft Excel OOXML (ZIP)-->
+        <FileFormatMapping signatureId="2030" Puid="fmt/214"/>
+        <!-- Microsoft Excel OOXML little endian (ZIP)-->
+        <FileFormatMapping signatureId="2040" Puid="fmt/214"/>
+        <!-- Microsoft Excel OOXML big endian (ZIP)-->
+        <FileFormatMapping signatureId="2050" Puid="fmt/214"/>
+	<!-- Microsoft Excel OOXML Macro-Enabled(ZIP)-->
+        <FileFormatMapping signatureId="2060" Puid="fmt/445"/>
+
+        <!-- Microsoft PowerPoint 2000 (OLE2)-->
+        <FileFormatMapping signatureId="3000" Puid="fmt/126"/>        
+        <!-- Microsoft PowerPoint 2007 OOXML (ZIP)-->
+        <FileFormatMapping signatureId="3010" Puid="fmt/215"/>
+        <!-- Microsoft PowerPoint 2007 OOXML little endian (ZIP)-->
+        <FileFormatMapping signatureId="3020" Puid="fmt/215"/>
+        <!-- Microsoft PowerPoint 2007 OOXML big endian (ZIP)-->
+        <FileFormatMapping signatureId="3030" Puid="fmt/215"/>
+	<!--  Macro Enabled Microsoft Powerpoint 2007 OOXML (ZIP)-->
+	<FileFormatMapping signatureId="3040" Puid="fmt/487" />
+	<!--  Microsoft Office Theme OOXML (ZIP)-->
+	<FileFormatMapping signatureId="3050" Puid="fmt/524" />  
+        
+        <!-- Microsoft Project 4.0 (OLE2)-->
+        <FileFormatMapping signatureId="4000" Puid="x-fmt/243"/>
+        <!-- Microsoft Project 98 (OLE2)-->
+        <FileFormatMapping signatureId="4010" Puid="x-fmt/245"/>
+		<!-- Microsoft Project 98 (OLE2)-->
+        <FileFormatMapping signatureId="4020" Puid="x-fmt/245"/>
+        <!-- Microsoft Project 2000-2003 (OLE2)-->
+        <FileFormatMapping signatureId="4030" Puid="x-fmt/247"/>
+		<!-- Microsoft Project 2000-2003 (OLE2)-->
+        <FileFormatMapping signatureId="4040" Puid="x-fmt/247"/>
+        <!-- Microsoft Project 2007 (OLE2)-->
+		<FileFormatMapping signatureId="4050" Puid="fmt/440"/>
+        <!-- Microsoft Project 2007 (OLE2)-->
+		<FileFormatMapping signatureId="4060" Puid="fmt/440"/>
+		
+        <!-- Microsoft Publisher 1.0 (OLE2)-->
+        <FileFormatMapping signatureId="5000" Puid="x-fmt/252"/>
+        <!-- Microsoft Publisher 2.0/95 (OLE2)-->
+        <FileFormatMapping signatureId="5010" Puid="x-fmt/253"/>
+        <!-- Microsoft Publisher 97-2007 (OLE2)-->
+        <FileFormatMapping signatureId="5020" Puid="x-fmt/257"/>
+        
+        <!-- Open Document Text 1.0 (ZIP)-->
+        <FileFormatMapping signatureId="6000" Puid="fmt/136"/>
+        <!-- Open Document Text 1.1 (ZIP)-->
+        <FileFormatMapping signatureId="6010" Puid="fmt/290"/>
+        <!-- Open Document Text 1.2 (ZIP)-->
+        <FileFormatMapping signatureId="6020" Puid="fmt/291"/>
+                
+        <!-- Open Document Spreadsheet 1.0 (ZIP)-->
+        <FileFormatMapping signatureId="7000" Puid="fmt/137"/>
+        <!-- Open Document Spreadsheet 1.1 (ZIP)-->
+        <FileFormatMapping signatureId="7010" Puid="fmt/294"/>
+        <!-- Open Document Spreadsheet 1.2 (ZIP)-->
+        <FileFormatMapping signatureId="7020" Puid="fmt/295"/>
+                        
+        <!-- Open Document Presentation 1.0 (ZIP)-->
+        <FileFormatMapping signatureId="8000" Puid="fmt/138"/>
+        <!-- Open Document Presentation 1.1 (ZIP)-->
+        <FileFormatMapping signatureId="8010" Puid="fmt/292"/>
+        <!-- Open Document Presentation 1.2 (ZIP)-->
+        <FileFormatMapping signatureId="8020" Puid="fmt/293"/>
+                        
+        <!-- Open Document Database 1.0 (ZIP)-->
+        <FileFormatMapping signatureId="9000" Puid="fmt/140"/>
+        <!-- Open Document Database 1.1 (ZIP)-->
+        <FileFormatMapping signatureId="9010" Puid="fmt/444"/>
+        <!-- Open Document Database 1.2 (ZIP)-->
+        <FileFormatMapping signatureId="9020" Puid="fmt/424"/>
+        
+        <!-- Java Archive Format (ZIP)-->
+        <FileFormatMapping signatureId="10000" Puid="x-fmt/412"/>
+        
+        <!-- Microsoft Outlook Email Message (OLE2) -->
+        <FileFormatMapping signatureId="12000" Puid="x-fmt/430"/>
+        
+        <!-- Microsoft Visio Document generic, 2000, 2003 (OLE2) -->
+		<FileFormatMapping signatureId="13000" Puid="fmt/442"/>
+        <FileFormatMapping signatureId="13010" Puid="x-fmt/258"/>
+        <FileFormatMapping signatureId="13020" Puid="fmt/443"/>
+
+        <!-- Apple iBooks format (ZIP)-->
+        <FileFormatMapping signatureId="14000" Puid="fmt/482"/>
+        <!-- ePub format (ZIP)-->
+        <FileFormatMapping signatureId="14010" Puid="fmt/483"/>
+
+        <!--  Microsoft Works Word Processor 3-4 (OLE2)-->
+        <FileFormatMapping signatureId="15000" Puid="fmt/233"/>
+        <!--  Microsoft Works Word Processor 5-6 (OLE2)-->
+        <FileFormatMapping signatureId="15010" Puid="fmt/258"/>
+     
+	<!--  Microsoft Encrypted Document (OLE2)-->
+        <FileFormatMapping signatureId="16000" Puid="fmt/494"/>
+        
+	<!--  Kodak FlashPix Image (OLE2)-->
+        <FileFormatMapping signatureId="17000" Puid="x-fmt/56"/>
+        
+	<!--  Bentley V8 DGN (OLE2)-->
+        <FileFormatMapping signatureId="18000" Puid="fmt/502"/>
+
+    </FileFormatMappings>
+  
+    <TriggerPuids>
+        <TriggerPuid ContainerType="OLE2" Puid="fmt/111"/> 
+        <TriggerPuid ContainerType="ZIP" Puid="fmt/189"/> 
+        <TriggerPuid ContainerType="ZIP" Puid="x-fmt/263"/> 
+    </TriggerPuids>
+
+</ContainerSignatureMapping>
