@@ -1,0 +1,9 @@
+Version 6.1.1
+ Intermediate version never released
+
+Version 6.1.2 Released 2013-06-20
+ * Updated aspectj version, allowing java 1.7 compatibility
+ * Signature updates: Signature file release 68, Container file 20130501
+ * Minor text changes in help
+
+
