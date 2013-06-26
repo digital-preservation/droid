@@ -309,8 +309,8 @@ public class ProfileManagerImpl implements ProfileManager {
             ProgressObserver callback) throws IOException {
 
         log.info("Saving profile: " + profileId + " to " + destination.getPath());
-        // shutdown the database so that we can safely zip it up.
-        profileContextLocator.shutdownDatabase(profileId);
+        // freeze the database so that we can safely zip it up.
+        profileContextLocator.freezeDatabase(profileId);
         ProfileInstance profile = profileContextLocator.getProfileInstance(profileId);
         ProfileState oldState = profile.getState();
         profile.changeState(ProfileState.SAVING);
@@ -325,7 +325,7 @@ public class ProfileManagerImpl implements ProfileManager {
             profile.setName(FilenameUtils.getBaseName(output.getName()));
             profile.onSave();
         } finally {
-            profileContextLocator.bootDatabase(profileId);
+            profileContextLocator.thawDatabase(profileId);
             profile.changeState(oldState);
         }
         return profile;

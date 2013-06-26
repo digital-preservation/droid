@@ -71,14 +71,14 @@ public interface ProfileInstanceLocator {
     Connection getConnection(String profileId);
     
     /**
-     * Shuts down the profile database.
+     * Halt writes to the profile database.
      * @param profileId the ID of the profile.
      */
-    void shutdownDatabase(String profileId);
+    void freezeDatabase(String profileId);
 
     /**
-     * Starts a profile database.
+     * Allow writes to a previously frozen database.
      * @param profileId the profile ID
      */
-    void bootDatabase(String profileId);
+    void thawDatabase(String profileId);
 }

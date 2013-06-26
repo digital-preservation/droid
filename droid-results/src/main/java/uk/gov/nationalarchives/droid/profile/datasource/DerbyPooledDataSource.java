@@ -35,7 +35,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLNonTransientConnectionException;
+import java.sql.Statement;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
@@ -90,30 +90,37 @@ public class DerbyPooledDataSource extends BasicDataSource {
     }
     
     /**
-     * Shuts down the database.  
-     * Derby throws a SQLNonTransientConnectionException on a SUCCESSFUL shutdown of the
-     * database (with SQLstate 08006), so we catch this and log as debug, otherwise as an error.
-     * @throws SQLException if the database could not be shutdown.
-     * @throws Exception
+     * Stop writes to the database to allow copying. 
      */
-    public void shutdown() throws SQLException {
+    public void freeze() {
         
-        log.debug(String.format("Closing database [%s]", getUrl()));
-        close();
-
-        String url = getUrl() + ";shutdown=true";
+        log.debug(String.format("Freezing database [%s]", getUrl()));
         
         try {
-            DriverManager.getConnection(url);
-        } catch (SQLNonTransientConnectionException e) {
-            if ("08006".equals(e.getSQLState())) {
-                log.debug(e.getMessage());
-            } else {
-                log.error(e.getMessage(), e);
-            }
+            Statement s = DriverManager.getConnection(getUrl()).createStatement();
+            s.executeUpdate("CALL SYSCS_UTIL.SYSCS_FREEZE_DATABASE()");
+            s.close();
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
         }
     }
     
+    /**
+     * Allow writes to a previously frozen database. 
+     */
+    public void thaw() {
+        
+        log.debug(String.format("Derby thawing database [%s]", getUrl()));
+        
+        try {
+            Statement s = DriverManager.getConnection(getUrl()).createStatement();
+            s.executeUpdate("CALL SYSCS_UTIL.SYSCS_UNFREEZE_DATABASE()");
+            s.close();
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+     
     /**
      * 
      * @param createUrl Sets the create Url to use when creating the database.
