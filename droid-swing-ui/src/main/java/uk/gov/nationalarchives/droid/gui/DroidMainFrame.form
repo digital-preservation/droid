@@ -412,16 +412,16 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updateNowMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="signatureUploadMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="signatureInstallMenuItem">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Shift+Ctrl+U"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Upload signature file..."/>
-                <Property name="toolTipText" type="java.lang.String" value="Loads a signature file from your local file system"/>
+                <Property name="text" type="java.lang.String" value="Install signature file..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Installs a signature file from your local file system"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="signatureUploadMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="signatureInstallMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator6">

@@ -57,7 +57,7 @@ import org.openide.util.NbBundle;
  *
  * @author rflitcroft
  */
-public class SignatureUploadDialog extends JDialog {
+public class SignatureInstallDialog extends JDialog {
     
     /** Cancel response. */
     public static final int CANCEL = 0;
@@ -70,10 +70,10 @@ public class SignatureUploadDialog extends JDialog {
     private int response = CANCEL;
     
     /** 
-     * Creates new form SignatureUploadDialog.
+     * Creates new form SignatureInstallDialog.
      * @param parent the parent window
      */
-    public SignatureUploadDialog(Window parent) {
+    public SignatureInstallDialog(Window parent) {
         super(parent);
         initComponents();
 
@@ -123,10 +123,10 @@ public class SignatureUploadDialog extends JDialog {
         cancelButton = new JButton();
         okButton = new JButton();
 
-        fileChooser.setApproveButtonText(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.fileChooser.approveButtonText")); // NOI18N
-        fileChooser.setDialogTitle(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.fileChooser.dialogTitle")); // NOI18N
+        fileChooser.setApproveButtonText(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.fileChooser.approveButtonText")); // NOI18N
+        fileChooser.setDialogTitle(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.fileChooser.dialogTitle")); // NOI18N
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.title")); // NOI18N
+        setTitle(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.title")); // NOI18N
         setModal(true);
 
 
@@ -134,16 +134,16 @@ public class SignatureUploadDialog extends JDialog {
 
         jPanel1.setBorder(BorderFactory.createEtchedBorder());
 
-        jLabel1.setText(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.jLabel1.text")); // NOI18N
-        fileNameTextBox.setText(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.fileNameTextBox.text")); // NOI18N
-        browseButton.setText(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.browseButton.text")); // NOI18N
+        jLabel1.setText(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.jLabel1.text")); // NOI18N
+        fileNameTextBox.setText(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.fileNameTextBox.text")); // NOI18N
+        browseButton.setText(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.browseButton.text")); // NOI18N
         browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 browseButtonActionPerformed(evt);
             }
         });
 
-        setDefaultCheckbox.setText(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.setDefaultCheckbox.text")); // NOI18N
+        setDefaultCheckbox.setText(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.setDefaultCheckbox.text")); // NOI18N
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -174,14 +174,14 @@ public class SignatureUploadDialog extends JDialog {
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        cancelButton.setText(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.cancelButton.text")); // NOI18N
+        cancelButton.setText(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.cancelButton.text")); // NOI18N
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
 
-        okButton.setText(NbBundle.getMessage(SignatureUploadDialog.class, "SignatureUploadDialog.okButton.text")); // NOI18N
+        okButton.setText(NbBundle.getMessage(SignatureInstallDialog.class, "SignatureInstallDialog.okButton.text")); // NOI18N
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 okButtonActionPerformed(evt);

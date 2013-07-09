@@ -71,13 +71,13 @@ public interface SignatureManager {
     Map<SignatureType, SignatureFileInfo> getDefaultSignatures() throws SignatureFileException;
     
     /**
-     * Uploads a signature file to DROID.
-     * @param type the type of signature file being uploaded
-     * @param signatureFile the signature file to upload
+     * Installs a signature file in DROID.
+     * @param type the type of signature file being installed
+     * @param signatureFile the signature file to install
      * @param setDefault set this signature file as the new default
      * @return the siognature file info.
-     * @throws SignatureFileException if the upload failed
+     * @throws SignatureFileException if the installation failed
      */
-    SignatureFileInfo upload(SignatureType type, File signatureFile, boolean setDefault) throws SignatureFileException;
+    SignatureFileInfo install(SignatureType type, File signatureFile, boolean setDefault) throws SignatureFileException;
 
 }

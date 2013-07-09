@@ -413,7 +413,7 @@ public class SignatureManagerImpl implements SignatureManager {
      * {@inheritDoc}
      */
     @Override
-    public SignatureFileInfo upload(SignatureType type, File signatureFile, boolean setDefault) 
+    public SignatureFileInfo install(SignatureType type, File signatureFile, boolean setDefault) 
         throws SignatureFileException {
         
         SignatureInfoParser parser = new SignatureInfoParser();
