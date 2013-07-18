@@ -93,7 +93,7 @@ public class JpaPlanetsXMLDaoTest {
     }
 
     @AfterClass
-    public static void tesarDown() {
+    public static void tearDown() {
         System.clearProperty("hibernate.generateDdl");
     }
 

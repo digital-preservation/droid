@@ -82,7 +82,6 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  * any state it creates should be destroyed at the end of the test and the test
  * should run repetitively.
  */
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:META-INF/spring-profile.xml"})
 public class ProfileManagerIntegrationTest {
