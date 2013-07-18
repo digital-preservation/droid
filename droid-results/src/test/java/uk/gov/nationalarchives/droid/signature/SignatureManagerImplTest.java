@@ -54,6 +54,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.mockito.ArgumentCaptor;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
@@ -160,6 +161,7 @@ public class SignatureManagerImplTest {
 
     }
 
+    @Ignore
     @Test
     public void testCheckForNewSignatureFileWhenNewFileIsAvailable() throws SignatureServiceException {
         
