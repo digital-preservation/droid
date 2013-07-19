@@ -36,6 +36,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.SQLNonTransientConnectionException;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
@@ -88,6 +89,32 @@ public class DerbyPooledDataSource extends BasicDataSource {
         }
         return url;
     }
+
+    /**
+    * Shuts down the database.  
+    * Derby throws a SQLNonTransientConnectionException on a SUCCESSFUL shutdown of the
+    * database (with SQLstate 08006), so we catch this and log as debug, otherwise as an error.
+    * @throws SQLException if the database could not be shutdown.
+    * @throws Exception
+    */
+    public void shutdown() throws SQLException {
+
+        log.debug(String.format("Closing database [%s]", getUrl()));
+        close();
+
+        String url = getUrl() + ";shutdown=true";
+
+        try {
+            DriverManager.getConnection(url);
+        } catch (SQLNonTransientConnectionException e) {
+            if ("08006".equals(e.getSQLState())) {
+                log.debug(e.getMessage());
+            } else {
+                log.error(e.getMessage(), e);
+            }
+        }
+    }
+
     
     /**
      * Stop writes to the database to allow copying. 
