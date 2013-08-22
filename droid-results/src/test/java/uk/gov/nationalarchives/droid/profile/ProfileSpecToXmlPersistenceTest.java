@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.xml.bind.JAXBException;
 
@@ -240,7 +241,7 @@ public class ProfileSpecToXmlPersistenceTest {
                 "profiles/untitled-1/profile.xml"));
         writer.append("<Profile>");
         writer.newLine();
-        writer.append("  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>");
+        writer.append("  <CreatedDate>2009-07-01T00:00:00Z</CreatedDate>");
         writer.newLine();
         writer.append("  <Location>untitled-1</Location>");
         writer.newLine();
@@ -326,7 +327,8 @@ public class ProfileSpecToXmlPersistenceTest {
         assertEquals("STOPPED", profile.getState().name());
         assertEquals(120, profile.getThrottle());
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        assertEquals(df.parse("2009-01-01 00:00:00"), profile.getDateCreated());
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        assertEquals(df.parse("2009-07-01 00:00:00"), profile.getDateCreated());
 
         ProfileSpec profileSpec = profile.getProfileSpec();
 
