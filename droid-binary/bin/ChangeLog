@@ -1,9 +1,17 @@
-Version 6.1.1
- Intermediate version never released
+version 6.1.3 Minor bugfix release
+ * Signature updates: Signature file release 69
+ * Fix for failure on startup without .droid6 folder (github issue #5)
+ * Fix for signature file switch exception (github issue #2)
+ * Rename 'upload' to 'install' for signature files (github issue #14)
+ * Fix to date format test (github issue #23)
 
 Version 6.1.2 Released 2013-06-20
  * Updated aspectj version, allowing java 1.7 compatibility
  * Signature updates: Signature file release 68, Container file 20130501
  * Minor text changes in help
+
+Version 6.1.1
+ Intermediate version never released
+
 
 

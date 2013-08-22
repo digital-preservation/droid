@@ -138,13 +138,13 @@ IF "%1"=="" GOTO NOPARAM
 
 :PARAM
 REM has command line parameters passed - run command line version:
-java %DROIDOPTIONS% -jar droid-command-line-6.1.2.jar %*
+java %DROIDOPTIONS% -jar droid-command-line-6.1.3.jar %*
 
 GOTO end
 
 :NOPARAM
 REM no command line parameters passed - run GUI version:
-start javaw %DROIDOPTIONS% -jar droid-ui-6.1.2.jar
+start javaw %DROIDOPTIONS% -jar droid-ui-6.1.3.jar
 
 :END
 
