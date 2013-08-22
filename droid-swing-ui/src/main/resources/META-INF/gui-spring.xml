@@ -34,9 +34,11 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans" default-autowire="no"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util-2.5.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
 	<import resource="classpath*:/META-INF/cxf/cxf.xml" />
@@ -91,6 +93,9 @@
 
     <bean id="uploadSignatureFileAction" class="uk.gov.nationalarchives.droid.gui.config.UploadSignatureFileAction" scope="prototype">
         <property name="signatureManager" ref="signatureManager"/>
+        <property name="type">
+        	<util:constant static-field="uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType.BINARY"/>
+        </property>
     </bean>
 
     <bean id="exportAction" class="uk.gov.nationalarchives.droid.gui.export.ExportAction" scope="prototype">
