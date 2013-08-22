@@ -40,7 +40,6 @@
 		<tocitem text="Whats New" target="Whats New" />
 		<tocitem text="License" target="License" />
 		<tocitem text="Third-party components" target="Third-party components" />
-		<tocitem text="Project team" target="Project team" />
 		<tocitem text="FAQ" target="FAQ" />
 	</tocitem>
 	<tocitem text="Profiling your files">
