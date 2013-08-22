@@ -54,6 +54,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.mockito.ArgumentCaptor;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
@@ -161,6 +162,7 @@ public class SignatureManagerImplTest {
     }
 
     @Test
+    @Ignore
     public void testCheckForNewSignatureFileWhenNewFileIsAvailable() throws SignatureServiceException {
         
         SignatureFileInfo signatureFileInfo = new SignatureFileInfo(100, false, SignatureType.BINARY);
@@ -246,7 +248,7 @@ public class SignatureManagerImplTest {
     }
     
     @Test
-    public void testGetLatestConatinerSignatureFileWhenCurrentFileIsLatest() throws Exception {
+    public void testGetLatestContainerSignatureFileWhenCurrentFileIsLatest() throws Exception {
         
         SignatureFileInfo latestContainerSigInfo = new SignatureFileInfo(20100929, false, SignatureType.CONTAINER);
         when(containerSignatureService.getLatestVersion(20100101)).thenReturn(latestContainerSigInfo);

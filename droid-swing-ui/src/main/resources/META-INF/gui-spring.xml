@@ -74,7 +74,7 @@
         <lookup-method name="newReportAction" bean="reportAction"/>
         <lookup-method name="newListSignatureFilesAction" bean="listSignatureFilesAction"/>
         <lookup-method name="newCheckSignatureUpdateAction" bean="checkSignatureUpdateAction"/>
-        <lookup-method name="newUploadSignatureFileAction" bean="uploadSignatureFileAction"/>
+        <lookup-method name="newInstallSignatureFileAction" bean="installSignatureFileAction"/>
     </bean>
     
     <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
@@ -91,7 +91,7 @@
         <property name="signatureManager" ref="signatureManager"/>
     </bean>
 
-    <bean id="uploadSignatureFileAction" class="uk.gov.nationalarchives.droid.gui.config.UploadSignatureFileAction" scope="prototype">
+    <bean id="installSignatureFileAction" class="uk.gov.nationalarchives.droid.gui.config.InstallSignatureFileAction" scope="prototype">
         <property name="signatureManager" ref="signatureManager"/>
         <property name="type">
         	<util:constant static-field="uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType.BINARY"/>

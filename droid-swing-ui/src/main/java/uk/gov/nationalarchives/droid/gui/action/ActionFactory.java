@@ -32,7 +32,7 @@
 package uk.gov.nationalarchives.droid.gui.action;
 
 import uk.gov.nationalarchives.droid.gui.config.ListSignatureFilesAction;
-import uk.gov.nationalarchives.droid.gui.config.UploadSignatureFileAction;
+import uk.gov.nationalarchives.droid.gui.config.InstallSignatureFileAction;
 import uk.gov.nationalarchives.droid.gui.export.ExportAction;
 import uk.gov.nationalarchives.droid.gui.report.ReportAction;
 import uk.gov.nationalarchives.droid.gui.signature.CheckSignatureUpdateAction;
@@ -78,8 +78,8 @@ public abstract class ActionFactory {
     public abstract ListSignatureFilesAction newListSignatureFilesAction();
 
     /**
-     * @return a new action to upload a signature file
+     * @return a new action to install a signature file
      */
-    public abstract UploadSignatureFileAction newUploadSignatureFileAction();
+    public abstract InstallSignatureFileAction newInstallSignatureFileAction();
 
 }
