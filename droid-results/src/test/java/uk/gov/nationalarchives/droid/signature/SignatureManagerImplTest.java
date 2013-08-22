@@ -162,7 +162,11 @@ public class SignatureManagerImplTest {
     }
 
     @Test
-    @Ignore
+    @Ignore 
+ /* This test is broken from within TNA. This was previously masked by
+ *  setting the hardcoded latest version to the actual latest version (then
+ *  26) 
+ */
     public void testCheckForNewSignatureFileWhenNewFileIsAvailable() throws SignatureServiceException {
         
         SignatureFileInfo signatureFileInfo = new SignatureFileInfo(100, false, SignatureType.BINARY);

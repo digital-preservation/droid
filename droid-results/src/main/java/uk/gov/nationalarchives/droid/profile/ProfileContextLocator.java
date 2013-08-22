@@ -123,12 +123,19 @@ public class ProfileContextLocator {
     }
     
     /**
-     * Shuts down the database for the specified profile, releasing all connections
-     * and resources.
+     * Freeze the database for the specified profile, allowing a copy to be made.
      * @param profileId the id of a profile.
      */
-    public void shutdownDatabase(String profileId) {
-        profileInstanceLocator.shutdownDatabase(profileId);
+    public void freezeDatabase(String profileId) {
+        profileInstanceLocator.freezeDatabase(profileId);
+    }
+    
+    /**
+     *  reopen a frozen database database for the specified profile.
+     * @param profileId the id of a profile.
+     */
+    public void thawDatabase(String profileId) {
+        profileInstanceLocator.thawDatabase(profileId);
     }
     
     /**
@@ -164,7 +171,6 @@ public class ProfileContextLocator {
         }
         props.setProperty(CREATE_URL, createUrl);
         props.setProperty(DATABASE_URL, String.format("jdbc:derby:%s", databasePath.getPath()));
-        
         TemplateStatus status = null;
         final boolean newDatabase = !databasePath.exists();        
         if (newDatabase) {
@@ -217,7 +223,7 @@ public class ProfileContextLocator {
 
         return result;
     }
-    
+   
     private void generateNewDatabaseAndTemplates(final ProfileInstance profile, 
             final ProfileInstanceManager profileManager, 
             final File databasePath,
@@ -226,9 +232,10 @@ public class ProfileContextLocator {
         
         // If we were starting with no template at all, we now have a blank profile we can use as a blank template:
         if (status == TemplateStatus.NO_TEMPLATE) {
-            shutdownDatabase(profile.getUuid());
+            // freeze the database to allow safe copying
+            freezeDatabase(profile.getUuid());
             packProfileTemplate(databasePath, getTemplateFile(BLANK_PROFILE));
-            bootDatabase(profile.getUuid());
+            thawDatabase(profile.getUuid());
         }
         // If we don't have a signature template, then we need to 
         // populate the database with signature file metadata.
@@ -239,9 +246,9 @@ public class ProfileContextLocator {
                 // signature file version:
                 final String name = getTemplateNameForSignatureVersion(profile.getSignatureFileVersion());
                 File templateFile = getTemplateFile(name);
-                shutdownDatabase(profile.getUuid());
+                freezeDatabase(profile.getUuid());
                 packProfileTemplate(databasePath, templateFile);
-                bootDatabase(profile.getUuid());
+                thawDatabase(profile.getUuid());
             } catch (SignatureFileException e) {
                 String message = "Error reading signature file";
                 log.error(message, e);
@@ -327,14 +334,6 @@ public class ProfileContextLocator {
      */
     public boolean hasProfileContext(String profileName) {
         return profileInstances.containsKey(profileName);
-    }
-
-    /**
-     * Boots the database for the specified profile.
-     * @param profileId the id of a profile.
-     */
-    public void bootDatabase(String profileId) {
-        profileInstanceLocator.bootDatabase(profileId);
     }
     
     /**

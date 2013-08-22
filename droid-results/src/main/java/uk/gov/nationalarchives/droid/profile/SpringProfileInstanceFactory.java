@@ -36,6 +36,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
@@ -103,12 +105,12 @@ public class SpringProfileInstanceFactory implements ProfileInstanceLocator {
      * {@inheritDoc}
      */
     @Override
-    public void shutdownDatabase(String profileId) {
+    public void freezeDatabase(String profileId) {
         ApplicationContext ctx = profileInstanceManagers.get(profileId);
         DerbyPooledDataSource dataSource = (DerbyPooledDataSource) ctx
                 .getBean(DATA_SOURCE_BEAN_NAME);
         try {
-            dataSource.shutdown();
+            dataSource.freeze();
             //CHECKSTYLE:OFF no choice here - the datasource throws Exception
         } catch (Exception e) {
             // CHECKSTYLE:ON
@@ -121,17 +123,19 @@ public class SpringProfileInstanceFactory implements ProfileInstanceLocator {
      * {@inheritDoc}
      */
     @Override
-    public void bootDatabase(String profileId) {
+    public void thawDatabase(String profileId) {
         ApplicationContext ctx = profileInstanceManagers.get(profileId);
         DerbyPooledDataSource dataSource = (DerbyPooledDataSource) ctx
                 .getBean(DATA_SOURCE_BEAN_NAME);
         try {
-            dataSource.init();
-        } catch (SQLException e) {
-            throw new ProfileException(e.getMessage(), e);
+            dataSource.thaw();
+            //CHECKSTYLE:OFF no choice here - the datasource throws Exception
+        } catch (Exception ex) {
+            // CHECKSTYLE:ON
+            Logger.getLogger(SpringProfileInstanceFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     /**
      * 
      * {@inheritDoc}
