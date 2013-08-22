@@ -98,7 +98,7 @@
 	<mapID target="FAQ" url="Web pages/FAQ.html"/>
 	<mapID target="Remove top level resources2" url="Images/Remove top level resources2.png"/>
 	<mapID target="Creating a new profile2" url="Images/Creating a new profile2.png"/>
-	<mapID target="Upload signature" url="Images/Upload signature.png"/>
+	<mapID target="Install signature" url="Images/Install signature.png"/>
 	<mapID target="containerResourceType" url="Images/containerResourceType.gif"/>
 	<mapID target="fileResourceType" url="Images/fileResourceType.gif"/>
 	<mapID target="folderResourceType" url="Images/folderResourceType.gif"/>

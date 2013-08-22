@@ -86,8 +86,8 @@ import uk.gov.nationalarchives.droid.gui.action.OpenContainingFolderAction;
 import uk.gov.nationalarchives.droid.gui.action.RemoveFilesAndFoldersAction;
 import uk.gov.nationalarchives.droid.gui.action.StopRunningProfilesAction;
 import uk.gov.nationalarchives.droid.gui.config.ConfigDialog;
-import uk.gov.nationalarchives.droid.gui.config.SignatureUploadDialog;
-import uk.gov.nationalarchives.droid.gui.config.UploadSignatureFileAction;
+import uk.gov.nationalarchives.droid.gui.config.SignatureInstallDialog;
+import uk.gov.nationalarchives.droid.gui.config.InstallSignatureFileAction;
 import uk.gov.nationalarchives.droid.gui.event.ButtonManager;
 import uk.gov.nationalarchives.droid.gui.export.ExportAction;
 import uk.gov.nationalarchives.droid.gui.export.ExportDialog;
@@ -136,7 +136,7 @@ public class DroidMainFrame extends JFrame {
     private ConfigDialog configDialog;
     private GlobalContext globalContext;
     private JFileChooser exportFileChooser;
-    private SignatureUploadDialog signatureUploadDialog;
+    private SignatureInstallDialog signatureInstallDialog;
     private ReportDialog reportDialog;
 
     private Set<ExitListener> exitListeners = new HashSet<ExitListener>();
@@ -320,7 +320,7 @@ public class DroidMainFrame extends JFrame {
         droidContext = new DroidUIContext(jProfilesTabbedPane, profileManager);
         exportFileChooser = new ExportFileChooser();
         filterFileChooser = new FilterFileChooser(globalContext.getGlobalConfig().getFilterDir());
-        signatureUploadDialog = new SignatureUploadDialog(this);
+        signatureInstallDialog = new SignatureInstallDialog(this);
         resourceFileChooser = new ResourceSelectorDialog(this);
         resourceFileChooser.setModal(true);
 
@@ -440,7 +440,7 @@ public class DroidMainFrame extends JFrame {
         jMenuTools = new javax.swing.JMenu();
         jSeparator7 = new javax.swing.JSeparator();
         updateNowMenuItem = new javax.swing.JMenuItem();
-        signatureUploadMenuItem = new javax.swing.JMenuItem();
+        signatureInstallMenuItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
         settingsMenuItem = new javax.swing.JMenuItem();
         jhelp = new javax.swing.JMenu();
@@ -916,15 +916,15 @@ public class DroidMainFrame extends JFrame {
         });
         jMenuTools.add(updateNowMenuItem);
 
-        signatureUploadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        signatureUploadMenuItem.setText("Upload signature file...");
-        signatureUploadMenuItem.setToolTipText("Loads a signature file from your local file system");
-        signatureUploadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        signatureInstallMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        signatureInstallMenuItem.setText("Install signature file...");
+        signatureInstallMenuItem.setToolTipText("Installs a signature file from your local file system");
+        signatureInstallMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                signatureUploadMenuItemActionPerformed(evt);
+                signatureInstallMenuItemActionPerformed(evt);
             }
         });
-        jMenuTools.add(signatureUploadMenuItem);
+        jMenuTools.add(signatureInstallMenuItem);
         jMenuTools.add(jSeparator6);
 
         settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -1121,17 +1121,17 @@ public class DroidMainFrame extends JFrame {
         }
     }// GEN-LAST:event_jMenuFilterMenuSelected
 
-    private void signatureUploadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_signatureUploadMenuItemActionPerformed
-        signatureUploadDialog.setLocationRelativeTo(this);
-        signatureUploadDialog.setVisible(true);
-        if (signatureUploadDialog.getResponse() == SignatureUploadDialog.OK) {
-            UploadSignatureFileAction action = globalContext.getActionFactory().newUploadSignatureFileAction();
-            action.setFileName(signatureUploadDialog.getSignatureFilename());
-            action.setUseAsDefault(signatureUploadDialog.isDefault());
+    private void signatureInstallMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_signatureInstallMenuItemActionPerformed
+        signatureInstallDialog.setLocationRelativeTo(this);
+        signatureInstallDialog.setVisible(true);
+        if (signatureInstallDialog.getResponse() == SignatureInstallDialog.OK) {
+            InstallSignatureFileAction action = globalContext.getActionFactory().newInstallSignatureFileAction();
+            action.setFileName(signatureInstallDialog.getSignatureFilename());
+            action.setUseAsDefault(signatureInstallDialog.isDefault());
             action.execute(this);
         }
 
-    }// GEN-LAST:event_signatureUploadMenuItemActionPerformed
+    }// GEN-LAST:event_signatureInstallMenuItemActionPerformed
 
     private void jMenuEditFilterActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMenuFilterActionPerformed
         FilterImpl filter = getFilter();
@@ -1436,7 +1436,7 @@ public class DroidMainFrame extends JFrame {
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JMenu jhelp;
     private javax.swing.JMenuItem settingsMenuItem;
-    private javax.swing.JMenuItem signatureUploadMenuItem;
+    private javax.swing.JMenuItem signatureInstallMenuItem;
     private javax.swing.JMenuItem updateNowMenuItem;
     // End of variables declaration//GEN-END:variables
 

@@ -45,7 +45,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
  * @author rflitcroft
  *
  */
-public class UploadSignatureFileAction {
+public class InstallSignatureFileAction {
 
     private SignatureManager signatureManager;
     
@@ -60,12 +60,12 @@ public class UploadSignatureFileAction {
     public void execute(Window parent) {
         File f = new File(fileName);
         try {
-            SignatureFileInfo info = signatureManager.upload(type, f, useAsDefault);
-            String message = String.format("Signature file %s has been uploaded", info.getFile().getName());
-            JOptionPane.showMessageDialog(parent, message, "Signature file uploaded", JOptionPane.INFORMATION_MESSAGE);
+            SignatureFileInfo info = signatureManager.install(type, f, useAsDefault);
+            String message = String.format("Signature file %s has been installed", info.getFile().getName());
+            JOptionPane.showMessageDialog(parent, message, "Signature file installed", JOptionPane.INFORMATION_MESSAGE);
         } catch (SignatureFileException e) {
             JOptionPane.showMessageDialog(parent, e.getMessage(), 
-                    "Error uploading signature file", JOptionPane.ERROR_MESSAGE);
+                    "Error installing signature file", JOptionPane.ERROR_MESSAGE);
         }            
     }
 
