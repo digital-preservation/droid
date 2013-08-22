@@ -130,7 +130,7 @@ fi
 
 # Run the command line or user interface version with the options:
 if [ $# -gt 0 ]; then
-    java $OPTIONS -jar droid-command-line-6.1.2.jar "$@"
+    java $OPTIONS -jar droid-command-line-6.1.3.jar "$@"
 else
-    java $OPTIONS -jar droid-ui-6.1.2.jar
+    java $OPTIONS -jar droid-ui-6.1.3.jar
 fi

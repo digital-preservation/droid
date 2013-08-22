@@ -68,7 +68,7 @@ public class DroidGlobalConfig {
     private static final String DEFAULT_DROID_PROPERTIES = "default_droid.properties";
 
     //FIXME: update to latest signature file before release.
-    private static final String DROID_SIGNATURE_FILE = "DROID_SignatureFile_V68.xml";
+    private static final String DROID_SIGNATURE_FILE = "DROID_SignatureFile_V69.xml";
     private static final String CONTAINER_SIGNATURE_FILE = "container-signature-20130501.xml";
     private static final String TEXT_SIGNATURE_FILE = "text-signature-20101101.xml";
     
