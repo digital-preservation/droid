@@ -70,6 +70,8 @@ public class ExportCommandTest {
     @Test
     public void testExportThreeProfiles() throws Exception {
         
+        final String destination = File.createTempFile("droid", "exportCommandTest").getAbsolutePath();
+        
         ExportManager exportManager = mock(ExportManager.class);
         ProfileManager profileManager = mock(ProfileManager.class);
         
@@ -87,7 +89,7 @@ public class ExportCommandTest {
         when(profileManager.open(eq(new File("foo3")), any(ProgressObserver.class))).thenReturn(profile3);
         
         Future future = mock(Future.class);
-        when(exportManager.exportProfiles(any(List.class), eq("destination"), (Filter) isNull(), eq(ExportOptions.ONE_ROW_PER_FORMAT))).thenReturn(future);
+        when(exportManager.exportProfiles(any(List.class), eq(destination), (Filter) isNull(), eq(ExportOptions.ONE_ROW_PER_FORMAT), eq("UTF-8"))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
         
@@ -95,7 +97,7 @@ public class ExportCommandTest {
         command.setProfiles(profileList);
         command.setExportManager(exportManager);
         command.setProfileManager(profileManager);
-        command.setDestination("destination");
+        command.setDestination(destination);
         command.setExportOptions(ExportOptions.ONE_ROW_PER_FORMAT);
         
         command.execute();
@@ -104,7 +106,7 @@ public class ExportCommandTest {
             "profile1", "profile2", "profile3",
         };
         
-        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), "destination", null, ExportOptions.ONE_ROW_PER_FORMAT);
+        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8");
         
     }
 
@@ -120,7 +122,7 @@ public class ExportCommandTest {
         when(profileManager.open(eq(new File("foo1")), any(ProgressObserver.class))).thenReturn(profile1);
         
         Future future = mock(Future.class);
-        when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT))).thenReturn(future);
+        when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
         command.setDqlFilterParser(new AntlrDqlParser());
@@ -148,7 +150,7 @@ public class ExportCommandTest {
         
         ArgumentCaptor<Filter> filterCaptor = ArgumentCaptor.forClass(Filter.class);
         verify(exportManager).exportProfiles(eq(Arrays.asList(expectedExportedProfiles)), 
-                eq("destination"), filterCaptor.capture(), eq(ExportOptions.ONE_ROW_PER_FORMAT));
+                eq("destination"), filterCaptor.capture(), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class));
 
         
         Filter filter = filterCaptor.getValue();

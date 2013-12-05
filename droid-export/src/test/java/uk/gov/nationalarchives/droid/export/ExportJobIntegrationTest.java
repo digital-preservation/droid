@@ -101,7 +101,7 @@ public class ExportJobIntegrationTest {
         };
         
         exportManager.exportProfiles(Arrays.asList(profileIds), "exports/export.csv", null,
-            ExportOptions.ONE_ROW_PER_FILE);
+            ExportOptions.ONE_ROW_PER_FILE, null);
         
         profileContextLocator.removeProfileContext("test");
         

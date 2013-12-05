@@ -95,7 +95,7 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      */
     @Override
     protected Void doInBackground() {
-        exportTask = exportManager.exportProfiles(profileIds, destination.getPath(), null, options);
+        exportTask = exportManager.exportProfiles(profileIds, destination.getPath(), null, options, null); //TODO set encoding from UI option
         try {
             exportTask.get();
         } catch (InterruptedException e) {

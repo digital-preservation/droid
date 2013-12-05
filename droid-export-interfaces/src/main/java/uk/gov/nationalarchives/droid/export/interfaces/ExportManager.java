@@ -63,8 +63,10 @@ public interface ExportManager {
      * @param destination the destination filename
      * @param filter optional filter
      * @param options the options for export.
+     * @param outputEncoding The character encoding to use in the output, null to use default encoding
      * @return future for cancelling the task. 
      */
-    Future<?> exportProfiles(List<String> profileIds, String destination, Filter filter, ExportOptions options);
+    Future<?> exportProfiles(List<String> profileIds, String destination,
+            Filter filter, ExportOptions options, String outputEncoding);
 
 }
