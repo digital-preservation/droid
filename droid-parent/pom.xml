@@ -87,11 +87,11 @@
     <build>
         <pluginManagement>
             <plugins>
-		<plugin>
+		        <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-dependency-plugin</artifactId>
-		    <version>2.5.1</version>
-		</plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+		            <version>2.5.1</version>
+		        </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -251,6 +251,7 @@
                         <exclude>**/tmp/**</exclude>
                         <exlcude>**/profiles/**</exlcude>
                         <exclude>**/droid-test-db/**</exclude>
+                        <exclude>**/.idea/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
