@@ -57,6 +57,7 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     private ExportManager exportManager;
     private File destination;
     private ExportOptions options;
+    private String outputEncoding;
     private List<String> profileIds;
     private ActionDoneCallback<ExportAction> callback;
     
@@ -95,7 +96,7 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      */
     @Override
     protected Void doInBackground() {
-        exportTask = exportManager.exportProfiles(profileIds, destination.getPath(), null, options, null); //TODO set encoding from UI option
+        exportTask = exportManager.exportProfiles(profileIds, destination.getPath(), null, options, outputEncoding);
         try {
             exportTask.get();
         } catch (InterruptedException e) {
@@ -153,6 +154,15 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      */
     public void cancel() {
         exportTask.cancel(true);
+    }
+
+    /**
+     * Set's the character encoding for the export file.
+     *
+     * @param outputEncoding The character encoding to use in the output
+     */
+    public void setOutputEncoding(final String outputEncoding) {
+        this.outputEncoding = outputEncoding;
     }
     
 }
