@@ -35,12 +35,15 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -52,6 +55,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JComboBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -144,6 +148,16 @@ public class ExportDialog extends JDialog {
         }
         return ExportOptions.ONE_ROW_PER_FORMAT;
     }
+
+    /**
+     * Get the character Output Encoding for the export file.
+     *
+     * @return The character encoding for the export file
+     */
+    public String getOutputEncoding() {
+        final CharsetEncodingItem encoding = (CharsetEncodingItem) cmdEncoding.getSelectedItem();
+        return encoding.getCharset().name();
+    }
     
     /**
      * 
@@ -196,13 +210,15 @@ public class ExportDialog extends JDialog {
         exportButton = new JButton();
         RadioOneRowPerFile = new JRadioButton();
         RadioOneRowPerIdentification = new JRadioButton();
+        cmdEncoding = new JComboBox();
+        jLabel1 = new JLabel();
 
         setTitle(NbBundle.getMessage(ExportDialog.class, "ExportDialog.title_1")); // NOI18N
         setAlwaysOnTop(true);
         setName("exportDialog"); // NOI18N
 
-
         profileSelectLabel.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.profileSelectLabel.text_1")); // NOI18N
+
         jScrollPane1.setPreferredSize(new Dimension(300, 402));
 
         profileSelectTable.setModel(new DefaultTableModel(
@@ -237,29 +253,39 @@ public class ExportDialog extends JDialog {
 
         buttonGroup1.add(RadioOneRowPerFile);
         RadioOneRowPerFile.setSelected(true);
-
         RadioOneRowPerFile.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerFile.text")); // NOI18N
         RadioOneRowPerFile.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerFile.toolTipText")); // NOI18N
-        buttonGroup1.add(RadioOneRowPerIdentification);
 
+        buttonGroup1.add(RadioOneRowPerIdentification);
         RadioOneRowPerIdentification.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerIdentification.text")); // NOI18N
         RadioOneRowPerIdentification.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerIdentification.toolTipText")); // NOI18N
+
+        cmdEncoding.setModel(getOutputEncodings());
+        cmdEncoding.setEditor(null);
+
+        jLabel1.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jLabel1.text_1")); // NOI18N
+
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(175, Short.MAX_VALUE)
-                .addComponent(exportButton)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(RadioOneRowPerFile)
-                .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(RadioOneRowPerIdentification)
-                .addContainerGap(127, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmdEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(exportButton)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(RadioOneRowPerFile)
+                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addComponent(RadioOneRowPerIdentification)
+                        .addGap(0, 145, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -270,7 +296,9 @@ public class ExportDialog extends JDialog {
                 .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportButton))
+                    .addComponent(exportButton)
+                    .addComponent(cmdEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addContainerGap())
         );
 
@@ -282,7 +310,7 @@ public class ExportDialog extends JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(profileSelectLabel))
                 .addContainerGap())
         );
@@ -313,7 +341,9 @@ public class ExportDialog extends JDialog {
     private JRadioButton RadioOneRowPerIdentification;
     private ButtonGroup buttonGroup1;
     private JButton cancelButton;
+    private JComboBox cmdEncoding;
     private JButton exportButton;
+    private JLabel jLabel1;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     private JLabel profileSelectLabel;
@@ -330,6 +360,63 @@ public class ExportDialog extends JDialog {
         }
         
         exportButton.setEnabled(profileSelected);
+    }
+
+    /**
+     * Simple tuple for holding combobox items
+     * for character encoding.
+     */
+    class CharsetEncodingItem {
+        private final String label;
+        private final Charset charset;
+
+        /**
+         * @param label  The label to use in the combobox item
+         * @param charset The character encoding value
+         */
+        public CharsetEncodingItem(final String label, final Charset charset) {
+            this.label = label;
+            this.charset = charset;
+        }
+
+        /**
+         * Gets the label
+         *
+         * @return the label
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * Gets the charset
+         *
+         * @return the charset
+         */
+        public Charset getCharset() {
+            return charset;
+        }
+
+        /**
+         * Returns the label
+         *
+         * @return The label
+         */
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+    
+    private ComboBoxModel getOutputEncodings() {
+        final DefaultComboBoxModel model = new DefaultComboBoxModel();
+        final Charset defaultEncoding = Charset.defaultCharset();
+        model.addElement(new CharsetEncodingItem("UTF 8", Charset.forName("UTF-8")));
+        model.addElement(
+            new CharsetEncodingItem("Platform Specific (" +  defaultEncoding.name() + ")", defaultEncoding)
+        );
+        
+        return model;
     }
     
     

@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
@@ -93,7 +94,11 @@ public class ExportCommand implements DroidCommand {
         
         // Run the export
         try {
-            exportManager.exportProfiles(profileIds, destination, filter, options).get();
+            //default to UTF-8
+            final String outputEncoding = "UTF-8"; //TODO set encoding from command line option
+            final Future<?> fProfiles = exportManager.exportProfiles(profileIds, destination, filter,
+                    options, outputEncoding);
+            fProfiles.get();
         } catch (InterruptedException e) {
             throw new CommandExecutionException(e);
         } catch (ExecutionException e) {

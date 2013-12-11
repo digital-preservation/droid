@@ -50,11 +50,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
-import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
-import uk.gov.nationalarchives.droid.export.interfaces.ItemReader;
-import uk.gov.nationalarchives.droid.export.interfaces.ItemReaderCallback;
-import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
-import uk.gov.nationalarchives.droid.export.interfaces.JobCancellationException;
+import uk.gov.nationalarchives.droid.export.interfaces.*;
 import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
 import uk.gov.nationalarchives.droid.profile.ProfileInstanceManager;
@@ -127,7 +123,7 @@ public class ExportManagerImplTest {
         List<String> profileIdList = new ArrayList<String>();
         profileIdList.add("profile1");
         
-        exportManager.exportProfiles(profileIdList, "destination", null, ExportOptions.ONE_ROW_PER_FILE).get();
+        exportManager.exportProfiles(profileIdList, "destination", null, ExportOptions.ONE_ROW_PER_FILE, null).get();
 
         verify(writer).open(any(Writer.class));
         verify(writer).write(fis);

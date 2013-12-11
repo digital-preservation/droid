@@ -1509,6 +1509,7 @@ public class DroidMainFrame extends JFrame {
                 exportAction.setDestination(exportFileChooser.getSelectedFile());
                 exportAction.setProfileIds(profileIds);
                 exportAction.setExportOptions(exportOptions.getExportOptions());
+                exportAction.setOutputEncoding(exportOptions.getOutputEncoding());
                 
                 exportAction.setCallback(new ActionDoneCallback<ExportAction>() {
                     @Override
