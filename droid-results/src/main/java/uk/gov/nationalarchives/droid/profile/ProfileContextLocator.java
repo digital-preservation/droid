@@ -83,6 +83,8 @@ public class ProfileContextLocator {
             profileInstance.setUuid((String) id);
             profileInstance.setThrottle(globalConfig.getProperties()
                     .getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName()));
+            profileInstance.setHashAlgorithm(globalConfig.getProperties()
+                    .getString(DroidGlobalProperty.HASH_ALGORITHM.getName()));
             profileInstance.setGenerateHash(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.GENERATE_HASH.getName()));
             profileInstance.setProcessArchiveFiles(globalConfig.getProperties()

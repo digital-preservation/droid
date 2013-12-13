@@ -120,7 +120,10 @@ public class ProfileInstance {
 
     @XmlElement(name = "GenerateHash")
     private Boolean generateHash;
-    
+
+    @XmlElement(name = "HashAlgorithm")
+    private String hashAlgorithm;
+
     @XmlElement(name = "ProcessArchiveFiles")
     private Boolean processArchiveFiles;
     
@@ -540,7 +543,22 @@ public class ProfileInstance {
     public void setGenerateHash(boolean generateHash) {
         this.generateHash = generateHash;
     }
-    
+
+    /**
+     *
+     * @return name of algorithm for hash generation.
+     */
+    public String getHashAlgorithm() {
+        return hashAlgorithm;
+    }
+
+    /**
+     *
+     * @param hashAlgorithm Algorithm to use to generate hashes.
+     */
+    public void setHashAlgorithm(String hashAlgorithm) {
+        this.hashAlgorithm = hashAlgorithm;
+    }
     /**
      * 
      * @return Whether to process archive files or not.
