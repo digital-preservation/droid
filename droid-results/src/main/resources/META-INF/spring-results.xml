@@ -245,6 +245,7 @@
         <property name="executorService" ref="coreExecutorService"/>
         <property name="processArchives" value="${processArchives}"/>
         <property name="generateHash" value="${generateHash}"/>
+        <property name="hashAlgorithm" value="${hashAlgorithm}"/>
         <property name="matchAllExtensions" value="${matchAllExtensions}"/>
         <property name="maxBytesToScan" value="${maxBytesToScan}"/>
         <property name="droidCore" ref="droid"/>

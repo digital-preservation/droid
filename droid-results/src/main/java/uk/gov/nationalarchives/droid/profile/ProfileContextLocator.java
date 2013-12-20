@@ -145,6 +145,7 @@ public class ProfileContextLocator {
      * @param profile the profile to obtain a profile manager for.
      * @return a profile instance manager for a pre-existing profile context
      */
+    //CHECKSTYLE:OFF
     public ProfileInstanceManager openProfileInstanceManager(ProfileInstance profile) {
         
         File profileHome = new File(globalConfig.getProfilesDir(), profile.getUuid());
@@ -164,9 +165,10 @@ public class ProfileContextLocator {
         props.setProperty("containerSigPath", containerSignatureFile.getPath()); 
         props.setProperty("processArchives", String.valueOf(profile.getProcessArchiveFiles()));
         props.setProperty("generateHash", String.valueOf(profile.getGenerateHash()));
+        props.setProperty("hashAlgorithm", String.valueOf(profile.getHashAlgorithm()));
         props.setProperty("maxBytesToScan", String.valueOf(profile.getMaxBytesToScan()));
         props.setProperty("matchAllExtensions", String.valueOf(profile.getMatchAllExtensions()));
-
+ 
         String createUrl = globalConfig.getProperties().getString("database.createUrl");
         if (createUrl == null || createUrl.isEmpty()) {
             createUrl = "{none}";
@@ -191,7 +193,8 @@ public class ProfileContextLocator {
         
         return profileManager;
     }
-
+    //CHECKSTYLE:ON
+    
     private void setCreateSchemaProperties(boolean create, Properties props) {
         if (create) {
             props.setProperty(HIBERNATE_GENERATE_DDL, "true");

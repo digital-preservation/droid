@@ -95,6 +95,7 @@ public class SubmissionGateway implements AsynchDroid {
     private ArchiveHandlerFactory archiveHandlerFactory;
     private ContainerIdentifierFactory containerIdentifierFactory;
     private HashGenerator hashGenerator;
+    private String hashAlgorithm;
     private boolean generateHash;
     private boolean matchAllExtensions;
     private long maxBytesToScan = -1;
@@ -464,6 +465,13 @@ public class SubmissionGateway implements AsynchDroid {
      */
     public void setGenerateHash(boolean generateHash) {
         this.generateHash = generateHash;
+    }
+    
+        /**
+     * @param hashAlgorithm the algorithm to set
+     */
+    public void setHashAlgorithm(String hashAlgorithm) {
+        this.hashAlgorithm = hashAlgorithm;
     }
     
     /**

@@ -186,7 +186,7 @@
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="generateHashCheckBox" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="hashAlgorithm" min="-2" pref="110" max="-2" attributes="0"/>
+                                          <Component id="hashAlgorithmCombo" min="-2" pref="110" max="-2" attributes="0"/>
                                       </Group>
                                       <Component id="processArchivesCheckBox1" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="rowPerFileButton2" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -223,7 +223,7 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="generateHashCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="hashAlgorithm" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="hashAlgorithmCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
@@ -341,9 +341,7 @@
                     <Property name="horizontalAlignment" type="int" value="4"/>
                   </Properties>
                   <BindingProperties>
-                    <BindingProperty name="text" source="Form" sourcePath="${globalConfig[\&quot;profile.maxBytesToScan\&quot;]}" target="jTextField2" targetPath="text" updateStrategy="0" immediately="false">
-                      <BindingParameter name="javax.swing.binding.ParameterKeys.TEXT_CHANGE_STRATEGY" value="javax.swing.binding.TextChangeStrategy.ON_TYPE"/>
-                    </BindingProperty>
+                    <BindingProperty name="text" source="Form" sourcePath="${globalConfig[\&quot;profile.maxBytesToScan\&quot;]}" target="jTextField2" targetPath="text" updateStrategy="0" immediately="false"/>
                   </BindingProperties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel9">
@@ -379,15 +377,19 @@
                     <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.matchAllExtensions\&quot;]}" target="rowPerFormatButton2" targetPath="selected" updateStrategy="0" immediately="false"/>
                   </BindingProperties>
                 </Component>
-                <Component class="javax.swing.JComboBox" name="hashAlgorithm">
+                <Component class="javax.swing.JComboBox" name="hashAlgorithmCombo">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="2">
-                        <StringItem index="0" value="MD5"/>
-                        <StringItem index="1" value="SHA256"/>
-                      </StringArray>
+                      <StringArray count="0"/>
                     </Property>
                   </Properties>
+                  <BindingProperties>
+                    <BindingProperty name="elements" source="Form" sourcePath="${allHashAlgorithms}" target="hashAlgorithmCombo" targetPath="elements" updateStrategy="1" immediately="false"/>
+                    <BindingProperty name="selectedItem" source="Form" sourcePath="$globalConfig[\&quot;profile.hashAlgorithm\&quot;]}" target="hashAlgorithmCombo" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
+                  </BindingProperties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hashAlgorithmComboActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

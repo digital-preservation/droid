@@ -49,7 +49,6 @@ import java.util.SortedMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -110,6 +109,9 @@ public class ConfigDialog extends JDialog {
     
     private ObservableMap<String, Object> globalConfig = ObservableCollections.observableMap(props);
     
+    private ObservableList<String> allHashAlgorithms = 
+        ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
+    
     private ObservableList<String> allBinarySigFiles = 
         ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
     
@@ -148,6 +150,18 @@ public class ConfigDialog extends JDialog {
         final Map<SignatureType, SortedMap<String, SignatureFileInfo>> allSignatureFiles = 
             context.getActionFactory().newListSignatureFilesAction().list();
         
+        // initialise checksum list for dropdown
+        //(overkill in this case, but using same mechanism as sig files for consistency)
+        ArrayList availableAlgorithms = new ArrayList(); 
+        availableAlgorithms.add("md5"); //TODO move to config
+        availableAlgorithms.add("sha256");
+        Object hashAlgorithm = 
+            globalConfig.get(DroidGlobalProperty.HASH_ALGORITHM.getName());
+        allHashAlgorithms.addAll(availableAlgorithms);
+        if (allHashAlgorithms.contains(hashAlgorithm)) {
+            globalConfig.put(DroidGlobalProperty.HASH_ALGORITHM.getName(), hashAlgorithm);
+        }
+        
         Object defaultSigFileVersion = globalConfig.get(DroidGlobalProperty.DEFAULT_BINARY_SIG_FILE_VERSION.getName());
         allBinarySigFiles.addAll(allSignatureFiles.get(SignatureType.BINARY).keySet());
         if (!allBinarySigFiles.isEmpty() && allBinarySigFiles.contains(defaultSigFileVersion)) {
@@ -162,6 +176,8 @@ public class ConfigDialog extends JDialog {
             globalConfig.put(DroidGlobalProperty.DEFAULT_CONTAINER_SIG_FILE_VERSION.getName(), 
                     defaultContainerSigFileVersion);
         }
+        
+        
         
         /*
         // init text signature combo
@@ -206,7 +222,7 @@ public class ConfigDialog extends JDialog {
         jLabel9 = new JLabel();
         rowPerFileButton2 = new JRadioButton();
         rowPerFormatButton2 = new JRadioButton();
-        hashAlgorithm = new JComboBox();
+        hashAlgorithmCombo = new JComboBox();
         jPanel5 = new JPanel();
         jLabel5 = new JLabel();
         updateUrlTextBox = new JTextField();
@@ -355,7 +371,17 @@ public class ConfigDialog extends JDialog {
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.matchAllExtensions\"]}"), rowPerFormatButton2, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
-        hashAlgorithm.setModel(new DefaultComboBoxModel(new String[] { "MD5", "SHA256" }));
+        eLProperty = ELProperty.create("${allHashAlgorithms}");
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, hashAlgorithmCombo);
+        bindingGroup.addBinding(jComboBoxBinding);
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("$globalConfig[\"profile.hashAlgorithm\"]}"), hashAlgorithmCombo, BeanProperty.create("selectedItem"));
+        bindingGroup.addBinding(binding);
+
+        hashAlgorithmCombo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                hashAlgorithmComboActionPerformed(evt);
+            }
+        });
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -383,7 +409,7 @@ public class ConfigDialog extends JDialog {
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(generateHashCheckBox)
                                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                                .addComponent(hashAlgorithm, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(hashAlgorithmCombo, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
                             .addComponent(processArchivesCheckBox1)
                             .addComponent(rowPerFileButton2)
                             .addComponent(rowPerFormatButton2)
@@ -411,7 +437,7 @@ public class ConfigDialog extends JDialog {
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(generateHashCheckBox)
-                    .addComponent(hashAlgorithm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(hashAlgorithmCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.TRAILING)
                     .addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -740,6 +766,10 @@ public class ConfigDialog extends JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_rowPerFormatButton1ActionPerformed
 
+    private void hashAlgorithmComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_hashAlgorithmComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_hashAlgorithmComboActionPerformed
+
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
         for (Component c : panel.getComponents()) {
@@ -769,7 +799,7 @@ public class ConfigDialog extends JDialog {
     private JFormattedTextField defaultThrottleTextBox1;
     private JTabbedPane generalTabbedPane1;
     private JCheckBox generateHashCheckBox;
-    private JComboBox hashAlgorithm;
+    private JComboBox hashAlgorithmCombo;
     private JLabel jLabel1;
     private JLabel jLabel11;
     private JLabel jLabel2;
@@ -836,12 +866,20 @@ public class ConfigDialog extends JDialog {
         return globalConfig;
     }
 
-    /**
+       /**
      * 
      * @return collection of available signature files.
      */
     public List<String> getAllBinarySigFiles() {
         return allBinarySigFiles;
+    }
+    
+    /**
+     * 
+     * @return collection of available hash algorithms.
+     */
+    public List<String> getAllHashAlgorithms() {
+        return allHashAlgorithms;
     }
     
     /**

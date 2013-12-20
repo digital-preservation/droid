@@ -104,7 +104,7 @@ public enum DroidGlobalProperty {
     /** Generate hashes for each file analysed?. */
     GENERATE_HASH("profile.generateHash", PropertyType.BOOLEAN, true),
 
-    /** Hash algorithm to use (currently only md5, sha256 available). */
+    /** Default hash algorithm to use (currently only md5, sha256 available). */
     HASH_ALGORITHM("profile.hashAlgorithm", PropertyType.TEXT, true),
 
     /** CSV Export one row per format. */
