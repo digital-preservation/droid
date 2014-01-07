@@ -846,6 +846,12 @@ public class ConfigDialog extends JDialog {
     }
 
     /**
+     * @return the hashAlogorithm dropdown
+     */
+    JComboBox getHashAlgorithmCombo() {
+        return hashAlgorithmCombo;
+    }
+    /**
      * @return the cancelButton
      */
     JButton getCancelButton() {
