@@ -122,7 +122,7 @@ public class ConfigDialog extends JDialog {
     private ObservableList<String> allTextSigFiles = 
         ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
     */
-    
+
     /** 
      * Creates new form ConfigDialog.
      * @param owner the owner of the dialog 
@@ -152,14 +152,17 @@ public class ConfigDialog extends JDialog {
         
         // initialise checksum list for dropdown
         //(overkill in this case, but using same mechanism as sig files for consistency)
-        ArrayList availableAlgorithms = new ArrayList(); 
-        availableAlgorithms.add("md5"); //TODO move to config
-        availableAlgorithms.add("sha256");
-        Object hashAlgorithm = 
+        List<String> availableAlgorithms = (ArrayList<String>)properties.get("availableHashAlgorithms");
+        //availableAlgorithms.add("md5"); //TODO move to config
+        //availableAlgorithms.add("sha256");
+
+        //BNO: Get the default hash algorithm as specified in the config file (droid.properties).  Ideally
+        // the property should be renamed to e.g. defaultHashAlgorithm but this may break existing code...
+        Object defaultHashAlgorithm =
             globalConfig.get(DroidGlobalProperty.HASH_ALGORITHM.getName());
         allHashAlgorithms.addAll(availableAlgorithms);
-        if (allHashAlgorithms.contains(hashAlgorithm)) {
-            globalConfig.put(DroidGlobalProperty.HASH_ALGORITHM.getName(), hashAlgorithm);
+        if (allHashAlgorithms.contains(defaultHashAlgorithm)) {
+            globalConfig.put(DroidGlobalProperty.HASH_ALGORITHM.getName(), defaultHashAlgorithm);
         }
         
         Object defaultSigFileVersion = globalConfig.get(DroidGlobalProperty.DEFAULT_BINARY_SIG_FILE_VERSION.getName());
@@ -343,6 +346,7 @@ public class ConfigDialog extends JDialog {
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultContainerSigFileVersion\"]}"), containerSigCombo, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
+        //TODO: BNO, possibly remove this and other listener assignments - the code doesn't seem to do anything..?
         containerSigCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 containerSigComboActionPerformed(evt);
@@ -374,7 +378,9 @@ public class ConfigDialog extends JDialog {
         eLProperty = ELProperty.create("${allHashAlgorithms}");
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, hashAlgorithmCombo);
         bindingGroup.addBinding(jComboBoxBinding);
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("$globalConfig[\"profile.hashAlgorithm\"]}"), hashAlgorithmCombo, BeanProperty.create("selectedItem"));
+        //binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("{$globalConfig[\"profile.hashAlgorithm\"]}"), hashAlgorithmCombo, BeanProperty.create("selectedItem"));
+        //bindingGroup.addBinding(binding);
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.hashAlgorithm\"]}"), hashAlgorithmCombo, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
         hashAlgorithmCombo.addActionListener(new ActionListener() {

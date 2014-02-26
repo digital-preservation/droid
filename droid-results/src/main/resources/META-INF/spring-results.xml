@@ -251,10 +251,13 @@
         <property name="droidCore" ref="droid"/>
         <property name="submissionQueue" ref="submissionQueue"/>
         <property name="replaySubmitter" ref="replaySubmitter"/>
-        <property name="hashGenerator" ref="hashGenerator"/>
+        <property name="hashGenerator" ref="${hashAlgorithm}HashGenerator"/>
     </bean>
     
-    <bean id="hashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator"/>
+    <!-- <bean id="hashGenerator"   class="uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator"/> -->
+
+    <bean id="md5HashGenerator"   class="uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator"/>
+    <bean id="sha256HashGenerator"   class="uk.gov.nationalarchives.droid.core.interfaces.hash.SHA256HashGenerator"/>
     
     <bean id="submissionQueue" class="uk.gov.nationalarchives.droid.submitter.JaxBSubmissionQueueDao">
         <property name="targetFileName" value="${submissionQueueFile}"/>

@@ -130,6 +130,7 @@ public final class DroidCommandLine {
                 option = CommandLineParam.TOP_LEVEL_COMMANDS.get(opt.getOpt());
                 if (option != null) {
                     break;
+
                 }
             }
 

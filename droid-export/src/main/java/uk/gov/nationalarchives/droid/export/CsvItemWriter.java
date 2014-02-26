@@ -62,8 +62,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     private static final String FILE_URI_SCHEME = "file";
 
+    private static final int HASH_ARRAY_INDEX = 12;
+
     private static final String[] HEADERS = {
-        "ID",
+           "ID",
         "PARENT_ID",
         "URI",
         "FILE_PATH",
@@ -75,7 +77,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         "EXT",
         "LAST_MODIFIED",
         "EXTENSION_MISMATCH",
-        "MD5_HASH",
+         "%s_HASH",
+        //"MD5_HASH",
+        // config.props.store.get("profile.hashAlgorithm").toString().toUpperCase() + "_HASH",
         "FORMAT_COUNT",
         "PUID",
         "MIME_TYPE",
@@ -206,7 +210,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     @Override
     public void open(Writer writer) {
         csvWriter = new CSVWriter(writer);
-        csvWriter.writeNext(HEADERS);
+        String[] headers = HEADERS;
+        headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], config.getProperties().getProperty("profile.hashAlgorithm").toString().toUpperCase().toUpperCase() );
+        csvWriter.writeNext(headers);
     }
 
     /**

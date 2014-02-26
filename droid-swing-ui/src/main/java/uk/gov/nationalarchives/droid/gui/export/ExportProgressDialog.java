@@ -62,6 +62,7 @@ public class ExportProgressDialog extends JDialog {
      * @param parent the dialog's parent 
      * @param action The action that this dialog is viewing
      */
+
     public ExportProgressDialog(Frame parent, ExportAction action) {
         super(parent);
         this.action = action;

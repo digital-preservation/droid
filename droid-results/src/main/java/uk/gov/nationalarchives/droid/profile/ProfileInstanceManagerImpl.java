@@ -187,8 +187,8 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         if (pausedThreadId != null) {
             submitterPermits.acquireUninterruptibly();
         }
-        pauseControl.resume();
         profileInstance.start();
+        pauseControl.resume();
     }
 
     /**

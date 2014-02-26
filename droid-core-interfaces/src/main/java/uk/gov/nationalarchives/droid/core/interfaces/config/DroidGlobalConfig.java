@@ -37,11 +37,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.Map.Entry;
+
+//BNO new libraries
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -77,8 +76,9 @@ public class DroidGlobalConfig {
     // UPDATE THIS SCHEMA VERSION IF THE DATABASE SCHEMA CHANGES.
     private static final String TEMPLATE_SCHEMA_VERSION = "schema 6.03";
 
-
-    
+    // BNO - to exclude availableHashAlgorithms (and possibly other settings in future) getting written to the
+    // droid.properties file when settings are saved.  // See comments under update() method
+    private static final List<String> NON_CONFIGURABLE_PROPERTIES = Arrays.asList("availableHashAlgorithms");
     
     private final Log log = LogFactory.getLog(getClass());
     
@@ -165,6 +165,7 @@ public class DroidGlobalConfig {
     public void init() throws ConfigurationException {
 
         File droidProperties = new File(droidWorkDir, DROID_PROPERTIES);
+        // Read the properties form the configuration file
         props = new PropertiesConfiguration(droidProperties);
 
         URL defaultPropsUrl = getClass().getClassLoader().getResource(
@@ -244,7 +245,12 @@ public class DroidGlobalConfig {
      */
     public void update(Map<String, Object> properties) throws ConfigurationException {
         for (Entry<String, Object> entry : properties.entrySet()) {
-            props.setProperty(entry.getKey(), entry.getValue());
+            //BNO to stop us updating droid.properties with values that aren't user configurable
+            // See comments under getPropertiesMap below
+            if(!NON_CONFIGURABLE_PROPERTIES.contains(entry.getKey()))
+            {
+                props.setProperty(entry.getKey(), entry.getValue());
+            }
         }
         
         props.save();
@@ -262,7 +268,17 @@ public class DroidGlobalConfig {
                 allSettings.put(key, property.getType().getTypeSafeValue(props, key));
             }
         }
-        
+
+        // TODO: Review BNO: Add the available hash algorithms.  These are better hard coded here than in the
+        // droid.properties file since the list is not user configurable.  However, the existing droid.properties
+        // profile.hashAlgorithm can still be used to indicate the default selection.
+        List<String> availableHashAlgorithms = new ArrayList<String>();
+
+        availableHashAlgorithms.add("md5");
+        availableHashAlgorithms.add("sha256");
+
+        allSettings.put("availableHashAlgorithms",availableHashAlgorithms );
+
         return allSettings;
     }
     
