@@ -211,7 +211,12 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     public void open(Writer writer) {
         csvWriter = new CSVWriter(writer);
         String[] headers = HEADERS;
-        headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], config.getProperties().getProperty("profile.hashAlgorithm").toString().toUpperCase().toUpperCase() );
+        //We need the null reference check since the config may be null when called from JUnit tests
+        if(config.getProperties() != null)
+        {
+            headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], config.getProperties().getProperty("profile.hashAlgorithm").toString().toUpperCase().toUpperCase() );
+        }
+
         csvWriter.writeNext(headers);
     }
 
