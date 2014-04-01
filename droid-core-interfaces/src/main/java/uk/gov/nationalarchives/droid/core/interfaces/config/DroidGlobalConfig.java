@@ -37,8 +37,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 //BNO new libraries
 
@@ -72,13 +78,14 @@ public class DroidGlobalConfig {
     private static final String TEXT_SIGNATURE_FILE = "text-signature-20101101.xml";
     
     private static final String DATABASE_DURABILITY = "database.durability";
+    private static final String AVAILABLE_HASH_ALGORITHMS = "availableHashAlgorithms";
     
     // UPDATE THIS SCHEMA VERSION IF THE DATABASE SCHEMA CHANGES.
     private static final String TEMPLATE_SCHEMA_VERSION = "schema 6.03";
 
     // BNO - to exclude availableHashAlgorithms (and possibly other settings in future) getting written to the
     // droid.properties file when settings are saved.  // See comments under update() method
-    private static final List<String> NON_CONFIGURABLE_PROPERTIES = Arrays.asList("availableHashAlgorithms");
+    private static final List<String> NON_CONFIGURABLE_PROPERTIES = Arrays.asList(AVAILABLE_HASH_ALGORITHMS);
     
     private final Log log = LogFactory.getLog(getClass());
     
@@ -101,7 +108,6 @@ public class DroidGlobalConfig {
      */
     public DroidGlobalConfig() throws IOException {
         String droidHomePath = System.getProperty(DROID_USER);
-
         droidWorkDir = new File(droidHomePath);
         droidWorkDir.mkdirs();
         
@@ -247,8 +253,7 @@ public class DroidGlobalConfig {
         for (Entry<String, Object> entry : properties.entrySet()) {
             //BNO to stop us updating droid.properties with values that aren't user configurable
             // See comments under getPropertiesMap below
-            if(!NON_CONFIGURABLE_PROPERTIES.contains(entry.getKey()))
-            {
+            if (!NON_CONFIGURABLE_PROPERTIES.contains(entry.getKey())) {
                 props.setProperty(entry.getKey(), entry.getValue());
             }
         }
@@ -277,7 +282,7 @@ public class DroidGlobalConfig {
         availableHashAlgorithms.add("md5");
         availableHashAlgorithms.add("sha256");
 
-        allSettings.put("availableHashAlgorithms",availableHashAlgorithms );
+        allSettings.put(AVAILABLE_HASH_ALGORITHMS, availableHashAlgorithms);
 
         return allSettings;
     }
