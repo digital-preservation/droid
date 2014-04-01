@@ -152,9 +152,7 @@ public class ConfigDialog extends JDialog {
         
         // initialise checksum list for dropdown
         //(overkill in this case, but using same mechanism as sig files for consistency)
-        List<String> availableAlgorithms = (ArrayList<String>)properties.get("availableHashAlgorithms");
-        //availableAlgorithms.add("md5"); //TODO move to config
-        //availableAlgorithms.add("sha256");
+        List<String> availableAlgorithms = (ArrayList<String>) properties.get("availableHashAlgorithms");
 
         //BNO: Get the default hash algorithm as specified in the config file (droid.properties).  Ideally
         // the property should be renamed to e.g. defaultHashAlgorithm but this may break existing code...
