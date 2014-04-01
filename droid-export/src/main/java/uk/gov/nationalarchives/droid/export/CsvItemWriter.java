@@ -65,7 +65,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private static final int HASH_ARRAY_INDEX = 12;
 
     private static final String[] HEADERS = {
-           "ID",
+        "ID",
         "PARENT_ID",
         "URI",
         "FILE_PATH",
@@ -77,9 +77,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         "EXT",
         "LAST_MODIFIED",
         "EXTENSION_MISMATCH",
-         "%s_HASH",
-        //"MD5_HASH",
-        // config.props.store.get("profile.hashAlgorithm").toString().toUpperCase() + "_HASH",
+        "%s_HASH",
         "FORMAT_COUNT",
         "PUID",
         "MIME_TYPE",
@@ -212,9 +210,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         csvWriter = new CSVWriter(writer);
         String[] headers = HEADERS;
         //We need the null reference check since the config may be null when called from JUnit tests
-        if(config.getProperties() != null)
-        {
-            headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], config.getProperties().getProperty("profile.hashAlgorithm").toString().toUpperCase().toUpperCase() );
+        if (config.getProperties() != null) {
+            String hashName = config.getProperties().getProperty("profile.hashAlgorithm").toString().toUpperCase();
+            headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], hashName);
         }
 
         csvWriter.writeNext(headers);
