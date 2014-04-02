@@ -382,7 +382,7 @@
                       </Properties>
                       <BindingProperties>
                         <BindingProperty name="elements" source="Form" sourcePath="${allHashAlgorithms}" target="hashAlgorithmCombo" targetPath="elements" updateStrategy="1" immediately="false"/>
-                        <BindingProperty name="selectedItem" source="Form" sourcePath="$globalConfig[\&quot;profile.hashAlgorithm\&quot;]}" target="hashAlgorithmCombo" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
+                        <BindingProperty name="selectedItem" source="Form" sourcePath="${globalConfig[\&quot;profile.hashAlgorithm\&quot;]}" target="hashAlgorithmCombo" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
                       </BindingProperties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hashAlgorithmComboActionPerformed"/>

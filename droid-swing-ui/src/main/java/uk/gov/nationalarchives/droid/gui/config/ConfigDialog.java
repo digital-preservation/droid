@@ -350,7 +350,7 @@ public class ConfigDialog extends JDialog {
         eLProperty = ELProperty.create("${allHashAlgorithms}");
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, hashAlgorithmCombo);
         bindingGroup.addBinding(jComboBoxBinding);
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("$globalConfig[\"profile.hashAlgorithm\"]}"), hashAlgorithmCombo, BeanProperty.create("selectedItem"));
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.hashAlgorithm\"]}"), hashAlgorithmCombo, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
         hashAlgorithmCombo.addActionListener(new ActionListener() {
