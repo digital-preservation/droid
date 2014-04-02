@@ -68,7 +68,12 @@ public enum CriterionFieldEnum {
     /** Mime type. */
     MIME_TYPE("Mime type", "format.mimeType", String.class),
     /** File format. */
-    FILE_FORMAT("Format name", "format.name", String.class); 
+    FILE_FORMAT("Format name", "format.name", String.class), 
+    
+    /** Extension mismatch. **/
+    //  BNO TODO: Presumably the 2nd argument refers to some config ???
+    // see uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection
+    EXTENSION_MISMATCH("Extension Mismatch", "metaData.extensionMismatch", Boolean.class);
     
     private static Map<String, CriterionFieldEnum> allFields = new HashMap<String, CriterionFieldEnum>();
 

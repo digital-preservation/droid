@@ -70,12 +70,14 @@ public final class DqlCriterionFactory {
                 new EnumCriterionFactory<NodeStatus>(NodeStatus.class));
         factories.put(CriterionFieldEnum.RESOURCE_TYPE, 
                 new EnumCriterionFactory<ResourceType>(ResourceType.class));
+        //BNO:
+        factories.put(CriterionFieldEnum.EXTENSION_MISMATCH , new BooleanCriterionFactory());
     }
     
     private DqlCriterionFactory() { }
 
     /**
-     * Create a new citerion.
+     * Create a new criterion.
      * @param dqlValue the dql value
      * @param dqlField the field
      * @param dqlOperator the operator.
@@ -154,6 +156,26 @@ public final class DqlCriterionFactory {
         }
     }
 
+
+    private static final class BooleanCriterionFactory implements CriterionFactory {
+        //BNO: NOt sure if we need this as only ever concerned with a single value...?
+        @Override
+        public FilterCriterion newCriterion(CriterionFieldEnum field,
+                                            CriterionOperator operator, Collection<String> dqlValues) {
+            BooleanCriterion criterion = new BooleanCriterion(field, operator);
+            criterion.setValue(dqlValues);
+            return criterion;
+        };
+
+        @Override
+        public FilterCriterion newCriterion(CriterionFieldEnum field,
+                                            CriterionOperator operator, String dqlValue) {
+            BooleanCriterion criterion = new BooleanCriterion(field, operator);
+            criterion.setValue(dqlValue);
+            return criterion;
+        }
+    }
+
     private static final class EnumCriterionFactory<T extends Enum<T>> implements CriterionFactory {
 
         private Class<T> type;
@@ -212,6 +234,46 @@ public final class DqlCriterionFactory {
         @Override
         protected Date toTypedValue(String s) {
             return ISODateTimeFormat.date().parseDateTime(s).toDate();
+        }
+    }
+
+    // BNO:
+    private static class BooleanCriterion extends AbstractFilterCriterion<Boolean> {
+
+        //******************************************************************************************
+        // Author: Brian O'Reilly
+        // Date: 14 March 2014
+        // Description: Returns a boolean value base on a string input.  Returns True if the input
+        // is "true" or "yes", or False if the input is "false" or "no".  Throws an
+        // IllegalArgumentException for all other inputs. Validation is not case sensitive.
+        // Added to facilitate filtering based on whether or not there is a mismatch between the
+        // file extension and the PUID.
+        //******************************************************************************************
+
+        public static final String INVALID_BOOLEAN =  "The supplied value %s cannot be converted to a Boolean value";
+
+        public BooleanCriterion(CriterionFieldEnum field, CriterionOperator operator) {
+            super(field, operator);
+        }
+
+        @Override
+        protected Boolean toTypedValue(String s) {
+            
+            String temp = s;
+            
+            if ("yes".equalsIgnoreCase(temp)) {
+                temp = Boolean.toString(Boolean.TRUE);
+            }
+            if ("no".equalsIgnoreCase(temp)) {
+                temp = Boolean.toString(Boolean.FALSE);
+            }
+
+            if ("true".equalsIgnoreCase(temp) || "false".equalsIgnoreCase(temp)) {
+                return Boolean.valueOf(temp);
+            } else {
+                //BNO
+                throw new IllegalArgumentException(String.format(INVALID_BOOLEAN, temp));
+            }
         }
     }
 
