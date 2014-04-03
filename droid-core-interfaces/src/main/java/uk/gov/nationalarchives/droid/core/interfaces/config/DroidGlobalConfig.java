@@ -81,7 +81,7 @@ public class DroidGlobalConfig {
     private static final String AVAILABLE_HASH_ALGORITHMS = "availableHashAlgorithms";
     
     // UPDATE THIS SCHEMA VERSION IF THE DATABASE SCHEMA CHANGES.
-    private static final String TEMPLATE_SCHEMA_VERSION = "schema 6.03";
+    private static final String TEMPLATE_SCHEMA_VERSION = "schema 6.04";
 
     // BNO - to exclude availableHashAlgorithms (and possibly other settings in future) getting written to the
     // droid.properties file when settings are saved.  // See comments under update() method
