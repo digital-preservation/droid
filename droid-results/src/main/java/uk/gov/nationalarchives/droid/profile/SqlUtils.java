@@ -83,14 +83,15 @@ public final class SqlUtils {
                         nodePrefix + ".identification_method")
                 .replace("profileResourceNode.metaData.nodeStatus",
                         nodePrefix + ".node_status")
+                .replace("profileResourceNode.metaData.extensionMismatch",
+                        nodePrefix + ".extension_mismatch")
                 .replace("format.mimeType",
                         formatPrefix + ".mime_type")
                 .replace("format.name",
                         formatPrefix + ".name")
                 .replace("format.puid",
                         formatPrefix + ".puid")
-                .replace("extensionMismatch",
-                        nodePrefix + ".extension_mismatch");
+                .replace("extensionMismatch", "extension_mismatch"); 
     }    
     
     /**

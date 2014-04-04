@@ -40,9 +40,11 @@ import javax.swing.table.DefaultTableModel;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
 import uk.gov.nationalarchives.droid.gui.filter.DatePicker;
 import uk.gov.nationalarchives.droid.gui.filter.FilterDialog;
 import uk.gov.nationalarchives.droid.gui.filter.TextBoxAndButton;
+import uk.gov.nationalarchives.droid.gui.filter.domain.ExtensionMismatchMetadata;
 import uk.gov.nationalarchives.droid.gui.filter.domain.GenericMetadata;
 import uk.gov.nationalarchives.droid.gui.filter.domain.LastModifiedDateMetadata;
 import uk.gov.nationalarchives.droid.profile.FilterCriterionImpl;
@@ -90,18 +92,44 @@ public class LoadFilterAction {
                 component = new DatePicker();
                 ((DatePicker) component).setDateCombos(filterCriteria.getValueFreeText());
             } else {
-                component = new TextBoxAndButton(filterDialog);
-                ((TextBoxAndButton) component).getTextField().setText(filterCriteria.getValueFreeText());
-                ((TextBoxAndButton) component).setType(metadata, filterDialog.getFilterContext().getFilterCriterion(i));
-                if (metadata.isFreeText()) {
-                    ((TextBoxAndButton) component).getButton().hide();
-                    filterDialog.getFilterTable().repaint();
+                if (metadata instanceof ExtensionMismatchMetadata) {
+                    component = configureComboBox(filterCriteria, metadata);
                 } else {
-                    ((TextBoxAndButton) component).getTextField().disable();
+                    component = configureTextBoxAndButton(filterDialog, i, filterCriteria, metadata);
                 }
             }
             tableModel.setValueAt(component, i, 2);
         }
     }
 
+    private Component configureTextBoxAndButton(FilterDialog filterDialog,
+            int i, FilterCriterionImpl filterCriteria, GenericMetadata metadata) {
+        Component component;
+        component = new TextBoxAndButton(filterDialog);
+        ((TextBoxAndButton) component).getTextField().setText(
+                filterCriteria.getValueFreeText());
+        FilterCriterionImpl fci = filterDialog.getFilterContext()
+                .getFilterCriterion(i);
+        ((TextBoxAndButton) component).setType(metadata, fci);
+        if (metadata.isFreeText()) {
+            ((TextBoxAndButton) component).getButton().hide();
+            filterDialog.getFilterTable().repaint();
+        } else {
+            ((TextBoxAndButton) component).getTextField().disable();
+        }
+        return component;
+    }
+
+    private Component configureComboBox(FilterCriterionImpl filterCriteria, GenericMetadata metadata) {
+        Component component;
+        JComboBox combo = new JComboBox();
+
+        for (FilterValue v : metadata.getPossibleValues()) {
+            combo.addItem(v.toString());
+        }
+
+        combo.setSelectedItem(filterCriteria.getValue().toString());
+        component = (Component) combo;
+        return component;
+    }
 }

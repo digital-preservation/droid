@@ -73,6 +73,7 @@ import uk.gov.nationalarchives.droid.gui.filter.domain.FilterDomain;
 import uk.gov.nationalarchives.droid.gui.filter.domain.FilterValidationException;
 import uk.gov.nationalarchives.droid.gui.filter.domain.GenericMetadata;
 import uk.gov.nationalarchives.droid.gui.filter.domain.LastModifiedDateMetadata;
+import uk.gov.nationalarchives.droid.gui.filter.domain.ExtensionMismatchMetadata;
 import uk.gov.nationalarchives.droid.profile.FilterCriterionImpl;
 import uk.gov.nationalarchives.droid.profile.FilterImpl;
 import uk.gov.nationalarchives.droid.profile.FilterSpecDao;
@@ -317,9 +318,15 @@ public class FilterDialog extends JDialog {
                     // get Metadata Object from the selected string.
                     GenericMetadata metadata = filterDomain.getMetaDataFromFieldType(selectedItem);
 
-                    comp = metadata instanceof LastModifiedDateMetadata ? new DatePicker() : new TextBoxAndButton(
-                            FilterDialog.this);
-
+                    if (metadata instanceof LastModifiedDateMetadata) {
+                        comp = new DatePicker();
+                    } else {
+                        if (metadata instanceof ExtensionMismatchMetadata) {
+                            comp = new JComboBox();
+                        } else {
+                            comp = new TextBoxAndButton(FilterDialog.this);
+                        }
+                    }
                     tableModel.setValueAt(comp, filterTable.getSelectedRow(), 2);
 
                     if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -342,6 +349,7 @@ public class FilterDialog extends JDialog {
                         // Apply metadaUi logic.
                         applyMetadaUILogic(comp, metadata);
 
+                        //Add the possible criteria e.g. all, any equal to...
                         operationComboboxModel.removeAllElements();
                         for (CriterionOperator metaDataOp : metadata.getOperationList()) {
                             operationComboboxModel.addElement(metaDataOp);
@@ -350,6 +358,12 @@ public class FilterDialog extends JDialog {
                         if (comp instanceof TextBoxAndButton) {
                             ((TextBoxAndButton) comp).setType(metadata, filterContext.getFilterCriterion(filterTable
                                     .getSelectedRow()));
+                        }
+                        //BNO: For extension_mismatch
+                        if (comp instanceof JComboBox) {
+                            JComboBox combo = (JComboBox) comp;
+                            combo.addItem("true");
+                            combo.addItem("false");
                         }
                         filterTable.repaint();
                     }
@@ -372,7 +386,12 @@ public class FilterDialog extends JDialog {
                     ((TextBoxAndButton) comp).getTextField().show();
                 }
             } else {
-                ((TextBoxAndButton) comp).getTextField().disable();
+                //BNO need to check as we have a combo box for Extension Mismatch so can't assume
+               // comp will always be TextAndButton
+                if (comp instanceof TextBoxAndButton) {
+                    ((TextBoxAndButton) comp).getTextField().disable();
+                }
+
                 comp.show();
             }
             if (metadata instanceof DummyMetadata) {
@@ -709,6 +728,8 @@ public class FilterDialog extends JDialog {
                 } else if (componentAtThirdRow instanceof DatePicker) {
                     freeTextAtRow = ((DatePicker) componentAtThirdRow)
                             .getDateString();
+                } else if (componentAtThirdRow instanceof JComboBox) {
+                    freeTextAtRow =  ((JComboBox) componentAtThirdRow).getSelectedItem().toString();
                 } else {
                     throw new RuntimeException("Fatal error");
                 }

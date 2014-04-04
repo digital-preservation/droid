@@ -86,6 +86,10 @@ public class AntlrDqlParser implements DqlFilterParser {
             return criterion;
         } catch (RecognitionException e) {
             throw new DqlParseException(e);
+        } catch (IllegalArgumentException e) {
+            //BNO - added to provide improved stack tracing where the user enters an invalid argument for 
+            // the extension_mismatch (Boolean) filter condition.
+            throw new DqlParseException(e);
         }
 
     }

@@ -61,7 +61,8 @@ public final class DqlCriterionMapper {
         fieldMapping.put("status", CriterionFieldEnum.JOB_STATUS);
         fieldMapping.put("puid", CriterionFieldEnum.PUID);
         fieldMapping.put("mime_type", CriterionFieldEnum.MIME_TYPE);
-        
+        fieldMapping.put("extension_mismatch", CriterionFieldEnum.EXTENSION_MISMATCH);
+    
         operatorMapping.put("<", CriterionOperator.LT);
         operatorMapping.put("<=", CriterionOperator.LTE);
         operatorMapping.put("=", CriterionOperator.EQ);
