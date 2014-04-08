@@ -36,8 +36,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
 
 /**
- * @author Brian O'Reilly
- * @date 14/03/2014
+ * @author Brian O'Reilly 
+ * 14/03/2014
  */
 public class ExtensionMismatchMetadata extends GenericMetadata {
 
