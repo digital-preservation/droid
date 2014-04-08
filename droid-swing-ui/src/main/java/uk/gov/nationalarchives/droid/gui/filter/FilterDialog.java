@@ -320,12 +320,10 @@ public class FilterDialog extends JDialog {
 
                     if (metadata instanceof LastModifiedDateMetadata) {
                         comp = new DatePicker();
+                    } else if (metadata instanceof ExtensionMismatchMetadata) {
+                        comp = new JComboBox();
                     } else {
-                        if (metadata instanceof ExtensionMismatchMetadata) {
-                            comp = new JComboBox();
-                        } else {
-                            comp = new TextBoxAndButton(FilterDialog.this);
-                        }
+                        comp = new TextBoxAndButton(FilterDialog.this);
                     }
                     tableModel.setValueAt(comp, filterTable.getSelectedRow(), 2);
 
