@@ -125,7 +125,7 @@ public class LoadFilterAction {
         JComboBox combo = new JComboBox();
 
         for (FilterValue v : metadata.getPossibleValues()) {
-            combo.addItem(v.toString());
+            combo.addItem(v.getDescription());
         }
 
         combo.setSelectedItem(filterCriteria.getValue().toString());
