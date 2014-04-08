@@ -31,6 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.gui.filter.domain;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
@@ -42,6 +45,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
 public class ExtensionMismatchMetadata extends GenericMetadata {
 
     private static final String DISPLAY_NAME = "File Ext-PUID mismatch";
+    private static final Pattern BOOLEAN_STR_REGEX = Pattern.compile("true|false|yes|no", Pattern.CASE_INSENSITIVE);
+    private static final Matcher BOOLEAN_MATCHER = BOOLEAN_STR_REGEX.matcher("");
 
     /** */
     public ExtensionMismatchMetadata() {
@@ -52,22 +57,13 @@ public class ExtensionMismatchMetadata extends GenericMetadata {
         addPossibleValue(new FilterValue(2, Boolean.toString(Boolean.FALSE), Boolean.toString(Boolean.FALSE)));
     }
 
+
     @Override
     public void validate(String stringToValidate) throws FilterValidationException {
-    
-        String temp = stringToValidate;
-
-        if ("yes".equalsIgnoreCase(temp)) {
-            temp = Boolean.toString(Boolean.TRUE);
-        }
-        if ("no".equalsIgnoreCase(temp)) {
-            temp = Boolean.toString(Boolean.FALSE);
-        }
-
-        if (!("true".equalsIgnoreCase(temp) || "false".equalsIgnoreCase(temp))) {
+        BOOLEAN_MATCHER.reset(stringToValidate);
+        if (!BOOLEAN_MATCHER.matches()) {
             throw new FilterValidationException("Extension Mismatch must be true or false!");
         }
-
     }
 
     @Override

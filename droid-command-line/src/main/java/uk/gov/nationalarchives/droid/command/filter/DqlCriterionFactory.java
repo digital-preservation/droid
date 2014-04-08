@@ -35,6 +35,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -256,7 +258,11 @@ public final class DqlCriterionFactory {
     */
     private static class BooleanCriterion extends AbstractFilterCriterion<Boolean> {
 
-        public static final String INVALID_BOOLEAN =  "The supplied value %s cannot be converted to a Boolean value";
+        public  static final String INVALID_BOOLEAN =  "The supplied value %s cannot be converted to a Boolean value";
+        private static final Pattern BOOLEAN_TRUE_STR_REGEX = Pattern.compile("true|yes", Pattern.CASE_INSENSITIVE);
+        private static final Pattern BOOLEAN_FALSE_STR_REGEX = Pattern.compile("false|no", Pattern.CASE_INSENSITIVE);
+        private static final Matcher BOOLEAN_TRUE_MATCHER = BOOLEAN_TRUE_STR_REGEX.matcher("");
+        private static final Matcher BOOLEAN_FALSE_MATCHER = BOOLEAN_FALSE_STR_REGEX.matcher("");
      
         public BooleanCriterion(CriterionFieldEnum field, CriterionOperator operator) {
              super(field, operator);
@@ -270,14 +276,20 @@ public final class DqlCriterionFactory {
         */
         @Override
         protected Boolean toTypedValue(String inputString) {
-                
-            if ("no".equalsIgnoreCase(inputString) || "false".equalsIgnoreCase(inputString)) { 
-                return Boolean.FALSE;
-            } else if ("yes".equalsIgnoreCase(inputString) || "true".equalsIgnoreCase(inputString)) {
+
+            BOOLEAN_TRUE_MATCHER.reset(inputString);
+            if (BOOLEAN_TRUE_MATCHER.matches()) {
                 return Boolean.TRUE;
-            } else {
-                throw new IllegalArgumentException(String.format(INVALID_BOOLEAN, inputString));
             }
+            BOOLEAN_FALSE_MATCHER.reset(inputString);
+            if (BOOLEAN_FALSE_MATCHER.matches()) {
+                return Boolean.FALSE;
+            }
+            
+            throw new IllegalArgumentException(String.format(INVALID_BOOLEAN, inputString));
+
         }
+
+    
     }
 }
