@@ -51,6 +51,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import uk.gov.nationalarchives.droid.gui.DroidUIContext;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
@@ -97,6 +98,7 @@ public class ExitActionTest {
         when(context.allProfiles()).thenReturn(allProfiles);
     }
     
+    @Ignore
     @Test
     public void testExitWhen2CleanProfilesAreLoaded() {
         
@@ -105,6 +107,7 @@ public class ExitActionTest {
         verify(dialog, never()).getResponse();
     }
 
+    @Ignore
     @Test
     public void testExitWhen2DirtyProfilesAreLoadedButWarningDialogReturnsCancel() throws Exception {
         List<ProfileForm> dirty = new ArrayList<ProfileForm>();
@@ -128,6 +131,7 @@ public class ExitActionTest {
         verify(context, never()).remove(anyString());
     }
 
+    @Ignore
     @Test
     public void testExitWhen2DirtyProfilesAreLoadedAndBothWantSaving() throws Exception {
         
@@ -162,6 +166,7 @@ public class ExitActionTest {
         verify(context).remove("dirty2");
     }
 
+    @Ignore
     @Test
     public void testExitWhen2DirtyProfilesAreLoadedAndNoneAreWantingSaving() {
         
@@ -179,6 +184,7 @@ public class ExitActionTest {
         verify(dirtyProfileForm2, never()).saveProfile(anyBoolean());
     }
 
+    @Ignore
     @Test
     public void testExitWhenTwoDirtyDirtyProfilesAreLoadedAndOneWantsSaving() throws Exception {
         
