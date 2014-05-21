@@ -223,6 +223,7 @@ public class CommandFactoryImpl implements CommandFactory {
     @Override
     public DroidCommand getNoProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
         final String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
+
         if (resources.length == 0) {
             throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
         }

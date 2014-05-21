@@ -67,7 +67,7 @@ public class NoProfileRunCommandTest {
             command.execute();
             fail("Expected CommandExecutionException");
         } catch (CommandExecutionException x) {
-            assertEquals("Resources directory not found", x.getMessage());
+            assertEquals("The specified input test1.txt was not found", x.getMessage());
         } finally {
 //            sigFile.delete();
         }
