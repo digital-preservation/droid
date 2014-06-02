@@ -67,8 +67,12 @@ public final class SqlUtils {
      */
     public static String transformEJBtoSQLFields(String ejbFragment,
             String nodePrefix, String formatPrefix) {
-        return ejbFragment.replace("profileResourceNode.metaData.name", 
-                        nodePrefix + ".name ")
+
+        //BNO: We call into here when running the export, also when adding or updating a
+        // filter criterion via the UI (after clicking the "Apply" button...
+        System.out.println(ejbFragment);
+        String temp = ejbFragment.replace("profileResourceNode.metaData.name",
+                 nodePrefix + ".name ")
                 .replace("profileResourceNode.metaData.size", 
                         nodePrefix + ".file_size")
                 .replace("profileResourceNode.metaData.extension", 
@@ -88,9 +92,14 @@ public final class SqlUtils {
                 .replace("format.name",
                         formatPrefix + ".name")
                 .replace("format.puid",
-                        formatPrefix + ".puid")
-                .replace("extensionMismatch",
-                        nodePrefix + ".extension_mismatch");
+                        formatPrefix + ".puid");
+
+        System.out.println(temp);
+        temp = temp.replace("extensionMismatch",
+                          "extension_mismatch");
+        //BNO:
+        System.out.println(temp);
+        return temp;
     }    
     
     /**

@@ -45,7 +45,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 
 /**
  * @author rflitcroft
- *
+ * @emended: Brian O'Reilly
+ * @date: 	1st April 2014
+ * @reason: Updated to include new "extension_mismatch" filter criteria
  */
 public class DqlCriterionMapperTest {
 
@@ -54,6 +56,7 @@ public class DqlCriterionMapperTest {
     public void testAllFieldMappings() {
 
         String[] allDqlFields = new String[] {
+            "extension_mismatch",
             "file_ext",
             "file_name",
             "file_size",
@@ -64,11 +67,12 @@ public class DqlCriterionMapperTest {
             "mime_type",
             "puid",
             "status",
-            "type",
+            "type"
         };
         
         
         int i = 0;
+        assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.EXTENSION_MISMATCH);
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.FILE_EXTENSION);
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.FILE_NAME);
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.FILE_SIZE);
@@ -80,6 +84,7 @@ public class DqlCriterionMapperTest {
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.PUID);
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.JOB_STATUS);
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.RESOURCE_TYPE);
+                
         
         final CriterionFieldEnum[] fieldValues = CriterionFieldEnum.values();
         assertEquals(allDqlFields.length, fieldValues.length);

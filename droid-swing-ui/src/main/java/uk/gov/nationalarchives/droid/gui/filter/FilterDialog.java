@@ -60,7 +60,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.xml.bind.JAXBException;
 
-
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.gui.DroidUIContext;
@@ -69,6 +68,7 @@ import uk.gov.nationalarchives.droid.gui.action.ApplyFilterToTreeTableAction;
 import uk.gov.nationalarchives.droid.gui.filter.action.InitialiseFilterAction;
 import uk.gov.nationalarchives.droid.gui.filter.action.LoadFilterAction;
 import uk.gov.nationalarchives.droid.gui.filter.domain.DummyMetadata;
+import uk.gov.nationalarchives.droid.gui.filter.domain.ExtensionMismatchMetadata;
 import uk.gov.nationalarchives.droid.gui.filter.domain.FilterDomain;
 import uk.gov.nationalarchives.droid.gui.filter.domain.FilterValidationException;
 import uk.gov.nationalarchives.droid.gui.filter.domain.GenericMetadata;
@@ -216,7 +216,9 @@ public class FilterDialog extends JDialog {
     private void intialiseFilter() {
 
         String profileId = droidContext.getSelectedProfile().getProfile().getUuid();
+        //BNO: Nothing much happens in the following constructor call.
         InitialiseFilterAction initialiseFilterAction = new InitialiseFilterAction();
+        //.. it all happens here
         initialiseFilterAction.initialiseFilter(profileId, profileManager, filterDomain);
 
     }
@@ -317,8 +319,19 @@ public class FilterDialog extends JDialog {
                     // get Metadata Object from the selected string.
                     GenericMetadata metadata = filterDomain.getMetaDataFromFieldType(selectedItem);
 
-                    comp = metadata instanceof LastModifiedDateMetadata ? new DatePicker() : new TextBoxAndButton(
-                            FilterDialog.this);
+                    //comp = metadata instanceof LastModifiedDateMetadata ? new DatePicker() : new TextBoxAndButton(
+                    //        FilterDialog.this);
+
+                    //BNO:
+                    if (metadata instanceof LastModifiedDateMetadata) {
+                        comp = new DatePicker();
+                    } else {
+                        if (metadata instanceof ExtensionMismatchMetadata) {
+                            comp = new JComboBox<String>();
+                        } else {
+                            comp = new TextBoxAndButton(FilterDialog.this);
+                        }
+                    }
 
                     tableModel.setValueAt(comp, filterTable.getSelectedRow(), 2);
 
@@ -342,14 +355,25 @@ public class FilterDialog extends JDialog {
                         // Apply metadaUi logic.
                         applyMetadaUILogic(comp, metadata);
 
+                        //Add the possible criteria e.g. all, any equal to...
                         operationComboboxModel.removeAllElements();
                         for (CriterionOperator metaDataOp : metadata.getOperationList()) {
                             operationComboboxModel.addElement(metaDataOp);
                         }
 
                         if (comp instanceof TextBoxAndButton) {
+                            //BNO - debug
+                            TextBoxAndButton tbab = (TextBoxAndButton) comp;
+                            //Populate the text and button based on the available values and (where applicable) 
+                            //existing filter criteria
                             ((TextBoxAndButton) comp).setType(metadata, filterContext.getFilterCriterion(filterTable
                                     .getSelectedRow()));
+                        }
+                        //BNO: For extension_mismatch - TODO: LOad values based on criterion itself
+                        if (comp instanceof JComboBox) {
+                            JComboBox combo = (JComboBox) comp;
+                            combo.addItem("true");
+                            combo.addItem("false");
                         }
                         filterTable.repaint();
                     }
@@ -372,7 +396,12 @@ public class FilterDialog extends JDialog {
                     ((TextBoxAndButton) comp).getTextField().show();
                 }
             } else {
-                ((TextBoxAndButton) comp).getTextField().disable();
+                //BNO - we need to check now as we have a combo box for Extension Mismatch so can't assume
+                // comp will always be TextAndButton
+                if (comp instanceof TextBoxAndButton) {
+                    ((TextBoxAndButton) comp).getTextField().disable();
+                }
+
                 comp.show();
             }
             if (metadata instanceof DummyMetadata) {
@@ -703,12 +732,16 @@ public class FilterDialog extends JDialog {
 
             String freeTextAtRow = null;
             try {
+                //BNO: Causes problem with Boolean values as they get quoted within string then fail validation!
                 if (componentAtThirdRow instanceof TextBoxAndButton) {
                     freeTextAtRow = ((TextBoxAndButton) componentAtThirdRow)
                             .getTextField().getText();
                 } else if (componentAtThirdRow instanceof DatePicker) {
                     freeTextAtRow = ((DatePicker) componentAtThirdRow)
                             .getDateString();
+                } else if (componentAtThirdRow instanceof JComboBox) {
+                    freeTextAtRow =  ((JComboBox) componentAtThirdRow).getSelectedItem().toString();
+
                 } else {
                     throw new RuntimeException("Fatal error");
                 }
