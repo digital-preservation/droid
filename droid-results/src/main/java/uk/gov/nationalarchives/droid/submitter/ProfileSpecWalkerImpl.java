@@ -99,6 +99,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 fileWalker = walkState.getCurrentFileWalker();
                 
                 fileWalker.setFileHandler(new FileWalkerHandler() {
+
                     @Override
                     public ResourceId handle(File file, int depth, ProgressEntry parent) { 
                         progressMonitor.startJob(file.toURI());

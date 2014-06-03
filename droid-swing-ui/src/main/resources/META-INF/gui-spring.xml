@@ -145,5 +145,11 @@
     </bean>
     
     <bean id="profileDiskAction" class="uk.gov.nationalarchives.droid.profile.ProfileDiskAction"/>
+
+    <!--
+    <bean id="hashAlgorithms" class="uk.gov.nationalarchives.droid.profile.HashAlgorithms">
+        <property name="values" value="md5,sha1"></property>
+    </bean>
+    -->
     
 </beans>

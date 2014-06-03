@@ -67,6 +67,15 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 /**
  * @author rflitcroft
  *
+ * Amendments
+ * ================================================
+ * By: Brian O'Reilly
+ * Date: 26-Feb-2014
+ * Details: Changed expectedString hash component  to  "%s_HASH"  instead of MD5_HASH" .
+ * This is because, following the introduction of SHA256 as an additional option over and
+ * above MD5, the actual hash header id constructed at run time in tbe application based on the config.
+ * However, the test does not have access to the configuration, so testing against the placeholder is the
+ * best approach and avoids introducing additional dependencies.
  */
 public class CsvItemWriterTest {
 
@@ -101,7 +110,8 @@ public class CsvItemWriterTest {
         
         JobOptions jobOptions = mock(JobOptions.class);
         when(jobOptions.getParameter("location")).thenReturn("test.csv");
-        
+
+       // String hashAlgorithm = config.getProperties().getProperty("HASH_ALGORITHM").toString();
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
         itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
         itemWriter.open(writer);
@@ -118,7 +128,7 @@ public class CsvItemWriterTest {
             + "\"EXT\","
             + "\"LAST_MODIFIED\","
             + "\"EXTENSION_MISMATCH\","
-            + "\"MD5_HASH\","
+            + "\"%s_HASH\","
             + "\"FORMAT_COUNT\","
             + "\"PUID\","
             + "\"MIME_TYPE\","

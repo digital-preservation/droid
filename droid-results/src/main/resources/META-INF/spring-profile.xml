@@ -42,6 +42,7 @@
     <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileManagerImpl">
         <!-- <property name="profileInstanceFactory" ref="profileInstanceFactory"/> -->
         <property name="profileContextLocator" ref="profileContextLocator"/>
+
         <property name="profileSpecDao" ref="profileSpecDao"/>
         <property name="profileDiskAction" ref="profileDiskAction"/>
         <property name="config" ref="globalConfig"/>

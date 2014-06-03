@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.gui.config;
 
-import java.awt.Color;
+//import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -63,11 +63,11 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+//import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.TitledBorder;
+//import javax.swing.border.TitledBorder;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
@@ -109,6 +109,9 @@ public class ConfigDialog extends JDialog {
     
     private ObservableMap<String, Object> globalConfig = ObservableCollections.observableMap(props);
     
+    private ObservableList<String> allHashAlgorithms = 
+        ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
+    
     private ObservableList<String> allBinarySigFiles = 
         ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
     
@@ -119,7 +122,7 @@ public class ConfigDialog extends JDialog {
     private ObservableList<String> allTextSigFiles = 
         ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
     */
-    
+
     /** 
      * Creates new form ConfigDialog.
      * @param owner the owner of the dialog 
@@ -147,6 +150,19 @@ public class ConfigDialog extends JDialog {
         final Map<SignatureType, SortedMap<String, SignatureFileInfo>> allSignatureFiles = 
             context.getActionFactory().newListSignatureFilesAction().list();
         
+        // initialise checksum list for dropdown
+        //(overkill in this case, but using same mechanism as sig files for consistency)
+        List<String> availableAlgorithms = (ArrayList<String>) properties.get("availableHashAlgorithms");
+
+        //BNO: Get the default hash algorithm as specified in the config file (droid.properties).  Ideally
+        // the property should be renamed to e.g. defaultHashAlgorithm but this may break existing code...
+        Object defaultHashAlgorithm =
+            globalConfig.get(DroidGlobalProperty.HASH_ALGORITHM.getName());
+        allHashAlgorithms.addAll(availableAlgorithms);
+        if (allHashAlgorithms.contains(defaultHashAlgorithm)) {
+            globalConfig.put(DroidGlobalProperty.HASH_ALGORITHM.getName(), defaultHashAlgorithm);
+        }
+        
         Object defaultSigFileVersion = globalConfig.get(DroidGlobalProperty.DEFAULT_BINARY_SIG_FILE_VERSION.getName());
         allBinarySigFiles.addAll(allSignatureFiles.get(SignatureType.BINARY).keySet());
         if (!allBinarySigFiles.isEmpty() && allBinarySigFiles.contains(defaultSigFileVersion)) {
@@ -161,6 +177,8 @@ public class ConfigDialog extends JDialog {
             globalConfig.put(DroidGlobalProperty.DEFAULT_CONTAINER_SIG_FILE_VERSION.getName(), 
                     defaultContainerSigFileVersion);
         }
+        
+        
         
         /*
         // init text signature combo
@@ -205,6 +223,8 @@ public class ConfigDialog extends JDialog {
         jLabel9 = new JLabel();
         rowPerFileButton2 = new JRadioButton();
         rowPerFormatButton2 = new JRadioButton();
+        hashAlgorithmCombo = new JComboBox();
+        jLabel10 = new JLabel();
         jPanel5 = new JPanel();
         jLabel5 = new JLabel();
         updateUrlTextBox = new JTextField();
@@ -245,33 +265,6 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(cancelButton)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel4Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {cancelButton, okButton});
-
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel4Layout.linkSize(SwingConstants.VERTICAL, new Component[] {cancelButton, okButton});
-
         jScrollPane1.setMinimumSize(new Dimension(450, 350));
         jScrollPane1.setPreferredSize(new Dimension(507, 290));
 
@@ -281,27 +274,27 @@ public class ConfigDialog extends JDialog {
         jPanel3.setPreferredSize(new Dimension(500, 380));
 
         jLabel3.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel1.text")); // NOI18N
+
         defaultThrottleTextBox1.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(new DecimalFormat("#0"))));
 
         Binding binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultThrottle\"]}"), defaultThrottleTextBox1, BeanProperty.create("value"));
         bindingGroup.addBinding(binding);
 
-
         jLabel4.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel2.text")); // NOI18N
-        jLabel11.setLabelFor(defaultSigFileComboBox1);
 
+        jLabel11.setLabelFor(defaultSigFileComboBox1);
         jLabel11.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel10.text")); // NOI18N
+
         ELProperty eLProperty = ELProperty.create("${allBinarySigFiles}");
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, defaultSigFileComboBox1);
         bindingGroup.addBinding(jComboBoxBinding);
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultBinarySigFileVersion\"]}"), defaultSigFileComboBox1, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
-
         processArchivesCheckBox1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processArchivesCheckBox.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processArchives\"]}"), processArchivesCheckBox1, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
-
 
         processArchivesCheckBox1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -310,6 +303,7 @@ public class ConfigDialog extends JDialog {
         });
 
         generateHashCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.generateHashCheckBox.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.generateHash\"]}"), generateHashCheckBox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
@@ -332,30 +326,43 @@ public class ConfigDialog extends JDialog {
         });
 
         containerSigFileLabel.setLabelFor(containerSigCombo);
-
         containerSigFileLabel.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.containerSigFileLabel.text_1")); // NOI18N
+
         jTextField2.setHorizontalAlignment(JTextField.RIGHT);
 
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.maxBytesToScan\"]}"), jTextField2, BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
-
         jLabel9.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel9.text")); // NOI18N
-        buttonGroupExtension.add(rowPerFileButton2);
 
+        buttonGroupExtension.add(rowPerFileButton2);
         rowPerFileButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton2.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"profile.matchAllExtensions\"]}"), rowPerFileButton2, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         buttonGroupExtension.add(rowPerFormatButton2);
-
         rowPerFormatButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFormatButton2.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.matchAllExtensions\"]}"), rowPerFormatButton2, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
+        eLProperty = ELProperty.create("${allHashAlgorithms}");
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, hashAlgorithmCombo);
+        bindingGroup.addBinding(jComboBoxBinding);
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.hashAlgorithm\"]}"), hashAlgorithmCombo, BeanProperty.create("selectedItem"));
+        bindingGroup.addBinding(binding);
+
+        hashAlgorithmCombo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                hashAlgorithmComboActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel10.text_1")); // NOI18N
+
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
-
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -367,31 +374,34 @@ public class ConfigDialog extends JDialog {
                             .addComponent(containerSigFileLabel))
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(defaultSigFileComboBox1, 0, 334, Short.MAX_VALUE)
-                            .addComponent(containerSigCombo, 0, 334, Short.MAX_VALUE))
+                            .addComponent(defaultSigFileComboBox1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(containerSigCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(generateHashCheckBox)
-                            .addComponent(processArchivesCheckBox1))
-                        .addGap(14, 14, 14))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel9)
+                        .addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField2, GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                        .addComponent(jTextField2, GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
                         .addGap(14, 14, 14))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(generateHashCheckBox)
+                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addComponent(hashAlgorithmCombo, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
+                            .addComponent(processArchivesCheckBox1)
                             .addComponent(rowPerFileButton2)
-                            .addComponent(rowPerFormatButton2))
-                        .addContainerGap(204, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel4)
-                        .addContainerGap(243, Short.MAX_VALUE))))
+                            .addComponent(rowPerFormatButton2)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel4)))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel10, GroupLayout.PREFERRED_SIZE, 384, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(Alignment.LEADING)
@@ -407,10 +417,12 @@ public class ConfigDialog extends JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(processArchivesCheckBox1)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(generateHashCheckBox)
+                .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(generateHashCheckBox)
+                    .addComponent(hashAlgorithmCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(jLabel9)
+                    .addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(rowPerFileButton2)
@@ -421,19 +433,22 @@ public class ConfigDialog extends JDialog {
                     .addComponent(jLabel3)
                     .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addPreferredGap(ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addComponent(jLabel10)
+                .addContainerGap())
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle"), jPanel3); // NOI18N
+
         jPanel5.setPreferredSize(new Dimension(544, 290));
         jPanel5.setRequestFocusEnabled(false);
 
         jLabel5.setLabelFor(updateUrlTextBox);
-
-
         jLabel5.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel5.text")); // NOI18N
         jLabel5.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel5.toolTipText")); // NOI18N
+
         updateUrlTextBox.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.updateUrlTextBox.toolTipText")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"pronom.update.url\"]}"), updateUrlTextBox, BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
@@ -443,7 +458,7 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        autoUpdatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Tahoma", 0, 11), UIManager.getDefaults().getColor("windowText")), NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoUpdatePanel.border.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Tahoma", 0, 11), UIManager.getDefaults().getColor("textText"))); // NOI18N
+        autoUpdatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createTitledBorder(""), NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoUpdatePanel.border.title"))); // NOI18N
         autoUpdatePanel.setEnabled(false);
 
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.frequency.days\"]}"), updateFrequencyTextBox, BeanProperty.create("value"));
@@ -451,10 +466,10 @@ public class ConfigDialog extends JDialog {
         binding = Bindings.createAutoBinding(UpdateStrategy.READ, updateScheduleRadioButton, ELProperty.create("${selected}"), updateFrequencyTextBox, BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
-
-
         jLabel6.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel4.text")); // NOI18N
+
         autoSetDefaultSignatureFileCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoSetDefaultSignatureFileCheckBox.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.autoSetDefault\"]}"), autoSetDefaultSignatureFileCheckBox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
@@ -465,8 +480,8 @@ public class ConfigDialog extends JDialog {
         });
 
         updateFrequencyButtonGroup.add(updateOnStartupRadioButton);
-
         updateOnStartupRadioButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.updateOnStartupRadioButton.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.frequency.startup\"]}"), updateOnStartupRadioButton, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
@@ -477,19 +492,18 @@ public class ConfigDialog extends JDialog {
         });
 
         updateFrequencyButtonGroup.add(updateScheduleRadioButton);
-
         updateScheduleRadioButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.updateScheduleRadioButton.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_ONCE, this, ELProperty.create("${!globalConfig[\"update.frequency.startup\"]}"), updateScheduleRadioButton, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
-
         askToDownloadCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.askToDownloadCheckBox.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.downloadPrompt\"]}"), askToDownloadCheckBox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         GroupLayout autoUpdatePanelLayout = new GroupLayout(autoUpdatePanel);
         autoUpdatePanel.setLayout(autoUpdatePanelLayout);
-
         autoUpdatePanelLayout.setHorizontalGroup(
             autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
             .addGroup(autoUpdatePanelLayout.createSequentialGroup()
@@ -506,7 +520,7 @@ public class ConfigDialog extends JDialog {
                 .addGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
                     .addComponent(autoSetDefaultSignatureFileCheckBox)
                     .addComponent(askToDownloadCheckBox))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         autoUpdatePanelLayout.setVerticalGroup(
             autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
@@ -526,10 +540,9 @@ public class ConfigDialog extends JDialog {
         );
 
         autoUpdateCheckbox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoUpdateCheckbox.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.autoCheck\"]}"), autoUpdateCheckbox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
-
-
 
         autoUpdateCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent evt) {
@@ -537,8 +550,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        jLabel7.setFont(new Font("Tahoma", 1, 11));
+        jLabel7.setFont(new Font("Tahoma", 1, 11)); // NOI18N
         jLabel7.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel6.text")); // NOI18N
+
         proxySettingsButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.proxySettingsButton.text")); // NOI18N
         proxySettingsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -547,25 +561,24 @@ public class ConfigDialog extends JDialog {
         });
 
         containerSigUrl.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.containerSigUrl.toolTipText")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"container.update.url\"]}"), containerSigUrl, BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
         jLabel2.setLabelFor(containerSigUrl);
-
-
-
         jLabel2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel2.text_1")); // NOI18N
         jLabel2.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel2.toolTipText")); // NOI18N
+
         jLabel1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel1.text_1")); // NOI18N
         jLabel1.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel1.toolTipText")); // NOI18N
+
         jTextField1.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel1.toolTipText")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"puid.urlPattern\"]}"), jTextField1, BeanProperty.create("text_ON_ACTION_OR_FOCUS_LOST"));
         bindingGroup.addBinding(binding);
 
         GroupLayout jPanel5Layout = new GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
-
-
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
@@ -576,17 +589,17 @@ public class ConfigDialog extends JDialog {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(20, 20, 20)
-                        .addComponent(updateUrlTextBox, GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
+                        .addComponent(updateUrlTextBox))
                     .addComponent(proxySettingsButton, Alignment.TRAILING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(containerSigUrl, GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
+                        .addComponent(containerSigUrl))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                        .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, 326, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(autoUpdateCheckbox, GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE))
+                    .addComponent(autoUpdateCheckbox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -612,22 +625,24 @@ public class ConfigDialog extends JDialog {
                 .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         jPanel5Layout.linkSize(SwingConstants.VERTICAL, new Component[] {containerSigUrl, updateUrlTextBox});
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel3.TabConstraints.tabTitle"), jPanel5); // NOI18N
-        jPanel2.setBorder(BorderFactory.createTitledBorder(null, NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.border.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Tahoma", 0, 11), new Color(0, 0, 0))); // NOI18N
-        csvExportButtonGroup.add(rowPerFileButton1);
 
+        jPanel2.setBorder(BorderFactory.createTitledBorder(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.border.title"))); // NOI18N
+
+        csvExportButtonGroup.add(rowPerFileButton1);
         rowPerFileButton1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton1.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"export.rowPerFormat\"]}"), rowPerFileButton1, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         csvExportButtonGroup.add(rowPerFormatButton1);
-
         rowPerFormatButton1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFormatButton1.text")); // NOI18N
+
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"export.rowPerFormat\"]}"), rowPerFormatButton1, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
@@ -639,7 +654,6 @@ public class ConfigDialog extends JDialog {
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
-
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -647,7 +661,7 @@ public class ConfigDialog extends JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(rowPerFileButton1)
                     .addComponent(rowPerFormatButton1))
-                .addContainerGap(330, Short.MAX_VALUE))
+                .addContainerGap(302, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
@@ -656,32 +670,54 @@ public class ConfigDialog extends JDialog {
                 .addComponent(rowPerFileButton1)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(rowPerFormatButton1)
-                .addContainerGap(237, Short.MAX_VALUE))
+                .addContainerGap(273, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle_1"), jPanel2); // NOI18N
+
         jScrollPane1.setViewportView(generalTabbedPane1);
+
+        GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(cancelButton))
+            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+        );
+
+        jPanel4Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {cancelButton, okButton});
+
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 407, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel4Layout.linkSize(SwingConstants.VERTICAL, new Component[] {cancelButton, okButton});
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
-                        .addGap(10, 10, 10))
-                    .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                .addContainerGap(40, Short.MAX_VALUE)
+                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
-                .addPreferredGap(ComponentPlacement.RELATED)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
 
@@ -735,6 +771,10 @@ public class ConfigDialog extends JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_rowPerFormatButton1ActionPerformed
 
+    private void hashAlgorithmComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_hashAlgorithmComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_hashAlgorithmComboActionPerformed
+
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
         for (Component c : panel.getComponents()) {
@@ -764,7 +804,9 @@ public class ConfigDialog extends JDialog {
     private JFormattedTextField defaultThrottleTextBox1;
     private JTabbedPane generalTabbedPane1;
     private JCheckBox generateHashCheckBox;
+    private JComboBox hashAlgorithmCombo;
     private JLabel jLabel1;
+    private JLabel jLabel10;
     private JLabel jLabel11;
     private JLabel jLabel2;
     private JLabel jLabel3;
@@ -810,6 +852,12 @@ public class ConfigDialog extends JDialog {
     }
 
     /**
+     * @return the hashAlogorithm dropdown
+     */
+    JComboBox getHashAlgorithmCombo() {
+        return hashAlgorithmCombo;
+    }
+    /**
      * @return the cancelButton
      */
     JButton getCancelButton() {
@@ -830,12 +878,20 @@ public class ConfigDialog extends JDialog {
         return globalConfig;
     }
 
-    /**
+       /**
      * 
      * @return collection of available signature files.
      */
     public List<String> getAllBinarySigFiles() {
         return allBinarySigFiles;
+    }
+    
+    /**
+     * 
+     * @return collection of available hash algorithms.
+     */
+    public List<String> getAllHashAlgorithms() {
+        return allHashAlgorithms;
     }
     
     /**

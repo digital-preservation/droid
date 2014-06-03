@@ -51,7 +51,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 @Embeddable
 public class NodeMetaData {
     
-    private static final int MD5_LENGTH = 32;
+    private static final int MAX_HASH_LENGTH = 64;
 
     @Index(name = "idx_prn_file_size")
     @Column(name = "file_size")
@@ -86,7 +86,7 @@ public class NodeMetaData {
     private ResourceType  resourceType;
     
     @Index(name = "idx_prn_hash")
-    @Column(name = "hash", length = MD5_LENGTH)
+    @Column(name = "hash", length = MAX_HASH_LENGTH)
     private String hash;
   
     /**

@@ -130,6 +130,7 @@ public final class DroidCommandLine {
                 option = CommandLineParam.TOP_LEVEL_COMMANDS.get(opt.getOpt());
                 if (option != null) {
                     break;
+
                 }
             }
 
@@ -137,7 +138,7 @@ public final class DroidCommandLine {
                 option.getCommand(commandFactory, cli).execute();
             } else {
                 throw new CommandLineSyntaxException(
-                        "No command line options specified");
+                        "No command line options specified (use -h to see all available options)");
             }
         } catch (ParseException pe) {
             throw new CommandLineSyntaxException(pe);
