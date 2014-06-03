@@ -37,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ResourceBundle;
@@ -64,6 +65,12 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  */
 public class NoProfileRunCommand implements DroidCommand {
     
+    private static final String EXTENSION_FILTER_NOT_APPLICABLE = 
+            "Ignoring extension filter option since it is not applicable when the selected resource is a file.";
+    private static final String RECURSE_NOT_APPLICABLE = 
+            "Ignoring recurse folders option since it is not applicable when the selected resource is a file.";
+    private static final String MULTIPLE_RESOURCES_SPECIFIED = 
+            "You specified more than one folder/file. Only the first item specified (%s) will be processed";
     private static final String FORWARD_SLASH = "/";
     private static final String BACKWARD_SLASH = "\\";
     private static final String PRINTABLE_TRUE = "True";
@@ -85,14 +92,27 @@ public class NoProfileRunCommand implements DroidCommand {
     */
     @Override
     public void execute() throws CommandExecutionException {
+    	
+    	Collection<File> matchedFiles = null;
         
+        //BNO This is why only the first file or folder specified is processed, and any additional ones are ignored..
+        File targetDirectoryOrFile = new File(resources[0]);
+    	
         if (!this.quietFlag) {
-            this.outputRuntimeInformation();
+            this.outputRuntimeInformation(targetDirectoryOrFile);
         }
       
-        File dirToSearch = new File(resources[0]);
-        if (!dirToSearch.isDirectory()) {
-            throw new CommandExecutionException("Resources directory not found");
+
+       //BNO - allow processing of a single file as well as directory
+        if (targetDirectoryOrFile.isDirectory()) {
+            matchedFiles =
+                    FileUtils.listFiles(targetDirectoryOrFile, this.extensions, this.recursive);
+        } else  if (targetDirectoryOrFile.isFile()) {
+        	File singleFileToProcess = FileUtils.getFile(targetDirectoryOrFile);
+        	matchedFiles =  new  ArrayList<File>();
+        	matchedFiles.add(singleFileToProcess);
+        } else {
+            throw new CommandExecutionException(String.format("The specified input %s was not found", targetDirectoryOrFile));       	
         }
 
         BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
@@ -145,9 +165,7 @@ public class NoProfileRunCommand implements DroidCommand {
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
                 path, slash, slash1, archives);
-        
-        Collection<File> matchedFiles =
-                FileUtils.listFiles(dirToSearch, this.extensions, this.recursive);
+
         String fileName = null;
         for (File file : matchedFiles) {
             try {
@@ -173,9 +191,9 @@ public class NoProfileRunCommand implements DroidCommand {
             } catch (FileNotFoundException fnfe) {
             	log.error("error processing files", fnfe);
             	throw new CommandExecutionException(fnfe);
-			} catch (IOException e) {
-				throw new CommandExecutionException(e);
-			} finally {
+            } catch (IOException e) {
+                throw new CommandExecutionException(e);
+            } finally {
                 if (in != null) {
                     try {
                     	request.close();
@@ -191,26 +209,46 @@ public class NoProfileRunCommand implements DroidCommand {
     }
     //CHECKSTYLE:ON
 
-    private void outputRuntimeInformation() {
+    private void outputRuntimeInformation(File targetDirectoryOrFile) {
+    	
+    	// BNO: updated the parameter sanitisation and output messages to account for the fact that the input
+    	// can now be either a folder or a single file.
+    	
+    	// BNO Currently if the user specifies more than one folder/file with the -Nr switch, only the first 
+    	// item is processed, but no message is output. Therefore added code to inform the user accordingly.
+    	// N.B. Not fully tested - as in Eclipse the switch command arguments don't seem to get parsed correctly,
+    	//  it doesn't always seem to know where one argument ends and the next one starts!!
+    	if (resources.length > 1) {
+    		System.out.println(String.format(MULTIPLE_RESOURCES_SPECIFIED, targetDirectoryOrFile));
+    	}
+    	
         String versionString = ResourceBundle.getBundle("options").getString("version_no");
         System.out.println("DROID " + versionString + " No Profile mode: Runtime Information");
-        System.out.println("Resource folder: " + this.resources[0]);
+        System.out.println("Selected folder or file: " + this.resources[0]);
         System.out.println("Binary signature file: " + this.fileSignaturesFileName);
        
-        if (this.containerSignaturesFileName == null) {
-            System.out.println("Container signature file: None");
-        } else {
-            System.out.println("Container signature file: " + this.containerSignaturesFileName);
+        System.out.println("Container signature file: " 
+            + (this.containerSignaturesFileName == null ? " None" : this.containerSignaturesFileName));
+        
+        
+        if (targetDirectoryOrFile.isDirectory()) {
+            System.out.println("Recurse folders: " + (this.recursive ? PRINTABLE_TRUE : PRINTABLE_FALSE));
+            if (this.extensions == null) {
+                System.out.println("Extension filter: No filter set");
+            } else {
+                System.out.println("Extension filter: "
+                    + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
+            }
         }
         
-        if (this.extensions == null) {
-            System.out.println("Extension filter: No filter set");
-        } else {
-            System.out.println("Extension filter: "
-                + Arrays.toString(this.extensions).replace("[", "").replace("]", "").trim());
+        if (targetDirectoryOrFile.isFile()) {
+            if (this.recursive) {
+                System.out.println(RECURSE_NOT_APPLICABLE);
+            }
+            if (this.extensions != null) {
+                System.out.println(EXTENSION_FILTER_NOT_APPLICABLE);
+            }
         }
-        
-        System.out.println("Recurse folders: " + (this.recursive ? PRINTABLE_TRUE : PRINTABLE_FALSE));
         
         System.out.println("Open archives: " + (this.archives ? PRINTABLE_TRUE : PRINTABLE_FALSE));
     }
