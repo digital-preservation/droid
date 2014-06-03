@@ -68,8 +68,10 @@ public enum CriterionFieldEnum {
     /** Mime type. */
     MIME_TYPE("Mime type", "format.mimeType", String.class),
     /** File format. */
-    FILE_FORMAT("Format name", "format.name", String.class); 
-    
+    FILE_FORMAT("Format name", "format.name", String.class),
+    /** Extension mismatch. */
+    EXTENSION_MISMATCH("Extension Mismatch", "metaData.extensionMismatch", Boolean.class);
+ 
     private static Map<String, CriterionFieldEnum> allFields = new HashMap<String, CriterionFieldEnum>();
 
     static {

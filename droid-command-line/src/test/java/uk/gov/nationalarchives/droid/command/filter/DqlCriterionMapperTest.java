@@ -45,7 +45,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 
 /**
  * @author rflitcroft
- *
+ * @author Brian O'Reilly
+ * Updated to include new "extension_mismatch" filter criterion 2014-04-1
  */
 public class DqlCriterionMapperTest {
 
@@ -54,6 +55,7 @@ public class DqlCriterionMapperTest {
     public void testAllFieldMappings() {
 
         String[] allDqlFields = new String[] {
+            "extension_mismatch",
             "file_ext",
             "file_name",
             "file_size",
@@ -69,6 +71,7 @@ public class DqlCriterionMapperTest {
         
         
         int i = 0;
+        assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.EXTENSION_MISMATCH);
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.FILE_EXTENSION);
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.FILE_NAME);
         assertEquals(forField(allDqlFields[i++]), CriterionFieldEnum.FILE_SIZE);

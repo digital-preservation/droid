@@ -228,6 +228,9 @@ public class FilterCriterionImpl implements FilterCriterion {
             case IDENTIFICATION_COUNT:
                 o = Integer.valueOf(s);
                 break;
+            case EXTENSION_MISMATCH:
+                o = Boolean.valueOf(s);
+                break;
             default:
                 throw new IllegalArgumentException(
                         String.format("Invalid argument [%s]", fieldType));

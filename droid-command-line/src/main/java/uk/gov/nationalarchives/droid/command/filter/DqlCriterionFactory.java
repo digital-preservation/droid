@@ -35,6 +35,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -70,12 +72,13 @@ public final class DqlCriterionFactory {
                 new EnumCriterionFactory<NodeStatus>(NodeStatus.class));
         factories.put(CriterionFieldEnum.RESOURCE_TYPE, 
                 new EnumCriterionFactory<ResourceType>(ResourceType.class));
+        factories.put(CriterionFieldEnum.EXTENSION_MISMATCH , new BooleanCriterionFactory());
     }
     
     private DqlCriterionFactory() { }
 
     /**
-     * Create a new citerion.
+     * Create a new criterion.
      * @param dqlValue the dql value
      * @param dqlField the field
      * @param dqlOperator the operator.
@@ -117,7 +120,7 @@ public final class DqlCriterionFactory {
             return criterion;
         }
     }
-    
+   
     private static final class LongCriterionFactory implements CriterionFactory {
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field, 
@@ -153,6 +156,25 @@ public final class DqlCriterionFactory {
             return criterion;
         }
     }
+
+    private static final class BooleanCriterionFactory implements CriterionFactory {
+        @Override
+        public FilterCriterion newCriterion(CriterionFieldEnum field,
+                                            CriterionOperator operator, Collection<String> dqlValues) {
+            BooleanCriterion criterion = new BooleanCriterion(field, operator);
+            criterion.setValue(dqlValues);
+            return criterion;
+        };
+
+        @Override
+        public FilterCriterion newCriterion(CriterionFieldEnum field,
+                                            CriterionOperator operator, String dqlValue) {
+            BooleanCriterion criterion = new BooleanCriterion(field, operator);
+            criterion.setValue(dqlValue);
+            return criterion;
+        }
+    }
+
 
     private static final class EnumCriterionFactory<T extends Enum<T>> implements CriterionFactory {
 
@@ -228,5 +250,46 @@ public final class DqlCriterionFactory {
         protected T toTypedValue(String s) {
             return Enum.valueOf(type, s);
         }
+    }
+
+    /**
+    * @author Brian O'Reilly
+    * @date 14 March 2014
+    */
+    private static class BooleanCriterion extends AbstractFilterCriterion<Boolean> {
+
+        public  static final String INVALID_BOOLEAN =  "The supplied value %s cannot be converted to a Boolean value";
+        private static final Pattern BOOLEAN_TRUE_STR_REGEX = Pattern.compile("true|yes", Pattern.CASE_INSENSITIVE);
+        private static final Pattern BOOLEAN_FALSE_STR_REGEX = Pattern.compile("false|no", Pattern.CASE_INSENSITIVE);
+        private static final Matcher BOOLEAN_TRUE_MATCHER = BOOLEAN_TRUE_STR_REGEX.matcher("");
+        private static final Matcher BOOLEAN_FALSE_MATCHER = BOOLEAN_FALSE_STR_REGEX.matcher("");
+     
+        public BooleanCriterion(CriterionFieldEnum field, CriterionOperator operator) {
+             super(field, operator);
+        }
+      
+        /**
+        * Convert String input of [true|yes|false|no]i to Boolean
+        * @param inputString textual value (may be user entered from CLI)
+        * @return boolean
+        * @throws IllegalArgumentException on unrecognised string
+        */
+        @Override
+        protected Boolean toTypedValue(String inputString) {
+
+            BOOLEAN_TRUE_MATCHER.reset(inputString);
+            if (BOOLEAN_TRUE_MATCHER.matches()) {
+                return Boolean.TRUE;
+            }
+            BOOLEAN_FALSE_MATCHER.reset(inputString);
+            if (BOOLEAN_FALSE_MATCHER.matches()) {
+                return Boolean.FALSE;
+            }
+            
+            throw new IllegalArgumentException(String.format(INVALID_BOOLEAN, inputString));
+
+        }
+
+    
     }
 }

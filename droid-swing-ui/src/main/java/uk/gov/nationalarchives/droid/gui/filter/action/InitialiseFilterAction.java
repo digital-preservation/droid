@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.gui.filter.action;
 
 import uk.gov.nationalarchives.droid.gui.filter.domain.DummyMetadata;
+import uk.gov.nationalarchives.droid.gui.filter.domain.ExtensionMismatchMetadata;
 import uk.gov.nationalarchives.droid.gui.filter.domain.FileExtensionMetadata;
 import uk.gov.nationalarchives.droid.gui.filter.domain.FileFormatMetadata;
 import uk.gov.nationalarchives.droid.gui.filter.domain.FileNameMetadata;
@@ -76,6 +77,7 @@ public class InitialiseFilterAction {
         IdentificationMethodMetadata identificationMethodMetadata = new IdentificationMethodMetadata();
         JobStatusMetadata jobStatusMetadata = new JobStatusMetadata();
         FormatCountMetaData formatCountMetaData = new FormatCountMetaData();
+        ExtensionMismatchMetadata extensionMismatchMetadata = new ExtensionMismatchMetadata();
         
         DummyMetadata dummyMetadata = new DummyMetadata();
 
@@ -91,6 +93,7 @@ public class InitialiseFilterAction {
         filterDomain.addFilterCondition(identificationMethodMetadata);
         filterDomain.addFilterCondition(jobStatusMetadata);
         filterDomain.addFilterCondition(formatCountMetaData);
+        filterDomain.addFilterCondition(extensionMismatchMetadata);
     }
 
 }
