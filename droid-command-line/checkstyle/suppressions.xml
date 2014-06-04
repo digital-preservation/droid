@@ -66,7 +66,7 @@
               files=".*Test\.java$"/>
 
     <suppress checks="CyclomaticComplexityCheck|MemberName|ClassDataAbstractionCoupling" files="ResultPrinter.java|NoProfileRunCommand.java"/>
-    
+    <suppress checks="CyclomaticComplexityCheck" files="NoProfileRunCommand.java"/>
     <!--
       Turn off all checks for Generated and Test code. Fixes issues with using
       Eclipse plug-in.

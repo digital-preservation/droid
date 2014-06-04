@@ -216,8 +216,6 @@ public class NoProfileRunCommand implements DroidCommand {
     	
     	// BNO Currently if the user specifies more than one folder/file with the -Nr switch, only the first 
     	// item is processed, but no message is output. Therefore added code to inform the user accordingly.
-    	// N.B. Not fully tested - as in Eclipse the switch command arguments don't seem to get parsed correctly,
-    	//  it doesn't always seem to know where one argument ends and the next one starts!!
     	if (resources.length > 1) {
     		System.out.println(String.format(MULTIPLE_RESOURCES_SPECIFIED, targetDirectoryOrFile));
     	}
