@@ -1,3 +1,10 @@
+version 6.1.4 Minor enhancements
+ * Signature updates: Signature file release 74, Container file 20140227
+ * sha256 checksum option
+ * command line no profile mode can now run against single files
+ * filter on matching files extensions
+ * Signature file web service URLs updated
+
 version 6.1.3 Minor bugfix release
  * Signature updates: Signature file release 69
  * Fix for failure on startup without .droid6 folder (github issue #5)
