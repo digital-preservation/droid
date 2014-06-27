@@ -96,7 +96,7 @@
                             <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>http://www.nationalarchives.gov.uk/pronom/service.asmx?WSDL</wsdl>
+                                    <wsdl>http://apps.nationalarchives.gov.uk/pronom/service.asmx?WSDL</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>

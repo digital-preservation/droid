@@ -129,6 +129,55 @@
 		</Files>
 	</ContainerSignature>
 
+	<ContainerSignature Id="1070" ContainerType="ZIP">
+		<Description>Microsoft Word OOXML Template</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="1070">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+									<Sequence>'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+
+<ContainerSignature Id="1080" ContainerType="ZIP">
+		<Description>Microsoft Word OOXML Macro-Enabled Document Template</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="1080">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+									<Sequence>'ContentType="application/vnd.ms-word.template.macroEnabledTemplate.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+
+        <ContainerSignature Id="1090" ContainerType="OLE2">
+            <Description>Microsoft Word (Generic) 6.0-2003 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>WordDocument</Path>
+                </File>
+            </Files>
+        </ContainerSignature>
+
         <ContainerSignature Id="2000" ContainerType="OLE2">
             <Description>Microsoft Excel 5.0/95 OLE2</Description>
             <Files>
@@ -278,7 +327,86 @@
             </Files>
         </ContainerSignature>
 
-        <ContainerSignature Id="3000" ContainerType="OLE2">
+<ContainerSignature Id="2070" ContainerType="ZIP">
+            <Description>Microsoft Excel Non-XML Binary Workbook(big endian)</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="2070">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+	                                    <Sequence>'ContentType="application/vnd.ms-excel.sheet.binary.macroEnabled.main"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+<ContainerSignature Id="2080" ContainerType="ZIP">
+            <Description>Microsoft Excel OOXML Template (big endian)</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="2080">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.template.main+xml"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+<ContainerSignature Id="2090" ContainerType="ZIP">
+            <Description>Microsoft Excel Macro-Enabled Template</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="2090">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="2048">
+	                                    <Sequence>'ContentType="application/vnd.ms-excel.template.macroEnabled.main+xml"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+		<ContainerSignature Id="2100" ContainerType="ZIP">
+            <Description>Microsoft Excel Macro-enabled add-in</Description>
+            <Files>
+                <File>
+                    <Path>[Content_Types].xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="2200">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="100" SubSeqMaxOffset="2048">
+	                                    <Sequence>'ContentType="application/vnd.ms-excel.addin.macroEnabled.main+xml"'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+		
+	    <ContainerSignature Id="3000" ContainerType="OLE2">
             <Description>Microsoft Powerpoint 2000 OLE2</Description>
             <Files>
                 <File>
@@ -402,7 +530,121 @@
 			</File>
 		</Files>
 	</ContainerSignature>
-
+	
+	<ContainerSignature Id="3060" ContainerType="ZIP">
+		<Description>Microsoft PowerPoint show</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="3060">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+									<Sequence>'ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideshow.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+	<ContainerSignature Id="3070" ContainerType="ZIP">
+		<Description>Microsoft PowerPoint Macro-enabled show</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="3070">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+									<Sequence>'ContentType="application/vnd.ms-powerpoint.slideshow.macroEnabled.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+	<ContainerSignature Id="3080" ContainerType="ZIP">
+		<Description>Microsoft PowerPoint Template</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="3080">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+									<Sequence>'ContentType="application/vnd.openxmlformats-officedocument.presentationml.template.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+	<ContainerSignature Id="3090" ContainerType="ZIP">
+		<Description>Microsoft PowerPoint Macro-enabled template</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="3090">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+									<Sequence>'ContentType="application/vnd.ms-powerpoint.template.macroEnabled.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+	<ContainerSignature Id="3100" ContainerType="ZIP">
+		<Description>Microsoft PowerPoint Macro-enabled add-in</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="3100">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+									<Sequence>'ContentType="application/vnd.ms-powerpoint.addin.macroEnabled.main+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
+	<ContainerSignature Id="3110" ContainerType="ZIP">
+		<Description>Microsoft PowerPoint Macro-enabled slide</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="3110">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+									<Sequence>'ContentType="application/vnd.ms-powerpoint.slide.macroEnabled.12"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature>
         <ContainerSignature Id="4000" ContainerType="OLE2">
             <Description>Microsoft Project 4.0 OLE2</Description>
             <Files>
@@ -1244,6 +1486,46 @@
             </Files>
         </ContainerSignature>
 
+        <ContainerSignature Id="17010" ContainerType="OLE2">
+            <Description>Microsoft PhotoDraw</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="17010">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="32" SubSeqMaxOffset="32">
+	                                    <Sequence>'Microsoft PhotoDraw version 1 Picture'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="17020" ContainerType="OLE2">
+            <Description>Micrografx Designer</Description>
+            <Files>
+                <File>
+                    <Path>DesignerDoc</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="17020">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>'DESIGNERDOC'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
         <ContainerSignature Id="18000" ContainerType="OLE2">
             <Description>Bentley V8 DGN</Description>
             <Files>
@@ -1253,8 +1535,146 @@
             </Files>
         </ContainerSignature> 
 
+	<ContainerSignature Id="19000" ContainerType="ZIP">
+            <Description>GeoGebra 2</Description>
+            <Files>
+                <File>
+                    <Path>geogebra.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="19000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="64">
+	                                    <Sequence>'geogebra format="2'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+	<ContainerSignature Id="19010" ContainerType="ZIP">
+            <Description>GeoGebra 1.X</Description>
+            <Files>
+                <File>
+                    <Path>geogebra.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="19010">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="64">
+	                                    <Sequence>'geogebra format="1'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+	<ContainerSignature Id="19020" ContainerType="ZIP">
+            <Description>GeoGebra 3</Description>
+            <Files>
+                <File>
+                    <Path>geogebra.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="19020">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="64">
+	                                    <Sequence>'geogebra format="3'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+<ContainerSignature Id="19030" ContainerType="ZIP">
+            <Description>GeoGebra 4</Description>
+            <Files>
+                <File>
+                    <Path>geogebra.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="19030">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="64">
+	                                    <Sequence>'geogebra format="4'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+<ContainerSignature Id="19040" ContainerType="ZIP">
+            <Description>GeoGebra 5</Description>
+            <Files>
+                <File>
+                    <Path>geogebra.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="19040">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="64">
+	                                    <Sequence>'geogebra format="5'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+    
+<ContainerSignature Id="19050" ContainerType="ZIP">
+            <Description>SPSS Output File (spv)</Description>
+            <Files>
+                <File>
+                    <Path>outputViewer0000000000.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="19050">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="1" SubSeqMaxOffset="256">
+	                                    <Sequence>'xml.spss.com/spss/viewer'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+<ContainerSignature Id="19060" ContainerType="ZIP">
+            <Description>SPSS Output File (spv)</Description>
+            <Files>
+                <File>
+                    <Path>outputViewer0000000000_heading.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="19050">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="1" SubSeqMaxOffset="256">
+					    <Sequence>'xml.spss.com/spss/viewer'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
     </ContainerSignatures>
-  
     <FileFormatMappings>
     
     	<!--  Microsoft Word 6.0/95 (OLE2)-->
@@ -1267,8 +1687,14 @@
         <FileFormatMapping signatureId="1040" Puid="fmt/412"/>
         <!-- Microsoft Word OOXML big endian (ZIP)-->
         <FileFormatMapping signatureId="1050" Puid="fmt/412"/>
-	<!--  Macro enabled Microsoft Word Document OOXML (ZIP)-->
+	<!-- Macro enabled Microsoft Word Document OOXML (ZIP)-->
 	<FileFormatMapping signatureId="1060" Puid="fmt/523" /> 
+	<!-- Microsoft Word OOXML Template (ZIP)-->
+	<FileFormatMapping signatureId="1070" Puid="fmt/597" /> 
+	<!-- Microsoft Word OOXML Macro-enabled Document Template (ZIP)-->
+	<FileFormatMapping signatureId="1080" Puid="fmt/599" />
+    	<!--  Microsoft Word (Generic) 6.0-2003 (OLE2)-->
+        <FileFormatMapping signatureId="1090" Puid="fmt/609"/>
         
         <!--  Microsoft Excel 5.0/95 (OLE2)-->
         <FileFormatMapping signatureId="2000" Puid="fmt/59"/>
@@ -1284,7 +1710,14 @@
         <FileFormatMapping signatureId="2050" Puid="fmt/214"/>
 	<!-- Microsoft Excel OOXML Macro-Enabled(ZIP)-->
         <FileFormatMapping signatureId="2060" Puid="fmt/445"/>
-
+	<!-- Microsoft Excel OOXML Binary workbook(ZIP)-->
+        <FileFormatMapping signatureId="2070" Puid="fmt/595"/>
+	<!--  Microsoft Excel OOXML Template (ZIP)--> 
+  	<FileFormatMapping signatureId="2080" Puid="fmt/598" />
+	<!--  Microsoft Excel Macro-Enabled Template (ZIP)--> 
+  	<FileFormatMapping signatureId="2090" Puid="fmt/627" />
+	<!-- Microsoft Excel Macro-enabled add-in (ZIP)-->
+	<FileFormatMapping signatureId="2100" Puid="fmt/628" />
         <!-- Microsoft PowerPoint 2000 (OLE2)-->
         <FileFormatMapping signatureId="3000" Puid="fmt/126"/>        
         <!-- Microsoft PowerPoint 2007 OOXML (ZIP)-->
@@ -1297,21 +1730,32 @@
 	<FileFormatMapping signatureId="3040" Puid="fmt/487" />
 	<!--  Microsoft Office Theme OOXML (ZIP)-->
 	<FileFormatMapping signatureId="3050" Puid="fmt/524" />  
-        
+        <!--  Microsoft PowerPoint show (ZIP)-->
+	<FileFormatMapping signatureId="3060" Puid="fmt/629" />  
+	<!--  Microsoft PowerPoint Macro-enabled show (ZIP)-->
+	<FileFormatMapping signatureId="3070" Puid="fmt/630" />  
+	<!--  Microsoft PowerPoint Template (ZIP)-->
+	<FileFormatMapping signatureId="3080" Puid="fmt/631" />  
+	<!--  Microsoft PowerPoint Macro-enabled template (ZIP)-->
+	<FileFormatMapping signatureId="3090" Puid="fmt/632" />  
+	<!--  Microsoft PowerPoint Macro-enabled add-in (ZIP)-->
+	<FileFormatMapping signatureId="3100" Puid="fmt/633" />  
+	<!--  Microsoft PowerPoint Macro-enabled slide (ZIP)-->
+	<FileFormatMapping signatureId="3110" Puid="fmt/636" />	
         <!-- Microsoft Project 4.0 (OLE2)-->
         <FileFormatMapping signatureId="4000" Puid="x-fmt/243"/>
         <!-- Microsoft Project 98 (OLE2)-->
         <FileFormatMapping signatureId="4010" Puid="x-fmt/245"/>
-		<!-- Microsoft Project 98 (OLE2)-->
+	<!-- Microsoft Project 98 (OLE2)-->
         <FileFormatMapping signatureId="4020" Puid="x-fmt/245"/>
         <!-- Microsoft Project 2000-2003 (OLE2)-->
         <FileFormatMapping signatureId="4030" Puid="x-fmt/247"/>
-		<!-- Microsoft Project 2000-2003 (OLE2)-->
+	<!-- Microsoft Project 2000-2003 (OLE2)-->
         <FileFormatMapping signatureId="4040" Puid="x-fmt/247"/>
         <!-- Microsoft Project 2007 (OLE2)-->
-		<FileFormatMapping signatureId="4050" Puid="fmt/440"/>
+	<FileFormatMapping signatureId="4050" Puid="fmt/440"/>
         <!-- Microsoft Project 2007 (OLE2)-->
-		<FileFormatMapping signatureId="4060" Puid="fmt/440"/>
+	<FileFormatMapping signatureId="4060" Puid="fmt/440"/>
 		
         <!-- Microsoft Publisher 1.0 (OLE2)-->
         <FileFormatMapping signatureId="5000" Puid="x-fmt/252"/>
@@ -1350,7 +1794,7 @@
         
         <!-- Java Archive Format (ZIP)-->
         <FileFormatMapping signatureId="10000" Puid="x-fmt/412"/>
-        
+
         <!-- Microsoft Outlook Email Message (OLE2) -->
         <FileFormatMapping signatureId="12000" Puid="x-fmt/430"/>
         
@@ -1374,9 +1818,29 @@
         
 	<!--  Kodak FlashPix Image (OLE2)-->
         <FileFormatMapping signatureId="17000" Puid="x-fmt/56"/>
+
+	<!--  Microsoft PhotoDraw (OLE2)-->
+        <FileFormatMapping signatureId="17010" Puid="fmt/594"/>
+	<!--  Micrografx Designer (OLE2)-->
+        <FileFormatMapping signatureId="17020" Puid="x-fmt/151"/>
         
 	<!--  Bentley V8 DGN (OLE2)-->
         <FileFormatMapping signatureId="18000" Puid="fmt/502"/>
+
+	<!--  GeoGebra 2 (ZIP)-->
+        <FileFormatMapping signatureId="19000" Puid="fmt/617"/>
+	<!--  GeoGebra 1.X (ZIP)-->
+        <FileFormatMapping signatureId="19010" Puid="fmt/619"/>
+	<!--  GeoGebra 3 (ZIP)-->
+        <FileFormatMapping signatureId="19020" Puid="fmt/620"/>
+	<!--  GeoGebra 4 (ZIP)-->
+        <FileFormatMapping signatureId="19030" Puid="fmt/621"/>
+	<!--  GeoGebra 5 (ZIP)-->
+        <FileFormatMapping signatureId="19040" Puid="fmt/622"/>
+	<!--  SPSS Output File (spv) (ZIP)-->
+        <FileFormatMapping signatureId="19050" Puid="fmt/274"/>
+	<!--  SPSS Output File (spv) (ZIP)-->
+        <FileFormatMapping signatureId="19060" Puid="fmt/274"/>
 
     </FileFormatMappings>
   

@@ -566,6 +566,8 @@ public class DroidCommandLineTest {
     /**
      * This has been added by Riz Rahman to test the -Nr(noProfile) with -q (quiet), -R (recursive) with 
      * file --extension-list (file extensions) functionality
+     * TODO: Signature file version needs to be updated every time a new one is released, or we need to leave the old one in. Ideally
+     * this would somehow be read from configuration!
      * @throws CommandLineException
      */
     @Test
@@ -576,7 +578,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V69.xml",
+            "src/test/resources/signatures/DROID_SignatureFile_V74.xml",
             "--extension-list",
             "xml", "txt", "jp2", "jpg"
         };
@@ -604,7 +606,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V69.xml"
+            "src/test/resources/signatures/DROID_SignatureFile_V74.xml"
         };
      
         NoProfileRunCommand noProfileRunCmd = new NoProfileRunCommand();
