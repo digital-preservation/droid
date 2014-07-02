@@ -128,7 +128,7 @@ public class CsvItemWriterTest {
             + "\"EXT\","
             + "\"LAST_MODIFIED\","
             + "\"EXTENSION_MISMATCH\","
-            + "\"%s_HASH\","
+            + "\"HASH\","
             + "\"FORMAT_COUNT\","
             + "\"PUID\","
             + "\"MIME_TYPE\","

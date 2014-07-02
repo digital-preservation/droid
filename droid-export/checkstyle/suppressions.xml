@@ -72,4 +72,5 @@
     <suppress checks="." files=".*[\\/]grammars[\\/]Generated[a-zA-Z]*\.java"/>
     <suppress checks="." files=".*[\\/]grammars[\\/]Generated[a-zA-Z]*\.java"/>
     <suppress checks="." files=".*[\\/]checkstyle[\\/]gui[\\/]"/>
+    <suppress files="ExportTask.java" checks="ExecutableStatementCountCheck|MemberName|ClassDataAbstractionCoupling"/>
 </suppressions>
