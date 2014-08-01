@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>6.2-SNAPSHOT</version>
         <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -17,8 +17,7 @@
         <connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
         <developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
         <url>scm:git:git@github.com:digital-preservation/droid.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
   
     <build>
         <plugins>
@@ -46,7 +45,7 @@
                     <dependency>
                         <groupId>uk.gov.nationalarchives</groupId>
                         <artifactId>droid-build-tools</artifactId>
-                        <version>6.2.0-SNAPSHOT</version>
+                        <version>6.2-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -162,11 +161,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+<!-- <dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring</artifactId>
+<scope>runtime</scope>
+</dependency> -->
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>

@@ -4,8 +4,8 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.2.0-SNAPSHOT</version>
-  	    <relativePath>../droid-parent</relativePath>
+        <version>6.2-SNAPSHOT</version>
+   <relativePath>../droid-parent</relativePath>
     </parent>
     
     <artifactId>droid-export-interfaces</artifactId>
@@ -17,8 +17,7 @@
         <connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
         <developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
         <url>scm:git:git@github.com:digital-preservation/droid.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
   
     <build>
         <plugins>
@@ -46,7 +45,7 @@
                     <dependency>
                         <groupId>uk.gov.nationalarchives</groupId>
                         <artifactId>droid-build-tools</artifactId>
-                        <version>6.2.0-SNAPSHOT</version>
+                        <version>6.2-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -104,10 +103,12 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!-- BNO removed as should be covered by spring-context in 4.0.3 -->
+<!-- <dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring-beans</artifactId>
+<scope>test</scope>
+</dependency>
+-->
   </dependencies>
 </project>

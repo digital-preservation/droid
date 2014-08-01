@@ -68,7 +68,8 @@ import uk.gov.nationalarchives.droid.profile.FilterImpl;
  * create planets xml using different mechanism now.
  */
 @Ignore
-@RunWith(SpringJUnit4ClassRunner.class)
+// BNO: Commented out as causes compilation failure with Java 8 build...
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml",
         "classpath*:META-INF/spring-results.xml",
         "classpath*:META-INF/spring-test.xml" })

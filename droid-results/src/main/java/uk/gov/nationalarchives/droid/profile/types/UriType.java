@@ -32,92 +32,72 @@
 package uk.gov.nationalarchives.droid.profile.types;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
 
+import org.hibernate.dialect.Dialect;
+import org.hibernate.type.AbstractSingleColumnStandardBasicType;
+import org.hibernate.type.DiscriminatorType;
 import org.hibernate.type.StringType;
+import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
 
 /**
  * @author rflitcroft
  *
  */
-public class UriType extends StringType {
-
-    private static final long serialVersionUID = -5484571563787862267L;
+public class UriType extends AbstractSingleColumnStandardBasicType<URI> implements DiscriminatorType<URI> {
 
     /**
-     * {@inheritDoc}
+     * .
+     */  
+    public static final UriType INSTANCE = new UriType();
+    private static final long serialVersionUID = -9191945677317066123L;
+
+    /**
+     * constructor.
      */
-    @Override
-    public Object get(ResultSet rs, String name) throws SQLException {
-        return newUri(rs.getString(name));
+    public UriType() {
+        super(VarcharTypeDescriptor.INSTANCE, UriTypeDescriptor.INSTANCE);
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Class<URI> getReturnedClass() {
-        return URI.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void set(PreparedStatement st, Object value, int index) throws SQLException {
-        st.setString(index, value == null ? null : value.toString());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int sqlType() {
-        return Types.VARCHAR;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+     * @return - the literal "uri".
+     */    
     public String getName() {
-        return "uri"; 
+        return "uri";
     }
 
     /**
-     * {@inheritDoc}
+     * @return - true.
      */
     @Override
-    public Object stringToObject(String xml) {
-        return newUri(xml);
+    protected boolean registerUnderJavaType() {
+        return true;
     }
 
     /**
-     * {@inheritDoc}
+     * @param value - the URI to convert to string.
+     * @return - URI to String.
      */
     @Override
-    public String toString(Object value) {
-        return value == null ? null : value.toString();
+    public String toString(URI value) {
+        return UriTypeDescriptor.INSTANCE.toString(value);
     }
 
     /**
-     * {@inheritDoc}
+     * @param value - the URI to convert to string.
+     * @param dialect - the dialect to use.
+     * @return - SQL String.
+     * @throws Exception 
      */
-    @Override
-    public Object fromStringValue(String xml) {
-        return newUri(xml);
+    public String objectToSQLString(URI value, Dialect dialect) throws Exception {
+
+        return StringType.INSTANCE.objectToSQLString(toString(value), dialect);
     }
-    
-    private static URI newUri(String s) {
-        try {
-            return s == null ? null : new URI(s);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+    /**
+     * @param xml - the xml string
+     * @return - URI from string.
+     */
+    public URI stringToObject(String xml) {
+        return UriTypeDescriptor.INSTANCE.fromString(xml);
     }
-    
 }

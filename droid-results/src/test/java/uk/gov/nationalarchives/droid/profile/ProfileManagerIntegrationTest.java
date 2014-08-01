@@ -83,7 +83,8 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  * should run repetitively.
  */
 @Ignore
-@RunWith(SpringJUnit4ClassRunner.class)
+//BNO: Commented out as causes compilation failure with Java 8 build...
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:META-INF/spring-profile.xml"})
 public class ProfileManagerIntegrationTest {
 

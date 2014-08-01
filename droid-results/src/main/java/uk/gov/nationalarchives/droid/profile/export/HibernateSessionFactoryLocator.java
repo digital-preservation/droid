@@ -32,7 +32,11 @@
 package uk.gov.nationalarchives.droid.profile.export;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.ejb.HibernateEntityManagerFactory;
+//import org.hibernate.ejb.HibernateEntityManagerFactory;
+//BNO: replaced namespace above with this one as we were getting a spring type mismatch
+//This is now the recommended approach as the ejb version is deprecated - see:
+//http://docs.jboss.org/hibernate/orm/4.3/javadocs/org/hibernate/ejb/HibernateEntityManagerFactory.html
+import org.hibernate.jpa.HibernateEntityManagerFactory;
 
 /**
  * @author rflitcroft
