@@ -42,12 +42,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * @author rflitcroft
+ * @author rfitcroft
  *
  */
-@Ignore("Error on @RunWith - Type mismatch error on SpringJUnit4ClassRunner.class - "
-		+ "upgrading JUnit to 4.6 appears to solve this but introduces other issues")
+//BNO: Commented out as causes compilation failure with Java 8 build...
 //@RunWith(SpringJUnit4ClassRunner.class)
+@Ignore("BNO - see above - Error on @RunWith - Type mismatch error on SpringJUnit4ClassRunner.class - "
+		+ "upgrading JUnit to 4.6 appears to solve this but introduces other issues")
 @ContextConfiguration(locations = "classpath*:archive-spring.xml")
 public class ArchiveFormatResolverImplTest {
 
