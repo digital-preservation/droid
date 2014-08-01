@@ -36,13 +36,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans" default-autowire="no"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
     <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileManagerImpl">
         <!-- <property name="profileInstanceFactory" ref="profileInstanceFactory"/> -->
         <property name="profileContextLocator" ref="profileContextLocator"/>
-
         <property name="profileSpecDao" ref="profileSpecDao"/>
         <property name="profileDiskAction" ref="profileDiskAction"/>
         <property name="config" ref="globalConfig"/>
