@@ -33,10 +33,11 @@ package uk.gov.nationalarchives.droid.export.interfaces;
 
 import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 
 
 /**
- * @author rflitcroft
+ * @author rflitcroft, Brian O'Reilly
  * @param <T> the type to write
  */
 public interface ItemWriter<T> {
@@ -63,4 +64,10 @@ public interface ItemWriter<T> {
      * @param options Sets the options to use when writing out the export.
      */
     void setOptions(ExportOptions options);
+    
+    /**
+     * Customises the column headers in the export output.
+     * @param headersToSet - Map of headers to customise and values to set.
+     */
+    void setHeaders(Map<String, String> headersToSet);
 }

@@ -38,6 +38,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -46,7 +47,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import au.com.bytecode.opencsv.CSVWriter;
-
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
@@ -77,7 +77,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         "EXT",
         "LAST_MODIFIED",
         "EXTENSION_MISMATCH",
-        "%s_HASH",
+        "HASH",
         "FORMAT_COUNT",
         "PUID",
         "MIME_TYPE",
@@ -91,6 +91,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private DroidGlobalConfig config;
     private FastDateFormat dateFormat = DateFormatUtils.ISO_DATETIME_FORMAT;
     private ExportOptions options = ExportOptions.ONE_ROW_PER_FILE;
+    
+    private String[] headers;
     
     /**
      * {@inheritDoc}
@@ -208,12 +210,14 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     @Override
     public void open(Writer writer) {
         csvWriter = new CSVWriter(writer);
-        String[] headers = HEADERS;
-        //We need the null reference check since the config may be null when called from JUnit tests
-        if (config.getProperties() != null) {
-            String hashName = config.getProperties().getProperty("profile.hashAlgorithm").toString().toUpperCase();
-            headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], hashName);
+        if (headers == null) {
+            headers = HEADERS;
         }
+        //We need the null reference check since the config may be null when called from JUnit tests
+        //if (config.getProperties() != null) {
+        //    String hashName = config.getProperties().getProperty("profile.hashAlgorithm").toString().toUpperCase();
+        //    headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], hashName);
+        //}
 
         csvWriter.writeNext(headers);
     }
@@ -270,4 +274,19 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         this.config = config;
     }
 
+    /**
+     * @param headersToSet the headers to set
+     */
+    public void setHeaders(Map<String, String> headersToSet) {
+
+        if (this.headers == null) {
+            this.headers = HEADERS;
+        }
+
+        String hashHeader = headersToSet.get("hash");
+        if (hashHeader != null) {
+            this.headers[HASH_ARRAY_INDEX] = hashHeader;
+        }
+    }
+    
 }

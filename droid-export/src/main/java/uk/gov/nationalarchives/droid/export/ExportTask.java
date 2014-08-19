@@ -39,7 +39,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
@@ -57,10 +61,12 @@ import uk.gov.nationalarchives.droid.profile.ProfileInstanceManager;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
 /**
- * @author rflitcroft
+ * @author rflitcroft, Brian O'Reilly
  *
  */
 public class ExportTask implements Runnable {
+
+    private static final String PROJECT_NOT_AVAILABLE_FOR_EXPORT = "Profile not available for export: %s";
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -73,6 +79,7 @@ public class ExportTask implements Runnable {
     private final ProfileContextLocator profileContextLocator;
 
     private volatile boolean cancelled;
+    
 
     /**
      * @param destination Output file path
@@ -164,14 +171,19 @@ public class ExportTask implements Runnable {
 
     private void doExport(final Writer writer, final String destinationDescription) {
         log.info(String.format("Exporting profiles to: [%s]", destinationDescription));
+
+        //BNO - amended to add header customisations for different hash algorithms
+        Map<String, String> headerCustomisations = getHeaderCustomisationsFromProfiles();
+        itemWriter.setHeaders(headerCustomisations);
         itemWriter.setOptions(options);
         itemWriter.open(writer);
+        
         StopWatch stopWatch = new StopWatch();
         try {
             for (String profileId : profileIds) {
                 stopWatch.start();
                 if (!profileContextLocator.hasProfileContext(profileId)) {
-                    final String message = String.format("Profile not available for export: %s", profileId);
+                    final String message = String.format(PROJECT_NOT_AVAILABLE_FOR_EXPORT, profileId);
                     log.warn(message);
                     throw new RuntimeException(message);
                 }
@@ -213,5 +225,40 @@ public class ExportTask implements Runnable {
                 }
             }
         }
+    }
+    
+    private Map<String, String> getHeaderCustomisationsFromProfiles() {
+
+        // Brian O'Reilly, July 2014:
+        // Customises the column headers for the export output.  Currently (July 2014), only the column header 
+        // for the hash algorithm needs to be customised depending on whether or not the profile(s) selected
+        // for export contain hash algorithms, and if so
+        // whether all the selected profiles use the same algorithm.
+        Map<String, String> map = new HashMap<String, String>();
+        String hashAlgorithmHeader = "HASH";
+        Set<String> algorithmsFound = new HashSet<String>();
+ 
+        for (String profileId : this.profileIds) {
+            if (!this.profileContextLocator.hasProfileContext(profileId)) {
+                final String message = String.format(PROJECT_NOT_AVAILABLE_FOR_EXPORT, profileId);
+                log.warn(message);
+                throw new RuntimeException(message);
+            }
+            ProfileInstance profile = profileContextLocator.getProfileInstance(profileId);
+            if (profile.getGenerateHash()) {
+                algorithmsFound.add(profile.getHashAlgorithm().toUpperCase());
+            }
+        } 
+        
+        // If the count is 1, this means that at least one profile in the export cohort was run with hash generation,  
+        // and that only a single hash algorithm was used for all the profiles in the export (e.g. not one with MD5 
+        // and one with SHa256). If so, we can set the column header to reflect the specific hash - otherwise we use 
+        //the generic "HASH" header.
+        if (algorithmsFound.size() == 1) {
+            hashAlgorithmHeader = algorithmsFound.iterator().next() + "_HASH";
+        }
+        
+        map.put("hash", hashAlgorithmHeader);
+        return map;
     }
 }
