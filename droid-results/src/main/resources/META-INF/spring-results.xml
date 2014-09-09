@@ -245,15 +245,18 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="executorService" ref="coreExecutorService"/>
         <property name="processArchives" value="${processArchives}"/>
         <property name="generateHash" value="${generateHash}"/>
+        <property name="hashAlgorithm" value="${hashAlgorithm}"/>
         <property name="matchAllExtensions" value="${matchAllExtensions}"/>
         <property name="maxBytesToScan" value="${maxBytesToScan}"/>
         <property name="droidCore" ref="droid"/>
         <property name="submissionQueue" ref="submissionQueue"/>
         <property name="replaySubmitter" ref="replaySubmitter"/>
-        <property name="hashGenerator" ref="hashGenerator"/>
+        <property name="hashGenerator" ref="${hashAlgorithm}HashGenerator"/>
     </bean>
-    
-    <bean id="hashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator"/>
+   
+   <!-- BNO: these changes were made in SHA256 branch but didn't appear to get pulled down from GitHub --> 
+ <bean id="md5HashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator"/>
+ <bean id="sha256HashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.SHA256HashGenerator"/>
     
     <bean id="submissionQueue" class="uk.gov.nationalarchives.droid.submitter.JaxBSubmissionQueueDao">
         <property name="targetFileName" value="${submissionQueueFile}"/>
