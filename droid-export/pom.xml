@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.2-SNAPSHOT</version>
+        <version>6.2.0-SNAPSHOT</version>
         <relativePath>../droid-parent</relativePath>
     </parent>
     
@@ -45,7 +45,7 @@
                     <dependency>
                         <groupId>uk.gov.nationalarchives</groupId>
                         <artifactId>droid-build-tools</artifactId>
-                        <version>6.2-SNAPSHOT</version>
+                        <version>6.2.0-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>
