@@ -79,7 +79,8 @@
        One method&nbsp;of duplicate detection is to use content hashes. If two files have the same
       hash value, then they are overwhelmingly likely to have identical content.&nbsp;The odds of
       two arbitrary files having the same hash value by accident are less than 1 in
-      18,000,000,000,000,000,000, which is very, very low.&nbsp;DROID can generate content hashes
+      18,000,000,000,000,000,000, which is very, very low (these odds are for MD5, with SHA256 the 
+      odds become orders of magnitude lower still).&nbsp;DROID can generate content hashes
       for your files, but note that DROID will not locate files with the same hash value for you,
       only generate them in the first place. &nbsp;If you export your profiles to a CSV file and
       import them into software like Excel or Access, you can query for files which have the same

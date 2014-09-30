@@ -1,3 +1,7 @@
+Version 6.1.5
+ * Signature updates: Signature file release 77, Container file 20140624
+ * Minor updates to help pages
+
 version 6.1.4 Minor enhancements
  * Signature updates: Signature file release 74, Container file 20140227
  * sha256 checksum option

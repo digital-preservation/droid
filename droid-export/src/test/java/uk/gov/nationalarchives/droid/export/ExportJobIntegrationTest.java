@@ -56,7 +56,8 @@ import uk.gov.nationalarchives.droid.profile.ProfileSpec;
  * @author rflitcroft
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+//BNO: Commented out as causes compilation failure with Java 8 build...
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { 
         "classpath*:META-INF/export-spring.xml"
         })

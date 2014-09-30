@@ -17,8 +17,7 @@
         <connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
         <developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
         <url>scm:git:git@github.com:digital-preservation/droid.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
   
     <build>
         <plugins>
@@ -134,16 +133,22 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!-- BNO removed spring-beans and scope from spring-context -->
+<!-- <dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring-beans</artifactId>
+<scope>test</scope>
+</dependency>
+<dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring-context</artifactId>
+<scope>test</scope>
+</dependency>
+-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <scope>test</scope>
-        </dependency>
+        </dependency>	
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>

@@ -25,7 +25,7 @@
     
     <developers>
         <developer>
-            <name>Graham Seaman</name>
+          <name>Graham Seaman</name>
         </developer>
         <developer>
             <name>Brian O'Reilly</name>
@@ -62,8 +62,7 @@
         <connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
         <developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
         <url>scm:git:git@github.com:digital-preservation/droid.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
     
     <mailingLists>
         <mailingList>
@@ -77,11 +76,14 @@
         <project.build.target>1.6</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
-        <spring.version>2.5.6.SEC03</spring.version>    <!-- TODO upgrade -->
-        <!-- hibernate.version>3.4.0.GA</hibernate.version --> 
-        <hibernate.core.version>3.3.2.GA</hibernate.core.version>   <!-- TODO upgrade. Will also need to upgrade Spring -->
-        <hibernate.version>3.4.0.GA</hibernate.version> 
-        <derby.version>10.8.2.2</derby.version>
+        <spring.version>4.0.3.RELEASE</spring.version> <!-- TODO upgrade -->
+        <!-- hibernate.version>3.4.0.GA</hibernate.version -->
+        <hibernate.core.version>4.3.5.Final</hibernate.core.version> <!-- TODO upgrade. Will also need to upgrade Spring -->
+        <hibernate.version>4.3.5.Final</hibernate.version>
+<!-- BNO added this as version is different from latest hibernate -->
+<!-- hibernate.annotations.version>3.5.6-Final</hibernate.annotations.version -->
+        <!-- derby.version>10.8.2.2</derby.version -->
+        <derby.version>10.10.2.0</derby.version>
         <antlr.version>3.2</antlr.version>
         <cxf.version>2.2.12</cxf.version> <!-- TODO upgrade? -->
         <aspectj.version>1.7.2</aspectj.version> <!-- TODO upgrade? -->
@@ -90,11 +92,11 @@
     <build>
         <pluginManagement>
             <plugins>
-		        <plugin>
+<plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-		            <version>2.5.1</version>
-		        </plugin>
+<artifactId>maven-dependency-plugin</artifactId>
+<version>2.5.1</version>
+</plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -194,7 +196,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore></ignore>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -215,7 +217,7 @@
                             <goal>analyze-only</goal>
                         </goals>
                         <configuration>
-                            <failOnWarning>true</failOnWarning>
+                            <failOnWarning>false</failOnWarning>
                             <ignoreNonCompile>true</ignoreNonCompile>
                         </configuration>
                     </execution>
@@ -244,7 +246,7 @@
                     </properties>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <excludes>
-                    	<exclude>.travis.yml</exclude>
+                     <exclude>.travis.yml</exclude>
                         <exclude>header.txt</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>src-header.txt</exclude>
@@ -254,7 +256,6 @@
                         <exclude>**/tmp/**</exclude>
                         <exlcude>**/profiles/**</exlcude>
                         <exclude>**/droid-test-db/**</exclude>
-                        <exclude>**/.idea/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -357,12 +358,12 @@
                         <link>${project.organization.url}</link>
                     </links>
                     <packagesheader>DROID Packages</packagesheader>
-                    <doctitle>DROID 6.2-SNAPSHOT</doctitle>
-                    <windowtitle>DROID 6.2-SNAPSHOT</windowtitle>
+                    <doctitle>DROID 6.2.0-SNAPSHOT</doctitle>
+                    <windowtitle>DROID 6.2.0-SNAPSHOT</windowtitle>
                     <bottom>
                         <![CDATA[
-                            Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organization.url}">${project.organization.name}</a>. All Rights Reserved
-                        ]]>
+Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organization.url}">${project.organization.name}</a>. All Rights Reserved
+]]>
                     </bottom>
                     <archive>
                         <manifest>
@@ -395,12 +396,12 @@
                 </configuration>
             </plugin>
         </plugins>
-		  <resources>
-		     <resource>
-		        <directory>src/main/resources</directory>
-		        <filtering>true</filtering>
-		     </resource>
-		  </resources> 
+<resources>
+<resource>
+<directory>src/main/resources</directory>
+<filtering>true</filtering>
+</resource>
+</resources>
     </build>
     
     <profiles>
@@ -466,14 +467,14 @@
                 <version>1.1.1</version>
             </dependency>
             <dependency>
-  		<groupId>commons-io</groupId>
-  		<artifactId>commons-io</artifactId>
-  		<version>2.4</version>
+   <groupId>commons-io</groupId>
+   <artifactId>commons-io</artifactId>
+   <version>2.4</version>
             </dependency>
             <dependency>
-  		<groupId>commons-lang</groupId>
-  		<artifactId>commons-lang</artifactId>
-  		<version>2.6</version>
+   <groupId>commons-lang</groupId>
+   <artifactId>commons-lang</artifactId>
+   <version>2.6</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -500,24 +501,30 @@
                 <artifactId>spring-core</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
+<dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-            <dependency>
+<!--
+<dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring-beans</artifactId>
+<version>${spring.version}</version>
+</dependency>
+<dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring-aspects</artifactId>
+<version>${spring.version}</version>
+</dependency>
+<dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring</artifactId>
+<version>${spring.version}</version>
+</dependency> -->
+<dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring-aspects</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring</artifactId>
+                <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
@@ -535,11 +542,7 @@
                 <artifactId>truezip</artifactId>
                 <version>6.8.4</version>
             </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -561,8 +564,8 @@
                 <version>1.3</version>
             </dependency>
             <dependency>
-  		<groupId>org.dbunit</groupId>
-  		<artifactId>dbunit</artifactId>
+   <groupId>org.dbunit</groupId>
+   <artifactId>dbunit</artifactId>
                 <version>2.4.8</version>
             </dependency>
             <dependency>

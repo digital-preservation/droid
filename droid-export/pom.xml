@@ -17,8 +17,7 @@
         <connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
         <developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
         <url>scm:git:git@github.com:digital-preservation/droid.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
   
     <build>
         <plugins>
@@ -58,61 +57,63 @@
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-results</artifactId>
             <version>${project.version}</version>
-  	</dependency>
-  	<dependency>
+   </dependency>
+   <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-export-interfaces</artifactId>
             <version>${project.version}</version>
-  	</dependency>
+   </dependency>
         <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-core-interfaces</artifactId>
             <version>${project.version}</version>
-  	</dependency>
+   </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-annotation_1.0_spec</artifactId>
             <version>1.1.1</version>
-        </dependency>    
+        </dependency>
         <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
-  	</dependency>
+   </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-  	</dependency>
+   </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-  	</dependency>
-  	<dependency>
+   </dependency>
+   <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-  	</dependency>
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-        </dependency>
+   </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-        <dependency>
+<!-- BNO added spring-context and removed spring and spring-beans -->
+<dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
+            <artifactId>spring-context</artifactId>
             <scope>runtime</scope>
-  	</dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <scope>runtime</scope>
-  	</dependency>
+   </dependency>
+<!-- <dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring</artifactId>
+<scope>runtime</scope>
+</dependency>
+<dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring-beans</artifactId>
+<scope>runtime</scope>
+</dependency> -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
-  	</dependency>  	
+   </dependency>
     </dependencies>
 </project>
