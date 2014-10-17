@@ -10,7 +10,7 @@
   
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.1.5-SNAPSHOT</version>
+    <version>6.1.5</version>
     <packaging>pom</packaging>
   
     <name>droid-parent</name>
@@ -62,7 +62,8 @@
         <connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
         <developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
         <url>scm:git:git@github.com:digital-preservation/droid.git</url>
-    </scm>
+      <tag>droid-6.1.5</tag>
+  </scm>
     
     <mailingLists>
         <mailingList>
@@ -203,7 +204,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>

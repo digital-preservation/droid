@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<artifactId>droid-parent</artifactId>
 		<groupId>uk.gov.nationalarchives</groupId>
-		<version>6.1.5-SNAPSHOT</version>
+		<version>6.1.5</version>
 		<relativePath>../droid-parent</relativePath>
 	</parent>
 
@@ -18,7 +17,8 @@
 		<connection>scm:git:git@github.com:digital-preservation/droid.git</connection>
 		<developerConnection>scm:git:git@github.com:digital-preservation/droid.git</developerConnection>
 		<url>scm:git:git@github.com:digital-preservation/droid.git</url>
-	</scm>
+	  <tag>droid-6.1.5</tag>
+  </scm>
 
 	<build>
 		<plugins>
@@ -46,7 +46,7 @@
 					<dependency>
 						<groupId>uk.gov.nationalarchives</groupId>
 						<artifactId>droid-build-tools</artifactId>
-						<version>6.1.5-SNAPSHOT</version>
+						<version>6.1.5</version>
 					</dependency>
 				</dependencies>
 			</plugin>
