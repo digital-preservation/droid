@@ -49,7 +49,7 @@
                     <aggregate>false</aggregate>
                     <excludes>
                         <exclude>.idea/**</exclude>
-                    </exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
