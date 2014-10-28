@@ -117,7 +117,7 @@ public class SubSequence extends SimpleElement {
      * Get the id of the internal
      * signature that this sequence belongs to
      *
-     * @return
+     * @return int
      */
     public int getParentSignature() {
         return parentSignature;
@@ -500,7 +500,7 @@ public class SubSequence extends SimpleElement {
      * @param targetFile   the binary file to be identified
      * @param reverseOrder true if file is being searched from right to left
      * @param bigEndian    True iff our parent signature is big-endian
-     * @return
+     * @return boolean
      */
     public boolean isFoundAtStartOfFile(ByteReader targetFile, boolean reverseOrder, boolean bigEndian) {
 

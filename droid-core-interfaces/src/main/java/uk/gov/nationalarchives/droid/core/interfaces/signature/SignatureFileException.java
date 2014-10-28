@@ -47,7 +47,6 @@ public class SignatureFileException extends Exception {
      * 
      * @param message
      *            the message
-     * @param filePath
      * @param errorCode
      *            the error code
      */
@@ -61,7 +60,6 @@ public class SignatureFileException extends Exception {
      * 
      * @param message
      *            the message
-     * @param filePath
      * @param cause
      *            the cause of the exception
      * @param errorCode

@@ -123,7 +123,7 @@ public class ByteSequence extends SimpleElement {
      * is this byte sequence anchored to either
      * BOF or EOF
      *
-     * @return
+     * @return boolean
      */
     public boolean isAnchored() {
         return getReference().endsWith("EOFoffset") || getReference().endsWith("BOFoffset");
