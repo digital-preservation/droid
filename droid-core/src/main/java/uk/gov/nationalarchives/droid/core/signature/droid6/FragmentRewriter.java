@@ -35,17 +35,17 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
  * A utility class to transform DROID 4 expression fragments
  * into net.domesdaybook regular expressions. 
  *
- * <p/>The only syntactic different between a DROID 4 fragment and
- * net.domesdaybook expressions are in the definitions of sets.
+ * <p>The only syntactic different between a DROID 4 fragment and
+ * net.domesdaybook expressions are in the definitions of sets.</p>
  *
- * <p/>DROID 4 uses:
+ * <p>DROID 4 uses:
  *  * a ! to indicate an inverted set, whereas net.domesdaybook uses the more standard ^
- *  * a : to indicate a range of values, whereas net.domesdaybook uses the more standard -
+ *  * a : to indicate a range of values, whereas net.domesdaybook uses the more standard -</p>
  * 
- * <p/>net.domesdaybook regular expressions permit case sensitive
+ * <p>net.domesdaybook regular expressions permit case sensitive
  * strings delimited by single quotes ('), and case insensitive
  * strings delimited by back-ticks (`).  In case these are passed
- * in to the rewriter, it will ignore text between these delimiters.
+ * in to the rewriter, it will ignore text between these delimiters.</p>
  *  
  * @author Matt Palmer
  */

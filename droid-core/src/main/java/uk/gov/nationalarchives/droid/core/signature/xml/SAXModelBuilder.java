@@ -121,12 +121,12 @@ public class SAXModelBuilder extends DefaultHandler {
 
     /**
      * Set up XML namespace handling.
-     * <p/>
+     * 
      * <p>If <code>allowGlobalNamespace</code> is set to <code>true</code>, elements
      * that do not have a namespace specified are parsed; attributes that don't
      * have a namespace specified are parsed.  If it is <code>false</code>, for
      * it to be parsed, an element must have a namespace specifed (by default or
-     * with a prefix); an attribute must have a namespace specified with a prefix.
+     * with a prefix); an attribute must have a namespace specified with a prefix.</p>
      *
      * @param nspace            the XML namespace to use
      * @param globalNamespace allow the parser to recognise elements/ attributes that aren't in any namespace

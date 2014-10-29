@@ -72,8 +72,8 @@ package uk.gov.nationalarchives.droid.core.signature;
 
 /**
  * Interface for accessing the bytes from a file, URL or stream.
- * <p/>
- * Create an instance with <code>AbstractByteReader.newByteReader()</code>.
+ * 
+ * <p>Create an instance with <code>AbstractByteReader.newByteReader()</code>.</p>
  *
  * @author linb
  */
@@ -168,9 +168,9 @@ public interface ByteReader {
 
     /**
      * Position the file marker at a given byte position.
-     * <p/>
-     * The file marker is used to record how far through the file
-     * the byte sequence matching algorithm has got.
+     * 
+     * <p>The file marker is used to record how far through the file
+     * the byte sequence matching algorithm has got.</p>
      *
      * @param markerPosition The byte number in the file at which to position the marker
      */

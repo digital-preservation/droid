@@ -99,10 +99,10 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
  * algorithm.  Typically, this means parts of the subsequence
  * with gaps {n-m}, and alternatives (A|B|C).
  * 
- * <p/>A subsequence is defined by the longest anchoring sequence
+ * <p>A subsequence is defined by the longest anchoring sequence
  * which can be searched for, with any side fragments to the left
  * and right of it checked for after the anchoring sequence is 
- * found.  
+ * found. </p> 
  *
  * @author Martin Waller
  * @author Matt Palmer
