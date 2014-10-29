@@ -43,7 +43,6 @@ public class FormatCountMetaData extends GenericMetadata {
     private static final int ALLOWEDNOOFDIGITS = 18;
     
     /**
-     * @param metadataName
      */
     public FormatCountMetaData() {
         super(CriterionFieldEnum.IDENTIFICATION_COUNT);
