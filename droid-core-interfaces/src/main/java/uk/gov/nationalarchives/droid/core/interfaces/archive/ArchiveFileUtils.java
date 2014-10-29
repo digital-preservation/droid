@@ -104,8 +104,8 @@ public final class ArchiveFileUtils {
     /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.
-     * <p/>
-     * <p>The bytes are read from <code>buffer</code> from the current position to its limit.
+     * 
+     * <p>The bytes are read from <code>buffer</code> from the current position to its limit.</p>
      *
      * @param buffer  contains the contents of the channel read so far
      * @param channel the rest of the channel
@@ -158,8 +158,8 @@ public final class ArchiveFileUtils {
     /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.
-     * <p/>
-     * <p>The bytes are read from <code>buffer</code> from the current position to its limit.
+     * 
+     * <p>The bytes are read from <code>buffer</code> from the current position to its limit.</p>
      *
      * @param tempDir the directory in which to create the temp file
      * @param buffer the initial buffer containing the first part of the file.
