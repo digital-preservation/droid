@@ -180,7 +180,7 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
     }
 
     /**
-     * @Override
+     * 
      */
     @Override
     public final void setErrorIdent() {
@@ -198,7 +198,7 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
     }
 
     /**
-     * @Override
+     * 
      */
     @Override
     public final void setNoIdent() {
@@ -206,7 +206,7 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
     }
 
     /**
-     * @Override
+     * 
      */
     @Override
     public final void setPositiveIdent() {
@@ -214,7 +214,7 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
     }
 
     /**
-     * @Override
+     * 
      */
     @Override
     public final void setTentativeIdent() {

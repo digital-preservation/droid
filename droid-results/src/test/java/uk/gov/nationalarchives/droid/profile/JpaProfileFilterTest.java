@@ -66,12 +66,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
  * @author rflitcroft, Alok Kumar Dash
  *
  */
-//BNO: Commented out as causes compilation failure with Java 8 build...
-//@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml", "classpath*:META-INF/spring-results.xml",
         "classpath*:META-INF/spring-test.xml" })
 @TransactionConfiguration(defaultRollback = true)
-@Ignore("BNO - problematic in Java 8 build")
 public class JpaProfileFilterTest {
 
     private static IDataSet testData;
