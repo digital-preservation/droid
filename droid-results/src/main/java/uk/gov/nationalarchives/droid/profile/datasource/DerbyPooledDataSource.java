@@ -95,7 +95,6 @@ public class DerbyPooledDataSource extends BasicDataSource {
     * Derby throws a SQLNonTransientConnectionException on a SUCCESSFUL shutdown of the
     * database (with SQLstate 08006), so we catch this and log as debug, otherwise as an error.
     * @throws SQLException if the database could not be shutdown.
-    * @throws Exception
     */
     public void shutdown() throws SQLException {
 

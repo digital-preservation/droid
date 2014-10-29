@@ -375,7 +375,7 @@ public class SignatureManagerImpl implements SignatureManager {
     
     /**
      * {@inheritDoc}
-     * @throws SignatureFileException 
+     * @throws SignatureFileException on failure to retrieve signatures
      */
     @Override
     public Map<SignatureType, SignatureFileInfo> getDefaultSignatures() throws SignatureFileException {
