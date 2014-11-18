@@ -49,6 +49,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="ZIP" value-ref="zipHandler"/>
                 <entry key="TAR" value-ref="tarHandler"/>
                 <entry key="GZ" value-ref="gzHandler"/>
+                <entry key="ARC" value-ref="arcHandler"/>
             </map>
         </property>
     </bean>
@@ -128,6 +129,13 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         </property>
         <property name="droidCore" ref="submissionGateway"/>
     </bean>
+    <bean id="arcHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArcArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArcEntryRequestFactory" parent="archiveRequestFactory"/>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
     
     <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
         <property name="puids">
@@ -135,6 +143,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="ZIP" value="${archive.zip}"/>
                 <entry key="TAR" value="${archive.tar}"/>
                 <entry key="GZ" value="${archive.gz}"/>
+                <entry key="ARC" value="${archive.arc}"/>
             </map>
         </property>
     </bean>
