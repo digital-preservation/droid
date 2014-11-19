@@ -85,6 +85,9 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
 import java.util.ArrayList;
 import java.util.List;
 
+//BNO-BS2 - new import for Byteseek 2.0
+import net.byteseek.io.reader.WindowReader;
+
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -428,7 +431,6 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
         }
         return matchResult;
     }
-
 
     /**
      * 

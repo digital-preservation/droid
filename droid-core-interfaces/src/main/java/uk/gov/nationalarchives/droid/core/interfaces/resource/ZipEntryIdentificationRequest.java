@@ -38,7 +38,10 @@ import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+//BNO-BS2 - replace this import with AbstractReader or WindowReader
+//in package net.byteseek.io.reader
 import net.domesdaybook.reader.ByteReader;
+import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -49,6 +52,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
  * @author rflitcroft
  *
  */
+//BNO-BS2 - this  class is almost identical to {@link TarEntryIdentificationRequest}
 public class ZipEntryIdentificationRequest implements IdentificationRequest {
 
     private static final int BUFFER_CACHE_CAPACITY = 16;
@@ -113,6 +117,15 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest {
     @Override
     public final void open(InputStream in) throws IOException {
         /* using normal stream access and CachedByteArrays */
+    	
+    	/*BNO-BS2
+    	 * Currently the cachedBinary instantiation is a of a class
+    	 * derived from the {@link CachedBytes} interface, which extends
+    	 * the ByteReader interface in Byteseek 1.1.  In Byteseek 2.0, we
+    	 * have a new class model based on the {@link WindowReader} interface,
+    	 * and we are probably looking to instantiate one of these classes instead.
+    	 */
+    	
         byte[] firstBuffer = new byte[bufferCapacity];
         int bytesRead = ResourceUtils.readBuffer(in, firstBuffer);
         if (bytesRead < 1) {
@@ -125,6 +138,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest {
             cachedBinary = new CachedByteArray(firstBuffer, bytesRead);
             size = (long) bytesRead;
         } else {
+        	//BNO-BS2 - Byteseek 2 implementation should remove the need to write out to temp file.
             cachedBinary = new CachedByteArrays(lruCapacity, bufferCapacity, firstBuffer, bufferCapacity);
             tempFile = ArchiveFileUtils.writeEntryToTemp(tempDir, firstBuffer, in);
             cachedBinary.setSourceFile(tempFile);
@@ -286,8 +300,16 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest {
     /**
      * {@inheritDoc}
      */
+    //BNO-BS2 - now need to return AbstractReader or WindowReader in package net.byteseek.io.reader
+    // (see import change above)
     @Override
     public final ByteReader getReader() {
         return cachedBinary;
     }
+
+	@Override
+	public WindowReader getWindowReader() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

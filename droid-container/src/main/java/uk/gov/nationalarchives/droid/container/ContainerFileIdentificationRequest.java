@@ -38,10 +38,15 @@ import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
+//BNO-BS2 - replace this import with AbstractReader or WindowReader
+//in package net.byteseek.io.reader
 import net.domesdaybook.reader.ByteReader;
+import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.CachedByteArray;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.CachedByteArrays;
@@ -274,7 +279,15 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
      * {@inheritDoc}
      */
     @Override
+  //BNO-BS2 - now need to return AbstractReader or WindowReader in package net.byteseek.io.reader
+  // (see import change above)
     public final ByteReader getReader() {
         return cachedBinary;
-    }        
+    }
+
+	@Override
+	public WindowReader getWindowReader() {
+		// TODO Auto-generated method stub
+		return null;
+	}        
 }

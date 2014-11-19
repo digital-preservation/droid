@@ -77,6 +77,9 @@ package uk.gov.nationalarchives.droid.core.signature;
  *
  * @author linb
  */
+//BNO-BS2
+import net.byteseek.io.reader.WindowReader;
+
 public interface ByteReader {
 
     /* Setters for identification status */
@@ -201,6 +204,9 @@ public interface ByteReader {
      * @return An object which can read bytes.
      */
     net.domesdaybook.reader.ByteReader getReader();
+    
+    //BNO-BS2
+    WindowReader getWindowReader();
     
     /**
      * Returns the number of bytes in the file.

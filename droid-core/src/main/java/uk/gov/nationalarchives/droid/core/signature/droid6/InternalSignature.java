@@ -392,6 +392,7 @@ public class InternalSignature extends SimpleElement {
      */
     public final boolean matches(final ByteReader targetFile, final long maxBytesToScan) {
         boolean matchResult = true;
+        //BNO Byte sequences within the current signature
         final List<ByteSequence> sequences = byteSequences;
         final int numseqs = sequences.size();
         //check each byte sequence in turn - stop as soon as one is found to be non-compliant

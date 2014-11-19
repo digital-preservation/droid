@@ -42,6 +42,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
 
+//BNO-BS2
+import net.byteseek.io.reader.WindowReader;
+
 /**
  * Adapts an IdentificationRequest to the ByteReader interface.
  * @author rflitcroft
@@ -243,6 +246,13 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
     public final net.domesdaybook.reader.ByteReader getReader() {
         return request.getReader();
     }
+
+    //BNO-BS2
+	@Override
+	public WindowReader getWindowReader() {
+		return request.getWindowReader();
+	}
+    
     
     
     

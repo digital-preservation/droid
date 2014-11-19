@@ -121,6 +121,12 @@ import net.domesdaybook.matcher.sequence.searcher.SequenceMatcherSearcher;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 
+import net.byteseek.compiler.CompileException;
+//BNO-BS2
+import net.byteseek.io.reader.WindowReader;
+import net.byteseek.searcher.sequence.AbstractSequenceSearcher;
+// -- this currently causes a clash. Can Java do import aliasing similar to .NET?? 
+//import net.byteseek.compiler.matcher.SequenceMatcherCompiler;  
 
 
 /**
@@ -160,8 +166,12 @@ public class SubSequence extends SimpleElement {
     private boolean fullFileScan;
     private List<LeftFragment> leftFragments = new ArrayList<LeftFragment>();
     private List<RightFragment> rightFragments = new ArrayList<RightFragment>();
+    //BNO-BS2
     private SequenceMatcher matcher;
     private SequenceMatcherSearcher searcher;
+    private net.byteseek.matcher.sequence.SequenceMatcher matcherBS2;
+    // Note the direct instantiation - in BS2 BoyerMooreHorspoolSearcher is not derived from SequenceMatcherSearcher
+    private AbstractSequenceSearcher searcherBS2;
 
     private final List<List<SideFragment>> orderedLeftFragments = new ArrayList<List<SideFragment>>();
     private final List<List<SideFragment>> orderedRightFragments = new ArrayList<List<SideFragment>>();
@@ -215,12 +225,25 @@ public class SubSequence extends SimpleElement {
      * @param seq A regular expression defining the anchor sequence for the subsequence.
      */
     public final void setSequence(final String seq) {
+    	//BNO-BS2 - to replace with BS2 versions.  Though do we need to consider backwards compatibility?
         try {
             final String transformedSequence = FragmentRewriter.rewriteFragment(seq);
+            //BNO-BS2
             SequenceMatcherCompiler compiler = new SequenceMatcherCompiler();
+            net.byteseek.compiler.matcher.SequenceMatcherCompiler compilerBS2 = new net.byteseek.compiler.matcher.SequenceMatcherCompiler();
+            
             matcher = compiler.compile(transformedSequence);
             searcher = new BoyerMooreHorspoolSearcher(matcher);
+            matcherBS2 = compilerBS2.compile(transformedSequence);
+            searcherBS2 = new net.byteseek.searcher.sequence.horspool.BoyerMooreHorspoolSearcher(matcherBS2);
+            
+            //BNO-BS2 - ParseException is the old Byteseek
         } catch (ParseException ex) {
+            final String warning = String.format(SEQUENCE_PARSE_ERROR, seq, ex.getMessage());
+            getLog().warn(warning);
+            //throw new IllegalArgumentException(seq, ex);
+            isInvalidSubSequence = true;
+        } catch (CompileException ex) { //BNO - in BS2 this replaces the earlier ParseException
             final String warning = String.format(SEQUENCE_PARSE_ERROR, seq, ex.getMessage());
             getLog().warn(warning);
             //throw new IllegalArgumentException(seq, ex);
@@ -626,6 +649,8 @@ public class SubSequence extends SimpleElement {
             // so even small performance improvements add up quickly.
 
             final net.domesdaybook.reader.ByteReader reader = targetFile.getReader();
+            //BNO-BS2 - remove above expression when BS2 refactor done.
+            final WindowReader windowReader = targetFile.getWindowReader();
 
             if (backwardsSearch) {
                 
@@ -657,7 +682,9 @@ public class SubSequence extends SimpleElement {
 
                 long matchPosition = startSearchWindow;
                 while (matchPosition >= endSearchWindow) {
-                    matchPosition = searcher.searchBackwards(reader, matchPosition, endSearchWindow);
+                    //BNO-BS2
+                	//TODO: Replace with BS2 searcher.
+                	matchPosition = searcher.searchBackwards(reader, matchPosition, endSearchWindow);
                     if (matchPosition != -1) {
                         boolean matchFound = true;
                         // Check that any right fragments, behind our sequence, match.

@@ -35,8 +35,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+
+//BNO-BS2 - replace this import with AbstractReader or WindowReader
+// in package net.byteseek.io.reader
 import net.domesdaybook.reader.ByteReader;
 
+import net.byteseek.io.reader.WindowReader;
+import net.byteseek.io.reader.FileReader;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
@@ -55,6 +60,14 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     private final long size;
 
     private CachedBytes cachedBinary;
+    
+    // BNO-BS2 - this will replace cachedBinary above once refactoring for Byteseek 2.0 is complete
+    // I'm assuming for now that the instantiation here will always be FileReader rather than any other implementation.
+    // InputStreamReader would appear to be the other option.  POssibly this is favoured for large files?  If so, need
+    // some decision mechanism - probably a factory method call, about which to instantiate.  And of course the private
+    // variable would then need to be WindowReader!
+    private FileReader byteseek2FileReader;
+    
     private final RequestIdentifier identifier;
 
     private final int lruCapacity;
@@ -98,6 +111,20 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     @Override
     public final void open(InputStream in) throws IOException {
         /* using normal stream access and CachedByteArrays */
+    	
+    	/*BNO-BS2
+    	 * Currently the cachedBinary instantiation is a of a class
+    	 * derived from the {@link CachedBytes} interface, which extends
+    	 * the ByteReader interface in Byteseek 1.1.  In Byteseek 2.0, we
+    	 * have a new class model based on the {@link WindowReader} interface,
+    	 * and we are probably looking to instantiate one of these classes instead.
+    	 */
+        //BNO-BS2
+        byteseek2FileReader = new FileReader(fileName);
+    	
+    	//BNO-BS2 - presumably we'll use the new Byteseek2.0 FileReader class for all these scenarios..
+    	// It provides various constructors that take a File object - so no need for the setSourceFile
+    	// in the current cavhedBytes extended interface..
         byte[] firstBuffer = new byte[bufferCapacity];
         int bytesRead = ResourceUtils.readBuffer(in, firstBuffer);
         if (bytesRead < 1) {
@@ -135,6 +162,8 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
         // proves to be a zip file).
         final File theFile = new File(identifier.getUri());
         cachedBinary.setSourceFile(theFile);
+        
+
     }
     
     
@@ -214,9 +243,20 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
      * {@inheritDoc}
      */
     @Override
+    //BNO-BS2 - now need to return AbstractReader or WindowReader in package net.byteseek.io.reader
+    // (see import change above)
     public final ByteReader getReader() {
+    	//BNO remove this method once Byteseek 2.0 refactor complete..
         return cachedBinary;
     }
+    
+    
+	@Override
+	public WindowReader getWindowReader() {
+		// TODO Auto-generated method stub
+		return byteseek2FileReader;
+	}
+
 
     /**
      * {@inheritDoc}
@@ -226,5 +266,6 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
         // File system identification requests always set the source file.
         return cachedBinary.getSourceFile();
     }
+
 
 }

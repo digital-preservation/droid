@@ -36,6 +36,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+//BNO-BS2 - replace this import with AbstractReader or WindowReader
+//in package net.byteseek.io.reader
+import net.byteseek.io.reader.WindowReader;
 import net.domesdaybook.reader.ByteReader;
 
 /**
@@ -69,7 +72,10 @@ public interface IdentificationRequest {
      * 
      * @return A net.domesdaybook.reader.ByteReader object,
      */
-    ByteReader getReader();
+    //BNO-BS2 - now need to return AbstractReader or WindowReader in package net.byteseek.io.reader
+    // (see import change above)
+    ByteReader getReader();  //To be removed following Byteseek 2 refactoring 
+    WindowReader getWindowReader();
     
     /**
      * Returns the file name. 

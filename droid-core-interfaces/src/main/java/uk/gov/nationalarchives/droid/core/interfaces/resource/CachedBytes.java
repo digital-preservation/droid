@@ -45,6 +45,10 @@ import net.domesdaybook.reader.ByteReader;
  * @author Matt Palmer
  *
  */
+// BNO-BS2 Need to take a view on whether we still want this extended interface within DROID
+// when moving to Byteseek 2.  Possibly not as the new Window interface based class hierarchy 
+// within Byteseek 2.0 
+// should provide more efficient read access to the underlying bytes stream.
 public interface CachedBytes extends ByteReader {
 
     
