@@ -47,6 +47,9 @@
                 <configuration>
                     <header>droid-parent/header.txt</header>
                     <aggregate>false</aggregate>
+                    <excludes>
+                        <exclude>.idea/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

@@ -39,16 +39,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 /**
  * @author rfitcroft
  *
  */
-//BNO: Commented out as causes compilation failure with Java 8 build...
-//@RunWith(SpringJUnit4ClassRunner.class)
-@Ignore("BNO - see above - Error on @RunWith - Type mismatch error on SpringJUnit4ClassRunner.class - "
-		+ "upgrading JUnit to 4.6 appears to solve this but introduces other issues")
+@RunWith(SpringJUnit4ClassRunner.class)
+// we don't have a servlet listener, so override the defaults here to suppress warning
+@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @ContextConfiguration(locations = "classpath*:archive-spring.xml")
 public class ArchiveFormatResolverImplTest {
 

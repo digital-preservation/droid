@@ -110,7 +110,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     /**
      * Subclasses should override this to process the container in its specific way.
      * @param request the identification request to process.
-     * @param matches a Liost of container signature potential matches.
+     * @param matches a List of container signature potential matches.
      * @throws IOException if the input stream could not be read
      */
     protected abstract void process(IdentificationRequest request, 
