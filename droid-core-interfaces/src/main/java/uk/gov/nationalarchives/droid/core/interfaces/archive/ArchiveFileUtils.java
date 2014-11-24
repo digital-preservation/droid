@@ -102,6 +102,24 @@ public final class ArchiveFileUtils {
     }
 
     /**
+     * Builds a URI for a arc file entry modelled on the apache-commons format used for tar files.
+     * @param parent the parent arc file.
+     * @param arcEntry the arc entry
+     * @return the URI
+     */
+    public static URI toArcUri(URI parent, String arcEntry) {
+        String parentScheme = parent.getScheme();
+        String parentSsp = parent.getSchemeSpecificPart();
+
+        try {
+            return new URI("arc:" + parentScheme,
+                    parentSsp + ARCHIVE_DELIMITER + arcEntry, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.
      * <p/>
