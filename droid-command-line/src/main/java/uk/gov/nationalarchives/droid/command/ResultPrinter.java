@@ -38,6 +38,7 @@ import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.ZipArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.ArcArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.container.Ole2ContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
@@ -80,6 +81,8 @@ public class ResultPrinter {
     private final String JIP_ARCHIVE = "x-fmt/412";
     private final String TAR_ARCHIVE = "x-fmt/265";
     private final String GZIP_ARCHIVE = "x-fmt/266";
+    private final String ARC_ARCHIVE = "x-fmt/219";
+    private final String OTHERARC_ARCHIVE = "fmt/410";
     
     /**
      * Store signature files.
@@ -156,6 +159,11 @@ public class ResultPrinter {
                                 new ZipArchiveContentIdentifier(binarySignatureIdentifier,
                                     containerSignatureDefinitions, path, slash, slash1);
                         zipArchiveIdentifier.identify(results.getUri(), request);
+                    }  else if (ARC_ARCHIVE.equals(puid) || OTHERARC_ARCHIVE.equals(puid)) {
+                        ArcArchiveContentIdentifier arcArchiveIdentifier =
+                                new ArcArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1);
+                        arcArchiveIdentifier.identify(results.getUri(), request);
                     }
                 }
             }   

@@ -51,6 +51,7 @@ public class ArchiveHandlerFactoryTest {
     private ArchiveHandler zipHandler;
     private ArchiveHandler tarHandler;
     private ArchiveHandler gzHandler;
+    private ArchiveHandler arcHandler;
     
     @Before
     public void setup() {
@@ -59,12 +60,14 @@ public class ArchiveHandlerFactoryTest {
         zipHandler = mock(ArchiveHandler.class);
         tarHandler = mock(ArchiveHandler.class);
         gzHandler = mock(ArchiveHandler.class);
+        arcHandler = mock(ArchiveHandler.class);
         
         Map<String, ArchiveHandler> handlers = new HashMap<String, ArchiveHandler>();
         
         handlers.put("ZIP", zipHandler);
         handlers.put("TAR", tarHandler);
         handlers.put("GZ", gzHandler);
+        handlers.put("ARC", arcHandler);
         
         factory.setHandlers(handlers);
         
@@ -76,6 +79,7 @@ public class ArchiveHandlerFactoryTest {
         assertEquals(zipHandler, factory.getHandler("ZIP"));
         assertEquals(tarHandler, factory.getHandler("TAR"));
         assertEquals(gzHandler, factory.getHandler("GZ"));
+        assertEquals(arcHandler, factory.getHandler("ARC"));
     }
     
 }

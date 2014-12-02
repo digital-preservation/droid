@@ -42,16 +42,12 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
-//import org.apache.commons.io.FilenameUtils;
 import org.jwat.arc.ArcReader;
 import org.jwat.arc.ArcReaderFactory;
 import org.jwat.arc.ArcRecord;
 import org.jwat.arc.ArcRecordBase;
-//import org.jwat.common.Uri;
 
-//import uk.gov.nationalarchives.droid.core.interfaces.*;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -61,17 +57,22 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 
+
 /**
  * @author rflitcroft
  * @author gseaman
  *
  */
 public class ArcArchiveHandler implements ArchiveHandler {
-
+    /**
+     * Save importing all the http codes
+     */
+    protected static final int HTTP_ACCEPTED = 200;
     private AsynchDroid droidCore;
     private IdentificationRequestFactory factory;
     private ResultHandler resultHandler;
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -138,7 +139,7 @@ public class ArcArchiveHandler implements ArchiveHandler {
                 this.iterator = arcReader.iterator();
             } catch (IOException e) {
                 // TODO log
-                System.out.println("boo");
+                System.err.println(e);
             }
         }
 
@@ -147,13 +148,19 @@ public class ArcArchiveHandler implements ArchiveHandler {
          */
         @Override
         protected ArcRecordBase getNextEntry(InputStream in) throws IOException {
+            ArcRecordBase base = null;
             //get the next real ARC record (not header) and return it as an ArcRecord
-            ArcRecordBase base = this.iterator.next();
-            String scheme = base.getScheme();
-            // skip the header record at the start and any dns requests
-            while (!(base instanceof ArcRecord) || "dns".equals(scheme)) {
+            if (this.iterator.hasNext()) {
                 base = this.iterator.next();
-                scheme = base.getScheme();
+                // skip the header record at the start, any dns requests, and non 200 responses
+                while (!(base instanceof ArcRecord) || "dns".equals(base.getScheme())
+                    || base.getHttpHeader().statusCode != HTTP_ACCEPTED) {
+                    if (this.iterator.hasNext()) {
+                        base = this.iterator.next();
+                    } else {
+                        base = null;
+                    }
+                }
             }
             return base;
         }
@@ -200,14 +207,8 @@ public class ArcArchiveHandler implements ArchiveHandler {
     private ResourceId submitDirectory(final URI parentName,
                                        ArcRecordBase entry, String entryName, ResourceId correlationId) {
         IdentificationResultImpl result = new IdentificationResultImpl();
-        long size = -1; //entry.getSize();
-        Date date = null; //entry.getModTime();
-        long time = date == null ? -1 : date.getTime();
 
-        RequestMetaData metaData = new RequestMetaData(
-                size != -1 ? size : null,
-                time != -1 ? time : null,
-                entryName);
+        RequestMetaData metaData = new RequestMetaData(null, null, entryName);
 
         RequestIdentifier identifier = new RequestIdentifier(
                 ArchiveFileUtils.toArcUri(parentName, entry.getFileName()));
@@ -293,7 +294,7 @@ public class ArcArchiveHandler implements ArchiveHandler {
                 String dirName = urlName;
                 String[] dirs = p.split(urlName);
                 // extract the last directory name if any
-                if (dirs[dirs.length - 1] != "") {
+                if (!"".equals(dirs[dirs.length - 1])) {
                     dirName = dirs[dirs.length - 1];
                 }
                 longestParentId = submitDirectory(parentName, entry, dirName, longestParentId);
