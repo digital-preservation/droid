@@ -1,0 +1,353 @@
+WARC/1.0
+WARC-Type: warcinfo
+WARC-Date: 2014-12-08T15:33:49Z
+WARC-Filename: WEB-20141208153349544-00000-17489~argos~8443.warc.gz
+WARC-Record-ID: <urn:uuid:f5984459-182c-4436-8ad1-2f840ccff429>
+Content-Type: application/warc-fields
+Content-Length: 358
+
+software: Heritrix/3.2.0 http://crawler.archive.org
+ip: 127.0.0.1
+hostname: argos
+format: WARC File Format 1.0
+conformsTo: http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf
+isPartOf: test
+description: droid test data
+robots: obey
+http-header-user-agent: Mozilla/5.0 (compatible; heritrix/3.2.0 +http://www.nationalarchives.gov.uk)
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: dns:localhost
+WARC-Date: 2014-12-08T15:33:48Z
+WARC-IP-Address: 192.168.1.254
+WARC-Record-ID: <urn:uuid:1f521bd0-e22f-4f24-a162-ca54df78d3a6>
+Content-Type: text/dns
+Content-Length: 47
+
+20141208153348
+localhost.		3600	IN	A	127.0.0.1
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://localhost/robots.txt
+WARC-Date: 2014-12-08T15:33:52Z
+WARC-Payload-Digest: sha1:4TD2UVMG7Z6NKU3XGRMN5KVRGWYPS7NG
+WARC-IP-Address: 127.0.0.1
+WARC-Record-ID: <urn:uuid:d2bd3dd1-7d4d-4bee-866a-8da624e60f49>
+Content-Type: application/http; msgtype=response
+Content-Length: 431
+
+HTTP/1.1 404 Not Found
+Date: Mon, 08 Dec 2014 15:33:53 GMT
+Server: Apache
+Content-Length: 267
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /robots.txt was not found on this server.</p>
+<hr>
+<address>Apache Server at localhost Port 80</address>
+</body></html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://localhost/robots.txt
+WARC-Date: 2014-12-08T15:33:52Z
+WARC-Concurrent-To: <urn:uuid:d2bd3dd1-7d4d-4bee-866a-8da624e60f49>
+WARC-Record-ID: <urn:uuid:76949cb3-f57b-4be1-8587-f79f48662aae>
+Content-Type: application/http; msgtype=request
+Content-Length: 227
+
+GET /robots.txt HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/3.2.0 +http://www.nationalarchives.gov.uk)
+Connection: close
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Host: localhost
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://localhost/robots.txt
+WARC-Date: 2014-12-08T15:33:52Z
+WARC-Concurrent-To: <urn:uuid:d2bd3dd1-7d4d-4bee-866a-8da624e60f49>
+WARC-Record-ID: <urn:uuid:d9591a98-0487-4f57-9cdc-98b88020ea03>
+Content-Type: application/warc-fields
+Content-Length: 170
+
+force-fetch:
+via: http://localhost/
+hopsFromSeed: P
+fetchTimeMs: 1497
+charsetForLinkExtraction: ISO-8859-1
+outlink: http://localhost/favicon.ico I =INFERRED_MISC
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://localhost/
+WARC-Date: 2014-12-08T15:34:02Z
+WARC-Payload-Digest: sha1:OMVSKRSH5SCVWD4X4OY4LYMORGYVYVVT
+WARC-IP-Address: 127.0.0.1
+WARC-Record-ID: <urn:uuid:f671a69a-1c43-457f-8dc6-23fd82c627ae>
+Content-Type: application/http; msgtype=response
+Content-Length: 458
+
+HTTP/1.1 200 OK
+Date: Mon, 08 Dec 2014 15:34:02 GMT
+Server: Apache
+Last-Modified: Tue, 25 Nov 2014 11:53:02 GMT
+ETag: "5626c3-dc-508ad8da02380"
+Accept-Ranges: bytes
+Content-Length: 220
+Connection: close
+Content-Type: text/html
+
+<html>
+	<head>
+		<script language="javascript" type="text/javascript" src="js/test.js"></script>
+	</head>
+	<body>
+		<h1>Test</h1>
+		<ul>
+			<li><a href="content/test.html">Content page</a></li>
+		</ul>
+	</body>
+</html>
+
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://localhost/
+WARC-Date: 2014-12-08T15:34:02Z
+WARC-Concurrent-To: <urn:uuid:f671a69a-1c43-457f-8dc6-23fd82c627ae>
+WARC-Record-ID: <urn:uuid:1ca2786d-f2e3-4391-8c30-3fbd490a76e8>
+Content-Type: application/http; msgtype=request
+Content-Length: 217
+
+GET / HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/3.2.0 +http://www.nationalarchives.gov.uk)
+Connection: close
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Host: localhost
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://localhost/
+WARC-Date: 2014-12-08T15:34:02Z
+WARC-Concurrent-To: <urn:uuid:f671a69a-1c43-457f-8dc6-23fd82c627ae>
+WARC-Record-ID: <urn:uuid:5a88f7a2-53b2-4116-9792-31cf1d7c0124>
+Content-Type: application/warc-fields
+Content-Length: 227
+
+seed:
+fetchTimeMs: 46
+charsetForLinkExtraction: ISO-8859-1
+outlink: http://localhost/favicon.ico I =INFERRED_MISC
+outlink: http://localhost/js/test.js E script/@src
+outlink: http://localhost/content/test.html L a/@href
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://localhost/favicon.ico
+WARC-Date: 2014-12-08T15:34:05Z
+WARC-Payload-Digest: sha1:LFYHOLDFQ62X5CGOMSGUL2QEUSORW6TX
+WARC-IP-Address: 127.0.0.1
+WARC-Record-ID: <urn:uuid:3bb89894-bde7-459a-9fb8-f9e564cc95ec>
+Content-Type: application/http; msgtype=response
+Content-Length: 432
+
+HTTP/1.1 404 Not Found
+Date: Mon, 08 Dec 2014 15:34:05 GMT
+Server: Apache
+Content-Length: 268
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /favicon.ico was not found on this server.</p>
+<hr>
+<address>Apache Server at localhost Port 80</address>
+</body></html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://localhost/favicon.ico
+WARC-Date: 2014-12-08T15:34:05Z
+WARC-Concurrent-To: <urn:uuid:3bb89894-bde7-459a-9fb8-f9e564cc95ec>
+WARC-Record-ID: <urn:uuid:9b317366-e415-4b93-9c98-f9b7ff7f47c0>
+Content-Type: application/http; msgtype=request
+Content-Length: 256
+
+GET /favicon.ico HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/3.2.0 +http://www.nationalarchives.gov.uk)
+Connection: close
+Referer: http://localhost/
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Host: localhost
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://localhost/favicon.ico
+WARC-Date: 2014-12-08T15:34:05Z
+WARC-Concurrent-To: <urn:uuid:3bb89894-bde7-459a-9fb8-f9e564cc95ec>
+WARC-Record-ID: <urn:uuid:9b9d8dbf-793d-406f-98a5-ed5b14b9d692>
+Content-Type: application/warc-fields
+Content-Length: 153
+
+via: http://localhost/
+hopsFromSeed: I
+fetchTimeMs: 3
+charsetForLinkExtraction: ISO-8859-1
+outlink: http://localhost/favicon.ico I =INFERRED_MISC
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://localhost/js/test.js
+WARC-Date: 2014-12-08T15:34:08Z
+WARC-Payload-Digest: sha1:HGRLRTAVVRAGT6CMS7ZCXJXZEDRNYRPX
+WARC-IP-Address: 127.0.0.1
+WARC-Record-ID: <urn:uuid:323ee277-f617-4b9d-9287-11df90cffd2b>
+Content-Type: application/http; msgtype=response
+Content-Length: 279
+
+HTTP/1.1 200 OK
+Date: Mon, 08 Dec 2014 15:34:08 GMT
+Server: Apache
+Last-Modified: Tue, 25 Nov 2014 11:50:49 GMT
+ETag: "562680-1b-508ad85b2b840"
+Accept-Ranges: bytes
+Content-Length: 27
+Connection: close
+Content-Type: application/x-javascript
+
+         alert("js Test");
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://localhost/js/test.js
+WARC-Date: 2014-12-08T15:34:08Z
+WARC-Concurrent-To: <urn:uuid:323ee277-f617-4b9d-9287-11df90cffd2b>
+WARC-Record-ID: <urn:uuid:948ec22c-2025-4645-8660-ebbbe3b99590>
+Content-Type: application/http; msgtype=request
+Content-Length: 255
+
+GET /js/test.js HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/3.2.0 +http://www.nationalarchives.gov.uk)
+Connection: close
+Referer: http://localhost/
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Host: localhost
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://localhost/js/test.js
+WARC-Date: 2014-12-08T15:34:08Z
+WARC-Concurrent-To: <urn:uuid:323ee277-f617-4b9d-9287-11df90cffd2b>
+WARC-Record-ID: <urn:uuid:0340cf92-a72b-4fd6-b483-2c5f31ba5e2c>
+Content-Type: application/warc-fields
+Content-Length: 154
+
+via: http://localhost/
+hopsFromSeed: E
+fetchTimeMs: 71
+charsetForLinkExtraction: ISO-8859-1
+outlink: http://localhost/favicon.ico I =INFERRED_MISC
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://localhost/content/test.html
+WARC-Date: 2014-12-08T15:34:11Z
+WARC-Payload-Digest: sha1:J4ZI4A5VHTGYNZXMISBR5K2K4LSNJKGW
+WARC-IP-Address: 127.0.0.1
+WARC-Record-ID: <urn:uuid:b7710175-2869-42ca-b041-c565e6e5c006>
+Content-Type: application/http; msgtype=response
+Content-Length: 357
+
+HTTP/1.1 200 OK
+Date: Mon, 08 Dec 2014 15:34:11 GMT
+Server: Apache
+Last-Modified: Tue, 25 Nov 2014 11:52:03 GMT
+ETag: "5626c6-77-508ad8a1bdec0"
+Accept-Ranges: bytes
+Content-Length: 119
+Connection: close
+Content-Type: text/html
+
+<html>
+	<head>
+		<title>Testing</title>
+	</head>
+	<body>
+		<h1>Testing</h1>
+		<p>This is my test</p>
+	</body>
+</html>
+
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://localhost/content/test.html
+WARC-Date: 2014-12-08T15:34:11Z
+WARC-Concurrent-To: <urn:uuid:b7710175-2869-42ca-b041-c565e6e5c006>
+WARC-Record-ID: <urn:uuid:5a2557e0-a9f8-4e0d-9560-1da1eebdb320>
+Content-Type: application/http; msgtype=request
+Content-Length: 262
+
+GET /content/test.html HTTP/1.0
+User-Agent: Mozilla/5.0 (compatible; heritrix/3.2.0 +http://www.nationalarchives.gov.uk)
+Connection: close
+Referer: http://localhost/
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Host: localhost
+
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Target-URI: http://localhost/content/test.html
+WARC-Date: 2014-12-08T15:34:11Z
+WARC-Concurrent-To: <urn:uuid:b7710175-2869-42ca-b041-c565e6e5c006>
+WARC-Record-ID: <urn:uuid:6a068dd4-6be4-4a82-b693-afcbab8a9ed0>
+Content-Type: application/warc-fields
+Content-Length: 154
+
+via: http://localhost/
+hopsFromSeed: L
+fetchTimeMs: 64
+charsetForLinkExtraction: ISO-8859-1
+outlink: http://localhost/favicon.ico I =INFERRED_MISC
+
+
+

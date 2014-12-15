@@ -50,6 +50,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="TAR" value-ref="tarHandler"/>
                 <entry key="GZ" value-ref="gzHandler"/>
                 <entry key="ARC" value-ref="arcHandler"/>
+                <entry key="WARC" value-ref="warcHandler"/>
             </map>
         </property>
     </bean>
@@ -136,7 +137,13 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="droidCore" ref="submissionGateway"/>
         <property name="resultHandler" ref="databaseResultHandler"/>
     </bean>
-    
+    <bean id="warcHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.WarcArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.WarcEntryRequestFactory" parent="archiveRequestFactory"/>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
     <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
         <property name="puids">
             <map>
@@ -144,6 +151,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="TAR" value="${archive.tar}"/>
                 <entry key="GZ" value="${archive.gz}"/>
                 <entry key="ARC" value="${archive.arc}"/>
+                <entry key="WARC" value="${archive.warc}"/>
             </map>
         </property>
     </bean>
@@ -155,7 +163,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JpaPlanetsXMLDaoImpl"/>
     <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl"/>
     <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandlerDao"/>
-    <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl"/>
+    <bean id="referenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl"/>
     
     <bean id="referenceDataService" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataServiceImpl"/>
     

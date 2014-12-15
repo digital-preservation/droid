@@ -118,7 +118,23 @@ public final class ArchiveFileUtils {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+    /**
+     * Builds a URI for a warc file entry modelled on the apache-commons format used for tar files.
+     * @param parent the parent warc file.
+     * @param warcEntry the warc entry
+     * @return the URI
+     */
+    public static URI toWarcUri(URI parent, String warcEntry) {
+        String parentScheme = parent.getScheme();
+        String parentSsp = parent.getSchemeSpecificPart();
 
+        try {
+            return new URI("warc:" + parentScheme,
+                    parentSsp + ARCHIVE_DELIMITER + warcEntry, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
     /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.

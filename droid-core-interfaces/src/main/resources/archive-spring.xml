@@ -53,6 +53,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="TAR" value-ref="tarHandler"/>
                 <entry key="GZ" value-ref="gzHandler"/>
                 <entry key="ARC" value-ref="arcHandler"/>
+                <entry key="WARC" value-ref="warcHandler"/>
             </map>
         </property>
     </bean>
@@ -63,6 +64,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="tarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarArchiveHandler"/>
     <bean id="gzHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipArchiveHandler"/>
     <bean id="arcHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArcArchiveHandler"/>
+    <bean id="warcHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.WarcArchiveHandler"/>
            
     <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
         <property name="puids">
@@ -71,6 +73,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="TAR" value="${archive.tar}"/>
                 <entry key="GZ" value="${archive.gz}"/>
                 <entry key="ARC" value="${archive.arc}"/>
+                <entry key="WARC" value="${archive.warc}"/>
             </map>
         </property>
     </bean>
