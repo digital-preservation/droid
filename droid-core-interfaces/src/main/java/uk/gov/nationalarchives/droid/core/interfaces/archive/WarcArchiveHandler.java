@@ -213,7 +213,7 @@ public class WarcArchiveHandler implements ArchiveHandler {
         RequestMetaData metaData = new RequestMetaData(null, null, entryName);
 
         RequestIdentifier identifier = new RequestIdentifier(
-            ArchiveFileUtils.toArcUri(parentName, entry.getHttpHeader().requestUri));
+            ArchiveFileUtils.toWarcUri(parentName, entry.getHttpHeader().requestUri));
 
         result.setRequestMetaData(metaData);
         result.setIdentifier(identifier);
