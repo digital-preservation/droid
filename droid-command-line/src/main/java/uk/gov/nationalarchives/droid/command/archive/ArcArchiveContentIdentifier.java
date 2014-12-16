@@ -49,7 +49,7 @@ import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArcEntryRequestFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
@@ -106,7 +106,7 @@ public class ArcArchiveContentIdentifier {
         
         final String newPath = "arc:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
-        final IdentificationRequestFactory factory  = new ArcEntryRequestFactory();
+        final IdentificationRequestFactory factory  = new WebArchiveEntryRequestFactory();
 
         try {
             InputStream arcIn = request.getSourceInputStream();

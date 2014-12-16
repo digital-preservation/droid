@@ -45,11 +45,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 
 /**
- * Encapsulates a request for a ARC entry.
+ * Encapsulates a request for a WARC entry.
  * @author rflitcroft
  *
  */
-public class ArcEntryIdentificationRequest implements IdentificationRequest {
+public class WebArchiveEntryIdentificationRequest implements IdentificationRequest {
 
     private static final int BUFFER_CACHE_CAPACITY = 16;
 
@@ -77,7 +77,7 @@ public class ArcEntryIdentificationRequest implements IdentificationRequest {
      * @param identifier the request identifier
      * @param tempDir the location to write temp files.
      */
-    public ArcEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier, File tempDir) {
+    public WebArchiveEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier, File tempDir) {
         this(metaData, identifier, BUFFER_CACHE_CAPACITY, CAPACITY, tempDir);
     }
     
@@ -88,7 +88,7 @@ public class ArcEntryIdentificationRequest implements IdentificationRequest {
      * @param bufferCapacity the buffer capacity
      * @param tempDir the location to write temp files.
      */
-    ArcEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
+    WebArchiveEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
             int lruCapacity, int bufferCapacity, File tempDir) {
         this.identifier = identifier;
         size = metaData.getSize();

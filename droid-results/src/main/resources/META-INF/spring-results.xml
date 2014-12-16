@@ -132,14 +132,14 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     </bean>
     <bean id="arcHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArcArchiveHandler">
         <property name="factory">
-            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArcEntryRequestFactory" parent="archiveRequestFactory"/>
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory" parent="archiveRequestFactory"/>
         </property>
         <property name="droidCore" ref="submissionGateway"/>
         <property name="resultHandler" ref="databaseResultHandler"/>
     </bean>
     <bean id="warcHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.WarcArchiveHandler">
         <property name="factory">
-            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.WarcEntryRequestFactory" parent="archiveRequestFactory"/>
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory" parent="archiveRequestFactory"/>
         </property>
         <property name="droidCore" ref="submissionGateway"/>
         <property name="resultHandler" ref="databaseResultHandler"/>

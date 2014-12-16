@@ -49,7 +49,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.WarcEntryRequestFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 /**
@@ -106,7 +106,7 @@ public class WarcArchiveContentIdentifier {
         
         final String newPath = "warc:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
-        final IdentificationRequestFactory factory  = new WarcEntryRequestFactory();
+        final IdentificationRequestFactory factory  = new WebArchiveEntryRequestFactory();
         try {
             InputStream warcIn = request.getSourceInputStream();
             WarcReader warcReader = WarcReaderFactory.getReader(warcIn);

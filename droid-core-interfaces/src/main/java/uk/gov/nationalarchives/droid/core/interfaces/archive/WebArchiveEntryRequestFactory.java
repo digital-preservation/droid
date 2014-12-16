@@ -34,21 +34,20 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.WarcEntryIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.WebArchiveEntryIdentificationRequest;
 
 /**
  * @author rflitcroft
  *
  */
-public class WarcEntryRequestFactory extends AbstractArchiveRequestFactory {
-
+public class WebArchiveEntryRequestFactory extends AbstractArchiveRequestFactory {
     /**
      * {@inheritDoc}
      */
     @Override
     public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
         final IdentificationRequest request =
-            new WarcEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
+            new WebArchiveEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
         
         return request;
     }
