@@ -60,6 +60,7 @@ public final class ArchiveFileUtils {
     private static final String TEMP_FILENAME_PREFIX = "droid-archive~";
     private static final String SSP_DELIMITER = ":/";
     private static final String ARCHIVE_DELIMITER = "!/";
+    private static final String COLON = ":";
     private static final int WRITE_BUFFER_CAPACITY = 8192;
 
     private ArchiveFileUtils() { };
@@ -102,39 +103,24 @@ public final class ArchiveFileUtils {
     }
 
     /**
-     * Builds a URI for a arc file entry modelled on the apache-commons format used for tar files.
-     * @param parent the parent arc file.
-     * @param arcEntry the arc entry
+     * Builds a URI for a webarchive file entry modelled on the apache-commons format used for tar files.
+     * @param archiveType arc or warc
+     * @param parent the parent file
+     * @param warcEntry the webarchive entry
      * @return the URI
      */
-    public static URI toArcUri(URI parent, String arcEntry) {
+    public static URI toWebArchiveUri(String archiveType, URI parent, String warcEntry) {
         String parentScheme = parent.getScheme();
         String parentSsp = parent.getSchemeSpecificPart();
 
         try {
-            return new URI("arc:" + parentScheme,
-                    parentSsp + ARCHIVE_DELIMITER + arcEntry, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-    /**
-     * Builds a URI for a warc file entry modelled on the apache-commons format used for tar files.
-     * @param parent the parent warc file.
-     * @param warcEntry the warc entry
-     * @return the URI
-     */
-    public static URI toWarcUri(URI parent, String warcEntry) {
-        String parentScheme = parent.getScheme();
-        String parentSsp = parent.getSchemeSpecificPart();
-
-        try {
-            return new URI("warc:" + parentScheme,
+            return new URI(archiveType + COLON + parentScheme,
                     parentSsp + ARCHIVE_DELIMITER + warcEntry, null);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
     /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.
@@ -274,7 +260,7 @@ public final class ArchiveFileUtils {
         String originSsp = StringUtils.substringBetween(requestUri.toString(), SSP_DELIMITER, "!");
         String scheme = StringUtils.substringBefore(requestUri.toString(), SSP_DELIMITER);
         if (originSsp != null) {
-            return URI.create(StringUtils.substringAfterLast(scheme, ":") + SSP_DELIMITER + originSsp);
+            return URI.create(StringUtils.substringAfterLast(scheme, COLON) + SSP_DELIMITER + originSsp);
         }
         
         return requestUri;

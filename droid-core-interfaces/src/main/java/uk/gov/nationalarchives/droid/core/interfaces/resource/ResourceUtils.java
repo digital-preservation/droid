@@ -76,7 +76,12 @@ public final class ResourceUtils {
      * @return String The file extension of the supplied filename.
      */
     public static String getExtension(String filename) {
-        final String nameOnly = FilenameUtils.getName(filename);
+        String nameOnly = FilenameUtils.getName(filename);
+        // if filename from a url, may have querystring appended: remove it
+        final int queryPos = nameOnly.indexOf('?');
+        if (queryPos > 0) {
+            nameOnly = nameOnly.substring(0, queryPos);
+        }
         final int dotPos = nameOnly.lastIndexOf('.');
         return dotPos > 0 ? nameOnly.substring(dotPos + 1) : "";
     }

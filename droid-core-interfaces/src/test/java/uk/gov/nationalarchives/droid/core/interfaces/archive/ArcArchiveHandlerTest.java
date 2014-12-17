@@ -83,7 +83,7 @@ public class ArcArchiveHandlerTest {
         ByteCountingPushBackInputStream bpin = new ByteCountingPushBackInputStream(in, 512);
         assertEquals(true, ArcReaderFactory.isArcFile(bpin));
 
-        ArcArchiveHandler handler = new ArcArchiveHandler();
+//        ArcArchiveHandler handler = new ArcArchiveHandler();
 //        handler.handle(request);
 //
 //
@@ -94,7 +94,7 @@ public class ArcArchiveHandlerTest {
 //        ResourceId expectedParentId = new ResourceId(99L, "");
 //        int count = 0;
 //        while ((entry = iterator.getNextEntry()) != null) {
-//            URI expectedUri = ArchiveFileUtils.toArcUri(file.toURI(), entry.getName());
+//            URI expectedUri = ArchiveFileUtils.toWebArchiveUri("arc", file.toURI(), entry.getName());
 //            IdentificationRequest mockRequest = mock(IdentificationRequest.class);
 //            when(mockRequest.toString()).thenReturn(expectedUri.toString());
 //
@@ -111,7 +111,7 @@ public class ArcArchiveHandlerTest {
 //
 //        AsynchDroid droidCore = mock(AsynchDroid.class);
 //
-//        TarArchiveHandler handler = new TarArchiveHandler();
+//        ArcArchiveHandler handler = new ArcArchiveHandler();
 //        handler.setFactory(factory);
 //        handler.setDroidCore(droidCore);
 //
