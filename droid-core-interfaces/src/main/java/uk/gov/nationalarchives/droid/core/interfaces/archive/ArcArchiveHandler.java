@@ -185,7 +185,10 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
         protected void handleEntry(ArcRecordBase entry) throws IOException {
             String entryUri = entry.getUrl().toString();
             String entryPath = new URL(entryUri).getFile();
-            String entryName = entryPath.substring(entryPath.lastIndexOf('/') + 1);
+            // remove querystring to get prefix (may include slashes)
+            final int queryPos = entryPath.indexOf('?');
+            String querylessPath = queryPos > 0 ? entryPath.substring(0, queryPos) : entryPath;
+            String entryName = entryPath.substring(querylessPath.lastIndexOf('/') + 1);
             String prefixPath = entryUri.substring(0, entryUri.length() - entryName.length());
             ResourceId correlationId = parentId; // by default, files are correlated to the parent.
             String requestUri = entry.getHttpHeader().requestUri;

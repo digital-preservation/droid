@@ -186,7 +186,10 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
         protected void handleEntry(WarcRecord entry) throws IOException {
             String entryUri = entry.header.warcTargetUriStr;
             String entryPath = new URL(entryUri).getFile();
-            String entryName = entryPath.substring(entryPath.lastIndexOf('/') + 1);
+            // remove querystring if any (may include slashes)
+            final int queryPos = entryPath.indexOf('?');
+            String querylessPath = queryPos > 0 ? entryPath.substring(0, queryPos) : entryPath;
+            String entryName = entryPath.substring(querylessPath.lastIndexOf('/') + 1);
             String prefixPath = entryUri.substring(0, entryUri.length() - entryName.length());
             ResourceId correlationId = parentId; // by default, files are correlated to the parent.
             String requestUri = entry.getHttpHeader().requestUri;
