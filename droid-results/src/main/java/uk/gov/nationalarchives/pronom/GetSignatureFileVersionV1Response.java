@@ -45,16 +45,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="Version" type="{http://pronom.nationalarchives.gov.uk}Version"/>
- *         &lt;element name="Deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="Version" type="{http://pronom.nationalarchives.gov.uk}Version"/&gt;
+ *         &lt;element name="Deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -98,7 +98,8 @@ public class GetSignatureFileVersionV1Response {
 
     /**
      * Gets the value of the deprecated property.
-     * 
+     *
+     * @return boolean True if deprecated 
      */
     public boolean isDeprecated() {
         return deprecated;
@@ -106,7 +107,7 @@ public class GetSignatureFileVersionV1Response {
 
     /**
      * Sets the value of the deprecated property.
-     * 
+     * @param value True if deprecated
      */
     public void setDeprecated(boolean value) {
         this.deprecated = value;

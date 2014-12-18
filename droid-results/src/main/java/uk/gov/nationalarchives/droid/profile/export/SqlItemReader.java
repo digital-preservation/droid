@@ -51,7 +51,7 @@ import uk.gov.nationalarchives.droid.profile.SqlUtils;
 
 /**
  * @author a-mpalmer
- * @param <T>
+ * @param <T> type of Item to read
  */
 public class SqlItemReader<T> implements ItemReader<T> {
 
@@ -86,7 +86,7 @@ public class SqlItemReader<T> implements ItemReader<T> {
     /**
      * {@inheritDoc}
      * 
-     * @throws JobCancellationException
+     * @throws JobCancellationException if cancelled
      */
     @Override
     // @Transactional(propagation = Propagation.REQUIRED)

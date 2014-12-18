@@ -195,7 +195,7 @@ public final class CachedByteArrays implements CachedBytes {
 
     /**
      * {@inheritDoc}
-     * @throws IOException 
+     * @throws IOException on failure to open file
      */
     @Override
     public void setSourceFile(File sourceFile) throws IOException {

@@ -234,7 +234,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest {
 
     /**
      * {@inheritDoc}
-     * @throws IOException 
+     * @throws IOException on failure to get InputStream
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
@@ -243,7 +243,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest {
     
     /**
      * {@inheritDoc}
-     * @throws IOException 
+     * @throws IOException on failure to create File from InputStream
      */
     @Override
     public final File getSourceFile() throws IOException {

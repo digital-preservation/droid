@@ -38,9 +38,9 @@ import java.util.Comparator;
  * internal signatures being compared, to allow them to be
  * sorted for maximum performance.
  * 
- * <p/>To change the sort order of the signatures, change the
+ * <p>To change the sort order of the signatures, change the
  * sort order calculation in the {@link InternalSignature}
- * class itself, not this comparator.
+ * class itself, not this comparator.</p>
  * 
  * @author Matt Palmer
  */

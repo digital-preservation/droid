@@ -52,15 +52,15 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ByFormatType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="formatItem" type="{http://www.nationalarchives.gov.uk/CollectionProfile}FormatItemType"/>
- *       &lt;/choice>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ByFormatType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="formatItem" type="{http://www.nationalarchives.gov.uk/CollectionProfile}FormatItemType"/&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @deprecated PLANETS XML is now generated using XSLT over normal report xml files.
@@ -93,7 +93,7 @@ public class ByFormatType {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link FormatItemType }
-     * 
+     * @return List
      * 
      */
     public List<FormatItemType> getFormatItem() {

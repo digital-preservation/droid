@@ -126,7 +126,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.9.1</version>
+                    <version>2.9.1</version> <!-- >= 2.12 would get rid of the erroneous LICENSE.txt stack dumps in debug --> 
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -262,8 +262,8 @@
                         <exclude>**/DROID_SignatureFile_*.xml</exclude>
                         <exclude>**/container-signature*.xml</exclude>
                         <exclude>**/tmp/**</exclude>
-                        <exlcude>**/profiles/**</exlcude>
                         <exclude>**/droid-test-db/**</exclude>
+                        <exclude>**/package-info.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -365,6 +365,10 @@
                         <link>${project.url}</link>
                         <link>${project.organization.url}</link>
                     </links>
+                    <!-- this won't work till version 2.11 is released -->
+                    <sourceFileExcludes>
+                        <exclude>**/package-info.java</exclude>
+                    </sourceFileExcludes>    
                     <packagesheader>DROID Packages</packagesheader>
                     <doctitle>DROID 6.1.5-SNAPSHOT</doctitle>
                     <windowtitle>DROID 6.1.5-SNAPSHOT</windowtitle>

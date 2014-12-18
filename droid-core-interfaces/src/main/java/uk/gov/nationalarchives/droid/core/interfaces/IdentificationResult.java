@@ -87,7 +87,6 @@ public interface IdentificationResult {
     
     /**
      * @return the request identifier
-     * @return
      */
     RequestIdentifier getIdentifier();
 

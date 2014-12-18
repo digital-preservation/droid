@@ -92,15 +92,15 @@ import uk.gov.nationalarchives.droid.core.signature.ByteReader;
  * that can match a target file against itself, but operating
  * over bytes rather than text.
  * 
- * <p/>It is composed of a list of {@link SubSequence} objects,
+ * <p>It is composed of a list of {@link SubSequence} objects,
  * all of which must match for the ByteSequence as a whole to 
- * match.
+ * match.</p>
  * 
- * <p/>Subsequences are effectively individual strings of bytes
+ * <p>Subsequences are effectively individual strings of bytes
  * (albeit complex ones, including alternate strings and gaps), 
  * separated from each other by wildcard .* operators.  If there
  * are no .* operators in a ByteSequence, then there is only one
- * SubSequence.
+ * SubSequence.</p>
  *
  * @author Martin Waller
  * @version 6.0.0
