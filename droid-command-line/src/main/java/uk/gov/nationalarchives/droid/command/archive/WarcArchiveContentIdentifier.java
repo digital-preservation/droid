@@ -115,12 +115,11 @@ public class WarcArchiveContentIdentifier {
                 WarcRecord record = null;
                 while (iterator.hasNext()) {
                     record = iterator.next();
-                    // skip WARC-internal records, any dns requests, and non 200 responses
-                    while (record != null
-                            && ("warc-fields".equals(record.header.contentType.mediaType)
-                            || "dns".equals(record.header.contentType.mediaType)
-                            || record.getHttpHeader().statusCode == null
-                            || httpACCEPTED != record.getHttpHeader().statusCode)) {
+                    // skip all but responses, and only accept HTTP 200s
+                    while ( record != null
+                            && ( !"response".equals(record.header.warcTypeStr)
+                            ||  record.getHttpHeader() == null
+                            || (httpACCEPTED != record.getHttpHeader().statusCode))) {
                         if (iterator.hasNext()) {
                             record = iterator.next();
                         } else {

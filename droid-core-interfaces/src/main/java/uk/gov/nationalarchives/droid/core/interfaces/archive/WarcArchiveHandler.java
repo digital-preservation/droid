@@ -117,11 +117,11 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
             WarcRecord record = null;
             if (this.iterator.hasNext()) {
                 record = this.iterator.next();
-                // skip WARC-internal records, any dns requests, and non 200 responses
-                while ("warc-fields".equals(record.header.contentType.mediaType)
-                        || "dns".equals(record.header.contentType.mediaType)
-                        ||  record.getHttpHeader().statusCode == null
-                        || (HTTP_ACCEPTED != record.getHttpHeader().statusCode)) {
+                // skip all but responses, and only accept HTTP 200s
+                while (record != null
+                        && (!"response".equals(record.header.warcTypeStr)
+                        ||  record.getHttpHeader() == null
+                        || (HTTP_ACCEPTED != record.getHttpHeader().statusCode))) {
                     if (this.iterator.hasNext()) {
                         record = this.iterator.next();
                     } else {
@@ -184,6 +184,8 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
 
         @Override
         protected void handleEntry(WarcRecord entry) throws IOException {
+            final int maxLEN = 255;
+
             String entryUri = entry.header.warcTargetUriStr;
             String entryPath = new URL(entryUri).getFile();
             // remove querystring if any (may include slashes)
@@ -203,8 +205,10 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                             requestUri, parentId, parentName, directories);
                 }
             }
+            // if the file name (including querystring) is > 255 chars, truncate it for the DB and readability
+            String truncatedName = entryName.length() < maxLEN ? entryName : entryName.substring(0, maxLEN);
 
-            submit(entry, entryName, parentName, in, correlationId, originatorNodeId);
+            submit(entry, truncatedName, parentName, in, correlationId, originatorNodeId);
         }
 
     }

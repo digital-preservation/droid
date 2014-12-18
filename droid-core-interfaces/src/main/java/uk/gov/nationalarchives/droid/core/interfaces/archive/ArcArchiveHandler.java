@@ -183,6 +183,8 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
 
         @Override
         protected void handleEntry(ArcRecordBase entry) throws IOException {
+            final int maxLEN = 255;
+
             String entryUri = entry.getUrl().toString();
             String entryPath = new URL(entryUri).getFile();
             // remove querystring to get prefix (may include slashes)
@@ -202,8 +204,10 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
                         requestUri, parentId, parentName, directories);
                 }
             }
+            // if the file name (including querystring) is > 255 chars, truncate it for the DB and readability
+            String truncatedName = entryName.length() < maxLEN ? entryName : entryName.substring(0, maxLEN);
 
-            submit(entry, entryName, parentName, in, correlationId, originatorNodeId);
+            submit(entry, truncatedName, parentName, in, correlationId, originatorNodeId);
         }
 
     }
