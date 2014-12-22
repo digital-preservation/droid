@@ -126,7 +126,10 @@ public class ProfileInstance {
 
     @XmlElement(name = "ProcessArchiveFiles")
     private Boolean processArchiveFiles;
-    
+
+    @XmlElement(name = "ProcessWebArchiveFiles")
+    private Boolean processWebArchiveFiles;
+
     @XmlElement(name = "MaxBytesToScan")
     private Long maxBytesToScan;
     
@@ -566,7 +569,12 @@ public class ProfileInstance {
     public Boolean getProcessArchiveFiles() {
         return processArchiveFiles;
     }
-    
+
+    /**
+     *
+     * @return Whether to process webarchive files or not.
+     */
+    public Boolean getProcessWebArchiveFiles() { return processWebArchiveFiles; }
     /**
      * 
      * @param processArchiveFiles Whether to process archive files or not.
@@ -574,7 +582,13 @@ public class ProfileInstance {
     public void setProcessArchiveFiles(boolean processArchiveFiles) {
         this.processArchiveFiles = processArchiveFiles;
     }
-
+    /**
+     *
+     * @param processWebArchiveFiles Whether to process web archive files or not.
+     */
+    public void setProcessWebArchiveFiles(boolean processWebArchiveFiles) {
+        this.processWebArchiveFiles = processWebArchiveFiles;
+    }
     /**
      * 
      * @return The maximum bytes to scan from the beginning and end of a file, 

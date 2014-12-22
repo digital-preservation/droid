@@ -36,9 +36,10 @@ import java.util.List;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
-import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.ZipArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.ArcArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.WarcArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.container.Ole2ContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
@@ -75,6 +76,7 @@ public class ResultPrinter {
     private String slash1;
     private String wrongSlash;
     private boolean archives;
+    private boolean webArchives;
     private final String OLE2_CONTAINER = "OLE2";
     private final String ZIP_CONTAINER = "ZIP";
     private final String ZIP_ARCHIVE = "x-fmt/263";
@@ -83,6 +85,7 @@ public class ResultPrinter {
     private final String GZIP_ARCHIVE = "x-fmt/266";
     private final String ARC_ARCHIVE = "x-fmt/219";
     private final String OTHERARC_ARCHIVE = "fmt/410";
+    private final String WARC_ARCHIVE = "fmt/289";
     
     /**
      * Store signature files.
@@ -93,10 +96,11 @@ public class ResultPrinter {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      * @param archives                      Should archives be examined?
+     * @param webArchives                   Should web archives be examined?
      */
     public ResultPrinter(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
-            final String path, final String slash, final String slash1, boolean archives) {
+            final String path, final String slash, final String slash1, boolean archives, boolean webArchives) {
     
         this.binarySignatureIdentifier = binarySignatureIdentifier;
         this.containerSignatureDefinitions = containerSignatureDefinitions;
@@ -105,6 +109,7 @@ public class ResultPrinter {
         this.slash1 = slash1;
         this.wrongSlash = this.slash.equals(R_SLASH) ? "\\" : R_SLASH;
         this.archives = archives;
+        this.webArchives = webArchives;
         if (containerSignatureDefinitions != null) {
             triggerPuids = containerSignatureDefinitions.getTiggerPuids();
         }
@@ -118,6 +123,7 @@ public class ResultPrinter {
      * 
      * @throws CommandExecutionException    if unexpected container type encountered
      */
+    //CHECKSTYLE:OFF
     public void print(final IdentificationResultCollection results,
             final IdentificationRequest request) throws CommandExecutionException {
         
@@ -159,11 +165,19 @@ public class ResultPrinter {
                                 new ZipArchiveContentIdentifier(binarySignatureIdentifier,
                                     containerSignatureDefinitions, path, slash, slash1);
                         zipArchiveIdentifier.identify(results.getUri(), request);
-                    }  else if (ARC_ARCHIVE.equals(puid) || OTHERARC_ARCHIVE.equals(puid)) {
+                    }
+                }
+                if (webArchives) {
+                    if (ARC_ARCHIVE.equals(puid) || OTHERARC_ARCHIVE.equals(puid)) {
                         ArcArchiveContentIdentifier arcArchiveIdentifier =
                                 new ArcArchiveContentIdentifier(binarySignatureIdentifier,
                                         containerSignatureDefinitions, path, slash, slash1);
                         arcArchiveIdentifier.identify(results.getUri(), request);
+                    } else if (WARC_ARCHIVE.equals(puid)) {
+                        WarcArchiveContentIdentifier warcArchiveIdentifier =
+                                new WarcArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1);
+                        warcArchiveIdentifier.identify(results.getUri(), request);
                     }
                 }
             }   
@@ -171,7 +185,7 @@ public class ResultPrinter {
             System.out.println(fileName + ",Unknown");
         }
     }
-    
+    //CHECKSTYLE:ON
     private IdentificationResultCollection getContainerResults(
         final IdentificationResultCollection results,
         final IdentificationRequest request, final String fileName) throws CommandExecutionException {

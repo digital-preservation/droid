@@ -117,7 +117,7 @@ public class ZipArchiveContentIdentifier {
                                 binarySignatureIdentifier.matchBinarySignatures(zipRequest);
                         final ResultPrinter resultPrinter =
                                 new ResultPrinter(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, newPath, slash, slash1, true);
+                                    containerSignatureDefinitions, newPath, slash, slash1, true, false);
                         resultPrinter.print(zipResults, zipRequest);
                     }
                 }

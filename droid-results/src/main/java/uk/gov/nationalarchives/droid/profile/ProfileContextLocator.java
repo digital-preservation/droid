@@ -89,6 +89,8 @@ public class ProfileContextLocator {
                     .getBoolean(DroidGlobalProperty.GENERATE_HASH.getName()));
             profileInstance.setProcessArchiveFiles(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.PROCESS_ARCHIVES.getName()));
+            profileInstance.setProcessWebArchiveFiles(globalConfig.getProperties()
+                    .getBoolean(DroidGlobalProperty.PROCESS_WEB_ARCHIVES.getName()));
             profileInstance.setMaxBytesToScan(globalConfig.getProperties()
                     .getLong(DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName()));
             profileInstance.setMatchAllExtensions(globalConfig.getProperties()
@@ -164,6 +166,7 @@ public class ProfileContextLocator {
         
         props.setProperty("containerSigPath", containerSignatureFile.getPath()); 
         props.setProperty("processArchives", String.valueOf(profile.getProcessArchiveFiles()));
+        props.setProperty("processWebArchives", String.valueOf(profile.getProcessWebArchiveFiles()));
         props.setProperty("generateHash", String.valueOf(profile.getGenerateHash()));
         props.setProperty("hashAlgorithm", String.valueOf(profile.getHashAlgorithm()));
         props.setProperty("maxBytesToScan", String.valueOf(profile.getMaxBytesToScan()));

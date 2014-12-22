@@ -144,7 +144,7 @@ public class ArcArchiveContentIdentifier {
                             binarySignatureIdentifier.matchBinarySignatures(arcRequest);
                         final ResultPrinter resultPrinter =
                             new ResultPrinter(binarySignatureIdentifier,
-                                containerSignatureDefinitions, newPath, slash, slash1, true);
+                                containerSignatureDefinitions, newPath, slash, slash1, true, true);
                         resultPrinter.print(arcResults, arcRequest);
                     }
                 }
