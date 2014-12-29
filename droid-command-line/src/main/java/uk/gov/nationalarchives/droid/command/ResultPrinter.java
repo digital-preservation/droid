@@ -153,7 +153,7 @@ public class ResultPrinter {
                     if (GZIP_ARCHIVE.equals(puid)) {
                         GZipArchiveContentIdentifier gzipArchiveIdentifier = 
                                 new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, path, slash, slash1);
+                                    containerSignatureDefinitions, path, slash, slash1, webArchives);
                         gzipArchiveIdentifier.identify(results.getUri(), request);
                     } else if (TAR_ARCHIVE.equals(puid)) {
                         TarArchiveContentIdentifier tarArchiveIdentifier = 
@@ -167,7 +167,7 @@ public class ResultPrinter {
                         zipArchiveIdentifier.identify(results.getUri(), request);
                     }
                 }
-                if (webArchives) {
+                if (webArchives && !container) {
                     if (ARC_ARCHIVE.equals(puid) || OTHERARC_ARCHIVE.equals(puid)) {
                         ArcArchiveContentIdentifier arcArchiveIdentifier =
                                 new ArcArchiveContentIdentifier(binarySignatureIdentifier,

@@ -65,6 +65,7 @@ public class GZipArchiveContentIdentifier {
     private String slash;
     private String slash1;
     private File tmpDir;
+    private Boolean expandWebArchives;
     
     /**
      * 
@@ -73,10 +74,11 @@ public class GZipArchiveContentIdentifier {
      * @param path                          current archive path 
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
+     * @param webArchives                   Whether to further expand gzipped web archive files
      */
     public GZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
-            final String path, final String slash, final String slash1) {
+            final String path, final String slash, final String slash1, final Boolean webArchives) {
     
         synchronized (this) {
             this.binarySignatureIdentifier = binarySignatureIdentifier;
@@ -87,6 +89,7 @@ public class GZipArchiveContentIdentifier {
             if (tmpDir == null) {
                 tmpDir = new File(System.getProperty("java.io.tmpdir"));
             }
+            this.expandWebArchives = webArchives;
         }
     }
     
@@ -118,7 +121,7 @@ public class GZipArchiveContentIdentifier {
                      binarySignatureIdentifier.matchBinarySignatures(gzRequest);
             
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, false);
+                    containerSignatureDefinitions, newPath, slash, slash1, true, expandWebArchives);
             resultPrinter.print(gzResults, gzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 

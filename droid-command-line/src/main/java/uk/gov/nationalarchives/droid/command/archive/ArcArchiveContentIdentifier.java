@@ -107,27 +107,18 @@ public class ArcArchiveContentIdentifier {
         final String newPath = "arc:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
         final IdentificationRequestFactory factory  = new WebArchiveEntryRequestFactory();
-
         try {
-            InputStream arcIn = request.getSourceInputStream();
+            final InputStream arcIn = request.getSourceInputStream();
             ArcReader arcReader = ArcReaderFactory.getReader(arcIn);
             Iterator<ArcRecordBase> iterator = arcReader.iterator();
             try {
                 ArcRecordBase base = null;
                 while (iterator.hasNext()) {
                     base = iterator.next();
-                    String scheme = base.getScheme();
                     // skip the header record at the start and any dns requests
-                    while (!(base instanceof ArcRecord) || "dns".equals(scheme)
-                           || base.getHttpHeader().statusCode != httpACCEPTED) {
-                        if (iterator.hasNext()) {
-                            base = iterator.next();
-                        } else {
-                            base = null;
-                        }
-                    }
-                    if (base != null) {
-                        scheme = base.getScheme();
+                    if (base instanceof ArcRecord
+                        && base.getHttpHeader() != null
+                        && base.getHttpHeader().statusCode == httpACCEPTED) {
                         // no directory structure, so we use the full url as name
                         String name = base.getUrl().toString();
 

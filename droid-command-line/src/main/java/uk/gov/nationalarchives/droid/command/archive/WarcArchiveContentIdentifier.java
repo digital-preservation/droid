@@ -116,17 +116,10 @@ public class WarcArchiveContentIdentifier {
                 while (iterator.hasNext()) {
                     record = iterator.next();
                     // skip all but responses, and only accept HTTP 200s
-                    while ( record != null
-                            && ( !"response".equals(record.header.warcTypeStr)
-                            ||  record.getHttpHeader() == null
-                            || (httpACCEPTED != record.getHttpHeader().statusCode))) {
-                        if (iterator.hasNext()) {
-                            record = iterator.next();
-                        } else {
-                            record = null;
-                        }
-                    }
-                    if (record != null) {
+                    // This means .wat and .wet files will report as empty
+                    if ( "response".equals(record.header.warcTypeStr)
+                        && record.getHttpHeader() != null
+                        && httpACCEPTED != record.getHttpHeader().statusCode) {
                         // no directory structure, so we use the full url as name
                         String name = record.header.warcTargetUriStr;
 
