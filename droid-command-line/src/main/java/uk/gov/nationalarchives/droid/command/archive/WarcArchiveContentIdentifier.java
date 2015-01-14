@@ -119,7 +119,7 @@ public class WarcArchiveContentIdentifier {
                     // This means .wat and .wet files will report as empty
                     if ( "response".equals(record.header.warcTypeStr)
                         && record.getHttpHeader() != null
-                        && httpACCEPTED != record.getHttpHeader().statusCode) {
+                        && httpACCEPTED == record.getHttpHeader().statusCode) {
                         // no directory structure, so we use the full url as name
                         String name = record.header.warcTargetUriStr;
 
