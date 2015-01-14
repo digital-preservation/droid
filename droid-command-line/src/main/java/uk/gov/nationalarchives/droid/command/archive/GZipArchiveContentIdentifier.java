@@ -114,7 +114,7 @@ public class GZipArchiveContentIdentifier {
         GzipCompressorInputStream gzin = null;
         try {
             gzin = new GzipCompressorInputStream(
-                new FileInputStream(request.getSourceFile()));
+                new FileInputStream(request.getSourceFile()), true);
 
             gzRequest.open(gzin);
             final IdentificationResultCollection gzResults =
