@@ -184,7 +184,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
 
         @Override
         protected void handleEntry(WarcRecord entry) throws IOException {
-            final int maxLEN = 255;
+            final int maxLEN = 4095;
 
             String entryUri = entry.header.warcTargetUriStr;
             String entryPath = new URL(entryUri).getFile();
@@ -205,7 +205,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                             requestUri, parentId, parentName, directories);
                 }
             }
-            // if the file name (including querystring) is > 255 chars, truncate it for the DB and readability
+            // if the file name (including querystring) is > 4096 chars, truncate it for the DB
             String truncatedName = entryName.length() < maxLEN ? entryName : entryName.substring(0, maxLEN);
 
             submit(entry, truncatedName, parentName, in, correlationId, originatorNodeId);
