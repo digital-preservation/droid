@@ -137,6 +137,7 @@ public class ArcArchiveContentIdentifier {
                             new ResultPrinter(binarySignatureIdentifier,
                                 containerSignatureDefinitions, newPath, slash, slash1, true, true);
                         resultPrinter.print(arcResults, arcRequest);
+                        arcRequest.close();
                     }
                 }
             } finally {

@@ -123,6 +123,7 @@ public class GZipArchiveContentIdentifier {
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
                     containerSignatureDefinitions, newPath, slash, slash1, true, expandWebArchives);
             resultPrinter.print(gzResults, gzRequest);
+            gzRequest.close();
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 
         } finally {

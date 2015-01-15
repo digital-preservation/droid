@@ -118,6 +118,7 @@ public class TarArchiveContentIdentifier {
                                 new ResultPrinter(binarySignatureIdentifier,
                                     containerSignatureDefinitions, newPath, slash, slash1, true, false);
                         resultPrinter.print(tarResults, tarRequest);
+                        tarRequest.close();
                     }
                 }
             } finally {
