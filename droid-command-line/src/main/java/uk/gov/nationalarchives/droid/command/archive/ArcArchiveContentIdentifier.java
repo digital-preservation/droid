@@ -35,9 +35,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Iterator;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.jwat.arc.ArcReader;
+import org.jwat.arc.ArcReaderFactory;
+import org.jwat.arc.ArcRecord;
+import org.jwat.arc.ArcRecordBase;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
@@ -46,15 +49,16 @@ import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentificationRequest;
 
 /**
- * Identifier for files held in a ZIP archive.
+ * Identifier for files held in an ARC archive.
  * 
  * @author rbrennan
  */
-public class ZipArchiveContentIdentifier {
+public class ArcArchiveContentIdentifier {
 
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
@@ -71,7 +75,7 @@ public class ZipArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public ZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
+    public ArcArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
@@ -91,52 +95,58 @@ public class ZipArchiveContentIdentifier {
      * @param uri The URI of the file to identify
      * @param request The Identification Request
      * @throws CommandExecutionException When an exception happens during execution
-     * @throws CommandExecutionException When an exception happens during archive file access
+     * @throws CommandExecutionException When an exception happens during archive access
      */
     public void identify(final URI uri, final IdentificationRequest request)
         throws CommandExecutionException {
+        /**
+         * Save importing all the http codes
+         */
+        final int httpACCEPTED = 200;
         
-        final String newPath = "zip:" + slash1 + path + request.getFileName() + "!" + slash;
+        final String newPath = "arc:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
-        InputStream zipIn = null; 
+        final IdentificationRequestFactory factory  = new WebArchiveEntryRequestFactory();
         try {
-            zipIn = request.getSourceInputStream(); 
-            final ZipArchiveInputStream in = new ZipArchiveInputStream(zipIn);
+            final InputStream arcIn = request.getSourceInputStream();
+            ArcReader arcReader = ArcReaderFactory.getReader(arcIn);
+            Iterator<ArcRecordBase> iterator = arcReader.iterator();
             try {
-                ZipArchiveEntry entry = null; 
-                while ((entry = (ZipArchiveEntry) in.getNextZipEntry()) != null) {
-                    final String name = entry.getName();
-                    if (!entry.isDirectory()) {
-                        final RequestMetaData metaData = new RequestMetaData(1L, 2L, name);
+                ArcRecordBase base = null;
+                while (iterator.hasNext()) {
+                    base = iterator.next();
+                    // skip the header record at the start and any dns requests
+                    if (base instanceof ArcRecord
+                        && base.getHttpHeader() != null
+                        && base.getHttpHeader().statusCode == httpACCEPTED) {
+                        // no directory structure, so we use the full url as name
+                        String name = base.getUrl().toString();
+
+                        RequestMetaData metaData = new RequestMetaData(
+                                base.getArchiveLength(),
+                                base.getArchiveDate().getTime(),
+                            name);
+
                         final RequestIdentifier identifier = new RequestIdentifier(uri);
-                        final ZipEntryIdentificationRequest zipRequest =
-                            new ZipEntryIdentificationRequest(metaData, identifier, tmpDir);
-                        
-                        zipRequest.open(in);
-                        final IdentificationResultCollection zipResults =
-                                binarySignatureIdentifier.matchBinarySignatures(zipRequest);
+
+                        IdentificationRequest arcRequest = factory.newRequest(metaData, identifier);
+                        arcRequest.open(base.getPayloadContent());
+                        final IdentificationResultCollection arcResults =
+                            binarySignatureIdentifier.matchBinarySignatures(arcRequest);
                         final ResultPrinter resultPrinter =
-                                new ResultPrinter(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, newPath, slash, slash1, true, false);
-                        resultPrinter.print(zipResults, zipRequest);
-                        zipRequest.close();
+                            new ResultPrinter(binarySignatureIdentifier,
+                                containerSignatureDefinitions, newPath, slash, slash1, true, true);
+                        resultPrinter.print(arcResults, arcRequest);
+                        arcRequest.close();
                     }
                 }
             } finally {
-                if (in != null) {
-                    in.close();
+                if (arcIn != null) {
+                    arcIn.close();
                 }
             }
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 
-        } finally {
-            if (zipIn != null) {
-                try {
-                    zipIn.close();
-                } catch (IOException ioe) {
-                    throw new CommandExecutionException(ioe.getMessage(), ioe);
-                }
-            }
         }
     }
 }

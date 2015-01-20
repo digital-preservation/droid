@@ -60,6 +60,7 @@ public final class ArchiveFileUtils {
     private static final String TEMP_FILENAME_PREFIX = "droid-archive~";
     private static final String SSP_DELIMITER = ":/";
     private static final String ARCHIVE_DELIMITER = "!/";
+    private static final String COLON = ":";
     private static final int WRITE_BUFFER_CAPACITY = 8192;
 
     private ArchiveFileUtils() { };
@@ -96,6 +97,25 @@ public final class ArchiveFileUtils {
         try {
             return new URI("tar:" + parentScheme, 
                     parentSsp + ARCHIVE_DELIMITER + FilenameUtils.separatorsToUnix(tarEntry), null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Builds a URI for a webarchive file entry modelled on the apache-commons format used for tar files.
+     * @param archiveType arc or warc
+     * @param parent the parent file
+     * @param warcEntry the webarchive entry
+     * @return the URI
+     */
+    public static URI toWebArchiveUri(String archiveType, URI parent, String warcEntry) {
+        String parentScheme = parent.getScheme();
+        String parentSsp = parent.getSchemeSpecificPart();
+
+        try {
+            return new URI(archiveType + COLON + parentScheme,
+                    parentSsp + ARCHIVE_DELIMITER + warcEntry, null);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -240,7 +260,7 @@ public final class ArchiveFileUtils {
         String originSsp = StringUtils.substringBetween(requestUri.toString(), SSP_DELIMITER, "!");
         String scheme = StringUtils.substringBefore(requestUri.toString(), SSP_DELIMITER);
         if (originSsp != null) {
-            return URI.create(StringUtils.substringAfterLast(scheme, ":") + SSP_DELIMITER + originSsp);
+            return URI.create(StringUtils.substringAfterLast(scheme, COLON) + SSP_DELIMITER + originSsp);
         }
         
         return requestUri;

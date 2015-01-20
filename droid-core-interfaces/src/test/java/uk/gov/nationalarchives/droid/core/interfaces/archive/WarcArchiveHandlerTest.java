@@ -31,55 +31,55 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import org.junit.Before;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.jwat.warc.WarcReader;
+import org.jwat.warc.WarcReaderFactory;
+import org.jwat.warc.WarcRecord;
+import org.jwat.common.ByteCountingPushBackInputStream;
+
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
+import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 /**
- * @author rflitcroft
+ * @author gseaman
  *
  */
-public class ArchiveHandlerFactoryTest {
+public class WarcArchiveHandlerTest {
 
-    private ArchiveHandlerFactoryImpl factory;
-    private ArchiveHandler zipHandler;
-    private ArchiveHandler tarHandler;
-    private ArchiveHandler gzHandler;
-    private ArchiveHandler arcHandler;
-    
-    @Before
-    public void setup() {
-        factory = new ArchiveHandlerFactoryImpl();
-        
-        zipHandler = mock(ArchiveHandler.class);
-        tarHandler = mock(ArchiveHandler.class);
-        gzHandler = mock(ArchiveHandler.class);
-        arcHandler = mock(ArchiveHandler.class);
-        
-        Map<String, ArchiveHandler> handlers = new HashMap<String, ArchiveHandler>();
-        
-        handlers.put("ZIP", zipHandler);
-        handlers.put("TAR", tarHandler);
-        handlers.put("GZ", gzHandler);
-        handlers.put("ARC", arcHandler);
-        
-        factory.setHandlers(handlers);
-        
-    }
-    
     @Test
-    public void testGetEachTypeOfHandler() {
-     
-        assertEquals(zipHandler, factory.getHandler("ZIP"));
-        assertEquals(tarHandler, factory.getHandler("TAR"));
-        assertEquals(gzHandler, factory.getHandler("GZ"));
-        assertEquals(arcHandler, factory.getHandler("ARC"));
+    public void testHandleWarcFile() throws Exception {
+
+        File file = new File(getClass().getResource("/expanded.warc").getFile());
+        InputStream in = new FileInputStream(file);
+        ByteCountingPushBackInputStream bpin = new ByteCountingPushBackInputStream(in, 512);
+        assertEquals(true, WarcReaderFactory.isWarcFile(bpin));
     }
-    
 }

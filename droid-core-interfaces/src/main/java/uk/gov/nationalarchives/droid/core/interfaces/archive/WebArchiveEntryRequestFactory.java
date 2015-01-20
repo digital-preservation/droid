@@ -31,55 +31,25 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import org.junit.Before;
-import org.junit.Test;
-
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.WebArchiveEntryIdentificationRequest;
 
 /**
  * @author rflitcroft
  *
  */
-public class ArchiveHandlerFactoryTest {
+public class WebArchiveEntryRequestFactory extends AbstractArchiveRequestFactory {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
+        final IdentificationRequest request =
+            new WebArchiveEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
+        
+        return request;
+    }
 
-    private ArchiveHandlerFactoryImpl factory;
-    private ArchiveHandler zipHandler;
-    private ArchiveHandler tarHandler;
-    private ArchiveHandler gzHandler;
-    private ArchiveHandler arcHandler;
-    
-    @Before
-    public void setup() {
-        factory = new ArchiveHandlerFactoryImpl();
-        
-        zipHandler = mock(ArchiveHandler.class);
-        tarHandler = mock(ArchiveHandler.class);
-        gzHandler = mock(ArchiveHandler.class);
-        arcHandler = mock(ArchiveHandler.class);
-        
-        Map<String, ArchiveHandler> handlers = new HashMap<String, ArchiveHandler>();
-        
-        handlers.put("ZIP", zipHandler);
-        handlers.put("TAR", tarHandler);
-        handlers.put("GZ", gzHandler);
-        handlers.put("ARC", arcHandler);
-        
-        factory.setHandlers(handlers);
-        
-    }
-    
-    @Test
-    public void testGetEachTypeOfHandler() {
-     
-        assertEquals(zipHandler, factory.getHandler("ZIP"));
-        assertEquals(tarHandler, factory.getHandler("TAR"));
-        assertEquals(gzHandler, factory.getHandler("GZ"));
-        assertEquals(arcHandler, factory.getHandler("ARC"));
-    }
-    
 }

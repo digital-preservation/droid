@@ -35,9 +35,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Iterator;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.jwat.warc.WarcReader;
+import org.jwat.warc.WarcReaderFactory;
+import org.jwat.warc.WarcRecord;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
@@ -46,15 +48,16 @@ import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentificationRequest;
 
 /**
- * Identifier for files held in a ZIP archive.
+ * Identifier for files held in a WARC archive.
  * 
  * @author rbrennan
  */
-public class ZipArchiveContentIdentifier {
+public class WarcArchiveContentIdentifier {
 
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
@@ -71,7 +74,7 @@ public class ZipArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public ZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
+    public WarcArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
@@ -91,52 +94,61 @@ public class ZipArchiveContentIdentifier {
      * @param uri The URI of the file to identify
      * @param request The Identification Request
      * @throws CommandExecutionException When an exception happens during execution
-     * @throws CommandExecutionException When an exception happens during archive file access
+     * @throws CommandExecutionException When an exception happens during archive access
      */
+    //CHECKSTYLE:OFF
     public void identify(final URI uri, final IdentificationRequest request)
         throws CommandExecutionException {
+        /**
+         * Save importing all the http codes
+         */
+        final int httpACCEPTED = 200;
         
-        final String newPath = "zip:" + slash1 + path + request.getFileName() + "!" + slash;
+        final String newPath = "warc:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
-        InputStream zipIn = null; 
+        final IdentificationRequestFactory factory  = new WebArchiveEntryRequestFactory();
         try {
-            zipIn = request.getSourceInputStream(); 
-            final ZipArchiveInputStream in = new ZipArchiveInputStream(zipIn);
+            InputStream warcIn = request.getSourceInputStream();
+            WarcReader warcReader = WarcReaderFactory.getReader(warcIn);
+            Iterator<WarcRecord> iterator = warcReader.iterator();
             try {
-                ZipArchiveEntry entry = null; 
-                while ((entry = (ZipArchiveEntry) in.getNextZipEntry()) != null) {
-                    final String name = entry.getName();
-                    if (!entry.isDirectory()) {
-                        final RequestMetaData metaData = new RequestMetaData(1L, 2L, name);
+                WarcRecord record = null;
+                while (iterator.hasNext()) {
+                    record = iterator.next();
+                    // skip all but responses, and only accept HTTP 200s
+                    // This means .wat and .wet files will report as empty
+                    if ( "response".equals(record.header.warcTypeStr)
+                        && record.getHttpHeader() != null
+                        && httpACCEPTED == record.getHttpHeader().statusCode) {
+                        // no directory structure, so we use the full url as name
+                        String name = record.header.warcTargetUriStr;
+
+                        RequestMetaData metaData = new RequestMetaData(
+                            record.header.contentLength,
+                            record.header.warcDate.getTime(),
+                            name);
+
                         final RequestIdentifier identifier = new RequestIdentifier(uri);
-                        final ZipEntryIdentificationRequest zipRequest =
-                            new ZipEntryIdentificationRequest(metaData, identifier, tmpDir);
-                        
-                        zipRequest.open(in);
-                        final IdentificationResultCollection zipResults =
-                                binarySignatureIdentifier.matchBinarySignatures(zipRequest);
+
+                        IdentificationRequest arcRequest = factory.newRequest(metaData, identifier);
+                        arcRequest.open(record.getPayloadContent());
+                        final IdentificationResultCollection arcResults =
+                            binarySignatureIdentifier.matchBinarySignatures(arcRequest);
                         final ResultPrinter resultPrinter =
-                                new ResultPrinter(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, newPath, slash, slash1, true, false);
-                        resultPrinter.print(zipResults, zipRequest);
-                        zipRequest.close();
+                            new ResultPrinter(binarySignatureIdentifier,
+                                containerSignatureDefinitions, newPath, slash, slash1, true, true);
+                        resultPrinter.print(arcResults, arcRequest);
+                        arcRequest.close();
                     }
                 }
             } finally {
-                if (in != null) {
-                    in.close();
+                if (warcIn != null) {
+                    warcIn.close();
                 }
             }
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 
-        } finally {
-            if (zipIn != null) {
-                try {
-                    zipIn.close();
-                } catch (IOException ioe) {
-                    throw new CommandExecutionException(ioe.getMessage(), ioe);
-                }
-            }
         }
     }
+    //CHECKSTYLE:ON
 }

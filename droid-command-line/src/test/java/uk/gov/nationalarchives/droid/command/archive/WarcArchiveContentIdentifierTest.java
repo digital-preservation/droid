@@ -53,17 +53,17 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  *
  * @author rbrennan
  */
-public class GZipArchiveContentIdentifierTest {
+public class WarcArchiveContentIdentifierTest {
     
     private BinarySignatureIdentifier binarySignatureIdentifier;
-    private GZipArchiveContentIdentifier gZipArchiveContentIdentifier;
+    private WarcArchiveContentIdentifier warcArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
             "src/test/resources/signatures/DROID_SignatureFile_V78.xml";
     private String containerSignatures =
             "src/test/resources/signatures/container-signature-20140922.xml";
-    private String gZipFile =
-            "src/test/resources/testfiles/test.gz";
+    private String warcFile =
+            "src/test/resources/testfiles/expanded.warc";
     
     @Before
     public void setUp() throws CommandExecutionException {
@@ -83,25 +83,25 @@ public class GZipArchiveContentIdentifierTest {
         } catch (Exception e) {
             throw new CommandExecutionException(e);
         }
-        gZipArchiveContentIdentifier =
-                new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", false);
+        warcArchiveContentIdentifier =
+                new WarcArchiveContentIdentifier(binarySignatureIdentifier,
+                    containerSignatureDefinitions, "", "/", "/");
     }
     
     @After
     public void tearDown() {
-        gZipArchiveContentIdentifier = null;
+        warcArchiveContentIdentifier = null;
         containerSignatureDefinitions = null;
         binarySignatureIdentifier = null;
     }
     
     @Test
-    public void identifyGZipArchiveTest() throws CommandExecutionException {
+    public void identifyWarcArchiveTest() throws CommandExecutionException {
 
         String fileName;
-        File file = new File(gZipFile);
+        File file = new File(warcFile);
         if (!file.exists()) {
-            fail("GZIP test file not found");
+            fail("WARC test file not found");
         }
         URI uri = file.toURI();
         RequestIdentifier identifier = new RequestIdentifier(uri);
@@ -113,11 +113,10 @@ public class GZipArchiveContentIdentifierTest {
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
 
-            InputStream gZipStream = new FileInputStream(file);
-            request.open(gZipStream);
-            gZipArchiveContentIdentifier.identify(uri, request);
-
-        } catch (IOException e) {
+            InputStream warcStream = new FileInputStream(file);
+            request.open(warcStream);
+            warcArchiveContentIdentifier.identify(uri, request);
+        } catch (Exception e) {
             throw new CommandExecutionException(e);
         }
     }

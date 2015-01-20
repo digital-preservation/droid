@@ -84,6 +84,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private boolean quietFlag;
     private boolean recursive;
     private boolean archives;
+    private boolean webArchives;
     private Log log = LogFactory.getLog(this.getClass());
 
     //CHECKSTYLE:OFF
@@ -164,7 +165,7 @@ public class NoProfileRunCommand implements DroidCommand {
         path = "";
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
-                path, slash, slash1, archives);
+                path, slash, slash1, archives, webArchives);
 
         String fileName = null;
         for (File file : matchedFiles) {
@@ -207,7 +208,6 @@ public class NoProfileRunCommand implements DroidCommand {
             }
         }
     }
-    //CHECKSTYLE:ON
 
     private void outputRuntimeInformation(File targetDirectoryOrFile) {
     	
@@ -249,8 +249,9 @@ public class NoProfileRunCommand implements DroidCommand {
         }
         
         System.out.println("Open archives: " + (this.archives ? PRINTABLE_TRUE : PRINTABLE_FALSE));
+        System.out.println("Open web archives: " + (this.webArchives ? PRINTABLE_TRUE : PRINTABLE_FALSE));
     }
-
+    //CHECKSTYLE:ON
     /**
      * Set the resources.
      * 
@@ -286,7 +287,15 @@ public class NoProfileRunCommand implements DroidCommand {
     public void setArchives(boolean archives) {
         this.archives = archives;
     }
-    
+
+    /**
+     * Set whether this examines Web Archives.
+     *
+     * @param webArchives true if we should examine web archives, false otherwise
+     */
+    public void setWebArchives(boolean webArchives) {
+        this.webArchives = webArchives;
+    }
     /**
      * Set recursive.
      * 

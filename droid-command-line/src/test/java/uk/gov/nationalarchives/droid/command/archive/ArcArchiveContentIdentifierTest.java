@@ -53,17 +53,17 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  *
  * @author rbrennan
  */
-public class GZipArchiveContentIdentifierTest {
+public class ArcArchiveContentIdentifierTest {
     
     private BinarySignatureIdentifier binarySignatureIdentifier;
-    private GZipArchiveContentIdentifier gZipArchiveContentIdentifier;
+    private ArcArchiveContentIdentifier arcArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
             "src/test/resources/signatures/DROID_SignatureFile_V78.xml";
     private String containerSignatures =
             "src/test/resources/signatures/container-signature-20140922.xml";
-    private String gZipFile =
-            "src/test/resources/testfiles/test.gz";
+    private String arcFile =
+            "src/test/resources/testfiles/expanded.arc";
     
     @Before
     public void setUp() throws CommandExecutionException {
@@ -83,25 +83,25 @@ public class GZipArchiveContentIdentifierTest {
         } catch (Exception e) {
             throw new CommandExecutionException(e);
         }
-        gZipArchiveContentIdentifier =
-                new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", false);
+        arcArchiveContentIdentifier =
+                new ArcArchiveContentIdentifier(binarySignatureIdentifier,
+                    containerSignatureDefinitions, "", "/", "/");
     }
     
     @After
     public void tearDown() {
-        gZipArchiveContentIdentifier = null;
+        arcArchiveContentIdentifier = null;
         containerSignatureDefinitions = null;
         binarySignatureIdentifier = null;
     }
     
     @Test
-    public void identifyGZipArchiveTest() throws CommandExecutionException {
+    public void identifyArcArchiveTest() throws CommandExecutionException {
 
         String fileName;
-        File file = new File(gZipFile);
+        File file = new File(arcFile);
         if (!file.exists()) {
-            fail("GZIP test file not found");
+            fail("ARC test file not found");
         }
         URI uri = file.toURI();
         RequestIdentifier identifier = new RequestIdentifier(uri);
@@ -113,11 +113,10 @@ public class GZipArchiveContentIdentifierTest {
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
 
-            InputStream gZipStream = new FileInputStream(file);
-            request.open(gZipStream);
-            gZipArchiveContentIdentifier.identify(uri, request);
-
-        } catch (IOException e) {
+            InputStream arcStream = new FileInputStream(file);
+            request.open(arcStream);
+            arcArchiveContentIdentifier.identify(uri, request);
+        } catch (Exception e) {
             throw new CommandExecutionException(e);
         }
     }
