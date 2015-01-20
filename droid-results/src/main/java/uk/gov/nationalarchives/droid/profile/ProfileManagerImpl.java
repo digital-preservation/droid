@@ -159,8 +159,9 @@ public class ProfileManagerImpl implements ProfileManager {
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws SignatureFileException
+     * @param profileId String
+     * @throws IllegalArgumentException if profileId nonexistent
+     * @return Profile
      */
     @Override
     public ProfileInstance openProfile(String profileId) {
@@ -178,8 +179,7 @@ public class ProfileManagerImpl implements ProfileManager {
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws SignatureFileException
+     * @param profileInstance The profile to stop
      */
     @Override
     public void stop(String profileInstance) {
@@ -189,9 +189,9 @@ public class ProfileManagerImpl implements ProfileManager {
     }
 
     /**
-     * @param profileInstance
-     * @return
-     * @throws SignatureFileException
+     * @param profileInstance String
+     * @return ProfileInstanceManager
+     * @throws ProfileException if null profileInstance
      */
     private ProfileInstanceManager getProfileInstanceManager(
             String profileInstance) {

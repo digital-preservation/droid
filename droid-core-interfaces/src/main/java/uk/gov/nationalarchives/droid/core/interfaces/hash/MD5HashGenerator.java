@@ -44,7 +44,7 @@ public class MD5HashGenerator implements HashGenerator {
 
     /**
      * {@inheritDoc}
-     * @throws IOException 
+     * @throws IOException on failure to call md5Hex on Stream
      */
     @Override
     public String hash(InputStream in) throws IOException {

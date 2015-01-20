@@ -47,15 +47,15 @@ import uk.gov.nationalarchives.pronom.signaturefile.XmlFragment;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="SignatureFile" type="{http://www.nationalarchives.gov.uk/pronom/SignatureFile}SigFile"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="SignatureFile" type="{http://www.nationalarchives.gov.uk/pronom/SignatureFile}SigFile"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -74,8 +74,7 @@ public class GetSignatureFileV1Response {
      * Gets the value of the signatureFile property.
      * 
      * @return
-     *     possible object is
-     *     {@link SigFile }
+     *     possible object is XmlFragment
      *     
      */
     public XmlFragment getSignatureFile() {
@@ -86,8 +85,7 @@ public class GetSignatureFileV1Response {
      * Sets the value of the signatureFile property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link SigFile }
+     *     allowed object is XmlFragment
      *     
      */
     public void setSignatureFile(XmlFragment value) {

@@ -131,11 +131,11 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
  * the BoyerMooreHorpsool (BMH) algorithm.  This is known as the
  * "anchor" sequence.  
  * 
- * <p/>If necessary, it can include Left and 
+ * <p>If necessary, it can include Left and 
  * Right Fragments, which are parts of the extended string of
  * bytes which cannot be searched for using BMH.  These fragments
  * include features like alternative (A|B|C) and gaps in the 
- * string, e.g. {5} or {5-10}.   
+ * string, e.g. {5} or {5-10}.</p>   
  * 
  * 
  * @author Martin Waller
@@ -263,16 +263,9 @@ public class SubSequence extends SimpleElement {
     }    
 
     /**
-     * Note: unclear whether this is used anymore.
-     * 
-     * @param theLength The minimum length of a fragment.
-     */
-    /*
-    public final void setMinFragLength(final int theLength) {
-        this.minFragLength = theLength;
-    }
-    */
-
+     * @param name Name of attribute to set
+     * @param value Value of attribute to set (may be ignored)
+     */ 
     @Override
     public final void setAttributeValue(final String name, final String value) {
         if ("SubSeqMinOffset".equals(name)) {
@@ -594,6 +587,7 @@ public class SubSequence extends SimpleElement {
      * the beginning or end of the file.  If negative, scanning is unlimited.
      * @param bofSubsequence Indicates when subsequence is anchored to BOF
      * @param eofSubsequence Indicates when subsequence is anchored to EOF
+     * @return boolean True on success
      */
     //CHECKSTYLE:OFF - far too complex method.
     public final boolean findSequenceFromPosition(final long position, 

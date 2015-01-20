@@ -54,27 +54,27 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="FileProfileType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="profilingStartDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="profilingEndDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="profilingSaveDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="totalReadableFiles" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *         &lt;element name="totalUnreadableFiles" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *         &lt;element name="totalUnreadableFolders" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *         &lt;element name="totalSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="smallestSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="largestSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="meanSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="pathsProcessed" type="{http://www.nationalarchives.gov.uk/CollectionProfile}PathsProcessedType"/>
- *         &lt;element name="byYear" type="{http://www.nationalarchives.gov.uk/CollectionProfile}ByYearType"/>
- *         &lt;element name="byFormat" type="{http://www.nationalarchives.gov.uk/CollectionProfile}ByFormatType"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="FileProfileType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="profilingStartDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/&gt;
+ *         &lt;element name="profilingEndDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/&gt;
+ *         &lt;element name="profilingSaveDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/&gt;
+ *         &lt;element name="totalReadableFiles" type="{http://www.w3.org/2001/XMLSchema}integer"/&gt;
+ *         &lt;element name="totalUnreadableFiles" type="{http://www.w3.org/2001/XMLSchema}integer"/&gt;
+ *         &lt;element name="totalUnreadableFolders" type="{http://www.w3.org/2001/XMLSchema}integer"/&gt;
+ *         &lt;element name="totalSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/&gt;
+ *         &lt;element name="smallestSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/&gt;
+ *         &lt;element name="largestSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/&gt;
+ *         &lt;element name="meanSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/&gt;
+ *         &lt;element name="pathsProcessed" type="{http://www.nationalarchives.gov.uk/CollectionProfile}PathsProcessedType"/&gt;
+ *         &lt;element name="byYear" type="{http://www.nationalarchives.gov.uk/CollectionProfile}ByYearType"/&gt;
+ *         &lt;element name="byFormat" type="{http://www.nationalarchives.gov.uk/CollectionProfile}ByFormatType"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @deprecated PLANETS XML is now generated using XSLT over normal report xml files. 

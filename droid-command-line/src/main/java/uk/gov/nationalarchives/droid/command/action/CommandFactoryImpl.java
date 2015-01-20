@@ -281,7 +281,7 @@ public class CommandFactoryImpl implements CommandFactory {
     /**
      * {@inheritDoc}
      *
-     * @throws CommandLineSyntaxException
+     * @throws CommandLineSyntaxException on bad syntax in command
      */
     @Override
     public DroidCommand getConfigureDefaultSignatureVersionCommand(final CommandLine cli) throws CommandLineException {

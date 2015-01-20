@@ -52,7 +52,7 @@ public class ArchiveFormatResolverImpl implements ArchiveFormatResolver {
     }
     
     /**
-     * Sets the format -> puid mapping.
+     * Sets the format -&gt; puid mapping.
      * 
      * @param puids the PUIDS to set
      */

@@ -40,44 +40,44 @@ import java.util.Collection;
  */
 public enum ProfileState {
     
-    /** @return The profile is running. */
+    /** The profile is running. */
     RUNNING(true) { @Override 
         ProfileState[] nextStates() {
             return new ProfileState[] {STOPPED, FINISHED};
         }
     },
     
-    /** @return The profile has been stopped. */
+    /** The profile has been stopped. */
     STOPPED(false, true) { @Override ProfileState[] nextStates() {
             return new ProfileState[] {RUNNING, SAVING, FINISHED};
         }
     },
     
-    /** @return The profile is saving to disk. */
+    /** The profile is saving to disk. */
     SAVING(true) { @Override ProfileState[] nextStates() {
             return new ProfileState[] {VIRGIN, STOPPED, FINISHED};
         }
     },
     
-    /** @return The profile is loading from disk. */
+    /** The profile is loading from disk. */
     LOADING(true) { @Override ProfileState[] nextStates() {
             return new ProfileState[] {VIRGIN, STOPPED, FINISHED};
         }
     },
     
-    /** @return The profile is being initialised. */
+    /** The profile is being initialised. */
     INITIALISING(true) { @Override ProfileState[] nextStates() {
             return new ProfileState[] {VIRGIN, STOPPED, FINISHED};
         }
     }, 
     
-    /** @return The profile has never been run. */
+    /** The profile has never been run. */
     VIRGIN(false) { @Override ProfileState[] nextStates() {
             return new ProfileState[] {RUNNING, SAVING};
         }
     },
 
-    /** @return The profile has finished. */
+    /** The profile has finished. */
     FINISHED(false, true) { @Override ProfileState[] nextStates() {
             return new ProfileState[] {SAVING};
         }
@@ -109,7 +109,6 @@ public enum ProfileState {
     
     /**
      * @return True if this is a transient state, false otherwise.
-     * @return
      */
     public boolean isTransient() {
         return isTransient;
@@ -117,7 +116,7 @@ public enum ProfileState {
     
     /**
      * 
-     * @return true if theis profile state allows reporting; false otherwise.
+     * @return true if this profile state allows reporting; false otherwise.
      */
     public boolean isReportable() {
         return reportable;

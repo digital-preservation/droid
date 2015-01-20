@@ -58,6 +58,7 @@ public class ByteSeqSpecifier {
      *
      * @param asciiRep A StringBuffer whose initial portion will be an ASCII representation of the bytes specifier.  This will be
      *                 altered so that this initial portion is removed.
+     * @throws Exception on buffer indexing problems
      */
     public ByteSeqSpecifier(StringBuffer asciiRep) throws Exception {
         String specifier;    // The string of characters defining the bytes specifier (excluding any square brackets)
@@ -121,11 +122,11 @@ public class ByteSeqSpecifier {
      * @param direction +1 (left to right) or -1 (right to left).  The overall direction which our caller is searching in
      * @param bigEndian True iff the signature we are matching is big-endian
      * @return true iff the portion matches
-     *         <p/>
+     *         <p>
      *         Note: In an ideal world, we would hold bigEndian as a private member, set up on construction.  However, the framework
      *         used during parsing of the XML file does not lend itself to easily fetching information from a grandparent
      *         element.  Consequently, we parse the byte sequence specifier in ignorance of its endianness, and wait until
-     *         we try to match against a specific byte sequence (here) to find out how minSeq and maxSeq should be interpreted.
+     *         we try to match against a specific byte sequence (here) to find out how minSeq and maxSeq should be interpreted.</p>
      */
     public boolean matchesByteSequence(ByteReader file, long startPos, int direction, boolean bigEndian) {
         try {

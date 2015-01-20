@@ -87,15 +87,15 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 /**
  * A binary signature which can match one or more file formats.
  * 
- * <p/>It is composed of a list of {@link ByteSequence} objects,
- * which are like regular expressions that can match bytes.
+ * <p>It is composed of a list of {@link ByteSequence} objects,
+ * which are like regular expressions that can match bytes.</p>
  * 
- * <p/>A signature runs each ByteSequence against a target file, 
- * until one of them doesn't match, or all of them do. 
+ * <p>A signature runs each ByteSequence against a target file, 
+ * until one of them doesn't match, or all of them do.</p> 
  * 
- * <p/>It orders the ByteSequence objects to try to ensure 
+ * <p>It orders the ByteSequence objects to try to ensure 
  * optimal matching behaviour - e.g. the ones anchored to the 
- * start of the file are done before ones at the end of the file.
+ * start of the file are done before ones at the end of the file.</p>
  *
  * @author Martin Waller
  * @author Matt Palmer

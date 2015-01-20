@@ -48,7 +48,7 @@ import uk.gov.nationalarchives.droid.export.interfaces.JobCancellationException;
 
 /**
  * @author rflitcroft
- * @param <T>
+ * @param <T> type of Item to read
  *
  */
 public class HibernateItemReader<T> implements ItemReader<T> {
@@ -85,7 +85,7 @@ public class HibernateItemReader<T> implements ItemReader<T> {
     
     /**
      * {@inheritDoc}
-     * @throws JobCancellationException 
+     * @throws JobCancellationException if cancelled
      */
     @Override
     //@Transactional(propagation = Propagation.REQUIRED)

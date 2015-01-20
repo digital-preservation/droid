@@ -37,8 +37,7 @@ import java.util.Iterator;
 /**
  * Adapts an enumeration to the Iterator interface.
  * @author rflitcroft
- *
- * @param <T>
+ * @param <T> The type of elements in this enumeration
  */
 public class EnumerationAdapter<T> implements Iterator<T> {
     

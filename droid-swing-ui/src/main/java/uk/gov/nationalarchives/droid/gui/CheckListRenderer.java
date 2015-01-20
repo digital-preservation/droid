@@ -50,7 +50,6 @@ public class CheckListRenderer extends JCheckBox implements ListCellRenderer {
     }
 
     /**
-     * @Override
      * {@inheritDoc}
      * 
      */

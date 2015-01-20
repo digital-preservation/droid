@@ -68,6 +68,10 @@
     <suppress checks="ClassFanOutComplexity|ClassDataAbstractionCoupling"
               files=".*ProfileInstanceManagerImpl\.java$"/>
 
+    <!-- suppress requirement for @return on enum, which conflicts with new XDocLint -->
+    <suppress checks="JavadocMethodCheck"
+              files=".*ProfileState\.java$"/>
+
     <suppress checks="ThrowsCount"
               files=".*ProfileSpecWalker(Impl)*\.java$"/>
 
