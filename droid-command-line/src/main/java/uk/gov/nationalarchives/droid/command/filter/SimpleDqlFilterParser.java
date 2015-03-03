@@ -50,7 +50,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
  * Uses Java code without relying on Antlr (see AntlrDqlParser) which may have dependency issues with particular 
  * Java versions and environments.
  */
-//CHECKSTYLE:OFF  Too complex and some silly and patronising suggestions.  But indentation, whitespace etc all OK!
+//CHECKSTYLE:OFF  Too complex and some don't agree with all the suggestions.  But layout issues all OK!
 public class SimpleDqlFilterParser implements DqlFilterParser {
 
     private static final String INVALID_ARGUMENT_COUNT = "The filter condition \"%s\" is invalid, since it has only %d arguments - at least 3 are required (are you missing an operator, or a space?)";
@@ -89,7 +89,7 @@ public class SimpleDqlFilterParser implements DqlFilterParser {
             if (operatorIsTwoPart) {
                 String[] operators = Arrays.copyOfRange(filterComponents, 1, VALUES_START_INDEX_WITH_NOT_OPERATOR);
                 dqlOperator = operators[0] + " " + operators[1];
-                //dqlOperator =  String.join(" ", operators); -- ONly works with Java 8 - we have to support 7!!
+                //dqlOperator =  String.join(" ", operators); -- Only works with Java 8 - we have to support 7!!
                 valuesStartIndex = VALUES_START_INDEX_WITH_NOT_OPERATOR;
             } else {
                 dqlOperator = filterComponents[1];
