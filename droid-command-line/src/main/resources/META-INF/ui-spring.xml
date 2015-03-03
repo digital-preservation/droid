@@ -103,7 +103,8 @@
         <property name="dqlFilterParser" ref="dqlFilterParser"/>
     </bean>
     
-    <bean id="dqlFilterParser" class="uk.gov.nationalarchives.droid.command.filter.AntlrDqlParser"/>
+      <!--<bean id="dqlFilterParser" class="uk.gov.nationalarchives.droid.command.filter.AntlrDqlParser"/>  -->
+       <bean id="dqlFilterParser" class="uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser"/>
 
     <bean id="reportCommand" class="uk.gov.nationalarchives.droid.command.action.ReportCommand" scope="prototype">
         <property name="reportManager" ref="reportManager"/>

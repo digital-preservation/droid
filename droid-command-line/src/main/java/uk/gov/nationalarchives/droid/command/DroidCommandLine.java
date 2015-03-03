@@ -168,8 +168,6 @@ public final class DroidCommandLine {
         DroidCommandLine commandLine = new DroidCommandLine(args);
         returnCode = commandLine.processExecution();
 
-
-
         System.exit(returnCode);
     }
 
