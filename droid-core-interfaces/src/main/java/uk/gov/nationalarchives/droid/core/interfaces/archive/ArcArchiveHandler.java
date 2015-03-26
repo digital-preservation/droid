@@ -185,7 +185,8 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
         protected void handleEntry(ArcRecordBase entry) throws IOException {
             final int maxLEN = 4095;
 
-            String entryUri = entry.getUrl().toString();
+            //String entryUri = entry.getUrl().toString();
+            String entryUri = entry.getUrlStr();
             String entryPath = new URL(entryUri).getFile();
             // remove querystring to get prefix (may include slashes)
             final int queryPos = entryPath.indexOf('?');

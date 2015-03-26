@@ -37,10 +37,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
 
-import org.jwat.arc.ArcReader;
 import org.jwat.arc.ArcReaderFactory;
 import org.jwat.arc.ArcRecord;
 import org.jwat.arc.ArcRecordBase;
+
+import org.jwat.common.Uri;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
@@ -109,8 +110,7 @@ public class ArcArchiveContentIdentifier {
         final IdentificationRequestFactory factory  = new WebArchiveEntryRequestFactory();
         try {
             final InputStream arcIn = request.getSourceInputStream();
-            ArcReader arcReader = ArcReaderFactory.getReader(arcIn);
-            Iterator<ArcRecordBase> iterator = arcReader.iterator();
+            Iterator<ArcRecordBase> iterator = ArcReaderFactory.getReader(arcIn).iterator();
             try {
                 ArcRecordBase base = null;
                 while (iterator.hasNext()) {
@@ -120,24 +120,36 @@ public class ArcArchiveContentIdentifier {
                         && base.getHttpHeader() != null
                         && base.getHttpHeader().statusCode == httpACCEPTED) {
                         // no directory structure, so we use the full url as name
-                        String name = base.getUrl().toString();
-
-                        RequestMetaData metaData = new RequestMetaData(
+                        String name = null;
+                        Uri baseUrl = base.getUrl();
+                        if (baseUrl != null) {
+                            name = base.getUrl().toString();
+                        } else {
+                            // couldn't parse url - get raw version
+                            name = base.getUrlStr();
+                        }
+                        if (name == null) {
+                            String errMsg = "Skipping record with invalid URL in ArcArchiveContentIdentifier: "
+                                    + base.getHttpHeader().toString();
+                            System.err.println(errMsg);
+                        } else {
+                            RequestMetaData metaData = new RequestMetaData(
                                 base.getArchiveLength(),
                                 base.getArchiveDate().getTime(),
-                            name);
+                                name);
 
-                        final RequestIdentifier identifier = new RequestIdentifier(uri);
+                            final RequestIdentifier identifier = new RequestIdentifier(uri);
 
-                        IdentificationRequest arcRequest = factory.newRequest(metaData, identifier);
-                        arcRequest.open(base.getPayloadContent());
-                        final IdentificationResultCollection arcResults =
-                            binarySignatureIdentifier.matchBinarySignatures(arcRequest);
-                        final ResultPrinter resultPrinter =
-                            new ResultPrinter(binarySignatureIdentifier,
-                                containerSignatureDefinitions, newPath, slash, slash1, true, true);
-                        resultPrinter.print(arcResults, arcRequest);
-                        arcRequest.close();
+                            IdentificationRequest arcRequest = factory.newRequest(metaData, identifier);
+                            arcRequest.open(base.getPayloadContent());
+                            final IdentificationResultCollection arcResults =
+                                binarySignatureIdentifier.matchBinarySignatures(arcRequest);
+                            final ResultPrinter resultPrinter =
+                                new ResultPrinter(binarySignatureIdentifier,
+                                    containerSignatureDefinitions, newPath, slash, slash1, true, true);
+                            resultPrinter.print(arcResults, arcRequest);
+                            arcRequest.close();
+                        }
                     }
                 }
             } finally {
