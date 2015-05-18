@@ -123,9 +123,6 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     	 * have a new class model based on the {@link WindowReader} interface,
     	 * and we are probably looking to instantiate one of these classes instead.
     	 */
-        //BNO-BS2
-    	//BNO - This causes an IOException with the new Byteseek FileReader if the file path contains one or more spaces - because they are encoded to %20
-    	String filePath = identifier.getUri().toString().substring(6);
     	
     	//TODO: BNO-BS2 - Possibly have a factory that determines what type of Byteseek2 WindowReader to instantiate and
     	// what to pass to the constructor etc..
