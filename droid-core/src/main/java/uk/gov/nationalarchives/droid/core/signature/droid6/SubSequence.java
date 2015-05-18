@@ -1270,7 +1270,7 @@ public class SubSequence extends SimpleElement {
             // Although the differences between them are very small, DROID spends the majority of its time here,
             // so even small performance improvements add up quickly.
 
-            final net.domesdaybook.reader.ByteReader reader = targetFile.getReader();
+            //final net.domesdaybook.reader.ByteReader reader = targetFile.getReader();
             //BNO-BS2 - remove above expression when BS2 refactor done.
             final WindowReader windowReader = targetFile.getWindowReader();
 
@@ -1330,7 +1330,7 @@ public class SubSequence extends SimpleElement {
                             // Check that any left fragments, before our sequence, match.
                             if (hasLeftFragments) { 
                                 final long[] leftFragmentPositions =
-                                    bytePosForLeftFragments(reader, 0, matchPosition - 1, -1, 0);
+                                    bytePosForLeftFragmentsBS2(windowReader, 0, matchPosition - 1, -1, 0);
                                 matchFound = leftFragmentPositions.length > 0;
                                 matchPosition = matchFound ? leftFragmentPositions[0] : matchPosition;
                             }
@@ -1373,13 +1373,19 @@ public class SubSequence extends SimpleElement {
                     endSearchWindow = lastPossibleBytePosition;
                 }
 
-                long matchPosition = startSearchWindow;
+                //long matchPosition = startSearchWindow;
                 long matchPositionBS2 = startSearchWindow;
 
-                while (matchPosition <= endSearchWindow) {
-                    matchPosition = searcher.searchForwards(reader, matchPosition, endSearchWindow);
+                while (matchPositionBS2 <= endSearchWindow) {
                     
-                	List<SearchResult<net.byteseek.matcher.sequence.SequenceMatcher>> matches = searcherBS2.searchBackwards(windowReader, matchPosition, endSearchWindow);
+                	List<SearchResult<net.byteseek.matcher.sequence.SequenceMatcher>> matches = searcherBS2.searchForwards(windowReader, matchPositionBS2
+                			, endSearchWindow);
+
+                	if(matches.size() > 0) {
+                		matchPositionBS2 = matches.get(0).getMatchPosition();
+                	} else {
+                		matchPositionBS2 = -1;
+                	}
                 	
                 	if(matches.size() > 0) {
                 		matchPositionBS2 = matches.get(0).getMatchPosition();
@@ -1391,8 +1397,8 @@ public class SubSequence extends SimpleElement {
                         boolean matchFound = true;
                         if (hasLeftFragments) { // Check that any left fragments, behind our sequence match:
                             final long[] leftFragmentPositions = 
-                                bytePosForLeftFragments(reader, targetFile.getFileMarker(),
-                                    matchPosition - matchLength, -1, 0);
+                                bytePosForLeftFragmentsBS2(windowReader, targetFile.getFileMarker(),
+                                    matchPositionBS2 - matchLength, -1, 0);
                             matchFound = leftFragmentPositions.length > 0;
                             
 //                            // check BOF max seq offset (bugfix)
@@ -1405,7 +1411,7 @@ public class SubSequence extends SimpleElement {
                         if (matchFound) {
                             if (hasRightFragments) { // Check that any right fragments after our sequence match:
                                 final long[] rightFragmentPositions = 
-                                    bytePosForRightFragmentsBS2(windowReader, matchPosition + 1, lastBytePositionInFile, 1, 0);
+                                    bytePosForRightFragmentsBS2(windowReader, matchPositionBS2 + 1, lastBytePositionInFile, 1, 0);
                                 matchFound = rightFragmentPositions.length > 0;
                             
                                 // check EOF max seq offset (bugfix)
@@ -1415,15 +1421,15 @@ public class SubSequence extends SimpleElement {
                                     matchFound = false;
                                 }
                             
-                                matchPosition = matchFound ? rightFragmentPositions[0] : matchPosition;
+                                matchPositionBS2 = matchFound ? rightFragmentPositions[0] : matchPositionBS2;
                             }
                             if (matchFound) {
-                                targetFile.setFileMarker(matchPosition + 1L);
+                                targetFile.setFileMarker(matchPositionBS2 + 1L);
                                 entireSequenceFound = true;
                                 break;
                             }
                         }
-                        matchPosition += 1;
+                        matchPositionBS2 += 1;
                     } else {
                         break;
                     }
@@ -1644,5 +1650,126 @@ public class SubSequence extends SimpleElement {
             startPosInFile += searchDirectionL;
         }
         return endPosInFile;  //this is -1 unless subSeqFound = true
+    }
+    
+    private long[] bytePosForLeftFragmentsBS2(final WindowReader bytes, final long leftBytePos, final long rightBytePos,
+            final int searchDirection, final int offsetRange) {
+    //CHECKSTYLE:ON
+        final boolean leftFrag = true;
+        
+        // set up loop start and end depending on search order:
+        final int numFragPos = this.numLeftFragmentPositions; // getNumFragmentPositions(leftFrag);
+        long startPos;
+        int posLoopStart;
+        if (searchDirection == 1) {
+            startPos = leftBytePos;
+            posLoopStart = numFragPos;
+        } else {
+            startPos = rightBytePos;
+            posLoopStart = 1;
+        }
+
+        // Calculate the total possible number of options in all the fragments:
+        //TODO: can most of this calculation be done up front?
+        int totalNumOptions = offsetRange + 1;
+        for (int iFragPos = 1; iFragPos <= numFragPos; iFragPos++) {
+            totalNumOptions = totalNumOptions * this.getNumAlternativeFragments(leftFrag, iFragPos);
+        }
+        
+        //now set up the array so that it can potentially hold all possibilities
+        long[] markerPos = new long[totalNumOptions];
+        for (int iOffset = 0; iOffset <= offsetRange; iOffset++) {
+            markerPos[iOffset] = startPos + iOffset * searchDirection;
+        }
+        int numOptions = 1 + offsetRange;
+
+        // Search for the fragments:
+        boolean seqNotFound = false;
+        for (int iFragPos = posLoopStart; (!seqNotFound) && (iFragPos <= numFragPos) && (iFragPos >= 1);
+            iFragPos -= searchDirection) {
+            final List<SideFragmentBS2> fragmentsAtPosition = orderedLeftFragmentsBS2.get(iFragPos - 1);
+            final int numAltFrags = fragmentsAtPosition.size();
+            //array to store possible end positions after this fragment position has been examined
+            long[] tempEndPos = new long[numAltFrags * numOptions]; 
+
+            int numEndPos = 0;
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                //will now look for all matching alternative sequence at the current end positions
+                for (int iAlt = 0; iAlt < numAltFrags; iAlt++) {
+                    final SideFragmentBS2 fragment = fragmentsAtPosition.get(iAlt);
+                    long tempFragEnd;
+                    if (searchDirection == 1) {
+                        tempFragEnd = 
+                            this.endBytePosForSeqFragBS2(bytes, markerPos[iOption], 
+                                    rightBytePos, true, searchDirection, 
+                                    iFragPos, fragment);
+                    } else {
+                        tempFragEnd = 
+                            this.endBytePosForSeqFragBS2(bytes, leftBytePos, 
+                                    markerPos[iOption], true, searchDirection, 
+                                    iFragPos, fragment);
+                    }
+                    if (tempFragEnd > -1L) { // a match has been found
+                        tempEndPos[numEndPos] = tempFragEnd + searchDirection;
+                        numEndPos += 1;
+                    }
+                }
+            }
+            if (numEndPos == 0) {
+                seqNotFound = true;
+            } else {
+                numOptions = 0;
+                for (int iOption = 0; iOption < numEndPos; iOption++) {
+                    //eliminate any repeated end positions
+                    boolean addEndPos = true;
+                    for (int iMarker = 0; iMarker < numOptions; iMarker++) {
+                        if (markerPos[iMarker] == tempEndPos[iOption]) {
+                            addEndPos = false;
+                            break;
+                        }
+                    }
+                    if (addEndPos) {
+                        markerPos[numOptions] = tempEndPos[iOption];
+                        numOptions++;
+                    }
+                }
+            }
+        }
+
+        //prepare array to be returned
+        if (seqNotFound) {
+            // no possible positions found, return 0 length array
+            return new long[0];
+        }
+        // return ordered array of possibilities
+        long[] outArray = new long[numOptions];
+
+        // convert values to negative temporarily so that reverse sort order 
+        // can be obtained for a right to left search direction
+        if (searchDirection < 0) {
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                markerPos[iOption] = -markerPos[iOption];
+            }
+        }
+
+        //sort the values in the array
+        Arrays.sort(markerPos, 0, numOptions);
+
+        //convert values back to positive now that a reverse sort order has been obtained
+        if (searchDirection < 0) {
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                markerPos[iOption] = -markerPos[iOption];
+            }
+        }
+
+        //copy to a new array which has precisely the correct length
+        System.arraycopy(markerPos, 0, outArray, 0, numOptions);
+
+        //correct the value
+        for (int iOption = 0; iOption < numOptions; iOption++) {
+            outArray[iOption] -= searchDirection;
+        }
+
+        return outArray;
     }
 }
