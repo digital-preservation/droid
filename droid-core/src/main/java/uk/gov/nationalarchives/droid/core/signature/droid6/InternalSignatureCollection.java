@@ -93,7 +93,7 @@ public class InternalSignatureCollection extends SimpleElement {
      * @return A list of the internal signatures which matched. 
      */
     public List<InternalSignature> getMatchingSignatures(ByteReader targetFile, long maxBytesToScan) {
-    	//BNO: intSigs here represents all the available binary signature files..
+    	//BNO: intSigs here represents all the available binary signatures..
         List<InternalSignature> matchingSigs = new ArrayList<InternalSignature>();
         if (targetFile.getNumBytes() > 0) {
             final int stop = intSigs.size();

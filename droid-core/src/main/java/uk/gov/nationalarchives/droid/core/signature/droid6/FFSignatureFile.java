@@ -503,7 +503,8 @@ public class FFSignatureFile extends SimpleElement {
                     new FileFormatHit(internalSig.getFileFormat(fileFormatIndex), 
                                       FileFormatHit.HIT_TYPE_POSITIVE_GENERIC_OR_SPECIFIC,
                                       internalSig.isSpecific(), "");
-                targetFile.addHit(fileHit);
+
+                 targetFile.addHit(fileHit);
             }
         }
     }

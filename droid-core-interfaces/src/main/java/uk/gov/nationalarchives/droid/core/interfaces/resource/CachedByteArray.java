@@ -48,6 +48,7 @@ public final class CachedByteArray implements CachedBytes {
     private final byte[] bytes;
     private int maxSize;
     
+    
     /**
      * 
      * @param bytes A byte array containing the bytes to read.

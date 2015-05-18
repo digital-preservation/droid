@@ -152,7 +152,8 @@ public class SubmissionGateway implements AsynchDroid {
         protected void done() {
             boolean jobCountDecremented = false;
             try {
-                generateHash(request);
+
+            	generateHash(request);
                 IdentificationResultCollection results = get();
                 IdentificationResultCollection containerResults = handleContainer(request, results);
                 if (containerResults == null) {
@@ -274,6 +275,8 @@ public class SubmissionGateway implements AsynchDroid {
             jobCounter.decrement();
             jobCountDecremented = true;
             try {
+            	//BNO: Does this always return the same archive handler for any given container format?
+            	//And will it end up using the same submission gateway, or a new one with a different thread pool?
                 ArchiveHandler handler = archiveHandlerFactory.getHandler(archiveFormat);
                 handler.handle(request);
                 // CHECKSTYLE:OFF

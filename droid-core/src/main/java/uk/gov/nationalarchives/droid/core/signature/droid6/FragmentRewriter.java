@@ -98,6 +98,13 @@ public final class FragmentRewriter {
     //CHECKSTYLE:OFF - cyclomatic complexity is too high.
     public static String rewriteFragment(final String fragment) {
     //CHECKSTYLE:ON
+    	
+    	//BNO-BS2  - Test disabling the rewrite...
+    	//if(true) {
+    	//	return fragment;
+    	//}
+    	
+    	
         StringBuilder builder = new StringBuilder();
         final int length = fragment.length();
         boolean inCaseSensitiveString = false;

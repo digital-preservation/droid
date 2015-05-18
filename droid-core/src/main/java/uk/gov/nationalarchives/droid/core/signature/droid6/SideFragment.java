@@ -85,11 +85,13 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
+import java.io.IOException;
+
+import net.byteseek.io.reader.WindowReader;
 import net.domesdaybook.expression.compiler.sequence.SequenceMatcherCompiler;
 import net.domesdaybook.expression.parser.ParseException;
 import net.domesdaybook.matcher.sequence.SequenceMatcher;
 import net.domesdaybook.reader.ByteReader;
-
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 
 
@@ -250,6 +252,8 @@ public class SideFragment extends SimpleElement {
         setFragment(this.getText());
     }
 
+    
+    
     /**
      * Matches the fragment against the position in the ByteReader given.
      * 

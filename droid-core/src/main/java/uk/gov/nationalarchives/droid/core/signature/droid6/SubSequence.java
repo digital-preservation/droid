@@ -109,6 +109,7 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,10 +121,10 @@ import net.domesdaybook.matcher.sequence.searcher.BoyerMooreHorspoolSearcher;
 import net.domesdaybook.matcher.sequence.searcher.SequenceMatcherSearcher;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
-
 import net.byteseek.compiler.CompileException;
 //BNO-BS2
 import net.byteseek.io.reader.WindowReader;
+import net.byteseek.searcher.SearchResult;
 import net.byteseek.searcher.sequence.AbstractSequenceSearcher;
 // -- this currently causes a clash. Can Java do import aliasing similar to .NET?? 
 //import net.byteseek.compiler.matcher.SequenceMatcherCompiler;  
@@ -169,12 +170,19 @@ public class SubSequence extends SimpleElement {
     //BNO-BS2
     private SequenceMatcher matcher;
     private SequenceMatcherSearcher searcher;
+    
+    //Byteseek2 equivalents:
     private net.byteseek.matcher.sequence.SequenceMatcher matcherBS2;
     // Note the direct instantiation - in BS2 BoyerMooreHorspoolSearcher is not derived from SequenceMatcherSearcher
     private AbstractSequenceSearcher searcherBS2;
 
     private final List<List<SideFragment>> orderedLeftFragments = new ArrayList<List<SideFragment>>();
     private final List<List<SideFragment>> orderedRightFragments = new ArrayList<List<SideFragment>>();
+    
+    //BS2 equivalents
+    private final List<List<SideFragmentBS2>> orderedLeftFragmentsBS2 = new ArrayList<List<SideFragmentBS2>>();
+    private final List<List<SideFragmentBS2>> orderedRightFragmentsBS2 = new ArrayList<List<SideFragmentBS2>>();
+    
     private boolean backwardsSearch;
     private boolean isInvalidSubSequence;
     
@@ -228,6 +236,9 @@ public class SubSequence extends SimpleElement {
     	//BNO-BS2 - to replace with BS2 versions.  Though do we need to consider backwards compatibility?
         try {
             final String transformedSequence = FragmentRewriter.rewriteFragment(seq);
+        	//BNO-BS2 - is this what we want to get away from the old byteseek regex?
+
+
             //BNO-BS2
             SequenceMatcherCompiler compiler = new SequenceMatcherCompiler();
             net.byteseek.compiler.matcher.SequenceMatcherCompiler compilerBS2 = new net.byteseek.compiler.matcher.SequenceMatcherCompiler();
@@ -649,10 +660,8 @@ public class SubSequence extends SimpleElement {
             // so even small performance improvements add up quickly.
 
             final net.domesdaybook.reader.ByteReader reader = targetFile.getReader();
-            //BNO-BS2 - remove above expression when BS2 refactor done.
-            final WindowReader windowReader = targetFile.getWindowReader();
 
-            if (backwardsSearch) {
+            if (this.backwardsSearch) {
                 
                 // Define the search window relative to our starting position:
                 final long maximumPossibleStartingPosition =
@@ -681,10 +690,10 @@ public class SubSequence extends SimpleElement {
                 }
 
                 long matchPosition = startSearchWindow;
+
                 while (matchPosition >= endSearchWindow) {
-                    //BNO-BS2
-                	//TODO: Replace with BS2 searcher.
                 	matchPosition = searcher.searchBackwards(reader, matchPosition, endSearchWindow);
+                	
                     if (matchPosition != -1) {
                         boolean matchFound = true;
                         // Check that any right fragments, behind our sequence, match.
@@ -742,8 +751,12 @@ public class SubSequence extends SimpleElement {
                 }
 
                 long matchPosition = startSearchWindow;
+
                 while (matchPosition <= endSearchWindow) {
                     matchPosition = searcher.searchForwards(reader, matchPosition, endSearchWindow);
+                    
+
+                	
                     if (matchPosition != -1) {
                         boolean matchFound = true;
                         if (hasLeftFragments) { // Check that any left fragments, behind our sequence match:
@@ -1201,5 +1214,435 @@ public class SubSequence extends SimpleElement {
         }
 
         return regularExpression.toString();
+    }
+    
+    
+    // ********************************************************************************************************
+    // Byteseek 2 versions :
+    // ********************************************************************************************************
+    
+    /** Uses the Boyer-Moore-Horspool search algorithm to find a sequence within a window
+     * on a file.
+     *
+     * The search proceeds by trying to find an "anchor" sequence of bytes
+     * in the file, using the Boyer-Moore-Horspool algorithm, which permits it
+     * to skip over bytes if they can't possibly match the anchor sequence.
+     * It scans from the opposite end of the sequence to the search direction.
+     * This means it doesn't have to check every single byte in the search window.
+     * In general, the longer the anchor sequence, the more bytes we can skip.
+     * When it finds an anchor sequence, it checks any left or right
+     * fragments that may surround it, to verify the match.
+     * 
+     * @param position The position to begin searching from.
+     * @param targetFile The file to search in.
+     * @param maxBytesToScan The maximum amount of bytes to read from
+     * the beginning or end of the file.  If negative, scanning is unlimited.
+     * @param bofSubsequence Indicates when subsequence is anchored to BOF
+     * @param eofSubsequence Indicates when subsequence is anchored to EOF
+     */
+    //CHECKSTYLE:OFF - far too complex method.
+    public final boolean findSequenceFromPositionBS2(final long position, 
+            final ByteReader targetFile, final long maxBytesToScan,
+            final boolean bofSubsequence, final boolean eofSubsequence) {
+        boolean entireSequenceFound = false;
+        try {
+            // Local variables to speed up commonly used arrays and decisions:
+            final boolean hasLeftFragments = !orderedLeftFragments.isEmpty();
+            final boolean hasRightFragments = !orderedRightFragments.isEmpty();
+
+            // Define the length of the file and the pattern, minus one to get an offset from a zero index position.
+            final long lastBytePositionInFile = targetFile.getNumBytes() - 1;
+            
+            //final int lastBytePositionInAnchor = sequence.length -1;
+            final int matchLength = matcher.length();
+            final int lastBytePositionInAnchor = matchLength - 1;
+
+            // Define the smallest and greatest possible byte position in the file we could match at:
+            // the first possible byte position is the start of the file plus the minimum amount of 
+            // left fragments to check before this sequence.
+            final long firstPossibleBytePosition = minLeftFragmentLength; 
+            // the last possible byte position is the end of the file, minus the minimum 
+            // right fragments to check after this sequence.
+            final long lastPossibleBytePosition = lastBytePositionInFile - minRightFragmentLength; 
+
+            // Provide two implementations of the same algorithm -
+            // one for forward searching, the other for backwards searching.
+            // Although the differences between them are very small, DROID spends the majority of its time here,
+            // so even small performance improvements add up quickly.
+
+            final net.domesdaybook.reader.ByteReader reader = targetFile.getReader();
+            //BNO-BS2 - remove above expression when BS2 refactor done.
+            final WindowReader windowReader = targetFile.getWindowReader();
+
+            if (this.backwardsSearch) {
+                
+                // Define the search window relative to our starting position:
+                final long maximumPossibleStartingPosition =
+                    position - minRightFragmentLength - lastBytePositionInAnchor;
+                final long startSearchWindow = maximumPossibleStartingPosition - this.getMinSeqOffset();
+                final int rightFragmentWindow = maxRightFragmentLength - minRightFragmentLength;
+                long endSearchWindow = fullFileScan 
+                    ? 0 
+                    : maximumPossibleStartingPosition - this.getMaxSeqOffset() - rightFragmentWindow;
+
+                // Limit the maximum bytes to scan.
+                if (maxBytesToScan > 0 && endSearchWindow < lastBytePositionInFile - maxBytesToScan) {
+                    endSearchWindow  = lastBytePositionInFile - maxBytesToScan;
+                }
+
+                // If we're starting outside a possible match position, 
+                // don't continue:
+                if (startSearchWindow > lastPossibleBytePosition) {
+                    return false;
+                }
+
+                // Ensure we don't run over the start of the file,
+                // if it's shorter than the sequence we're trying to check.
+                if (endSearchWindow < firstPossibleBytePosition) {
+                    endSearchWindow = firstPossibleBytePosition;
+                }
+
+                long matchPosition = startSearchWindow;
+                long matchPositionBS2 = startSearchWindow;
+                while (matchPosition >= endSearchWindow) {
+                    //BNO-BS2
+                	//TODO: Replace with BS2 searcher.
+                	//matchPosition = searcher.searchBackwards(reader, matchPosition, endSearchWindow);
+                	
+                	List<SearchResult<net.byteseek.matcher.sequence.SequenceMatcher>> matches = searcherBS2.searchBackwards(windowReader, matchPosition, endSearchWindow);
+                	
+                	if(matches.size() > 0) {
+                		matchPositionBS2 = matches.get(0).getMatchPosition();
+                	} else {
+                		matchPositionBS2 = -1;
+                	}
+                	
+                    if (matchPositionBS2 != -1) {
+                        boolean matchFound = true;
+                        // Check that any right fragments, behind our sequence, match.
+                        if (hasRightFragments) { 
+                            final long[] rightFragmentPositions = 
+                                bytePosForRightFragmentsBS2(windowReader, matchPosition + matchLength, 
+                                    targetFile.getFileMarker(), 1, 0);
+                            matchFound = rightFragmentPositions.length > 0;
+                        }
+                        if (matchFound) {
+                            // Check that any left fragments, before our sequence, match.
+                            if (hasLeftFragments) { 
+                                final long[] leftFragmentPositions =
+                                    bytePosForLeftFragments(reader, 0, matchPosition - 1, -1, 0);
+                                matchFound = leftFragmentPositions.length > 0;
+                                matchPosition = matchFound ? leftFragmentPositions[0] : matchPosition;
+                            }
+                            if (matchFound) {
+                                // Record that a match has been found for the entire sequence:
+                                targetFile.setFileMarker(matchPosition - 1L);
+                                entireSequenceFound = true;
+                                break;
+                            }
+                        }
+                        matchPosition -= 1;
+                    } else {
+                        break;
+                    }
+                }
+            } else { // Searching forwards - the same algorithm optimised for forwards searching:
+                // Define the search window relative to our starting position:
+                final long minimumPossibleStartingPosition = 
+                    position + minLeftFragmentLength + lastBytePositionInAnchor;
+                final long startSearchWindow = minimumPossibleStartingPosition + this.getMinSeqOffset();
+                final int leftFragmentWindow = maxLeftFragmentLength - minLeftFragmentLength;
+                long endSearchWindow = fullFileScan 
+                    ? lastPossibleBytePosition 
+                    : minimumPossibleStartingPosition + this.getMaxSeqOffset() + leftFragmentWindow;
+
+                // Limit the maximum bytes to scan.
+                if (maxBytesToScan > 0 && endSearchWindow > maxBytesToScan) {
+                    endSearchWindow  = maxBytesToScan;
+                }
+
+                // If we're starting outside a possible match position, 
+                // don't continue:
+                if (startSearchWindow < firstPossibleBytePosition) {
+                    return false;
+                }
+
+                // Ensure the end position doesn't run over the end of the file,
+                // if it's shorter than the sequence we're trying to check.
+                if (endSearchWindow > lastPossibleBytePosition) {
+                    endSearchWindow = lastPossibleBytePosition;
+                }
+
+                long matchPosition = startSearchWindow;
+                long matchPositionBS2 = startSearchWindow;
+
+                while (matchPosition <= endSearchWindow) {
+                    matchPosition = searcher.searchForwards(reader, matchPosition, endSearchWindow);
+                    
+                	List<SearchResult<net.byteseek.matcher.sequence.SequenceMatcher>> matches = searcherBS2.searchBackwards(windowReader, matchPosition, endSearchWindow);
+                	
+                	if(matches.size() > 0) {
+                		matchPositionBS2 = matches.get(0).getMatchPosition();
+                	} else {
+                		matchPositionBS2 = -1;
+                	}
+                	
+                    if (matchPositionBS2 != -1) {
+                        boolean matchFound = true;
+                        if (hasLeftFragments) { // Check that any left fragments, behind our sequence match:
+                            final long[] leftFragmentPositions = 
+                                bytePosForLeftFragments(reader, targetFile.getFileMarker(),
+                                    matchPosition - matchLength, -1, 0);
+                            matchFound = leftFragmentPositions.length > 0;
+                            
+//                            // check BOF max seq offset (bugfix)
+                            if (matchFound
+                                    && bofSubsequence
+                                    && leftFragmentPositions[0] > this.maxSeqOffset) {
+                                matchFound = false;
+                            }
+                        }
+                        if (matchFound) {
+                            if (hasRightFragments) { // Check that any right fragments after our sequence match:
+                                final long[] rightFragmentPositions = 
+                                    bytePosForRightFragmentsBS2(windowReader, matchPosition + 1, lastBytePositionInFile, 1, 0);
+                                matchFound = rightFragmentPositions.length > 0;
+                            
+                                // check EOF max seq offset (bugfix)
+                                if (matchFound
+                                        && eofSubsequence
+                                        && rightFragmentPositions[0] > this.maxSeqOffset) {
+                                    matchFound = false;
+                                }
+                            
+                                matchPosition = matchFound ? rightFragmentPositions[0] : matchPosition;
+                            }
+                            if (matchFound) {
+                                targetFile.setFileMarker(matchPosition + 1L);
+                                entireSequenceFound = true;
+                                break;
+                            }
+                        }
+                        matchPosition += 1;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+            getLog().debug(e.getMessage());
+        } catch (IOException e) {
+        	//BNO-BS2 - required for Byteseek 2
+			// TODO Auto-generated catch block
+        	getLog().debug(e.getMessage());
+			e.printStackTrace();
+		}
+        //CHECKSTYLE:ON
+        return entireSequenceFound;
+    }
+    
+    
+    /**
+     * Searches for the right fragments of this subsequence between the given byte
+     * positions in the file.  Either returns the last byte taken up by the
+     * identified sequences or returns -2 if no match was found
+     *
+     * @param bytes           the binary file to be identified
+     * @param leftBytePos     left-most byte position of allowed search window on file
+     * @param rightBytePos    right-most byte position of allowed search window on file
+     * @param searchDirection 1 for a left to right search, -1 for right to left
+     * @param offsetRange     range of possible start positions in the direction of searchDirection
+     * @return
+     */
+    //CHECKSTYLE:OFF - way, way, way too complex.
+    private long[] bytePosForRightFragmentsBS2(final WindowReader bytes, final long leftBytePos, final long rightBytePos,
+            final int searchDirection, final int offsetRange) {
+    //CHECKSTYLE:ON
+        final boolean leftFrag = false;
+        long startPos = leftBytePos;
+        int posLoopStart = 1;
+        final int numFragPos = numRightFragmentPositions; 
+        if (searchDirection == -1) {
+            startPos = rightBytePos;
+            posLoopStart = numFragPos;
+        }
+
+        //now set up the array so that it can potentially hold all possibilities
+        int totalNumOptions = offsetRange + 1;
+        for (int iFragPos = 1; iFragPos <= numFragPos; iFragPos++) {
+            totalNumOptions = totalNumOptions * this.getNumAlternativeFragments(leftFrag, iFragPos);
+        }
+        long[] markerPos = new long[totalNumOptions];
+        for (int iOffset = 0; iOffset <= offsetRange; iOffset++) {
+            markerPos[iOffset] = startPos + iOffset * searchDirection;
+        }
+        int numOptions = 1 + offsetRange;
+
+        boolean seqNotFound = false;
+        for (int iFragPos = posLoopStart; 
+            (!seqNotFound) && (iFragPos <= numFragPos) && (iFragPos >= 1);
+            iFragPos += searchDirection) {
+            final List<SideFragmentBS2> fragmentsAtPosition = orderedRightFragmentsBS2.get(iFragPos - 1);
+            final int numAltFrags = fragmentsAtPosition.size();
+            //array to store possible end positions after this fragment position has been examined
+            long[] tempEndPos = new long[numAltFrags * numOptions]; 
+            int numEndPos = 0;
+
+
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                //will now look for all matching alternative sequence at the current end positions
+                for (int iAlt = 0; iAlt < numAltFrags; iAlt++) {
+                    final SideFragmentBS2 fragment = fragmentsAtPosition.get(iAlt);
+                    long tempFragEnd;
+                    if (searchDirection == -1) {
+                        tempFragEnd = 
+                            this.endBytePosForSeqFragBS2(bytes, leftBytePos,
+                                    markerPos[iOption], false, searchDirection, iFragPos, fragment);
+                    } else {
+                        tempFragEnd =
+                            this.endBytePosForSeqFragBS2(bytes, markerPos[iOption],
+                                    rightBytePos, false, searchDirection, iFragPos, fragment);
+                    }
+                    if (tempFragEnd > -1) { // a match has been found
+                        tempEndPos[numEndPos] = tempFragEnd + searchDirection;
+                        numEndPos += 1;
+                    }
+                }
+            }
+
+            if (numEndPos == 0) {
+                seqNotFound = true;
+            } else {
+                numOptions = 0;
+                for (int iOption = 0; iOption < numEndPos; iOption++) {
+                    //eliminate any repeated end positions
+                    boolean addEndPos = true;
+                    for (int iMarker = 0; iMarker < numOptions; iMarker++) {
+                        if (markerPos[iMarker] == tempEndPos[iOption]) {
+                            addEndPos = false;
+                            break;
+                        }
+                    }
+                    if (addEndPos) {
+                        markerPos[numOptions] = tempEndPos[iOption];
+                        numOptions++;
+                    }
+                }
+            }
+        }
+
+        //prepare array to be returned
+        if (seqNotFound) {
+            // no possible positions found, return 0 length array
+            return new long[0];
+        }
+        // return ordered array of possibilities
+        long[] outArray = new long[numOptions];
+
+        // convert values to negative temporarily so that reverse
+        // sort order can be obtained for a right to left search direction
+        if (searchDirection < 0) {
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                markerPos[iOption] = -markerPos[iOption];
+            }
+        }
+
+        //sort the values in the array
+        Arrays.sort(markerPos, 0, numOptions);
+
+        //convert values back to positive now that a reverse sort order has been obtained
+        if (searchDirection < 0) {
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                markerPos[iOption] = -markerPos[iOption];
+            }
+        }
+
+        //copy to a new array which has precisely the correct length
+        System.arraycopy(markerPos, 0, outArray, 0, numOptions);
+
+        //correct the value
+        for (int iOption = 0; iOption < numOptions; iOption++) {
+            outArray[iOption] -= searchDirection;
+        }
+
+        return outArray;
+    }
+    
+    /**
+     * searches for the specified fragment sequence
+     * between the leftmost and rightmost byte positions that are given.
+     * returns the end position of the found sequence or -1 if it is not found
+     *
+     * @param targetFile      The file that is being reviewed for identification
+     * @param leftEndBytePos  leftmost position in file at which to search
+     * @param rightEndBytePos rightmost postion in file at which to search-
+     * @param leftFrag        flag to indicate whether looking at left or right fragments
+     * @param searchDirection direction in which search is carried out (1 for left to right, -1 for right to left)
+     * @param fragPos         position of left/right sequence fragment to use
+     * @param fragIndex       index of fragment within the position (where alternatives exist)
+     * @return
+     */
+    //CHECKSTYLE:OFF too long and complex.
+    private long endBytePosForSeqFragBS2(final WindowReader bytes, 
+            final long leftEndBytePos, final long rightEndBytePos,
+            final boolean leftFrag, final int searchDirection, final int fragPos, final SideFragmentBS2 fragment) {
+    //CHECKSTYLE:ON
+        long startPosInFile;
+        long lastStartPosInFile;
+        long endPosInFile = -1L;
+        final long searchDirectionL = searchDirection;
+        int minOffset;
+        int maxOffset;
+        final int numBytes = fragment.getNumBytes();
+        final int byteOffset = (searchDirection == 1) ? 0 : numBytes - 1;
+        
+        if (leftFrag && (searchDirection == -1)) {
+            minOffset = fragment.getMinOffset();
+            maxOffset = fragment.getMaxOffset();
+        } else if (!leftFrag && (searchDirection == 1)) {
+            minOffset = fragment.getMinOffset();
+            maxOffset = fragment.getMaxOffset();
+        } else if (fragPos < this.getNumFragmentPositions(leftFrag)) {
+            final SideFragment nextFragment = this.getFragment(leftFrag, fragPos + 1, 0);
+            minOffset = nextFragment.getMinOffset();
+            maxOffset = nextFragment.getMaxOffset();
+        } else {
+            minOffset = 0;
+            maxOffset = 0;
+        }
+
+        // set up start and end positions for searches taking into account min and max offsets
+        if (searchDirection == -1) {
+            startPosInFile = rightEndBytePos - minOffset;
+            final long lastStartPosInFile1 = leftEndBytePos + numBytes - 1L;
+            final long lastStartPosInFile2 = rightEndBytePos - maxOffset;
+            lastStartPosInFile = (lastStartPosInFile1 < lastStartPosInFile2) 
+                ? lastStartPosInFile2 : lastStartPosInFile1;
+        } else {
+            startPosInFile = leftEndBytePos + minOffset;
+            final long lastStartPosInFile1 = rightEndBytePos - numBytes + 1L;
+            final long lastStartPosInFile2 = leftEndBytePos + maxOffset;
+            lastStartPosInFile = (lastStartPosInFile1 < lastStartPosInFile2) 
+                ? lastStartPosInFile1 : lastStartPosInFile2;
+        }
+
+        //keep searching until either the sequence fragment is found 
+        // or until the end of the search area has been reached.
+        //compare sequence with file contents directly at fileMarker position
+        //boolean subSeqFound = false;
+        //while ((!subSeqFound) && ((searchDirectionL) * (lastStartPosInFile - startPosInFile) >= 0L)) {
+        while (searchDirectionL * (lastStartPosInFile - startPosInFile) >= 0L) {
+            try {
+				if (fragment.matchesBytes(bytes, startPosInFile - byteOffset)) {
+				    endPosInFile = startPosInFile + (numBytes * searchDirectionL) - searchDirectionL;
+				    break;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            startPosInFile += searchDirectionL;
+        }
+        return endPosInFile;  //this is -1 unless subSeqFound = true
     }
 }

@@ -109,9 +109,12 @@ public class FileEventHandler {
                 //        parentId));
             } finally {
                 if (in != null) {
-                    in.close();
+                	//BNO-BS2 - don't want to close the input stream if we're using an InputStream Reader!!
+                	// Any workarounds - e.g. clone it (potentially expensive)!
+                    //in.close();
                 }
             }
+            //BNO: Calls the SubmissionGateway's submit method
             droidCore.submit(request);
             submissionThrottle.apply();
         } catch (IOException e) {

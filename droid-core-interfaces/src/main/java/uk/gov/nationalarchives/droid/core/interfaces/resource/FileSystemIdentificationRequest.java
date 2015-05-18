@@ -36,10 +36,14 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
+
+
+
 //BNO-BS2 - replace this import with AbstractReader or WindowReader
 // in package net.byteseek.io.reader
 import net.domesdaybook.reader.ByteReader;
-
+import net.byteseek.io.reader.AbstractReader;
+import net.byteseek.io.reader.InputStreamReader;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.FileReader;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -66,7 +70,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     // InputStreamReader would appear to be the other option.  POssibly this is favoured for large files?  If so, need
     // some decision mechanism - probably a factory method call, about which to instantiate.  And of course the private
     // variable would then need to be WindowReader!
-    private FileReader byteseek2FileReader;
+    private WindowReader byteseek2FileReader;
     
     private final RequestIdentifier identifier;
 
@@ -120,7 +124,14 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     	 * and we are probably looking to instantiate one of these classes instead.
     	 */
         //BNO-BS2
-        byteseek2FileReader = new FileReader(fileName);
+    	//BNO - This causes an IOException with the new Byteseek FileReader if the file path contains one or more spaces - because they are encoded to %20
+    	String filePath = identifier.getUri().toString().substring(6);
+    	
+    	//TODO: BNO-BS2 - Possibly have a factory that determines what type of Byteseek2 WindowReader to instantiate and
+    	// what to pass to the constructor etc..
+        //byteseek2FileReader = new FileReader(filePath);
+    	WindowReaderFactory wrf = new WindowReaderFactory();
+    	byteseek2FileReader =  wrf.getWindowReader(this.identifier);
     	
     	//BNO-BS2 - presumably we'll use the new Byteseek2.0 FileReader class for all these scenarios..
     	// It provides various constructors that take a File object - so no need for the setSourceFile
@@ -162,7 +173,6 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
         // proves to be a zip file).
         final File theFile = new File(identifier.getUri());
         cachedBinary.setSourceFile(theFile);
-        
 
     }
     
@@ -172,7 +182,18 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
      */
     @Override
     public final byte getByte(long position) {
-        return cachedBinary.readByte(position);
+    	//return cachedBinary.readByte(position);
+    	
+    	//BNO: To review - cast is because the new byteseek returns an INT rather than byte. Not sure why??
+     	byte b = 0;
+    	
+    	try {
+			b = (byte)byteseek2FileReader.readByte(position);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return b;
     }
 
     /**
