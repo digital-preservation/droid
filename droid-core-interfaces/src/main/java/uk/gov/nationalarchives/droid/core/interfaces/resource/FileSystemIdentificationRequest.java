@@ -128,7 +128,13 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     	// what to pass to the constructor etc..
         //byteseek2FileReader = new FileReader(filePath);
     	WindowReaderFactory wrf = new WindowReaderFactory();
+    	
+    	//Returns an InputStreamReader when called with 1 argument.
     	byteseek2FileReader =  wrf.getWindowReader(this.identifier);
+    	
+    	//Returns an InputStreamReader when called with 2 or 3 arguments.
+    	//byteseek2FileReader =  wrf.getWindowReader(this.identifier, in);
+    	//byteseek2FileReader =  wrf.getWindowReader(this.identifier, in, 60000000);
     	
     	//BNO-BS2 - presumably we'll use the new Byteseek2.0 FileReader class for all these scenarios..
     	// It provides various constructors that take a File object - so no need for the setSourceFile
