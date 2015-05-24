@@ -416,7 +416,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                /* matchResult = subseq.findSequenceFromPosition(
                         currentFilePos, targetFile, maxBytesToScan, false, fixedSubsequence);
                  */
-                matchResult = subseq.findSequenceFromPositionBS2(
+                matchResult = subseq.findSequenceFromPosition(
                          currentFilePos, targetFile, maxBytesToScan, false, fixedSubsequence);
                         
                 fixedSubsequence = false;
@@ -431,7 +431,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                 /*matchResult = subseq.findSequenceFromPosition(
                         currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
                 */
-                matchResult = subseq.findSequenceFromPositionBS2(
+                matchResult = subseq.findSequenceFromPosition(
                         currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
                         
                 fixedSubsequence = false;
