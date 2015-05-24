@@ -114,7 +114,7 @@ public class SideFragment extends SimpleElement {
     private static final String FRAGMENT_PARSE_ERROR = "The signature fragment [%s] could not be parsed. "
         + "The error returned was [%s]";
 
-    private static SequenceMatcherCompiler EXPRESSION_COMPILER = new SequenceMatcherCompiler();
+    private static final SequenceMatcherCompiler EXPRESSION_COMPILER = new SequenceMatcherCompiler();
 
     private int myPosition;
     private int myMinOffset;
