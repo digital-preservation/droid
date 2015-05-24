@@ -87,11 +87,10 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
 
 import java.io.IOException;
 
+import net.byteseek.compiler.CompileException;
+import net.byteseek.compiler.matcher.SequenceMatcherCompiler;
 import net.byteseek.io.reader.WindowReader;
-import net.domesdaybook.expression.compiler.sequence.SequenceMatcherCompiler;
-import net.domesdaybook.expression.parser.ParseException;
-import net.domesdaybook.matcher.sequence.SequenceMatcher;
-import net.domesdaybook.reader.ByteReader;
+import net.byteseek.matcher.sequence.SequenceMatcher;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 
 
@@ -113,7 +112,9 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 public class SideFragment extends SimpleElement {
     
     private static final String FRAGMENT_PARSE_ERROR = "The signature fragment [%s] could not be parsed. "
-        + "The error returned was [%s]"; 
+        + "The error returned was [%s]";
+
+    private static SequenceMatcherCompiler EXPRESSION_COMPILER = new SequenceMatcherCompiler();
 
     private int myPosition;
     private int myMinOffset;
@@ -171,10 +172,9 @@ public class SideFragment extends SimpleElement {
      */
     public final void setFragment(final String expression) {
         try {
-            SequenceMatcherCompiler compiler = new SequenceMatcherCompiler();
             final String transformed = FragmentRewriter.rewriteFragment(expression);
-            matcher = compiler.compile(transformed);
-        } catch (ParseException ex) {
+            matcher = EXPRESSION_COMPILER.compile(transformed);
+        } catch (CompileException ex) {
             final String warning = String.format(FRAGMENT_PARSE_ERROR, expression, ex.getMessage());
             isInvalidFragment = true;
             getLog().warn(warning);            
@@ -261,7 +261,7 @@ public class SideFragment extends SimpleElement {
      * @param matchFrom The position to match from.
      * @return Whether the fragment matches at the position given.
      */
-    public final boolean matchesBytes(final ByteReader bytes, final long matchFrom) {
+    public final boolean matchesBytes(final WindowReader bytes, final long matchFrom) throws IOException {
         return matcher.matches(bytes, matchFrom);
     }
 
