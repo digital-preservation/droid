@@ -12,7 +12,7 @@ import net.byteseek.io.reader.InputStreamReader;
 
 public class WindowReaderFactory {
 
-	//TODO: This could be expended to return a range of possible WindowReaders based on an estimated
+	//TODO: This could be extended to return a range of possible WindowReaders based on an estimated
 	// "best fit" from the information known about the IdentificationRequest at the outset, e.g. the
 	// file type, size etc.
 	public WindowReader getWindowReader(RequestIdentifier identifier, InputStream in) throws FileNotFoundException {
