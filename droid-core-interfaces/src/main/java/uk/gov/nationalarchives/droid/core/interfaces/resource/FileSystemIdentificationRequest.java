@@ -130,7 +130,10 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
         //byteseek2FileReader = new FileReader(filePath);
     	WindowReaderFactory wrf = new WindowReaderFactory();
     	
-    	//Returns a FileReader when called with 1 argument.
+    	//Returns a FileReader when called with 1 argument. Though if we do this - we're ignoring the input stream (so it doesn't
+    	//matter if we close it in FileEventHandler - onEvent !!!
+    	//On the other hand, if we instantiate an InputStreamReader - the stream needs to be open.  This leaves FileEventHandler - onEvent
+    	// having to "know" potentially what kind of reader we're going to end up with...
     	byteseek2FileReader =  wrf.getWindowReader(this.identifier);
     	
     	//Returns an InputStreamReader when called with 2 or 3 arguments.

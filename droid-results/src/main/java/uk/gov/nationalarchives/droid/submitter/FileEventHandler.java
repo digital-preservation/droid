@@ -110,7 +110,9 @@ public class FileEventHandler {
             } finally {
                 if (in != null) {
                 	//BNO-BS2 - don't want to close the input stream if we're using an InputStream Reader!!
-                	// Any workarounds - e.g. clone it (potentially expensive)!
+                	// Any workarounds - e.g. clone it (potentially expensive)! New Byteseek 2.0 version caches
+                	// the stream contents once read but still needs the stream to be open at the outset - but
+                	// we don't ideally want to make that decision here!
                     //in.close();
                 }
             }
