@@ -9,6 +9,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.InputStreamReader;
+import net.byteseek.io.reader.cache.AllWindowsCache;
+import net.byteseek.io.reader.cache.TempFileCache;
+import net.byteseek.io.reader.cache.TwoLevelCache;
 
 public class WindowReaderFactory {
 
@@ -16,7 +19,7 @@ public class WindowReaderFactory {
 	// "best fit" from the information known about the IdentificationRequest at the outset, e.g. the
 	// file type, size etc.
 	public WindowReader getWindowReader(RequestIdentifier identifier, InputStream in) throws FileNotFoundException {
-			return new  InputStreamReader(in);
+			return new  InputStreamReader(in,  TwoLevelCache.create(new AllWindowsCache(), new AllWindowsCache()) );
 	}
 	
 	public WindowReader getWindowReader(RequestIdentifier identifier) throws FileNotFoundException {

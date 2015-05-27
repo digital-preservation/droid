@@ -74,6 +74,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     
     private final RequestIdentifier identifier;
 
+    
     private final int lruCapacity;
     private final int bufferCapacity;
     
