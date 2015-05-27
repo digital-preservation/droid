@@ -130,7 +130,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
         //byteseek2FileReader = new FileReader(filePath);
     	WindowReaderFactory wrf = new WindowReaderFactory();
     	
-    	//Returns an InputStreamReader when called with 1 argument.
+    	//Returns a FileReader when called with 1 argument.
     	byteseek2FileReader =  wrf.getWindowReader(this.identifier);
     	
     	//Returns an InputStreamReader when called with 2 or 3 arguments.
