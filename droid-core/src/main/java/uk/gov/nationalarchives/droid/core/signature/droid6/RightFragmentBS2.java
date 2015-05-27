@@ -74,6 +74,7 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
  * @author Martin Waller
  * @author Matt Palmer
  * @version 6.0.0
+ * @Author Brian O'Reilly
  */
 public class RightFragmentBS2 extends SideFragmentBS2 {
 
