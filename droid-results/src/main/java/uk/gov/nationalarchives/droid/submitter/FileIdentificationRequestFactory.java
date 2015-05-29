@@ -36,6 +36,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData2;
 
 /**
  * @author rflitcroft
@@ -51,4 +52,9 @@ public class FileIdentificationRequestFactory implements IdentificationRequestFa
         return new FileSystemIdentificationRequest(metaData, identifier);
     }
     
+    //BNO - TODO: review structure and use in class hierarchy...
+    @Override
+    public final IdentificationRequest newRequest(RequestMetaData2 metaData) {
+        return new FileSystemIdentificationRequest(metaData);
+    }
 }

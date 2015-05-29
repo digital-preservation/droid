@@ -38,10 +38,11 @@ package uk.gov.nationalarchives.droid.core.interfaces.resource;
  */
 public class RequestMetaData {
 
-    private final Long size;
-    private final Long time;
-    private final String name;
-    private String hash;
+	//BNO - changed to protected from private to allow for RequestMetadata2 subclass
+    protected final Long size;
+    protected final Long time;
+    protected final String name;
+    protected String hash;
 
     /**
      * @param size - the size in bytes of the request data

@@ -48,6 +48,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData2;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 
 /**
@@ -91,6 +92,7 @@ public class FileEventHandler {
      */
     public void onEvent(File file, ResourceId parentId, ResourceId nodeId) {
 
+    	/*
         URI uri = file.toURI();
         RequestMetaData metaData = new RequestMetaData(file.length(), file
                 .lastModified(), file.getName());
@@ -100,6 +102,14 @@ public class FileEventHandler {
         identifier.setResourceId(nodeId);
         
         IdentificationRequest request = requestFactory.newRequest(metaData, identifier);
+        */
+    	
+        //BNO-BS2 RequestMetaData2 now incorporates RequestIdenifier so we can be sure it's the same resource..
+        RequestMetaData2 md2 = new RequestMetaData2(file);
+        md2.setParentResourceId(parentId);
+        md2.setResourceId(parentId);
+        IdentificationRequest request = requestFactory.newRequest(md2);
+        
         try {
             FileInputStream in = new FileInputStream(file);
             try {

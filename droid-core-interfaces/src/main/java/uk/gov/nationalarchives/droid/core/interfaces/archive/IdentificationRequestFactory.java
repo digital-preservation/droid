@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData2;
 
 /**
  * Interface for Creating new identification requests.
@@ -49,5 +50,8 @@ public interface IdentificationRequestFactory {
      * 
      */
     IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier);
+    
+    //BNO-BS2
+    IdentificationRequest newRequest(RequestMetaData2 metaData);
     
 }

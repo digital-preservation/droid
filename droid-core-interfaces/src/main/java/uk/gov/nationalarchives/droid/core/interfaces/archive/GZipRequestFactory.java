@@ -35,6 +35,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.GZipIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData2;
 
 /**
  * @author rflitcroft
@@ -51,4 +52,10 @@ public class GZipRequestFactory extends AbstractArchiveRequestFactory {
                 identifier, getTempDirLocation());
         return request;
     }
+
+	@Override
+	public IdentificationRequest newRequest(RequestMetaData2 metaData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

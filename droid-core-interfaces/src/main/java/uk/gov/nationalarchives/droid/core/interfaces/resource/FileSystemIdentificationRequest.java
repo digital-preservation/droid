@@ -79,7 +79,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     private final int bufferCapacity;
     
     private RequestMetaData requestMetaData;
-
+    
     /**
      * Constructs a new identification request.
      * @param metaData the metaData about the binary.
@@ -100,7 +100,28 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
         this.bufferCapacity = bufferCapacity;
 
     }
-    
+
+    /**
+     * BNO: New version with RequestMetadata2
+     * @param metaData
+     * @param lruCapacity
+     * @param bufferCapacity
+     */
+    FileSystemIdentificationRequest(RequestMetaData2 metaData,
+            int lruCapacity, int bufferCapacity) {
+        
+        this.requestMetaData = metaData;
+        //BNO - Remove once refactoring complete as we can just use the parent reference
+        this.identifier = metaData.getIdentifier();
+        
+        this.size = metaData.getSize();
+        this.fileName = metaData.getName();
+        //extension = FilenameUtils.getExtension(fileName);
+        extension = ResourceUtils.getExtension(fileName);
+        this.lruCapacity = lruCapacity;
+        this.bufferCapacity = bufferCapacity;
+
+    }
     /**
      * Constructs a new identification request.
      * @param metaData the metaData about the binary.
@@ -108,6 +129,11 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
      */
     public FileSystemIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier) {
         this(metaData, identifier, BUFFER_CACHE_CAPACITY, CAPACITY);
+    }
+    
+    //BNO-BS2
+    public FileSystemIdentificationRequest(RequestMetaData2 metaData) {
+        this(metaData, BUFFER_CACHE_CAPACITY, CAPACITY);
     }
     
     /**
@@ -140,9 +166,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
     	//byteseek2FileReader =  wrf.getWindowReader(this.identifier, in);
     	//byteseek2FileReader =  wrf.getWindowReader(this.identifier, in, 60000000);
     	
-    	//BNO-BS2 - presumably we'll use the new Byteseek2.0 FileReader class for all these scenarios..
-    	// It provides various constructors that take a File object - so no need for the setSourceFile
-    	// in the current cavhedBytes extended interface..
+    	//BNO-BS2 - this is the old Byteseek 1.0 version - left for now for reference
         byte[] firstBuffer = new byte[bufferCapacity];
         int bytesRead = ResourceUtils.readBuffer(in, firstBuffer);
         if (bytesRead < 1) {
@@ -257,14 +281,14 @@ public class FileSystemIdentificationRequest implements IdentificationRequest {
      */
     @Override
     public final RequestMetaData getRequestMetaData() {
-        return requestMetaData;
+        return this.requestMetaData;
     }
 
     /**
      * @return the identifier
      */
     public final RequestIdentifier getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     /**

@@ -129,14 +129,14 @@ public class IdentificationResultCollection {
     }
     
     /**
-     * @return The file lenghth of the resource
+     * @return The file length of the resource
      */
     public Long getFileLength() {
         return fileLength;
     }
     
     /**
-     * @param archive true if the identification idicated an archive format; false otherwise
+     * @param archive true if the identification indicated an archive format; false otherwise
      */
     public void setArchive(boolean archive) {
         this.archive = archive;

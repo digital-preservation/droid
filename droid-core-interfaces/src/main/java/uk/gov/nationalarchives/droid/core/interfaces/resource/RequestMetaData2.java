@@ -29,57 +29,53 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.container;
+package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
 import java.io.File;
+import java.net.URI;
 
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData2;
-
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 /**
  * @author rflitcroft
- *
+ * @Author: Brian O'Reilly
+ * Attempting to incorporate RequestIdentifier into this class to avoid passing around
+ * an instance of each that may or may not relate to the same resource, when consumers
+ * clearly expect that they do...
+ * TODO: Decide on the best home for this - shouldn't really be in "interfaces"
  */
-public class ContainerFileIdentificationRequestFactory implements IdentificationRequestFactory {
+public class RequestMetaData2 extends RequestMetaData {
 
-    private File tempDirLocation;
+    private String hash;
+    // TODO: Probably simplest just to reuse the existing class as a member...
+    // Possibly make it an inner class??
+    private RequestIdentifier identifier;
     
-    /**
-     * {@inheritDoc}
+    /*
+     *         URI uri = file.toURI();
+        RequestMetaData metaData = new RequestMetaData(file.length(), file
+                .lastModified(), file.getName());
      */
-    @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
-        return new ContainerFileIdentificationRequest(getTempDirLocation());
-    }
-    
-    /**
-     * @param tempDir the tempDir to set
-     */
-    public void setTempDirLocation(File tempDir) {
-        this.tempDirLocation = tempDir;
+
+    public RequestMetaData2(File file) {
+    	super(file.length(), file.lastModified(), file.getName()); 
+    	URI uri = file.toURI();
+    	this.setIdentifier(new RequestIdentifier(uri));
     }
 
-    /**
-     * Get the location of the temporary folder.
-     * 
-     * @return The location of the temporary folder
-     */
-    public File getTempDirLocation() {
-        synchronized (this) {
-            if (tempDirLocation == null) {
-                tempDirLocation = new File(System.getProperty("java.io.tmpdir"));
-            }
-        }
-        return tempDirLocation;
-    }
-
-    //BNO - TODO: temporary implementation - to review
-	@Override
-	public IdentificationRequest newRequest(RequestMetaData2 metaData) {
-		// TODO Auto-generated method stub
-		return null;
+	public RequestIdentifier getIdentifier() {
+		return identifier;
 	}
+
+	private void setIdentifier(RequestIdentifier identifier) {
+		this.identifier = identifier;
+	}
+   
+    public void setParentResourceId(ResourceId id) {
+        this.identifier.setParentResourceId(id);
+    }
+    
+    public void setResourceId(ResourceId id) {
+    	this.identifier.setResourceId(id);
+    }
 }

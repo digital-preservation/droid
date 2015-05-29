@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData2;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.TarEntryIdentificationRequest;
 
 /**
@@ -53,4 +54,10 @@ public class TarEntryRequestFactory extends AbstractArchiveRequestFactory {
         return request;
     }
 
+    //BNO - TODO: temporary implementation - to review
+	@Override
+	public IdentificationRequest newRequest(RequestMetaData2 metaData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
