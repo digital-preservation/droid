@@ -122,7 +122,6 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 import net.byteseek.compiler.CompileException;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.searcher.SearchResult;
-import net.byteseek.searcher.sequence.AbstractSequenceSearcher;
 import net.byteseek.compiler.matcher.SequenceMatcherCompiler;
 
 
@@ -150,7 +149,7 @@ public class SubSequence extends SimpleElement {
     private static final String SEQUENCE_PARSE_ERROR = "The signature sub-sequence [%s] could not be parsed. "
         + "The error returned was [%s]";
 
-    private static final SequenceMatcherCompiler EXPRESSION_COMPILER = new SequenceMatcherCompiler();
+    private static final SequenceMatcherCompiler SEQUENCE_COMPILER = new SequenceMatcherCompiler();
 
     private static final boolean EXPRESSION_BEFORE_GAPS = true;
     private static final boolean GAPS_BEFORE_EXPRESSION = false;
@@ -172,6 +171,8 @@ public class SubSequence extends SimpleElement {
     private final List<List<SideFragment>> orderedRightFragments = new ArrayList<List<SideFragment>>();
     private boolean backwardsSearch;
     private boolean isInvalidSubSequence;
+    private boolean hasLeftFragments;
+    private boolean hasRightFragments;
 
 
     /**
@@ -217,7 +218,7 @@ public class SubSequence extends SimpleElement {
         try {
             final String transformedSequence = FragmentRewriter.rewriteFragment(seq);
         	//BNO- - is this what we want to get away from the old byteseek regex?
-            matcher = EXPRESSION_COMPILER.compile(transformedSequence);
+            matcher = SEQUENCE_COMPILER.compile(transformedSequence);
             searcher = new HorspoolFinalFlagSearcher(matcher);
         } catch (CompileException ex) { //BNO - in  this replaces the earlier ParseException
             final String warning = String.format(SEQUENCE_PARSE_ERROR, seq, ex.getMessage());
@@ -364,6 +365,8 @@ public class SubSequence extends SimpleElement {
         this.backwardsSearch = reverseOrder;
         this.fullFileScan = fullScan;
         processSequenceFragments();
+        hasLeftFragments  = !orderedLeftFragments.isEmpty();
+        hasRightFragments = !orderedRightFragments.isEmpty();
     }
 
 
@@ -647,7 +650,117 @@ public class SubSequence extends SimpleElement {
     // ********************************************************************************************************
     // Byteseek 2 versions :
     // ********************************************************************************************************
-    
+
+    public final boolean findSequenceFromPosition2(final long position,
+                                                   final ByteReader targetFile,
+                                                   final long maxBytesToScan,
+                                                   final boolean bofSubsequence,
+                                                   final boolean eofSubsequence) {
+        try {
+            if (backwardsSearch) {
+                return findBackwardsSequenceFromPosition(position, targetFile, maxBytesToScan,
+                                                         bofSubsequence, eofSubsequence);
+            } else {
+                return findForwardsSequenceFromPosition(position, targetFile, maxBytesToScan,
+                                                        bofSubsequence, eofSubsequence);
+            }
+        } catch (IOException e) {
+            getLog().error("An IO exception occurred while searching in " + targetFile + " from position " + position, e);
+        } catch (IndexOutOfBoundsException e) {
+            getLog().debug("An index out of bounds exception occurred while searching in " + targetFile + " from position " + position, e);
+        }
+        return false;
+    }
+
+    private final boolean findForwardsSequenceFromPosition(final long position,
+                                                           final ByteReader targetFile,
+                                                           final long maxBytesToScan,
+                                                           final boolean bofSubsequence,
+                                                           final boolean eofSubsequence) throws IOException {
+        final WindowReader reader = targetFile.getWindowReader();
+        final long endSearchPosition = getForwardSearchEndPosition(reader, position, maxBytesToScan);
+        long searchPosition = position + minSeqOffset + minLeftFragmentLength;
+        while (searchPosition < endSearchPosition) {
+            final List<SearchResult<SequenceMatcher>> matches = searcher.searchForwards(reader, searchPosition, endSearchPosition);
+            if (matches.size() == 0) {
+                return false;
+            }
+            searchPosition = matches.get(0).getMatchPosition();
+            final long sequenceEndPosition = checkForwardFragments(reader, searchPosition, targetFile.getFileMarker(), bofSubsequence, eofSubsequence);
+            if (sequenceEndPosition >= 0) {
+                targetFile.setFileMarker(sequenceEndPosition + 1L);
+                return true;
+            }
+            searchPosition += 1;
+        }
+        return false;
+    }
+
+    private long getForwardSearchEndPosition(final WindowReader reader, final long position, final long maxBytesToScan) throws IOException {
+        if (fullFileScan) {
+            return maxBytesToScan < 0 ? reader.length() - minRightFragmentLength - 1 : maxBytesToScan - minRightFragmentLength;
+        } else {
+            final long endSearchWindow = position + maxSeqOffset + maxLeftFragmentLength;
+            if (maxBytesToScan > 0 && endSearchWindow > maxBytesToScan) {
+                return maxBytesToScan;
+            }
+            return endSearchWindow;
+        }
+    }
+
+    private long checkForwardFragments(final WindowReader reader, final long matchPosition, final long finalPosition,
+                                       final boolean bofSubsequence, final boolean eofSubsequence) {
+        if (hasLeftFragments &&
+            !leftFragmentsMatch(reader, matchPosition, finalPosition, bofSubsequence)) {
+            return -1;
+        }
+        final long matcherEndPosition = matchPosition + matcher.length();
+        if (hasRightFragments) {
+            return getRightFragmentEndPosition(reader, matcherEndPosition, eofSubsequence);
+        }
+        return matcherEndPosition;
+    }
+
+    private boolean leftFragmentsMatch(final WindowReader reader, final long fromPosition, final long finalPosition, final boolean bofSubsequence) {
+
+
+        //final long[] leftFragmentPositions = bytePosForLeftFragments(reader, startPosition, matchPosition, -1, 0);
+        // check BOF max seq offset (bugfix)
+        //if (leftFragmentPositions.length == 0 || ( bofSubsequence && leftFragmentPositions[0] > maxSeqOffset)) {
+        //    return false;
+        //}
+        return true;
+    }
+
+    private long getRightFragmentEndPosition(final WindowReader reader, final long fromPosition, final boolean eofSubsequence) {
+        /*
+        final long[] rightFragmentPositions =
+                bytePosForRightFragments(reader, matcherEndPosition, lastBytePositionInFile, 1, 0);
+
+        if (rightFragmentPositions.length == 0 ||
+            (eofSubsequence && rightFragmentPositions[0] > maxSeqOffset)) { // check EOF max seq offset (bugfix)
+            return -1;
+        }
+        return rightFragmentPositions[0];
+        */
+        return 0;
+    }
+
+
+
+
+    private final boolean findBackwardsSequenceFromPosition(final long position,
+                                                            final ByteReader targetFile,
+                                                            final long maxBytesToScan,
+                                                            final boolean bofSubsequence,
+                                                            final boolean eofSubsequence) {
+
+
+        //List<SearchResult<SequenceMatcher>> matches = searcher.
+        return false;
+    }
+
+
     /** Uses the Boyer-Moore-Horspool search algorithm to find a sequence within a window
      * on a file.
      *
@@ -704,8 +817,12 @@ public class SubSequence extends SimpleElement {
             if (this.backwardsSearch) {
                 
                 // Define the search window relative to our starting position:
+                //TODO:MP check positioning of backwards search with byteseek 2.
+                //final long maximumPossibleStartingPosition =
+                //    position - minRightFragmentLength - lastBytePositionInAnchor;
                 final long maximumPossibleStartingPosition =
-                    position - minRightFragmentLength - lastBytePositionInAnchor;
+                    position - minRightFragmentLength;
+
                 final long startSearchWindow = maximumPossibleStartingPosition - this.getMinSeqOffset();
                 final int rightFragmentWindow = maxRightFragmentLength - minRightFragmentLength;
                 long endSearchWindow = fullFileScan 
@@ -732,11 +849,9 @@ public class SubSequence extends SimpleElement {
                 //long matchPosition = startSearchWindow;
                 long matchPosition = startSearchWindow;
                 while (matchPosition >= endSearchWindow) {
-                    //BNO-
-                	//TODO: Replace with  searcher.
-                	//matchPosition = searcher.searchBackwards(reader, matchPosition, endSearchWindow);
-                	
-                	List<SearchResult<net.byteseek.matcher.sequence.SequenceMatcher>> matches = searcher.searchBackwards(windowReader, matchPosition, endSearchWindow);
+
+                	//List<SearchResult<SequenceMatcher>> matches = searcher.searchBackwards(windowReader, matchPosition + lastBytePositionInAnchor, endSearchWindow);
+                    List<SearchResult<SequenceMatcher>> matches = searcher.searchBackwards(windowReader, matchPosition, endSearchWindow);
                 	
                 	if(matches.size() > 0) {
                 		matchPosition = matches.get(0).getMatchPosition();
@@ -804,12 +919,17 @@ public class SubSequence extends SimpleElement {
                 long matchPosition = startSearchWindow;
 
                 while (matchPosition <= endSearchWindow) {
-                    
-                	List<SearchResult<net.byteseek.matcher.sequence.SequenceMatcher>> matches = searcher.searchForwards(windowReader, matchPosition
-                			, endSearchWindow);
+
+                    //TODO:MP hack search position to sane value (not at the end of the matcher, the beginning
+
+                	//List<SearchResult<SequenceMatcher>> matches = searcher.searchForwards(windowReader, matchPosition, endSearchWindow);
+                    final long matchStarterPosition = matchPosition - matchLength + 1;
+                    List<SearchResult<SequenceMatcher>> matches = searcher.searchForwards(windowReader, matchStarterPosition
+                            , endSearchWindow);
 
                 	if(matches.size() > 0) {
-                		matchPosition = matches.get(0).getMatchPosition();
+                        //TODO:MP hack search position to sane value (not at the end of the matcher, the beginning
+                        matchPosition = matches.get(0).getMatchPosition() + matchLength - 1;
                 	} else {
                 		matchPosition = -1;
                 	}

@@ -103,7 +103,11 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
      */
     @Override
     public final byte getByte(long fileIndex) {
-        return request.getByte(fileIndex);
+        try {
+            return request.getByte(fileIndex);
+        } catch (IOException ex) {
+            throw new RuntimeException("Something went horribly wrong trying to get a byte at position " + fileIndex, ex );
+        }
     }
 
     /**
@@ -236,15 +240,6 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
      */
     public final void setFileMarker(long fileMarker) {
         this.fileMarker = fileMarker;
-    }
-
-    /**
-     * @see uk.gov.nationalarchives.droid.core.signature.ByteReader#getReader()
-     * @return a ByteReader
-     */
-    @Override
-    public final net.domesdaybook.reader.ByteReader getReader() {
-        return request.getReader();
     }
 
     //BNO-BS2

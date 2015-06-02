@@ -42,6 +42,8 @@ import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
 
+import java.io.IOException;
+
 /**
  * @author rflitcroft
  *
@@ -63,11 +65,11 @@ public class IdentificationRequestByteWrapperAdapterTest {
     }
     
     @Test
-    public void testGetByte() {
+    public void testGetByte() throws IOException {
         long index = 12134567;
         
-        adapter.getByte(index);
-        byte myByte = (byte) 255;
+        //adapter.getByte(index);
+        byte myByte = (byte)255;
         when(request.getByte(index)).thenReturn(myByte);
         
         assertEquals(myByte, adapter.getByte(index));

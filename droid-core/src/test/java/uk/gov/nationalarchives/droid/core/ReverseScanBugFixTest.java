@@ -74,13 +74,12 @@ public class ReverseScanBugFixTest {
         assertTrue(file.exists());
         URI resourceUri = file.toURI();
   
-        InputStream in = new FileInputStream(file);
         RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), SCANFILE);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
         
         IdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
-        request.open(in);
+        request.open(file);
 
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
         List<IdentificationResult> results = resultsCollection.getResults();

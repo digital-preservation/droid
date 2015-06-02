@@ -82,6 +82,7 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -355,7 +356,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * @param targetFile
      * @return
      */
-    private int getIndirectOffset(final ByteReader targetFile) {
+    private int getIndirectOffset(final ByteReader targetFile) throws IOException {
         int offset = 0;
         if (this.hasIndirectOffset) {
             long power = 1;
@@ -365,25 +366,36 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                 offsetLocation = targetFile.getNumBytes() - offsetLocation - 1;
             }
 
-            final net.domesdaybook.reader.ByteReader reader = targetFile.getReader();
+            final WindowReader reader = targetFile.getWindowReader();
 
             // In the case of indirect BOF or indirect EOF bytesequences,
             // We need to read the file to get the offset.
             if (bigEndian) {
                 for (int byteIndex = offsetLength - 1; byteIndex > -1; byteIndex--) {
-                    final Byte fileByte = reader.readByte(offsetLocation + byteIndex);
-                    int byteValue = fileByte.intValue();
-                    byteValue = (byteValue >= 0) ? byteValue : byteValue + BYTEVALUES;
-                    offset += power * byteValue;
-                    power *= BYTEVALUES;
+                    final int byteValue = reader.readByte(offsetLocation + byteIndex);
+                    if (byteValue >= 0) {
+                        offset += power * byteValue;
+                        power *= BYTEVALUES;
+                    } else {
+                        throw new IOException("An error occurred reading a byte at position " + (offsetLocation + byteIndex));
+                    }
                 }
             } else {
                 for (int byteIndex = 0; byteIndex < offsetLength; byteIndex++) {
+                    final int byteValue = reader.readByte(offsetLocation + byteIndex);
+                    if (byteValue >= 0) {
+                        offset += power * byteValue;
+                        power *= BYTEVALUES;
+                    } else {
+                        throw new IOException("An error occurred reading a byte at position " + (offsetLocation + byteIndex));
+                    }
+                    /*
                     final Byte fileByte = reader.readByte(offsetLocation + byteIndex);
                     int byteValue = fileByte.intValue();
                     byteValue = (byteValue >= 0) ? byteValue : byteValue + BYTEVALUES;
                     offset += power * byteValue;
                     power *= BYTEVALUES;
+                    */
                 }
             }
         }
@@ -423,18 +435,23 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
             }
         } else {
             fixedSubsequence = this.anchoredToBOF;
-            final long offset = getIndirectOffset(targetFile);
-            targetFile.setFileMarker(offset);
-            for (int subSequenceIndex = 0; matchResult && subSequenceIndex < seq.length; subSequenceIndex++) {
-                final SubSequence subseq = seq[subSequenceIndex];
-                final long currentFilePos = targetFile.getFileMarker();
-                /*matchResult = subseq.findSequenceFromPosition(
-                        currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
-                */
-                matchResult = subseq.findSequenceFromPosition(
-                        currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
-                        
-                fixedSubsequence = false;
+            try {
+                final long offset = getIndirectOffset(targetFile);
+                targetFile.setFileMarker(offset);
+                for (int subSequenceIndex = 0; matchResult && subSequenceIndex < seq.length; subSequenceIndex++) {
+                    final SubSequence subseq = seq[subSequenceIndex];
+                    final long currentFilePos = targetFile.getFileMarker();
+                    /*matchResult = subseq.findSequenceFromPosition(
+                            currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
+                    */
+                    matchResult = subseq.findSequenceFromPosition(
+                            currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
+
+                    fixedSubsequence = false;
+                }
+            } catch (IOException io) {
+                //TODO should log something here...
+                return false;
             }
         }
         return matchResult;
