@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,11 +38,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.FilenameUtils;
+
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -53,36 +53,36 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 
 /**
- * @author mpalmer
+ * @author rflitcroft, mpalmer
  *
  */
-public class JavaZipArchiveHandler implements ArchiveHandler {
+public class ApacheZipArchiveHandler implements ArchiveHandler {
 
     private AsynchDroid droidCore;
     private IdentificationRequestFactory factory;
     private ResultHandler resultHandler;
-
-
+    
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public final void handle(IdentificationRequest request) throws IOException {
 
-        InputStream in = request.getSourceInputStream();
+        InputStream in = request.getSourceInputStream(); 
         try {
-            final ZipInputStream zin = new ZipInputStream(in);
-            ZipFile x = null;
-
+            final ZipArchiveInputStream zin = new ZipArchiveInputStream(in);
+            
             try {
-                Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
+                Iterable<ZipArchiveEntry> iterable = new Iterable<ZipArchiveEntry>() {
                     @Override
-                    public final Iterator<ZipEntry> iterator() {
+                    public final Iterator<ZipArchiveEntry> iterator() {
                         return new ZipInputStreamIterator(zin);
                     }
                 };
-
-                ZipArchiveWalker walker = new ZipArchiveWalker(zin, request.getIdentifier());
+                 
+        
+                ZipArchiveWalker walker = new ZipArchiveWalker(zin, request.getIdentifier());  
                 walker.walk(iterable);
             } finally {
                 if (zin != null) {
@@ -104,25 +104,25 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
      * @return
      */
     private ResourceId submitDirectory(final URI parentName,
-                                       ZipEntry entry, String entryName, ResourceId correlationId) {
+            ZipArchiveEntry entry, String entryName, ResourceId correlationId) {
         IdentificationResultImpl result = new IdentificationResultImpl();
-
+        
         long size = entry.getSize();
         long time = entry.getTime();
-
+        
         RequestMetaData metaData = new RequestMetaData(
-                size != -1 ? size : null,
+                size != -1 ? size : null, 
                 time != -1 ? time : null,
                 entryName);
-
+        
         RequestIdentifier identifier = new RequestIdentifier(
-                ArchiveFileUtils.toZipUri(parentName, entry.getName()) );
-
+                ArchiveFileUtils.toZipUri(parentName, entry.getName()));
+        
         result.setRequestMetaData(metaData);
         result.setIdentifier(identifier);
         return resultHandler.handleDirectory(result, correlationId, false);
     }
-
+    
     /**
      * Submits a request to droid.
      * @param entry the zip entry to submit
@@ -133,24 +133,24 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
      * @param originatorNodeId the ID of the originator node
      * @throws IOException if there was an error accessing the input stream 'in'
      */
-    final void submit(ZipEntry entry, String entryName, URI parentName,
-                      ZipInputStream in, ResourceId correlationId, long originatorNodeId)
-            throws IOException {
-
+    final void submit(ZipArchiveEntry entry, String entryName, URI parentName, 
+            ZipArchiveInputStream in, ResourceId correlationId, long originatorNodeId) 
+        throws IOException {
+        
         long size = entry.getSize();
         long time = entry.getTime();
-
+        
         RequestMetaData metaData = new RequestMetaData(
-                size != -1 ? size : null,
+                size != -1 ? size : null, 
                 time != -1 ? time : null,
                 entryName);
-
+        
         RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toZipUri(parentName, entry.getName()));
         identifier.setAncestorId(originatorNodeId);
         identifier.setParentResourceId(correlationId);
         droidCore.submit(factory.newRequest(metaData, identifier, in));
     }
-
+    
     /**
      * @param factory the factory to set
      */
@@ -164,19 +164,19 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
     public final void setDroidCore(AsynchDroid droidCore) {
         this.droidCore = droidCore;
     }
-
+    
     /**
      * Adapts an enumeration to the Iterator interface.
      * @author rflitcroft
      *
      */
-    private static final class ZipInputStreamIterator
-            extends ArchiveInputStreamIterator<ZipEntry, ZipInputStream> {
-
+    private static final class ZipInputStreamIterator 
+        extends ArchiveInputStreamIterator<ZipArchiveEntry, ZipArchiveInputStream> { 
+        
         /**
          * @param in
          */
-        public ZipInputStreamIterator(ZipInputStream in) {
+        public ZipInputStreamIterator(ZipArchiveInputStream in) {
             super(in);
         }
 
@@ -184,32 +184,32 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
          * {@inheritDoc}
          */
         @Override
-        protected ZipEntry getNextEntry(ZipInputStream stream) throws IOException {
-            return next();
+        protected ZipArchiveEntry getNextEntry(ZipArchiveInputStream stream) throws IOException {
+            return getInputStream().getNextZipEntry();
         }
     }
-
+    
     /**
      * Archive walker for zip files.
      * @author rflitcroft
      *
      */
-    private final class ZipArchiveWalker extends ArchiveFileWalker<ZipEntry> {
-
+    private final class ZipArchiveWalker extends ArchiveFileWalker<ZipArchiveEntry> {
+        
         private final ResourceId parentId;
         private final long originatorNodeId;
         private final URI parentName;
-        private final ZipInputStream in;
+        private final ZipArchiveInputStream in;
         private final Map<String, ResourceId> directories = new HashMap<String, ResourceId>();
-
-        ZipArchiveWalker(ZipInputStream in, RequestIdentifier identifier) {
+        
+        ZipArchiveWalker(ZipArchiveInputStream in, RequestIdentifier identifier) {
             this.in = in;
             this.parentId = identifier.getResourceId();
             this.parentName = identifier.getUri();
             this.originatorNodeId = identifier.getAncestorId();
         }
 
-
+        
         /**
          * Finds the longest path which has been seen before (if any),
          * and adds all the subsequent folders which haven't been seen.
@@ -219,7 +219,7 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
             // Split the path string into a list of ancestor paths:
             List<String> paths = ArchiveFileUtils.getAncestorPaths(path);
             ResourceId longestParentId = parentId;
-
+            
             // Find the longest path we *have* seen before (if any):
             // (ancestor paths are ordered longest first)
             int longestSeenBefore = paths.size();
@@ -236,18 +236,18 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
             // Add any that haven't yet been processed (from shortest to longest)
             for (int pathIndex = longestSeenBefore - 1; pathIndex >= 0; pathIndex--) {
                 final String pathName = paths.get(pathIndex);
-                ZipEntry entry = new ZipEntry(pathName);
+                ZipArchiveEntry entry = new ZipArchiveEntry(pathName);
                 String dirName = FilenameUtils.getName(pathName.substring(0, pathName.length() - 1));
                 longestParentId = submitDirectory(parentName, entry, dirName, longestParentId);
                 directories.put(pathName, longestParentId);
             }
-
+            
             return longestParentId;
         }
-
-
+        
+        
         @Override
-        protected void handleEntry(ZipEntry entry) throws IOException {
+        protected void handleEntry(ZipArchiveEntry entry) throws IOException {
             String entryName = entry.getName();
             final String prefixPath = FilenameUtils.getPath(entryName);
             ResourceId correlationId = parentId; // by default, files are correlated to the parent.
@@ -260,7 +260,7 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
                     correlationId = processAncestorFolders(prefixPath);
                 }
             }
-
+            
             // If there is a file, submit the file:
             entryName = FilenameUtils.getName(entryName);
             if (!entryName.isEmpty()) {
@@ -275,8 +275,5 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
     public final void setResultHandler(ResultHandler resultHandler) {
         this.resultHandler = resultHandler;
     }
-
+    
 }
-
-
-

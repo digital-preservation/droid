@@ -35,22 +35,28 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentificationRequest;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Generates requests for entries in a specific zip file.
  * An instance of this class is valid for one, and one only, zip file.
  * @author rflitcroft
  *
  */
-public class ZipEntryRequestFactory extends AbstractArchiveRequestFactory {
+public class ZipEntryRequestFactory extends AbstractArchiveRequestFactory<InputStream> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final ZipEntryIdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
+    public final ZipEntryIdentificationRequest newRequest(RequestMetaData metaData,
+                                                          RequestIdentifier identifier,
+                                                          InputStream in) throws IOException {
         
         final ZipEntryIdentificationRequest request = new ZipEntryIdentificationRequest(
                 metaData, identifier, getTempDirLocation());
+        request.open(in);
         return request;
     }
     

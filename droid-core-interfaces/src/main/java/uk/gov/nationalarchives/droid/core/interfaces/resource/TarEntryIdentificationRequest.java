@@ -35,6 +35,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.byteseek.io.reader.InputStreamReader;
+import net.byteseek.io.reader.ReaderInputStream;
+import net.byteseek.io.reader.cache.TempFileCache;
+import net.byteseek.io.reader.cache.TopAndTailCache;
+import net.byteseek.io.reader.cache.TwoLevelCache;
+import net.byteseek.io.reader.cache.WindowCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,62 +55,38 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 
 /**
  * Encapsulates a request for a GZIP entry.
- * @author rflitcroft
+ * @author rflitcroft, mpalmer
  *
  */
 //BNO-BS2 - this  class is almost identical to {@link ZipEntryIdentificationRequest}
-public class TarEntryIdentificationRequest implements IdentificationRequest {
+public class TarEntryIdentificationRequest implements IdentificationRequest<InputStream> {
 
-    private static final int BUFFER_CACHE_CAPACITY = 16;
-
-    private static final int CAPACITY = 32 * 1024; // 50 kB
-    
-    private Long size;
-    private final String extension;
-    
-    private CachedBytes cachedBinary;
+    private final static int TOP_TAIL_CAPACITY = 8 * 1024 * 1024; // hold 8Mb cache on either end of zip entry.
 
     private final String fileName;
-    private File tempFile;
-
-    private final int lruCapacity;
-    private final int bufferCapacity;
-    private File tempDir;
-    
+    private final String extension;
     private final RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
-    
+
+    private File tempDir;
+    private Long size;
+    private WindowReader reader;
+
     private Log log = LogFactory.getLog(this.getClass());
     
+
     /**
      * Constructs a new Tar file resource.
      * @param metaData the request meta data
      * @param identifier the request identifier
      * @param tempDir the location to write temp files.
      */
-    public TarEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier, File tempDir) {
-        this(metaData, identifier, BUFFER_CACHE_CAPACITY, CAPACITY, tempDir);
-    }
-    
-    /**
-     * Constructs a new Tar file resource.
-     * @param metaData the request meta data
-     * @param identifier the request identifier
-     * @param lruCapacity the buffer cache capacity
-     * @param bufferCapacity the buffer capacity
-     * @param tempDir the location to write temp files.
-     */
-    TarEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
-            int lruCapacity, int bufferCapacity, File tempDir) {
+    public TarEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
+                                  File tempDir) {
         this.identifier = identifier;
         size = metaData.getSize();
-        
         fileName = metaData.getName();
-        //extension = FilenameUtils.getExtension(fileName);
         extension = ResourceUtils.getExtension(fileName);
-        
-        this.lruCapacity = lruCapacity;
-        this.bufferCapacity = bufferCapacity;
         this.tempDir = tempDir;
         this.requestMetaData = metaData;
     }
@@ -114,51 +96,16 @@ public class TarEntryIdentificationRequest implements IdentificationRequest {
      */
     @Override
     public final void open(InputStream in) throws IOException {
-        /* using normal stream access and CachedByteArrays */
-    	
-    	/*BNO-BS2
-    	 * Currently the cachedBinary instantiation is a of a class
-    	 * derived from the {@link CachedBytes} interface, which extends
-    	 * the ByteReader interface in Byteseek 1.1.  In Byteseek 2.0, we
-    	 * have a new class model based on the {@link WindowReader} interface,
-    	 * and we are probably looking to instantiate one of these classes instead.
-    	 */
-    	
-        byte[] firstBuffer = new byte[bufferCapacity];
-        int bytesRead = ResourceUtils.readBuffer(in, firstBuffer);
-        if (bytesRead < 1) {
-            firstBuffer = new byte[0];
-            cachedBinary = new CachedByteArray(firstBuffer, 0);
-            size = 0L;
-        } else if (bytesRead < bufferCapacity) {
-            // size the buffer to the amount of bytes available:
-            // firstBuffer = Arrays.copyOf(firstBuffer, bytesRead);
-            cachedBinary = new CachedByteArray(firstBuffer, bytesRead);
-            size = (long) bytesRead;
-        } else {
-            cachedBinary = new CachedByteArrays(lruCapacity, bufferCapacity, firstBuffer, bufferCapacity);
-            //BNO-BS2 - Byteseek 2 implementation shoudl remove the need to write out to temp file.
-            tempFile = ArchiveFileUtils.writeEntryToTemp(tempDir, firstBuffer, in);
-            cachedBinary.setSourceFile(tempFile);
-            size = tempFile.length();
-        }                
-        /* using nio and byte buffers
-        ReadableByteChannel channel = Channels.newChannel(in);
-        ByteBuffer buffer = ByteBuffer.allocateDirect(bufferCapacity);
-        int bytesRead = 0;
-        do {
-            bytesRead = channel.read(buffer);
-        } while (bytesRead >= 0 && buffer.hasRemaining());
-        
-        cachedBinary = new CachedByteBuffers(lruCapacity, bufferCapacity, buffer);
-        if (buffer.limit() == buffer.capacity()) {
-            tempFile = ArchiveFileUtils.writeEntryToTemp(tempDir, buffer, channel);
-            cachedBinary.setSourceFile(tempFile);
-            this.size = tempFile.length();
-        } else {
-            size = (long) buffer.limit();
+        final WindowCache cache = TwoLevelCache.create(
+                new TopAndTailCache(TOP_TAIL_CAPACITY),
+                new TempFileCache(tempDir));
+        reader = new InputStreamReader(in, cache);
+        // Force read of entire input stream to build reader and remove dependence on source input stream.
+        final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
+        if (readSize != size) {
+            log.warn("The tar entry states it is " + size + " in length, but reading it produced: " + readSize);
+            size = readSize;
         }
-        */
     }
     
     /**
@@ -167,51 +114,9 @@ public class TarEntryIdentificationRequest implements IdentificationRequest {
      */
     @Override
     public final void close() throws IOException {
-        try {
-            if (cachedBinary != null) {
-                cachedBinary.close();
-                cachedBinary = null;
-            }
-        } finally {
-            if (tempFile != null) {
-                if (!tempFile.delete() && tempFile.exists()) {
-                    String message = String.format("Could not delete temporary file [%s] for tar entry [%s]. "
-                            + "Will try to delete on exit.", 
-                            tempFile.getAbsolutePath(), identifier.getUri().toString());
-                    log.warn(message);
-                    tempFile.deleteOnExit();
-                }
-                tempFile = null;
-            }
-        }
+        reader.close();
     }
     
-    /**
-     * Really ensure that temporary files are deleted, if the close method is not called.  
-     * Do not rely on this - this is just a double-double safety measure to avoid leaving 
-     * temporary files hanging around.
-     * {@inheritDoc}
-     */
-    @Override
-    //CHECKSTYLE:OFF
-    public void finalize() throws Throwable {
-    //CHECKSTYLE:ON
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
-    }   
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final byte getByte(long position) {
-        return cachedBinary.readByte(position);
-    }
-        
     /**
      * {@inheritDoc}
      */
@@ -237,46 +142,12 @@ public class TarEntryIdentificationRequest implements IdentificationRequest {
     }
 
     /**
-     * @return the raf
-     */
-    final CachedBytes getCache() {
-        return cachedBinary;
-    }
-    
-    /**
      * {@inheritDoc}
      * @throws IOException 
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
-        return cachedBinary.getSourceInputStream();
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @throws IOException 
-     */
-    @Override
-    public final File getSourceFile() throws IOException {
-        if (tempFile == null) {
-            final InputStream stream = cachedBinary.getSourceInputStream();
-            try {
-                tempFile = ResourceUtils.createTemporaryFileFromStream(tempDir, stream);
-            } finally {
-                if (stream != null) {
-                    stream.close();
-                }
-            }
-        }
-        return tempFile;
-    }    
-    
-    /**
-     * @return the tempFile
-     */
-    final File getTempFile() {
-        return tempFile;
+        return new ReaderInputStream(reader);
     }
     
     /**
@@ -295,20 +166,18 @@ public class TarEntryIdentificationRequest implements IdentificationRequest {
         return identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    //BNO-BS2 - now need to return AbstractReader or WindowReader in package net.byteseek.io.reader
-    // (see import change above)
     @Override
-    public final ByteReader getReader() {
-        return cachedBinary;
+    public byte getByte(long position) throws IOException {
+        final int result = reader.readByte(position);
+        if (result <0 ) {
+            throw new IOException("No byte at position " + position);
+        }
+        return (byte) result;
     }
 
-	@Override
+    @Override
 	public WindowReader getWindowReader() {
-		// TODO Auto-generated method stub
-		return null;
+        return reader;
 	}
 
 }

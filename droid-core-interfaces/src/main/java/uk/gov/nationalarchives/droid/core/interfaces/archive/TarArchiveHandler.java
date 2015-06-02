@@ -54,7 +54,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 /**
- * @author rflitcroft
+ * @author rflitcroft, mpalmer
  *
  */
 public class TarArchiveHandler implements ArchiveHandler {
@@ -140,9 +140,7 @@ public class TarArchiveHandler implements ArchiveHandler {
             new RequestIdentifier(ArchiveFileUtils.toTarUri(parentName, entry.getName()));
         identifier.setAncestorId(originatorNodeId);
         identifier.setParentResourceId(correlationId);
-        IdentificationRequest request = factory.newRequest(metaData, identifier);
-        request.open(in);
-        droidCore.submit(request);
+        droidCore.submit(factory.newRequest(metaData, identifier, in));
     }
     
     /**
@@ -276,7 +274,7 @@ public class TarArchiveHandler implements ArchiveHandler {
         /**
          * Finds the longest path which has been seen before (if any),
          * and adds all the subsequent folders which haven't been seen.
-         * @param prefixPath the path of 
+         * @param path the path of
          */
         private ResourceId processAncestorFolders(String path) {
             // Split the path string into a list of ancestor paths:

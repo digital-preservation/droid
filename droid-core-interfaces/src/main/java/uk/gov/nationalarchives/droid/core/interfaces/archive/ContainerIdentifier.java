@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;

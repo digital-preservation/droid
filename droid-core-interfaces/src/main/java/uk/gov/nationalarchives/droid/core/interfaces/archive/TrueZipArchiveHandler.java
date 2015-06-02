@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -68,8 +69,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      */
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        
-        final BasicZipFile zipFile = new BasicZipFile(request.getSourceFile());
+        final BasicZipFile zipFile = new BasicZipFile(new ReaderReadOnlyFile(request.getWindowReader()));
         try {
             Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
                 @Override
@@ -139,18 +139,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toZipUri(parentName, entry.getName()));
         identifier.setAncestorId(originatorNodeId);
         identifier.setParentResourceId(correlationId);
-
-        IdentificationRequest request = factory.newRequest(metaData, identifier);
-        InputStream in = null;
-        try {
-            in = file.getInputStream(entry);
-            request.open(in);
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
-        droidCore.submit(request);
+        droidCore.submit(factory.newRequest(metaData, identifier, file.getInputStream(entry)));
     }
     
     /**
@@ -231,7 +220,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         /**
          * Finds the longest path which has been seen before (if any),
          * and adds all the subsequent folders which haven't been seen.
-         * @param prefixPath the path of 
+         * @param path the path of
          */
         private ResourceId processAncestorFolders(String path) {
             // Split the path string into a list of ancestor paths:
