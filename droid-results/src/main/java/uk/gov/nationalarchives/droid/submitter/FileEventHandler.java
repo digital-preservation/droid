@@ -47,6 +47,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 
@@ -60,7 +61,7 @@ public class FileEventHandler {
 
     private AsynchDroid droidCore;
     private ResultHandler resultHandler;
-    private IdentificationRequestFactory requestFactory;
+    private IdentificationRequestFactory<File> requestFactory;
 
     private SubmissionThrottle submissionThrottle;
 
@@ -98,24 +99,9 @@ public class FileEventHandler {
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
-        
-        IdentificationRequest request = requestFactory.newRequest(metaData, identifier);
+
         try {
-            FileInputStream in = new FileInputStream(file);
-            try {
-                request.open(in);
-                //log.debug(String.format(
-                //        "Submitting job [%s]; parent id [%s] to droid.", uri,
-                //        parentId));
-            } finally {
-                if (in != null) {
-                	//BNO-BS2 - don't want to close the input stream if we're using an InputStream Reader!!
-                	// Any workarounds - e.g. clone it (potentially expensive)!
-                    //in.close();
-                }
-            }
-            //BNO: Calls the SubmissionGateway's submit method
-            droidCore.submit(request);
+            droidCore.submit(requestFactory.newRequest(metaData, identifier, file));
             submissionThrottle.apply();
         } catch (IOException e) {
             IdentificationErrorType error = file.exists() ? IdentificationErrorType.ACCESS_DENIED
@@ -125,6 +111,8 @@ public class FileEventHandler {
             } else {
                 log.warn(String.format("File not found: [%s]", file.getAbsolutePath()));
             }
+            //TODO: ugly to create a new request when the factory fails to open it for error reporting.
+            final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
             resultHandler.handleError(new IdentificationException(request, error, e));
         } catch (InterruptedException e) {
             log.debug("Interrupted while throttle active.", e);

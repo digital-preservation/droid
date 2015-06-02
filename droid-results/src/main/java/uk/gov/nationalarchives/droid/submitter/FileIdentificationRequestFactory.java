@@ -37,18 +37,25 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationReque
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * @author rflitcroft
  *
  */
-public class FileIdentificationRequestFactory implements IdentificationRequestFactory {
+public class FileIdentificationRequestFactory implements IdentificationRequestFactory<File> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
-        return new FileSystemIdentificationRequest(metaData, identifier);
+    public final IdentificationRequest<File> newRequest(RequestMetaData metaData,
+                                                        RequestIdentifier identifier,
+                                                        File file) throws IOException {
+        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        request.open(file);
+        return request;
     }
     
 }
