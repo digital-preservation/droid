@@ -113,8 +113,7 @@ public class GZipArchiveContentIdentifierTest {
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
 
-            InputStream gZipStream = new FileInputStream(file);
-            request.open(gZipStream);
+            request.open(file);
             gZipArchiveContentIdentifier.identify(uri, request);
 
         } catch (IOException e) {

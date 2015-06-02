@@ -66,7 +66,7 @@ public final class DroidCommandLine {
     public static final int WRAP_WIDTH = 120;
     
     /**Logger Log4j.*/
-    private Log log = LogFactory.getLog(this.getClass());
+    //private Log log = LogFactory.getLog(this.getClass());
     //private static Logger log = Logger.getLogger(DroidCommandLine.class);
     
 
@@ -200,7 +200,7 @@ public final class DroidCommandLine {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printWrapped(err, WRAP_WIDTH, ceex.getMessage());
             err.close();
-            log.error("Droid Execution Error", ceex);
+            //log.error("Droid Execution Error", ceex);
             throw ceex;
 
         } catch (CommandLineException clex) {
@@ -209,7 +209,7 @@ public final class DroidCommandLine {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printWrapped(err, WRAP_WIDTH, clex.getMessage());
             err.close();
-            log.error("Droid CommandLineException", clex);
+            //log.error("Droid CommandLineException", clex);
             throw clex;
         }
 

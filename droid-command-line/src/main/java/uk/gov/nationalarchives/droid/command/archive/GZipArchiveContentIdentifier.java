@@ -98,7 +98,7 @@ public class GZipArchiveContentIdentifier {
      */
     public final void identify(final URI uri, final IdentificationRequest request)
         throws CommandExecutionException {
-        
+
         final String newPath = "gzip:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
         final URI newUri = URI.create(GzipUtils.getUncompressedFilename(uri.toString()));
@@ -110,9 +110,7 @@ public class GZipArchiveContentIdentifier {
 
         GzipCompressorInputStream gzin = null;
         try {
-            gzin = new GzipCompressorInputStream(
-                new FileInputStream(request.getSourceFile()));
-
+            gzin = new GzipCompressorInputStream(request.getSourceInputStream());
             gzRequest.open(gzin);
             final IdentificationResultCollection gzResults =
                      binarySignatureIdentifier.matchBinarySignatures(gzRequest);
