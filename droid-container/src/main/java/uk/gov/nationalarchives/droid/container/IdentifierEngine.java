@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.container;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 
@@ -49,5 +50,5 @@ public interface IdentifierEngine {
      * 
      * @throws IOException if a problem occurred with processing
      */
-    void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException;
+    void process(IdentificationRequest  request, ContainerSignatureMatchCollection matches) throws IOException;
 }

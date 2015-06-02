@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.container;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +114,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
      * @param matches a Liost of container signature potential matches.
      * @throws IOException if the input stream could not be read
      */
-    protected abstract void process(IdentificationRequest request, 
+    protected abstract void process(IdentificationRequest  request,
             ContainerSignatureMatchCollection matches) throws IOException;
     
     /**

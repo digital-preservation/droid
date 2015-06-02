@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.container.ole2;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import uk.gov.nationalarchives.droid.container.AbstractContainerIdentifier;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
@@ -50,7 +51,7 @@ public class Ole2Identifier extends AbstractContainerIdentifier {
      * @throws IOException 
      */
     @Override
-    public final void process(IdentificationRequest request, 
+    public final void process(IdentificationRequest request,
         ContainerSignatureMatchCollection matches) throws IOException {
         
         getIdentifierEngine().process(request, matches);

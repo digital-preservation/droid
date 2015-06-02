@@ -32,7 +32,10 @@
 package uk.gov.nationalarchives.droid.container;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
+import net.byteseek.io.reader.WindowReader;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
@@ -42,7 +45,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * @author rflitcroft
  *
  */
-public class ContainerFileIdentificationRequestFactory implements IdentificationRequestFactory {
+public class ContainerFileIdentificationRequestFactory implements IdentificationRequestFactory<InputStream> {
 
     private File tempDirLocation;
     
@@ -50,8 +53,12 @@ public class ContainerFileIdentificationRequestFactory implements Identification
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
-        return new ContainerFileIdentificationRequest(getTempDirLocation());
+    public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
+                                                  RequestIdentifier identifier,
+                                                  InputStream in) throws IOException {
+        IdentificationRequest<InputStream> request = new ContainerFileIdentificationRequest(getTempDirLocation());
+        request.open(in);
+        return request;
     }
     
     /**

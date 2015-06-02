@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.container;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.byteseek.io.reader.WindowReader;
 import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
@@ -45,7 +46,7 @@ import uk.gov.nationalarchives.droid.core.signature.ByteReader;
  */
 public abstract class AbstractIdentifierEngine implements IdentifierEngine {
     
-    private IdentificationRequestFactory requestFactory;
+    private IdentificationRequestFactory<InputStream> requestFactory;
     
     /**
      * Returns a ByteReader for the input stream supplied.
@@ -54,8 +55,7 @@ public abstract class AbstractIdentifierEngine implements IdentifierEngine {
      * @throws IOException if the input stream could not be read
      */
     protected ByteReader newByteReader(InputStream in) throws IOException {
-        IdentificationRequest request = getRequestFactory().newRequest(null, null);
-        request.open(in);
+        IdentificationRequest<InputStream> request = getRequestFactory().newRequest(null, null, in);
         return new IdentificationRequestByteReaderAdapter(request);
     }
     
