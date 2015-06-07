@@ -645,7 +645,11 @@ public class SubSequence extends SimpleElement {
 
         return regularExpression.toString();
     }
-    
+
+
+    public String toString() {
+        return getClass().getSimpleName() + '[' + toRegularExpression(true) + ']';
+    }
     
     // ********************************************************************************************************
     // Byteseek 2 versions :
