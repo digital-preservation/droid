@@ -36,6 +36,7 @@ import java.io.*;
 
 //BNO-BS2 - replace this import with AbstractReader or WindowReader
 // in package net.byteseek.io.reader
+import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.cache.TopAndTailCache;
@@ -123,7 +124,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
-        return new FileInputStream(file);
+        return new ReaderInputStream(fileReader, false);
     }
     
     /**

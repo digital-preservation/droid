@@ -146,7 +146,7 @@ public class GZipIdentificationRequest implements IdentificationRequest<InputStr
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
-        return new ReaderInputStream(reader);
+        return new ReaderInputStream(reader, false);
     }
     
     /**

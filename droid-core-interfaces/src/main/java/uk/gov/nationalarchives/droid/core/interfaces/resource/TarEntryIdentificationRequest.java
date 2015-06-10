@@ -99,7 +99,7 @@ public class TarEntryIdentificationRequest implements IdentificationRequest<Inpu
         final WindowCache cache = TwoLevelCache.create(
                 new TopAndTailCache(TOP_TAIL_CAPACITY),
                 new TempFileCache(tempDir));
-        reader = new InputStreamReader(in, cache);
+        reader = new InputStreamReader(in, 4096, cache, false);
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
         if (readSize != size) {
@@ -147,7 +147,7 @@ public class TarEntryIdentificationRequest implements IdentificationRequest<Inpu
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
-        return new ReaderInputStream(reader);
+        return new ReaderInputStream(reader, false);
     }
     
     /**

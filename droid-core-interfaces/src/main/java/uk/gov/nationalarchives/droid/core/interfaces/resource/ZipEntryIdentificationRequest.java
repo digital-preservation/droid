@@ -143,7 +143,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
-        return new ReaderInputStream(reader);
+        return new ReaderInputStream(reader, false);
     }
     
     /**
