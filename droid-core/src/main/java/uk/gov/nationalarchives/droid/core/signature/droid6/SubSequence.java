@@ -115,7 +115,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.byteseek.matcher.sequence.SequenceMatcher;
+import net.byteseek.searcher.MatcherSearcher;
 import net.byteseek.searcher.Searcher;
+import net.byteseek.searcher.bytes.ByteMatcherSearcher;
 import net.byteseek.searcher.sequence.horspool.HorspoolFinalFlagSearcher;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
@@ -154,6 +156,8 @@ public class SubSequence extends SimpleElement {
     private static final boolean EXPRESSION_BEFORE_GAPS = true;
     private static final boolean GAPS_BEFORE_EXPRESSION = false;
 
+    public static int optimiseCount = 0; //TODO:MP remove, for debugging purposes.
+
     private int minSeqOffset;
     private int maxSeqOffset;
     private int minLeftFragmentLength;
@@ -174,6 +178,7 @@ public class SubSequence extends SimpleElement {
     private boolean hasLeftFragments;
     private boolean hasRightFragments;
 
+    private String subsequenceText;
 
     /**
      *
@@ -215,17 +220,7 @@ public class SubSequence extends SimpleElement {
      * @param seq A regular expression defining the anchor sequence for the subsequence.
      */
     public final void setSequence(final String seq) {
-        try {
-            final String transformedSequence = FragmentRewriter.rewriteFragment(seq);
-        	//BNO- - is this what we want to get away from the old byteseek regex?
-            matcher = SEQUENCE_COMPILER.compile(transformedSequence);
-            searcher = new HorspoolFinalFlagSearcher(matcher);
-        } catch (CompileException ex) { //BNO - in  this replaces the earlier ParseException
-            final String warning = String.format(SEQUENCE_PARSE_ERROR, seq, ex.getMessage());
-            getLog().warn(warning);
-            //throw new IllegalArgumentException(seq, ex);
-            isInvalidSubSequence = true;
-        }
+        subsequenceText = FragmentRewriter.rewriteFragment(seq);
     }
 
     /**
@@ -374,11 +369,29 @@ public class SubSequence extends SimpleElement {
      * Re-orders the left and right sequence fragments in increasing position order.
      * Also calculates the minimum and maximum lengths a fragment can have.
      */
-    //CHECKSTYLE:OFF - this method is far too long.
     private void processSequenceFragments() {
-    //CHECKSTYLE:ON
-        /* Left fragments */
-        //Determine the number of fragment subsequences there are
+        buildOrderedLeftFragments();
+        buildOrderedRightFragments();
+
+        optimiseSingleByteAlternatives(orderedLeftFragments);
+        optimiseSingleByteAlternatives(orderedRightFragments);
+
+        captureLeftFragments();
+        captureRightFragments();
+
+        calculateMinMaxLeftFragmentLength();
+        calculateMinMaxRightFragmentLength();
+
+        buildMatcherAndSearcher();
+
+        this.leftFragments = null;
+        this.rightFragments = null;
+        this.numLeftFragmentPositions = orderedLeftFragments.size();
+        this.numRightFragmentPositions = orderedRightFragments.size();
+        isInvalidSubSequence = isInvalidSubSequence ? true : checkForInvalidFragments();
+    }
+
+    private void buildOrderedLeftFragments() {
         int numPositions = 0;
         for (int i = 0; i < leftFragments.size(); i++) {
             final int currentPosition = this.getRawLeftFragment(i).getPosition();
@@ -399,11 +412,41 @@ public class SubSequence extends SimpleElement {
             final int currentPosition = fragment.getPosition();
             orderedLeftFragments.get(currentPosition - 1).add(fragment);
         }
+    }
 
-        // Optimise alternative sequences of single bytes into a byte-class,
-        // instead of being a set of alternatives.
-        for (int fragPos = 0; fragPos < this.orderedLeftFragments.size(); fragPos++) { // loop through all positions:
-            final List<SideFragment> fragmentsToMatch = this.orderedLeftFragments.get(fragPos);
+    private void buildOrderedRightFragments() {
+    /* Right fragments */
+        //Determine the number of fragment subsequences there are
+        int numPositions = 0;
+        for (int i = 0; i < rightFragments.size(); i++) {
+            final int currentPosition = this.getRawRightFragment(i).getPosition();
+            if (currentPosition > numPositions) {
+                numPositions = currentPosition;
+            }
+        }
+
+        //initialise all necessary fragment lists (one for each position)
+        for (int i = 0; i < numPositions; i++) { //loop through fragment positions
+            final List<SideFragment> alternativeFragments = new ArrayList<SideFragment>();
+            orderedRightFragments.add(alternativeFragments);
+        }
+
+        //Add fragments to new structure
+        for (int i = 0; i < rightFragments.size(); i++) {  //loop through all fragments
+            final SideFragment fragment = this.getRawRightFragment(i);
+            final int currentPosition = fragment.getPosition();
+            orderedRightFragments.get(currentPosition - 1).add(fragment);
+        }
+    }
+
+    /**
+     * Optimise alternative sequences of single bytes into a byte-class,
+     * instead of being a set of alternatives.  This is more efficient to match
+     * using byteseek.
+     */
+    private void optimiseSingleByteAlternatives(List<List<SideFragment>> fragments) {
+        for (int fragPos = 0; fragPos < fragments.size(); fragPos++) { // loop through all positions:
+            final List<SideFragment> fragmentsToMatch = fragments.get(fragPos);
             final int noOfFragments = fragmentsToMatch.size();
             if (noOfFragments > 1) {
                 boolean allFragmentsLengthOne = true;
@@ -427,11 +470,93 @@ public class SubSequence extends SimpleElement {
                     newFrag.setFragment(expression.toString());
                     List<SideFragment> newList = new ArrayList<SideFragment>();
                     newList.add(newFrag);
-                    orderedLeftFragments.set(fragPos, newList);
+                    fragments.set(fragPos, newList);
                 }
             }
         }
+    }
 
+    private void captureLeftFragments() {
+        int captureFragPos = -1;
+        int numLeftFragmentPos = orderedLeftFragments.size();
+        FRAGS:
+        for (int position = 0; position < numLeftFragmentPos; position++) {
+            List<SideFragment> fragsAtPos = orderedLeftFragments.get(position);
+            if (fragsAtPos.size() == 1) { // no alternatives at this position.
+                for (SideFragment frag : fragsAtPos) {
+                    if (frag.getMinOffset() == 0 && frag.getMaxOffset() == 0) { // bangs right up to the main sequence
+                        subsequenceText = frag.toRegularExpression(true) + ' ' + subsequenceText;
+                        captureFragPos = position;
+                    } else if (frag.getMinOffset() == frag.getMaxOffset()) { // a fixed offset from the main sequence
+                        if (backwardsSearch) {
+                            //TODO: work out if adding would make shift worse - it depends on this fragment
+                            //      but also potentially fragments after it.
+                            break FRAGS;
+                        } else {
+                            subsequenceText = frag.toRegularExpression(true) + " .{" + frag.getMinOffset() + "} " + subsequenceText;
+                            captureFragPos = position;
+                        }
+                    }
+                    else {
+                        break FRAGS;
+                    }
+                }
+            } else {
+                break FRAGS;
+            }
+        }
+        rewriteRemainingFragments(orderedLeftFragments, captureFragPos);
+    }
+
+    private void captureRightFragments() {
+        int captureFragPos = -1;
+        int numRightPos = orderedRightFragments.size();
+        //FRAGS: for (int position = numRightPos -1; position >= 0; position--) {
+        FRAGS: for (int position = 0; position < numRightPos; position++) {
+            List<SideFragment> fragsAtPos = orderedRightFragments.get(position);
+            if (fragsAtPos.size() == 1) { // no alternatives at this position.
+                for (SideFragment frag : fragsAtPos) {
+                    if (frag.getMinOffset() == 0 && frag.getMaxOffset() == 0) { // bangs right up to the main sequence
+                        subsequenceText = subsequenceText + ' ' + frag.toRegularExpression(true);
+                        captureFragPos = position;
+                    } else if (frag.getMinOffset() == frag.getMaxOffset()) { // a fixed offset from the main sequence
+                        if (backwardsSearch) { // things on the right can't make our average shift worse, so just add them.
+                            subsequenceText = subsequenceText + " .{" + frag.getMinOffset() + "} " + frag.toRegularExpression(true);
+                            captureFragPos = position;
+                        } else { // work out if adding this would make our average shift worse.
+                            //TODO: work out if adding would make shift worse - it depends on this fragment
+                            //      but also potentially fragments after it.
+                            break FRAGS;
+                        }
+                    }else {
+                        break FRAGS;
+                    }
+                }
+            } else {
+                break FRAGS;
+            }
+        }
+        rewriteRemainingFragments(orderedRightFragments, captureFragPos);
+    }
+
+    private void rewriteRemainingFragments(List<List<SideFragment>> orderedList, int captureFragPos) {
+        // Have we have captured fragments up to this position into the main subsequence?
+        if (captureFragPos > -1) {
+            // Remove all the fragments we have captured.
+            for (int deleteCount = 0; deleteCount <= captureFragPos; deleteCount++) {
+                orderedList.remove(0);
+            }
+            // Rewrite the positions of the remaining fragments.
+            for (int changePos = 0; changePos < orderedList.size(); changePos++) {
+                List<SideFragment> fragments = orderedList.get(changePos);
+                for (final SideFragment fragment : fragments) {
+                    fragment.setPosition(changePos);
+                }
+            }
+        }
+    }
+
+    private void calculateMinMaxLeftFragmentLength() {
         // Calculate minimum and maximum size of left fragments:
         minLeftFragmentLength = 0;
         maxLeftFragmentLength = 0;
@@ -453,68 +578,10 @@ public class SubSequence extends SimpleElement {
             minLeftFragmentLength += minFragSize;
             maxLeftFragmentLength += maxFragSize;
         }
+    }
 
-        this.numLeftFragmentPositions = orderedLeftFragments.size();
-
-        //clear out unnecessary info
-        this.leftFragments = null;
-
-        /* Right fragments */
-        //Determine the number of fragment subsequences there are
-        numPositions = 0;
-        for (int i = 0; i < rightFragments.size(); i++) {
-            final int currentPosition = this.getRawRightFragment(i).getPosition();
-            if (currentPosition > numPositions) {
-                numPositions = currentPosition;
-            }
-        }
-
-        //initialise all necessary fragment lists (one for each position)
-        for (int i = 0; i < numPositions; i++) { //loop through fragment positions
-            final List<SideFragment> alternativeFragments = new ArrayList<SideFragment>();
-            orderedRightFragments.add(alternativeFragments);
-        }
-
-        //Add fragments to new structure
-        for (int i = 0; i < rightFragments.size(); i++) {  //loop through all fragments
-            final SideFragment fragment = this.getRawRightFragment(i);
-            final int currentPosition = fragment.getPosition();
-            orderedRightFragments.get(currentPosition - 1).add(fragment);
-        }
-
-        // Optimise alternative sequences of single bytes into a byte-class,
-        // instead of being a set of alternatives.
-        for (int fragPos = 0; fragPos < orderedRightFragments.size(); fragPos++) { // loop through all positions:
-            final List<SideFragment> fragmentsToMatch = orderedRightFragments.get(fragPos);
-            final int noOfFragments = fragmentsToMatch.size();
-            if (noOfFragments > 1) {
-                boolean allFragmentsLengthOne = true;
-                SideFragment frag = null;
-                StringBuilder expression = new StringBuilder();
-                expression.append('[');
-                for (int fragmentIndex = 0; fragmentIndex < noOfFragments; fragmentIndex++) {
-                    frag = fragmentsToMatch.get(fragmentIndex);
-                    if (frag.getNumBytes() > 1) {
-                        allFragmentsLengthOne = false;
-                        break;
-                    }
-                    expression.append(frag.toRegularExpression(false));
-                }
-                if (allFragmentsLengthOne && frag != null) {
-                    SideFragment newFrag = new RightFragment();
-                    newFrag.setPosition(frag.getPosition());
-                    newFrag.setMinOffset(frag.getMinOffset());
-                    newFrag.setMaxOffset(frag.getMaxOffset());
-                    expression.append(']');
-                    newFrag.setFragment(expression.toString());
-                    List<SideFragment> newList = new ArrayList<SideFragment>();
-                    newList.add(newFrag);
-                    orderedRightFragments.set(fragPos, newList);
-                }
-            }
-        }
-
-        // Calculate minimum size of right fragments:
+    private void calculateMinMaxRightFragmentLength() {
+        // Calculate minimum and maximum size of right fragments:
         minRightFragmentLength = 0;
         maxRightFragmentLength = 0;
         for (int position = 0; position < orderedRightFragments.size(); position++) {
@@ -535,15 +602,35 @@ public class SubSequence extends SimpleElement {
             minRightFragmentLength += minFragSize;
             maxRightFragmentLength += maxFragSize;
         }
-
-        this.numRightFragmentPositions = orderedRightFragments.size();
-        //clear out unnecessary info
-        this.rightFragments = null;
-        
-        isInvalidSubSequence = isInvalidSubSequence ? true : checkForInvalidFragments();
     }
 
-    
+
+    private void buildMatcherAndSearcher() {
+        try {
+            matcher = SEQUENCE_COMPILER.compile(subsequenceText);
+            if (matcher.length() == 1) {
+                searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0)); // use simplest byte matcher searcher if the matcher is length 1.
+            } else {
+                searcher = new HorspoolFinalFlagSearcher(matcher); // use shifting searcher if shifts can be bigger than one.
+            }
+        } catch (CompileException ex) {
+            final String warning = String.format(SEQUENCE_PARSE_ERROR, subsequenceText, ex.getMessage());
+            getLog().warn(warning);
+            isInvalidSubSequence = true;
+        }
+    }
+
+    private int getNumberOfFragmentPositions(final List<SideFragment> fragments) {
+        int numPositions = 0;
+        for (int i = 0; i < leftFragments.size(); i++) {
+            final int currentPosition = fragments.get(i).getPosition();
+            if (currentPosition > numPositions) {
+                numPositions = currentPosition;
+            }
+        }
+        return numPositions;
+    }
+
     /**
      * 
      * @return Whether the subsequence is invalid.
