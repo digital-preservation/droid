@@ -59,6 +59,11 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Override
+    public void init() {
+        // nothing to do.
+    }
+
     /**
      * {@inheritDoc}
      */

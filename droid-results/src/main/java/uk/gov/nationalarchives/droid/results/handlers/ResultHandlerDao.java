@@ -45,6 +45,11 @@ import java.util.List;
 public interface ResultHandlerDao {
 
     /**
+     * Do anything required to start up the result handler.
+     */
+    void init();
+
+    /**
      * Saves a new identification to the database.
      * @param node the result to save
      * @param parentId the node's parent ID
