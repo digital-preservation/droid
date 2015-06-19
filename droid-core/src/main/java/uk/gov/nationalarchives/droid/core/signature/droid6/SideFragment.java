@@ -276,4 +276,9 @@ public class SideFragment extends SimpleElement {
     public final String toRegularExpression(final boolean prettyPrint) {
         return matcher == null ? "" : matcher.toRegularExpression(prettyPrint);
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + '[' + toRegularExpression(true) + ']';
+    }
 }
