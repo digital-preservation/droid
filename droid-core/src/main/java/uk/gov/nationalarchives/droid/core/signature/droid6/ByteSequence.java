@@ -541,17 +541,17 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
             final StringBuffer buffer, final int minGap, final int maxGap) {
         if (maxGap < 0) {
             if (minGap > 0) {
-                final String formatString = prettyPrint ? "  {%d-*}  " : "{%d-*}";
+                final String formatString = prettyPrint ? "  .{%d-*}  " : ".{%d-*}";
                 buffer.append(String.format(formatString, minGap));
             } else {
-                buffer.append(prettyPrint ? "  *  " : "*");
+                buffer.append(prettyPrint ? "  .*  " : ".*");
             }
         } else if (minGap > 0 || maxGap > 0) {
             if (minGap == maxGap) { // defined offset
-                final String formatString = prettyPrint ? " {%d} " : "{%d}";
+                final String formatString = prettyPrint ? " .{%d} " : ".{%d}";
                 buffer.append(String.format(formatString, minGap));
             } else {
-                final String formatString = prettyPrint ? " {%d-%d} " : "{%d-%d}";
+                final String formatString = prettyPrint ? " .{%d-%d} " : ".{%d-%d}";
                 buffer.append(String.format(formatString, minGap, maxGap));
             }
         }
