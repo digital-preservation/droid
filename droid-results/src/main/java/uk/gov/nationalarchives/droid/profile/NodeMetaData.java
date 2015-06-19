@@ -32,14 +32,6 @@
 package uk.gov.nationalarchives.droid.profile;
 
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
-import org.hibernate.annotations.Index;
-
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
@@ -48,45 +40,24 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
  * @author rflitcroft
  * 
  */
-@Embeddable
 public class NodeMetaData {
     
     private static final int MAX_HASH_LENGTH = 64;
 
-    @Index(name = "idx_prn_file_size")
-    @Column(name = "file_size")
     private Long size;
     
-    @Index(name = "idx_prn_last_modified")
-    @Column(name = "last_modified_date")
     private Date lastModifiedDate;
 
-    @Index(name = "idx_prn_name")
-    @Column(name = "name", nullable = false)
     private String name;
 
-    @Index(name = "idx_prn_extension")
-    @Column(name = "extension")
     private String extension;
 
-    @Index(name = "idx_prn_node_status")
-    @Column(name = "node_status")
-    @Enumerated(EnumType.ORDINAL)
     private NodeStatus nodeStatus;
 
-    @Index(name = "idx_prn_id_method")
-    @Column(name = "identification_method")
-    @Enumerated(EnumType.ORDINAL)
     private IdentificationMethod identificationMethod;
 
-    
-    @Index(name = "idx_prn_id_resourceType")
-    @Column(name = "resource_type", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
     private ResourceType  resourceType;
     
-    @Index(name = "idx_prn_hash")
-    @Column(name = "hash", length = MAX_HASH_LENGTH)
     private String hash;
   
     /**
