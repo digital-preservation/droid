@@ -45,6 +45,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * @author rflitcroft
  * 
@@ -65,6 +68,7 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
     // the resulthandlerimpl.  All this does is force two 
     // commits for the same resource node.
     //@Transactional(propagation = Propagation.MANDATORY)
+    //@Transactional(propagation = Propagation.REQUIRED)
     public void save(ProfileResourceNode node, ResourceId parentId) {
 
         entityManager.persist(node);
@@ -90,6 +94,12 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
     @Transactional(propagation = Propagation.REQUIRED)
     public Format loadFormat(String puid) {
         return entityManager.find(Format.class, puid);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<Format> getAllFormats() {
+        return entityManager.createQuery("SELECT f FROM Format f").getResultList();
     }
     
     /**

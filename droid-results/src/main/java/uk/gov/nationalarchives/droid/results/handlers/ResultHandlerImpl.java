@@ -33,6 +33,9 @@ package uk.gov.nationalarchives.droid.results.handlers;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 //import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
@@ -68,6 +71,7 @@ public class ResultHandlerImpl implements ResultHandler {
 
     private ResultHandlerDao resultHandlerDao;
     private ProgressMonitor progressMonitor;
+    private Map<String, Format> formats;
 
     /**
      * Saves the incoming result to the database.
@@ -106,10 +110,11 @@ public class ResultHandlerImpl implements ResultHandler {
             node.addFormatIdentification(Format.NULL);
             node.setZeroIdentifications();
         } else {
-            for (IdentificationResult result : results.getResults()) {
+            for (final IdentificationResult result : results.getResults()) {
                 node.getMetaData().setIdentificationMethod(result.getMethod());
                 //log.debug(String.format("Handling ID puid[%s]; uri[%s]", result.getPuid(), results.getUri()));
-                Format format = resultHandlerDao.loadFormat(result.getPuid());
+                //Format format = resultHandlerDao.loadFormat(result.getPuid());
+                final Format format = formats.get(result.getPuid());
                 node.addFormatIdentification(format);
             }
         }
@@ -247,6 +252,10 @@ public class ResultHandlerImpl implements ResultHandler {
      */
     @Override
     public void init() {
-        // does nothing - ids are assigned by the database as nodes are saved to it.
+        formats = new HashMap<String, Format>();
+        List<Format> formatList = resultHandlerDao.getAllFormats();
+        for (final Format format : formatList) {
+            formats.put(format.getPuid(), format);
+        }
     }
 }
