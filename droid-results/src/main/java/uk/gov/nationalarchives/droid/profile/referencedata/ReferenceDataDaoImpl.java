@@ -46,8 +46,8 @@ import javax.persistence.Query;
 
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    //@PersistenceContext
+    //private EntityManager entityManager;
 
     /**
      * {@inheritDoc}
@@ -59,9 +59,9 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         List<Format> formats = null;
 
         String query = "from Format order by name";
-        q = entityManager.createQuery(query);
+        //q = entityManager.createQuery(query);
 
-        formats = q.getResultList();
+        //formats = q.getResultList();
 
         return formats;
     }

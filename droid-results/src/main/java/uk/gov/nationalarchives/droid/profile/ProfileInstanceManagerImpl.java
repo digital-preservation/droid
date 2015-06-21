@@ -46,8 +46,6 @@ import java.util.concurrent.Semaphore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
@@ -119,7 +117,7 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    //@Transactional(propagation = Propagation.REQUIRED)
     public void initProfile(URI signatureFileUri) throws SignatureFileException {
         // pre-populate with available file formats
 
@@ -384,7 +382,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<ProfileResourceNode> findAllProfileResourceNodes(Long parentId) {
         final Filter filter = profileInstance.getFilter();
         if (filter.isEnabled() && filter.hasCriteria()) {

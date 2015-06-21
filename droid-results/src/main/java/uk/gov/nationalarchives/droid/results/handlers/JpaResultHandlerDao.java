@@ -45,8 +45,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author rflitcroft
@@ -55,13 +54,19 @@ import java.util.List;
 public class JpaResultHandlerDao implements ResultHandlerDao {
  
     private final Log log = LogFactory.getLog(getClass());
-    
+
+    private List<Format> formats;
+    private Map<String, Format> puidFormatMap = new HashMap<String,Format>(2500);
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public void init() {
-        // nothing to do.
+        formats = loadAllFormats();
+        for (final Format format : formats) {
+            puidFormatMap.put(format.getPuid(), format);
+        }
     }
 
     /**
@@ -98,15 +103,20 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Format loadFormat(String puid) {
-        return entityManager.find(Format.class, puid);
+        return puidFormatMap.get(puid);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public List<Format> getAllFormats() {
-        return entityManager.createQuery("SELECT f FROM Format f").getResultList();
+        return formats;
     }
-    
+
+    @Override
+    public Map<String, Format> getPUIDFormatMap() {
+        return puidFormatMap;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -136,6 +146,10 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
             entityManager.remove(o);
         }
        
+    }
+
+    private List<Format> loadAllFormats() {
+        return entityManager.createQuery("SELECT f FROM Format f").getResultList();
     }
 
 }

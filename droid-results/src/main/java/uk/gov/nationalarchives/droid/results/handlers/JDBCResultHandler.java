@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,6 @@ package uk.gov.nationalarchives.droid.results.handlers;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -58,8 +56,9 @@ import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**
- * @author rflitcroft
+ * An implementation of the ResultHandler interface using JDBC to access the underlying profile database directly.
  *
+ * @author Matt Palmer
  */
 public class JDBCResultHandler implements ResultHandler {
 
@@ -242,10 +241,6 @@ public class JDBCResultHandler implements ResultHandler {
      */
     @Override
     public void init() {
-        formats = new HashMap<String, Format>();
-        List<Format> formatList = resultHandlerDao.getAllFormats();
-        for (final Format format : formatList) {
-            formats.put(format.getPuid(), format);
-        }
+        formats = resultHandlerDao.getPUIDFormatMap();
     }
 }

@@ -33,8 +33,6 @@ package uk.gov.nationalarchives.droid.results.handlers;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 //import org.apache.commons.io.FilenameUtils;
@@ -56,7 +54,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-//import uk.gov.nationalarchives.droid.profile.FormatIdentification;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
@@ -252,10 +249,6 @@ public class JpaResultHandler implements ResultHandler {
      */
     @Override
     public void init() {
-        formats = new HashMap<String, Format>();
-        List<Format> formatList = resultHandlerDao.getAllFormats();
-        for (final Format format : formatList) {
-            formats.put(format.getPuid(), format);
-        }
+        formats = resultHandlerDao.getPUIDFormatMap();
     }
 }

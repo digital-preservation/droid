@@ -31,41 +31,25 @@
  */
 package uk.gov.nationalarchives.droid.profile.referencedata;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Index;
 
 /**
  * @author rflitcroft
  *
  */
-@Immutable
-@Entity
-@Table(name = "format")
 public class Format {
 
     /** The NULL format. */
     public static final Format NULL = nullFormat();
     
-    @Id
-    @Column(name = "puid")
     private String puid;
     
-    @Column(name = "mime_type")
-    @Index(name = "idx_mime_type")
     private String mimeType;
     
-    @Column(name = "name")
-    @Index(name = "idx_format_name")
     private String name;
 
-    @Column(name = "version")
     private String version;
     
     /**

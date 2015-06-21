@@ -121,7 +121,7 @@ public class NodeMetaData {
      *            the extension to set
      */
     public void setExtension(String extension) {
-        this.extension = extension.toLowerCase();
+        this.extension = extension == null? null : extension.toLowerCase();
     }
 
     /**

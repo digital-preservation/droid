@@ -34,14 +34,10 @@ package uk.gov.nationalarchives.droid.report.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Criterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
@@ -58,21 +54,21 @@ public class SqlReportDaoImpl implements ReportDao {
     
     private final Log log = LogFactory.getLog(getClass());
 
-    @PersistenceContext
-    private EntityManager entityManager;
+   // @PersistenceContext
+   // private EntityManager entityManager;
 
     /**
      * Flushes the DROID entity manager.
      */
     void flush() {
-        entityManager.flush();
+       // entityManager.flush();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    //@Transactional(propagation = Propagation.REQUIRED)
     public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField) {
         return getReportData(filter, reportField, new ArrayList<GroupByField>());
     }
@@ -81,7 +77,7 @@ public class SqlReportDaoImpl implements ReportDao {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    //@Transactional(propagation = Propagation.REQUIRED)
     public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField, 
             List<GroupByField> groupByFields) {
         final Query query = getQuery(reportField, groupByFields, filter);
@@ -99,8 +95,9 @@ public class SqlReportDaoImpl implements ReportDao {
         final FilterInfo filterInfo = getFilterInfo(filter);
         final String groupingStatement = getGroupingStatement(groupByFields);
         final String queryString = selectStatement + filterInfo.getFilterSubQuery() + groupingStatement;
-        final Query query = entityManager.createNativeQuery(queryString);
-        setFilterParameters(query, filterInfo.getFilterValues());
+        //final Query query = entityManager.createNativeQuery(queryString);
+        final Query query = null;
+        //setFilterParameters(query, filterInfo.getFilterValues());
         return query;
     }
     

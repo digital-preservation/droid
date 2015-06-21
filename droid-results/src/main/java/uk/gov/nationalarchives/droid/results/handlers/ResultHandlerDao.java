@@ -36,6 +36,7 @@ import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Operations for persistence.
@@ -65,11 +66,19 @@ public interface ResultHandlerDao {
     Format loadFormat(String puid);
 
     /**
-     * Gets a list of all formats
+     * Gets a list of all formats which can be recognised.
      *
      * @return a list of all formats.
      */
     List<Format> getAllFormats();
+
+    /**
+     * Gets a map of all formats against their PUID values,
+     * allowing the fast look up of a Format object from the PUID.
+     *
+     * @return A map of all formats against their PUID values.
+     */
+    Map<String,Format> getPUIDFormatMap();
 
     /**
      * @param nodeId the Id of the node to load
