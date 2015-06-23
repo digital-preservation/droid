@@ -95,8 +95,6 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
     private List<Format> formats;
     private Map<String, Format> puidFormatMap = new HashMap<String,Format>(2500);
 
-    //TODO: check auto commit status of data source.
-
     @Override
     public void init() {
         formats = loadAllFormats();
