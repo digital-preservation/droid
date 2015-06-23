@@ -830,7 +830,7 @@ public class SubSequence extends SimpleElement {
                                 matchPosition : -1;
                     } else {
                         final List<SearchResult<SequenceMatcher>> matches =
-                                searcher.searchForwards(windowReader, matchPosition, endSearchWindow);
+                                searcher.searchBackwards(windowReader, matchPosition, endSearchWindow);
                         matchPosition = matches.size() > 0?
                                 matches.get(0).getMatchPosition() : -1;
                     }
