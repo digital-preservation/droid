@@ -242,11 +242,11 @@ public final class SqlUtils {
         }
     }
 
-    public static void setNullableDate(final int position, final Date value, final PreparedStatement statement) throws SQLException {
+    public static void setNullableTimestamp(final int position, final Date value, final PreparedStatement statement) throws SQLException {
         if (value == null) {
             statement.setNull(position, Types.TIMESTAMP);
         } else {
-            statement.setDate(position, new java.sql.Date(value.getTime()));
+            statement.setTimestamp(position, new java.sql.Timestamp(value.getTime()));
         }
     }
 

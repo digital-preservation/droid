@@ -295,7 +295,7 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
         SqlUtils.setNullableString(    5,  extension, insertNode);
         SqlUtils.setNullableString(    6,  hash, insertNode);
         SqlUtils.setNullableEnumAsInt(7, method, insertNode);
-        SqlUtils.setNullableDate(      8,  modDate, insertNode);
+        SqlUtils.setNullableTimestamp(8, modDate, insertNode);
         insertNode.setString(          9,  name);
         SqlUtils.setNullableEnumAsInt( 10, nodeStatus, insertNode);
         SqlUtils.setNullableEnumAsInt( 11, resourceType, insertNode);
