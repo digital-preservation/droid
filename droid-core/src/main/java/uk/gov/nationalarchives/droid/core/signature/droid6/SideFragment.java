@@ -86,11 +86,16 @@
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
 import java.io.IOException;
+import java.util.List;
 
 import net.byteseek.compiler.CompileException;
 import net.byteseek.compiler.matcher.SequenceMatcherCompiler;
 import net.byteseek.io.reader.WindowReader;
+import net.byteseek.matcher.MatchResult;
 import net.byteseek.matcher.sequence.SequenceMatcher;
+import net.byteseek.searcher.Searcher;
+import net.byteseek.searcher.bytes.ByteMatcherSearcher;
+import net.byteseek.searcher.sequence.horspool.HorspoolFinalFlagSearcher;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 
 
@@ -120,6 +125,7 @@ public class SideFragment extends SimpleElement {
     private int myMinOffset;
     private int myMaxOffset;
     private SequenceMatcher matcher;
+    private Searcher searcher;
     private boolean isInvalidFragment;
   
     /* setters */
@@ -174,11 +180,15 @@ public class SideFragment extends SimpleElement {
         try {
             final String transformed = FragmentRewriter.rewriteFragment(expression);
             matcher = EXPRESSION_COMPILER.compile(transformed);
+            if (matcher.length() == 1) {
+                searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0));
+            } else {
+                searcher = new HorspoolFinalFlagSearcher(matcher);
+            }
         } catch (CompileException ex) {
             final String warning = String.format(FRAGMENT_PARSE_ERROR, expression, ex.getMessage());
             isInvalidFragment = true;
             getLog().warn(warning);            
-            //throw new IllegalArgumentException(expression, ex);
         }
     }
     
@@ -263,6 +273,34 @@ public class SideFragment extends SimpleElement {
      */
     public final boolean matchesBytes(final WindowReader bytes, final long matchFrom) throws IOException {
         return matcher.matches(bytes, matchFrom);
+    }
+
+    /**
+     * Finds the fragment looking forwards from 'from' up to 'to'.
+     *
+     * @param bytes
+     * @param from
+     * @param to
+     * @return
+     * @throws IOException
+     */
+    public final List<MatchResult> findFragmentForwards(final WindowReader bytes,
+                                                        final long from, final long to) throws IOException {
+        return searcher.searchForwards(bytes, from, to);
+    }
+
+    /**
+     * Finds the fragment looking backwards from 'from' back to 'to'.
+     *
+     * @param bytes
+     * @param from
+     * @param to
+     * @return
+     * @throws IOException
+     */
+    public final List<MatchResult> findBackwards(final WindowReader bytes,
+                                                 final long from, final long to) throws IOException {
+        return searcher.searchBackwards(bytes, from, to);
     }
 
 

@@ -115,7 +115,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.byteseek.matcher.sequence.SequenceMatcher;
-import net.byteseek.searcher.MatcherSearcher;
 import net.byteseek.searcher.Searcher;
 import net.byteseek.searcher.bytes.ByteMatcherSearcher;
 import net.byteseek.searcher.sequence.horspool.HorspoolFinalFlagSearcher;
@@ -742,6 +741,9 @@ public class SubSequence extends SimpleElement {
     // Byteseek 2 versions :
     // ********************************************************************************************************
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // BEGIN EXPERIMENTAL REFACTORING - not currently used - trying to make the logic in subsequence matching more comprehensible.
+
     public final boolean findSequenceFromPosition2(final long position,
                                                    final ByteReader targetFile,
                                                    final long maxBytesToScan,
@@ -749,11 +751,9 @@ public class SubSequence extends SimpleElement {
                                                    final boolean eofSubsequence) {
         try {
             if (backwardsSearch) {
-                return findBackwardsSequenceFromPosition(position, targetFile, maxBytesToScan,
-                                                         bofSubsequence, eofSubsequence);
+                return findBackwards(position, targetFile, maxBytesToScan, bofSubsequence, eofSubsequence);
             } else {
-                return findForwardsSequenceFromPosition(position, targetFile, maxBytesToScan,
-                                                        bofSubsequence, eofSubsequence);
+                return findForwards(position, targetFile, maxBytesToScan, bofSubsequence, eofSubsequence);
             }
         } catch (IOException e) {
             getLog().error("An IO exception occurred while searching in " + targetFile + " from position " + position, e);
@@ -763,23 +763,23 @@ public class SubSequence extends SimpleElement {
         return false;
     }
 
-    private final boolean findForwardsSequenceFromPosition(final long position,
-                                                           final ByteReader targetFile,
-                                                           final long maxBytesToScan,
-                                                           final boolean bofSubsequence,
-                                                           final boolean eofSubsequence) throws IOException {
+    private final boolean findForwards(final long position,
+                                       final ByteReader targetFile,
+                                       final long maxBytesToScan,
+                                       final boolean bofSubsequence,
+                                       final boolean eofSubsequence) throws IOException {
         final WindowReader reader = targetFile.getWindowReader();
         final long endSearchPosition = getForwardSearchEndPosition(reader, position, maxBytesToScan);
         long searchPosition = position + minSeqOffset + minLeftFragmentLength;
         while (searchPosition < endSearchPosition) {
             final List<SearchResult<SequenceMatcher>> matches = searcher.searchForwards(reader, searchPosition, endSearchPosition);
-            if (matches.size() == 0) {
+            if (matches.isEmpty()) {
                 return false;
             }
             searchPosition = matches.get(0).getMatchPosition();
             final long sequenceEndPosition = checkForwardFragments(reader, searchPosition, targetFile.getFileMarker(), bofSubsequence, eofSubsequence);
             if (sequenceEndPosition >= 0) {
-                targetFile.setFileMarker(sequenceEndPosition + 1L);
+                targetFile.setFileMarker(sequenceEndPosition + 1L); //TODO: Only set target file position if we match fragments?
                 return true;
             }
             searchPosition += 1;
@@ -789,6 +789,8 @@ public class SubSequence extends SimpleElement {
 
     private long getForwardSearchEndPosition(final WindowReader reader, final long position, final long maxBytesToScan) throws IOException {
         if (fullFileScan) {
+            //TODO: don't have to specify reader length: could just set Long.MAX...?
+            //TODO: what if search length is greater than maxBytesToScan?
             return maxBytesToScan < 0 ? reader.length() - minRightFragmentLength - 1 : maxBytesToScan - minRightFragmentLength;
         } else {
             final long endSearchWindow = position + maxSeqOffset + maxLeftFragmentLength;
@@ -813,6 +815,7 @@ public class SubSequence extends SimpleElement {
     }
 
     private boolean leftFragmentsMatch(final WindowReader reader, final long fromPosition, final long finalPosition, final boolean bofSubsequence) {
+
 
 
         //final long[] leftFragmentPositions = bytePosForLeftFragments(reader, startPosition, matchPosition, -1, 0);
@@ -840,16 +843,20 @@ public class SubSequence extends SimpleElement {
 
 
 
-    private final boolean findBackwardsSequenceFromPosition(final long position,
-                                                            final ByteReader targetFile,
-                                                            final long maxBytesToScan,
-                                                            final boolean bofSubsequence,
-                                                            final boolean eofSubsequence) {
+    private final boolean findBackwards(final long position,
+                                        final ByteReader targetFile,
+                                        final long maxBytesToScan,
+                                        final boolean bofSubsequence,
+                                        final boolean eofSubsequence) {
 
 
         //List<SearchResult<SequenceMatcher>> matches = searcher.
         return false;
     }
+
+    // END OF EXPERIMENTAL REFACTORING.
+    // -----------------------------------------------------------------------------------------------------------------
+
 
 
     /** Uses the Boyer-Moore-Horspool search algorithm to find a sequence within a window
@@ -1011,20 +1018,17 @@ public class SubSequence extends SimpleElement {
 
                 while (matchPosition <= endSearchWindow) {
 
-                    //TODO:MP hack search position to sane value (not at the end of the matcher, the beginning
-
-                	//List<SearchResult<SequenceMatcher>> matches = searcher.searchForwards(windowReader, matchPosition, endSearchWindow);
                     final long matchStarterPosition = matchPosition - matchLength + 1;
-                    List<SearchResult<SequenceMatcher>> matches = searcher.searchForwards(windowReader, matchStarterPosition
-                            , endSearchWindow);
-
-                	if(matches.size() > 0) {
-                        //TODO:MP hack search position to sane value (not at the end of the matcher, the beginning
-                        matchPosition = matches.get(0).getMatchPosition() + matchLength - 1;
-                	} else {
-                		matchPosition = -1;
-                	}
-                	
+                    final long matchEndingPosition  = endSearchWindow - matchLength + 1;
+                    if (matchStarterPosition == matchEndingPosition) {
+                        matchPosition = matcher.matches(windowReader, matchStarterPosition)?
+                                matchStarterPosition + matchLength - 1 : -1;
+                    } else {
+                        final List<SearchResult<SequenceMatcher>> matches =
+                                searcher.searchForwards(windowReader, matchStarterPosition, matchEndingPosition);
+                        matchPosition = matches.size() > 0?
+                                matches.get(0).getMatchPosition() + matchLength - 1 : -1;
+                    }
                 	
                     if (matchPosition != -1) {
                         boolean matchFound = true;
@@ -1071,10 +1075,7 @@ public class SubSequence extends SimpleElement {
         } catch (IndexOutOfBoundsException e) {
             getLog().debug(e.getMessage());
         } catch (IOException e) {
-        	//BNO- - required for Byteseek 2
-			// TODO Auto-generated catch block
-        	getLog().debug(e.getMessage());
-			e.printStackTrace();
+        	getLog().error(e.getMessage());
 		}
         //CHECKSTYLE:ON
         return entireSequenceFound;
@@ -1265,7 +1266,7 @@ public class SubSequence extends SimpleElement {
                 ? lastStartPosInFile1 : lastStartPosInFile2;
         }
 
-        //keep searching until either the sequence fragment is found 
+        //keep searching until either the sequence fragment is found
         // or until the end of the search area has been reached.
         //compare sequence with file contents directly at fileMarker position
         //boolean subSeqFound = false;
