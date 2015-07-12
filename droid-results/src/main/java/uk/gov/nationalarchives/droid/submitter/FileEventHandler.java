@@ -99,9 +99,10 @@ public class FileEventHandler {
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
-
+        IdentificationRequest<File> request = requestFactory.newRequest(metaData, identifier);
         try {
-            droidCore.submit(requestFactory.newRequest(metaData, identifier, file));
+            request.open(file);
+            droidCore.submit(request);
             submissionThrottle.apply();
         } catch (IOException e) {
             IdentificationErrorType error = file.exists() ? IdentificationErrorType.ACCESS_DENIED
@@ -111,8 +112,6 @@ public class FileEventHandler {
             } else {
                 log.warn(String.format("File not found: [%s]", file.getAbsolutePath()));
             }
-            //TODO: ugly to create a new request when the factory fails to open it for error reporting.
-            final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
             resultHandler.handleError(new IdentificationException(request, error, e));
         } catch (InterruptedException e) {
             log.debug("Interrupted while throttle active.", e);
