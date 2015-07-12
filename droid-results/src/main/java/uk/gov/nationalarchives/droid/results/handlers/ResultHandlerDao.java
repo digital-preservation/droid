@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.results.handlers;
 
+import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
@@ -52,11 +53,20 @@ public interface ResultHandlerDao {
 
     /**
      * Saves a new identification to the database.
+     *
      * @param node the result to save
      * @param parentId the node's parent ID
      */
     void save(ProfileResourceNode node, ResourceId parentId);
 
+    /**
+     * Ensure that all results so far are committed.
+     * <p>
+     * Some implementations may commit each result as they are saved, in which case this will do nothing.
+     * Other implementations may batch up results to improve performance.  In the event that a profile is paused
+     * or finishes naturally, commit() should be called to flush out any un-committed results to the database.
+     */
+    void commit();
 
     /**.
      * Loads a Format. 

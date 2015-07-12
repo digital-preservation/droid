@@ -121,36 +121,30 @@ public class JDBCResultHandler implements ResultHandler {
     public void handleError(IdentificationException e) {
         final IdentificationRequest request = e.getRequest();
         final RequestIdentifier identifier = request.getIdentifier();
-        URI uri = identifier.getUri();
-        //log.debug(String.format("handling error for job [%s]", uri));
-
+        final URI uri = identifier.getUri();
         final Long nodeId = identifier.getNodeId();
+
         ProfileResourceNode node;
-        if (nodeId != null) {
+        if (nodeId != null) { // node has already been saved
             node = resultHandlerDao.loadNode(nodeId);
             node.getMetaData().setNodeStatus(NodeStatus.ERROR);
-            // Need to initialise the collection eagerly...
-            node.getFormatIdentifications().size();
-        } else {
+            node.setStatusUpdate(true);
+        } else { // error occurred before the node was saved: make a new one for the resource:
             node = new ProfileResourceNode(uri);
-            node.setFinished(new Date());
             final NodeMetaData metaData = node.getMetaData();
-
-            metaData.setNodeStatus(getNodeStatus(e.getErrorType()));
             metaData.setResourceType(ResourceType.FILE);
+            metaData.setNodeStatus(getNodeStatus(e.getErrorType()));
             node.setNoFormatsIdentified();
-
             RequestMetaData requestMetaData = request.getRequestMetaData();
-
             metaData.setName(requestMetaData.getName());
             metaData.setSize(requestMetaData.getSize());
             metaData.setExtension(request.getExtension());
             metaData.setLastModified(request.getRequestMetaData().getTime());
             metaData.setHash(requestMetaData.getHash());
-
-            node.addFormatIdentification(Format.NULL);
-            resultHandlerDao.save(node, identifier.getParentResourceId());
+            node.addFormatIdentification(Format.NULL); //TODO: check what happens with Format.NULL.
+            node.setFinished(new Date());
         }
+        resultHandlerDao.save(node, identifier.getParentResourceId());
         progressMonitor.stopJob(node);
     }
 
@@ -192,12 +186,10 @@ public class JDBCResultHandler implements ResultHandler {
         metaData.setNodeStatus(restricted ? NodeStatus.ACCESS_DENIED : NodeStatus.DONE);
         metaData.setResourceType(ResourceType.FOLDER);
         node.setMetaData(metaData);
-
-        resultHandlerDao.save(node, parentId);
         node.setFinished(new Date());
-
         node.addFormatIdentification(Format.NULL);
 
+        resultHandlerDao.save(node, parentId);
         progressMonitor.stopJob(node);
         return new ResourceId(node.getId(), node.getPrefix());
     }
@@ -233,7 +225,7 @@ public class JDBCResultHandler implements ResultHandler {
      */
     @Override
     public void commit() {
-        // does nothing - results are committed as they are handled.
+        resultHandlerDao.commit();
     }
 
     /**

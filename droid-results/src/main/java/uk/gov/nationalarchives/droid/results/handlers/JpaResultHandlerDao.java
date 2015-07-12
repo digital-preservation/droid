@@ -96,6 +96,11 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
         node.setPrefixPlusOne(parentsPrefixString + nodePrefixPlusOne);
     }
 
+    @Override
+    public void commit() {
+        // nothing to do - all saves are transactional at the point of save.
+    }
+
 
     /**
      * {@inheritDoc}

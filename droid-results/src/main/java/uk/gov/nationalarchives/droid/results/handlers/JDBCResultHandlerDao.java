@@ -80,12 +80,13 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
             INSERT_FIVE_IDENTIFICATIONS, INSERT_SIX_IDENTIFICATIONS, INSERT_SEVEN_IDENTIFICATIONS,
             INSERT_EIGHT_IDENTIFICATIONS, INSERT_NINE_IDENTIFICATIONS, INSERT_TEN_IDENTIFICATIONS};
 
-    private static String DELETE_NODE = "DELETE FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
-    private static String SELECT_FORMAT = "SELECT * FROM FORMAT WHERE PUID = ?";
-    private static String SELECT_FORMATS = "SELECT * FROM FORMAT";
+    private static String UPDATE_NODE_STATUS           = "UPDATE PROFILE_RESOURCE_NODE SET NODE_STATUS = ? WHERE NODE_ID = ?";
+    private static String DELETE_NODE                  = "DELETE FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
+    private static String SELECT_FORMAT                = "SELECT * FROM FORMAT WHERE PUID = ?";
+    private static String SELECT_FORMATS               = "SELECT * FROM FORMAT";
     private static String SELECT_PROFILE_RESOURCE_NODE = "SELECT * FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
-    private static String SELECT_IDENTIFICATIONS = "SELECT * FROM IDENTIFICATION WHERE NODE_ID = ?";
-    private static String MAX_NODE_ID_QUERY = "SELECT MAX(NODE_ID) FROM PROFILE_RESOURCE_NODE";
+    private static String SELECT_IDENTIFICATIONS       = "SELECT * FROM IDENTIFICATION WHERE NODE_ID = ?";
+    private static String MAX_NODE_ID_QUERY            = "SELECT MAX(NODE_ID) FROM PROFILE_RESOURCE_NODE";
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -109,16 +110,31 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
         try {
             final Connection conn = datasource.getConnection();
             try {
-                final Long nodeId = nodeIds.incrementAndGet();
-                node.setId(nodeId);
-                final PreparedStatement insertNode = getNodeInsertStatement(conn, node, parentId);
-                try {
-                    insertNode.execute();
-                    final PreparedStatement insertIdentifications = getIdentificationStatement(conn, nodeId, node.getFormatIdentifications());
-                    insertIdentifications.execute();
-                    conn.commit();
-                } finally {
-                    insertNode.close();
+                if (node.isStatusUpdate()) {
+                    final Long nodeId = node.getId();
+                    if (nodeId != null) {
+                        final PreparedStatement updateNode = getUpdateNodeStatus(conn, node.getId(), node.getMetaData().getNodeStatus());
+                        try {
+                            updateNode.execute();
+                            conn.commit();
+                        } finally {
+                            updateNode.close();
+                        }
+                    } else {
+                        log.error("A node was flagged for status update, but it did not have an id already.  Parent id was " + parentId);
+                    }
+                } else {
+                    final Long nodeId = nodeIds.incrementAndGet();
+                    node.setId(nodeId);
+                    final PreparedStatement insertNode = getNodeInsertStatement(conn, node, parentId);
+                    try {
+                        insertNode.execute();
+                        final PreparedStatement insertIdentifications = getIdentificationStatement(conn, nodeId, node.getFormatIdentifications());
+                        insertIdentifications.execute();
+                        conn.commit();
+                    } finally {
+                        insertNode.close();
+                    }
                 }
             } finally{
                 conn.close();
@@ -127,6 +143,11 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
             log.error("A database exception occurred inserting a node " + node +
                       " with parent id " + parentId, e);
         }
+    }
+
+    @Override
+    public void commit() {
+        // nothing to do - results are committed on each save.
     }
 
 
@@ -255,6 +276,14 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
         return maxId;
     }
 
+    private PreparedStatement getUpdateNodeStatus(final Connection conn,
+                                                  final long nodeId,
+                                                  final NodeStatus nodeStatus) throws SQLException {
+        final PreparedStatement updateNodeStatus = conn.prepareStatement(UPDATE_NODE_STATUS);
+        SqlUtils.setNullableEnumAsInt(1, nodeStatus, updateNodeStatus);
+        updateNodeStatus.setLong(     2, nodeId);
+        return updateNodeStatus;
+    }
 
     private PreparedStatement getNodeInsertStatement(final Connection conn,
                                                      final ProfileResourceNode node,
