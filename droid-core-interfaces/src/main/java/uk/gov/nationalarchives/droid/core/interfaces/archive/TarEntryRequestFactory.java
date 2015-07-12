@@ -49,13 +49,9 @@ public class TarEntryRequestFactory extends AbstractArchiveRequestFactory<InputS
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData,
-                                                  RequestIdentifier identifier,
-                                                  InputStream in) throws IOException {
-        final IdentificationRequest request =
-            new TarEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
-        request.open(in);
-        return request;
+    public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
+                                                               RequestIdentifier identifier) {
+        return new TarEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
     }
 
 }

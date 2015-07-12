@@ -60,7 +60,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class TarArchiveHandler implements ArchiveHandler {
 
     private AsynchDroid droidCore;
-    private IdentificationRequestFactory factory;
+    private IdentificationRequestFactory<InputStream> factory;
     private ResultHandler resultHandler;
     
     /**
@@ -140,7 +140,9 @@ public class TarArchiveHandler implements ArchiveHandler {
             new RequestIdentifier(ArchiveFileUtils.toTarUri(parentName, entry.getName()));
         identifier.setAncestorId(originatorNodeId);
         identifier.setParentResourceId(correlationId);
-        droidCore.submit(factory.newRequest(metaData, identifier, in));
+        IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
+        request.open(in);
+        droidCore.submit(request);
     }
     
     /**

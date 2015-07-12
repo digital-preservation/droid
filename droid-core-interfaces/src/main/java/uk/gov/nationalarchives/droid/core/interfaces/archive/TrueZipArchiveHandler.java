@@ -61,7 +61,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class TrueZipArchiveHandler implements ArchiveHandler {
 
     private AsynchDroid droidCore;
-    private IdentificationRequestFactory factory;
+    private IdentificationRequestFactory<InputStream> factory;
     private ResultHandler resultHandler;    
     
     /**
@@ -139,7 +139,18 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toZipUri(parentName, entry.getName()));
         identifier.setAncestorId(originatorNodeId);
         identifier.setParentResourceId(correlationId);
-        droidCore.submit(factory.newRequest(metaData, identifier, file.getInputStream(entry)));
+
+        IdentificationRequest request = factory.newRequest(metaData, identifier);
+        InputStream in = null;
+        try {
+            in = file.getInputStream(entry);
+            request.open(in);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+        droidCore.submit(request);
     }
     
     /**

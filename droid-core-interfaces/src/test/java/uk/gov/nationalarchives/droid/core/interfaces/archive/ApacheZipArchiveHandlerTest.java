@@ -98,7 +98,7 @@ public class ApacheZipArchiveHandlerTest {
             identifer.setParentResourceId(parentId);
             
             if (!entry.isDirectory()) {
-                when(factory.newRequest(any(RequestMetaData.class), eq(identifer), any(InputStream.class)))
+                when(factory.newRequest(any(RequestMetaData.class), eq(identifer)))
                         .thenReturn(mockRequests.get(entryCount));
                 entryCount++;
             } else {

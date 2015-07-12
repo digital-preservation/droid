@@ -71,8 +71,16 @@ public class GZipArchiveHandler implements ArchiveHandler {
             RequestIdentifier identifier = new RequestIdentifier(uri);
             identifier.setAncestorId(request.getIdentifier().getAncestorId());
             identifier.setParentId(correlationId);
-            
-            archiveRequest = factory.newRequest(metaData, identifier, new GZIPInputStream(in));
+
+            archiveRequest = factory.newRequest(metaData, identifier);
+            final InputStream gzin = new GZIPInputStream(in);
+            try {
+                archiveRequest.open(gzin);
+            } finally {
+                if (gzin != null) {
+                    gzin.close();
+                }
+            }
         } finally {
             if (in != null) {
                 in.close();
