@@ -156,7 +156,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <!--
     <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandlerDao" init-method="init"/>
     -->
-    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JDBCResultHandlerDao" init-method="init">
+    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao" init-method="init">
         <property name = "datasource" ref="dataSource"/>
     </bean>
 
