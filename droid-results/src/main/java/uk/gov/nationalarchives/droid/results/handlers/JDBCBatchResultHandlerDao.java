@@ -102,6 +102,8 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private Map<String, Format> puidFormatMap = new HashMap<String,Format>(2500);
 
     private BlockingQueue<NodeInfo> blockingQueue = new ArrayBlockingQueue<NodeInfo>(128);
+    private MostRecentlyAddedNodeCache nodeCache  = new MostRecentlyAddedNodeCache(256);
+
     private Thread databaseWriterThread;
     private DatabaseWriter writer;
 
@@ -123,6 +125,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             setNodeIds(node, parentId);
         }
         try {
+            nodeCache.put(node.getId(), node);
             blockingQueue.put(new NodeInfo(node, insertNode));
         } catch (InterruptedException e) {
             e.printStackTrace(); //TODO: what to do here?
@@ -199,33 +202,35 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public ProfileResourceNode loadNode(Long nodeId) {
-        ProfileResourceNode node = null;
-        try {
-            final Connection conn = datasource.getConnection();
+        ProfileResourceNode node = nodeCache.get(nodeId);
+        if (node == null) {
             try {
-                final PreparedStatement loadNode = conn.prepareStatement(SELECT_PROFILE_RESOURCE_NODE);
+                final Connection conn = datasource.getConnection();
                 try {
-                    loadNode.setLong(1, nodeId);
-                    final ResultSet nodeResults = loadNode.executeQuery();
+                    final PreparedStatement loadNode = conn.prepareStatement(SELECT_PROFILE_RESOURCE_NODE);
                     try {
-                        if (nodeResults.next()) {
-                            final PreparedStatement loadIdentifications = conn.prepareStatement(SELECT_IDENTIFICATIONS);
-                            loadIdentifications.setLong(1, nodeId);
-                            final ResultSet idResults = loadIdentifications.executeQuery();
-                            node = SqlUtils.buildProfileResourceNode(nodeResults);
-                            SqlUtils.addIdentifications(node, idResults, puidFormatMap);
+                        loadNode.setLong(1, nodeId);
+                        final ResultSet nodeResults = loadNode.executeQuery();
+                        try {
+                            if (nodeResults.next()) {
+                                final PreparedStatement loadIdentifications = conn.prepareStatement(SELECT_IDENTIFICATIONS);
+                                loadIdentifications.setLong(1, nodeId);
+                                final ResultSet idResults = loadIdentifications.executeQuery();
+                                node = SqlUtils.buildProfileResourceNode(nodeResults);
+                                SqlUtils.addIdentifications(node, idResults, puidFormatMap);
+                            }
+                        } finally {
+                            nodeResults.close();
                         }
                     } finally {
-                        nodeResults.close();
+                        loadNode.close();
                     }
                 } finally {
-                    loadNode.close();
+                    conn.close();
                 }
-            } finally{
-                conn.close();
+            } catch (SQLException e) {
+                log.error("A database exception occurred loading a node with id " + nodeId, e);
             }
-        } catch (SQLException e) {
-            log.error("A database exception occurred loading a node with id " + nodeId, e);
         }
         return node;
     }
@@ -335,6 +340,31 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             this.insertNode = insertNode;
         }
     }
+
+    /**
+     * A simple Most Recently Used cache of ProfileResourceNodes, mapped against their node id.
+     * <p>
+     * This is to support loading a node (e.g. when handling an error), when the node itself may
+     * not yet be committed to the database (due to batched commits).
+     * <p>
+     * Keeping a most recently added cache of nodes allows us to return a recent node before it
+     * has actually been committed to the database.
+     */
+    private class MostRecentlyAddedNodeCache extends LinkedHashMap<Long, ProfileResourceNode> {
+
+        private final int capacity;
+
+        private MostRecentlyAddedNodeCache(int capacity) {
+            super(capacity + 1, 1.1f, false);
+            this.capacity = capacity;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(final Map.Entry<Long, ProfileResourceNode> eldest) {
+            return size() > capacity;
+        }
+    }
+
 
     /**
      * Class to run in a thread which takes from the blocking queue and batch commits
