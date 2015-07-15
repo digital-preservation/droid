@@ -51,11 +51,8 @@ public class FileIdentificationRequestFactory implements IdentificationRequestFa
      */
     @Override
     public final IdentificationRequest<File> newRequest(RequestMetaData metaData,
-                                                        RequestIdentifier identifier,
-                                                        File file) throws IOException {
-        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
-        request.open(file);
-        return request;
+                                                        RequestIdentifier identifier) {
+        return new FileSystemIdentificationRequest(metaData, identifier);
     }
     
 }

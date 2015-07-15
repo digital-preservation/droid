@@ -50,12 +50,8 @@ public class GZipRequestFactory extends AbstractArchiveRequestFactory<InputStrea
      */
     @Override
     public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
-                                                  RequestIdentifier identifier,
-                                                  InputStream in) throws IOException {
-        final IdentificationRequest request = new GZipIdentificationRequest(metaData, 
-                identifier, getTempDirLocation());
-        request.open(in);
-        return request;
+                                                  RequestIdentifier identifier) {
+        return new GZipIdentificationRequest(metaData, identifier, getTempDirLocation());
     }
 
 }

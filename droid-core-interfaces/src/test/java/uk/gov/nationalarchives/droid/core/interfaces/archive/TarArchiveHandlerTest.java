@@ -94,7 +94,7 @@ public class TarArchiveHandlerTest {
 
             when(mockRequest.getIdentifier()).thenReturn(expectedIdentifier);
             mockRequests.add(mockRequest);
-            when(factory.newRequest(any(RequestMetaData.class), eq(expectedIdentifier), any(InputStream.class)))
+            when(factory.newRequest(any(RequestMetaData.class), eq(expectedIdentifier)))
                 .thenReturn(mockRequests.get(count));
             count++;
         }

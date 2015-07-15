@@ -49,10 +49,9 @@ public interface IdentificationRequestFactory<T> {
     /**
      * @param metaData metadata about the request
      * @param identifier a request identifier
-     * @param in A byte source which will be read into a cache, backed by a file if necessary.
      * @return a new identification request
      * 
      */
-    IdentificationRequest<T> newRequest(RequestMetaData metaData, RequestIdentifier identifier, T in) throws IOException;
+    IdentificationRequest<T> newRequest(RequestMetaData metaData, RequestIdentifier identifier);
 
 }

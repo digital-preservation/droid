@@ -76,7 +76,7 @@ public class GZipArchiveHandlerTest {
         expectedIdentifier.setAncestorId(10L);
         expectedIdentifier.setParentId(30L);
 
-        when(factory.newRequest(any(RequestMetaData.class), eq(expectedIdentifier), any(InputStream.class)))
+        when(factory.newRequest(any(RequestMetaData.class), eq(expectedIdentifier)))
             .thenReturn(request);
 
         AsynchDroid droidCore = mock(AsynchDroid.class);

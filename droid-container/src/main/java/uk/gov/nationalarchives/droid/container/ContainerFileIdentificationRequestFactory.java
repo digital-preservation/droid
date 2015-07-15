@@ -54,11 +54,8 @@ public class ContainerFileIdentificationRequestFactory implements Identification
      */
     @Override
     public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
-                                                  RequestIdentifier identifier,
-                                                  InputStream in) throws IOException {
-        IdentificationRequest<InputStream> request = new ContainerFileIdentificationRequest(getTempDirLocation());
-        request.open(in);
-        return request;
+                                                  RequestIdentifier identifier) {
+        return new ContainerFileIdentificationRequest(getTempDirLocation());
     }
     
     /**

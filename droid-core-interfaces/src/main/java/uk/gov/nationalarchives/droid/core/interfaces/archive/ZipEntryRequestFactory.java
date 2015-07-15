@@ -51,13 +51,9 @@ public class ZipEntryRequestFactory extends AbstractArchiveRequestFactory<InputS
      */
     @Override
     public final ZipEntryIdentificationRequest newRequest(RequestMetaData metaData,
-                                                          RequestIdentifier identifier,
-                                                          InputStream in) throws IOException {
+                                                          RequestIdentifier identifier) {
         
-        final ZipEntryIdentificationRequest request = new ZipEntryIdentificationRequest(
-                metaData, identifier, getTempDirLocation());
-        request.open(in);
-        return request;
+        return new ZipEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
     }
     
 }

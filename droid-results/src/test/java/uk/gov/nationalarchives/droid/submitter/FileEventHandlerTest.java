@@ -84,7 +84,7 @@ public class FileEventHandlerTest {
         requestFactory = mock(IdentificationRequestFactory.class);
         request = mock(IdentificationRequest.class);
         fileEventHandler = new FileEventHandler(identificationEngine);
-        when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class), any(File.class))).thenReturn(request);
+        when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class))).thenReturn(request);
         fileEventHandler.setRequestFactory(requestFactory);
         
         tmpDir = new File("tmp/");
@@ -137,7 +137,7 @@ public class FileEventHandlerTest {
         final File file = new File("non-existent");
         assertFalse(file.exists());
         
-        when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class), any(File.class)))
+        when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class)))
             .thenReturn(request);
         
         fileEventHandler.setRequestFactory(requestFactory);
@@ -171,7 +171,7 @@ public class FileEventHandlerTest {
         file.createNewFile();
         assertTrue(file.exists());
         
-        when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class), any(File.class)))
+        when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class)))
             .thenReturn(request);
         
         final IOException ioException = new IOException("Can't read me!");

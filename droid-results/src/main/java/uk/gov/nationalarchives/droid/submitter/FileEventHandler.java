@@ -99,19 +99,10 @@ public class FileEventHandler {
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
-
-
-        //TODO: must stop factories opening the request.  Important to be able to get a request
-        //      object to carry the id, even if it subsequently fails opening it.  This is
-        //      handled differently by result handlers (insert vs. update).
-
-        //TODO: this assumes you can handle an error *after* you have already submitted the file
-        //      for processing.  This works with the hibernate style entity manager, which will
-        //      update the entity if its properties change subsequently.  It's problematic if
-        //      we're using a more traditional database system. OR - we need to have an update
-        //      mechanism for errors, which updates an existing node status when an error occurs.
+        IdentificationRequest<File> request = requestFactory.newRequest(metaData, identifier);
         try {
-            droidCore.submit(requestFactory.newRequest(metaData, identifier, file));
+            request.open(file);
+            droidCore.submit(request);
             submissionThrottle.apply();
         } catch (IOException e) {
             IdentificationErrorType error = file.exists() ? IdentificationErrorType.ACCESS_DENIED
@@ -121,9 +112,6 @@ public class FileEventHandler {
             } else {
                 log.warn(String.format("File not found: [%s]", file.getAbsolutePath()));
             }
-            //TODO: ugly to create a new request when the factory fails to open it for error reporting.
-            //      and will miss any id assigned to the request if saved.
-            final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
             resultHandler.handleError(new IdentificationException(request, error, e));
         } catch (InterruptedException e) {
             log.debug("Interrupted while throttle active.", e);

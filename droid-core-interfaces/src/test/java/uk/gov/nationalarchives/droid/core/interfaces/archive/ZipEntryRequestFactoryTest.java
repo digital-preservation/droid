@@ -77,7 +77,9 @@ public class ZipEntryRequestFactoryTest {
         
         RequestIdentifier identifier = new RequestIdentifier(zipUri);
         
-        IdentificationRequest request = factory.newRequest(metaData, identifier, in);
+        IdentificationRequest request = factory.newRequest(metaData, identifier);
+        request.open(in);
+
         assertTrue(request instanceof ZipEntryIdentificationRequest);
         
         assertEquals("fu.bah", request.getFileName());
