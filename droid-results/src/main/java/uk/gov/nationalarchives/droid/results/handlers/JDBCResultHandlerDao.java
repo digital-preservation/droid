@@ -110,21 +110,17 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
         try {
             final Connection conn = datasource.getConnection();
             try {
-                if (node.isStatusUpdate()) {
-                    final Long nodeId = node.getId();
-                    if (nodeId != null) {
-                        final PreparedStatement updateNode = getUpdateNodeStatus(conn, node.getId(), node.getMetaData().getNodeStatus());
-                        try {
-                            updateNode.execute();
-                            conn.commit();
-                        } finally {
-                            updateNode.close();
-                        }
-                    } else {
-                        log.error("A node was flagged for status update, but it did not have an id already.  Parent id was " + parentId);
+                Long nodeId = node.getId();
+                if (nodeId != null) {
+                    final PreparedStatement updateNode = getUpdateNodeStatus(conn, node.getId(), node.getMetaData().getNodeStatus());
+                    try {
+                        updateNode.execute();
+                        conn.commit();
+                    } finally {
+                        updateNode.close();
                     }
                 } else {
-                    final Long nodeId = nodeIds.incrementAndGet();
+                    nodeId = nodeIds.incrementAndGet();
                     node.setId(nodeId);
                     final PreparedStatement insertNode = getNodeInsertStatement(conn, node, parentId);
                     try {

@@ -124,13 +124,11 @@ public class JDBCResultHandler implements ResultHandler {
         final URI uri = identifier.getUri();
         final Long nodeId = identifier.getNodeId();
 
-        ProfileResourceNode node;
-        if (nodeId != null) { // node has already been saved
-            node = resultHandlerDao.loadNode(nodeId);
+        final ProfileResourceNode node = new ProfileResourceNode(uri);
+        if (nodeId != null) { // node already has an id - it has been saved already.
+            node.setId(nodeId);
             node.getMetaData().setNodeStatus(NodeStatus.ERROR);
-            node.setStatusUpdate(true);
         } else { // error occurred before the node was saved: make a new one for the resource:
-            node = new ProfileResourceNode(uri);
             final NodeMetaData metaData = node.getMetaData();
             metaData.setResourceType(ResourceType.FILE);
             metaData.setNodeStatus(getNodeStatus(e.getErrorType()));

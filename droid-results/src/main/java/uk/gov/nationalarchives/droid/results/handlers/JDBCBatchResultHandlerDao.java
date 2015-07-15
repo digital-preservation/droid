@@ -101,7 +101,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private List<Format> formats;
     private Map<String, Format> puidFormatMap = new HashMap<String,Format>(2500);
 
-    private BlockingQueue<ProfileResourceNode> blockingQueue = new ArrayBlockingQueue<ProfileResourceNode>(128);
+    private BlockingQueue<NodeInfo> blockingQueue = new ArrayBlockingQueue<NodeInfo>(128);
     private Thread databaseWriterThread;
     private DatabaseWriter writer;
 
@@ -118,9 +118,12 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public void save(final ProfileResourceNode node, final ResourceId parentId) {
-        setNodeIds(node, parentId);
+        final boolean insertNode = node.getId() == null;
+        if (insertNode) {
+            setNodeIds(node, parentId);
+        }
         try {
-            blockingQueue.put(node);
+            blockingQueue.put(new NodeInfo(node, insertNode));
         } catch (InterruptedException e) {
             e.printStackTrace(); //TODO: what to do here?
         }
@@ -322,10 +325,25 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         databaseWriterThread.start();
     }
 
+
+    private static class NodeInfo {
+        public ProfileResourceNode node;
+        public boolean             insertNode;
+
+        public NodeInfo(ProfileResourceNode node, boolean insertNode) {
+            this.node = node;
+            this.insertNode = insertNode;
+        }
+    }
+
+    /**
+     * Class to run in a thread which takes from the blocking queue and batch commits
+     * to the database.
+     */
     private static class DatabaseWriter implements Runnable {
 
         private final Log log = LogFactory.getLog(getClass());
-        private BlockingQueue<ProfileResourceNode> blockingQueue;
+        private BlockingQueue<NodeInfo> blockingQueue;
         private DataSource datasource;
         private Connection connection;
         private PreparedStatement insertNodeStatement;
@@ -334,7 +352,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         private volatile int batchCount;
         private final int batchLimit;
 
-        DatabaseWriter(final BlockingQueue blockingQueue,
+        DatabaseWriter(final BlockingQueue<NodeInfo> blockingQueue,
                        final DataSource datasource,
                        final int batchLimit) {
             this.blockingQueue = blockingQueue;
@@ -357,15 +375,15 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         public void run() {
             try {
                 while (true) {
-                    final ProfileResourceNode node = blockingQueue.take();
+                    final NodeInfo info = blockingQueue.take();
                     try {
-                        if (node.isStatusUpdate()) {
-                            updateNodeStatus(node);
+                        if (info.insertNode) {
+                            batchInsertNode(info.node);
                         } else {
-                            batchInsertNode(node);
+                            updateNodeStatus(info.node);
                         }
                     } catch (SQLException e) {
-                        log.error("A database problem occurred inserting the node: " + node, e);
+                        log.error("A database problem occurred inserting the node: " + info.node, e);
                     }
                 }
             } catch (InterruptedException e) {
