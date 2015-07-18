@@ -59,6 +59,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
+    // How many results in the batch before committing.
+    public static final int BATCH_LIMIT = 100;
+
     // A "poison-pill" node info to signal to the writing thread that
     // it should terminate and commit any results so far.
     private static NodeInfo COMMIT_SO_FAR = new NodeInfo(null, false);
@@ -295,7 +298,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     }
 
     private List<Format> loadAllFormats() {
-        final List<Format> formats = new ArrayList<Format>(2000);
+        final List<Format> formats = new ArrayList<Format>(2000); // about 1500 formats as of 2015.
         try {
             final Connection conn = datasource.getConnection();
             try {
@@ -322,7 +325,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     }
 
     private void createAndRunDatabaseWriterThread() {
-        writer = new DatabaseWriter(blockingQueue, datasource, 50);
+        writer = new DatabaseWriter(blockingQueue, datasource, BATCH_LIMIT);
         try {
             writer.init();
         } catch (SQLException e) {
