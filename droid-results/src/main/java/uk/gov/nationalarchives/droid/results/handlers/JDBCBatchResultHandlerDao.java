@@ -61,7 +61,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     // A "poison-pill" node info to signal to the writing thread that
     // it should terminate and commit any results so far.
-    private static NodeInfo TERMINATE_AND_COMMIT = new NodeInfo(null, false);
+    private static NodeInfo COMMIT_SO_FAR = new NodeInfo(null, false);
 
     private static String INSERT_PROFILE_RESOURCE_NODE =
                     "INSERT INTO PROFILE_RESOURCE_NODE " +
@@ -113,15 +113,11 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public void init() {
-        // If never initialised, load formats and get the max node id.
-        if (formats == null) {
-            formats = loadAllFormats();
-            for (final Format format : formats) {
-                puidFormatMap.put(format.getPuid(), format);
-            }
-            nodeIds = new AtomicLong(getMaxNodeId() + 1);
+        formats = loadAllFormats();
+        for (final Format format : formats) {
+            puidFormatMap.put(format.getPuid(), format);
         }
-        // create a new database writer thread.
+        nodeIds = new AtomicLong(getMaxNodeId() + 1);
         createAndRunDatabaseWriterThread();
     }
 
@@ -143,37 +139,11 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public void commit() {
-        if (databaseWriterThread != null) {
-            // If the previous thread is still running:
-            if (databaseWriterThread.isAlive()) {
-                try {
-                    // force the writer thread to commit its results and terminate.
-                    blockingQueue.put(TERMINATE_AND_COMMIT);
-
-                    // Wait for it to finish committing, for up to two seconds.
-                    int tryCount = 0;
-                    while (databaseWriterThread.isAlive() && tryCount++ < 40) {
-                        Thread.sleep(50);
-                    }
-
-                } catch (InterruptedException e) {
-                    log.debug("Sleeping while waiting for the previous database writer thread to commit and terminate was interrupted.", e);
-                }
-
-                // Last resort: if not yet terminated, interrupt it.
-                if (databaseWriterThread.isAlive()) {
-                    log.debug("Database writer thread is still alive 2 seconds after requesting termination - interrupting.");
-                    databaseWriterThread.interrupt();
-                    try {
-                        Thread.sleep(100); // Allow a little time to interrupt the previous thread - not sure if this is needed.
-                    } catch (InterruptedException e) {
-                        log.debug("Committing was interrupted while sleeping during interrupting the database writer thread.", e);
-                    }
-                }
-            }
+        try {
+            blockingQueue.put(COMMIT_SO_FAR);
+        } catch (InterruptedException e) {
+            log.debug("Interrupted while requesting a commit.", e);
         }
-        // create a new database writer thread to handle new requests.
-        createAndRunDatabaseWriterThread();
     }
 
     private void setNodeIds(ProfileResourceNode node, ResourceId parentId) {
@@ -447,27 +417,27 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         @Override
         public void run() {
             try {
-                // Loop until we're told to stop or are interrupted.
+                // Loop until we're interrupted.
                 while (true) {
                     final NodeInfo info = blockingQueue.take(); // this will block if there's nothing in the queue.
-                    if (info == TERMINATE_AND_COMMIT) { // signals to terminate the thread and commit what we have so far.
-                        break;
-                    }
-                    try {
-                        if (info.insertNode) { // are we inserting a node, or updating one already saved?
-                            batchInsertNode(info.node);
-                        } else {
-                            updateNodeStatus(info.node);
+                    if (info == COMMIT_SO_FAR) {
+                        commit();
+                    } else {
+                        try {
+                            if (info.insertNode) { // are we inserting a node, or updating one already saved?
+                                batchInsertNode(info.node);
+                            } else {
+                                updateNodeStatus(info.node);
+                            }
+                        } catch (SQLException e) {
+                            log.error("A database problem occurred inserting a node: " + info.node, e);
                         }
-                    } catch (SQLException e) {
-                        log.error("A database problem occurred inserting a node: " + info.node, e);
                     }
                 }
-                // do a final commit of any batched results not yet committed.
-                commit();
             } catch (InterruptedException e) {
                 log.debug("The database writer thread was interrupted.", e);
             }
+            //TODO: unless the thread is interrupted, how does it clean up resources?
             closeResources();
         }
 
