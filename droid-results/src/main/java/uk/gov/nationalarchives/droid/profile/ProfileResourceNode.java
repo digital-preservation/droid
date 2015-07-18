@@ -47,6 +47,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 *
 */
 
+//TODO: abstract profile resource node into an interface and have JPA and JDBC versions + factory.
 public class ProfileResourceNode {
 
     private Long id;
@@ -65,6 +66,28 @@ public class ProfileResourceNode {
      * Default constructor.
      */
     ProfileResourceNode() { }
+
+    /**
+     * Copy constructor for ProfileResourceNode.
+     * <p>
+     * All simple values are copied; collections and data objects are recreated
+     * with the same elements in them.
+     *
+     * @param toCopy The node to copy.
+     */
+    public ProfileResourceNode(ProfileResourceNode toCopy) {
+        this.id                    = toCopy.id;
+        this.parentId              = toCopy.parentId;
+        this.uri                   = toCopy.uri;
+        this.prefix                = toCopy.prefix;
+        this.prefixPlusOne         = toCopy.prefixPlusOne;
+        this.identificationCount   = toCopy.identificationCount;
+        this.finished              = toCopy.finished;
+        this.extensionMismatch     = toCopy.extensionMismatch;
+        this.formatIdentifications = new ArrayList<Format>(toCopy.formatIdentifications);
+        this.filterStatus          = toCopy.filterStatus;
+        this.metaData              = new NodeMetaData(toCopy.metaData);
+    }
     
     /**
      * @param uri the URI of the resource node

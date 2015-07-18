@@ -59,7 +59,29 @@ public class NodeMetaData {
     private ResourceType  resourceType;
     
     private String hash;
-  
+
+    /**
+     * Default constructor.
+     */
+    public NodeMetaData() {
+    }
+
+    /**
+     * Copy constructor for a NodeMetaData.
+     *
+     * @param toCopy The metadata to copy.
+     */
+    public NodeMetaData(NodeMetaData toCopy) {
+        this.size                 = toCopy.size;
+        this.lastModifiedDate     = toCopy.lastModifiedDate;
+        this.name                 = toCopy.name;
+        this.extension            = toCopy.extension;
+        this.nodeStatus           = toCopy.nodeStatus;
+        this.identificationMethod = toCopy.identificationMethod;
+        this.resourceType         = toCopy.resourceType;
+        this.hash                 = toCopy.hash;
+    }
+
     /**
      * @return the size
      */
