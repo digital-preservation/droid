@@ -59,6 +59,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
+    // A "poison-pill" node info to signal to the writing thread that
+    // it should terminate and commit any results so far.
+    private static NodeInfo TERMINATE_AND_COMMIT = new NodeInfo(null, false);
+
     private static String INSERT_PROFILE_RESOURCE_NODE =
                     "INSERT INTO PROFILE_RESOURCE_NODE " +
                     "(NODE_ID,EXTENSION_MISMATCH,FINISHED_TIMESTAMP,IDENTIFICATION_COUNT," +
@@ -109,13 +113,16 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public void init() {
-        formats = loadAllFormats();
-        for (final Format format : formats) {
-            puidFormatMap.put(format.getPuid(), format);
+        // If never initialised, load formats and get the max node id.
+        if (formats == null) {
+            formats = loadAllFormats();
+            for (final Format format : formats) {
+                puidFormatMap.put(format.getPuid(), format);
+            }
+            nodeIds = new AtomicLong(getMaxNodeId() + 1);
         }
-        nodeIds = new AtomicLong(getMaxNodeId() + 1);
-
-        setupDatabaseWriterThread();
+        // create a new database writer thread.
+        createAndRunDatabaseWriterThread();
     }
 
     @Override
@@ -125,25 +132,48 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             setNodeIds(node, parentId);
         }
         try {
-            nodeCache.put(node.getId(), node);
+            synchronized (nodeCache) { // different threads can add nodes.
+                nodeCache.put(node.getId(), node);
+            }
             blockingQueue.put(new NodeInfo(node, insertNode));
         } catch (InterruptedException e) {
-            e.printStackTrace(); //TODO: what to do here?
+            log.debug("Saving was interrupted while putting a new node into the queue.", e);
         }
     }
 
     @Override
     public void commit() {
-        // Give the writer thread a chance to finish processing the queue.
-        int attemptCount = 0;
-        while (blockingQueue.size() > 0 && attemptCount++ < 24) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
+        if (databaseWriterThread != null) {
+            // If the previous thread is still running:
+            if (databaseWriterThread.isAlive()) {
+                try {
+                    // force the writer thread to commit its results and terminate.
+                    blockingQueue.put(TERMINATE_AND_COMMIT);
+
+                    // Wait for it to finish committing, for up to two seconds.
+                    int tryCount = 0;
+                    while (databaseWriterThread.isAlive() && tryCount++ < 40) {
+                        Thread.sleep(50);
+                    }
+
+                } catch (InterruptedException e) {
+                    log.debug("Sleeping while waiting for the previous database writer thread to commit and terminate was interrupted.", e);
+                }
+
+                // Last resort: if not yet terminated, interrupt it.
+                if (databaseWriterThread.isAlive()) {
+                    log.debug("Database writer thread is still alive 2 seconds after requesting termination - interrupting.");
+                    databaseWriterThread.interrupt();
+                    try {
+                        Thread.sleep(100); // Allow a little time to interrupt the previous thread - not sure if this is needed.
+                    } catch (InterruptedException e) {
+                        log.debug("Committing was interrupted while sleeping during interrupting the database writer thread.", e);
+                    }
+                }
             }
         }
-        // interrupt the old thread (forcing a commit), and set up a new one:
-        setupDatabaseWriterThread();
+        // create a new database writer thread to handle new requests.
+        createAndRunDatabaseWriterThread();
     }
 
     private void setNodeIds(ProfileResourceNode node, ResourceId parentId) {
@@ -202,7 +232,13 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public ProfileResourceNode loadNode(Long nodeId) {
-        ProfileResourceNode node = nodeCache.get(nodeId);
+        ProfileResourceNode node = null;
+        synchronized (nodeCache) { // different threads can add nodes at any time.
+            node = nodeCache.get(nodeId);
+            if (node != null) {
+                node = new ProfileResourceNode(node); // return a copy of the node so it can be safely modified by another thread.
+            }
+        }
         if (node == null) {
             try {
                 final Connection conn = datasource.getConnection();
@@ -238,7 +274,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     @Override
     public void deleteNode(Long nodeId) {
         try {
-            final Connection conn = datasource.getConnection(); //TODO: check auto commit status.
+            final Connection conn = datasource.getConnection();
             try {
                 final PreparedStatement statement = conn.prepareStatement(DELETE_NODE);
                 try {
@@ -251,7 +287,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             } finally {
                 conn.close();
             }
-            //TODO: do we need to explicitly delete formats associated with this node, or does it do cascade?
+            //TODO: do we need to explicitly delete identifications associated with this node, or does it do cascade?
         } catch (SQLException e) {
             log.error("A database exception occurred deleting a node with id " + nodeId, e);
         }
@@ -315,10 +351,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         return formats;
     }
 
-    private void setupDatabaseWriterThread() {
-        if (databaseWriterThread != null) {
-            databaseWriterThread.interrupt();
-        }
+    private void createAndRunDatabaseWriterThread() {
         writer = new DatabaseWriter(blockingQueue, datasource, 50);
         try {
             writer.init();
@@ -329,7 +362,6 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         databaseWriterThread = new Thread(writer);
         databaseWriterThread.start();
     }
-
 
     private static class NodeInfo {
         public ProfileResourceNode node;
@@ -349,6 +381,10 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
      * <p>
      * Keeping a most recently added cache of nodes allows us to return a recent node before it
      * has actually been committed to the database.
+     * <p>
+     * <b>Thread Safety</b>  This is not thread-safe, and nodes may be added by different threads.
+     *                       We will use synchronization in the calling class to provide thread-safety,
+     *                       since there is no ConcurrentLinkedHashMap in the JDK by default.
      */
     private class MostRecentlyAddedNodeCache extends LinkedHashMap<Long, ProfileResourceNode> {
 
@@ -390,6 +426,13 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             this.batchLimit    = batchLimit;
         }
 
+        /**
+         * Initialise database prepared statements for the writer.
+         * <p>
+         * This must be called before running the writer.
+         *
+         * @throws SQLException
+         */
         public void init() throws SQLException {
             connection = datasource.getConnection();
             insertNodeStatement = connection.prepareStatement(INSERT_PROFILE_RESOURCE_NODE);
@@ -404,22 +447,28 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         @Override
         public void run() {
             try {
+                // Loop until we're told to stop or are interrupted.
                 while (true) {
-                    final NodeInfo info = blockingQueue.take();
+                    final NodeInfo info = blockingQueue.take(); // this will block if there's nothing in the queue.
+                    if (info == TERMINATE_AND_COMMIT) { // signals to terminate the thread and commit what we have so far.
+                        break;
+                    }
                     try {
-                        if (info.insertNode) {
+                        if (info.insertNode) { // are we inserting a node, or updating one already saved?
                             batchInsertNode(info.node);
                         } else {
                             updateNodeStatus(info.node);
                         }
                     } catch (SQLException e) {
-                        log.error("A database problem occurred inserting the node: " + info.node, e);
+                        log.error("A database problem occurred inserting a node: " + info.node, e);
                     }
                 }
-            } catch (InterruptedException e) {
+                // do a final commit of any batched results not yet committed.
                 commit();
-                closeResources();
-             }
+            } catch (InterruptedException e) {
+                log.debug("The database writer thread was interrupted.", e);
+            }
+            closeResources();
         }
 
         private void closeResources() {
@@ -427,13 +476,13 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 try {
                     statement.close();
                 } catch (SQLException s) {
-                    log.error("A problem occurred closing a prepared statement.", s);
+                    log.error("A problem occurred closing an identification prepared statement.", s);
                 }
             }
             try {
                 insertNodeStatement.close();
             } catch (SQLException s) {
-                log.error("A problem occurred closing a prepared statement.", s);
+                log.error("A problem occurred closing a node insert prepared statement.", s);
             }
             try {
                 connection.close();
@@ -529,7 +578,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
                     // Insert identifications of new nodes:
                     for (final PreparedStatement identifications : insertIdentifications.values()) {
-                        identifications.executeBatch(); //TODO: what about identifications not used in this run?
+                        identifications.executeBatch(); //TODO: optimise? what about identification statements not used in this run?
                     }
                     connection.commit();
                 } catch (SQLException e) {
@@ -538,8 +587,12 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             }
         }
 
+        /**
+         * Commits everything batched so far.
+         */
         public void commit() {
-            batchCount = Integer.MAX_VALUE - 10;
+            // set our batch count really high to force a commit.
+            batchCount = Integer.MAX_VALUE - 100000;
             commitBatchIfLargeEnough();
         }
 
