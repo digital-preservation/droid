@@ -564,8 +564,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
          * Commits everything batched so far.
          */
         public void commit() {
-            // set our batch count really high to force a commit.
-            batchCount = Integer.MAX_VALUE - 100000;
+            batchCount = BATCH_LIMIT;
             commitBatchIfLargeEnough();
         }
 
