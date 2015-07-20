@@ -160,8 +160,10 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name = "datasource" ref="dataSource"/>
     </bean>
 
-    <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl"/>
-    
+    <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl">
+        <property name = "datasource" ref="dataSource"/>
+    </bean>
+
     <bean id="referenceDataService" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataServiceImpl"/>
     
     <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileInstanceManagerImpl">
