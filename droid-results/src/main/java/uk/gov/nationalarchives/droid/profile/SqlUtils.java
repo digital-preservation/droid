@@ -163,23 +163,23 @@ public final class SqlUtils {
         // Get data from result set:
         final Long node_id                   = nodeResults.getLong(1);
         final Boolean extension_mismatch     = nodeResults.getBoolean(2);
-        final Date finished_timestamp        = nodeResults.getTimestamp(3);
-        //final Integer identification_count     = nodeResults.getInt(4); this is set on the node by adding identifications.
-        final String extension               = nodeResults.getString(5);
-        final String hash                    = nodeResults.getString(6);
-        final Integer idInt                  = nodeResults.getInt(7);
+        final Date finished_timestamp        = getNullableTimestamp(3, nodeResults);
+        //final Integer identification_count   = nodeResults.getInt(4); this is set on the node by adding identifications.
+        final String extension               = getNullableString(5, nodeResults);
+        final String hash                    = getNullableString(6, nodeResults);
+        final Integer idInt                  = getNullableInteger(7, nodeResults);
         final IdentificationMethod idMethod  = idInt == null? null : IdentificationMethod.values()[idInt];
-        final Date last_mod                  = nodeResults.getTimestamp(8);
+        final Date last_mod                  = getNullableTimestamp(8, nodeResults);
         final Long last_modified             = last_mod == null? null : last_mod.getTime();
         final String name                    = nodeResults.getString(9);
-        final Integer nodeS                  = nodeResults.getInt(10);
+        final Integer nodeS                  = getNullableInteger(10, nodeResults);
         final NodeStatus nodeStatus          = nodeS == null? null : NodeStatus.values()[nodeS];
-        final Integer rType                  = nodeResults.getInt(11);
+        final Integer rType                  = getNullableInteger(11, nodeResults);
         final ResourceType resourceType      = rType == null? null : ResourceType.values()[rType];
-        final Long size                      = nodeResults.getLong(12);
-        final Long parentId                  = nodeResults.getLong(13);
-        final String prefix                  = nodeResults.getString(14);
-        final String prefixPlusOne           = nodeResults.getString(15);
+        final Long size                      = getNullableLong(12, nodeResults);
+        final Long parentId                  = getNullableLong(13, nodeResults);
+        final String prefix                  = getNullableString(14, nodeResults);
+        final String prefixPlusOne           = getNullableString(15, nodeResults);
         final String uriString               = nodeResults.getString(17);
         final URI uri;
         try {
@@ -207,6 +207,30 @@ public final class SqlUtils {
         node.setPrefix(prefix);
         node.setPrefixPlusOne(prefixPlusOne);
         return node;
+    }
+
+    public static Integer getNullableInteger(final int position,
+                                                  final ResultSet results) throws SQLException {
+        final int value = results.getInt(position);
+        return results.wasNull()? null : value;
+    }
+
+    public static String getNullableString(final int position,
+                                           final ResultSet results) throws SQLException {
+        final String value = results.getString(position);
+        return results.wasNull()? null : value;
+    }
+
+    public static Long getNullableLong(final int position,
+                                         final ResultSet results) throws SQLException {
+        final Long value = results.getLong(position);
+        return results.wasNull()? null : value;
+    }
+
+    public static Date getNullableTimestamp(final int position,
+                                            final ResultSet results) throws SQLException {
+        final Date value = results.getTimestamp(position);
+        return results.wasNull() ? null : value;
     }
 
     public static void addIdentifications(final ProfileResourceNode node,
