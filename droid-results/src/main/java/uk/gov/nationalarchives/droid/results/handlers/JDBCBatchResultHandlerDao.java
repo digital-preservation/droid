@@ -98,6 +98,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private static String SELECT_FORMATS               = "SELECT * FROM FORMAT";
     private static String SELECT_PROFILE_RESOURCE_NODE = "SELECT * FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
     private static String SELECT_IDENTIFICATIONS       = "SELECT * FROM IDENTIFICATION WHERE NODE_ID = ?";
+    private static String DELETE_IDENTIFICATIONS       = "DELETE FROM IDENTIFICATION WHERE NODE_ID = ?";
     private static String MAX_NODE_ID_QUERY            = "SELECT MAX(NODE_ID) FROM PROFILE_RESOURCE_NODE";
 
     private final Log log = LogFactory.getLog(getClass());
@@ -249,18 +250,24 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         try {
             final Connection conn = datasource.getConnection();
             try {
-                final PreparedStatement statement = conn.prepareStatement(DELETE_NODE);
+                final PreparedStatement nodeStatement = conn.prepareStatement(DELETE_NODE);
                 try {
-                    statement.setLong(1, nodeId);
-                    statement.execute();
-                    conn.commit();
+                    nodeStatement.setLong(1, nodeId);
+                    nodeStatement.execute();
                 } finally {
-                    statement.close();
+                    nodeStatement.close();
                 }
+                final PreparedStatement idStatement = conn.prepareStatement(DELETE_IDENTIFICATIONS);
+                try {
+                    idStatement.setLong(1, nodeId);
+                    idStatement.execute();
+                } finally {
+                    idStatement.close();
+                }
+                conn.commit();
             } finally {
                 conn.close();
             }
-            //TODO: do we need to explicitly delete identifications associated with this node, or does it do cascade?
         } catch (SQLException e) {
             log.error("A database exception occurred deleting a node with id " + nodeId, e);
         }
