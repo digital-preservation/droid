@@ -143,9 +143,9 @@ public final class SqlUtils {
     public static Format buildFormat(final ResultSet results) throws SQLException {
         final Format format = new Format();
         format.setPuid(results.getString(1));
-        format.setMimeType(results.getString(2));
-        format.setName(results.getString(3));
-        format.setVersion(results.getString(4));
+        format.setMimeType(getNullableString(2, results));
+        format.setName(getNullableString(3, results));
+        format.setVersion(getNullableString(4, results));
         return format;
     }
 
