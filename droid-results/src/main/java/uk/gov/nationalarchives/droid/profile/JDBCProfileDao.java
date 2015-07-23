@@ -105,6 +105,7 @@ public class JDBCProfileDao implements ProfileDao {
         try {
             final Connection conn = datasource.getConnection();
             try {
+                // Get the nodes which are children of the parent id:
                 final String query = parentId == null? FIND_TOP_LEVEL_CHILDREN : FIND_CHILD_NODES;
                 final PreparedStatement findChildren = conn.prepareStatement(query);
                 if (parentId != null) {
@@ -112,13 +113,7 @@ public class JDBCProfileDao implements ProfileDao {
                 }
                 final ResultSet children = findChildren.executeQuery();
                 final List<ProfileResourceNode> childNodes= buildNodes(children);
-                if (childNodes.size() > 0) {
-                    final String childQuery = parentId == null? FIND_TOP_LEVEL_CHILD_IDS : FIND_CHILD_IDS;
-                    final PreparedStatement findIdentifications = conn.prepareStatement(childQuery);
-                    SqlUtils.setNullableLong(1, parentId, findIdentifications);
-                    final ResultSet identifications = findIdentifications.executeQuery();
-                    addIdentificationsToNodes(identifications, childNodes, resultHandlerDao.getPUIDFormatMap());
-                }
+                loadIdentifications(parentId, conn, childNodes);
                 return childNodes;
             } finally{
                 conn.close();
@@ -149,6 +144,7 @@ public class JDBCProfileDao implements ProfileDao {
                 final ResultSet results = statement.executeQuery();
                 final List<ProfileResourceNode> filteredNodes = buildNodes(results);
                 //TODO: deal with filter status.
+                loadIdentifications(parentId, conn, filteredNodes);
                 return filteredNodes;
             } finally{
                 conn.close();
@@ -159,11 +155,25 @@ public class JDBCProfileDao implements ProfileDao {
         return Collections.emptyList();
     }
 
+
+    private void loadIdentifications(Long parentId, Connection conn, List<ProfileResourceNode> childNodes) throws SQLException {
+        if (childNodes.size() > 0) {
+            final String childQuery = parentId == null? FIND_TOP_LEVEL_CHILD_IDS : FIND_CHILD_IDS;
+            final PreparedStatement findIdentifications = conn.prepareStatement(childQuery);
+            if (parentId != null) {
+                SqlUtils.setNullableLong(1, parentId, findIdentifications);
+            }
+            final ResultSet identifications = findIdentifications.executeQuery();
+            addIdentificationsToNodes(identifications, childNodes, resultHandlerDao.getPUIDFormatMap());
+        }
+    }
+
     private void setFilterParameters(final PreparedStatement statement,
                                      final QueryBuilder queryBuilder,
                                      final Long parentId) throws SQLException {
         final Object[] parameters = queryBuilder.getValues();
         int paramCount = 1;
+        // Set the filter parameters for the first part of the query.
         for (final Object parameter : parameters) {
             if (parameter != null) {
                 SqlUtils.setNonNullableParameter(paramCount++, parameter, statement);
@@ -171,6 +181,15 @@ public class JDBCProfileDao implements ProfileDao {
                 log.warn("A null filter parameter was encountered at position " + (paramCount - 1));
             }
         }
+        // Set the same filter parameters for the second part of the query.
+        for (final Object parameter : parameters) {
+            if (parameter != null) {
+                SqlUtils.setNonNullableParameter(paramCount++, parameter, statement);
+            } else {
+                log.warn("A null filter parameter was encountered at position " + (paramCount - 1));
+            }
+        }
+        // Set the parent id of the children if not null.
         if (parentId != null) {
             statement.setLong(paramCount, parentId);
         }
@@ -234,7 +253,10 @@ public class JDBCProfileDao implements ProfileDao {
     private List<ProfileResourceNode> buildNodes(final ResultSet children) throws SQLException {
         final List<ProfileResourceNode> childNodes = new ArrayList<ProfileResourceNode>(32);
         while(children.next()) {
-            childNodes.add(SqlUtils.buildProfileResourceNode(children));
+            final ProfileResourceNode child = SqlUtils.buildProfileResourceNode(children);
+            if (child.getFilterStatus() > 0) {
+                childNodes.add(child);
+            }
         }
         return childNodes;
     }

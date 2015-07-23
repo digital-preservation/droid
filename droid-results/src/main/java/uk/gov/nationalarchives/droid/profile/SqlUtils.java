@@ -187,6 +187,10 @@ public final class SqlUtils {
         } catch (URISyntaxException e) {
             throw new SQLException("The URI for the node obtained from the database: [" + uriString + "] could not be converted into a URI", e);
         }
+        int filterStatus = 1;
+        if (getNumberOfColumns(nodeResults) > 17) {
+            filterStatus = nodeResults.getInt(18);
+        }
 
         // Create the node
         final ProfileResourceNode node = new ProfileResourceNode(uri);
@@ -206,7 +210,13 @@ public final class SqlUtils {
         node.setParentId(parentId);
         node.setPrefix(prefix);
         node.setPrefixPlusOne(prefixPlusOne);
+        node.setFilterStatus(filterStatus);
         return node;
+    }
+
+    public static int getNumberOfColumns(final ResultSet resultSet) throws SQLException {
+        final ResultSetMetaData rsmd = resultSet.getMetaData();
+        return rsmd.getColumnCount();
     }
 
     public static Integer getNullableInteger(final int position,
