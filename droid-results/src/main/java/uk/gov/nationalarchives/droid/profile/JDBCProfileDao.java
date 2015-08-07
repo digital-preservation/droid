@@ -86,7 +86,8 @@ public class JDBCProfileDao implements ProfileDao {
         try {
             final Connection conn = datasource.getConnection();
             try {
-                final PreparedStatement insertFormat = getInsertFormatStatement(conn, format);
+                String dummy = "INSERT INTO FORMAT (PUID,MIME_TYPE,NAME,VERSION) VALUES ('','','','')";
+                final PreparedStatement insertFormat = (format == Format.NULL) ? conn.prepareStatement(dummy) : getInsertFormatStatement(conn, format);
                 insertFormat.execute();
                 conn.commit();
             } finally{

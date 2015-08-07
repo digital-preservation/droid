@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: uk.gov.nationalarchives:droid-command-line:6.1.6-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/uk/gov/nationalarchives/droid-command-line/6.1.6-SNAPSHOT/droid-command-line-6.1.6-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/uk/gov/nationalarchives/droid-command-line/6.1.6-SNAPSHOT/droid-command-line-6.1.6-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/uk/gov/nationalarchives/droid-command-line/6.1.6-SNAPSHOT/droid-command-line-6.1.6-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

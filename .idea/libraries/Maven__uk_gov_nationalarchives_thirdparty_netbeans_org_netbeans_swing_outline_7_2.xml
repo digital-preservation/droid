@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: uk.gov.nationalarchives.thirdparty.netbeans:org-netbeans-swing-outline:7.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/uk/gov/nationalarchives/thirdparty/netbeans/org-netbeans-swing-outline/7.2/org-netbeans-swing-outline-7.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/uk/gov/nationalarchives/thirdparty/netbeans/org-netbeans-swing-outline/7.2/org-netbeans-swing-outline-7.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/uk/gov/nationalarchives/thirdparty/netbeans/org-netbeans-swing-outline/7.2/org-netbeans-swing-outline-7.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

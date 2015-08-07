@@ -67,7 +67,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private static NodeInfo COMMIT_SO_FAR = new NodeInfo(null, false);
 
     private static String INSERT_PROFILE_RESOURCE_NODE =
-                    "INSERT INTO PROFILE_RESOURCE_NODE " +
+            "INSERT INTO PROFILE_RESOURCE_NODE " +
                     "(NODE_ID,EXTENSION_MISMATCH,FINISHED_TIMESTAMP,IDENTIFICATION_COUNT," +
                     " EXTENSION,HASH,IDENTIFICATION_METHOD,LAST_MODIFIED_DATE,NAME,NODE_STATUS," +
                     " RESOURCE_TYPE,FILE_SIZE,PARENT_ID,PREFIX,PREFIX_PLUS_ONE,URI) " +
@@ -95,11 +95,44 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private static String UPDATE_NODE_STATUS           = "UPDATE PROFILE_RESOURCE_NODE SET NODE_STATUS = ? WHERE NODE_ID = ?";
     private static String DELETE_NODE                  = "DELETE FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
     private static String SELECT_FORMAT                = "SELECT * FROM FORMAT WHERE PUID = ?";
+    //BNO
+    private static String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
     private static String SELECT_FORMATS               = "SELECT * FROM FORMAT";
     private static String SELECT_PROFILE_RESOURCE_NODE = "SELECT * FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
     private static String SELECT_IDENTIFICATIONS       = "SELECT * FROM IDENTIFICATION WHERE NODE_ID = ?";
     private static String DELETE_IDENTIFICATIONS       = "DELETE FROM IDENTIFICATION WHERE NODE_ID = ?";
     private static String MAX_NODE_ID_QUERY            = "SELECT MAX(NODE_ID) FROM PROFILE_RESOURCE_NODE";
+
+    //DDL statements
+    private static String CREATE_TABLE_FORMAT = "create table format (puid varchar(255) not null, mime_type varchar(255), name varchar(255), version varchar(255), primary key (puid))";
+    private static String CREATE_TABLE_IDENTIFICATION = "create table identification (node_id bigint not null, puid varchar(255) not null)";
+    private static String CREATE_TABLE_PRN = "create table profile_resource_node (node_id bigint not null, extension_mismatch boolean not null, finished_timestamp timestamp, identification_count integer, extension varchar(255), hash varchar(64), identification_method integer, last_modified_date timestamp, name varchar(255) not null, node_status integer, resource_type integer not null, file_size bigint, parent_id bigint, prefix varchar(255), prefix_plus_one varchar(255), text_encoding integer, uri varchar(4000) not null, primary key (node_id))";
+    private static String CREATE_IDX_MIME_TYPE_ON_FORMAT = "create index idx_mime_type on format (mime_type)";
+    private static String CREATE_IDX_FORMAT_NAME_ON_FORMAT = "create index idx_format_name on format (name)";
+    private static String CREATE_IDX_EXT_MISMATCH_ON_PRN = "create index idx_extension_mismatch on profile_resource_node (extension_mismatch)";
+    private static String CREATE_IDX_ID_COUNT_ON_PRN = "create index idx_id_count on profile_resource_node (identification_count)";
+    private static String CREATE_IDX_PRN_EXT_ON_PRN = "create index idx_prn_extension on profile_resource_node (extension)";
+    private static String CREATE_IDX_PRN_HASH_TYPE_ON_PRN = "create index idx_prn_hash on profile_resource_node (hash)";
+    private static String CREATE_IDX_PRN_ID_METHOD_ON_PRN = "create index idx_prn_id_method on profile_resource_node (identification_method)";
+    private static String CREATE_IDX_PRN_LAST_MODIFIED_ON_PRN = "create index idx_prn_last_modified on profile_resource_node (last_modified_date)";
+    private static String CREATE_IDX_PRN_NAME_ON_PRN = "create index idx_prn_name on profile_resource_node (name)";
+    private static String CREATE_IDX_PRN_NODE_STATUS_ON_PRN = "create index idx_prn_node_status on profile_resource_node (node_status)";
+    private static String CREATE_IDX_ID_RESOURCE_ON_PRN = "create index idx_prn_id_resourceType on profile_resource_node (resource_type)";
+    private static String CREATE_IDX_PRN_FILE_SIZE_ON_PRN = "create index idx_prn_file_size on profile_resource_node (file_size)";
+    private static String CREATE_IDX_PARENT_ID_ON_PRN = "create index idx_parent_id on profile_resource_node (parent_id)";
+    private static String CREATE_IDX_PREFIX_ON_PRN = "create index idx_prefix on profile_resource_node (prefix)";
+    private static String CREATE_IDX_PREFIX_PLUS_ONE_ON_PRN = "create index idx_prefix_plus_one on profile_resource_node (prefix_plus_one)";
+    private static String CREATE_IDX_TEXT_ENCODING_ON_PRN = "create index idx_text_encoding on profile_resource_node (text_encoding)";
+    private static String CREATE_IDX_URI_ON_PRN = "create index idx_uri on profile_resource_node (uri)";
+    private static String IDENTIFICATION_CONSTRAINT_1 = "alter table identification add constraint FK_fh484ccwwl4e5w9quqke4n6ri foreign key (puid) references format";
+    private static String IDENTIFICATION_CONSTRAINT_2 = "alter table identification add constraint FK_tpxmo6ppuxeckdreln5pt5e39 foreign key (node_id) references profile_resource_node";
+
+    //TODO: May not need these mnow we're not using Hibernate?
+    private static String CREATE_UNIQUE_KEY = "create table hibernate_unique_key ( next_hi integer )";
+    private static String INSERT_UNIQUE_KEY = "insert into hibernate_unique_key values ( 0 )";
+
+    private static boolean freshTemplate;
+    private static Object locker = new Object();
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -117,16 +150,103 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public void init() {
+
+        //TODO: If we're running DROID for the first time, the database will exist but won't have the DROID_USER
+        // BNO: Need to allow for the possibility that we're dealing with a fresh DROID install (or first run
+        // after a new signature?). In which case, the call to setUpFormatsAndDatabaseWriter() will fail since
+        // the database schema objects (previously created by hibedrnate) will not exist.  It gets worse.  We can't just
+        // create the schema then call setUpFormatsAndDatabaseWriter() beacuse the format data won't have been popiulated.
+        // This is handled by ProfileContextLocator-generateNewDatabaseAndTemplates after this class has been instantiated
+        // byy Spring...
+        synchronized (locker) {
+            if(!getIsFreshTemplate()) {
+                setUpFormatsAndDatabaseWriter();
+            } else {
+                createSchemaOnFreshTemplate();
+            }
+        }
+    }
+
+    public void setUpFormatsAndDatabaseWriterForNewTemplate () {
+        synchronized (locker) {
+            setUpFormatsAndDatabaseWriter();
+        }
+    }
+
+    private void setUpFormatsAndDatabaseWriter () {
         formats = loadAllFormats();
         for (final Format format : formats) {
             puidFormatMap.put(format.getPuid(), format);
         }
         nodeIds = new AtomicLong(getMaxNodeId() + 1);
         createAndRunDatabaseWriterThread();
+
+    }
+
+
+    private void createSchemaOnFreshTemplate() {
+
+        try {
+            final Connection conn = datasource.getConnection();
+
+            try {
+                final PreparedStatement createFormatTable = conn.prepareStatement(CREATE_TABLE_FORMAT);
+                createFormatTable.execute();
+
+                final PreparedStatement createIdentificationTable = conn.prepareStatement(CREATE_TABLE_IDENTIFICATION);
+                createIdentificationTable.execute();
+
+                final PreparedStatement createProfileResourceNodeTable = conn.prepareStatement(CREATE_TABLE_PRN);
+                createProfileResourceNodeTable.execute();
+
+                List<String> createIndexesAndConstraints = new ArrayList<String>(19);
+                createIndexesAndConstraints.add(CREATE_IDX_MIME_TYPE_ON_FORMAT);
+                createIndexesAndConstraints.add(CREATE_IDX_FORMAT_NAME_ON_FORMAT);
+                createIndexesAndConstraints.add(CREATE_IDX_EXT_MISMATCH_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_ID_COUNT_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_EXT_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_HASH_TYPE_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_ID_METHOD_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_LAST_MODIFIED_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_NAME_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_NODE_STATUS_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_ID_RESOURCE_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_FILE_SIZE_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PARENT_ID_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PREFIX_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PREFIX_PLUS_ONE_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_TEXT_ENCODING_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_URI_ON_PRN);
+                createIndexesAndConstraints.add(IDENTIFICATION_CONSTRAINT_1);
+                createIndexesAndConstraints.add(IDENTIFICATION_CONSTRAINT_2);
+
+                //BNO - possibly don't need these nw we're not using Hibernate?
+                //createIndexesAndConstraints.add(CREATE_UNIQUE_KEY);
+                //createIndexesAndConstraints.add(INSERT_UNIQUE_KEY);
+
+                for (String ddlSQL : createIndexesAndConstraints) {
+                    final PreparedStatement ddlStatement = conn.prepareStatement(ddlSQL);
+                    ddlStatement.execute();
+                }
+
+                conn.commit();
+
+            } catch (SQLException e) {
+                throw e;
+            } finally {
+                conn.close();
+                //Does the table exist?
+                //loadAllFormats();
+            }
+        } catch (SQLException e) {
+            log.error("A database exception occurred getting when creating the Derby database for a fresh install.", e);
+        }
     }
 
     @Override
     public void save(final ProfileResourceNode node, final ResourceId parentId) {
+
+
         final boolean insertNode = node.getId() == null;
         if (insertNode) {
             setNodeIds(node, parentId);
@@ -151,6 +271,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     }
 
     private void setNodeIds(ProfileResourceNode node, ResourceId parentId) {
+
         final Long nodeId = nodeIds.incrementAndGet();
         node.setId(nodeId);
         String parentsPrefixString = "";
@@ -305,10 +426,20 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     }
 
     private List<Format> loadAllFormats() {
-        final List<Format> formats = new ArrayList<Format>(2000); // about 1500 formats as of 2015.
+        //final List<Format> formats = new ArrayList<Format>(2000); // about 1500 formats as of 2015.
+
+        List<Format> formats = null;
         try {
             final Connection conn = datasource.getConnection();
+            log.error("Connection: " + conn.toString());
             try {
+                //BNO - Get the actual number of formats so we can initialise the list based on the current count.
+                final PreparedStatement getFormatCount = conn.prepareStatement(SELECT_FORMAT_COUNT);
+                final ResultSet rsFormatCount = getFormatCount.executeQuery();
+                rsFormatCount.next();
+                final int formatCount = rsFormatCount.getInt("total");
+                formats = new ArrayList<Format>(formatCount);
+
                 final PreparedStatement loadFormat = conn.prepareStatement(SELECT_FORMATS);
                 try {
                     final ResultSet results = loadFormat.executeQuery();
@@ -341,6 +472,15 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         }
         databaseWriterThread = new Thread(writer);
         databaseWriterThread.start();
+    }
+
+
+    public synchronized static void setIsFreshTemplate(boolean isFreshTemplate) {
+        freshTemplate = isFreshTemplate;
+    }
+
+    public static boolean getIsFreshTemplate() {
+        return freshTemplate;
     }
 
     private static class NodeInfo {
@@ -450,6 +590,8 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             //TODO: unless the thread is interrupted, how does it clean up resources?
             closeResources();
         }
+
+
 
         private void closeResources() {
             for (final PreparedStatement statement : insertIdentifications.values()) {
