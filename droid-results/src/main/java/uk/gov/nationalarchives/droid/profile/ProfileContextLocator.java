@@ -182,10 +182,13 @@ public class ProfileContextLocator {
             File profileTemplate = getProfileTemplateFile(profile);
             status = getTemplateStatus(profileTemplate);
             status = setupDatabaseTemplate(status, profileTemplate, databasePath, props);
-        } else {
-            setCreateSchemaProperties(false, props);
         }
-
+        /*
+        else {
+            //BNO: No longer reqiured?
+            //setCreateSchemaProperties(false, props);
+        }
+        */
         //BNO
         if (status == TemplateStatus.NO_TEMPLATE ) {
             // If we're starting with a fresh DROID install, we'll get a SQL Exception if we try to connect to the
@@ -226,27 +229,21 @@ public class ProfileContextLocator {
         TemplateStatus result = status;
         
         // if no profile template exists, generate a fresh profile database:
-        if (status == TemplateStatus.NO_TEMPLATE) {
-            setCreateSchemaProperties(true, props);
-/*
-            //BNO:
+        //if (status == TemplateStatus.NO_TEMPLATE) {
+            //BNO - no longer required:
+            //setCreateSchemaProperties(true, props);
+
+        //} else { // we either have a blank profile, or a signature profile: unpack the profile template:
+        if (status != TemplateStatus.NO_TEMPLATE) {
+            //BNO - no longer required:
+            //setCreateSchemaProperties(false, props);
             try {
                 unpackProfileTemplate(profileTemplate, databasePath);
             } catch (IOException e) {
                 log.error(e);
                 // could not load profile template - fall back on creating one from scratch.
-                setCreateSchemaProperties(true, props);
-                result = TemplateStatus.NO_TEMPLATE;
-            }
-*/
-        } else { // we either have a blank profile, or a signature profile: unpack the profile template:
-            setCreateSchemaProperties(false, props);
-            try {
-                unpackProfileTemplate(profileTemplate, databasePath);
-            } catch (IOException e) {
-                log.error(e);
-                // could not load profile template - fall back on creating one from scratch.
-                setCreateSchemaProperties(true, props);
+                //BNO. No Longer required?
+                //setCreateSchemaProperties(true, props);
                 result = TemplateStatus.NO_TEMPLATE;
             }
         }
