@@ -99,7 +99,7 @@ public enum DroidGlobalProperty {
     PROCESS_ARCHIVES("profile.processArchives", PropertyType.BOOLEAN, true),
 
     /** Whether to process files in web archives. */
-    PROCESS_WEB_ARCHIVES("profile.processWebArchives", PropertyType.BOOLEAN, false),
+    PROCESS_WEB_ARCHIVES("profile.processWebArchives", PropertyType.BOOLEAN, true),
 
     /** Whether to process files in archives. */
     PUID_URL_PATTERN("puid.urlPattern", PropertyType.TEXT, true), 
