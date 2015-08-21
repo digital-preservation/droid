@@ -90,7 +90,7 @@ public class JDBCProfileDao implements ProfileDao {
             final Connection conn = datasource.getConnection();
             try {
                 //BNO getInsertFormatStatement tries to convert the empty Puid to NULL, casuing a failed database insert.
-                //So we specify the SQL directly for this case.
+                //So as a workaround for now we specify the SQL directly for this case.
                 final PreparedStatement insertFormat = (format == Format.NULL) ? conn.prepareStatement(dummyPuid) : getInsertFormatStatement(conn, format);
                 insertFormat.execute();
                 conn.commit();

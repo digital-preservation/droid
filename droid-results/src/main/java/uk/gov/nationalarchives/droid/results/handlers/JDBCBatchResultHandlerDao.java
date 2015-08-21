@@ -155,7 +155,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         // BNO: Need to allow for the possibility that we're dealing with a fresh DROID install (or first run
         // after a new signature?). In which case, the call to setUpFormatsAndDatabaseWriter() will fail since
         // the database schema objects (created by hibernate in previous versions of DROID) will not exist.  Moreover,
-        // we can't just create the schema then call setUpFormatsAndDatabaseWriter() beacuse the format data won't
+        // we can't just create the schema then call setUpFormatsAndDatabaseWriter() because the format data won't
         // have been populated. This is handled by ProfileContextLocator-generateNewDatabaseAndTemplates
         //  -profileMabager.initProfile, after this class has been instantiated by Spring...
         synchronized (locker) {
@@ -398,6 +398,12 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             log.error("A database exception occurred deleting a node with id " + nodeId, e);
         }
     }
+
+    //BNO - to allow for the datasource to be referenced from JDBCSqlItemReader when called from ExportTask
+    public DataSource getDatasource () {
+        return this.datasource;
+    }
+
 
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;

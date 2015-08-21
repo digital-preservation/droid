@@ -196,13 +196,25 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 </bean>
 -->
 
+    <!--
     <bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.SqlItemReader" scope="prototype">
        <property name="sessionFactory" ref="sessionFactory"/>
        <property name="fetchSize" value="200"/>
        <property name="chunkSize" value="1000"/>
     </bean>
+-->
 
+    <bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.JDBCSqlItemReader" scope="prototype">
+        <!--<constructor-arg ref="typeParameterClass" /> -->
+        <property name="resultHandlerDao" ref="resultsDao" />
+        <property name="fetchSize" value="200"/>
+        <property name="chunkSize" value="1000"/>
+    </bean>
 
+    <!--
+    <bean id="typeParameterClass" class="Class<T>">
+    </bean>
+-->
     <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
     
     <bean id="sessionFactory" class="uk.gov.nationalarchives.droid.profile.export.HibernateSessionFactoryLocator"
