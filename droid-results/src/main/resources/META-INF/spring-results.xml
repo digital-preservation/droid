@@ -151,7 +151,9 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
 
     <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JpaPlanetsXMLDaoImpl"/>
-    <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl"/>
+    <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl">
+        <property name = "datasource" ref="dataSource"/>
+    </bean>
 
     <!--
     <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandlerDao" init-method="init"/>

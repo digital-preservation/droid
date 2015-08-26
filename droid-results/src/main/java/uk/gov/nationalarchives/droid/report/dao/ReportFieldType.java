@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.report.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -60,6 +62,9 @@ public interface ReportFieldType {
      */
 
     List<ReportLineItem> populateReportedData(List<?> results);
+
+    //BNO
+    List<ReportLineItem> populateReportedData(ResultSet results) throws SQLException;
 
     /**
      * Returns field string to be used in the query. 
