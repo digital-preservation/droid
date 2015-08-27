@@ -31,22 +31,20 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
 
+import org.jwat.common.ByteCountingPushBackInputStream;
 import org.jwat.warc.WarcReader;
 import org.jwat.warc.WarcReaderFactory;
 import org.jwat.warc.WarcRecord;
 
-import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory;
@@ -55,17 +53,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 /**
  * Identifier for files held in a WARC archive.
  * 
- * @author rbrennan
+ * @author G.Seaman
  */
-public class WarcArchiveContentIdentifier {
+public class WarcArchiveContentIdentifier extends ArchiveContentIdentifier {
 
-    private BinarySignatureIdentifier binarySignatureIdentifier;
-    private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String path;
-    private String slash;
-    private String slash1;
-    private File tmpDir;
-    
     /**
      * 
      * @param binarySignatureIdentifier     binary signature identifier
@@ -78,16 +69,7 @@ public class WarcArchiveContentIdentifier {
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
-        synchronized (this) {
-            this.binarySignatureIdentifier = binarySignatureIdentifier;
-            this.containerSignatureDefinitions = containerSignatureDefinitions;
-            this.path = path;
-            this.slash = slash;
-            this.slash1 = slash1;
-            if (tmpDir == null) {
-                tmpDir = new File(System.getProperty("java.io.tmpdir"));
-            }
-        }
+        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, false);
     }
     
     /**
@@ -96,16 +78,15 @@ public class WarcArchiveContentIdentifier {
      * @throws CommandExecutionException When an exception happens during execution
      * @throws CommandExecutionException When an exception happens during archive access
      */
-    //CHECKSTYLE:OFF
     public void identify(final URI uri, final IdentificationRequest request)
         throws CommandExecutionException {
         /**
          * Save importing all the http codes
          */
         final int httpACCEPTED = 200;
-        
-        final String newPath = "warc:" + slash1 + path + request.getFileName() + "!" + slash;
-        slash1 = "";
+
+        final String newPath = makeContainerURI("warc", request.getFileName());
+        setSlash1("");
         final IdentificationRequestFactory factory  = new WebArchiveEntryRequestFactory();
         try {
             InputStream warcIn = request.getSourceInputStream();
@@ -117,7 +98,7 @@ public class WarcArchiveContentIdentifier {
                     record = iterator.next();
                     // skip all but responses, and only accept HTTP 200s
                     // This means .wat and .wet files will report as empty
-                    if ( "response".equals(record.header.warcTypeStr)
+                    if ("response".equals(record.header.warcTypeStr)
                         && record.getHttpHeader() != null
                         && httpACCEPTED == record.getHttpHeader().statusCode) {
                         // no directory structure, so we use the full url as name
@@ -129,16 +110,11 @@ public class WarcArchiveContentIdentifier {
                             name);
 
                         final RequestIdentifier identifier = new RequestIdentifier(uri);
+                        IdentificationRequest warcRequest = factory.newRequest(metaData, identifier);
+                        ByteCountingPushBackInputStream in =
+                                (ByteCountingPushBackInputStream) record.getPayloadContent();
 
-                        IdentificationRequest arcRequest = factory.newRequest(metaData, identifier);
-                        arcRequest.open(record.getPayloadContent());
-                        final IdentificationResultCollection arcResults =
-                            binarySignatureIdentifier.matchBinarySignatures(arcRequest);
-                        final ResultPrinter resultPrinter =
-                            new ResultPrinter(binarySignatureIdentifier,
-                                containerSignatureDefinitions, newPath, slash, slash1, true, true);
-                        resultPrinter.print(arcResults, arcRequest);
-                        arcRequest.close();
+                        expandContainer(warcRequest, in, newPath);
                     }
                 }
             } finally {
@@ -147,8 +123,8 @@ public class WarcArchiveContentIdentifier {
                 }
             }
         } catch (IOException ioe) {
-            System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 
+            System.err.println(ioe + ": " + newPath); // continue after corrupt archive
         }
     }
-    //CHECKSTYLE:ON
+
 }

@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -43,12 +42,10 @@ import org.jwat.arc.ArcRecordBase;
 
 import org.jwat.common.Uri;
 
-import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
@@ -57,17 +54,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 /**
  * Identifier for files held in an ARC archive.
  * 
- * @author rbrennan
+ * @author G.Seaman
  */
-public class ArcArchiveContentIdentifier {
+public class ArcArchiveContentIdentifier extends ArchiveContentIdentifier {
 
-    private BinarySignatureIdentifier binarySignatureIdentifier;
-    private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String path;
-    private String slash;
-    private String slash1;
-    private File tmpDir;
-    
     /**
      * 
      * @param binarySignatureIdentifier     binary signature identifier
@@ -80,16 +70,7 @@ public class ArcArchiveContentIdentifier {
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
-        synchronized (this) {
-            this.binarySignatureIdentifier = binarySignatureIdentifier;
-            this.containerSignatureDefinitions = containerSignatureDefinitions;
-            this.path = path;
-            this.slash = slash;
-            this.slash1 = slash1;
-            if (tmpDir == null) {
-                tmpDir = new File(System.getProperty("java.io.tmpdir"));
-            }
-        }
+        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, false);
     }
     
     /**
@@ -104,15 +85,16 @@ public class ArcArchiveContentIdentifier {
          * Save importing all the http codes
          */
         final int httpACCEPTED = 200;
-        
-        final String newPath = "arc:" + slash1 + path + request.getFileName() + "!" + slash;
-        slash1 = "";
+
+        final String newPath = makeContainerURI("arc", request.getFileName());
+        setSlash1("");
         final IdentificationRequestFactory factory  = new WebArchiveEntryRequestFactory();
+        InputStream arcIn = null;
         try {
-            final InputStream arcIn = request.getSourceInputStream();
+            arcIn = request.getSourceInputStream();
             Iterator<ArcRecordBase> iterator = ArcReaderFactory.getReader(arcIn).iterator();
+            ArcRecordBase base = null;
             try {
-                ArcRecordBase base = null;
                 while (iterator.hasNext()) {
                     base = iterator.next();
                     // skip the header record at the start and any dns requests
@@ -130,7 +112,7 @@ public class ArcArchiveContentIdentifier {
                         }
                         if (name == null) {
                             String errMsg = "Skipping record with invalid URL in ArcArchiveContentIdentifier: "
-                                    + base.getHttpHeader().toString();
+                                + base.getHttpHeader().toString();
                             System.err.println(errMsg);
                         } else {
                             RequestMetaData metaData = new RequestMetaData(
@@ -141,24 +123,22 @@ public class ArcArchiveContentIdentifier {
                             final RequestIdentifier identifier = new RequestIdentifier(uri);
 
                             IdentificationRequest arcRequest = factory.newRequest(metaData, identifier);
-                            arcRequest.open(base.getPayloadContent());
-                            final IdentificationResultCollection arcResults =
-                                binarySignatureIdentifier.matchBinarySignatures(arcRequest);
-                            final ResultPrinter resultPrinter =
-                                new ResultPrinter(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, newPath, slash, slash1, true, true);
-                            resultPrinter.print(arcResults, arcRequest);
-                            arcRequest.close();
+                            InputStream in = base.getPayloadContent();
+                            expandContainer(arcRequest, in, newPath);
+
                         }
                     }
                 }
+            } catch (NullPointerException npe) {
+                System.err.println("Skipping invalid record header in " + newPath + npe);
             } finally {
                 if (arcIn != null) {
                     arcIn.close();
                 }
             }
         } catch (IOException ioe) {
-            System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 
+            System.err.println("Skipping invalid record in " + newPath + ioe);
         }
     }
+
 }
