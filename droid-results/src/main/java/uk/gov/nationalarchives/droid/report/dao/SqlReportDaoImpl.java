@@ -31,10 +31,15 @@
  */
 package uk.gov.nationalarchives.droid.report.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +47,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Criterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.SqlUtils;
+import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 
 /**
  * JPA implementation of JpaPlanetsXMLDaoImpl.
@@ -54,8 +60,26 @@ public class SqlReportDaoImpl implements ReportDao {
     
     private final Log log = LogFactory.getLog(getClass());
 
+    //BNO
+    private Connection connection;
+
    // @PersistenceContext
    // private EntityManager entityManager;
+
+    private JDBCBatchResultHandlerDao resultHandlerDao;
+    private DataSource datasource;
+
+    //BNO: For use in determining filter parameter types so we can set these to the correct SQL type.
+    //TODO: Maybe move to e.g. SQlUtils as this is also used in JDBCSqltemReader (for export)
+    private  enum ClassName {
+        String,
+        Date,
+        Long,
+        Integer,
+        Boolean
+    }
+
+
 
     /**
      * Flushes the DROID entity manager.
@@ -80,16 +104,51 @@ public class SqlReportDaoImpl implements ReportDao {
     //@Transactional(propagation = Propagation.REQUIRED)
     public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField, 
             List<GroupByField> groupByFields) {
-        final Query query = getQuery(reportField, groupByFields, filter);
-        final List<?> results = query.getResultList();
+
+        PreparedStatement statement = null;
+        ResultSet resultset = null;
+
+        final String sqlQuery = getQueryString(reportField, groupByFields, filter);
+        try{
+            final Connection connection = this.datasource.getConnection();
+            statement = connection.prepareStatement(sqlQuery);
+            setFilterParameters(statement, filter);
+            resultset = statement.executeQuery();
+            List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
+            reportData = reportField.getType().populateReportedData(resultset);
+            return reportData;
+        } catch(SQLException ex) {
+            log.error("Error executing report query", ex);
+        } finally {
+            try {
+                if(resultset != null) {
+                    resultset.close();
+                }
+                if(statement != null) {
+                    statement.close();
+                }
+                if(connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //e.printStackTrace();
+                log.error("Error closing statement or results set during report generation", e);
+            }
+        }
+        return null;
+    /*
+        final Query query = getQuery(reportField, groupByFields, filter); //BNO this is a Hibernate Query
+        final List<?> results = query.getResultList();  //BNO this is a Hibernate method call
+
         List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
-        if (results != null && !results.isEmpty()) {
+        //if (results != null && !results.isEmpty()) {
+        if (results != null) {
             reportData = reportField.getType().populateReportedData(results);
         }
-        return reportData;        
+        return reportData;
+           */
     }
-    
-    
+
     private Query getQuery(ReportFieldEnum reportField, List<GroupByField> groupByFields, Criterion filter) {
         final String selectStatement = getSelectStatement(reportField, groupByFields);
         final FilterInfo filterInfo = getFilterInfo(filter);
@@ -97,10 +156,18 @@ public class SqlReportDaoImpl implements ReportDao {
         final String queryString = selectStatement + filterInfo.getFilterSubQuery() + groupingStatement;
         //final Query query = entityManager.createNativeQuery(queryString);
         final Query query = null;
-        //setFilterParameters(query, filterInfo.getFilterValues());
+        setFilterParameters(query, filterInfo.getFilterValues());
         return query;
     }
-    
+
+
+    private String getQueryString(ReportFieldEnum reportField, List<GroupByField> groupByFields, Criterion filter) {
+        final String selectStatement = getSelectStatement(reportField, groupByFields);
+        final FilterInfo filterInfo = getFilterInfo(filter);
+        final String groupingStatement = getGroupingStatement(groupByFields);
+        final String queryString = selectStatement + filterInfo.getFilterSubQuery() + groupingStatement;
+        return queryString;
+    }
     
     // Get select statement for aggregate queries on the report field, 
     // including any grouping field in the results.
@@ -242,6 +309,45 @@ public class SqlReportDaoImpl implements ReportDao {
             Object transformedValue = SqlUtils.transformParameterToSQLValue(param);
             q.setParameter(pos++, transformedValue);
         }
-    }       
-    
+    }
+
+    private void setFilterParameters(PreparedStatement s, Criterion filter) {
+
+        final FilterInfo filterInfo = getFilterInfo(filter);
+        Object[] filterParams = filterInfo.getFilterValues();
+        int pos = 0;
+        for (Object param : filterParams) {
+            Object transformedValue = SqlUtils.transformParameterToSQLValue(param);
+
+            try {
+                String className = transformedValue.getClass().getSimpleName();
+                //Java 6 doesn't support switch on string!!
+                switch (ClassName.valueOf(className)) {
+                    case String:
+                        s.setString(++pos, (String) transformedValue);
+                        break;
+                    case Date:
+                        java.util.Date d = (java.util.Date) transformedValue;
+                        s.setDate(++pos, new java.sql.Date(d.getTime()));
+                        break;
+                    case Long:
+                        s.setLong(++pos, (Long) transformedValue);
+                        break;
+                    case Integer:
+                        s.setInt(++pos, (Integer) transformedValue);
+                        break;
+                    default:
+                        log.error("Invalid filter parameter type in SQLReportDaoImpl.java");
+                        break;
+                }
+            } catch (SQLException e) {
+                //e.printStackTrace();
+                log.error(e);
+            }
+        }
+    }
+
+    public void setDatasource(DataSource datasource) {
+        this.datasource = datasource;
+    }
 }

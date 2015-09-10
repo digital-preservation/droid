@@ -102,4 +102,8 @@ public interface ResultHandlerDao {
      */
     void deleteNode(Long nodeId);
 
+    // BNO: Added for new method in JDBCBatchResulthandlerDao.  Haven't previously published this interface
+    // via an API etc. ASAIK so shouldn't break anything...
+    void initialiseForNewTemplate();
+
 }

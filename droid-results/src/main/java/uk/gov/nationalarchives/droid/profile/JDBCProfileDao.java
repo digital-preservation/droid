@@ -37,6 +37,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDao;
+import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -55,6 +56,8 @@ public class JDBCProfileDao implements ProfileDao {
                                                            "ON ID.NODE_ID = PRN.NODE_ID";
     private static final String FIND_CHILD_IDS           = FIND_CHILDREN + " AND PRN.PARENT_ID = ?";
     private static final String FIND_TOP_LEVEL_CHILD_IDS = FIND_CHILDREN + " AND PRN.PARENT_ID IS NULL";
+
+    private static final String dummyPuid = "INSERT INTO FORMAT (PUID,MIME_TYPE,NAME,VERSION) VALUES ('','','','')";
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -86,7 +89,9 @@ public class JDBCProfileDao implements ProfileDao {
         try {
             final Connection conn = datasource.getConnection();
             try {
-                final PreparedStatement insertFormat = getInsertFormatStatement(conn, format);
+                //BNO getInsertFormatStatement tries to convert the empty Puid to NULL, casuing a failed database insert.
+                //So as a workaround for now we specify the SQL directly for this case.
+                final PreparedStatement insertFormat = (format == Format.NULL) ? conn.prepareStatement(dummyPuid) : getInsertFormatStatement(conn, format);
                 insertFormat.execute();
                 conn.commit();
             } finally{
@@ -153,6 +158,11 @@ public class JDBCProfileDao implements ProfileDao {
             log.error("A database exception occurred finding filtered nodes with parent id " + parentId, e);
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public void initialise() {
+        PopulateResultHandlerReferenceData();
     }
 
 
@@ -286,4 +296,11 @@ public class JDBCProfileDao implements ProfileDao {
         return parentId == null ? "is null" : " = ?";
     }
 
+    private void PopulateResultHandlerReferenceData() {
+        if(this.resultHandlerDao instanceof JDBCBatchResultHandlerDao) {
+            //initalize the formats
+            JDBCBatchResultHandlerDao batchResultHandler = (JDBCBatchResultHandlerDao)this.resultHandlerDao;
+            batchResultHandler.initialiseForNewTemplate();
+        }
+    }
 }

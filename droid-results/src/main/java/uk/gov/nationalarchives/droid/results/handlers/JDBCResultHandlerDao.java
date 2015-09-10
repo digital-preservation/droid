@@ -248,6 +248,12 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
         }
     }
 
+    @Override
+    public void initialiseForNewTemplate() {
+        //No need to do anything - all required initalisation will have been completed by the time we reach here.
+        //For a new template, the database schema will have ben created in Hibernate.
+    }
+
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
     }

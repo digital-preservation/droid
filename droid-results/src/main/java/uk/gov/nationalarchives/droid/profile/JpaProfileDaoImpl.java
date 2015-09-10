@@ -38,6 +38,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -232,6 +233,11 @@ public class JpaProfileDaoImpl implements ProfileDao {
     
     private String getParentIdQuery(Long parentId) {
         return parentId == null ? "is null" : " = ?";
+    }
+
+    @Override
+    public void initialise() {
+        //No need to do anything - all required initalisation will have been completed by the time we get here.
     }
     
 }

@@ -92,5 +92,17 @@ public enum ResourceType {
         return allowsChildren;
     }
 
-
+    //BNO - August 2015
+    public static ResourceType getResourceTypeForOrdinal(int value)  {
+        switch (value) {
+            case 0:
+                return ResourceType.FOLDER;
+            case 1:
+                return ResourceType.CONTAINER;
+            case 2:
+                return ResourceType.FILE;
+            default:
+                throw new  IllegalArgumentException("Invalid resource type " + value + "!");
+        }
+    }
 }

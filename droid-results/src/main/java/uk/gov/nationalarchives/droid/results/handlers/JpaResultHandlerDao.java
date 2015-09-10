@@ -153,6 +153,11 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
        
     }
 
+    @Override
+    public void initialiseForNewTemplate() {
+        //No need to do anything, all setup will be complete before this call if using Hibernate.
+    }
+
     private List<Format> loadAllFormats() {
         return entityManager.createQuery("SELECT f FROM Format f").getResultList();
     }
