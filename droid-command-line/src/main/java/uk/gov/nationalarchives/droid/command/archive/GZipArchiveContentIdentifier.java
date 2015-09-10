@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -39,12 +38,10 @@ import java.net.URI;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 
-import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.GZipIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
@@ -54,18 +51,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * 
  * @author rbrennan
  */
-public class GZipArchiveContentIdentifier {
+public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
 
     private static final long SIZE = 12L;
     private static final long TIME = 13L;
-    
-    private BinarySignatureIdentifier binarySignatureIdentifier;
-    private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String path;
-    private String slash;
-    private String slash1;
-    private File tmpDir;
-    private Boolean expandWebArchives;
     
     /**
      * 
@@ -79,20 +68,12 @@ public class GZipArchiveContentIdentifier {
     public GZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1, final Boolean webArchives) {
-    
-        synchronized (this) {
-            this.binarySignatureIdentifier = binarySignatureIdentifier;
-            this.containerSignatureDefinitions = containerSignatureDefinitions;
-            this.path = path;
-            this.slash = slash;
-            this.slash1 = slash1;
-            if (tmpDir == null) {
-                tmpDir = new File(System.getProperty("java.io.tmpdir"));
-            }
-            this.expandWebArchives = webArchives;
-        }
+
+       super(binarySignatureIdentifier, containerSignatureDefinitions, path,
+            slash, slash1, webArchives);
+
     }
-    
+
     /**
      * @param uri The URI of the file to identify
      * @param request The Identification Request
@@ -102,30 +83,24 @@ public class GZipArchiveContentIdentifier {
     public final void identify(final URI uri, final IdentificationRequest request)
         throws CommandExecutionException {
         
-        final String newPath = "gzip:" + slash1 + path + request.getFileName() + "!" + slash;
-        slash1 = "";
+        final String newPath = makeContainerURI("gzip", request.getFileName());
+        setSlash1("");
         final URI newUri = URI.create(GzipUtils.getUncompressedFilename(uri.toString()));
         
         final RequestIdentifier identifier = new RequestIdentifier(newUri);
         final RequestMetaData metaData = new RequestMetaData(SIZE, TIME, uri.getPath());
         final GZipIdentificationRequest gzRequest = new GZipIdentificationRequest(
-                metaData, identifier, tmpDir);
+                metaData, identifier, getTmpDir());
 
         GzipCompressorInputStream gzin = null;
         try {
             gzin = new GzipCompressorInputStream(
                 new FileInputStream(request.getSourceFile()), true);
 
-            gzRequest.open(gzin);
-            final IdentificationResultCollection gzResults =
-                     binarySignatureIdentifier.matchBinarySignatures(gzRequest);
-            
-            final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, expandWebArchives);
-            resultPrinter.print(gzResults, gzRequest);
-            gzRequest.close();
+            expandContainer(gzRequest, gzin, newPath);
+
         } catch (IOException ioe) {
-            System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive 
+            System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive
         } finally {
             if (gzin != null) {
                 try {
