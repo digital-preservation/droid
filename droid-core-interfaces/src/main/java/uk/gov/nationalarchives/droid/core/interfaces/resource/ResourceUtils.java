@@ -88,6 +88,18 @@ public final class ResourceUtils {
         return dotPos > 0 ? nameOnly.substring(dotPos + 1) : "";
     }
 
+    /**
+     * Creates an InputStreamReader backed by a cache.
+     * <p>
+     * If allocating all requested memory for this cache still leaves 24Mb of free memory,
+     * then a two-level cache will be created, using memory falling back to a temporary file.
+     * If there is insufficient memory to use memory, then only a temp file cache will be used.
+     *
+     * @param in The input stream to back the reader.
+     * @param tempDir The directory in which to create temporary files for caching.
+     * @param topTailCapacity The amount of memory to cache on the top and tail of each stream.
+     * @return
+     */
     public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity) {
         final WindowCache cache;
         if (Runtime.getRuntime().freeMemory() - (topTailCapacity * 2) > FREE_MEMORY_THRESHOLD) {
@@ -100,6 +112,18 @@ public final class ResourceUtils {
         return new InputStreamReader(in, cache);
     }
 
+    /**
+     * Creates an InputStreamReader backed by a cache.
+     * <p>
+     * If allocating all requested memory for this cache still leaves 24Mb of free memory,
+     * then a two-level cache will be created, using memory falling back to a temporary file.
+     * If there is insufficient memory to use memory, then only a temp file cache will be used.
+     *
+     * @param in The input stream to back the reader.
+     * @param tempDir The directory in which to create temporary files for caching.
+     * @param topTailCapacity The amount of memory to cache on the top and tail of each stream.
+     * @param closeStream Whether to close the underlying input stream when this reader is closed.     * @return
+     */
     public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity, boolean closeStream) {
         final WindowCache cache;
         if (Runtime.getRuntime().freeMemory() - (topTailCapacity * 2) > FREE_MEMORY_THRESHOLD) {
