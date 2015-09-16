@@ -39,6 +39,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
+import net.byteseek.io.reader.InputStreamReader;
+import net.byteseek.io.reader.cache.TempFileCache;
+import net.byteseek.io.reader.cache.TopAndTailCache;
+import net.byteseek.io.reader.cache.TwoLevelCache;
+import net.byteseek.io.reader.cache.WindowCache;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -63,7 +68,9 @@ public final class ResourceUtils {
     private static final int UNSIGNED_RIGHT_SHIFT_BY_18 = 18;
     private static final int UNSIGNED_RIGHT_SHIFT_BY_25 = 25;    
     private static final int ARRAYLENGTH = 5;
-    
+
+    private static final int FREE_MEMORY_THRESHOLD = 24 * 1024 * 1024;
+
     /**
      * Private constructor to prevent construction of static utility class.
      */
@@ -80,7 +87,32 @@ public final class ResourceUtils {
         final int dotPos = nameOnly.lastIndexOf('.');
         return dotPos > 0 ? nameOnly.substring(dotPos + 1) : "";
     }
-    
+
+    public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity) {
+        final WindowCache cache;
+        if (Runtime.getRuntime().freeMemory() - (topTailCapacity * 2) > FREE_MEMORY_THRESHOLD) {
+            cache = TwoLevelCache.create(
+                    new TopAndTailCache(topTailCapacity),
+                    new TempFileCache(tempDir));
+        } else {
+            cache = new TempFileCache(tempDir);
+        }
+        return new InputStreamReader(in, cache);
+    }
+
+    public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity, boolean closeStream) {
+        final WindowCache cache;
+        if (Runtime.getRuntime().freeMemory() - (topTailCapacity * 2) > FREE_MEMORY_THRESHOLD) {
+            cache = TwoLevelCache.create(
+                    new TopAndTailCache(topTailCapacity),
+                    new TempFileCache(tempDir));
+        } else {
+            cache = new TempFileCache(tempDir);
+        }
+        return new InputStreamReader(in, cache, closeStream);
+    }
+
+
     /**
      * @param tempDir The temp directory to create the temporary file in.
      * @param stream An input stream from which to create a file.

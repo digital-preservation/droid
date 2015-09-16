@@ -91,10 +91,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
      */
     @Override
     public final void open(final InputStream in) throws IOException {
-        final WindowCache cache = TwoLevelCache.create(
-                new TopAndTailCache(TOP_TAIL_CAPACITY),
-                new TempFileCache(tempDir));
-        reader = new InputStreamReader(in, cache);
+        reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY);
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
         if (readSize != size) {
