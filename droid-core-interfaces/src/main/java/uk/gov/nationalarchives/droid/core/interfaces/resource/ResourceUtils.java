@@ -69,8 +69,6 @@ public final class ResourceUtils {
     private static final int UNSIGNED_RIGHT_SHIFT_BY_25 = 25;    
     private static final int ARRAYLENGTH = 5;
 
-    private static final int FREE_MEMORY_THRESHOLD = 16 * 1024 * 1024; // 16Mb.
-
     /**
      * Private constructor to prevent construction of static utility class.
      */
@@ -102,7 +100,7 @@ public final class ResourceUtils {
      */
     public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity) {
         final WindowCache cache;
-        if (Runtime.getRuntime().freeMemory() - (topTailCapacity * 2) > FREE_MEMORY_THRESHOLD) {
+        if (Runtime.getRuntime().freeMemory() > topTailCapacity * 3) {
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
@@ -126,7 +124,7 @@ public final class ResourceUtils {
      */
     public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity, boolean closeStream) {
         final WindowCache cache;
-        if (Runtime.getRuntime().freeMemory() - (topTailCapacity * 2) > FREE_MEMORY_THRESHOLD) {
+        if (Runtime.getRuntime().freeMemory() > topTailCapacity * 3) {
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
