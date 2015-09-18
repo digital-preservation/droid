@@ -41,7 +41,7 @@ import java.io.RandomAccessFile;
 
 import net.byteseek.io.reader.InputStreamReader;
 import net.byteseek.io.reader.cache.TempFileCache;
-import net.byteseek.io.reader.cache.TopAndTailCache;
+import net.byteseek.io.reader.cache.TopAndTailStreamCache;
 import net.byteseek.io.reader.cache.TwoLevelCache;
 import net.byteseek.io.reader.cache.WindowCache;
 import org.apache.commons.io.FilenameUtils;
@@ -69,7 +69,7 @@ public final class ResourceUtils {
     private static final int UNSIGNED_RIGHT_SHIFT_BY_25 = 25;    
     private static final int ARRAYLENGTH = 5;
 
-    private static final int FREE_MEMORY_THRESHOLD = 24 * 1024 * 1024;
+    private static final int FREE_MEMORY_THRESHOLD = 16 * 1024 * 1024; // 16Mb.
 
     /**
      * Private constructor to prevent construction of static utility class.
@@ -91,7 +91,7 @@ public final class ResourceUtils {
     /**
      * Creates an InputStreamReader backed by a cache.
      * <p>
-     * If allocating all requested memory for this cache still leaves 24Mb of free memory,
+     * If allocating all requested memory for this cache still leaves enough free memory,
      * then a two-level cache will be created, using memory falling back to a temporary file.
      * If there is insufficient memory to use memory, then only a temp file cache will be used.
      *
@@ -104,7 +104,7 @@ public final class ResourceUtils {
         final WindowCache cache;
         if (Runtime.getRuntime().freeMemory() - (topTailCapacity * 2) > FREE_MEMORY_THRESHOLD) {
             cache = TwoLevelCache.create(
-                    new TopAndTailCache(topTailCapacity),
+                    new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
         } else {
             cache = new TempFileCache(tempDir);
@@ -115,7 +115,7 @@ public final class ResourceUtils {
     /**
      * Creates an InputStreamReader backed by a cache.
      * <p>
-     * If allocating all requested memory for this cache still leaves 24Mb of free memory,
+     * If allocating all requested memory for this cache still leaves enough free memory,
      * then a two-level cache will be created, using memory falling back to a temporary file.
      * If there is insufficient memory to use memory, then only a temp file cache will be used.
      *
@@ -128,7 +128,7 @@ public final class ResourceUtils {
         final WindowCache cache;
         if (Runtime.getRuntime().freeMemory() - (topTailCapacity * 2) > FREE_MEMORY_THRESHOLD) {
             cache = TwoLevelCache.create(
-                    new TopAndTailCache(topTailCapacity),
+                    new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
         } else {
             cache = new TempFileCache(tempDir);
