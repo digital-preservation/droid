@@ -40,10 +40,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
 import net.byteseek.io.reader.InputStreamReader;
-import net.byteseek.io.reader.cache.TempFileCache;
-import net.byteseek.io.reader.cache.TopAndTailStreamCache;
-import net.byteseek.io.reader.cache.TwoLevelCache;
-import net.byteseek.io.reader.cache.WindowCache;
+import net.byteseek.io.reader.cache.*;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -105,7 +102,9 @@ public final class ResourceUtils {
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
         } else {
-            cache = new TempFileCache(tempDir);
+            cache = DoubleCache.create(
+                    new MostRecentlyUsedSoftCache(1024),
+                    new TempFileCache(tempDir));
         }
         return new InputStreamReader(in, cache);
     }
@@ -129,7 +128,9 @@ public final class ResourceUtils {
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
         } else {
-            cache = new TempFileCache(tempDir);
+            cache = DoubleCache.create(
+                    new MostRecentlyUsedSoftCache(1024),
+                    new TempFileCache(tempDir));
         }
         return new InputStreamReader(in, cache, closeStream);
     }
