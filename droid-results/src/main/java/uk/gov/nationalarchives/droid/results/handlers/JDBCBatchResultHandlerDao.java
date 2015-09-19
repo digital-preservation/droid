@@ -200,15 +200,18 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
         try {
             final Connection conn = datasource.getConnection();
+            PreparedStatement createFormatTable = null;
+            PreparedStatement createIdentificationTable = null;
+            PreparedStatement createProfileResourceNodeTable = null;
 
             try {
-                final PreparedStatement createFormatTable = conn.prepareStatement(CREATE_TABLE_FORMAT);
+                createFormatTable = conn.prepareStatement(CREATE_TABLE_FORMAT);
                 createFormatTable.execute();
 
-                final PreparedStatement createIdentificationTable = conn.prepareStatement(CREATE_TABLE_IDENTIFICATION);
+                createIdentificationTable = conn.prepareStatement(CREATE_TABLE_IDENTIFICATION);
                 createIdentificationTable.execute();
 
-                final PreparedStatement createProfileResourceNodeTable = conn.prepareStatement(CREATE_TABLE_PRN);
+                createProfileResourceNodeTable = conn.prepareStatement(CREATE_TABLE_PRN);
                 createProfileResourceNodeTable.execute();
 
                 List<String> createIndexesAndConstraints = new ArrayList<String>(19);
@@ -242,6 +245,9 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             } catch (SQLException e) {
                 throw e;
             } finally {
+                createFormatTable.close();
+                createIdentificationTable.close();
+                createProfileResourceNodeTable.close();
                 conn.close();
             }
         } catch (SQLException e) {
@@ -664,6 +670,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
             // insert its identifications:
             //TODO: check for NULL format weirdness...
+
             final int identifications = numIdentifications == null? 0 : numIdentifications;
             final PreparedStatement statement = getIdentificationStatement(identifications);
             if (identifications == 0) {
