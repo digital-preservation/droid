@@ -56,7 +56,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
  */
 public class ZipEntryIdentificationRequest implements IdentificationRequest<InputStream> {
 
-    private final static int TOP_TAIL_CAPACITY = 8 * 1024 * 1024; // hold 8Mb cache on either end of zip entry.
+    private final static int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
 
     private final String extension;
     private final String fileName;
