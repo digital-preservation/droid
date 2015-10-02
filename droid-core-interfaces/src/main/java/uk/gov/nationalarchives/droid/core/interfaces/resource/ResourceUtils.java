@@ -98,7 +98,8 @@ public final class ResourceUtils {
      */
     public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity) {
         final WindowCache cache;
-        if (Runtime.getRuntime().freeMemory() > topTailCapacity * 3) {
+        if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_THRESHOLD) {
+
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
