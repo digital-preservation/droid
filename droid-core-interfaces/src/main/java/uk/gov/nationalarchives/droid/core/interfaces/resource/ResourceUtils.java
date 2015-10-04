@@ -98,17 +98,20 @@ public final class ResourceUtils {
      */
     public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity) {
         final WindowCache cache;
+        final InputStreamReader reader;
         if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_THRESHOLD) {
-
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
+            reader = new InputStreamReader(in, cache);
         } else {
-            cache = DoubleCache.create(
-                    new MostRecentlyUsedSoftCache(1024),
-                    new TempFileCache(tempDir));
+            final WindowCache memoryCache = new MostRecentlyUsedCache(1024);
+            final TempFileCache persistentCache = new TempFileCache(tempDir);
+            cache = DoubleCache.create(memoryCache, persistentCache);
+            reader = new InputStreamReader(in, cache);
+            reader.setSoftWindowRecovery(persistentCache);
         }
-        return new InputStreamReader(in, cache);
+        return reader;
     }
 
     /**
@@ -116,7 +119,8 @@ public final class ResourceUtils {
      * <p>
      * If allocating all requested memory for this cache still leaves enough free memory,
      * then a two-level cache will be created, using memory falling back to a temporary file.
-     * If there is insufficient memory to use memory, then only a temp file cache will be used.
+     * If there is insufficient memory to use memory, then a double cache of a most recently
+     * used cache with SoftWindows, backed by a temp file cache will be used.
      *
      * @param in The input stream to back the reader.
      * @param tempDir The directory in which to create temporary files for caching.
@@ -125,16 +129,20 @@ public final class ResourceUtils {
      */
     public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity, boolean closeStream) {
         final WindowCache cache;
+        final InputStreamReader reader;
         if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_THRESHOLD) {
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
+            reader = new InputStreamReader(in, cache, closeStream);
         } else {
-            cache = DoubleCache.create(
-                    new MostRecentlyUsedSoftCache(1024),
-                    new TempFileCache(tempDir));
+            final WindowCache memoryCache = new MostRecentlyUsedCache(1024);
+            final TempFileCache persistentCache = new TempFileCache(tempDir);
+            cache = DoubleCache.create(memoryCache, persistentCache);
+            reader = new InputStreamReader(in, cache, closeStream);
+            reader.setSoftWindowRecovery(persistentCache);
         }
-        return new InputStreamReader(in, cache, closeStream);
+        return reader;
     }
 
 
