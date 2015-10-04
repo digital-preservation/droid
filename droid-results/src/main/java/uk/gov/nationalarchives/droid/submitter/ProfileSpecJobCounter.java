@@ -99,7 +99,8 @@ public class ProfileSpecJobCounter implements Callable<Long> {
         private boolean recursive;
 
         public LukeFileWalker(URI root, boolean recursive) {
-            super(null, recursive ? -1 : 1);
+            //super(null, recursive ? -1 : 1);
+            super(null, recursive ? 3 : 1);
             this.recursive = recursive;
             this.root = new File(root);
         }
