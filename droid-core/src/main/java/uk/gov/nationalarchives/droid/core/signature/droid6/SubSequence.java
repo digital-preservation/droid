@@ -785,20 +785,12 @@ public class SubSequence extends SimpleElement {
             // one for forward searching, the other for backwards searching.
             // Although the differences between them are very small, DROID spends the majority of its time here,
             // so even small performance improvements add up quickly.
-
-            //final net.domesdaybook.reader.ByteReader reader = targetFile.getReader();
-            //BNO- - remove above expression when  refactor done.
             final WindowReader windowReader = targetFile.getWindowReader();
 
             if (this.backwardsSearch) {
 
                 // Define the search window relative to our starting position:
-                //TODO:MP check positioning of backwards search with byteseek 2.
-                //final long maximumPossibleStartingPosition =
-                //    position - minRightFragmentLength - lastBytePositionInAnchor;
-                final long maximumPossibleStartingPosition =
-                        position - minRightFragmentLength;
-
+                final long maximumPossibleStartingPosition = position - minRightFragmentLength - lastBytePositionInAnchor;
                 final long startSearchWindow = maximumPossibleStartingPosition - this.getMinSeqOffset();
                 final int rightFragmentWindow = maxRightFragmentLength - minRightFragmentLength;
                 long endSearchWindow = fullFileScan
@@ -821,6 +813,9 @@ public class SubSequence extends SimpleElement {
                 if (endSearchWindow < firstPossibleBytePosition) {
                     endSearchWindow = firstPossibleBytePosition;
                 }
+
+                //TODO: MP check start and end matching and search constraints.
+                //      Not sure about endSearchWindow.
 
                 long matchPosition = startSearchWindow;
                 while (matchPosition >= endSearchWindow) {
