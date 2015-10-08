@@ -814,9 +814,6 @@ public class SubSequence extends SimpleElement {
                     endSearchWindow = firstPossibleBytePosition;
                 }
 
-                //TODO: MP check start and end matching and search constraints.
-                //      Not sure about endSearchWindow.
-
                 long matchPosition = startSearchWindow;
                 while (matchPosition >= endSearchWindow) {
 
