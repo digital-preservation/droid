@@ -94,27 +94,37 @@ public class FilterValue {
         this.queryParameter = queryParameter;
     }
 
-    /** Getter method for id. @return id Id of the reference data.*/
+    /** Getter method for id. 
+     * @return id Id of the reference data.
+    */
     public int getId() {
         return id;
     }
 
-    /** Setter method for id. @param id Id of the reference data. */
+    /** Setter method for id. 
+     * @param id Id of the reference data. 
+     */
     public void setId(int id) {
         this.id = id;
     }
 
-    /** Getter method for description. @return description  */
+    /** Getter method for description. 
+     * @return description  
+     */
     public String getDescription() {
         return description;
     }
 
-    /** Setter method for description. @param description Description of the reference data.*/
+    /** Setter method for description. 
+     * @param description Description of the reference data.
+    */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /** Overridden toString method. @return toString representation of Values (Reference Data)*/
+    /** Overridden toString method. 
+     * @return toString representation of Values (Reference Data)
+    */
     @Override
     public String toString() {
         return description;

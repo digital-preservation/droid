@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -39,12 +38,10 @@ import java.net.URI;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 
-import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentificationRequest;
@@ -54,15 +51,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentifica
  * 
  * @author rbrennan
  */
-public class ZipArchiveContentIdentifier {
+public class ZipArchiveContentIdentifier extends ArchiveContentIdentifier {
 
-    private BinarySignatureIdentifier binarySignatureIdentifier;
-    private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String path;
-    private String slash;
-    private String slash1;
-    private File tmpDir;
-    
+
     /**
      * 
      * @param binarySignatureIdentifier     binary signature identifier
@@ -75,16 +66,8 @@ public class ZipArchiveContentIdentifier {
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
-        synchronized (this) {
-            this.binarySignatureIdentifier = binarySignatureIdentifier;
-            this.containerSignatureDefinitions = containerSignatureDefinitions;
-            this.path = path;
-            this.slash = slash;
-            this.slash1 = slash1;
-            if (tmpDir == null) {
-                tmpDir = new File(System.getProperty("java.io.tmpdir"));
-            }
-        }
+            super(binarySignatureIdentifier, containerSignatureDefinitions,
+        path, slash, slash1, false);
     }
     
     /**
@@ -95,9 +78,9 @@ public class ZipArchiveContentIdentifier {
      */
     public void identify(final URI uri, final IdentificationRequest request)
         throws CommandExecutionException {
-        
-        final String newPath = "zip:" + slash1 + path + request.getFileName() + "!" + slash;
-        slash1 = "";
+
+        final String newPath = makeContainerURI("zip", request.getFileName());
+        setSlash1("");
         InputStream zipIn = null; 
         try {
             zipIn = request.getSourceInputStream(); 
@@ -110,15 +93,8 @@ public class ZipArchiveContentIdentifier {
                         final RequestMetaData metaData = new RequestMetaData(1L, 2L, name);
                         final RequestIdentifier identifier = new RequestIdentifier(uri);
                         final ZipEntryIdentificationRequest zipRequest =
-                            new ZipEntryIdentificationRequest(metaData, identifier, tmpDir);
-                        
-                        zipRequest.open(in);
-                        final IdentificationResultCollection zipResults =
-                                binarySignatureIdentifier.matchBinarySignatures(zipRequest);
-                        final ResultPrinter resultPrinter =
-                                new ResultPrinter(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, newPath, slash, slash1, true);
-                        resultPrinter.print(zipResults, zipRequest);
+                            new ZipEntryIdentificationRequest(metaData, identifier, getTmpDir());
+                        expandContainer(zipRequest, in, newPath);
                     }
                 }
             } finally {
@@ -139,3 +115,4 @@ public class ZipArchiveContentIdentifier {
         }
     }
 }
+

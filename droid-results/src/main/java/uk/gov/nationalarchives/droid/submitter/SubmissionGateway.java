@@ -90,6 +90,7 @@ public class SubmissionGateway implements AsynchDroid {
     private ResultHandler resultHandler;
     private ExecutorService executorService;
     private boolean processArchives;
+    private boolean processWebArchives;
     private ArchiveFormatResolver archiveFormatResolver;
     private ArchiveFormatResolver containerFormatResolver;
     private ArchiveHandlerFactory archiveHandlerFactory;
@@ -161,7 +162,7 @@ public class SubmissionGateway implements AsynchDroid {
                     results = handleExtensions(request, results);
                     
                     // Are we processing archive formats?
-                    if (processArchives && archiveFormatResolver != null) {
+                    if ((processArchives || processWebArchives) && archiveFormatResolver != null) {
                         jobCountDecremented = handleArchive(request, results);
                     } else { // just process the results so far:
                         results.setArchive(getArchiveFormat(results) != null);
@@ -251,7 +252,6 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     /**
-     * @param jobCountDecremented
      * @param results
      * @return
      */
@@ -332,19 +332,33 @@ public class SubmissionGateway implements AsynchDroid {
     
     /**
      * @param results
-     * @param nodeId
+     * @return format or null
      */
     private String getArchiveFormat(IdentificationResultCollection results) {
         for (IdentificationResult result : results.getResults()) {
-            final String format = archiveFormatResolver.forPuid(result.getPuid());
-            if (format != null) {
+            String format = archiveFormatResolver.forPuid(result.getPuid());
+            if (format != null) { // exit on the first non-null format met
+                if (processArchives && !processWebArchives && isWebArchiveFormat(format)) {
+                    format = null;
+                } else if (!processArchives && processWebArchives && !isWebArchiveFormat(format)) {
+                    format = null;
+                }
                 return format;
             }
         }
         
         return null;
     }
-    
+
+    /**
+     *
+     * @param format
+     * @return true if a Web Archive format
+     */
+    private Boolean isWebArchiveFormat(String format) {
+        return "ARC".equals(format) || "WARC".equals(format);
+    }
+
     private String getContainerFormat(IdentificationResultCollection results) {
         for (IdentificationResult result : results.getResults()) {
             final String format = containerFormatResolver.forPuid(result.getPuid());
@@ -417,12 +431,20 @@ public class SubmissionGateway implements AsynchDroid {
     }
     
     /**
-     * @param processArchives the processArchives to set
+     * @param processArchives set whether to process Archives
      */
     public void setProcessArchives(boolean processArchives) {
+
         this.processArchives = processArchives;
     }
-    
+
+    /**
+     * @param processWebArchives set whether to process Web Archives
+     */
+    public void setProcessWebArchives(boolean processWebArchives) {
+        this.processWebArchives = processWebArchives;
+    }
+
     /**
      * @param resultHandler the resultHandler to set
      */

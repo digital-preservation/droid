@@ -65,7 +65,7 @@ public interface IdentificationRequest {
      * calls add up, as reading a byte is the most called method in the
      * entirety of droid - by orders of magnitude.  It makes a real difference
      * to the processing speed to avoid additional call overhead here.
-     * Done only as a result of profiling the software.<p/>
+     * Done only as a result of profiling the software.</p>
      * 
      * @return A net.domesdaybook.reader.ByteReader object,
      */
@@ -100,7 +100,6 @@ public interface IdentificationRequest {
      * 
      * @return an InputStream which will read the binary data which formed the source
      * of this request.  
-     * @return
      * @throws IOException  if there was an error reading from the binary source
      */
     InputStream getSourceInputStream() throws IOException;

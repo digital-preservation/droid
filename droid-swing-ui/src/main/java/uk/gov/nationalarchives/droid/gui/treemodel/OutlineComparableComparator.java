@@ -38,7 +38,7 @@ import org.netbeans.swing.etable.ETableColumn;
  * sorts directories first.
  * @author rflitcroft
  *
- * @param <T>
+ * @param <T> type of DirectoryComparable objects
  */
 public class OutlineComparableComparator<T extends DirectoryComparable<T>> implements DirectoryComparator<T> {
 

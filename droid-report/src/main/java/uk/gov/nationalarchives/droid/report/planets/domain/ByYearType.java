@@ -52,15 +52,15 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ByYearType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="yearItem" type="{http://www.nationalarchives.gov.uk/CollectionProfile}YearItemType"/>
- *       &lt;/choice>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ByYearType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="yearItem" type="{http://www.nationalarchives.gov.uk/CollectionProfile}YearItemType"/&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  *  * @deprecated PLANETS XML is now generated using XSLT over normal report xml files.
@@ -94,7 +94,7 @@ public class ByYearType {
      * Objects of the following type(s) are allowed in the list
      * {@link YearItemType }
      * 
-     * 
+     * @return List
      */
     public List<YearItemType> getYearItem() {
         if (yearItem == null) {

@@ -61,7 +61,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XmlFragment }
-     * 
+     * @return XmlFragment
      */
     public XmlFragment createXmlFragment() {
         return new XmlFragment();

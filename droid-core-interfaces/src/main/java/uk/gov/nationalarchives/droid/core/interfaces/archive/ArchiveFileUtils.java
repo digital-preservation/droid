@@ -60,6 +60,7 @@ public final class ArchiveFileUtils {
     private static final String TEMP_FILENAME_PREFIX = "droid-archive~";
     private static final String SSP_DELIMITER = ":/";
     private static final String ARCHIVE_DELIMITER = "!/";
+    private static final String COLON = ":";
     private static final int WRITE_BUFFER_CAPACITY = 8192;
 
     private ArchiveFileUtils() { };
@@ -102,10 +103,29 @@ public final class ArchiveFileUtils {
     }
 
     /**
+     * Builds a URI for a webarchive file entry modelled on the apache-commons format used for tar files.
+     * @param archiveType arc or warc
+     * @param parent the parent file
+     * @param warcEntry the webarchive entry
+     * @return the URI
+     */
+    public static URI toWebArchiveUri(String archiveType, URI parent, String warcEntry) {
+        String parentScheme = parent.getScheme();
+        String parentSsp = parent.getSchemeSpecificPart();
+
+        try {
+            return new URI(archiveType + COLON + parentScheme,
+                    parentSsp + ARCHIVE_DELIMITER + warcEntry, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.
-     * <p/>
-     * <p>The bytes are read from <code>buffer</code> from the current position to its limit.
+     * 
+     * <p>The bytes are read from <code>buffer</code> from the current position to its limit.</p>
      *
      * @param buffer  contains the contents of the channel read so far
      * @param channel the rest of the channel
@@ -158,8 +178,8 @@ public final class ArchiveFileUtils {
     /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.
-     * <p/>
-     * <p>The bytes are read from <code>buffer</code> from the current position to its limit.
+     * 
+     * <p>The bytes are read from <code>buffer</code> from the current position to its limit.</p>
      *
      * @param tempDir the directory in which to create the temp file
      * @param buffer the initial buffer containing the first part of the file.
@@ -240,7 +260,7 @@ public final class ArchiveFileUtils {
         String originSsp = StringUtils.substringBetween(requestUri.toString(), SSP_DELIMITER, "!");
         String scheme = StringUtils.substringBefore(requestUri.toString(), SSP_DELIMITER);
         if (originSsp != null) {
-            return URI.create(StringUtils.substringAfterLast(scheme, ":") + SSP_DELIMITER + originSsp);
+            return URI.create(StringUtils.substringAfterLast(scheme, COLON) + SSP_DELIMITER + originSsp);
         }
         
         return requestUri;

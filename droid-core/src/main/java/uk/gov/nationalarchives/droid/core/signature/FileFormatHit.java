@@ -162,8 +162,8 @@ public class FileFormatHit extends SimpleElement {
 
     /**
      * Updates the warning message for a hit.
-     * <p/>
-     * Used by XML reader for IdentificationFile/FileFormatHit/IdentificationWarning element
+     * 
+     * <p>Used by XML reader for IdentificationFile/FileFormatHit/IdentificationWarning element</p>
      *
      * @param theWarning A warning associated with the hit
      */

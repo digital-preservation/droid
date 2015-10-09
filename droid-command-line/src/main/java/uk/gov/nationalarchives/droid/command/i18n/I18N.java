@@ -95,7 +95,10 @@ public final class I18N {
     
     /** Help for archives. */
     public static final String ARCHIVES_HELP = "archives.help";
-    
+
+    /** Help for archives. */
+    public static final String WEB_ARCHIVES_HELP = "web_archives.help";
+
     /** Recurse subdirectories. */
     public static final String RECURSE_HELP = "recurse.help";
     

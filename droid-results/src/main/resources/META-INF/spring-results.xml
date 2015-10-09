@@ -49,6 +49,8 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="ZIP" value-ref="zipHandler"/>
                 <entry key="TAR" value-ref="tarHandler"/>
                 <entry key="GZ" value-ref="gzHandler"/>
+                <entry key="ARC" value-ref="arcHandler"/>
+                <entry key="WARC" value-ref="warcHandler"/>
             </map>
         </property>
     </bean>
@@ -128,13 +130,28 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         </property>
         <property name="droidCore" ref="submissionGateway"/>
     </bean>
-    
+    <bean id="arcHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArcArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory" parent="archiveRequestFactory"/>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
+    <bean id="warcHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.WarcArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.WebArchiveEntryRequestFactory" parent="archiveRequestFactory"/>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
     <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
         <property name="puids">
             <map>
                 <entry key="ZIP" value="${archive.zip}"/>
                 <entry key="TAR" value="${archive.tar}"/>
                 <entry key="GZ" value="${archive.gz}"/>
+                <entry key="ARC" value="${archive.arc}"/>
+                <entry key="WARC" value="${archive.warc}"/>
             </map>
         </property>
     </bean>
@@ -146,7 +163,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JpaPlanetsXMLDaoImpl"/>
     <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl"/>
     <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandlerDao"/>
-    <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl"/>
+    <bean id="referenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl"/>
     
     <bean id="referenceDataService" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataServiceImpl"/>
     
@@ -244,6 +261,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
         <property name="executorService" ref="coreExecutorService"/>
         <property name="processArchives" value="${processArchives}"/>
+        <property name="processWebArchives" value="#{${processWebArchives} == null?false : ${processWebArchives}}"/>
         <property name="generateHash" value="${generateHash}"/>
         <property name="hashAlgorithm" value="${hashAlgorithm}"/>
         <property name="matchAllExtensions" value="${matchAllExtensions}"/>

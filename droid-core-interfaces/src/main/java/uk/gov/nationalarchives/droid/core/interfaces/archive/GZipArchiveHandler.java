@@ -99,7 +99,7 @@ public class GZipArchiveHandler implements ArchiveHandler {
     }
 
     /**
-     * @param droidCore the droid core to subnmit requests to.
+     * @param droidCore the droid core to submit requests to.
      */
     public final void setDroidCore(AsynchDroid droidCore) {
         droid = droidCore;

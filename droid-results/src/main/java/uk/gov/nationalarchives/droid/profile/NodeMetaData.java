@@ -52,6 +52,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 public class NodeMetaData {
     
     private static final int MAX_HASH_LENGTH = 64;
+    // file names from (w)arc files are URLs. The upper
+    // limit of the path+query components of URL length in IE is 2048
+    private static final int MAX_STRING_LENGTH = 4095;
 
     @Index(name = "idx_prn_file_size")
     @Column(name = "file_size")
@@ -62,7 +65,7 @@ public class NodeMetaData {
     private Date lastModifiedDate;
 
     @Index(name = "idx_prn_name")
-    @Column(name = "name", nullable = false)
+    @Column(length = MAX_STRING_LENGTH, name = "name", nullable = false)
     private String name;
 
     @Index(name = "idx_prn_extension")

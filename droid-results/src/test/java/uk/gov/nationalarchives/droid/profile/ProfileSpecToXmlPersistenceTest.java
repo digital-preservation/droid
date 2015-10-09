@@ -372,7 +372,7 @@ public class ProfileSpecToXmlPersistenceTest {
             + "<Profile>" 
             + "    <CreatedDate>" 
             +          ISODateTimeFormat.dateTime().print(profile.getDateCreated().getTime()) 
-            + "    </CreatedDate>" 
+            + "</CreatedDate>"
             + "    <State>STOPPED</State>"
             + "    <Filter>"
             + "        <Enabled>true</Enabled>" 
@@ -390,7 +390,7 @@ public class ProfileSpecToXmlPersistenceTest {
             + "    </Filter>"
             + "    <Throttle>0</Throttle>"
             + "</Profile>";
-        
+
         XMLAssert.assertXMLEqual(new StringReader(control), new FileReader("tmp/profile.xml"));
     }
     

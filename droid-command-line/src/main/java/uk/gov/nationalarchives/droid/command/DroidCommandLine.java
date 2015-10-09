@@ -154,8 +154,8 @@ public final class DroidCommandLine {
      * 
      * @param args
      *            the command line arguments
-     * @throws CommandLineException 
-     * @throws CommandExecutionException 
+     * @throws CommandLineException if bad command
+     * @throws CommandExecutionException if cannot execute command
      */
     public static void main(final String[] args) throws CommandLineException {
 
@@ -176,7 +176,7 @@ public final class DroidCommandLine {
     /**
      * 
      * @return a status code 0 success otherwise 1
-     * @throws CommandLineException 
+     * @throws CommandLineException on bad command
      */
     public int processExecution() throws CommandLineException {
         
@@ -228,7 +228,7 @@ public final class DroidCommandLine {
 
     /**
      * 
-     * @param commandFactory 
+     * @param commandFactory the factory
      */
     public void setCommandFactory(CommandFactory commandFactory) {
         this.commandFactory = commandFactory;

@@ -62,7 +62,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSignatureFileVersionV1Response }
-     * 
+     * @return SignatureFileVersionV1Response 
      */
     public GetSignatureFileVersionV1Response createGetSignatureFileVersionV1Response() {
         return new GetSignatureFileVersionV1Response();
@@ -70,6 +70,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Version }
+     *
+     * @return Version
      * 
      */
     public Version createVersion() {
@@ -79,6 +81,7 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link GetSignatureFileV1 }
      * 
+     * @return GetSignatureFileV1
      */
     public GetSignatureFileV1 createGetSignatureFileV1() {
         return new GetSignatureFileV1();
@@ -87,6 +90,7 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link GetSignatureFileVersionV1 }
      * 
+     * @return GetSignatureFileVersionV1
      */
     public GetSignatureFileVersionV1 createGetSignatureFileVersionV1() {
         return new GetSignatureFileVersionV1();
@@ -95,6 +99,7 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link GetSignatureFileV1Response }
      * 
+     * @return GetSignatureFileV1Response
      */
     public GetSignatureFileV1Response createGetSignatureFileV1Response() {
         return new GetSignatureFileV1Response();

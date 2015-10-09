@@ -85,8 +85,8 @@ public class UriType extends AbstractSingleColumnStandardBasicType<URI> implemen
     /**
      * @param value - the URI to convert to string.
      * @param dialect - the dialect to use.
-     * @return - SQL String.
-     * @throws Exception 
+     * @return - SQL String
+     * @throws Exception if conversion fails
      */
     public String objectToSQLString(URI value, Dialect dialect) throws Exception {
 

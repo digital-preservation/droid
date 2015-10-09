@@ -113,8 +113,8 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
  * Holds all the file formats and binary signatures used to 
  * match them.
  * 
- * <p/>Can match a target file against all the binary signatures,
- * returning which file formats were hit when matching.
+ * <p>Can match a target file against all the binary signatures,
+ * returning which file formats were hit when matching.</p>
  * 
  * @author Martin Waller
  * @author Matt Palmer

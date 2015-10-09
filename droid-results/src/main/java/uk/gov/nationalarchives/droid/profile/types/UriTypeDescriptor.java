@@ -102,7 +102,7 @@ public class UriTypeDescriptor extends AbstractTypeDescriptor<URI> {
 
     /**
      * @param <X> - type to wrap to a URI.
-     * @param value - value to wrap, of type <X> .
+     * @param value - value to wrap, of type X .
      * @param options - not used.
      * @return - URI from generic type.
      */

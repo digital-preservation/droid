@@ -65,11 +65,11 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
  * so their existence is checked for once an anchoring sequence 
  * has been found.
  * 
- * <p/>This subclass of SideFragment is only required so the XML
+ * <p>This subclass of SideFragment is only required so the XML
  * parser can build an instance of this class and assemble the
- * right fragments together.
+ * right fragments together.</p>
  * 
- * <p/>Left and Right Fragments are otherwise identical in functionality.
+ * <p>Left and Right Fragments are otherwise identical in functionality.</p>
  * 
  * @author Martin Waller
  * @author Matt Palmer

@@ -208,8 +208,15 @@ public enum CommandLineParam {
             return null;
         }
     },
-    
-    /** Quiet operation flag. */
+    /** Open webarchives flag. */
+    WEB_ARCHIVES("W", "open-webarchives", I18N.WEB_ARCHIVES_HELP) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+
+        /** Quiet operation flag. */
     QUIET("q", "quiet", I18N.QUIET_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -372,6 +379,7 @@ public enum CommandLineParam {
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption());
         options.addOption(ARCHIVES.newOption());
+        options.addOption(WEB_ARCHIVES.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
         
@@ -418,6 +426,7 @@ public enum CommandLineParam {
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption());
         options.addOption(ARCHIVES.newOption());
+        options.addOption(WEB_ARCHIVES.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
         

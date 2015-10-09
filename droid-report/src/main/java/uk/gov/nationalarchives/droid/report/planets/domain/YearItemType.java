@@ -55,17 +55,17 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="YearItemType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="year" type="{http://www.w3.org/2001/XMLSchema}gYear"/>
- *         &lt;element name="numFiles" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *         &lt;element name="totalFileSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="YearItemType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="year" type="{http://www.w3.org/2001/XMLSchema}gYear"/&gt;
+ *         &lt;element name="numFiles" type="{http://www.w3.org/2001/XMLSchema}integer"/&gt;
+ *         &lt;element name="totalFileSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @deprecated PLANETS XML is now generated using XSLT over normal report xml files. 

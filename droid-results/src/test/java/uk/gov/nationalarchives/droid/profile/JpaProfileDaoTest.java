@@ -63,12 +63,10 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  * @author rflitcroft
  *
  */
-//BNO: Commented out as causes compilation failure with Java 8 build...
-//@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml", "classpath*:META-INF/spring-results.xml",
         "classpath*:META-INF/spring-test.xml" })
 @TransactionConfiguration(defaultRollback = true)
-@Ignore("BNO - see comment above")
 public class JpaProfileDaoTest {
 
     private static IDataSet testData;

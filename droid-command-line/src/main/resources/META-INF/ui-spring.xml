@@ -192,6 +192,8 @@
                 <entry key="ZIP" value="${archive.zip}"/>
                 <entry key="TAR" value="${archive.tar}"/>
                 <entry key="GZ" value="${archive.gz}"/>
+                <entry key="ARC" value="${archive.arc}"/>
+                <entry key="WARC" value="${archive.warc}"/>
             </map>
         </property>
     </bean>
@@ -202,6 +204,8 @@
                 <entry key="ZIP" value-ref="zipHandler"/>
                 <entry key="TAR" value-ref="tarHandler"/>
                 <entry key="GZ" value-ref="gzHandler"/>
+                <entry key="ARC" value-ref="arcHandler"/>
+                <entry key="WARC" value-ref="warcHandler"/>
             </map>
         </property>
     </bean>

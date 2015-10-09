@@ -75,7 +75,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ByFormatType }
-     * 
+     * @return ByFormatType
      */
     public ByFormatType createByFormatType() {
         return new ByFormatType();
@@ -83,7 +83,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PathsProcessedType }
-     * 
+     * @return PathsProcessedType
      */
     public PathsProcessedType createPathsProcessedType() {
         return new PathsProcessedType();
@@ -91,7 +91,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FileProfileType }
-     * 
+     * @return FileProfileType
      */
     public FileProfileType createFileProfileType() {
         return new FileProfileType();
@@ -99,7 +99,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FormatItemType }
-     * 
+     * @return FormatItemType
      */
     public FormatItemType createFormatItemType() {
         return new FormatItemType();
@@ -107,7 +107,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ByYearType }
-     * 
+     * @return ByYearType
      */
     public ByYearType createByYearType() {
         return new ByYearType();
@@ -115,7 +115,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link YearItemType }
-     * 
+     * @return YearItemType
      */
     public YearItemType createYearItemType() {
         return new YearItemType();
@@ -123,7 +123,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FileProfileType }{@code >}}
-     * 
+     * @param value FileProfileType
+     * @return JAXBElement for File Profile
      */
     @XmlElementDecl(namespace = "http://www.nationalarchives.gov.uk/CollectionProfile", name = "FileProfile")
     public JAXBElement<FileProfileType> createFileProfile(FileProfileType value) {

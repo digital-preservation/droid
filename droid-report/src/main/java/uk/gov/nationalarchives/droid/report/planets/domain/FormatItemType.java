@@ -53,20 +53,20 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="FormatItemType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="PUID" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="MIME" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="FormatName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="FormatVersion" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="numFiles" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *         &lt;element name="totalFileSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="FormatItemType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="PUID" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="MIME" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="FormatName" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="FormatVersion" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="numFiles" type="{http://www.w3.org/2001/XMLSchema}integer"/&gt;
+ *         &lt;element name="totalFileSize" type="{http://www.w3.org/2001/XMLSchema}decimal"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @deprecated PLANETS XML is now generated using XSLT over normal report xml files. 

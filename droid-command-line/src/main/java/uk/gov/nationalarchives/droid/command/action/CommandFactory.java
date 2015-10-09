@@ -86,7 +86,7 @@ public interface CommandFactory {
 
     /**
      * @param cli the command line;
-     * @return a new {@link RunProfileCommand}
+     * @return a new {@link DroidCommand}
      * @throws CommandLineSyntaxException if the command line args were invalid
      */
     DroidCommand getProfileCommand(CommandLine cli) throws CommandLineSyntaxException;
@@ -94,7 +94,7 @@ public interface CommandFactory {
 
     /**
      * @param cli the command line;
-     * @return a new {@link RunNoProfileCommand}
+     * @return a new {@link DroidCommand}
      * @throws CommandLineSyntaxException if the command line args were invalid
      */
     DroidCommand getNoProfileCommand(CommandLine cli) throws CommandLineSyntaxException;

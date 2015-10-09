@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -39,12 +38,10 @@ import java.net.URI;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
-import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.TarEntryIdentificationRequest;
@@ -54,15 +51,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.TarEntryIdentifica
  * 
  * @author rbrennan
  */
-public class TarArchiveContentIdentifier {
+public class TarArchiveContentIdentifier extends ArchiveContentIdentifier {
 
-    private BinarySignatureIdentifier binarySignatureIdentifier;
-    private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String path;
-    private String slash;
-    private String slash1;
-    private File tmpDir;
-    
     /**
      * 
      * @param binarySignatureIdentifier     binary signature identifier
@@ -75,16 +65,7 @@ public class TarArchiveContentIdentifier {
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     
-        synchronized (this) {
-            this.binarySignatureIdentifier = binarySignatureIdentifier;
-            this.containerSignatureDefinitions = containerSignatureDefinitions;
-            this.path = path;
-            this.slash = slash;
-            this.slash1 = slash1;
-            if (tmpDir == null) {
-                tmpDir = new File(System.getProperty("java.io.tmpdir"));
-            }
-        }
+        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash, false);
     }
     
     /**
@@ -95,9 +76,9 @@ public class TarArchiveContentIdentifier {
      */
     public void identify(final URI uri, final IdentificationRequest request)
         throws CommandExecutionException {
-        
-        final String newPath = "tar:" + slash1 + path + request.getFileName() + "!" + slash;
-        slash1 = "";
+
+        final String newPath = makeContainerURI("tar", request.getFileName());
+        setSlash1("");
         InputStream tarIn = null; 
         try {
             tarIn = request.getSourceInputStream(); 
@@ -110,14 +91,8 @@ public class TarArchiveContentIdentifier {
                         final RequestMetaData metaData = new RequestMetaData(1L, 2L, name);
                         final RequestIdentifier identifier = new RequestIdentifier(uri);
                         final TarEntryIdentificationRequest tarRequest =
-                            new TarEntryIdentificationRequest(metaData, identifier, tmpDir);
-                        tarRequest.open(in);
-                        final IdentificationResultCollection tarResults =
-                                binarySignatureIdentifier.matchBinarySignatures(tarRequest);
-                        final ResultPrinter resultPrinter =
-                                new ResultPrinter(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, newPath, slash, slash1, true);
-                        resultPrinter.print(tarResults, tarRequest);
+                            new TarEntryIdentificationRequest(metaData, identifier, getTmpDir());
+                        expandContainer(tarRequest, in, newPath);
                     }
                 }
             } finally {
