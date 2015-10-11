@@ -52,7 +52,9 @@ public class ProfileSpecJobCounter implements Callable<Long> {
     private ProfileSpec profileSpec;
     private long count;
     private volatile boolean cancelled;
-    
+
+    public final static int PROGRESS_DEPTH_LIMIT = 4; // If set to -1, do all files and folders.
+
     /**
      * @param profileSpec the profile spec to size
      */
@@ -99,8 +101,7 @@ public class ProfileSpecJobCounter implements Callable<Long> {
         private boolean recursive;
 
         public LukeFileWalker(URI root, boolean recursive) {
-            //super(null, recursive ? -1 : 1);
-            super(null, recursive ? 3 : 1);
+            super(null, recursive ? PROGRESS_DEPTH_LIMIT : 1);
             this.recursive = recursive;
             this.root = new File(root);
         }

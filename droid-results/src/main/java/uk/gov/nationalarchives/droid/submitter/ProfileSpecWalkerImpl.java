@@ -102,7 +102,8 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
                     @Override
                     public ResourceId handle(File file, int depth, ProgressEntry parent) { 
-                        if (depth < 4) {
+                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0 ||
+                            depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
                             progressMonitor.startJob(file.toURI());
                         }
                         ResourceId parentId = parent == null ? null : parent.getResourceId();
@@ -114,7 +115,8 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 fileWalker.setDirectoryHandler(new FileWalkerHandler() {
                     @Override
                     public ResourceId handle(File file, int depth, ProgressEntry parent) {
-                        if (depth < 4) {
+                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0 ||
+                            depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
                             progressMonitor.startJob(file.toURI());
                         }
                         ResourceId parentId = parent == null ? null : parent.getResourceId();
@@ -125,7 +127,8 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 fileWalker.setRestrictedDirectoryHandler(new FileWalkerHandler() {
                     @Override
                     public ResourceId handle(File file, int depth, ProgressEntry parent) {
-                        if (depth < 4) {
+                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0 ||
+                            depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
                             progressMonitor.startJob(file.toURI());
                         }
                         ResourceId parentId = parent == null ? null : parent.getResourceId();
