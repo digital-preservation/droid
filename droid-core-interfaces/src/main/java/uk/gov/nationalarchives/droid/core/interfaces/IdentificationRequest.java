@@ -31,15 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-//BNO-BS2 - replace this import with AbstractReader or WindowReader
-//in package net.byteseek.io.reader
 import net.byteseek.io.reader.WindowReader;
-import net.domesdaybook.reader.ByteReader;
 
 /**
  * Encapsulates an identification request.
@@ -73,7 +69,6 @@ public interface IdentificationRequest<T> {
     
     String getFileName();
 
-    //TODO:MP: pay attention to where size is called.  On an input stream this forces reading the entire stream.
     /**
      * @return the size of the resource in bytes.
      */

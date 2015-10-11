@@ -32,8 +32,8 @@
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import de.schlichtherle.io.rof.AbstractReadOnlyFile;
-import net.byteseek.io.reader.Window;
 import net.byteseek.io.reader.WindowReader;
+import net.byteseek.io.reader.windows.Window;
 
 import java.io.IOException;
 
@@ -74,6 +74,7 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
      * @param closeReaderIfClosed If true, then the backing WindowReader will be closed when this is closed.
      */
     public ReaderReadOnlyFile(final WindowReader reader, final boolean closeReaderIfClosed) {
+        super();
         this.reader = reader;
         this.closeReaderIfClosed = closeReaderIfClosed;
     }

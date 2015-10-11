@@ -32,10 +32,8 @@
 package uk.gov.nationalarchives.droid.container;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
-import net.byteseek.io.reader.WindowReader;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;

@@ -35,12 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.byteseek.io.reader.InputStreamReader;
 import net.byteseek.io.reader.ReaderInputStream;
-import net.byteseek.io.reader.cache.TempFileCache;
-import net.byteseek.io.reader.cache.TopAndTailCache;
-import net.byteseek.io.reader.cache.TwoLevelCache;
-import net.byteseek.io.reader.cache.WindowCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
