@@ -52,9 +52,12 @@ import javax.sql.DataSource;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
+import java.sql.Date;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Brian O'Reilly (based on SQLItemReader)
@@ -84,6 +87,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     private final Log log = LogFactory.getLog(getClass());
 
     private final Class<T> typeParameterClass;
+
 
     //For use in determining filter parameter types so we can set these to the correct SQL type.
     private  enum ClassName {
@@ -131,14 +135,35 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                 metaData.setNodeStatus(NodeStatus.DONE);
 
                 ProfileResourceNode profileResourceNode = new ProfileResourceNode(new URI(cursor.getString("URI")));
-                profileResourceNode.setId(cursor.getLong("NODE_ID"));
+                Long currentNodeId = cursor.getLong("NODE_ID");
+                profileResourceNode.setId(currentNodeId);
                 profileResourceNode.setParentId(cursor.getLong("PARENT_ID"));
                 profileResourceNode.setExtensionMismatch(cursor.getBoolean("EXTENSION_MISMATCH"));
                 profileResourceNode.setMetaData(metaData);
-
+/*
                 List<Format> formats = this.identificationReader.getFormatsForResourceNode(profileResourceNode.getId());
                 for(Format fmt: formats) {
                     profileResourceNode.addFormatIdentification(fmt);
+                }
+*/
+
+                int numberOfIdentifications =  cursor.getInt("id_count");
+
+                for(int i=numberOfIdentifications; i>0; i--) {
+                    String puid = cursor.getString("PUID");
+                    if(cursor.getLong("NODE_ID") == currentNodeId)
+                    {
+                        Format format = this.identificationReader.getFormatForPuid(puid);
+                        profileResourceNode.addFormatIdentification(format);
+                    } else {
+                        throw new SQLDataException("Unexpected node ID during traversal of identification results!");
+                    }
+
+                    if(i > 1) {
+                        if(!cursor.next()) {
+                            break;
+                        };
+                    }
                 }
 
                 return new ProfileResourceNode(profileResourceNode);
@@ -251,15 +276,32 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                 QueryBuilder queryBuilder = SqlUtils.getQueryBuilder(filter);
                 String ejbFragment = queryBuilder.toEjbQl();
                 boolean formatCriteriaExist = ejbFragment.contains("format.");
-                String sqlFilter = SqlUtils.transformEJBtoSQLFields(ejbFragment, "profile", "form");
-                queryString = formatCriteriaExist ? "select distinct profile.* " : "select profile.* ";
-                queryString += "from profile_resource_node as profile ";
+                String sqlFilter = SqlUtils.transformEJBtoSQLFields(ejbFragment, "p", "f");
+                //queryString = formatCriteriaExist ? "select distinct p.*, " : "select p.*, ";
+                queryString =  "select p.*, ";
+                queryString += "(select count('x') from identification i1 where i1.node_id = p.node_id) AS id_count, i.PUID ";
+                queryString += "from profile_resource_node p ";
+                queryString += "inner join identification i on p.node_id = i.node_id ";
+
                 if (formatCriteriaExist) {
-                    queryString += "inner join identification as ident on ident.node_id = profile.node_id"
-                            + " inner join format as form on form.puid = ident.puid ";
+                    queryString += " inner join format f on f.puid = i.puid ";
                 }
-                queryString += "where " + sqlFilter;
-                queryString += "order by profile.node_id";
+
+                //(1) To get only rows including the filter value e.g. if there are multiple PUIDs but only one is listed in the filter, only the
+                //matching one will be returned:
+                //queryString += "where " + sqlFilter;
+
+                //(2) TO get all identifications where any of the identifications matches a filter condition. E.g. if there are 2 PUIDs but only
+                // one is listed in the filter, both will be returned.  This is the current behaviour with DROID 6.1.5
+                queryString += "where ";
+                queryString += "p.node_id IN ";
+                queryString += "(SELECT p2.node_id FROM profile_resource_node p2 ";
+                queryString += " INNER JOIN identification i2 ON p2.node_id = i2.node_id ";
+                queryString += "INNER JOIN format f2 on i2.puid = f2.puid ";
+                queryString += "WHERE ";
+                queryString += sqlFilter.replace("f.", "f2.") + ")";
+
+                queryString += "order by p.node_id";
                 //query = session.createSQLQuery(queryString).addEntity(ProfileResourceNode.class);
                 int i = 0;
 
@@ -290,7 +332,10 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                     }
                 }
             } else {
-                queryString = "select * from profile_resource_node order by node_id";
+                //queryString = "select * from profile_resource_node order by node_id ";
+                queryString = "select p.*, ";
+                queryString += "(select count('x') from identification i1 where i1.node_id = p.node_id) AS id_count, i.PUID ";
+                queryString += "from profile_resource_node p  inner join identification i on p.node_id = i.node_id order by p.node_id";
                 profileStatement = conn.prepareStatement(queryString);
             }
             profileResultSet = profileStatement.executeQuery();
@@ -327,10 +372,20 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                 "FROM IDENTIFICATION AS T1 INNER JOIN FORMAT AS T2 ON T1.PUID = T2.PUID " +
                     "WHERE T1.NODE_ID = ?";
 
+        private final static String SELECT_FORMATS               = "SELECT * FROM FORMAT";
+        private final static String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
+
+        private Map<String, Format> formats;
+        //
+        private final static String formatQueryRange = "SELECT T1.NODE_ID, T1.PUID, T2.MIME_TYPE, T2.NAME, T2.VERSION " +
+                "FROM IDENTIFICATION AS T1 INNER JOIN FORMAT AS T2 ON T1.PUID = T2.PUID " +
+                "WHERE T1.NODE_ID BETWEEN ? AND ?";
+
         IdentificationReader()  {
             try {
                 this.connection  = JDBCSqlItemReader.this.datasource.getConnection();
                 this.formatsStatement = this.connection.prepareStatement(formatQuery);
+                this.formats = loadAllFormats();
             } catch (SQLException ex) {
                 log.error("Error retrieving SQL connection for format identifications", ex);
             }
@@ -369,6 +424,48 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
             }
             return Collections.EMPTY_LIST;
         }
+
+        private Map<String,Format> loadAllFormats() {
+
+            Map<String, Format> formats = null;
+            try {
+                final Connection conn = datasource.getConnection();
+                try {
+                    //BNO - Get the actual number of formats so we can initialise the list based on the current count.
+                    //final PreparedStatement getFormatCount = conn.prepareStatement(SELECT_FORMAT_COUNT);
+                    //final ResultSet rsFormatCount = getFormatCount.executeQuery();
+                    //rsFormatCount.next();
+                    //final int formatCount = rsFormatCount.getInt("total");
+                    formats = new HashMap<String, Format>();
+
+                    final PreparedStatement loadFormat = conn.prepareStatement(SELECT_FORMATS);
+                    try {
+                        final ResultSet results = loadFormat.executeQuery();
+                        try {
+                            while (results.next()) {
+                                String puid = results.getString("PUID");
+                                formats.put(puid,SqlUtils.buildFormat(results));
+                            }
+                        } finally {
+                            results.close();
+                        }
+                    } finally {
+                        loadFormat.close();
+                    }
+                } finally{
+                    //conn.close();
+                }
+            } catch (SQLException e) {
+                log.error("A database exception occurred getting all formats.", e);
+            }
+            return formats;
+        }
+
+        public Format getFormatForPuid(String puid) {
+            Format format = this.formats.get(puid);
+            return format;
+        }
+
 
         private void closeResources() {
             try {
