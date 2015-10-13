@@ -37,14 +37,7 @@ import java.io.InputStream;
 
 //BNO-BS2 - replace this import with AbstractReader or WindowReader
 //in package net.byteseek.io.reader
-import net.byteseek.io.reader.InputStreamReader;
 import net.byteseek.io.reader.ReaderInputStream;
-import net.byteseek.io.reader.cache.TempFileCache;
-import net.byteseek.io.reader.cache.TopAndTailCache;
-import net.byteseek.io.reader.cache.TwoLevelCache;
-import net.byteseek.io.reader.cache.WindowCache;
-import net.domesdaybook.reader.ByteReader;
-
 import net.byteseek.io.reader.WindowReader;
 
 //CHECKSTYLE:OFF - getting wrong import order - no idea why.
@@ -56,7 +49,6 @@ import org.apache.commons.logging.LogFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 
 /**
  * @author rflitcroft, mpalmer

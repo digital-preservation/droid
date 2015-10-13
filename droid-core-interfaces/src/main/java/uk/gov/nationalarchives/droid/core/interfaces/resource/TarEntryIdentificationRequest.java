@@ -35,23 +35,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.byteseek.io.reader.InputStreamReader;
 import net.byteseek.io.reader.ReaderInputStream;
-import net.byteseek.io.reader.cache.TempFileCache;
-import net.byteseek.io.reader.cache.TopAndTailCache;
-import net.byteseek.io.reader.cache.TwoLevelCache;
-import net.byteseek.io.reader.cache.WindowCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-//BNO-BS2 - replace this import with AbstractReader or WindowReader
-//in package net.byteseek.io.reader
-import net.domesdaybook.reader.ByteReader;
 import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 
 /**
  * Encapsulates a request for a GZIP entry.
