@@ -142,8 +142,8 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private List<Format> formats;
     private Map<String, Format> puidFormatMap = new HashMap<String,Format>(2500);
 
-    private BlockingQueue<NodeInfo> blockingQueue = new ArrayBlockingQueue<NodeInfo>(128);
-    private MostRecentlyAddedNodeCache nodeCache  = new MostRecentlyAddedNodeCache(256);
+    private BlockingQueue<NodeInfo> blockingQueue = new ArrayBlockingQueue<NodeInfo>(256);
+    private MostRecentlyAddedNodeCache nodeCache  = new MostRecentlyAddedNodeCache(512);
 
     private Thread databaseWriterThread;
     private DatabaseWriter writer;

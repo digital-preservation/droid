@@ -61,7 +61,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 //BNO-BS2 - this  class is almost identical to {@link ZipEntryIdentificationRequest}
 public class TarEntryIdentificationRequest implements IdentificationRequest<InputStream> {
 
-    private final static int TOP_TAIL_CAPACITY = 8 * 1024 * 1024; // hold 8Mb cache on either end of zip entry.
+    private final static int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 8Mb cache on either end of zip entry.
 
     private final String fileName;
     private final String extension;
@@ -96,10 +96,7 @@ public class TarEntryIdentificationRequest implements IdentificationRequest<Inpu
      */
     @Override
     public final void open(InputStream in) throws IOException {
-        final WindowCache cache = TwoLevelCache.create(
-                new TopAndTailCache(TOP_TAIL_CAPACITY),
-                new TempFileCache(tempDir));
-        reader = new InputStreamReader(in, 4096, cache, false);
+        reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY, false);
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
         if (readSize != size) {
