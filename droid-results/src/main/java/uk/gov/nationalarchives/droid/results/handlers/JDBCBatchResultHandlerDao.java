@@ -651,7 +651,6 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             final PreparedStatement insertNode = insertNodeStatement;
             insertNode.setLong(1, nodeId);
             insertNode.setBoolean(2, mismatch);
-            //insertNode.setDate(3, finished);
             SqlUtils.setNullableTimestamp(3, finished, insertNode);
             SqlUtils.setNullableInteger(   4,  numIdentifications, insertNode);
             SqlUtils.setNullableString(    5,  extension, insertNode);
