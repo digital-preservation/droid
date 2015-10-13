@@ -32,11 +32,21 @@
 package uk.gov.nationalarchives.droid.profile.referencedata;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.gov.nationalarchives.droid.profile.SqlUtils;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.sql.DataSource;
 
 /**
  * @author Alok Kumar Dash
@@ -46,24 +56,44 @@ import javax.persistence.Query;
 
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private static String SELECT_FORMATS = "SELECT * FROM FORMAT";
+    private final Log log = LogFactory.getLog(getClass());
+    private DataSource datasource;
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public List<Format> getFormats() {
-        Query q = null;
-        List<Format> formats = null;
-
-        String query = "from Format order by name";
-        q = entityManager.createQuery(query);
-
-        formats = q.getResultList();
-
+        final List<Format> formats = new ArrayList<Format>(2000); // about 1500 formats as of 2015.
+        try {
+            final Connection conn = datasource.getConnection();
+            try {
+                final PreparedStatement loadFormat = conn.prepareStatement(SELECT_FORMATS);
+                try {
+                    final ResultSet results = loadFormat.executeQuery();
+                    try {
+                        while (results.next()) {
+                            formats.add(SqlUtils.buildFormat(results));
+                        }
+                    } finally {
+                        results.close();
+                    }
+                } finally {
+                    loadFormat.close();
+                }
+            } finally{
+                conn.close();
+            }
+        } catch (SQLException e) {
+            log.error("A database exception occurred getting all formats.", e);
+        }
         return formats;
+
+    }
+
+    public void setDatasource(DataSource datasource) {
+        this.datasource = datasource;
     }
 
 }

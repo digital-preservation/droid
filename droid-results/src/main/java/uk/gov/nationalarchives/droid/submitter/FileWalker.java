@@ -91,11 +91,14 @@ public class FileWalker extends DirectoryWalker {
     @XmlElementWrapper(name = "Progress")
     @XmlElement(name = "ProgressEntry")
     private Deque<ProgressEntry> progress;
-    
+
+    @XmlTransient
+    private String topLevelAbsolutePath;
+
     private FileWalkerHandler fileHandler;
     private FileWalkerHandler directoryHandler;
     private FileWalkerHandler restrictedDirectoryHandler;
-    
+
     private boolean fastForward;
     private List<ProgressEntry> recoveryRoad;
     
@@ -112,6 +115,7 @@ public class FileWalker extends DirectoryWalker {
         super(null, recursive ? -1 : 1);
         this.recursive = recursive;
         this.root = root;
+        this.topLevelAbsolutePath = new File(root).getAbsolutePath();
     }
     
     /**
@@ -148,7 +152,7 @@ public class FileWalker extends DirectoryWalker {
     protected void handleFile(File file, int depth, Collection results) 
         throws IOException {
         
-        if (!SubmitterUtils.isFileSystemAvailable(file, root)) {
+        if (!SubmitterUtils.isFileSystemAvailable(file, topLevelAbsolutePath)) {
             log.error(String.format(FILE_SYSTEM_UNAVAILABLE, file.getAbsolutePath()));
             throw new IOException(file.getAbsolutePath());
         }
@@ -174,7 +178,7 @@ public class FileWalker extends DirectoryWalker {
     protected boolean handleDirectory(File dir, int depth, Collection results) throws IOException {
         boolean processDir = true;
         
-        if (!SubmitterUtils.isFileSystemAvailable(dir, root)) {
+        if (!SubmitterUtils.isFileSystemAvailable(dir, topLevelAbsolutePath)) {
             log.error(String.format(FILE_SYSTEM_UNAVAILABLE, dir.getAbsolutePath()));
             throw new IOException(dir.getAbsolutePath());
         }

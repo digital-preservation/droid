@@ -69,7 +69,8 @@ each open profile will have its own Spring context.
     <property name="initialSize" value="${datasource.initialSize}"/>
     <property name="createUrl" value="${datasource.createUrl}"/>
   </bean>
-  
+
+  <!--
   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
     <property name="entityManagerFactory" ref="entityManagerFactory"/>
     <property name="dataSource" ref="dataSource"/>
@@ -102,12 +103,13 @@ each open profile will have its own Spring context.
   <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
     <property name="showSql" value="${hibernate.showSql}"/>
     <property name="generateDdl" value="${hibernate.generateDdl}"/>
-    <!-- <property name="database" value="DERBY"/> -->
+    // comment out: <property name="database" value="DERBY"/>
     <property name="database" value="${hibernate.vendoradaptor.database}"/>
   </bean>
   
   <bean id="entityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
     <property name="entityManagerFactory" ref="entityManagerFactory"/>
   </bean>
+  -->
 
 </beans>

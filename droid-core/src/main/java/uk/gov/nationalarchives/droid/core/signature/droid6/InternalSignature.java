@@ -228,7 +228,11 @@ public class InternalSignature extends SimpleElement {
         calculateSignatureSortOrder();
         return false;
     }
-    
+
+    //TODO: this doesn't work when the signature is part of a container signature.
+    //      Or rather, it works but has no format information, since we don't bind
+    //      file formats to binary signatures used internally in container signatures.
+    //      Therefore, you get a warning about the sig, but no information about the format it relates to.
     private String getPerformanceWarningMessage() {
         return String.format("Signature [id:%d] will always scan up to maximum bytes.  "
                 + "Matches formats: %s", intSigID, getFileFormatDescriptions());

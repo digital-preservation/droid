@@ -79,5 +79,6 @@ public interface ProfileDao {
 //     * @return the root node ID.
 //     */
 //    long createRootNode();
+    void initialise();
 
 }

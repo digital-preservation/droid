@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.core.interfaces;
 
 /**
  * @author Alok Kumar Dash
+ * BNO: Aug 2015: Added static method to retrieve enum by integer value
  */
 public enum IdentificationMethod {
 
@@ -82,4 +83,19 @@ public enum IdentificationMethod {
         return method;
     }
 
+    //BNO - August 2015
+    public static IdentificationMethod getIdentifationMethodForOrdinal(int value)  {
+        switch (value) {
+            case 0:
+                return IdentificationMethod.NULL;
+            case 1:
+                return IdentificationMethod.BINARY_SIGNATURE;
+            case 2:
+                return IdentificationMethod.EXTENSION;
+            case 3:
+                return IdentificationMethod.CONTAINER;
+            default:
+                throw new  IllegalArgumentException("Invalid identification " + value + "!");
+        }
+    }
 }

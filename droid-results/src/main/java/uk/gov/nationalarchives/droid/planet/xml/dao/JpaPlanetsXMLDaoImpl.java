@@ -72,21 +72,21 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
     private final Log log = LogFactory.getLog(getClass());
 
-    @PersistenceContext
-    private EntityManager entityManager;
+   // @PersistenceContext
+   // private EntityManager entityManager;
 
     /**
      * Flushes the DROID entity manager.
      */
     void flush() {
-        entityManager.flush();
+       // entityManager.flush();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+   // @Transactional(propagation = Propagation.REQUIRED)
     public PlanetsXMLData getDataForPlanetsXML(Filter filter) {
 
         filterQueryString = "";
@@ -154,8 +154,9 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
     }
 
     private ProfileStat getProfileStat() {
-
         ProfileStat profileStat = new ProfileStat();
+                /*
+
         Query q = entityManager
                 .createQuery("SELECT   min(profileResourceNode.metaData.size), max(profileResourceNode.metaData.size), "
                         + "avg(profileResourceNode.metaData.size), sum(profileResourceNode.metaData.size) "
@@ -191,12 +192,13 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
                 profileStat.setProfileTotalSize(bigInt);
 
             }
+
         }
 
         setTotalUnreadableFiles(profileStat);
         setTotalUnreadableFolders(profileStat);
         setTotalReadableFiles(profileStat);
-
+            */
         return profileStat;
     }
 
@@ -204,6 +206,7 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
      * @param profileStat
      */
     private void setTotalReadableFiles(ProfileStat profileStat) {
+        /*
         Query queryForTotalReadableFiles = entityManager
                 .createQuery("SELECT   count(*) "
                         + "from ProfileResourceNode profileResourceNode  "
@@ -226,12 +229,14 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
                         .toString()));
             }
         }
+        */
     }
 
     /**
      * @param profileStat
      */
     private void setTotalUnreadableFolders(ProfileStat profileStat) {
+       /*
         Query queryForTotalUnreadableFolders = entityManager
                 .createQuery("SELECT  count(*) "
                         + "from  ProfileResourceNode profileResourceNode "
@@ -253,13 +258,15 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
                         .toString()));
             }
         }
+        */
     }
 
     /**
      * @param profileStat
      */
     private void setTotalUnreadableFiles(ProfileStat profileStat) {
-        Query queryForTotalUnreadableFiles = entityManager
+        /*
+            Query queryForTotalUnreadableFiles = entityManager
                 .createQuery("SELECT count(*) "
                         + "from ProfileResourceNode profileResourceNode   "
                         + "where (metaData.nodeStatus = ? or metaData.nodeStatus = ?) "
@@ -280,13 +287,14 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
                         .toString()));
             }
         }
+        */
     }
 
     private List<GroupByYearSizeAndCountRow> getGroupByYear() {
 
         List<GroupByYearSizeAndCountRow> dataList = new ArrayList<GroupByYearSizeAndCountRow>();
         GroupByYearSizeAndCountRow groupByYearSizeAndCountRow = null;
-
+        /*
         Query q = entityManager
                 .createQuery("SELECT   year(profileResourceNode.metaData.lastModifiedDate), "
                         + "count(*), sum(profileResourceNode.metaData.size) "
@@ -321,13 +329,14 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
             }
 
         }
+        */
         return dataList;
     }
 
     private List<GroupByPuidSizeAndCountRow> getGroupByPuid() {
         List<GroupByPuidSizeAndCountRow> dataList = new ArrayList<GroupByPuidSizeAndCountRow>();
         GroupByPuidSizeAndCountRow groupByPuidSizeAndCountRow = null;
-
+        /*
         Query q = entityManager
                 .createQuery("SELECT  f.puid, count(*), sum(profileResourceNode.metaData.size) "
                         + "from ProfileResourceNode profileResourceNode "
@@ -376,6 +385,7 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
             }
 
         }
+        */
 
         return dataList;
     }

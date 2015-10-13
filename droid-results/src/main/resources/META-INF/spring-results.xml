@@ -141,13 +141,31 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="containerPuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
     </bean>
-
+    <!--
     <bean id="profileDao" class="uk.gov.nationalarchives.droid.profile.JpaProfileDaoImpl"/>
+    -->
+    <bean id="profileDao" class="uk.gov.nationalarchives.droid.profile.JDBCProfileDao">
+        <property name="datasource" ref="dataSource"/>
+        <property name="resultHandlerDao" ref="resultsDao"/>
+    </bean>
+
+
     <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JpaPlanetsXMLDaoImpl"/>
-    <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl"/>
-    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandlerDao"/>
-    <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl"/>
-    
+    <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl">
+        <property name = "datasource" ref="dataSource"/>
+    </bean>
+
+    <!--
+    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandlerDao" init-method="init"/>
+    -->
+    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao" init-method="init">
+        <property name = "datasource" ref="dataSource"/>
+    </bean>
+
+    <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl">
+        <property name = "datasource" ref="dataSource"/>
+    </bean>
+
     <bean id="referenceDataService" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataServiceImpl"/>
     
     <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileInstanceManagerImpl">
@@ -180,13 +198,25 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 </bean>
 -->
 
+    <!--
     <bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.SqlItemReader" scope="prototype">
        <property name="sessionFactory" ref="sessionFactory"/>
        <property name="fetchSize" value="200"/>
        <property name="chunkSize" value="1000"/>
     </bean>
+-->
 
+    <bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.JDBCSqlItemReader" scope="prototype">
+        <!--<constructor-arg ref="typeParameterClass" /> -->
+        <property name="resultHandlerDao" ref="resultsDao" />
+        <property name="fetchSize" value="200"/>
+        <property name="chunkSize" value="1000"/>
+    </bean>
 
+    <!--
+    <bean id="typeParameterClass" class="Class<T>">
+    </bean>
+-->
     <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
     
     <bean id="sessionFactory" class="uk.gov.nationalarchives.droid.profile.export.HibernateSessionFactoryLocator"
@@ -222,11 +252,17 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
 
 <!-- database result handler commits on every node -->
-    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.ResultHandlerImpl" init-method="init">
+    <!--
+    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandler" init-method="init">
         <property name="resultHandlerDao" ref="resultsDao"/>
         <property name="progressMonitor" ref="progressMonitor"/>
     </bean>
-    
+    -->
+    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.JDBCResultHandler" init-method="init">
+        <property name="resultHandlerDao" ref="resultsDao"/>
+        <property name="progressMonitor" ref="progressMonitor"/>
+    </bean>
+
     <!-- experimental batching database result handler commits in batches.
 <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.BatchResultHandler" init-method="init">
 <property name="progressMonitor" ref="progressMonitor"/>

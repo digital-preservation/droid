@@ -45,6 +45,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
+import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
 
@@ -181,11 +182,27 @@ public class ProfileContextLocator {
             File profileTemplate = getProfileTemplateFile(profile);
             status = getTemplateStatus(profileTemplate);
             status = setupDatabaseTemplate(status, profileTemplate, databasePath, props);
-        } else {
-            setCreateSchemaProperties(false, props);
         }
-        
+        /*
+        else {
+            //BNO: No longer reqiured?
+            //setCreateSchemaProperties(false, props);
+        }
+        */
+        //BNO
+        if (status == TemplateStatus.NO_TEMPLATE ) {
+            // If we're starting with a fresh DROID install, we'll get a SQL Exception if we try to connect to the
+            // Derby database (the database will exist but the DROID_USER and schema obhjects will not be there yet.
+            //TODO: Probably only want to do this if actually using this class - so query spring for whether
+            // this is the case..
+            JDBCBatchResultHandlerDao.setIsFreshTemplate(true);
+        }
+
         ProfileInstanceManager profileManager = profileInstanceLocator.getProfileInstanceManager(profile, props);
+
+        if (status == TemplateStatus.NO_TEMPLATE ) {
+            JDBCBatchResultHandlerDao.setIsFreshTemplate(false);
+        }
         
         if (newDatabase) {
             generateNewDatabaseAndTemplates(profile, profileManager, databasePath, signatureFile, status);
@@ -212,16 +229,21 @@ public class ProfileContextLocator {
         TemplateStatus result = status;
         
         // if no profile template exists, generate a fresh profile database:
-        if (status == TemplateStatus.NO_TEMPLATE) {
-            setCreateSchemaProperties(true, props);
-        } else { // we either have a blank profile, or a signature profile: unpack the profile template:
-            setCreateSchemaProperties(false, props);
+        //if (status == TemplateStatus.NO_TEMPLATE) {
+            //BNO - no longer required:
+            //setCreateSchemaProperties(true, props);
+
+        //} else { // we either have a blank profile, or a signature profile: unpack the profile template:
+        if (status != TemplateStatus.NO_TEMPLATE) {
+            //BNO - no longer required:
+            //setCreateSchemaProperties(false, props);
             try {
                 unpackProfileTemplate(profileTemplate, databasePath);
             } catch (IOException e) {
                 log.error(e);
                 // could not load profile template - fall back on creating one from scratch.
-                setCreateSchemaProperties(true, props);
+                //BNO. No Longer required?
+                //setCreateSchemaProperties(true, props);
                 result = TemplateStatus.NO_TEMPLATE;
             }
         }

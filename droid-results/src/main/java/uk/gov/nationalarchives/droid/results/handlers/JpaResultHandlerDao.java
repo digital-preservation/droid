@@ -45,6 +45,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
+import java.util.*;
+
 /**
  * @author rflitcroft
  * 
@@ -52,9 +54,20 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 public class JpaResultHandlerDao implements ResultHandlerDao {
  
     private final Log log = LogFactory.getLog(getClass());
-    
+
+    private List<Format> formats;
+    private Map<String, Format> puidFormatMap = new HashMap<String,Format>(2500);
+
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Override
+    public void init() {
+        formats = loadAllFormats();
+        for (final Format format : formats) {
+            puidFormatMap.put(format.getPuid(), format);
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -65,6 +78,7 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
     // the resulthandlerimpl.  All this does is force two 
     // commits for the same resource node.
     //@Transactional(propagation = Propagation.MANDATORY)
+    //@Transactional(propagation = Propagation.REQUIRED)
     public void save(ProfileResourceNode node, ResourceId parentId) {
 
         entityManager.persist(node);
@@ -82,6 +96,11 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
         node.setPrefixPlusOne(parentsPrefixString + nodePrefixPlusOne);
     }
 
+    @Override
+    public void commit() {
+        // nothing to do - all saves are transactional at the point of save.
+    }
+
 
     /**
      * {@inheritDoc}
@@ -89,9 +108,20 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Format loadFormat(String puid) {
-        return entityManager.find(Format.class, puid);
+        return puidFormatMap.get(puid);
     }
-    
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<Format> getAllFormats() {
+        return formats;
+    }
+
+    @Override
+    public Map<String, Format> getPUIDFormatMap() {
+        return puidFormatMap;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -121,6 +151,15 @@ public class JpaResultHandlerDao implements ResultHandlerDao {
             entityManager.remove(o);
         }
        
+    }
+
+    @Override
+    public void initialiseForNewTemplate() {
+        //No need to do anything, all setup will be complete before this call if using Hibernate.
+    }
+
+    private List<Format> loadAllFormats() {
+        return entityManager.createQuery("SELECT f FROM Format f").getResultList();
     }
 
 }

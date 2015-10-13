@@ -252,8 +252,8 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     /**
-     * @param jobCountDecremented
-     * @param results
+     * @param request  The archive request to handle.
+     * @param results The previous identification results for the archive format.
      * @return
      */
     private boolean handleArchive(IdentificationRequest request, 
@@ -334,8 +334,7 @@ public class SubmissionGateway implements AsynchDroid {
     }
     
     /**
-     * @param results
-     * @param nodeId
+     * @param results A previous identification of an archival format.
      */
     private String getArchiveFormat(IdentificationResultCollection results) {
         for (IdentificationResult result : results.getResults()) {
