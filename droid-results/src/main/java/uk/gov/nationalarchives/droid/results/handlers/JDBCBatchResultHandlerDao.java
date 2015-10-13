@@ -200,15 +200,18 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
         try {
             final Connection conn = datasource.getConnection();
+            PreparedStatement createFormatTable = null;
+            PreparedStatement createIdentificationTable = null;
+            PreparedStatement createProfileResourceNodeTable = null;
 
             try {
-                final PreparedStatement createFormatTable = conn.prepareStatement(CREATE_TABLE_FORMAT);
+                createFormatTable = conn.prepareStatement(CREATE_TABLE_FORMAT);
                 createFormatTable.execute();
 
-                final PreparedStatement createIdentificationTable = conn.prepareStatement(CREATE_TABLE_IDENTIFICATION);
+                createIdentificationTable = conn.prepareStatement(CREATE_TABLE_IDENTIFICATION);
                 createIdentificationTable.execute();
 
-                final PreparedStatement createProfileResourceNodeTable = conn.prepareStatement(CREATE_TABLE_PRN);
+                createProfileResourceNodeTable = conn.prepareStatement(CREATE_TABLE_PRN);
                 createProfileResourceNodeTable.execute();
 
                 List<String> createIndexesAndConstraints = new ArrayList<String>(19);
@@ -242,6 +245,9 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             } catch (SQLException e) {
                 throw e;
             } finally {
+                createFormatTable.close();
+                createIdentificationTable.close();
+                createProfileResourceNodeTable.close();
                 conn.close();
             }
         } catch (SQLException e) {
@@ -645,7 +651,6 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             final PreparedStatement insertNode = insertNodeStatement;
             insertNode.setLong(1, nodeId);
             insertNode.setBoolean(2, mismatch);
-            //insertNode.setDate(            3,  finished);
             SqlUtils.setNullableTimestamp(3, finished, insertNode);
             SqlUtils.setNullableInteger(   4,  numIdentifications, insertNode);
             SqlUtils.setNullableString(    5,  extension, insertNode);
