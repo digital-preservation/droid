@@ -36,21 +36,22 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.TarEntryIdentificationRequest;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * @author rflitcroft
  *
  */
-public class TarEntryRequestFactory extends AbstractArchiveRequestFactory {
+public class TarEntryRequestFactory extends AbstractArchiveRequestFactory<InputStream> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
-        final IdentificationRequest request =
-            new TarEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
-        
-        return request;
+    public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
+                                                               RequestIdentifier identifier) {
+        return new TarEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
     }
 
 }

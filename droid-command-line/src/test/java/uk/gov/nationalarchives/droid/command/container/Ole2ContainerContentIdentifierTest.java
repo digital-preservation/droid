@@ -130,8 +130,7 @@ public class Ole2ContainerContentIdentifierTest {
                 new FileSystemIdentificationRequest(metaData, identifier);
             IdentificationResultCollection results =
                 new IdentificationResultCollection(request);
-            InputStream ole2Stream = new FileInputStream(file);
-            request.open(ole2Stream);
+            request.open(file);
             results = ole2ContainerContentIdentifier.process(request.getSourceInputStream(), results);
             if (results.getResults().isEmpty()) {
                 fail("OLE2 file not identified");

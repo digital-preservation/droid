@@ -252,7 +252,8 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     /**
-     * @param results
+     * @param request  The archive request to handle.
+     * @param results The previous identification results for the archive format.
      * @return
      */
     private boolean handleArchive(IdentificationRequest request, 
@@ -274,6 +275,8 @@ public class SubmissionGateway implements AsynchDroid {
             jobCounter.decrement();
             jobCountDecremented = true;
             try {
+            	//BNO: Does this always return the same archive handler for any given container format?
+            	//And will it end up using the same submission gateway, or a new one with a different thread pool?
                 ArchiveHandler handler = archiveHandlerFactory.getHandler(archiveFormat);
                 handler.handle(request);
                 // CHECKSTYLE:OFF
@@ -331,7 +334,7 @@ public class SubmissionGateway implements AsynchDroid {
     }
     
     /**
-     * @param results
+     * @param results A previous identification of an archival format.
      * @return format or null
      */
     private String getArchiveFormat(IdentificationResultCollection results) {

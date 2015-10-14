@@ -252,6 +252,7 @@ public class FFSignatureFile extends SimpleElement {
      * and before the FFSignatureFile class is used.
       */
     public final void prepareForUse() {
+    	//BNO: Called when profile initialised.
         this.prepareInternalSignatures();
     }
 
@@ -323,6 +324,7 @@ public class FFSignatureFile extends SimpleElement {
      * to ensure its own best performance.
      */
     private void prepareInternalSignatures() {
+    	//BNO: Called when profile initialised
         this.setAllSignatureFileFormats();
         this.intSigs.prepareForUse();
         intSigs.sortSignatures(new InternalSignatureComparator());
@@ -501,7 +503,8 @@ public class FFSignatureFile extends SimpleElement {
                     new FileFormatHit(internalSig.getFileFormat(fileFormatIndex), 
                                       FileFormatHit.HIT_TYPE_POSITIVE_GENERIC_OR_SPECIFIC,
                                       internalSig.isSpecific(), "");
-                targetFile.addHit(fileHit);
+
+                 targetFile.addHit(fileHit);
             }
         }
     }

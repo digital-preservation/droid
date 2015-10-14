@@ -113,8 +113,7 @@ public class TarArchiveContentIdentifierTest {
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
 
-            InputStream tarStream = new FileInputStream(file);
-            request.open(tarStream);
+            request.open(file);
             tarArchiveContentIdentifier.identify(uri, request);
 
         } catch (IOException e) {

@@ -47,6 +47,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 
@@ -60,7 +61,7 @@ public class FileEventHandler {
 
     private AsynchDroid droidCore;
     private ResultHandler resultHandler;
-    private IdentificationRequestFactory requestFactory;
+    private IdentificationRequestFactory<File> requestFactory;
 
     private SubmissionThrottle submissionThrottle;
 
@@ -98,20 +99,9 @@ public class FileEventHandler {
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
-        
-        IdentificationRequest request = requestFactory.newRequest(metaData, identifier);
+        IdentificationRequest<File> request = requestFactory.newRequest(metaData, identifier);
         try {
-            FileInputStream in = new FileInputStream(file);
-            try {
-                request.open(in);
-                //log.debug(String.format(
-                //        "Submitting job [%s]; parent id [%s] to droid.", uri,
-                //        parentId));
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
-            }
+            request.open(file);
             droidCore.submit(request);
             submissionThrottle.apply();
         } catch (IOException e) {

@@ -112,9 +112,7 @@ public class ZipArchiveContentIdentifierTest {
                 new RequestMetaData(file.length(), file.lastModified(), fileName);
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
-
-            InputStream zipStream = new FileInputStream(file);
-            request.open(zipStream);
+            request.open(file);
             zipArchiveContentIdentifier.identify(uri, request);
         } catch (IOException e) {
             throw new CommandExecutionException(e);

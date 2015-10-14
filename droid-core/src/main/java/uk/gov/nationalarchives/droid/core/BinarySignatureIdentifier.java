@@ -97,6 +97,7 @@ public class BinarySignatureIdentifier implements DroidCore {
      */
     @Override
     public IdentificationResultCollection matchBinarySignatures(IdentificationRequest request) {
+    	//BNO: Called once for each identification request
         IdentificationResultCollection results = new IdentificationResultCollection(request);
         results.setRequestMetaData(request.getRequestMetaData());
         ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);

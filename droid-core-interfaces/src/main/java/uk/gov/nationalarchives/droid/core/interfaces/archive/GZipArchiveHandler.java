@@ -44,7 +44,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 /**
- * @author rflitcroft
+ * @author rflitcroft, mpalmer
  *
  */
 public class GZipArchiveHandler implements ArchiveHandler {
@@ -57,7 +57,7 @@ public class GZipArchiveHandler implements ArchiveHandler {
      */
     @Override
     public final void handle(IdentificationRequest request) throws IOException {
-        IdentificationRequest archiveRequest = null;
+        IdentificationRequest<InputStream> archiveRequest = null;
         InputStream in = request.getSourceInputStream(); 
         try {
             URI parent = request.getIdentifier().getUri(); 
@@ -71,14 +71,14 @@ public class GZipArchiveHandler implements ArchiveHandler {
             RequestIdentifier identifier = new RequestIdentifier(uri);
             identifier.setAncestorId(request.getIdentifier().getAncestorId());
             identifier.setParentId(correlationId);
-            
+
             archiveRequest = factory.newRequest(metaData, identifier);
             final InputStream gzin = new GZIPInputStream(in);
             try {
                 archiveRequest.open(gzin);
             } finally {
                 if (gzin != null) {
-                    gzin.close();                
+                    gzin.close();
                 }
             }
         } finally {

@@ -69,7 +69,12 @@ public class ResourceId {
     public String getPath() {
         return path;
     }
-    
+
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[id: " + id + " path: " + path + ']';
+    }
     
     /**
      * {@inheritDoc}

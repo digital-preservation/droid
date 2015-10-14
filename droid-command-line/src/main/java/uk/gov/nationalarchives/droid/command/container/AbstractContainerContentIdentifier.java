@@ -112,7 +112,7 @@ public abstract class AbstractContainerContentIdentifier implements ContainerCon
     public IdentificationResultCollection process(
         final InputStream in, final IdentificationResultCollection containerResults) throws IOException {
         
-        final IdentificationRequest request = new ContainerFileIdentificationRequest(null);
+        final IdentificationRequest<InputStream> request = new ContainerFileIdentificationRequest(null);
 
         try {
             request.open(in);

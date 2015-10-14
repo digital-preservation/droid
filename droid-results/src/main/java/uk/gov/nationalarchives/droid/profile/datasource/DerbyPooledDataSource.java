@@ -32,11 +32,8 @@
 package uk.gov.nationalarchives.droid.profile.datasource;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.SQLNonTransientConnectionException;
+import java.sql.*;
+import java.util.logging.Logger;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
@@ -67,6 +64,7 @@ public class DerbyPooledDataSource extends BasicDataSource {
         System.setProperty("derby.stream.error.file", 
                 new File(droidLogDir, "derby.log").getPath());
         //setPoolPreparedStatements(true);
+        //setInitialSize(20); // initial size of connection pool.
         setDefaultTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
         setDefaultAutoCommit(false);
         log.debug(String.format("Booting database [%s]", getUrl()));
@@ -154,5 +152,9 @@ public class DerbyPooledDataSource extends BasicDataSource {
     public void setCreateUrl(final String createUrl) {
         this.createUrl = createUrl;
     }
-    
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
+    }
 }

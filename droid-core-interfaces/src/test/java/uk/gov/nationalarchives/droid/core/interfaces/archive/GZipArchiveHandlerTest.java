@@ -91,7 +91,6 @@ public class GZipArchiveHandlerTest {
         
         handler.handle(originalRequest);
         
-        verify(request).open(any(InputStream.class));
         verify(droidCore).submit(request);
     }
     

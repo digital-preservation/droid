@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.container.zip;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import uk.gov.nationalarchives.droid.container.AbstractContainerIdentifier;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
@@ -47,7 +48,7 @@ public class ZipIdentifier extends AbstractContainerIdentifier {
      * {@inheritDoc}
      */
     @Override
-    public final void process(final IdentificationRequest request, 
+    public final void process(final IdentificationRequest request,
         final ContainerSignatureMatchCollection matches) throws IOException {
         
         getIdentifierEngine().process(request, matches);

@@ -98,6 +98,13 @@ public final class FragmentRewriter {
     //CHECKSTYLE:OFF - cyclomatic complexity is too high.
     public static String rewriteFragment(final String fragment) {
     //CHECKSTYLE:ON
+    	
+    	//BNO-BS2  - Test disabling the rewrite...
+    	//if(true) {
+    	//	return fragment;
+    	//}
+    	
+    	
         StringBuilder builder = new StringBuilder();
         final int length = fragment.length();
         boolean inCaseSensitiveString = false;
@@ -116,7 +123,12 @@ public final class FragmentRewriter {
                     builder.append(theChar);
                 }
             } else {
-                builder.append(theChar);
+                if (theChar == OPENSET && charIndex + 1 < length &&
+                    fragment.charAt(charIndex+1) == INVERTED_OLD) {
+                    builder.append(INVERTED_NEW).append(OPENSET);
+                } else {
+                    builder.append(theChar);
+                }
             }
 
             // Determine if we are in sets or strings

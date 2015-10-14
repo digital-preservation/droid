@@ -35,12 +35,16 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Interface for Creating new identification requests.
- * @author rflitcroft
- *
+ * @author rflitcroft, mpalmer
+ * @param <T> The type of byte source backing the identification request.
  */
-public interface IdentificationRequestFactory {
+public interface IdentificationRequestFactory<T> {
 
     /**
      * @param metaData metadata about the request
@@ -48,6 +52,6 @@ public interface IdentificationRequestFactory {
      * @return a new identification request
      * 
      */
-    IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier);
-    
+    IdentificationRequest<T> newRequest(RequestMetaData metaData, RequestIdentifier identifier);
+
 }

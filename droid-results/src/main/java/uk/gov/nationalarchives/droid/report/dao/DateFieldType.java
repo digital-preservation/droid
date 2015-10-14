@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.report.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +137,53 @@ public class DateFieldType implements ReportFieldType {
         return lineItems;
     }
 
+
+    //@Override
+    public List<ReportLineItem> populateReportedData(ResultSet results) throws SQLException{
+
+        List<ReportLineItem> lineItems = new ArrayList<ReportLineItem>();
+
+        while (results.next()) {
+            ReportLineItem reportLineItem = new ReportLineItem();
+
+            int numberOfColumns = results.getMetaData().getColumnCount();
+            Object[] resultsArray =  new Object[numberOfColumns];
+
+            for(int i=0;i<numberOfColumns;i++) {
+                resultsArray[i] = results.getObject(i+1);
+            }
+
+            //Object[] resultsArray = (Object[]) res;
+            Object count = resultsArray[COUNT_INDEX];
+            Object earlyTime = resultsArray[EARLIEST_INDEX];
+            Object latestTime = resultsArray[LATEST_INDEX];
+
+            if (count != null) {
+                reportLineItem.setCount(new Long((Integer) count));
+            }
+
+            Timestamp timestamp = (Timestamp) earlyTime;
+            if (timestamp != null) {
+                reportLineItem.setEarliestDate(timestamp);
+            }
+
+            timestamp = (Timestamp) latestTime;
+            if (timestamp != null) {
+                reportLineItem.setLatestDate(timestamp);
+            }
+
+            if (isGroupByExists) {
+                List<String> values = new ArrayList<String>();
+                for (int valueIndex = 0; valueIndex < groupingFields.size(); valueIndex++) {
+                    values.add(getFieldValue(resultsArray[GROUP_INDEX + valueIndex]));
+                }
+                reportLineItem.setGroupByValues(values);
+            }
+
+            lineItems.add(reportLineItem);
+        }
+        return lineItems;
+    }
     /**
      * @return the field
      */

@@ -181,10 +181,9 @@ public class NoProfileRunCommand implements DroidCommand {
             identifier.setParentId(1L);
             
             InputStream in = null;
-            IdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
+            IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
             try {
-                in = new FileInputStream(file);
-                request.open(in);
+                request.open(file);
                 IdentificationResultCollection results =
                     binarySignatureIdentifier.matchBinarySignatures(request);
                 

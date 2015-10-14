@@ -39,6 +39,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
+import net.byteseek.io.reader.InputStreamReader;
+import net.byteseek.io.reader.cache.*;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -63,7 +65,8 @@ public final class ResourceUtils {
     private static final int UNSIGNED_RIGHT_SHIFT_BY_18 = 18;
     private static final int UNSIGNED_RIGHT_SHIFT_BY_25 = 25;    
     private static final int ARRAYLENGTH = 5;
-    
+    public static final double FREE_MEMORY_THRESHOLD = 64 * 1024 * 1024; // 64 Mb of free memory must be available.
+
     /**
      * Private constructor to prevent construction of static utility class.
      */
@@ -85,7 +88,69 @@ public final class ResourceUtils {
         final int dotPos = nameOnly.lastIndexOf('.');
         return dotPos > 0 ? nameOnly.substring(dotPos + 1) : "";
     }
-    
+
+    /**
+     * Creates an InputStreamReader backed by a cache.
+     * <p>
+     * If allocating all requested memory for this cache still leaves enough free memory,
+     * then a two-level cache will be created, using memory falling back to a temporary file.
+     * If there is insufficient memory to use memory, then only a temp file cache will be used.
+     *
+     * @param in The input stream to back the reader.
+     * @param tempDir The directory in which to create temporary files for caching.
+     * @param topTailCapacity The amount of memory to cache on the top and tail of each stream.
+     * @return
+     */
+    public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity) {
+        final WindowCache cache;
+        final InputStreamReader reader;
+        if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_THRESHOLD) {
+            cache = TwoLevelCache.create(
+                    new TopAndTailStreamCache(topTailCapacity),
+                    new TempFileCache(tempDir));
+            reader = new InputStreamReader(in, cache);
+        } else {
+            final WindowCache memoryCache = new MostRecentlyUsedCache(1024);
+            final TempFileCache persistentCache = new TempFileCache(tempDir);
+            cache = DoubleCache.create(memoryCache, persistentCache);
+            reader = new InputStreamReader(in, cache);
+            reader.setSoftWindowRecovery(persistentCache);
+        }
+        return reader;
+    }
+
+    /**
+     * Creates an InputStreamReader backed by a cache.
+     * <p>
+     * If allocating all requested memory for this cache still leaves enough free memory,
+     * then a two-level cache will be created, using memory falling back to a temporary file.
+     * If there is insufficient memory to use memory, then a double cache of a most recently
+     * used cache with SoftWindows, backed by a temp file cache will be used.
+     *
+     * @param in The input stream to back the reader.
+     * @param tempDir The directory in which to create temporary files for caching.
+     * @param topTailCapacity The amount of memory to cache on the top and tail of each stream.
+     * @param closeStream Whether to close the underlying input stream when this reader is closed.     * @return
+     */
+    public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity, boolean closeStream) {
+        final WindowCache cache;
+        final InputStreamReader reader;
+        if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_THRESHOLD) {
+            cache = TwoLevelCache.create(
+                    new TopAndTailStreamCache(topTailCapacity),
+                    new TempFileCache(tempDir));
+            reader = new InputStreamReader(in, cache, closeStream);
+        } else {
+            final WindowCache memoryCache = new MostRecentlyUsedCache(1024);
+            final TempFileCache persistentCache = new TempFileCache(tempDir);
+            cache = DoubleCache.create(memoryCache, persistentCache);
+            reader = new InputStreamReader(in, cache, closeStream);
+            reader.setSoftWindowRecovery(persistentCache);
+        }
+        return reader;
+    }
+
+
     /**
      * @param tempDir The temp directory to create the temporary file in.
      * @param stream An input stream from which to create a file.

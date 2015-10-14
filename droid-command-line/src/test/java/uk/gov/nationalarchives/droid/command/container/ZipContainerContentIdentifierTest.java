@@ -130,8 +130,7 @@ public class ZipContainerContentIdentifierTest {
                 new FileSystemIdentificationRequest(metaData, identifier);
             IdentificationResultCollection results =
                 new IdentificationResultCollection(request);
-            InputStream zipStream = new FileInputStream(file);
-            request.open(zipStream);
+            request.open(file);
             results = zipContainerContentIdentifier.process(request.getSourceInputStream(), results);
             if (results.getResults().isEmpty()) {
                 fail("ZIP file not identified");

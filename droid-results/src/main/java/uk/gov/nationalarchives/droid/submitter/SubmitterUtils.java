@@ -32,7 +32,6 @@
 package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.File;
-import java.net.URI;
 
 /**
  * @author rflitcroft
@@ -47,39 +46,37 @@ public final class SubmitterUtils {
     /**
      * Determines via best effort if the file system on which the file resides is available.
      * @param file a file
-     * @param topLevelResource the top-level resource URI for the file.
+     * @param topLevelAbsolutePath  the top-level resource URI for the file.
      * @return true if the file system is available, false otherwise.
      */
-    static boolean isFileSystemAvailable(File file, URI topLevelResource) {
+    static boolean isFileSystemAvailable(final File file, final String topLevelAbsolutePath) {
         
-        File topLevel = new File(topLevelResource);
-        
-        if (isEqualPath(file, topLevel)) {
+        if (isEqualPath(file, topLevelAbsolutePath)) {
             return file.exists();
         } 
         
-        return isFileSystemAvailable(file, topLevel);
+        return isFileSystemAvailable2(file, topLevelAbsolutePath);
     }
     
-    private static boolean isFileSystemAvailable(File file, File topLevelResource) { 
+    private static boolean isFileSystemAvailable2(final File file, final String topLevelAbsolutePath) {
         
         boolean available;
         
         if (file.exists()) {
             available = true;
         } else {
-            if (isEqualPath(file, topLevelResource)) {
+            if (isEqualPath(file, topLevelAbsolutePath)) {
                 available = false;
             } else {
-                available = isFileSystemAvailable(file.getParentFile(), topLevelResource);
+                available = isFileSystemAvailable2(file.getParentFile(), topLevelAbsolutePath);
             }
         }
         
         return available;
     }
     
-    private static boolean isEqualPath(File file1, File file2) {
-        return file1.getAbsolutePath().equals(file2.getAbsolutePath());
+    private static boolean isEqualPath(final File file1, final String topLevelAbsolutePath) {
+        return topLevelAbsolutePath.equals(file1.getAbsolutePath());
     }
     
 }

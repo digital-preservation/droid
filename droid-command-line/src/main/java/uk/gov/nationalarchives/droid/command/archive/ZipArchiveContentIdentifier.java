@@ -76,7 +76,7 @@ public class ZipArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @throws CommandExecutionException When an exception happens during execution
      * @throws CommandExecutionException When an exception happens during archive file access
      */
-    public void identify(final URI uri, final IdentificationRequest request)
+    public void identify(final URI uri, final IdentificationRequest  request)
         throws CommandExecutionException {
 
         final String newPath = makeContainerURI("zip", request.getFileName());

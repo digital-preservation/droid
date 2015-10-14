@@ -77,6 +77,9 @@ package uk.gov.nationalarchives.droid.core.signature;
  *
  * @author linb
  */
+//BNO-BS2
+import net.byteseek.io.reader.WindowReader;
+
 public interface ByteReader {
 
     /* Setters for identification status */
@@ -191,16 +194,9 @@ public interface ByteReader {
      */
     byte getByte(long fileIndex);
 
-    /**
-     * This is provided to avoid having to call getByte on this class.
-     * Since getting bytes is called orders of magnitude more than anything
-     * else it is extremely performance sensitive.
-     * If the implementing class has direct access to bytes, return itself.
-     * If not, return a child object which does implementing the 
-     * net.domesdaybook.reader interface instead. 
-     * @return An object which can read bytes.
-     */
-    net.domesdaybook.reader.ByteReader getReader();
+
+    //BNO-BS2
+    WindowReader getWindowReader();
     
     /**
      * Returns the number of bytes in the file.
