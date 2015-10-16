@@ -38,10 +38,12 @@ import java.net.URI;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 
+import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.GZipIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
@@ -55,6 +57,9 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
 
     private static final long SIZE = 12L;
     private static final long TIME = 13L;
+
+    private BinarySignatureIdentifier binarySignatureIdentifier;
+    private ContainerSignatureDefinitions containerSignatureDefinitions;
     
     /**
      * 
@@ -80,25 +85,29 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @throws CommandExecutionException When an exception happens during execution
      * @throws CommandExecutionException When an exception happens during archive file input/output
      */
+
     public final void identify(final URI uri, final IdentificationRequest request)
-        throws CommandExecutionException {
-        
-        final String newPath = makeContainerURI("gzip", request.getFileName());
-        setSlash1("");
+            throws CommandExecutionException {
+
+        final String newPath = "gzip:" + slash1 + path + request.getFileName() + "!" + slash;
+        slash1 = "";
         final URI newUri = URI.create(GzipUtils.getUncompressedFilename(uri.toString()));
-        
+
         final RequestIdentifier identifier = new RequestIdentifier(newUri);
         final RequestMetaData metaData = new RequestMetaData(SIZE, TIME, uri.getPath());
         final GZipIdentificationRequest gzRequest = new GZipIdentificationRequest(
-                metaData, identifier, getTmpDir());
+                metaData, identifier, tmpDir);
 
         GzipCompressorInputStream gzin = null;
         try {
-            gzin = new GzipCompressorInputStream(
-                new FileInputStream(request.getSourceFile()), true);
+            gzin = new GzipCompressorInputStream(request.getSourceInputStream());
+            gzRequest.open(gzin);
+            final IdentificationResultCollection gzResults =
+                    binarySignatureIdentifier.matchBinarySignatures(gzRequest);
 
-            expandContainer(gzRequest, gzin, newPath);
-
+            final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
+                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandWebArchives());
+            resultPrinter.print(gzResults, gzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive
         } finally {
@@ -111,4 +120,5 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
             }
         }
     }
+
 }

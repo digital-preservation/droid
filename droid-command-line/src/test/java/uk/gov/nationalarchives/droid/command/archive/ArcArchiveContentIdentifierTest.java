@@ -48,6 +48,7 @@ import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.WebArchiveEntryIdentificationRequest;
 
 /**
  *
@@ -110,8 +111,8 @@ public class ArcArchiveContentIdentifierTest {
             fileName = file.getCanonicalPath();
             RequestMetaData metaData =
                 new RequestMetaData(file.length(), file.lastModified(), fileName);
-            FileSystemIdentificationRequest request =
-                new FileSystemIdentificationRequest(metaData, identifier);
+            WebArchiveEntryIdentificationRequest request =
+                new WebArchiveEntryIdentificationRequest(metaData, identifier, new File("src/test/resources/temp"));
 
             InputStream arcStream = new FileInputStream(file);
             request.open(arcStream);

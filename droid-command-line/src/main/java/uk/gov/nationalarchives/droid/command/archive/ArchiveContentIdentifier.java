@@ -51,12 +51,12 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollect
 
 public abstract class ArchiveContentIdentifier {
 
-    private String slash;
-    private String slash1;
+    protected String slash;
+    protected String slash1;
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private File tmpDir;
-    private String path;
+    protected File tmpDir;
+    protected String path;
     private Boolean expandWebArchives;
 
 

@@ -170,7 +170,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name = "datasource" ref="dataSource"/>
     </bean>
 
-    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao" init-method="init">
+    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao" init-method="init" destroy-method="cleanup">
         <property name = "datasource" ref="dataSource"/>
     </bean>
 

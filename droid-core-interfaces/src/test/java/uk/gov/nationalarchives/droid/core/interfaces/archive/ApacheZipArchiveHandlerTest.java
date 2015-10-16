@@ -54,8 +54,9 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.junit.matchers.TypeSafeMatcher;
+//import org.junit.matchers.TypeSafeMatcher;
 import org.mockito.ArgumentCaptor;
+import org.junit.internal.matchers.TypeSafeMatcher;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -191,7 +192,7 @@ public class ApacheZipArchiveHandlerTest {
     }
 
     private static Matcher<IdentificationResult> resultMatcher(final URI uri) {
-        
+
         return new TypeSafeMatcher<IdentificationResult>() {
             @Override
             public void describeTo(Description arg0) {

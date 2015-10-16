@@ -295,6 +295,7 @@ public class DroidMainFrame extends JFrame {
             }
         });
 
+
         initComponents();
         setLocationRelativeTo(null);
 

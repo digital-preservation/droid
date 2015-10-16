@@ -113,8 +113,9 @@ public class WarcArchiveContentIdentifierTest {
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
 
-            InputStream warcStream = new FileInputStream(file);
-            request.open(warcStream);
+            //InputStream warcStream = new FileInputStream(file);
+            //request.open(warcStream);
+            request.open(file);
             warcArchiveContentIdentifier.identify(uri, request);
         } catch (Exception e) {
             throw new CommandExecutionException(e);

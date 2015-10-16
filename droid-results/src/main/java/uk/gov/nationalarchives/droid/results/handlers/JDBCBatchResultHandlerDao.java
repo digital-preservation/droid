@@ -238,6 +238,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 for (String ddlSQL : createIndexesAndConstraints) {
                     final PreparedStatement ddlStatement = conn.prepareStatement(ddlSQL);
                     ddlStatement.execute();
+                    ddlStatement.close();
                 }
 
                 conn.commit();
@@ -490,6 +491,11 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         databaseWriterThread.start();
     }
 
+    public void cleanup() {
+        System.out.println("Cleaning up JDBCBatchResultHandlerDao");
+        this.writer.closeResources();
+    }
+
 
     public synchronized static void setIsFreshTemplate(boolean isFreshTemplate) {
         freshTemplate = isFreshTemplate;
@@ -535,6 +541,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         protected boolean removeEldestEntry(final Map.Entry<Long, ProfileResourceNode> eldest) {
             return size() > capacity;
         }
+
     }
 
 

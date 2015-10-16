@@ -25,7 +25,7 @@
         <module>droid-core</module>
         <module>droid-core-interfaces</module>
         <module>droid-build-tools</module>
-        <!--<module>droid-command-line</module>-->
+        <module>droid-command-line</module>
         
         <module>droid-container</module>
         <module>droid-export</module>
