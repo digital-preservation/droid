@@ -68,8 +68,7 @@ import uk.gov.nationalarchives.droid.profile.FilterImpl;
  * create planets xml using different mechanism now.
  */
 @Ignore
-// BNO: Commented out as causes compilation failure with Java 8 build...
-//@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml",
         "classpath*:META-INF/spring-results.xml",
         "classpath*:META-INF/spring-test.xml" })
@@ -89,13 +88,13 @@ public class JpaPlanetsXMLDaoTest {
     @BeforeClass
     public static void getTestData() throws Exception {
         testData = new FlatXmlDataSetBuilder().build(JpaPlanetsXMLDaoTest.class
-                .getResource("planets-xml-test-data.xml"));
-        System.setProperty("hibernate.generateDdl", "true");
+                .getResource("planets-xml-test-data-sans-formats.xml"));
+        //System.setProperty("hibernate.generateDdl", "true");
     }
 
     @AfterClass
     public static void tearDown() {
-        System.clearProperty("hibernate.generateDdl");
+        //System.clearProperty("hibernate.generateDdl");
     }
 
     @Test

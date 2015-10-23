@@ -60,9 +60,9 @@ public class ArcArchiveContentIdentifierTest {
     private ArcArchiveContentIdentifier arcArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V78.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V82.xml";
     private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20140922.xml";
+            "src/test/resources/signatures/container-signature-20150307.xml";
     private String arcFile =
             "src/test/resources/testfiles/expanded.arc";
     

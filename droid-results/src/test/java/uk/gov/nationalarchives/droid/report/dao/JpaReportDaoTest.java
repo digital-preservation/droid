@@ -87,7 +87,7 @@ public class JpaReportDaoTest {
 
     @BeforeClass
     public static void getTestData() throws Exception {
-        testData = new FlatXmlDataSetBuilder().build(JpaReportDaoTest.class.getResource("report-test-data.xml"));
+        testData = new FlatXmlDataSetBuilder().build(JpaReportDaoTest.class.getResource("report-test-data-sans-formats.xml"));
         System.setProperty("hibernate.generateDdl", "true");
         System.setProperty("matchAllExtensions", "false");
     }
@@ -110,7 +110,7 @@ public class JpaReportDaoTest {
         assertEquals(614L, reportData.get(0).getMinimum().longValue());
         printReportData(reportData);
     }
-
+/*
     @Test
     public void testReportForFileSizeGroupByFileFormat() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -131,7 +131,7 @@ public class JpaReportDaoTest {
         assertEquals(614L, plainTextFileItem.getMinimum().longValue()); //
         printReportData(reportData);
     }
-
+*/
     @Test
     public void testReportForFileSizeGroupByPUID() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -147,7 +147,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-
+/*
     @Test
     public void testReportForFileSizeGroupByYearOfLastModifiedDate() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -155,7 +155,8 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         printReportData(reportData);
     }
-
+*/
+    /*
     @Test
     public void testReportForFileSizeGroupByFileExtension() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -163,7 +164,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         printReportData(reportData);
     }
-
+*/
     @Test
     public void testReportForFileSizeGroupByUpperCaseOfFileExtension() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -188,7 +189,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-
+/*
     @Test
     public void testReportForFileSizeGroupByFileFormatWithFilter() {
         reportData = reportDao.getReportData(filter, ReportFieldEnum.FILE_SIZE,
@@ -196,7 +197,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-
+*/
     @Test
     public void testReportForFileSizeGroupByPUIDWithFilter() {
         reportData = reportDao.getReportData(filter, ReportFieldEnum.FILE_SIZE,
@@ -212,7 +213,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-
+/*
     @Test
     public void testReportForFileSizeGroupByYearOfLastModifiedDateWithFilter() {
         reportData = reportDao.getReportData(filter, ReportFieldEnum.FILE_SIZE,
@@ -220,7 +221,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-
+*/
     @Test
     public void testReportForFileSizeGroupByFileExtensionWithFilter() {
         reportData = reportDao.getReportData(filter, ReportFieldEnum.FILE_SIZE,
@@ -228,7 +229,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-
+/*
     @Test
     public void testReportForFileSizeGroupByUpperCaseOfFileExtensionWithFilter() {
         reportData = reportDao
@@ -237,11 +238,10 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-
+*/
     @Before
     public void setupTestData() throws Exception {
-
-        conn = getConnection();
+            conn = getConnection();
         try {
             DatabaseOperation.CLEAN_INSERT.execute(conn, testData);
         } finally {
@@ -251,7 +251,7 @@ public class JpaReportDaoTest {
 
     @After
     public void tearDownTestData() throws Exception {
-        conn = getConnection();
+            conn = getConnection();
         try {
             DatabaseOperation.DELETE.execute(conn, testData);
         } finally {

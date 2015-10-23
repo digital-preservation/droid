@@ -157,7 +157,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         // the database schema objects (created by hibernate in previous versions of DROID) will not exist.  Moreover,
         // we can't just create the schema then call setUpFormatsAndDatabaseWriter() because the format data won't
         // have been populated. This is handled by ProfileContextLocator-generateNewDatabaseAndTemplates
-        //  -profileMabager.initProfile, after this class has been instantiated by Spring...
+        //  -profileManager.initProfile, after this class has been instantiated by Spring...
         synchronized (locker) {
             if(!getIsFreshTemplate()) {
                 setUpFormatsAndDatabaseWriter();

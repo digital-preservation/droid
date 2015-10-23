@@ -77,6 +77,9 @@ public class DerbyPooledDataSource extends BasicDataSource {
             String message = String.format("Invalid driver class name: %s", driverClassName);
             log.error(message, e);
             throw new RuntimeException(message, e);
+        }  catch (Exception e) {
+            String s = e.getMessage();
+            log.error(s);
         }
     }
     

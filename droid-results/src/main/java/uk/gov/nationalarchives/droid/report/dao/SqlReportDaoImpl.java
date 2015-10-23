@@ -59,14 +59,7 @@ public class SqlReportDaoImpl implements ReportDao {
     private static String formatfilter = "formatfilter";
     
     private final Log log = LogFactory.getLog(getClass());
-
-    //BNO
     private Connection connection;
-
-   // @PersistenceContext
-   // private EntityManager entityManager;
-
-    private JDBCBatchResultHandlerDao resultHandlerDao;
     private DataSource datasource;
 
     //BNO: For use in determining filter parameter types so we can set these to the correct SQL type.
@@ -349,5 +342,10 @@ public class SqlReportDaoImpl implements ReportDao {
 
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
+    }
+
+
+    public DataSource getDatasource() {
+        return this.datasource;
     }
 }
