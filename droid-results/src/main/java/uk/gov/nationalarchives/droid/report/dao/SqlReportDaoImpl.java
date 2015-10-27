@@ -52,14 +52,13 @@ import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 /**
  * JPA implementation of JpaPlanetsXMLDaoImpl.
  * 
- * @author Alok Kumar Dash.
+ * @author Alok Kumar Dash. , Brian O'Reilly
  */
 public class SqlReportDaoImpl implements ReportDao {
 
     private static String formatfilter = "formatfilter";
     
     private final Log log = LogFactory.getLog(getClass());
-    private Connection connection;
     private DataSource datasource;
 
     //BNO: For use in determining filter parameter types so we can set these to the correct SQL type.
@@ -120,26 +119,13 @@ public class SqlReportDaoImpl implements ReportDao {
                 if(statement != null) {
                     statement.close();
                 }
-                if(connection != null) {
-                    connection.close();
-                }
             } catch (SQLException e) {
                 //e.printStackTrace();
                 log.error("Error closing statement or results set during report generation", e);
             }
         }
         return null;
-    /*
-        final Query query = getQuery(reportField, groupByFields, filter); //BNO this is a Hibernate Query
-        final List<?> results = query.getResultList();  //BNO this is a Hibernate method call
 
-        List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
-        //if (results != null && !results.isEmpty()) {
-        if (results != null) {
-            reportData = reportField.getType().populateReportedData(results);
-        }
-        return reportData;
-           */
     }
 
     private Query getQuery(ReportFieldEnum reportField, List<GroupByField> groupByFields, Criterion filter) {

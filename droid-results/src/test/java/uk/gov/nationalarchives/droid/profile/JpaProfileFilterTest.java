@@ -70,7 +70,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml", "classpath*:META-INF/spring-results.xml",
         "classpath*:META-INF/spring-test.xml" })
 @TransactionConfiguration(defaultRollback = true)
-@Ignore
 public class JpaProfileFilterTest {
 
     private static IDataSet testData;

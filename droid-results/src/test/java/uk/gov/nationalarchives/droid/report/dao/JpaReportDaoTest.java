@@ -31,18 +31,32 @@
  */
 package uk.gov.nationalarchives.droid.report.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.dbcp.BasicDataSource;
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.statement.IStatementFactory;
+import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.After;
@@ -62,8 +76,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Criterio
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Restrictions;
 
 /**
- * @author Alok Kumar Dash
- * 
+ * @author Alok Kumar Dash, Brian O Reilly
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml", "classpath*:META-INF/spring-results.xml",
@@ -80,21 +94,24 @@ public class JpaReportDaoTest {
     @Autowired
     private ReportDao reportDao;
 
-    @Autowired
-    private DataSource dataSource;
+    //@Autowired
+    //private DataSource dataSource;
 
-    private IDatabaseConnection conn;
+    //private IDatabaseConnection conn;
+    private static IDatabaseConnection conn;
 
     @BeforeClass
     public static void getTestData() throws Exception {
         testData = new FlatXmlDataSetBuilder().build(JpaReportDaoTest.class.getResource("report-test-data-sans-formats.xml"));
-        System.setProperty("hibernate.generateDdl", "true");
+        //System.setProperty("hibernate.generateDdl", "true");
         System.setProperty("matchAllExtensions", "false");
+        conn = TestDatabase.getConnection();
     }
 
     @AfterClass
     public static void tearDown() {
-        System.clearProperty("hibernate.generateDdl");
+        //System.clearProperty("hibernate.generateDdl");
+        TestDatabase.closeResources();
     }
 
     // Without Filter
@@ -110,19 +127,19 @@ public class JpaReportDaoTest {
         assertEquals(614L, reportData.get(0).getMinimum().longValue());
         printReportData(reportData);
     }
-/*
+
     @Test
     public void testReportForFileSizeGroupByFileFormat() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
                 getGroupByFieldList(ReportFieldEnum.FILE_FORMAT));
-        
+
         ReportLineItem plainTextFileItem = null;
         for (ReportLineItem item : reportData) {
             if ("Plain Text File".equals(getGroupValue(item, 0))) {
                 plainTextFileItem = item;
             }
         }
-        
+
         assertEquals("Plain Text File", getGroupValue(plainTextFileItem, 0));
         assertEquals(5L, plainTextFileItem.getCount().longValue());
         assertEquals(4697.0D, plainTextFileItem.getAverage().doubleValue(), 0.0001);
@@ -131,7 +148,7 @@ public class JpaReportDaoTest {
         assertEquals(614L, plainTextFileItem.getMinimum().longValue()); //
         printReportData(reportData);
     }
-*/
+
     @Test
     public void testReportForFileSizeGroupByPUID() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -147,7 +164,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-/*
+
     @Test
     public void testReportForFileSizeGroupByYearOfLastModifiedDate() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -155,8 +172,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         printReportData(reportData);
     }
-*/
-    /*
+
     @Test
     public void testReportForFileSizeGroupByFileExtension() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -164,7 +180,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         printReportData(reportData);
     }
-*/
+
     @Test
     public void testReportForFileSizeGroupByUpperCaseOfFileExtension() {
         reportData = reportDao.getReportData(null, ReportFieldEnum.FILE_SIZE,
@@ -189,7 +205,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-/*
+
     @Test
     public void testReportForFileSizeGroupByFileFormatWithFilter() {
         reportData = reportDao.getReportData(filter, ReportFieldEnum.FILE_SIZE,
@@ -197,7 +213,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-*/
+
     @Test
     public void testReportForFileSizeGroupByPUIDWithFilter() {
         reportData = reportDao.getReportData(filter, ReportFieldEnum.FILE_SIZE,
@@ -213,7 +229,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-/*
+
     @Test
     public void testReportForFileSizeGroupByYearOfLastModifiedDateWithFilter() {
         reportData = reportDao.getReportData(filter, ReportFieldEnum.FILE_SIZE,
@@ -221,7 +237,7 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-*/
+
     @Test
     public void testReportForFileSizeGroupByFileExtensionWithFilter() {
         reportData = reportDao.getReportData(filter, ReportFieldEnum.FILE_SIZE,
@@ -229,41 +245,46 @@ public class JpaReportDaoTest {
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-/*
+
     @Test
     public void testReportForFileSizeGroupByUpperCaseOfFileExtensionWithFilter() {
         reportData = reportDao
                 .getReportData(filter, ReportFieldEnum.FILE_SIZE,
-                 getGroupByFieldList(ReportFieldEnum.FILE_EXTENSION, "upper"));
+                        getGroupByFieldList(ReportFieldEnum.FILE_EXTENSION, "upper"));
         assertTrue(reportData.size() > 0);
         //printReportData(reportData);
     }
-*/
+
     @Before
     public void setupTestData() throws Exception {
-            conn = getConnection();
+
+        //conn = getConnection();
+        if(conn == null) {
+            conn = TestDatabase.getConnection();
+        }
         try {
             DatabaseOperation.CLEAN_INSERT.execute(conn, testData);
         } finally {
-            conn.close();
+            //conn.close();
         }
     }
 
     @After
     public void tearDownTestData() throws Exception {
-            conn = getConnection();
+        //conn = getConnection();
+        if(conn == null) {
+            conn = TestDatabase.getConnection();
+            if(this.reportDao instanceof SqlReportDaoImpl) {
+                ((SqlReportDaoImpl)reportDao).getDatasource().getConnection().close();
+            }
+        }
         try {
             DatabaseOperation.DELETE.execute(conn, testData);
         } finally {
-            conn.close();
+            //conn.close();
         }
     }
 
-    protected IDatabaseConnection getConnection() throws Exception {
-        Connection con = DataSourceUtils.getConnection(dataSource);
-        con.setAutoCommit(true);
-        return new DatabaseConnection(con);
-    }
 
     private void printReportData(List<ReportLineItem> myReportData) {
         for (ReportLineItem item : myReportData) {
@@ -286,7 +307,7 @@ public class JpaReportDaoTest {
 //
 //        return myfilter;
 //    }
-    
+
     private Criterion newFilter() {
         return Restrictions.lt("metaData.size", 10000L);
     }
@@ -294,7 +315,7 @@ public class JpaReportDaoTest {
     private List<GroupByField> getGroupByFieldList(ReportFieldEnum reportField) {
         return getGroupByFieldList(reportField, "");
     }
-    
+
     private List<GroupByField> getGroupByFieldList(ReportFieldEnum reportField, String function) {
         GroupByField grouper = new GroupByField();
         grouper.setGroupByField(reportField);
@@ -303,10 +324,75 @@ public class JpaReportDaoTest {
         result.add(grouper);
         return result;
     }
-    
+
     private String getGroupValue(ReportLineItem item, int index) {
-        return item.getGroupByValues().size() > index 
-            ? item.getGroupByValues().get(index) 
-            : "";
+        return item.getGroupByValues().size() > index
+                ? item.getGroupByValues().get(index)
+                : "";
+    }
+
+    private static class TestDatabase {
+
+        private static IDatabaseConnection conn;
+        private static Connection con;
+
+        public static IDatabaseConnection getConnection() {
+
+            if(conn == null) {
+                InputStream in = null;
+                final BasicDataSource dataSource = new BasicDataSource() ;
+                try {
+
+                    Properties prop = new Properties();
+                    in = JpaReportDaoTest.class.getResourceAsStream("../../../../../../src/test/resources/jpa-test.properties");
+                    prop.load(in);
+
+                    dataSource.setDriverClassName(prop.getProperty("datasource.driverClassName"));
+                    dataSource.setUrl(prop.getProperty("datasource.url"));
+                    dataSource.setUsername(prop.getProperty("datasource.username"));
+                    dataSource.setPassword(prop.getProperty("datasource.password"));
+                    dataSource.setMinIdle(Integer.parseInt(prop.getProperty("datasource.minIdle")));
+                    dataSource.setMaxActive(Integer.parseInt(prop.getProperty("datasource.maxActive")));
+                    dataSource.setInitialSize(Integer.parseInt(prop.getProperty("datasource.initialSize")));
+
+                } catch(IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if(in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                try {
+                    con = dataSource.getConnection();
+                    con.setAutoCommit(true);
+                    conn = new DatabaseConnection(con);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch(DatabaseUnitException e) {
+                    e.printStackTrace();
+                }
+            }
+            return conn;
+        }
+
+        public static void closeResources() {
+
+            try {
+                if(conn != null) {
+                    conn.close();
+                }
+
+                if(con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

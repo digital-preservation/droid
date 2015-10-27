@@ -67,7 +67,6 @@ import uk.gov.nationalarchives.droid.profile.FilterImpl;
  * @author Alok Kumar Dash
  * create planets xml using different mechanism now.
  */
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml",
         "classpath*:META-INF/spring-results.xml",

@@ -66,7 +66,7 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
     private static final String ZERO = "0";
 
     private String filterQueryString = "";
-    //private Map<String, Object> filterQueryParameterMap;
+
     private Object[] filterParams;
     private boolean filterEnabled;
 
@@ -111,13 +111,7 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
             
             filterQueryString = " AND " + queryBuilder.toEjbQl();
             filterParams = queryBuilder.getValues();
-            
-//            FilterQueryStringGenerator filterQueryGenerator = new FilterQueryStringGenerator();
-//            FilterQueryStringGenerator.FilterQueryStringAndNamedParameter queryAndParameter = filterQueryGenerator
-//                    .getFilterQueryString(filter);
-//            filterQueryString = " AND " + queryAndParameter.getFilterQueryString();
-//            filterQueryParameterMap = queryAndParameter.getNamesParameterMap();
-        } 
+        }
 
         PlanetsXMLData planetXMLData = new PlanetsXMLData();
         planetXMLData.setProfileStat(getProfileStat());
@@ -135,21 +129,6 @@ public class JpaPlanetsXMLDaoImpl implements PlanetsXMLDao {
             for (Object param : filterParams) {
                 q.setParameter(pos++, param);
             }
-//            
-//            
-//            for (String parameterKey : filterQueryParameterMap.keySet()) {
-//                log.info("The Parameter is : " + parameterKey);
-//
-//                if (filterQueryParameterMap.get(parameterKey) instanceof String) {
-//                    q.setParameter(parameterKey, filterQueryParameterMap.get(parameterKey));
-//                    log.info("The Parameter  Value is : "
-//                            + filterQueryParameterMap.get(parameterKey));
-//                } else if (filterQueryParameterMap.get(parameterKey) instanceof Long) {
-//                    q.setParameter(parameterKey, filterQueryParameterMap.get(parameterKey));
-//                    log.info("The Parameter Value is : "
-//                            + filterQueryParameterMap.get(parameterKey));
-//                }
-//            }
         }
     }
 
