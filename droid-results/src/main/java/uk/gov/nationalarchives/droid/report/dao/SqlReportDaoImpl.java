@@ -50,7 +50,7 @@ import uk.gov.nationalarchives.droid.profile.SqlUtils;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 
 /**
- * JPA implementation of JpaPlanetsXMLDaoImpl.
+ * JDBC implementation of JpaPlanetsXMLDaoImpl.
  * 
  * @author Alok Kumar Dash. , Brian O'Reilly
  */
@@ -99,10 +99,11 @@ public class SqlReportDaoImpl implements ReportDao {
 
         PreparedStatement statement = null;
         ResultSet resultset = null;
+        Connection connection = null;
 
         final String sqlQuery = getQueryString(reportField, groupByFields, filter);
         try{
-            final Connection connection = this.datasource.getConnection();
+            connection = this.datasource.getConnection();
             statement = connection.prepareStatement(sqlQuery);
             setFilterParameters(statement, filter);
             resultset = statement.executeQuery();
@@ -119,10 +120,14 @@ public class SqlReportDaoImpl implements ReportDao {
                 if(statement != null) {
                     statement.close();
                 }
+                if(connection != null) {
+                    connection.close();
+                }
             } catch (SQLException e) {
                 //e.printStackTrace();
                 log.error("Error closing statement or results set during report generation", e);
             }
+
         }
         return null;
 

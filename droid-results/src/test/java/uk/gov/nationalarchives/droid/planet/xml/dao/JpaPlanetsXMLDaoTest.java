@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.planet.xml.dao;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,6 +181,7 @@ public class JpaPlanetsXMLDaoTest {
     @After
     public void tearDownTestData() throws Exception {
         conn = getConnection();
+
         try {
             DatabaseOperation.DELETE.execute(conn, testData);
         } finally {
@@ -188,7 +190,10 @@ public class JpaPlanetsXMLDaoTest {
     }
 
     protected IDatabaseConnection getConnection() throws Exception {
-        return new DatabaseConnection(DataSourceUtils.getConnection(dataSource));
+
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        con.setAutoCommit(true);
+        return new DatabaseConnection(con);
     }
 
 }

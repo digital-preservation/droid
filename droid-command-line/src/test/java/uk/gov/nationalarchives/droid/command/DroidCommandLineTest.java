@@ -63,6 +63,7 @@ import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 
 /**
@@ -148,6 +149,7 @@ public class DroidCommandLineTest {
     }
     
     @Test
+    //@Ignore  //BNO
     public void testExportWith3Profiles() throws Exception {
         String[] args = new String[] {
             "-E",
@@ -321,6 +323,7 @@ public class DroidCommandLineTest {
     }
     
     @Test
+    //@Ignore //BNO
     public void testFilterFieldNames() throws Exception {
         String[] args = new String[] {
             "-k"
@@ -518,7 +521,6 @@ public class DroidCommandLineTest {
         commandLine.processExecution();
     }
 
-    @Ignore("BNO - fails in Java 8 build when DroidCommandLine calls LogFactory.getLog")
     @Test
     public void testDisplayAllSignatureFiles() throws CommandLineException {
         
@@ -572,9 +574,7 @@ public class DroidCommandLineTest {
      * this would somehow be read from configuration!
      * @throws CommandLineException
      */
-    @Test
-    //BNO 23-Oct-2015 TODO: Disabled for now, failure somwthing to do with Log4J
-    @Ignore
+    @Test(timeout = 20000) //BNO added the timeout as getting "Not started" in Intellij but it doesn't seem to make any difference!!
     public void runRecursiveNoProfileWithFileExts() throws CommandLineException {
         String[] args = new String[] {
             "-q",
@@ -586,7 +586,13 @@ public class DroidCommandLineTest {
             "--extension-list",
             "xml", "txt", "jp2", "jpg"
         };
-     
+
+        //TODO: BNO - added this call as otherwise an error occurs when trying instantiate the log
+        // when we call new NoProfileRunCommand();  However, this does mean that configureRuntimeEnvironment
+        // is called twice as it's also called in ommandLine.processExecution();  This only affects tests
+        // not live (in live the Main method in DroidCommandLine handles this but this isn't called in the tests)
+        RuntimeConfig.configureRuntimeEnvironment();
+
         NoProfileRunCommand noProfileRunCmd = new NoProfileRunCommand();
 		when(context.getNoProfileRunCommand()).thenReturn(noProfileRunCmd);
      
@@ -602,9 +608,8 @@ public class DroidCommandLineTest {
      * This has been added by Riz Rahman to test the -Nr(noProfile) with -q (quiet), -R (recursive) no file extensions functionality
      * @throws CommandLineException
      */
-    @Test
-    //BNO 23-Oct-2015 TODO: Disabled for now, failure somwthing to do with Log4J
-    @Ignore
+    @Test(timeout=20000)  //BNO added the timeout as getting "Not started" in Intellij but it doesn't seem to make any difference!!
+    //@Ignore
     public void runRecursiveNoProfileWithoutFileExts() throws CommandLineException {
         String[] args = new String[] {
             "-q",
@@ -612,9 +617,16 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V78.xml"
+            "src/test/resources/signatures/DROID_SignatureFile_V82.xml"
         };
-     
+
+        //TODO: BNO - added this call as otherwise an error occurs when trying instantiate the log
+        // when we call new NoProfileRunCommand();  However, this does mean that configureRuntimeEnvironment
+        // is called twice as it's also called in commandLine.processExecution();  This only affects tests
+        // not live (in live the Main method in DroidCommandLine handles this but this isn't called in the tests)
+        RuntimeConfig.configureRuntimeEnvironment();
+
+
         NoProfileRunCommand noProfileRunCmd = new NoProfileRunCommand();
 		when(context.getNoProfileRunCommand()).thenReturn(noProfileRunCmd);
      

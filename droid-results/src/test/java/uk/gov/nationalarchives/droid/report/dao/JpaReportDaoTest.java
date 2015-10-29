@@ -345,8 +345,8 @@ public class JpaReportDaoTest {
 
                     Properties prop = new Properties();
                     in = JpaReportDaoTest.class.getResourceAsStream("../../../../../../src/test/resources/jpa-test.properties");
-                    prop.load(in);
 
+                    prop.load(in);
                     dataSource.setDriverClassName(prop.getProperty("datasource.driverClassName"));
                     dataSource.setUrl(prop.getProperty("datasource.url"));
                     dataSource.setUsername(prop.getProperty("datasource.username"));
@@ -354,7 +354,15 @@ public class JpaReportDaoTest {
                     dataSource.setMinIdle(Integer.parseInt(prop.getProperty("datasource.minIdle")));
                     dataSource.setMaxActive(Integer.parseInt(prop.getProperty("datasource.maxActive")));
                     dataSource.setInitialSize(Integer.parseInt(prop.getProperty("datasource.initialSize")));
-
+                //Properties may not be accessible when running the  test from e.g. a Maven bukld via cmmand line
+                } catch (NullPointerException e) {
+                    dataSource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
+                    dataSource.setUrl("jdbc:derby:droid-test-db;create=true");
+                    dataSource.setUsername("droid_user");
+                    dataSource.setPassword("droid_user");
+                    dataSource.setMinIdle(5);
+                    dataSource.setMaxActive(20);
+                    dataSource.setInitialSize(5);
                 } catch(IOException e) {
                     e.printStackTrace();
                 } finally {
