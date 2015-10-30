@@ -41,6 +41,8 @@ import java.io.RandomAccessFile;
 
 import net.byteseek.io.reader.InputStreamReader;
 import net.byteseek.io.reader.cache.*;
+import net.byteseek.object.factory.LongFactory;
+import net.byteseek.object.factory.PowerTwoIntervalLongFactory;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -66,6 +68,8 @@ public final class ResourceUtils {
     private static final int UNSIGNED_RIGHT_SHIFT_BY_25 = 25;    
     private static final int ARRAYLENGTH = 5;
     public static final double FREE_MEMORY_THRESHOLD = 64 * 1024 * 1024; // 64 Mb of free memory must be available.
+
+    static final LongFactory positionFactory = new PowerTwoIntervalLongFactory(12, 4096);
 
     /**
      * Private constructor to prevent construction of static utility class.
@@ -108,11 +112,13 @@ public final class ResourceUtils {
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
+            cache.setPositionFactory(positionFactory);
             reader = new InputStreamReader(in, cache);
         } else {
             final WindowCache memoryCache = new MostRecentlyUsedCache(1024);
             final TempFileCache persistentCache = new TempFileCache(tempDir);
             cache = DoubleCache.create(memoryCache, persistentCache);
+            cache.setPositionFactory(positionFactory);
             reader = new InputStreamReader(in, cache);
             reader.setSoftWindowRecovery(persistentCache);
         }
@@ -139,11 +145,13 @@ public final class ResourceUtils {
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
                     new TempFileCache(tempDir));
+            cache.setPositionFactory(positionFactory);
             reader = new InputStreamReader(in, cache, closeStream);
         } else {
             final WindowCache memoryCache = new MostRecentlyUsedCache(1024);
             final TempFileCache persistentCache = new TempFileCache(tempDir);
             cache = DoubleCache.create(memoryCache, persistentCache);
+            cache.setPositionFactory(positionFactory);
             reader = new InputStreamReader(in, cache, closeStream);
             reader.setSoftWindowRecovery(persistentCache);
         }
