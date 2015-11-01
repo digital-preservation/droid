@@ -82,7 +82,6 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
         // Use a caching strategy that uses soft references, to allow the GC to reclaim
         // cached file bytes in low memory conditions.
         final WindowCache cache = new TopAndTailFixedLengthCache(file.length(), TOP_TAIL_BUFFER_CAPACITY);
-        cache.setPositionFactory(ResourceUtils.positionFactory);
         fileReader = new FileReader(file, cache);
         ((FileReader)fileReader).useSoftWindows(true);
         this.file = file;
