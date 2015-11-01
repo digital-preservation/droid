@@ -36,9 +36,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
@@ -50,9 +47,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.list.TransformedList;
-import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -64,23 +58,12 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
  *
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class FileWalker extends DirectoryWalker {
+public class FileWalker {
 
     private StringBuilder URI_STRING_BUILDER = new StringBuilder(1024);
    
-    /**
-     * 
-     */
     private static final String FILE_SYSTEM_UNAVAILABLE = "File system appears to be unavailable for file: [%s]";
 
-    private final Transformer FILE_TO_URI_TRANSFORMER = new Transformer() {
-        @Override
-        public Object transform(Object input) {
-            //return ((File) input).toURI();
-            return SubmitterUtils.toURI((File) input, URI_STRING_BUILDER);
-        }
-    };
-    
     @XmlTransient
     private Log log = LogFactory.getLog(this.getClass());    
     
@@ -114,7 +97,6 @@ public class FileWalker extends DirectoryWalker {
      * @param recursive if the Filewalker should operate recursively
      */
     public FileWalker(URI root, boolean recursive) {
-        super(null, recursive ? -1 : 1);
         this.recursive = recursive;
         this.root = root;
         this.topLevelAbsolutePath = new File(root).getAbsolutePath();
@@ -134,9 +116,9 @@ public class FileWalker extends DirectoryWalker {
             progress = new ArrayDeque<ProgressEntry>();
         }
         
-        walk(new File(root), null);
+        walk(new File(root), 0);
     }
-    
+
     private static List<ProgressEntry> reverseProgress(Deque<ProgressEntry> progress) {
         List<ProgressEntry> reversed = new ArrayList<ProgressEntry>();
         for (Iterator<ProgressEntry> it = progress.descendingIterator(); it.hasNext();) {
@@ -146,40 +128,31 @@ public class FileWalker extends DirectoryWalker {
         return reversed;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void handleFile(File file, int depth, Collection results) 
-        throws IOException {
-        
-        if (!SubmitterUtils.isFileSystemAvailable(file, topLevelAbsolutePath)) {
-            log.error(String.format(FILE_SYSTEM_UNAVAILABLE, file.getAbsolutePath()));
-            throw new IOException(file.getAbsolutePath());
-        }
-        
-        if (fastForward) {
-            if (recoveryRoad.get(depth - 1).containsChild(toURI(file))) {
-                // FOUND IT!!
-                fastForward = false;
-            } else {
-                return;
+    private void walk(File directory, int depth) throws IOException {
+        if (handleDirectory(directory, depth)) {
+            final File[] children = directory.listFiles();
+            if (children != null) {
+                handleDirectoryStart(directory, depth, children);
+                if (recursive || depth == 0) {
+                    final int childDepth = depth + 1;
+                    for (final File child : children) {
+                        if (child.isDirectory()) {
+                            walk(child, childDepth);
+                        } else {
+                            handleFile(child, childDepth);
+                        }
+                    }
+                }
+                handleDirectoryEnd(directory, depth);
+            } else { // can't access children - restricted directory.
+                handleRestrictedDirectory(directory, depth);
             }
         }
-        
-        ProgressEntry progressEntry = progress.peek();
-        if (file.isFile()) {
-            fileHandler.handle(file, depth, progressEntry);
-        }
-        progressEntry.removeChild(toURI(file));
     }
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    protected boolean handleDirectory(File dir, int depth, Collection results) throws IOException {
+
+    protected boolean handleDirectory(File dir, int depth) throws IOException {
         boolean processDir = true;
-        
+
         if (!SubmitterUtils.isFileSystemAvailable(dir, topLevelAbsolutePath)) {
             log.error(String.format(FILE_SYSTEM_UNAVAILABLE, dir.getAbsolutePath()));
             throw new IOException(dir.getAbsolutePath());
@@ -200,13 +173,8 @@ public class FileWalker extends DirectoryWalker {
         }
         return processDir;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void handleDirectoryStart(File directory, int depth, Collection results) 
+
+    protected void handleDirectoryStart(File directory, int depth, File[] children)
         throws IOException {
         
         // if we are fast forwarding, then just keep going...
@@ -215,31 +183,39 @@ public class FileWalker extends DirectoryWalker {
         }
         
         ProgressEntry parent = progress.peek();
-        List unprocessedChildren = Collections.EMPTY_LIST;
-        ResourceId directoryId;
-        
-        if (recursive || depth == 0) {
-            File[] children = directory.listFiles();
-            if (children == null) {
-                directoryId = restrictedDirectoryHandler.handle(directory, depth, parent);
-            } else {
-                unprocessedChildren = TransformedList.decorate(new ArrayList<URI>(), FILE_TO_URI_TRANSFORMER); 
-                unprocessedChildren.addAll(Arrays.asList(children));
-                directoryId = directoryHandler.handle(directory, depth, parent);
-            }
-        } else {
-            directoryId = directoryHandler.handle(directory, depth, parent);
+        ResourceId directoryId = directoryHandler.handle(directory, depth, parent);
+        final List<URI> fileURIList = new ArrayList<URI>(children.length);
+        for (File child : children) {
+            fileURIList.add(toURI(child));
         }
-        progress.push(new ProgressEntry(toURI(directory), directoryId, unprocessedChildren));
+        progress.push(new ProgressEntry(toURI(directory), directoryId, fileURIList));
+    }
+
+    protected void handleFile(File file, int depth)
+            throws IOException {
+
+        if (!SubmitterUtils.isFileSystemAvailable(file, topLevelAbsolutePath)) {
+            log.error(String.format(FILE_SYSTEM_UNAVAILABLE, file.getAbsolutePath()));
+            throw new IOException(file.getAbsolutePath());
+        }
+
+        if (fastForward) {
+            if (recoveryRoad.get(depth - 1).containsChild(toURI(file))) {
+                // FOUND IT!!
+                fastForward = false;
+            } else {
+                return;
+            }
+        }
+
+        ProgressEntry progressEntry = progress.peek();
+        if (file.isFile()) {
+            fileHandler.handle(file, depth, progressEntry);
+        }
+        progressEntry.removeChild(toURI(file));
     }
     
-    
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void handleDirectoryEnd(File directory, int depth, Collection results) {
+    protected void handleDirectoryEnd(File directory, int depth) {
         
         if (fastForward) {
             // Indicates a failure to recover from an expected directory, so we
@@ -252,6 +228,20 @@ public class FileWalker extends DirectoryWalker {
         }
         
         progress.pop();
+        if (!progress.isEmpty()) {
+            progress.peek().removeChild(toURI(directory));
+        }
+    }
+
+
+    private void handleRestrictedDirectory(File directory, int depth) throws IOException {
+        // if we are fast forwarding, then just keep going...
+        if (fastForward) {
+            return;
+        }
+
+        ProgressEntry parent = progress.peek();
+        restrictedDirectoryHandler.handle(directory, depth, parent);
         if (!progress.isEmpty()) {
             progress.peek().removeChild(toURI(directory));
         }
@@ -317,7 +307,7 @@ public class FileWalker extends DirectoryWalker {
         @XmlElementWrapper(name = "Children")
         @XmlElement(name = "ChildUri")
         private List<URI> children;
-        
+
         /**
          * Default constructor.
          */
