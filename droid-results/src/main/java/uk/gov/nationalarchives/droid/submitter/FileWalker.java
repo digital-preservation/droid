@@ -66,16 +66,18 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FileWalker extends DirectoryWalker {
 
+    private StringBuilder URI_STRING_BUILDER = new StringBuilder(1024);
    
     /**
      * 
      */
     private static final String FILE_SYSTEM_UNAVAILABLE = "File system appears to be unavailable for file: [%s]";
 
-    private static final Transformer FILE_TO_URI_TRANSFORMER = new Transformer() {
+    private final Transformer FILE_TO_URI_TRANSFORMER = new Transformer() {
         @Override
         public Object transform(Object input) {
-            return ((File) input).toURI();
+            //return ((File) input).toURI();
+            return SubmitterUtils.toURI((File) input, URI_STRING_BUILDER);
         }
     };
     
@@ -143,7 +145,7 @@ public class FileWalker extends DirectoryWalker {
         }
         return reversed;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -158,7 +160,7 @@ public class FileWalker extends DirectoryWalker {
         }
         
         if (fastForward) {
-            if (recoveryRoad.get(depth - 1).containsChild(file.toURI())) {
+            if (recoveryRoad.get(depth - 1).containsChild(toURI(file))) {
                 // FOUND IT!!
                 fastForward = false;
             } else {
@@ -170,7 +172,7 @@ public class FileWalker extends DirectoryWalker {
         if (file.isFile()) {
             fileHandler.handle(file, depth, progressEntry);
         }
-        progressEntry.removeChild(file.toURI());
+        progressEntry.removeChild(toURI(file));
     }
     
     @SuppressWarnings("unchecked")
@@ -183,9 +185,8 @@ public class FileWalker extends DirectoryWalker {
             throw new IOException(dir.getAbsolutePath());
         }
 
-        URI dirUri = dir.toURI();
-        
         if (fastForward) {
+            URI dirUri = toURI(dir);
             if (!(depth < recoveryRoad.size() && recoveryRoad.get(depth).getUri().equals(dirUri))) {
                 // This directory is NOT on our road to recovery.
                 if (recoveryRoad.get(depth - 1).containsChild(dirUri)) {
@@ -229,7 +230,7 @@ public class FileWalker extends DirectoryWalker {
         } else {
             directoryId = directoryHandler.handle(directory, depth, parent);
         }
-        progress.push(new ProgressEntry(directory.toURI(), directoryId, unprocessedChildren));
+        progress.push(new ProgressEntry(toURI(directory), directoryId, unprocessedChildren));
     }
     
     
@@ -252,7 +253,7 @@ public class FileWalker extends DirectoryWalker {
         
         progress.pop();
         if (!progress.isEmpty()) {
-            progress.peek().removeChild(directory.toURI());
+            progress.peek().removeChild(toURI(directory));
         }
     }
     
@@ -290,7 +291,13 @@ public class FileWalker extends DirectoryWalker {
     void setProgress(Deque<ProgressEntry> progress) {
         this.progress = progress;
     }
-    
+
+
+    private URI toURI(final File file) {
+        return SubmitterUtils.toURI(file, URI_STRING_BUILDER);
+    }
+
+
     /**
      * A progress entry.
      * @author rflitcroft
