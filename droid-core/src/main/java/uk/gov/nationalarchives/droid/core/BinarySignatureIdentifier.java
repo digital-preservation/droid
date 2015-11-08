@@ -38,9 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -60,8 +57,6 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
  *
  */
 public class BinarySignatureIdentifier implements DroidCore {
-
-    private final Log log = LogFactory.getLog(getClass());
 
     private FFSignatureFile sigFile;
     private SignatureFileParser sigFileParser = new SignatureFileParser();
