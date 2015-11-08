@@ -184,7 +184,10 @@ public class BinarySignatureIdentifier implements DroidCore {
         // Build a set of format ids the results have priority over:
         FileFormatCollection allFormats = sigFile.getFileFormatCollection();
         Set<Integer> lowerPriorityIDs = new HashSet<Integer>();
-        for (IdentificationResult result : results.getResults()) {
+        final List<IdentificationResult> theResults = results.getResults();
+        int numResults = theResults.size();
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
             final String resultPUID = result.getPuid();
             final FileFormat format = allFormats.getFormatForPUID(resultPUID);
             lowerPriorityIDs.addAll(format.getFormatIdsHasPriorityOver());
@@ -192,7 +195,8 @@ public class BinarySignatureIdentifier implements DroidCore {
         
         // If a result has an id in this set, add it to the remove list;
         List<IdentificationResult> lowerPriorityResults = new ArrayList<IdentificationResult>();
-        for (IdentificationResult result : results.getResults()) {
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
             final String resultPUID = result.getPuid();
             final FileFormat format = allFormats.getFormatForPUID(resultPUID);
             if (lowerPriorityIDs.contains(format.getID())) {
@@ -201,7 +205,9 @@ public class BinarySignatureIdentifier implements DroidCore {
         }
          
         // Now remove any lower priority results from the collection:
-        for (IdentificationResult result : lowerPriorityResults) {
+        numResults = lowerPriorityResults.size();
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = lowerPriorityResults.get(i);
             results.removeResult(result);
         }
     }
