@@ -45,7 +45,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,14 +59,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FileWalker {
 
-    private StringBuilder URI_STRING_BUILDER = new StringBuilder(1024);
-   
     private static final String FILE_SYSTEM_UNAVAILABLE = "File system appears to be unavailable for file: [%s]";
 
-    @XmlTransient
-    private Log log = LogFactory.getLog(this.getClass());    
+    private Log log = LogFactory.getLog(this.getClass());
     
-    @XmlElement(name = "RootUri")
+
     private URI root;
 
     @XmlAttribute(name = "Recursive")
@@ -77,13 +73,10 @@ public class FileWalker {
     @XmlElement(name = "ProgressEntry")
     private Deque<ProgressEntry> progress;
 
-    @XmlTransient
     private String topLevelAbsolutePath;
-
     private FileWalkerHandler fileHandler;
     private FileWalkerHandler directoryHandler;
     private FileWalkerHandler restrictedDirectoryHandler;
-
     private boolean fastForward;
     private List<ProgressEntry> recoveryRoad;
     
@@ -98,10 +91,19 @@ public class FileWalker {
      */
     public FileWalker(URI root, boolean recursive) {
         this.recursive = recursive;
-        this.root = root;
+        setRootUri(root);
+    }
+
+    @XmlElement(name = "RootUri")
+    public URI getRootUri() {
+        return root;
+    }
+
+    public void setRootUri(URI rootUri) {
+        this.root = rootUri;
         this.topLevelAbsolutePath = new File(root).getAbsolutePath();
     }
-    
+
     /**
      * (Re)starts the file walker.
      * @throws IOException if an IO exception occured
@@ -159,10 +161,9 @@ public class FileWalker {
         }
 
         if (fastForward) {
-            URI dirUri = toURI(dir);
-            if (!(depth < recoveryRoad.size() && recoveryRoad.get(depth).getUri().equals(dirUri))) {
+            if (!(depth < recoveryRoad.size() && recoveryRoad.get(depth).getFile().equals(dir))) {
                 // This directory is NOT on our road to recovery.
-                if (recoveryRoad.get(depth - 1).containsChild(dirUri)) {
+                if (recoveryRoad.get(depth - 1).containsChild(dir)) {
                     // This directory is yet to be processed
                     fastForward = false;
                 } else {
@@ -184,11 +185,7 @@ public class FileWalker {
         
         ProgressEntry parent = progress.peek();
         ResourceId directoryId = directoryHandler.handle(directory, depth, parent);
-        final List<URI> fileURIList = new ArrayList<URI>(children.length);
-        for (File child : children) {
-            fileURIList.add(toURI(child));
-        }
-        progress.push(new ProgressEntry(toURI(directory), directoryId, fileURIList));
+        progress.push(new ProgressEntry(directory, directoryId, children));
     }
 
     protected void handleFile(File file, int depth)
@@ -200,7 +197,7 @@ public class FileWalker {
         }
 
         if (fastForward) {
-            if (recoveryRoad.get(depth - 1).containsChild(toURI(file))) {
+            if (recoveryRoad.get(depth - 1).containsChild(file)) {
                 // FOUND IT!!
                 fastForward = false;
             } else {
@@ -212,7 +209,7 @@ public class FileWalker {
         if (file.isFile()) {
             fileHandler.handle(file, depth, progressEntry);
         }
-        progressEntry.removeChild(toURI(file));
+        progressEntry.removeChild(file);
     }
     
     protected void handleDirectoryEnd(File directory, int depth) {
@@ -229,7 +226,7 @@ public class FileWalker {
         
         progress.pop();
         if (!progress.isEmpty()) {
-            progress.peek().removeChild(toURI(directory));
+            progress.peek().removeChild(directory);
         }
     }
 
@@ -243,7 +240,7 @@ public class FileWalker {
         ProgressEntry parent = progress.peek();
         restrictedDirectoryHandler.handle(directory, depth, parent);
         if (!progress.isEmpty()) {
-            progress.peek().removeChild(toURI(directory));
+            progress.peek().removeChild(directory);
         }
     }
     
@@ -283,16 +280,12 @@ public class FileWalker {
     }
 
 
-    private URI toURI(final File file) {
-        return SubmitterUtils.toURI(file, URI_STRING_BUILDER);
-    }
-
-
     /**
      * A progress entry.
      * @author rflitcroft
      *
      */
+    @XmlAccessorType(XmlAccessType.NONE)
     public static final class ProgressEntry {
         
         @XmlAttribute(name = "Id")
@@ -301,12 +294,10 @@ public class FileWalker {
         @XmlAttribute(name = "Prefix")
         private String prefix;
         
-        @XmlElement(name = "Uri")
-        private URI uri;
-        
-        @XmlElementWrapper(name = "Children")
-        @XmlElement(name = "ChildUri")
-        private List<URI> children;
+        private File directory;
+
+
+        private File[] children;
 
         /**
          * Default constructor.
@@ -314,33 +305,69 @@ public class FileWalker {
         ProgressEntry() { }
         
         /**
-         * @param uri the URI of the entry
-         * @param id the ID of the entry
-         * @param prefix the prefix of the entry
-         * @param children the entry's children
+         * @param directory the File of the directory
+         * @param id the ID of the directory
+         * @param prefix the prefix of the directory
+         * @param children the directory's children
          */
-        ProgressEntry(URI uri, long id, String prefix, List<URI> children) {
-            this.uri = uri;
+        ProgressEntry(File directory, long id, String prefix, File[] children) {
+            this.directory = directory;
             this.id = id;
             this.prefix = prefix;
             this.children = children;
         }
+
+
         
         /**
-         * @param uri the URI of the entry
-         * @param resourceId the ResourceId of the entry
-         * @param children the entry's children
+         * @param directory the File of the directory
+         * @param resourceId the ResourceId of the directory
+         * @param children the directory's children
          */
-        ProgressEntry(URI uri, ResourceId resourceId, List<URI> children) {
+        ProgressEntry(File directory, ResourceId resourceId, File[] children) {
             if (resourceId == null) {
                 throw new IllegalArgumentException("Cannot construct a ProgressEntry with a null ResourceId");
             }
-            this.uri = uri;
+            this.directory = directory;
             this.id = resourceId.getId();
             this.prefix = resourceId.getPath();
             this.children = children;
-        }        
-        
+        }
+
+
+        @XmlElement(name = "Uri")
+        public URI getUri() {
+            return directory.toURI();
+        }
+
+        public void setUri(URI directory) {
+            this.directory = new File(directory);
+        }
+
+        @XmlElementWrapper(name = "Children")
+        @XmlElement(name = "ChildUri")
+        public List<URI> getChildUri() {
+            List<URI> result = new ArrayList<URI>();
+            if (children != null) {
+                for (File child : children) {
+                    if (child != null) {
+                        result.add(child.toURI());
+                    }
+                }
+            }
+            return result;
+        }
+
+        public void setChildUri(List<URI> childURIs) {
+            if (childURIs != null) {
+                this.children = new File[childURIs.size()];
+                int index = 0;
+                for (URI childURI : childURIs) {
+                    children[index++] = new File(childURI);
+                }
+            }
+        }
+
         /**
          * @return the id of the entry
          */
@@ -365,27 +392,42 @@ public class FileWalker {
         }
         
         /**
-         * @return the URI of the entry
+         * @return the File of the directory.
          */
-        public URI getUri() {
-            return uri;
+        public File getFile() {
+            return directory;
         }
         
         /**
-         * @param childUri the child uri to remove
+         * @param child the child uri to remove
          */
-        private void removeChild(URI childUri) {
-            children.remove(childUri);
+        private void removeChild(File child) {
+            if (children != null) {
+                for (int i = 0; i < children.length; i++) {
+                    if (child.equals(children[i])) {
+                        children[i] = null;
+                        break;
+                    }
+                }
+            }
         }
         
         /**
          * 
-         * @param childUri the child URi to check
+         * @param child the child file to check
          * @return true if the progress entry contains the child specified.
          */
-        public boolean containsChild(URI childUri) {
-            return children != null && children.contains(childUri);
+        public boolean containsChild(File child) {
+            if (children != null) {
+                for (int i = 0; i < children.length; i++) {
+                    if (child.equals(children[i])) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
+
     }
     
 }
