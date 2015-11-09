@@ -73,12 +73,18 @@ public final class ArchiveFileUtils {
      */
     public static URI toZipUri(URI parent, String zipEntry) {
         
-        String parentScheme = parent.getScheme();
-        String parentSsp = parent.getSchemeSpecificPart();
-        
+        final String parentScheme = parent.getScheme();
+        final String parentSsp = parent.getSchemeSpecificPart();
+
+        final StringBuilder builder = new StringBuilder(parentSsp.length() + ARCHIVE_DELIMITER.length() + zipEntry.length());
+        builder.append("zip:").append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(zipEntry));
+        String newSSP = builder.toString();
+
         try {
-            return new URI("zip:" + parentScheme,
-                    parentSsp + ARCHIVE_DELIMITER + FilenameUtils.separatorsToUnix(zipEntry), null);
+            return new URI(newScheme, newSSP, null);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -94,9 +100,15 @@ public final class ArchiveFileUtils {
         String parentScheme = parent.getScheme();
         String parentSsp = parent.getSchemeSpecificPart();
 
+        final StringBuilder builder = new StringBuilder(parentSsp.length() + ARCHIVE_DELIMITER.length() + tarEntry.length());
+        builder.append("tar:").append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(tarEntry));
+        String newSSP = builder.toString();
+
         try {
-            return new URI("tar:" + parentScheme, 
-                    parentSsp + ARCHIVE_DELIMITER + FilenameUtils.separatorsToUnix(tarEntry), null);
+            return new URI(newScheme, newSSP, null);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -113,9 +125,15 @@ public final class ArchiveFileUtils {
         String parentScheme = parent.getScheme();
         String parentSsp = parent.getSchemeSpecificPart();
 
+        final StringBuilder builder = new StringBuilder(parentSsp.length() + ARCHIVE_DELIMITER.length() + warcEntry.length());
+        builder.append(archiveType).append(COLON).append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(warcEntry);
+        String newSSP = builder.toString();
+
         try {
-            return new URI(archiveType + COLON + parentScheme,
-                    parentSsp + ARCHIVE_DELIMITER + warcEntry, null);
+            return new URI(newScheme, newSSP, null);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -242,11 +260,17 @@ public final class ArchiveFileUtils {
         
         String parentScheme = parent.getScheme();
         String parentSsp = parent.getSchemeSpecificPart();
-        
+
+        String gzEntryName = GzipUtils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart()));
+        final StringBuilder builder = new StringBuilder(parentSsp.length() + ARCHIVE_DELIMITER.length() + gzEntryName.length());
+        builder.append("gz:").append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(gzEntryName);
+        String newSSP = builder.toString();
+
         try {
-            return new URI("gz:" + parentScheme,
-                    parentSsp + ARCHIVE_DELIMITER
-                    + GzipUtils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart())), null); 
+            return new URI(newScheme, newSSP, null);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
