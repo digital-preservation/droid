@@ -494,8 +494,10 @@ public class FFSignatureFile extends SimpleElement {
      * @param targetFile The binary file to be identified
      */
     public final void runFileIdentification(final ByteReader targetFile) {
-        List<InternalSignature> matchingSigs = intSigs.getMatchingSignatures(targetFile, maxBytesToScan);
-        for (InternalSignature internalSig : matchingSigs) {
+        final List<InternalSignature> matchingSigs = intSigs.getMatchingSignatures(targetFile, maxBytesToScan);
+        final int numSigs = matchingSigs.size(); // reduce garbage: use an indexed loop rather than an iterator.
+        for (int i = 0; i < numSigs; i++) {
+            final InternalSignature internalSig = matchingSigs.get(i);
             targetFile.setPositiveIdent();
             final int numFileFormats = internalSig.getNumFileFormats();
             for (int fileFormatIndex = 0; fileFormatIndex < numFileFormats; fileFormatIndex++) {
