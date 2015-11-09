@@ -56,6 +56,22 @@ import java.util.Map;
  */
 public final class SqlUtils {
 
+    private final static int NODE_COL_INDEX = 1;
+    private final static int EXTENSION_MISMATCH_COL_INDEX = 2;
+    private final static int FINISHED_TIMESTAMP_COL_INDEX = 3;
+    private final static int EXTENSION__COL_INDEX = 5;
+    private final static int HASH_COL_INDEX = 7;
+    private final static int IDINT_COL_INDEX = 8;
+    private final static int LAST_MOD_COL_INDEX = 9;
+    private final static int NAME_COL_INDEX = 10;
+    private final static int NODES_COL_INDEX = 12;
+    private final static int RTYPE_COL_INDEX = 13;
+    private final static int SIZE_COL_INDEX = 14;
+    private final static int PARENT_ID_COL_INDEX = 15;
+    private final static int PREFIX_COL_INDEX = 14;
+    private final static int PREFIX_PLUS_ONE_COL_INDEX = 17;
+    private final static int URI_COL_INDEX = 19;
+
     private SqlUtils() {
     }
     
@@ -161,26 +177,26 @@ public final class SqlUtils {
      */
     public static ProfileResourceNode buildProfileResourceNode(final ResultSet nodeResults) throws SQLException {
         // Get data from result set:
-        final Long node_id                   = nodeResults.getLong(1);
-        final Boolean extension_mismatch     = nodeResults.getBoolean(2);
-        final Date finished_timestamp        = getNullableTimestamp(3, nodeResults);
+        final Long node_id                   = nodeResults.getLong(NODE_COL_INDEX);
+        final Boolean extension_mismatch     = nodeResults.getBoolean(EXTENSION_MISMATCH_COL_INDEX);
+        final Date finished_timestamp        = getNullableTimestamp(FINISHED_TIMESTAMP_COL_INDEX, nodeResults);
         //final Integer identification_count   = nodeResults.getInt(4); this is set on the node by adding identifications.
-        final String extension               = getNullableString(5, nodeResults);
-        final String hash                    = getNullableString(6, nodeResults);
-        final Integer idInt                  = getNullableInteger(7, nodeResults);
+        final String extension               = getNullableString(EXTENSION__COL_INDEX, nodeResults);
+        final String hash                    = getNullableString(HASH_COL_INDEX, nodeResults);
+        final Integer idInt                  = getNullableInteger(IDINT_COL_INDEX, nodeResults);
         final IdentificationMethod idMethod  = idInt == null? null : IdentificationMethod.values()[idInt];
-        final Date last_mod                  = getNullableTimestamp(8, nodeResults);
+        final Date last_mod                  = getNullableTimestamp(LAST_MOD_COL_INDEX, nodeResults);
         final Long last_modified             = last_mod == null? null : last_mod.getTime();
-        final String name                    = nodeResults.getString(9);
-        final Integer nodeS                  = getNullableInteger(10, nodeResults);
+        final String name                    = nodeResults.getString(NAME_COL_INDEX);
+        final Integer nodeS                  = getNullableInteger(NODES_COL_INDEX, nodeResults);
         final NodeStatus nodeStatus          = nodeS == null? null : NodeStatus.values()[nodeS];
-        final Integer rType                  = getNullableInteger(11, nodeResults);
+        final Integer rType                  = getNullableInteger(RTYPE_COL_INDEX, nodeResults);
         final ResourceType resourceType      = rType == null? null : ResourceType.values()[rType];
-        final Long size                      = getNullableLong(12, nodeResults);
-        final Long parentId                  = getNullableLong(13, nodeResults);
-        final String prefix                  = getNullableString(14, nodeResults);
-        final String prefixPlusOne           = getNullableString(15, nodeResults);
-        final String uriString               = nodeResults.getString(17);
+        final Long size                      = getNullableLong(SIZE_COL_INDEX, nodeResults);
+        final Long parentId                  = getNullableLong(PARENT_ID_COL_INDEX, nodeResults);
+        final String prefix                  = getNullableString(PREFIX_COL_INDEX, nodeResults);
+        final String prefixPlusOne           = getNullableString(PREFIX_PLUS_ONE_COL_INDEX, nodeResults);
+        final String uriString               = nodeResults.getString(URI_COL_INDEX);
         final URI uri;
         try {
             uri = new URI(uriString);
