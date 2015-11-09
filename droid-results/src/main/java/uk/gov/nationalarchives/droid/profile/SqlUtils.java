@@ -45,13 +45,11 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
- * @author a-mpalmer
+ * @author a-mpalmer, boreilly
  *
  */
 public final class SqlUtils {
@@ -64,13 +62,15 @@ public final class SqlUtils {
     private final static int IDINT_COL_INDEX = 8;
     private final static int LAST_MOD_COL_INDEX = 9;
     private final static int NAME_COL_INDEX = 10;
-    private final static int NODES_COL_INDEX = 12;
-    private final static int RTYPE_COL_INDEX = 13;
+    private final static int NODE_STATUS_COL_INDEX = 12;
+    private final static int RESOURCE_TYPE_COL_INDEX = 13;
     private final static int SIZE_COL_INDEX = 14;
     private final static int PARENT_ID_COL_INDEX = 15;
-    private final static int PREFIX_COL_INDEX = 14;
+    private final static int PREFIX_COL_INDEX = 16;
     private final static int PREFIX_PLUS_ONE_COL_INDEX = 17;
     private final static int URI_COL_INDEX = 19;
+    private final static int FILTER_STATUS_COL_INDEX = 20;
+
 
     private SqlUtils() {
     }
@@ -96,11 +96,13 @@ public final class SqlUtils {
     public static String transformEJBtoSQLFields(String ejbFragment,
             String nodePrefix, String formatPrefix) {
         return ejbFragment.replace("profileResourceNode.metaData.name", 
-                        nodePrefix + ".name ")
+                        //nodePrefix + ".name ")
+                        nodePrefix + ".u_name ")
                 .replace("profileResourceNode.metaData.size", 
                         nodePrefix + ".file_size")
                 .replace("profileResourceNode.metaData.extension", 
-                        nodePrefix + ".extension")
+                        //nodePrefix + ".extension")
+                        nodePrefix + ".u_extension")
                 .replace("profileResourceNode.identificationCount",
                         nodePrefix + ".identification_count")
                 .replace("profileResourceNode.metaData.lastModifiedDate",
@@ -116,7 +118,8 @@ public final class SqlUtils {
                 .replace("format.mimeType",
                         formatPrefix + ".mime_type")
                 .replace("format.name",
-                        formatPrefix + ".name")
+                        //formatPrefix + ".name")
+                        formatPrefix + ".u_name")
                 .replace("format.puid",
                         formatPrefix + ".puid")
                 .replace("extensionMismatch", "extension_mismatch"); 
@@ -188,9 +191,9 @@ public final class SqlUtils {
         final Date last_mod                  = getNullableTimestamp(LAST_MOD_COL_INDEX, nodeResults);
         final Long last_modified             = last_mod == null? null : last_mod.getTime();
         final String name                    = nodeResults.getString(NAME_COL_INDEX);
-        final Integer nodeS                  = getNullableInteger(NODES_COL_INDEX, nodeResults);
+        final Integer nodeS                  = getNullableInteger(NODE_STATUS_COL_INDEX, nodeResults);
         final NodeStatus nodeStatus          = nodeS == null? null : NodeStatus.values()[nodeS];
-        final Integer rType                  = getNullableInteger(RTYPE_COL_INDEX, nodeResults);
+        final Integer rType                  = getNullableInteger(RESOURCE_TYPE_COL_INDEX, nodeResults);
         final ResourceType resourceType      = rType == null? null : ResourceType.values()[rType];
         final Long size                      = getNullableLong(SIZE_COL_INDEX, nodeResults);
         final Long parentId                  = getNullableLong(PARENT_ID_COL_INDEX, nodeResults);
@@ -204,8 +207,8 @@ public final class SqlUtils {
             throw new SQLException("The URI for the node obtained from the database: [" + uriString + "] could not be converted into a URI", e);
         }
         int filterStatus = 1;
-        if (getNumberOfColumns(nodeResults) > 17) {
-            filterStatus = nodeResults.getInt(18);
+        if (getNumberOfColumns(nodeResults) > URI_COL_INDEX) {
+            filterStatus = nodeResults.getInt(FILTER_STATUS_COL_INDEX);
         }
 
         // Create the node

@@ -97,7 +97,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private static String SELECT_FORMAT                = "SELECT * FROM FORMAT WHERE PUID = ?";
 
     private static String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
-    private static String SELECT_FORMATS               = "SELECT * FROM FORMAT";
+    private static String SELECT_FORMATS               = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT";
     private static String SELECT_PROFILE_RESOURCE_NODE = "SELECT * FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
     private static String SELECT_IDENTIFICATIONS       = "SELECT * FROM IDENTIFICATION WHERE NODE_ID = ?";
     private static String DELETE_IDENTIFICATIONS       = "DELETE FROM IDENTIFICATION WHERE NODE_ID = ?";
@@ -126,10 +126,6 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private static String CREATE_IDX_URI_ON_PRN = "CREATE INDEX IDX_URI ON PROFILE_RESOURCE_NODE (URI)";
     private static String IDENTIFICATION_CONSTRAINT_1 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_FH484CCWWL4E5W9QUQKE4N6RI FOREIGN KEY (PUID) REFERENCES FORMAT";
     private static String IDENTIFICATION_CONSTRAINT_2 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_TPXMO6PPUXECKDRELN5PT5E39 FOREIGN KEY (NODE_ID) REFERENCES PROFILE_RESOURCE_NODE";
-
-    //TODO: May not need these mnow we're not using Hibernate?
-    private static String CREATE_UNIQUE_KEY = "create table hibernate_unique_key ( next_hi integer )";
-    private static String INSERT_UNIQUE_KEY = "insert into hibernate_unique_key values ( 0 )";
 
     private static boolean freshTemplate;
     private final static Object locker = new Object();
