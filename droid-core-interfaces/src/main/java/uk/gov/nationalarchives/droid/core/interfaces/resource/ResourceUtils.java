@@ -242,7 +242,6 @@ public final class ResourceUtils {
         // Map 0-93 to 33-126
         // Map 93-127 to 192-226
         char[] values = new char[ARRAYLENGTH];
-        
         int i = 0;
         values[i++] = (char) printableValue((value >>> UNSIGNED_RIGHT_SHIFT_BY_25) & HEX_7F); // bits 26-32
         values[i++] = (char) printableValue((value >>> UNSIGNED_RIGHT_SHIFT_BY_18) & HEX_7F); // bits 19-25
@@ -250,9 +249,30 @@ public final class ResourceUtils {
         values[i++] = (char) printableValue((value >>> UNSIGNED_RIGHT_SHIFT_BY_4) & HEX_7F); // bits 5-11
         values[i++] = (char) printableValue(value & HEX_F); // bits 1-4
         return new String(values);
-    }    
-    
-    
+    }
+
+    /**
+     * COnverts an long to base 128 integer.
+     * @param value Value to convet to base 128 integer.
+     * @return Base 128Integer.
+     */
+
+    public static void getBase128IntegerCharArray(long value, char[] values) {
+        // Use printable characters in this range:
+        // ASCII & UTF-8: 33 - 126 (no space) = 94 values.
+        // ISO Latin 1 & UTF-8: 192 - 226 = 34 values.
+        // Map 0-93 to 33-126
+        // Map 93-127 to 192-226
+
+        int i = 0;
+        values[i++] = (char) printableValue((value >>> UNSIGNED_RIGHT_SHIFT_BY_25) & HEX_7F); // bits 26-32
+        values[i++] = (char) printableValue((value >>> UNSIGNED_RIGHT_SHIFT_BY_18) & HEX_7F); // bits 19-25
+        values[i++] = (char) printableValue((value >>> UNSIGNED_RIGHT_SHIFT_BY_11) & HEX_7F); // bits 12-18
+        values[i++] = (char) printableValue((value >>> UNSIGNED_RIGHT_SHIFT_BY_4) & HEX_7F); // bits 5-11
+        values[i++] = (char) printableValue(value & HEX_F); // bits 1-4
+    }
+
+
     /**
      * Attempts to delete each temporary file in a directory.
      * 
