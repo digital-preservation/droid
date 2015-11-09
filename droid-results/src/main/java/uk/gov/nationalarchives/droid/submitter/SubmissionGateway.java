@@ -363,7 +363,10 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     private String getContainerFormat(IdentificationResultCollection results) {
-        for (IdentificationResult result : results.getResults()) {
+        final List<IdentificationResult> theResults = results.getResults();
+        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
             final String format = containerFormatResolver.forPuid(result.getPuid());
             if (format != null) {
                 return format;
