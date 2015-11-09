@@ -224,7 +224,10 @@ public class BinarySignatureIdentifier implements DroidCore {
             IdentificationResultCollection results, String fileExtension) {
         if (fileExtension == null || fileExtension.isEmpty()) {
             FileFormatCollection allFormats = sigFile.getFileFormatCollection();
-            for (IdentificationResult result : results.getResults()) {
+            final List<IdentificationResult> theResults = results.getResults();
+            final int numResults = theResults.size(); // garbage reduction: use indexed loop instead of allocating iterator.
+            for (int i = 0; i < numResults; i++) {
+                final IdentificationResult result = theResults.get(i);
                 final String resultPUID = result.getPuid();
                 final FileFormat format = allFormats.getFormatForPUID(resultPUID);
                 if (format.getNumExtensions() > 0) {
@@ -234,7 +237,10 @@ public class BinarySignatureIdentifier implements DroidCore {
             }
         } else {
             FileFormatCollection allFormats = sigFile.getFileFormatCollection();
-            for (IdentificationResult result : results.getResults()) {
+            final List<IdentificationResult> theResults = results.getResults();
+            final int numResults = theResults.size(); // garbage reduction: use indexed loop instead of allocating iterator.
+            for (int i = 0; i < numResults; i++) {
+                final IdentificationResult result = theResults.get(i);
                 final String resultPUID = result.getPuid();
                 final FileFormat format = allFormats.getFormatForPUID(resultPUID);
                 if (format.hasExtensionMismatch(fileExtension)) {
