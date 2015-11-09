@@ -131,7 +131,9 @@ public class BinarySignatureIdentifier implements DroidCore {
                 fileFormats = sigFile.getTentativeFormatsForExtension(fileExtension);
             }
             if (fileFormats != null) {
-                for (FileFormat format : fileFormats) {
+                final int numFormats = fileFormats.size();
+                for (int i = 0; i < numFormats; i++) {
+                    final FileFormat format = fileFormats.get(i);
                     IdentificationResultImpl result = new IdentificationResultImpl();
                     result.setName(format.getName());
                     result.setVersion(format.getVersion());
