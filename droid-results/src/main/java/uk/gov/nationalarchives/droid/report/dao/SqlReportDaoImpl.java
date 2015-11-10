@@ -38,7 +38,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Query;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
@@ -48,6 +47,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Criterio
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.SqlUtils;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
+import uk.gov.nationalarchives.droid.profile.SqlUtils;
 
 /**
  * JDBC implementation of JpaPlanetsXMLDaoImpl.
@@ -61,18 +61,6 @@ public class SqlReportDaoImpl implements ReportDao {
     private final Log log = LogFactory.getLog(getClass());
     private DataSource datasource;
 
-    //BNO: For use in determining filter parameter types so we can set these to the correct SQL type.
-    //TODO: Maybe move to e.g. SQlUtils as this is also used in JDBCSqltemReader (for export)
-    private  enum ClassName {
-        String,
-        Date,
-        Long,
-        Integer,
-        Boolean
-    }
-
-
-
     /**
      * Flushes the DROID entity manager.
      */
@@ -84,7 +72,6 @@ public class SqlReportDaoImpl implements ReportDao {
      * {@inheritDoc}
      */
     @Override
-    //@Transactional(propagation = Propagation.REQUIRED)
     public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField) {
         return getReportData(filter, reportField, new ArrayList<GroupByField>());
     }
@@ -93,8 +80,7 @@ public class SqlReportDaoImpl implements ReportDao {
      * {@inheritDoc}
      */
     @Override
-    //@Transactional(propagation = Propagation.REQUIRED)
-    public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField, 
+    public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField,
             List<GroupByField> groupByFields) {
 
         PreparedStatement statement = null;
@@ -131,17 +117,6 @@ public class SqlReportDaoImpl implements ReportDao {
         }
         return null;
 
-    }
-
-    private Query getQuery(ReportFieldEnum reportField, List<GroupByField> groupByFields, Criterion filter) {
-        final String selectStatement = getSelectStatement(reportField, groupByFields);
-        final FilterInfo filterInfo = getFilterInfo(filter);
-        final String groupingStatement = getGroupingStatement(groupByFields);
-        final String queryString = selectStatement + filterInfo.getFilterSubQuery() + groupingStatement;
-        //final Query query = entityManager.createNativeQuery(queryString);
-        final Query query = null;
-        setFilterParameters(query, filterInfo.getFilterValues());
-        return query;
     }
 
 
@@ -286,14 +261,6 @@ public class SqlReportDaoImpl implements ReportDao {
         }
     }
     
-    
-    private void setFilterParameters(Query q, Object[] filterParams) {
-        int pos = 1;
-        for (Object param : filterParams) {
-            Object transformedValue = SqlUtils.transformParameterToSQLValue(param);
-            q.setParameter(pos++, transformedValue);
-        }
-    }
 
     private void setFilterParameters(PreparedStatement s, Criterion filter) {
 
@@ -306,7 +273,7 @@ public class SqlReportDaoImpl implements ReportDao {
             try {
                 String className = transformedValue.getClass().getSimpleName();
                 //Java 6 doesn't support switch on string!!
-                switch (ClassName.valueOf(className)) {
+                switch (SqlUtils.ClassName.valueOf(className)) {
                     case String:
                         s.setString(++pos, (String) transformedValue);
                         break;

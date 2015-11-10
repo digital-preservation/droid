@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -62,6 +64,8 @@ public abstract class WebArchiveHandler {
     private AsynchDroid droidCore;
     private IdentificationRequestFactory factory;
     private ResultHandler resultHandler;
+
+    protected  static Log log = LogFactory.getLog(WebArchiveHandler.class);
 
     /**
      * @param factory the factory to set

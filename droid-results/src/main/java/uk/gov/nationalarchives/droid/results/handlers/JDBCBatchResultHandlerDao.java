@@ -151,7 +151,6 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     @Override
     public void init() {
 
-        //TODO: If we're running DROID for the first time, the database will exist but won't have the DROID_USER
         // BNO: Need to allow for the possibility that we're dealing with a fresh DROID install (or first run
         // after a new signature?). In which case, the call to setUpFormatsAndDatabaseWriter() will fail since
         // the database schema objects (created by hibernate in previous versions of DROID) will not exist.  Moreover,

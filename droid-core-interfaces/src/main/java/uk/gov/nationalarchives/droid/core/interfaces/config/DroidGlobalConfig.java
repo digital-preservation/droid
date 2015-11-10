@@ -274,7 +274,7 @@ public class DroidGlobalConfig {
             }
         }
 
-        // TODO: Review BNO: Add the available hash algorithms.  These are better hard coded here than in the
+        // BNO: To note - The available hash algorithms are better hard coded here than in the
         // droid.properties file since the list is not user configurable.  However, the existing droid.properties
         // profile.hashAlgorithm can still be used to indicate the default selection.
         List<String> availableHashAlgorithms = new ArrayList<String>();

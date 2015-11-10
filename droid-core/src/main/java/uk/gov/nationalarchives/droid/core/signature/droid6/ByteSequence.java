@@ -89,6 +89,8 @@ import java.util.List;
 //BNO-BS2 - new import for Byteseek 2.0
 import net.byteseek.io.reader.WindowReader;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -179,6 +181,8 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     private int sortOrder;
 
     private boolean isInvalidByteSequence;
+
+    private Log log = LogFactory.getLog(this.getClass());
     
     /**
      * 
@@ -450,7 +454,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                     fixedSubsequence = false;
                 }
             } catch (IOException io) {
-                //TODO should log something here...
+                log.error(String.format("Error processing file: %s. for byte sequence match", targetFile.getFileName()),io);
                 return false;
             }
         }

@@ -77,17 +77,10 @@
         <project.build.target>1.6</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
-        <spring.version>4.0.3.RELEASE</spring.version> <!-- TODO upgrade -->
-        <!-- hibernate.version>3.4.0.GA</hibernate.version -->
-        <hibernate.core.version>4.3.5.Final</hibernate.core.version> <!-- TODO upgrade. Will also need to upgrade Spring -->
-        <hibernate.version>4.3.5.Final</hibernate.version>
-<!-- BNO added this as version is different from latest hibernate -->
-<!-- hibernate.annotations.version>3.5.6-Final</hibernate.annotations.version -->
-        <!-- derby.version>10.8.2.2</derby.version -->
+        <spring.version>4.0.3.RELEASE</spring.version>
         <derby.version>10.10.2.0</derby.version>
-        <antlr.version>3.2</antlr.version>
-        <cxf.version>2.2.12</cxf.version> <!-- TODO upgrade? -->
-        <aspectj.version>1.7.2</aspectj.version> <!-- TODO upgrade? -->
+        <cxf.version>2.2.12</cxf.version>
+        <aspectj.version>1.8.7</aspectj.version>
     </properties>
   
     <build>
@@ -104,12 +97,6 @@
                     <version>2.5</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.antlr</groupId>
-                    <artifactId>antlr3-maven-plugin</artifactId>
-                    <version>${antlr.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-codegen-plugin</artifactId>
                     <version>${cxf.version}</version>
                 </plugin>
@@ -527,28 +514,12 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <artifactId>spring-core</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-<dependency>
+            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-<!--
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-beans</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-aspects</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring</artifactId>
-<version>${spring.version}</version>
-</dependency> -->
-<dependency>
+            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
@@ -595,6 +566,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
    <artifactId>dbunit</artifactId>
                 <version>2.4.8</version>
             </dependency>
+            <!--
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr-runtime</artifactId>
@@ -605,6 +577,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <artifactId>antlr</artifactId>
                 <version>${antlr.version}</version>
             </dependency>
+            -->
         </dependencies>
     </dependencyManagement>
     

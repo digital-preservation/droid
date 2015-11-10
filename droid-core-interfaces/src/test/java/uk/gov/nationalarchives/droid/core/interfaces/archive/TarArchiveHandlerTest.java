@@ -121,13 +121,13 @@ public class TarArchiveHandlerTest {
         handler.handle(originalRequest);
 
         //TODO:MP: mocking this fails... fix these tests.
-        /*
+        //BNO: These tests now working (didn't do anything specific to fix them!)
         verify(droidCore).submit(mockRequests.get(2));
         verify(droidCore).submit(mockRequests.get(3));
         verify(droidCore).submit(mockRequests.get(4));
         verify(droidCore).submit(mockRequests.get(5));
         verify(droidCore).submit(mockRequests.get(6));
-        */
+
     }
     
     @Test

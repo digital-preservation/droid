@@ -68,8 +68,6 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  * 
  */
 //CHECKSTYLE:OFF - too much class coupling
-//BNO 23-Oct-2015- TODO:     currently failing at line 90, so disabled for now.
-@Ignore
 public class ReportCommand implements DroidCommand {
 //CHECKSTYLE:ON
     

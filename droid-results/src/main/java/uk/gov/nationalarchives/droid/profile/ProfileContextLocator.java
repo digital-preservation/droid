@@ -196,7 +196,7 @@ public class ProfileContextLocator {
         if (status == TemplateStatus.NO_TEMPLATE ) {
             // If we're starting with a fresh DROID install, we'll get a SQL Exception if we try to connect to the
             // Derby database (the database will exist but the DROID_USER and schema obhjects will not be there yet.
-            //TODO: Probably only want to do this if actually using this class - so query spring for whether
+            // TODO: Probably only want to do this if actually using this class - so query spring for whether
             // this is the case..
             JDBCBatchResultHandlerDao.setIsFreshTemplate(true);
         }

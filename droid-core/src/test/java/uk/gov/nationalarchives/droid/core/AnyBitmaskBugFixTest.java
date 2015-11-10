@@ -86,13 +86,13 @@ public class AnyBitmaskBugFixTest {
         List<IdentificationResult> results = resultsCollection.getResults();
 
         //TODO:MP fix test
-        /*
+        //BNO: This test now working (didn't do anything specific to fix!)
         assertEquals(EXPECTED_HITS, results.size());
         Iterator<IdentificationResult> iter = results.iterator();
         while (iter.hasNext()) {
             IdentificationResult result = iter.next();
             assertEquals(EXPECTED_PUID, result.getPuid());
         }
-        */
+
       }
 }

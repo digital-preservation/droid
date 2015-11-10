@@ -31,20 +31,16 @@
  */
 package uk.gov.nationalarchives.droid.planet.xml.dao;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
-import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
-import uk.gov.nationalarchives.droid.core.interfaces.filter.RestrictionFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Junction;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
-import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Restrictions;
+import uk.gov.nationalarchives.droid.profile.SqlUtils;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
-import javax.persistence.Query;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -52,14 +48,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
-import uk.gov.nationalarchives.droid.profile.SqlUtils;
 
 /**
  * JDBC implementation of JpaPlanetsXMLDaoImpl.
@@ -79,12 +71,12 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
     private String filterQueryString = "";
 
     private static String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
-    private static String SELECT_FORMATS               = "SELECT * FROM FORMAT";
+    private static String SELECT_FORMATS               = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT";
 
     private static final String FILTER_FORMAT_SQL_JOIN = " inner join identification i on p.node_id = i.node_id inner join format f on f.puid = i.puid ";
     private Object[] filterParams;
     private boolean filterEnabled;
-    private Boolean formatCriteriaExist;
+    private boolean formatCriteriaExist;
     private QueryBuilder queryBuilder;
 
     private final Log log = LogFactory.getLog(getClass());
@@ -93,16 +85,6 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
     private Connection connection;
 
     private Map<String, Format> puidFormatMap;
-
-    //For use in determining filter parameter types so we can set these to the correct SQL type.
-    //TODO: This is used elsewhere so move to shared location e.g. Utils
-    private  enum ClassName {
-        String,
-        Date,
-        Long,
-        Integer,
-        Boolean
-    }
 
     public JdbcPlanetsXMLDaoImpl() {
 
@@ -183,7 +165,7 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
             String className = value2.getClass().getSimpleName();
             //Java 6 doesn't support switch on string!!
-            switch(ClassName.valueOf(className)) {
+            switch(SqlUtils.ClassName.valueOf(className)) {
                 case String:
                     profileStatement.setString(pos++, (String) value2);
                     break;
