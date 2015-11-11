@@ -58,17 +58,17 @@ public final class SqlUtils {
     private final static int EXTENSION_MISMATCH_COL_INDEX = 2;
     private final static int FINISHED_TIMESTAMP_COL_INDEX = 3;
     private final static int EXTENSION__COL_INDEX = 5;
-    private final static int HASH_COL_INDEX = 7;
-    private final static int IDINT_COL_INDEX = 8;
-    private final static int LAST_MOD_COL_INDEX = 9;
-    private final static int NAME_COL_INDEX = 10;
-    private final static int NODE_STATUS_COL_INDEX = 12;
-    private final static int RESOURCE_TYPE_COL_INDEX = 13;
-    private final static int SIZE_COL_INDEX = 14;
-    private final static int PARENT_ID_COL_INDEX = 15;
-    private final static int PREFIX_COL_INDEX = 16;
-    private final static int PREFIX_PLUS_ONE_COL_INDEX = 17;
-    private final static int URI_COL_INDEX = 19;
+    private final static int HASH_COL_INDEX = 6;
+    private final static int IDINT_COL_INDEX = 7;
+    private final static int LAST_MOD_COL_INDEX = 8;
+    private final static int NAME_COL_INDEX = 9;
+    private final static int NODE_STATUS_COL_INDEX = 10;
+    private final static int RESOURCE_TYPE_COL_INDEX = 11;
+    private final static int SIZE_COL_INDEX = 12;
+    private final static int PARENT_ID_COL_INDEX = 13;
+    private final static int PREFIX_COL_INDEX = 14;
+    private final static int PREFIX_PLUS_ONE_COL_INDEX = 15;
+    private final static int URI_COL_INDEX = 17;
     private final static int FILTER_STATUS_COL_INDEX = 20;
 
 

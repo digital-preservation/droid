@@ -94,36 +94,48 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     private static String UPDATE_NODE_STATUS           = "UPDATE PROFILE_RESOURCE_NODE SET NODE_STATUS = ? WHERE NODE_ID = ?";
     private static String DELETE_NODE                  = "DELETE FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
-    private static String SELECT_FORMAT                = "SELECT * FROM FORMAT WHERE PUID = ?";
+    private static String SELECT_FORMAT                = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT WHERE PUID = ?";
 
     private static String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
     private static String SELECT_FORMATS               = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT";
-    private static String SELECT_PROFILE_RESOURCE_NODE = "SELECT * FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
-    private static String SELECT_IDENTIFICATIONS       = "SELECT * FROM IDENTIFICATION WHERE NODE_ID = ?";
+    private static String SELECT_PROFILE_RESOURCE_NODE = "SELECT NODE_ID, EXTENSION_MISMATCH, FINISHED_TIMESTAMP, IDENTIFICATION_COUNT, EXTENSION, HASH, " +
+                                                         "IDENTIFICATION_METHOD, LAST_MODIFIED_DATE, NAME, NODE_STATUS, RESOURCE_TYPE, FILE_SIZE, " +
+                                                         "PARENT_ID, PREFIX, PREFIX_PLUS_ONE, TEXT_ENCODING, URI FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
+
+    private static String SELECT_IDENTIFICATIONS       = "SELECT NODE_ID, PUID FROM IDENTIFICATION WHERE NODE_ID = ?";
     private static String DELETE_IDENTIFICATIONS       = "DELETE FROM IDENTIFICATION WHERE NODE_ID = ?";
     private static String MAX_NODE_ID_QUERY            = "SELECT MAX(NODE_ID) FROM PROFILE_RESOURCE_NODE";
 
     //DDL statements
-    private static String CREATE_TABLE_FORMAT = "CREATE TABLE FORMAT (PUID VARCHAR(255) NOT NULL, MIME_TYPE VARCHAR(255), NAME VARCHAR(255), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), VERSION VARCHAR(255), PRIMARY KEY (PUID))";
-    private static String CREATE_TABLE_IDENTIFICATION = "CREATE TABLE IDENTIFICATION (NODE_ID BIGINT NOT NULL, PUID VARCHAR(255) NOT NULL)";
-    private static String CREATE_TABLE_PRN = "CREATE TABLE PROFILE_RESOURCE_NODE (NODE_ID BIGINT NOT NULL, EXTENSION_MISMATCH BOOLEAN NOT NULL, FINISHED_TIMESTAMP TIMESTAMP, IDENTIFICATION_COUNT INTEGER, EXTENSION VARCHAR(255), U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION)), HASH VARCHAR(64), IDENTIFICATION_METHOD INTEGER, LAST_MODIFIED_DATE TIMESTAMP, NAME VARCHAR(255) NOT NULL, U_NAME GENERATED ALWAYS AS (UPPER(NAME)), NODE_STATUS INTEGER, RESOURCE_TYPE INTEGER NOT NULL, FILE_SIZE BIGINT, PARENT_ID BIGINT, PREFIX VARCHAR(255), PREFIX_PLUS_ONE VARCHAR(255), TEXT_ENCODING INTEGER, URI VARCHAR(4000) NOT NULL, PRIMARY KEY (NODE_ID))";
-    private static String CREATE_IDX_MIME_TYPE_ON_FORMAT = "CREATE INDEX IDX_MIME_TYPE ON FORMAT (MIME_TYPE)";
+    private static String CREATE_TABLE_FORMAT = "CREATE TABLE FORMAT (PUID VARCHAR(255) NOT NULL, MIME_TYPE VARCHAR(255), NAME VARCHAR(255), " +
+                                                "VERSION VARCHAR(255), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), PRIMARY KEY (PUID))";
+    private static String CREATE_TABLE_IDENTIFICATION = "CREATE TABLE IDENTIFICATION (NODE_ID BIGINT NOT NULL, PUID VARCHAR(255) NOT NULL, " +
+                                                        "PRIMARY KEY(NODE_ID, PUID))";
+    private static String CREATE_TABLE_PRN = "CREATE TABLE PROFILE_RESOURCE_NODE (NODE_ID BIGINT NOT NULL, EXTENSION_MISMATCH BOOLEAN NOT NULL, " +
+                                                "FINISHED_TIMESTAMP TIMESTAMP, IDENTIFICATION_COUNT INTEGER, EXTENSION VARCHAR(255), " +
+                                                "HASH VARCHAR(64), IDENTIFICATION_METHOD INTEGER, LAST_MODIFIED_DATE TIMESTAMP, NAME VARCHAR(255) NOT NULL, " +
+                                                "NODE_STATUS INTEGER, RESOURCE_TYPE INTEGER NOT NULL, FILE_SIZE BIGINT, PARENT_ID BIGINT, PREFIX VARCHAR(255), " +
+                                                "PREFIX_PLUS_ONE VARCHAR(255), TEXT_ENCODING INTEGER, URI VARCHAR(4000) NOT NULL, " +
+                                                "U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION)), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), " +
+                                                "PRIMARY KEY (NODE_ID))";
+    //private static String CREATE_IDX_MIME_TYPE_ON_FORMAT = "CREATE INDEX IDX_MIME_TYPE ON FORMAT (MIME_TYPE)";
     private static String CREATE_IDX_FORMAT_NAME_ON_FORMAT = "CREATE INDEX IDX_FORMAT_NAME ON FORMAT (NAME)";
-    private static String CREATE_IDX_EXT_MISMATCH_ON_PRN = "CREATE INDEX IDX_EXTENSION_MISMATCH ON PROFILE_RESOURCE_NODE (EXTENSION_MISMATCH)";
-    private static String CREATE_IDX_ID_COUNT_ON_PRN = "CREATE INDEX IDX_ID_COUNT ON PROFILE_RESOURCE_NODE (IDENTIFICATION_COUNT)";
-    private static String CREATE_IDX_PRN_EXT_ON_PRN = "CREATE INDEX IDX_PRN_EXTENSION ON PROFILE_RESOURCE_NODE (EXTENSION)";
-    private static String CREATE_IDX_PRN_HASH_TYPE_ON_PRN = "CREATE INDEX IDX_PRN_HASH ON PROFILE_RESOURCE_NODE (HASH)";
-    private static String CREATE_IDX_PRN_ID_METHOD_ON_PRN = "CREATE INDEX IDX_PRN_ID_METHOD ON PROFILE_RESOURCE_NODE (IDENTIFICATION_METHOD)";
+    //private static String CREATE_IDX_EXT_MISMATCH_ON_PRN = "CREATE INDEX IDX_EXTENSION_MISMATCH ON PROFILE_RESOURCE_NODE (EXTENSION_MISMATCH)";
+    //private static String CREATE_IDX_ID_COUNT_ON_PRN = "CREATE INDEX IDX_ID_COUNT ON PROFILE_RESOURCE_NODE (IDENTIFICATION_COUNT)";
+    //private static String CREATE_IDX_PRN_EXT_ON_PRN = "CREATE INDEX IDX_PRN_EXTENSION ON PROFILE_RESOURCE_NODE (EXTENSION)";
+    private static String CREATE_IDX_PRN_EXT_ON_PRN = "CREATE INDEX IDX_PRN_EXTENSION ON PROFILE_RESOURCE_NODE (U_EXTENSION)";
+    //private static String CREATE_IDX_PRN_HASH_TYPE_ON_PRN = "CREATE INDEX IDX_PRN_HASH ON PROFILE_RESOURCE_NODE (HASH)";
+    //private static String CREATE_IDX_PRN_ID_METHOD_ON_PRN = "CREATE INDEX IDX_PRN_ID_METHOD ON PROFILE_RESOURCE_NODE (IDENTIFICATION_METHOD)";
     private static String CREATE_IDX_PRN_LAST_MODIFIED_ON_PRN = "CREATE INDEX IDX_PRN_LAST_MODIFIED ON PROFILE_RESOURCE_NODE (LAST_MODIFIED_DATE)";
-    private static String CREATE_IDX_PRN_NAME_ON_PRN = "CREATE INDEX IDX_PRN_NAME ON PROFILE_RESOURCE_NODE (NAME)";
-    private static String CREATE_IDX_PRN_NODE_STATUS_ON_PRN = "CREATE INDEX IDX_PRN_NODE_STATUS ON PROFILE_RESOURCE_NODE (NODE_STATUS)";
-    private static String CREATE_IDX_ID_RESOURCE_ON_PRN = "CREATE INDEX IDX_PRN_ID_RESOURCETYPE ON PROFILE_RESOURCE_NODE (RESOURCE_TYPE)";
+    //private static String CREATE_IDX_PRN_NAME_ON_PRN = "CREATE INDEX IDX_PRN_NAME ON PROFILE_RESOURCE_NODE (NAME)";
+    //private static String CREATE_IDX_PRN_NODE_STATUS_ON_PRN = "CREATE INDEX IDX_PRN_NODE_STATUS ON PROFILE_RESOURCE_NODE (NODE_STATUS)";
+    //private static String CREATE_IDX_ID_RESOURCE_ON_PRN = "CREATE INDEX IDX_PRN_ID_RESOURCETYPE ON PROFILE_RESOURCE_NODE (RESOURCE_TYPE)";
     private static String CREATE_IDX_PRN_FILE_SIZE_ON_PRN = "CREATE INDEX IDX_PRN_FILE_SIZE ON PROFILE_RESOURCE_NODE (FILE_SIZE)";
     private static String CREATE_IDX_PARENT_ID_ON_PRN = "CREATE INDEX IDX_PARENT_ID ON PROFILE_RESOURCE_NODE (PARENT_ID)";
     private static String CREATE_IDX_PREFIX_ON_PRN = "CREATE INDEX IDX_PREFIX ON PROFILE_RESOURCE_NODE (PREFIX)";
     private static String CREATE_IDX_PREFIX_PLUS_ONE_ON_PRN = "CREATE INDEX IDX_PREFIX_PLUS_ONE ON PROFILE_RESOURCE_NODE (PREFIX_PLUS_ONE)";
-    private static String CREATE_IDX_TEXT_ENCODING_ON_PRN = "CREATE INDEX IDX_TEXT_ENCODING ON PROFILE_RESOURCE_NODE (TEXT_ENCODING)";
-    private static String CREATE_IDX_URI_ON_PRN = "CREATE INDEX IDX_URI ON PROFILE_RESOURCE_NODE (URI)";
+    //private static String CREATE_IDX_TEXT_ENCODING_ON_PRN = "CREATE INDEX IDX_TEXT_ENCODING ON PROFILE_RESOURCE_NODE (TEXT_ENCODING)";
+    //private static String CREATE_IDX_URI_ON_PRN = "CREATE INDEX IDX_URI ON PROFILE_RESOURCE_NODE (URI)";
     private static String IDENTIFICATION_CONSTRAINT_1 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_FH484CCWWL4E5W9QUQKE4N6RI FOREIGN KEY (PUID) REFERENCES FORMAT";
     private static String IDENTIFICATION_CONSTRAINT_2 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_TPXMO6PPUXECKDRELN5PT5E39 FOREIGN KEY (NODE_ID) REFERENCES PROFILE_RESOURCE_NODE";
 
@@ -144,10 +156,15 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private Thread databaseWriterThread;
     private DatabaseWriter writer;
 
+    private final static int PRN_COL_COUNT_SANS_UCASE_COLS = 17;
+    private final static int PRN_COL_COUNT_WITH_UCASE_COLS = 19;
+
+    private static String CREATE_UCASE_PRN_EXTN_COL = "ALTER TABLE PROFILE_RESOURCE_NODE ADD COLUMN U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION))";
+    private static String CREATE_UCASE_PRN_NAME_COL = "ALTER TABLE PROFILE_RESOURCE_NODE ADD COLUMN U_NAME GENERATED ALWAYS AS (UPPER(NAME))";
+    private static String CREATE_UCASE_FMT_NAME_COL = "ALTER TABLE FORMAT ADD COLUMN U_NAME GENERATED ALWAYS AS (UPPER(NAME))";
+
     @Override
     public void init() {
-
-        //TODO: If we're running DROID for the first time, the database will exist but won't have the DROID_USER
         // BNO: Need to allow for the possibility that we're dealing with a fresh DROID install (or first run
         // after a new signature?). In which case, the call to setUpFormatsAndDatabaseWriter() will fail since
         // the database schema objects (created by hibernate in previous versions of DROID) will not exist.  Moreover,
@@ -156,6 +173,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         //  -profileManager.initProfile, after this class has been instantiated by Spring...
         synchronized (locker) {
             if(!getIsFreshTemplate()) {
+                checkCreateUpperCaseColumns();
                 setUpFormatsAndDatabaseWriter();
             } else {
                 createSchemaOnFreshTemplate();
@@ -177,6 +195,69 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             boolean alreadyInitialised = this.formats != null;
             if(!alreadyInitialised) {
                 setUpFormatsAndDatabaseWriter();
+            }
+        }
+    }
+
+    //TODO: This method creates the calculated upper case columns required to support the case
+    // insensitive filtering introduced in Release 6.1.6.  This is the first release with this feature,
+    // and without this check users would get an SQL error if they already have DROID installed with
+    // an existing template which does not have the columns.  However, the check
+    // creates additional overhead in opening profiles - consider removing in a future
+    // release when we can assume most people will have a template that already includes these columns.
+    private void checkCreateUpperCaseColumns () {
+
+        Connection conn = null;
+        PreparedStatement loadNode = null;
+        PreparedStatement createColumn = null;
+        ResultSet result = null;
+        try {
+            conn = datasource.getConnection();
+            conn.setAutoCommit(false);
+            loadNode = conn.prepareStatement("SELECT * FROM PROFILE_RESOURCE_NODE");
+            result = loadNode.executeQuery();
+            int numberOfColumnsInPrnTable = result.getMetaData().getColumnCount();
+            result.close();
+            int x;
+
+            switch(numberOfColumnsInPrnTable) {
+                case PRN_COL_COUNT_SANS_UCASE_COLS:
+                    String[] statements = {CREATE_UCASE_PRN_EXTN_COL, CREATE_UCASE_PRN_NAME_COL, CREATE_UCASE_FMT_NAME_COL };
+
+                    for(String s : statements) {
+                        try {
+                            createColumn = conn.prepareStatement(s);
+                            x = createColumn.executeUpdate();
+                        } finally {
+                            createColumn.close();
+                        }
+                    }
+                    conn.commit();
+                    break;
+                case PRN_COL_COUNT_WITH_UCASE_COLS:
+                    //Do nothing - the required columns already exist in the template
+                    break;
+                default:
+                    throw new SQLException("Invalid number of columns in profile_resource_node table!");
+            }
+        } catch (SQLException e) {
+            log.error(e);
+        } finally {
+            try {
+                //Check for null references to avoid the exception overhead
+                if (result != null) {
+                    result.close();
+                }
+                if (result != null) {
+                    loadNode.close();
+                }
+                if(conn != null) {
+                    conn.rollback();
+                    conn.close();
+                }
+
+            } catch (SQLException e) {
+                log.error(e);
             }
         }
     }
@@ -211,23 +292,23 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 createProfileResourceNodeTable.execute();
 
                 List<String> createIndexesAndConstraints = new ArrayList<String>(19);
-                createIndexesAndConstraints.add(CREATE_IDX_MIME_TYPE_ON_FORMAT);
+                //createIndexesAndConstraints.add(CREATE_IDX_MIME_TYPE_ON_FORMAT);
                 createIndexesAndConstraints.add(CREATE_IDX_FORMAT_NAME_ON_FORMAT);
-                createIndexesAndConstraints.add(CREATE_IDX_EXT_MISMATCH_ON_PRN);
-                createIndexesAndConstraints.add(CREATE_IDX_ID_COUNT_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_EXT_MISMATCH_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_ID_COUNT_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PRN_EXT_ON_PRN);
-                createIndexesAndConstraints.add(CREATE_IDX_PRN_HASH_TYPE_ON_PRN);
-                createIndexesAndConstraints.add(CREATE_IDX_PRN_ID_METHOD_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_PRN_HASH_TYPE_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_PRN_ID_METHOD_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PRN_LAST_MODIFIED_ON_PRN);
-                createIndexesAndConstraints.add(CREATE_IDX_PRN_NAME_ON_PRN);
-                createIndexesAndConstraints.add(CREATE_IDX_PRN_NODE_STATUS_ON_PRN);
-                createIndexesAndConstraints.add(CREATE_IDX_ID_RESOURCE_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_PRN_NAME_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_PRN_NODE_STATUS_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_ID_RESOURCE_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PRN_FILE_SIZE_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PARENT_ID_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PREFIX_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PREFIX_PLUS_ONE_ON_PRN);
-                createIndexesAndConstraints.add(CREATE_IDX_TEXT_ENCODING_ON_PRN);
-                createIndexesAndConstraints.add(CREATE_IDX_URI_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_TEXT_ENCODING_ON_PRN);
+                //createIndexesAndConstraints.add(CREATE_IDX_URI_ON_PRN);
                 createIndexesAndConstraints.add(IDENTIFICATION_CONSTRAINT_1);
                 createIndexesAndConstraints.add(IDENTIFICATION_CONSTRAINT_2);
 
