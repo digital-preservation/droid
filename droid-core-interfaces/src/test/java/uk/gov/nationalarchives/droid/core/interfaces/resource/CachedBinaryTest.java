@@ -31,6 +31,14 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
+import net.byteseek.io.reader.InputStreamReader;
+import net.byteseek.io.reader.cache.AllWindowsCache;
+import net.byteseek.io.reader.cache.TempFileCache;
+import net.byteseek.io.reader.windows.Window;
+import org.junit.Before;
+import org.junit.Test;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -41,15 +49,9 @@ import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
-
-
 
 /**
- * @author rflitcroft
+ * @author rflitcroft, boreilly
  *
  */
 public class CachedBinaryTest {
@@ -71,8 +73,10 @@ public class CachedBinaryTest {
         Channels.newChannel(in).read(blockZero);
         
         cache = new CachedByteBuffers(1, 1000, blockZero);
+        InputStreamReader reader = new InputStreamReader(in);
+
         assertEquals(rawBytes[799], cache.readByte(799));
-        
+
         InputStream sourceIn = cache.getSourceInputStream();
         
         int byteIn;
@@ -83,6 +87,38 @@ public class CachedBinaryTest {
         }
         
         assertEquals(800, count);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testGetInputStreamWithNoBackingFileCache1() throws Exception {
+
+        byte[] rawBytes = new byte[800];
+        new Random().nextBytes(rawBytes);
+
+        ByteArrayInputStream in = new ByteArrayInputStream(rawBytes);
+
+        InputStreamReader reader = new InputStreamReader(in, rawBytes.length, new AllWindowsCache());
+
+        // We need to do this first otherwise the next statement always returns -1 due to the reader,
+        // retrieving a null window, not clear why...
+        reader.readByte(4096);
+        //The cast is required to allow for negative numbers (since readByte returns an int)
+        int someByte = (byte)reader.readByte(799);
+
+        assertEquals(rawBytes[799], someByte);
+
+        Window window = reader.getWindow(0);
+
+        int byteIn;
+        //int count = 0;
+
+        for(int count =0;count<rawBytes.length; count++) {
+            byteIn = window.getByte(count);
+            assertEquals("Incorrect byte: " + count, rawBytes[count], (byte) byteIn);
+        }
+
+        //This should throw the IndexOutOfBoundsException
+        byteIn = window.getByte(rawBytes.length);
     }
 
     @Test 
@@ -113,5 +149,40 @@ public class CachedBinaryTest {
         }
         
         assertEquals(8500, count);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testGetInputStreamWithBackingFileCache1() throws Exception {
+
+        byte[] rawBytes = new byte[8500];
+        new Random().nextBytes(rawBytes);
+
+        ByteArrayInputStream in = new ByteArrayInputStream(rawBytes);
+
+        final File tempDir = new File("tmp");
+        tempDir.mkdir();
+
+        InputStreamReader reader = new InputStreamReader(in, rawBytes.length, new TempFileCache(tempDir));
+
+        // We need to do this first otherwise the next statement always returns -1 due to the reader,
+        // retrieving a null window, not clear why...
+        reader.readByte(12228);
+        //The cast is required to allow for negative numbers (since readByte returns an int)
+        int someByte = (byte)reader.readByte(8499);
+
+        assertEquals(rawBytes[8499], someByte);
+
+        Window window = reader.getWindow(0);
+
+        int byteIn;
+        //int count = 0;
+
+        for(int count =0;count<rawBytes.length; count++) {
+            byteIn = window.getByte(count);
+            assertEquals("Incorrect byte: " + count, rawBytes[count], (byte) byteIn);
+        }
+
+        //This should throw the IndexOutOfBoundsException
+        byteIn = window.getByte(rawBytes.length);
     }
 }
