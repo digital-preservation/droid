@@ -752,6 +752,35 @@
             </Files>
         </ContainerSignature>
 
+		<ContainerSignature Id="4070" ContainerType="OLE2">
+            <Description>Microsoft Project 2010 OLE2</Description>
+            <Files>
+                <File>
+                    <Path>Props14</Path>
+				</File>
+			</Files>
+		</ContainerSignature>
+		
+		<ContainerSignature Id="4080" ContainerType="OLE2">
+			<Description>Microsoft Project 2010 OLE2</Description>
+			<Files>
+				<File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="4080">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1064">
+	                                    <Sequence>0F 00 00 00 'MSProject.MPP14' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
         <ContainerSignature Id="5000" ContainerType="OLE2">
             <Description>Microsoft Publisher 1.0 OLE2</Description>
             <Files>
@@ -1509,6 +1538,26 @@
             </Files>
         </ContainerSignature>
 
+        <ContainerSignature Id="17005" ContainerType="OLE2">
+            <Description>Kodak FlashPix Image</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="17005">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="12" SubSeqMaxOffset="64">
+	                                    <Sequence>'56616700-C154-11CE-8553-00AA00A1F95B'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
         <ContainerSignature Id="17010" ContainerType="OLE2">
             <Description>Microsoft PhotoDraw</Description>
             <Files>
@@ -1685,7 +1734,7 @@
                     <Path>outputViewer0000000000_heading.xml</Path>
                     <BinarySignatures>
                         <InternalSignatureCollection>
-	                        <InternalSignature ID="19050">
+	                        <InternalSignature ID="19060">
 	                            <ByteSequence Reference="BOFoffset">
 	                                <SubSequence Position="1" SubSeqMinOffset="1" SubSeqMaxOffset="256">
 					    <Sequence>'xml.spss.com/spss/viewer'</Sequence>
@@ -1697,6 +1746,27 @@
                 </File>
             </Files>
         </ContainerSignature>
+
+<ContainerSignature Id="19070" ContainerType="ZIP">
+            <Description>Keyhole Markup Language</Description>
+            <Files>
+                <File>
+                    <Path>doc.kml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="19070">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="1" SubSeqMaxOffset="64">
+					    <Sequence>'kml xmlns='</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
 
         <ContainerSignature Id="20000" ContainerType="ZIP">
             <Description>Open XML Paper Specification</Description>
@@ -2029,6 +2099,10 @@
 	<FileFormatMapping signatureId="4050" Puid="fmt/440"/>
         <!-- Microsoft Project 2007 (OLE2)-->
 	<FileFormatMapping signatureId="4060" Puid="fmt/440"/>
+        <!-- Microsoft Project 2010 (OLE2)-->
+	<FileFormatMapping signatureId="4070" Puid="fmt/725"/>
+        <!-- Microsoft Project 2010 (OLE2)-->
+	<FileFormatMapping signatureId="4080" Puid="fmt/725"/>
 		
         <!-- Microsoft Publisher 1.0 (OLE2)-->
         <FileFormatMapping signatureId="5000" Puid="x-fmt/252"/>
@@ -2093,6 +2167,8 @@
         
 	<!--  Kodak FlashPix Image (OLE2)-->
         <FileFormatMapping signatureId="17000" Puid="x-fmt/56"/>
+	<!--  Kodak FlashPix Image (OLE2)-->
+        <FileFormatMapping signatureId="17005" Puid="x-fmt/56"/>
 
 	<!--  Microsoft PhotoDraw (OLE2)-->
         <FileFormatMapping signatureId="17010" Puid="fmt/594"/>
@@ -2116,6 +2192,8 @@
         <FileFormatMapping signatureId="19050" Puid="fmt/274"/>
 	<!--  SPSS Output File (spv) (ZIP)-->
         <FileFormatMapping signatureId="19060" Puid="fmt/274"/>
+	<!--  Keyhole Markup Language (Container) (ZIP)-->
+        <FileFormatMapping signatureId="19070" Puid="fmt/724"/>
 
 	<!--  Open XML Paper Specification (ZIP)-->
         <FileFormatMapping signatureId="20000" Puid="fmt/657"/>

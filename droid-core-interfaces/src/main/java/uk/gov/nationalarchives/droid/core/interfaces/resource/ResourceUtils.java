@@ -110,7 +110,7 @@ public final class ResourceUtils {
                     new TempFileCache(tempDir));
             reader = new InputStreamReader(in, cache);
         } else {
-            final WindowCache memoryCache = new MostRecentlyUsedCache(1024);
+            final WindowCache memoryCache = new LeastRecentlyUsedCache(1024);
             final TempFileCache persistentCache = new TempFileCache(tempDir);
             cache = DoubleCache.create(memoryCache, persistentCache);
             reader = new InputStreamReader(in, cache);
@@ -141,7 +141,7 @@ public final class ResourceUtils {
                     new TempFileCache(tempDir));
             reader = new InputStreamReader(in, cache, closeStream);
         } else {
-            final WindowCache memoryCache = new MostRecentlyUsedCache(1024);
+            final WindowCache memoryCache = new LeastRecentlyUsedCache(1024);
             final TempFileCache persistentCache = new TempFileCache(tempDir);
             cache = DoubleCache.create(memoryCache, persistentCache);
             reader = new InputStreamReader(in, cache, closeStream);
