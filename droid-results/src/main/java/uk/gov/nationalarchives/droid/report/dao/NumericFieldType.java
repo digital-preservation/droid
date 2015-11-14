@@ -159,10 +159,6 @@ public class NumericFieldType implements ReportFieldType {
             Object minimum = resultsArray[MIN_INDEX];
             Object maximum = resultsArray[MAX_INDEX];
 
-
-
-
-            //TODO: Review
             // BNO: The previous casts to BigInteger fail with the non-Hibernate code.  The Hibernate version
             // already returns the fields concerned as BigInteger hence it doesn't fail at the same point.
             // Unclear as why we're casting to BigInteger - if we actually need the additional range then

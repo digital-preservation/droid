@@ -51,14 +51,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author a-mpalmer
+ * @author a-mpalmer, boreilly
  *
  */
 public final class SqlUtils {
 
     private SqlUtils() {
     }
-    
+
+    //For use in determining filter parameter types so we can set these to the correct SQL type.
+    public enum ClassName {
+        String,
+        Date,
+        Long,
+        Integer,
+        Boolean
+    }
+
     /**
      * Changes enumeration types to their ordinal value.
      * @param value The object to be transformed

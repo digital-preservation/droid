@@ -164,9 +164,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="resultHandlerDao" ref="resultsDao"/>
     </bean>
 
-    <!--
-   <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JpaPlanetsXMLDaoImpl" />
-   -->
    <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JdbcPlanetsXMLDaoImpl">
        <property name = "datasource" ref="dataSource"/>
    </bean>
@@ -215,12 +212,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     </bean>
 
     <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
-    
-    <bean id="sessionFactory" class="uk.gov.nationalarchives.droid.profile.export.HibernateSessionFactoryLocator"
-        factory-method="getSessionFactory" lazy-init="true">
-        <constructor-arg ref="entityManagerFactory"/>
-    </bean>
-    
+
     <bean id="droid" class="uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier" init-method="init">
         <property name="signatureFile" value="${signatureFilePath}"/>
     </bean>

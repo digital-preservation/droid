@@ -90,7 +90,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
 
     /**
      * Adapts the JWAT ByteCountingPushbackInputStream to generate arc entries.
-     * @author gseaman
+     * @author gseaman, boreilly
      *
      */
     private static final class ArcArchiveEntryIterator
@@ -104,7 +104,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
                 ArcReader arcReader = ArcReaderFactory.getReader(in);
                 this.iterator = arcReader.iterator();
             } catch (IOException e) {
-                // TODO log
+                log.error(e);
                 System.err.println(e);
             }
         }

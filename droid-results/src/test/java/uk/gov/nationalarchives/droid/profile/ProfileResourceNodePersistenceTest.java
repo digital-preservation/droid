@@ -67,7 +67,7 @@ public class ProfileResourceNodePersistenceTest {
     private IDatabaseConnection conn;
 
     @Autowired 
-    private JpaProfileDaoImpl profileDao;
+    private JDBCProfileDao profileDao;
     
     @BeforeClass
     public static void getTestData() {

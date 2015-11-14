@@ -587,7 +587,7 @@ public class DroidCommandLineTest {
             "xml", "txt", "jp2", "jpg"
         };
 
-        //TODO: BNO - added this call as otherwise an error occurs when trying instantiate the log
+        //NB: BNO - added this call as otherwise an error occurs when trying instantiate the log
         // when we call new NoProfileRunCommand();  However, this does mean that configureRuntimeEnvironment
         // is called twice as it's also called in ommandLine.processExecution();  This only affects tests
         // not live (in live the Main method in DroidCommandLine handles this but this isn't called in the tests)
@@ -620,7 +620,7 @@ public class DroidCommandLineTest {
             "src/test/resources/signatures/DROID_SignatureFile_V82.xml"
         };
 
-        //TODO: BNO - added this call as otherwise an error occurs when trying instantiate the log
+        //NB: BNO - added this call as otherwise an error occurs when trying instantiate the log
         // when we call new NoProfileRunCommand();  However, this does mean that configureRuntimeEnvironment
         // is called twice as it's also called in commandLine.processExecution();  This only affects tests
         // not live (in live the Main method in DroidCommandLine handles this but this isn't called in the tests)

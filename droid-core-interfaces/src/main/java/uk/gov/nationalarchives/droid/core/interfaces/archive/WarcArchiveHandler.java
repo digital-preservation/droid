@@ -90,7 +90,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
 
     /**
      * Adapts the JWAT ByteCountingPushbackInputStream to generate warc entries.
-     * @author gseaman
+     * @author gseaman, boreilly
      *
      */
     private static final class WarcArchiveEntryIterator
@@ -104,7 +104,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                 WarcReader warcReader = WarcReaderFactory.getReader(in);
                 this.iterator = warcReader.iterator();
             } catch (IOException e) {
-                // TODO log
+                log.error(e);
                 System.err.println(e);
             }
         }
