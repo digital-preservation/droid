@@ -38,9 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -60,8 +57,6 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
  *
  */
 public class BinarySignatureIdentifier implements DroidCore {
-
-    private final Log log = LogFactory.getLog(getClass());
 
     private FFSignatureFile sigFile;
     private SignatureFileParser sigFileParser = new SignatureFileParser();
@@ -136,7 +131,9 @@ public class BinarySignatureIdentifier implements DroidCore {
                 fileFormats = sigFile.getTentativeFormatsForExtension(fileExtension);
             }
             if (fileFormats != null) {
-                for (FileFormat format : fileFormats) {
+                final int numFormats = fileFormats.size();
+                for (int i = 0; i < numFormats; i++) {
+                    final FileFormat format = fileFormats.get(i);
                     IdentificationResultImpl result = new IdentificationResultImpl();
                     result.setName(format.getName());
                     result.setVersion(format.getVersion());
@@ -184,7 +181,10 @@ public class BinarySignatureIdentifier implements DroidCore {
         // Build a set of format ids the results have priority over:
         FileFormatCollection allFormats = sigFile.getFileFormatCollection();
         Set<Integer> lowerPriorityIDs = new HashSet<Integer>();
-        for (IdentificationResult result : results.getResults()) {
+        final List<IdentificationResult> theResults = results.getResults();
+        int numResults = theResults.size();
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
             final String resultPUID = result.getPuid();
             final FileFormat format = allFormats.getFormatForPUID(resultPUID);
             lowerPriorityIDs.addAll(format.getFormatIdsHasPriorityOver());
@@ -192,7 +192,8 @@ public class BinarySignatureIdentifier implements DroidCore {
         
         // If a result has an id in this set, add it to the remove list;
         List<IdentificationResult> lowerPriorityResults = new ArrayList<IdentificationResult>();
-        for (IdentificationResult result : results.getResults()) {
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
             final String resultPUID = result.getPuid();
             final FileFormat format = allFormats.getFormatForPUID(resultPUID);
             if (lowerPriorityIDs.contains(format.getID())) {
@@ -201,7 +202,9 @@ public class BinarySignatureIdentifier implements DroidCore {
         }
          
         // Now remove any lower priority results from the collection:
-        for (IdentificationResult result : lowerPriorityResults) {
+        numResults = lowerPriorityResults.size();
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = lowerPriorityResults.get(i);
             results.removeResult(result);
         }
     }
@@ -223,7 +226,10 @@ public class BinarySignatureIdentifier implements DroidCore {
             IdentificationResultCollection results, String fileExtension) {
         if (fileExtension == null || fileExtension.isEmpty()) {
             FileFormatCollection allFormats = sigFile.getFileFormatCollection();
-            for (IdentificationResult result : results.getResults()) {
+            final List<IdentificationResult> theResults = results.getResults();
+            final int numResults = theResults.size(); // garbage reduction: use indexed loop instead of allocating iterator.
+            for (int i = 0; i < numResults; i++) {
+                final IdentificationResult result = theResults.get(i);
                 final String resultPUID = result.getPuid();
                 final FileFormat format = allFormats.getFormatForPUID(resultPUID);
                 if (format.getNumExtensions() > 0) {
@@ -233,7 +239,10 @@ public class BinarySignatureIdentifier implements DroidCore {
             }
         } else {
             FileFormatCollection allFormats = sigFile.getFileFormatCollection();
-            for (IdentificationResult result : results.getResults()) {
+            final List<IdentificationResult> theResults = results.getResults();
+            final int numResults = theResults.size(); // garbage reduction: use indexed loop instead of allocating iterator.
+            for (int i = 0; i < numResults; i++) {
+                final IdentificationResult result = theResults.get(i);
                 final String resultPUID = result.getPuid();
                 final FileFormat format = allFormats.getFormatForPUID(resultPUID);
                 if (format.hasExtensionMismatch(fileExtension)) {

@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.results.handlers;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -103,7 +104,10 @@ public class JDBCResultHandler implements ResultHandler {
             node.addFormatIdentification(Format.NULL);
             node.setZeroIdentifications();
         } else {
-            for (final IdentificationResult result : results.getResults()) {
+            final List<IdentificationResult> theResults = results.getResults();
+            final int numResults = theResults.size(); // garbage reduction: use an indexed loop to avoid allocating an iterator.
+            for (int i = 0; i < numResults; i++) {
+                final IdentificationResult result = theResults.get(i);
                 node.getMetaData().setIdentificationMethod(result.getMethod());
                 final Format format = formats.get(result.getPuid());
                 node.addFormatIdentification(format);

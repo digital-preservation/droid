@@ -83,9 +83,9 @@ public class FileWalkerPersistenceTest {
         
         final File root = new File("root");
         FileWalker filewalker = new FileWalker(root.toURI(), true);
-        progress.push(new ProgressEntry(dirResource1.toURI(), 1, "X", null));
-        progress.push(new ProgressEntry(dirResource2.toURI(), 2, "Y", null));
-        progress.push(new ProgressEntry(dirResource3.toURI(), 3, "Z", null));
+        progress.push(new ProgressEntry(dirResource1, 1, "X", null));
+        progress.push(new ProgressEntry(dirResource2, 2, "Y", null));
+        progress.push(new ProgressEntry(dirResource3, 3, "Z", null));
         
         filewalker.setProgress(progress);
         

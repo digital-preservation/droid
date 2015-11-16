@@ -40,6 +40,7 @@ import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.cache.TopAndTailFixedLengthCache;
+import net.byteseek.io.reader.cache.WindowCache;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
@@ -80,8 +81,8 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
     public final void open(final File file) throws IOException {
         // Use a caching strategy that uses soft references, to allow the GC to reclaim
         // cached file bytes in low memory conditions.
-        fileReader = new FileReader(file,
-                new TopAndTailFixedLengthCache(file.length(), TOP_TAIL_BUFFER_CAPACITY));
+        final WindowCache cache = new TopAndTailFixedLengthCache(file.length(), TOP_TAIL_BUFFER_CAPACITY);
+        fileReader = new FileReader(file, cache);
         ((FileReader)fileReader).useSoftWindows(true);
         this.file = file;
         fileReader.getWindow(0); // force read of first block to generate any IO exceptions.

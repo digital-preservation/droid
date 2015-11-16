@@ -65,6 +65,8 @@ public class FileEventHandler {
 
     private SubmissionThrottle submissionThrottle;
 
+    private StringBuilder URI_STRING_BUILDER = new StringBuilder(1024);
+
     /**
      * Default Constructor.
      */
@@ -92,7 +94,7 @@ public class FileEventHandler {
      */
     public void onEvent(File file, ResourceId parentId, ResourceId nodeId) {
 
-        URI uri = file.toURI();
+        URI uri = SubmitterUtils.toURI(file, URI_STRING_BUILDER);
         RequestMetaData metaData = new RequestMetaData(file.length(), file
                 .lastModified(), file.getName());
 

@@ -90,9 +90,11 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
             maxBytesToScan);
 
         process(request, matches);
-        
         final IdentificationResultCollection results = new IdentificationResultCollection(request);
-        for (final ContainerSignatureMatch match : matches.getContainerSignatureMatches()) {
+        final List<ContainerSignatureMatch> matchList = matches.getContainerSignatureMatches();
+        final int numMatches = matchList.size(); // garbage reduction: use an indexed loop rather than allocating an iterator.
+        for (int i = 0; i < numMatches; i++) {
+            final ContainerSignatureMatch match = matchList.get(i);
             if (match.isMatch()) {
                 List<FileFormatMapping> mappings = formats.get(match.getSignature().getId());
                 for (final FileFormatMapping mapping : mappings) {

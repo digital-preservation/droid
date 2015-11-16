@@ -55,7 +55,7 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
 
     private final static int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
 
-    private Long size;
+    private long size;
     private File tempDir;
     private Log log = LogFactory.getLog(this.getClass());
     private WindowReader reader;
