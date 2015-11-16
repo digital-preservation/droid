@@ -37,14 +37,9 @@ import net.byteseek.io.reader.cache.TempFileCache;
 import net.byteseek.io.reader.windows.Window;
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
@@ -52,16 +47,19 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @author rflitcroft, boreilly
+ * TODO: Commented out tests refer to Byteseek 1 based classes which are to be deleted folowing
+ * the move to Byteseek2.  The remaining tests use the byteseek 2 InputStreamReader but we can delete
+ * the entire class once the Byteseek2 test suite has been fully updated.
  *
  */
 public class CachedBinaryTest {
 
-    private CachedByteBuffers cache;
+    //private CachedByteBuffers cache;
     
     @Before
     public void setup() {
     }
-    
+    /*
     @Test 
     public void testGetInputStreamWithNoBackingFileCache() throws Exception {
         
@@ -88,7 +86,7 @@ public class CachedBinaryTest {
         
         assertEquals(800, count);
     }
-
+    */
     @Test(expected = IndexOutOfBoundsException.class)
     public void testGetInputStreamWithNoBackingFileCache1() throws Exception {
 
@@ -120,7 +118,7 @@ public class CachedBinaryTest {
         //This should throw the IndexOutOfBoundsException
         byteIn = window.getByte(rawBytes.length);
     }
-
+    /*
     @Test 
     public void testGetInputStreamWithBackingFileCache() throws Exception {
         
@@ -150,7 +148,7 @@ public class CachedBinaryTest {
         
         assertEquals(8500, count);
     }
-
+    */
     @Test(expected = IndexOutOfBoundsException.class)
     public void testGetInputStreamWithBackingFileCache1() throws Exception {
 
