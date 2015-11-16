@@ -31,23 +31,18 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.*;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
-import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 
 
@@ -65,7 +60,7 @@ public abstract class WebArchiveHandler {
     private IdentificationRequestFactory factory;
     private ResultHandler resultHandler;
 
-    protected  static Log log = LogFactory.getLog(WebArchiveHandler.class);
+    protected static Log log = LogFactory.getLog(WebArchiveHandler.class);
 
     /**
      * @param factory the factory to set

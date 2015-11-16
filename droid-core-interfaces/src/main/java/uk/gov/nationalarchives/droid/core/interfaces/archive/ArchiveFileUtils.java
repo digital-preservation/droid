@@ -31,6 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import org.apache.commons.compress.compressors.gzip.GzipUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,10 +46,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.compress.compressors.gzip.GzipUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Utilities.
@@ -63,8 +63,8 @@ public final class ArchiveFileUtils {
     private static final String COLON = ":";
     private static final int WRITE_BUFFER_CAPACITY = 8192;
 
-    private ArchiveFileUtils() { };
-    
+    private ArchiveFileUtils() { }
+
     /**
      * Builds a URI for a zip file entry.
      * @param parent the parent zip file.
@@ -76,7 +76,8 @@ public final class ArchiveFileUtils {
         final String parentScheme = parent.getScheme();
         final String parentSsp = parent.getSchemeSpecificPart();
 
-        final StringBuilder builder = new StringBuilder(parentSsp.length() + ARCHIVE_DELIMITER.length() + zipEntry.length());
+        final StringBuilder builder = new StringBuilder(parentSsp.length() +
+                ARCHIVE_DELIMITER.length() + zipEntry.length());
         builder.append("zip:").append(parentScheme);
         String newScheme = builder.toString();
         builder.setLength(0);
@@ -100,7 +101,8 @@ public final class ArchiveFileUtils {
         String parentScheme = parent.getScheme();
         String parentSsp = parent.getSchemeSpecificPart();
 
-        final StringBuilder builder = new StringBuilder(parentSsp.length() + ARCHIVE_DELIMITER.length() + tarEntry.length());
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + tarEntry.length());
         builder.append("tar:").append(parentScheme);
         String newScheme = builder.toString();
         builder.setLength(0);
@@ -125,7 +127,8 @@ public final class ArchiveFileUtils {
         String parentScheme = parent.getScheme();
         String parentSsp = parent.getSchemeSpecificPart();
 
-        final StringBuilder builder = new StringBuilder(parentSsp.length() + ARCHIVE_DELIMITER.length() + warcEntry.length());
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + warcEntry.length());
         builder.append(archiveType).append(COLON).append(parentScheme);
         String newScheme = builder.toString();
         builder.setLength(0);
@@ -262,7 +265,8 @@ public final class ArchiveFileUtils {
         String parentSsp = parent.getSchemeSpecificPart();
 
         String gzEntryName = GzipUtils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart()));
-        final StringBuilder builder = new StringBuilder(parentSsp.length() + ARCHIVE_DELIMITER.length() + gzEntryName.length());
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + gzEntryName.length());
         builder.append("gz:").append(parentScheme);
         String newScheme = builder.toString();
         builder.setLength(0);

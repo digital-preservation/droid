@@ -36,7 +36,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.TarEntryIdentificationRequest;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 /**

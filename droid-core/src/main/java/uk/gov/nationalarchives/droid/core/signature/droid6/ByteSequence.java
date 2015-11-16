@@ -82,16 +82,16 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
+import net.byteseek.io.reader.WindowReader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.gov.nationalarchives.droid.core.signature.ByteReader;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 //BNO-BS2 - new import for Byteseek 2.0
-import net.byteseek.io.reader.WindowReader;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
  * A ByteSequence is a regular-expression like object
@@ -182,7 +182,8 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
 
     private boolean isInvalidByteSequence;
 
-    private Log log = LogFactory.getLog(this.getClass());
+    //Use static log for optimimal performance..
+    private final static Log log = LogFactory.getLog(ByteSequence.class);
     
     /**
      * 
