@@ -31,11 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import java.io.IOException;
+
 import de.schlichtherle.io.rof.AbstractReadOnlyFile;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.windows.Window;
-
-import java.io.IOException;
 
 /**
  * This class adapts a byteseek 2 WindowReader to behave as a ReadOnlyFile interface defined in TrueZip.
@@ -107,8 +107,8 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
             throw new IOException("Cannot seek to a negative position: " + position);
         }
         if (position > reader.length()) {
-            throw new IOException("Cannot seek past the end of data with length " + reader.length() +
-                    ".  Seek position was " + position);
+            throw new IOException("Cannot seek past the end of data with length "
+                    + reader.length() + ".  Seek position was " + position);
         }
         filePointer = position;
     }
@@ -120,8 +120,9 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
             throw new IndexOutOfBoundsException("Offset or length cannot be negative: {" + offset + "," + length + "}");
         }
         if (offset + length > bytes.length) {
-            throw new IndexOutOfBoundsException("The offset " + offset + " plus length " + length +
-                                                 " cannot be greater than the length of the bytes " + bytes.length);
+            throw new IndexOutOfBoundsException("The offset "
+                    + offset + " plus length " + length
+                    + " cannot be greater than the length of the bytes " + bytes.length);
         }
         if (filePointer >= length() || length == 0) {
             return -1;
@@ -134,7 +135,7 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
             final int windowOffset = reader.getWindowOffset(filePointer);
             final int availableBytes = window.length() - windowOffset;
             final int remainingBytes = length - totalRead;
-            final int copyBytes    = remainingBytes < availableBytes? remainingBytes : availableBytes;
+            final int copyBytes    = remainingBytes < availableBytes ? remainingBytes : availableBytes;
             System.arraycopy(window.getArray(), windowOffset, bytes, offset + totalRead, copyBytes);
             totalRead += copyBytes;
             filePointer += copyBytes;
@@ -145,9 +146,9 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
 
     @Override
     public void close() throws IOException {
-         if (!closed && closeReaderIfClosed) {
-             reader.close();
-         }
+        if (!closed && closeReaderIfClosed) {
+            reader.close();
+        }
         closed = true;
     }
 

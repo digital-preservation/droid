@@ -16,7 +16,7 @@
     <name>droid-parent</name>
     <description>A tool developed by the UK National Archives to perform automated batch identification of file formats.</description>
     <url>http://digital-preservation.github.com/droid/</url>
-    <inceptionYear>2012</inceptionYear>
+    <inceptionYear>2015</inceptionYear>
   
     <organization>
         <name>The National Archives</name>
@@ -233,7 +233,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            <!--
+
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
@@ -272,7 +272,7 @@
                     </execution>
                 </executions>
             </plugin>
-    -->
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>

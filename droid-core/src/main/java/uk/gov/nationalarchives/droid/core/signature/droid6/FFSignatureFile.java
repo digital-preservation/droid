@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -252,7 +252,7 @@ public class FFSignatureFile extends SimpleElement {
      * and before the FFSignatureFile class is used.
       */
     public final void prepareForUse() {
-    	//BNO: Called when profile initialised.
+        //BNO: Called when profile initialised.
         this.prepareInternalSignatures();
     }
 
@@ -324,7 +324,7 @@ public class FFSignatureFile extends SimpleElement {
      * to ensure its own best performance.
      */
     private void prepareInternalSignatures() {
-    	//BNO: Called when profile initialised
+        //BNO: Called when profile initialised
         this.setAllSignatureFileFormats();
         this.intSigs.prepareForUse();
         intSigs.sortSignatures(new InternalSignatureComparator());
@@ -506,7 +506,7 @@ public class FFSignatureFile extends SimpleElement {
                                       FileFormatHit.HIT_TYPE_POSITIVE_GENERIC_OR_SPECIFIC,
                                       internalSig.isSpecific(), "");
 
-                 targetFile.addHit(fileHit);
+                targetFile.addHit(fileHit);
             }
         }
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -98,13 +98,6 @@ public final class FragmentRewriter {
     //CHECKSTYLE:OFF - cyclomatic complexity is too high.
     public static String rewriteFragment(final String fragment) {
     //CHECKSTYLE:ON
-    	
-    	//BNO-BS2  - Test disabling the rewrite...
-    	//if(true) {
-    	//	return fragment;
-    	//}
-    	
-    	
         StringBuilder builder = new StringBuilder();
         final int length = fragment.length();
         boolean inCaseSensitiveString = false;
@@ -123,8 +116,8 @@ public final class FragmentRewriter {
                     builder.append(theChar);
                 }
             } else {
-                if (theChar == OPENSET && charIndex + 1 < length &&
-                    fragment.charAt(charIndex+1) == INVERTED_OLD) {
+                if (theChar == OPENSET && charIndex + 1 < length
+                        && fragment.charAt(charIndex + 1) == INVERTED_OLD) {
                     builder.append(INVERTED_NEW).append(OPENSET);
                 } else {
                     builder.append(theChar);

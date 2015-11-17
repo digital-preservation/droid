@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,7 @@ public class BinarySignatureIdentifier implements DroidCore {
      */
     @Override
     public IdentificationResultCollection matchBinarySignatures(IdentificationRequest request) {
-    	//BNO: Called once for each identification request
+        //BNO: Called once for each identification request
         IdentificationResultCollection results = new IdentificationResultCollection(request);
         results.setRequestMetaData(request.getRequestMetaData());
         ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
@@ -227,7 +227,8 @@ public class BinarySignatureIdentifier implements DroidCore {
         if (fileExtension == null || fileExtension.isEmpty()) {
             FileFormatCollection allFormats = sigFile.getFileFormatCollection();
             final List<IdentificationResult> theResults = results.getResults();
-            final int numResults = theResults.size(); // garbage reduction: use indexed loop instead of allocating iterator.
+            // garbage reduction: use indexed loop instead of allocating iterator.
+            final int numResults = theResults.size();
             for (int i = 0; i < numResults; i++) {
                 final IdentificationResult result = theResults.get(i);
                 final String resultPUID = result.getPuid();
@@ -240,7 +241,8 @@ public class BinarySignatureIdentifier implements DroidCore {
         } else {
             FileFormatCollection allFormats = sigFile.getFileFormatCollection();
             final List<IdentificationResult> theResults = results.getResults();
-            final int numResults = theResults.size(); // garbage reduction: use indexed loop instead of allocating iterator.
+            // garbage reduction: use indexed loop instead of allocating iterator.
+            final int numResults = theResults.size();
             for (int i = 0; i < numResults; i++) {
                 final IdentificationResult result = theResults.get(i);
                 final String resultPUID = result.getPuid();

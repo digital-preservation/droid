@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,14 +35,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.byteseek.io.reader.ReaderInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 
 /**
  * Encapsulates a request for a GZIP entry.
@@ -52,7 +52,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 //BNO-BS2 - this  class is almost identical to {@link ZipEntryIdentificationRequest}
 public class TarEntryIdentificationRequest implements IdentificationRequest<InputStream> {
 
-    private final static int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 8Mb cache on either end of zip entry.
+    private  static final int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 8Mb cache on either end of zip entry.
 
     private final String fileName;
     private final String extension;
@@ -157,15 +157,14 @@ public class TarEntryIdentificationRequest implements IdentificationRequest<Inpu
     @Override
     public byte getByte(long position) throws IOException {
         final int result = reader.readByte(position);
-        if (result <0 ) {
+        if (result < 0) {
             throw new IOException("No byte at position " + position);
         }
         return (byte) result;
     }
 
     @Override
-	public WindowReader getWindowReader() {
+    public WindowReader getWindowReader() {
         return reader;
-	}
-
+    }
 }

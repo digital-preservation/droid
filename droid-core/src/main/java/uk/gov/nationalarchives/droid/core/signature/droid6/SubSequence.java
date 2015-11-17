@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -154,8 +154,6 @@ public class SubSequence extends SimpleElement {
 
     private static final boolean EXPRESSION_BEFORE_GAPS = true;
     private static final boolean GAPS_BEFORE_EXPRESSION = false;
-
-    public static int optimiseCount = 0; //TODO:MP remove, for debugging purposes.
 
     private int minSeqOffset;
     private int maxSeqOffset;
@@ -481,7 +479,7 @@ public class SubSequence extends SimpleElement {
     private void captureLeftFragments() {
         int captureFragPos = -1;
         int numLeftFragmentPos = orderedLeftFragments.size();
-        FRAGS:
+    FRAGS:
         for (int position = 0; position < numLeftFragmentPos; position++) {
             List<SideFragment> fragsAtPos = orderedLeftFragments.get(position);
             if (fragsAtPos.size() == 1) { // no alternatives at this position.
@@ -495,11 +493,13 @@ public class SubSequence extends SimpleElement {
                             //      but also potentially fragments after it.
                             break FRAGS;
                         } else {
-                            subsequenceText = frag.toRegularExpression(true) + " .{" + frag.getMinOffset() + "} " + subsequenceText;
+                            // CHECKSTYLE:OFF " .{" and "} " defined locally in separate methods for optimal performance
+                            subsequenceText = frag.toRegularExpression(true)
+                                    + " .{" + frag.getMinOffset() + "} " + subsequenceText;
+                            // CHECKSTYLE:ON
                             captureFragPos = position;
                         }
-                    }
-                    else {
+                    } else {
                         break FRAGS;
                     }
                 }
@@ -514,23 +514,26 @@ public class SubSequence extends SimpleElement {
         int captureFragPos = -1;
         int numRightPos = orderedRightFragments.size();
         //FRAGS: for (int position = numRightPos -1; position >= 0; position--) {
-        FRAGS: for (int position = 0; position < numRightPos; position++) {
+    FRAGS:
+        for (int position = 0; position < numRightPos; position++) {
             List<SideFragment> fragsAtPos = orderedRightFragments.get(position);
             if (fragsAtPos.size() == 1) { // no alternatives at this position.
                 for (SideFragment frag : fragsAtPos) {
                     if (frag.getMinOffset() == 0 && frag.getMaxOffset() == 0) { // bangs right up to the main sequence
                         subsequenceText = subsequenceText + ' ' + frag.toRegularExpression(true);
                         captureFragPos = position;
+                        // CHECKSTYLE:OFF     Quite legitmiate to have more than 120 chars per line just now...
                     } else if (frag.getMinOffset() == frag.getMaxOffset()) { // a fixed offset from the main sequence
                         if (backwardsSearch) { // things on the right can't make our average shift worse, so just add them.
                             subsequenceText = subsequenceText + " .{" + frag.getMinOffset() + "} " + frag.toRegularExpression(true);
                             captureFragPos = position;
+                            // CHECKSTYLE:ON
                         } else { // work out if adding this would make our average shift worse.
                             //TODO: work out if adding would make shift worse - it depends on this fragment
                             //      but also potentially fragments after it.
                             break FRAGS;
                         }
-                    }else {
+                    } else {
                         break FRAGS;
                     }
                 }
@@ -609,12 +612,14 @@ public class SubSequence extends SimpleElement {
 
     private void buildMatcherAndSearcher() {
         try {
+            // CHECKSTYLE:OFF     Quite legitimate to have more than 120 chars per line just now...
             matcher = SEQUENCE_COMPILER.compile(subsequenceText);
             if (matcher.length() == 1) {
                 searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0)); // use simplest byte matcher searcher if the matcher is length 1.
             } else {
                 searcher = new HorspoolFinalFlagSearcher(matcher); // use shifting searcher if shifts can be bigger than one.
             }
+            // CHECKSTYLE:ON
         } catch (CompileException ex) {
             final String warning = String.format(SEQUENCE_PARSE_ERROR, subsequenceText, ex.getMessage());
             getLog().warn(warning);
@@ -735,7 +740,10 @@ public class SubSequence extends SimpleElement {
         return regularExpression.toString();
     }
 
-
+    /***
+     * toString override.
+     * @return Formatted simple name of the class.
+     */
     public String toString() {
         return getClass().getSimpleName() + '[' + toRegularExpression(true) + ']';
     }
@@ -1159,10 +1167,10 @@ public class SubSequence extends SimpleElement {
         }
         return endPosInFile;  //this is -1 unless subSeqFound = true
     }
-
+    //CHECKSTYLE:OFF Too complex method...
     private long[] bytePosForLeftFragments(final WindowReader bytes, final long leftBytePos, final long rightBytePos,
                                            final int searchDirection, final int offsetRange) {
-        //CHECKSTYLE:ON
+
         final boolean leftFrag = true;
 
         // set up loop start and end depending on search order:
@@ -1280,7 +1288,7 @@ public class SubSequence extends SimpleElement {
 
         return outArray;
     }
-
+    // CHECKSTYLE:ON
     private LeftFragment getRawLeftFragment(final int theIndex) {
         return leftFragments.get(theIndex);
     }

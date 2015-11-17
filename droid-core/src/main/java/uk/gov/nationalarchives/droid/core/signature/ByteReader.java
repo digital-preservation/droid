@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,17 +69,15 @@
  */
 package uk.gov.nationalarchives.droid.core.signature;
 
+import net.byteseek.io.reader.WindowReader;
 
 /**
  * Interface for accessing the bytes from a file, URL or stream.
- * 
+ *
  * <p>Create an instance with <code>AbstractByteReader.newByteReader()</code>.</p>
  *
- * @author linb
+ * @author linb, boreilly
  */
-//BNO-BS2
-import net.byteseek.io.reader.WindowReader;
-
 public interface ByteReader {
 
     /* Setters for identification status */
@@ -195,7 +193,10 @@ public interface ByteReader {
     byte getByte(long fileIndex);
 
 
-    //BNO-BS2
+    /**
+     * Gets the the associated WindowReader object.
+     * @return a Byteseek2 WindowReader.
+     */
     WindowReader getWindowReader();
     
     /**

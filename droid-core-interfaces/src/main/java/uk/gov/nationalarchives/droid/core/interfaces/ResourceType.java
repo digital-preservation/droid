@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,17 +92,27 @@ public enum ResourceType {
         return allowsChildren;
     }
 
-    //BNO - August 2015
+    /**
+     * Returns the ResourceType enum value for the corresponding ordinal.
+     * @param value Integer value corresponding to a ResourceType Enum
+     * @return The corresponding ResourceType Enum for the value parameter.
+     */
     public static ResourceType getResourceTypeForOrdinal(int value)  {
+
+        ResourceType resourceType = null;
         switch (value) {
             case 0:
-                return ResourceType.FOLDER;
+                resourceType = ResourceType.FOLDER;
+                break;
             case 1:
-                return ResourceType.CONTAINER;
+                resourceType = ResourceType.CONTAINER;
+                break;
             case 2:
-                return ResourceType.FILE;
+                resourceType = ResourceType.FILE;
+                break;
             default:
                 throw new  IllegalArgumentException("Invalid resource type " + value + "!");
         }
+        return resourceType;
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,16 +82,15 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
-import net.byteseek.io.reader.WindowReader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import uk.gov.nationalarchives.droid.core.signature.ByteReader;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-//BNO-BS2 - new import for Byteseek 2.0
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import net.byteseek.io.reader.WindowReader;
+import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
  * A ByteSequence is a regular-expression like object
@@ -165,6 +164,14 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * The value of the quote character.
      */
     private static final int QUOTE_CHARACTER_VALUE = 39;
+    /**
+     * Error message when excption reading a byte from position
+     */
+    private static final String BYTE_READ_ERROR = "An error occurred reading a byte at position ";
+    /**
+    *Use static log for optimmal performance..
+     */
+    private  static final Log LOGGER = LogFactory.getLog(ByteSequence.class);
     
     private List<SubSequence> subSequences = new ArrayList<SubSequence>();
     private SubSequence[] sequences = new SubSequence[0];
@@ -182,9 +189,6 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
 
     private boolean isInvalidByteSequence;
 
-    //Use static log for optimimal performance..
-    private final static Log log = LogFactory.getLog(ByteSequence.class);
-    
     /**
      * 
      * @return Whether the byte sequence is anchored to the beginning of a file.
@@ -382,7 +386,8 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                         offset += power * byteValue;
                         power *= BYTEVALUES;
                     } else {
-                        throw new IOException("An error occurred reading a byte at position " + (offsetLocation + byteIndex));
+                        throw new IOException(BYTE_READ_ERROR
+                                + (offsetLocation + byteIndex));
                     }
                 }
             } else {
@@ -392,7 +397,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                         offset += power * byteValue;
                         power *= BYTEVALUES;
                     } else {
-                        throw new IOException("An error occurred reading a byte at position " + (offsetLocation + byteIndex));
+                        throw new IOException(BYTE_READ_ERROR + (offsetLocation + byteIndex));
                     }
                     /*
                     final Byte fileByte = reader.readByte(offsetLocation + byteIndex);
@@ -455,7 +460,8 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                     fixedSubsequence = false;
                 }
             } catch (IOException io) {
-                log.error(String.format("Error processing file: %s. for byte sequence match", targetFile.getFileName()),io);
+                LOGGER.error(String.format("Error processing file: %s. for byte sequence match",
+                        targetFile.getFileName()), io);
                 return false;
             }
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,19 +83,32 @@ public enum IdentificationMethod {
         return method;
     }
 
-    //BNO - August 2015
+    /**
+     * Returns the IdentificationMethod enum value for the corresponding ordinal.
+     * @param  value - the ordinal value used for the identfication method.
+     * @return the IdentificationMethodEnum corresponding to the value parameter.
+     */
     public static IdentificationMethod getIdentifationMethodForOrdinal(int value)  {
+
+        IdentificationMethod identificationMethod = null;
+    // CHECKSTYLE:OFF --  Complaining about magic number, not an issue in this context...
         switch (value) {
             case 0:
-                return IdentificationMethod.NULL;
+                identificationMethod = IdentificationMethod.NULL;
+                break;
             case 1:
-                return IdentificationMethod.BINARY_SIGNATURE;
+                identificationMethod = IdentificationMethod.BINARY_SIGNATURE;
+                break;
             case 2:
-                return IdentificationMethod.EXTENSION;
+                identificationMethod = IdentificationMethod.EXTENSION;
+                break;
             case 3:
-                return IdentificationMethod.CONTAINER;
+                identificationMethod = IdentificationMethod.CONTAINER;
+                break;
             default:
                 throw new  IllegalArgumentException("Invalid identification " + value + "!");
         }
+        // CHECKSTYLE:ON
+        return identificationMethod;
     }
 }

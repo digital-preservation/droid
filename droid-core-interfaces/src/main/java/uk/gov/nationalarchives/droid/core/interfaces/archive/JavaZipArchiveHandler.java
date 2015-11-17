@@ -43,6 +43,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FilenameUtils;
+
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -116,7 +117,7 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
                 entryName);
 
         RequestIdentifier identifier = new RequestIdentifier(
-                ArchiveFileUtils.toZipUri(parentName, entry.getName()) );
+                ArchiveFileUtils.toZipUri(parentName, entry.getName()));
 
         result.setRequestMetaData(metaData);
         result.setIdentifier(identifier);
@@ -134,8 +135,8 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
      * @throws IOException if there was an error accessing the input stream 'in'
      */
     final void submit(ZipEntry entry, String entryName, URI parentName,
-                      ZipInputStream in, ResourceId correlationId, long originatorNodeId)
-            throws IOException {
+                  ZipInputStream in, ResourceId correlationId, long originatorNodeId)
+        throws IOException {
 
         long size = entry.getSize();
         long time = entry.getTime();

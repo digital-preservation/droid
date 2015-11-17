@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,11 +35,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.byteseek.io.reader.ReaderInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
+import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -93,7 +92,7 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
     @Override
     public final byte getByte(long position) throws IOException {
         final int result = reader.readByte(position);
-        if (result <0 ) {
+        if (result < 0) {
             throw new IOException("No byte at position " + position);
         }
         return (byte) result;
@@ -149,9 +148,8 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
         return null;
     }
 
-
-	@Override
-	public WindowReader getWindowReader() {
+    @Override
+    public WindowReader getWindowReader() {
 		return reader;
 	}        
 }

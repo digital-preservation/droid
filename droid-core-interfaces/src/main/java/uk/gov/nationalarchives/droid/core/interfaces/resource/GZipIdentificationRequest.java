@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
  */
 public class GZipIdentificationRequest implements IdentificationRequest<InputStream> {
 
-    private final static int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
+    private static final int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
 
     private final String extension;
     private final String fileName;
@@ -156,15 +156,14 @@ public class GZipIdentificationRequest implements IdentificationRequest<InputStr
     @Override
     public byte getByte(long position) throws IOException {
         final int result = reader.readByte(position);
-        if (result <0 ) {
+        if (result < 0) {
             throw new IOException("No byte at position " + position);
         }
         return (byte) result;
     }
 
     @Override
-	public WindowReader getWindowReader() {
-		return reader;
-	}
-
+    public WindowReader getWindowReader() {
+        return reader;
+    }
 }

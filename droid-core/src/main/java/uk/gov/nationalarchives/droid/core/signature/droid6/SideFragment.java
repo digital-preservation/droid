@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -270,6 +270,7 @@ public class SideFragment extends SimpleElement {
      * @param bytes The byte reader to match the bytes with.
      * @param matchFrom The position to match from.
      * @return Whether the fragment matches at the position given.
+     * @throws IOException If a problem occurs reading the underlying file or stream
      */
     public final boolean matchesBytes(final WindowReader bytes, final long matchFrom) throws IOException {
         return matcher.matches(bytes, matchFrom);
@@ -278,11 +279,11 @@ public class SideFragment extends SimpleElement {
     /**
      * Finds the fragment looking forwards from 'from' up to 'to'.
      *
-     * @param bytes
-     * @param from
-     * @param to
-     * @return
-     * @throws IOException
+     * @param bytes a Byteseek WindowReader object
+     * @param from the position within bytes from which to start searching
+     * @param to the position within bytes at which to end searching
+     * @return A list of match results
+     * @throws IOException If a problem occurs reading the underlying file or stream
      */
     public final List<MatchResult> findFragmentForwards(final WindowReader bytes,
                                                         final long from, final long to) throws IOException {
@@ -292,11 +293,11 @@ public class SideFragment extends SimpleElement {
     /**
      * Finds the fragment looking backwards from 'from' back to 'to'.
      *
-     * @param bytes
-     * @param from
-     * @param to
-     * @return
-     * @throws IOException
+     * @param bytes a Byteseek WindowReader object
+     * @param from the position within bytes from which to start searching
+     * @param to the position within bytes at which to end searching
+     * @return A list of match results
+     * @throws IOException If a problem occurs reading the underlying file or stream
      */
     public final List<MatchResult> findBackwards(final WindowReader bytes,
                                                  final long from, final long to) throws IOException {

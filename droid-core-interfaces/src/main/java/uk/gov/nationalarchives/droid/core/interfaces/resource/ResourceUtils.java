@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,9 +39,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
-import net.byteseek.io.reader.InputStreamReader;
-import net.byteseek.io.reader.cache.*;
 import org.apache.commons.io.FilenameUtils;
+
+import net.byteseek.io.reader.cache.DoubleCache;
+import net.byteseek.io.reader.cache.LeastRecentlyUsedCache;
+import net.byteseek.io.reader.cache.TempFileCache;
+import net.byteseek.io.reader.cache.TopAndTailStreamCache;
+import net.byteseek.io.reader.cache.TwoLevelCache;
+import net.byteseek.io.reader.cache.WindowCache;
+import net.byteseek.io.reader.InputStreamReader;
 
 /**
  * 
@@ -49,6 +55,11 @@ import org.apache.commons.io.FilenameUtils;
  *
  */
 public final class ResourceUtils {
+
+    /**
+     * Amount of free memory must be available.
+     */
+    public static final double FREE_MEMORY_THRESHOLD = 64 * 1024 * 1024; // 64 Mb of free memory must be available.
 
     private static final int BUFFER_SIZE = 8192;
     
@@ -65,7 +76,6 @@ public final class ResourceUtils {
     private static final int UNSIGNED_RIGHT_SHIFT_BY_18 = 18;
     private static final int UNSIGNED_RIGHT_SHIFT_BY_25 = 25;    
     private static final int ARRAYLENGTH = 5;
-    public static final double FREE_MEMORY_THRESHOLD = 64 * 1024 * 1024; // 64 Mb of free memory must be available.
 
     /**
      * Private constructor to prevent construction of static utility class.
@@ -99,7 +109,7 @@ public final class ResourceUtils {
      * @param in The input stream to back the reader.
      * @param tempDir The directory in which to create temporary files for caching.
      * @param topTailCapacity The amount of memory to cache on the top and tail of each stream.
-     * @return
+     * @return The input stream reader.
      */
     public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity) {
         final WindowCache cache;
@@ -130,9 +140,11 @@ public final class ResourceUtils {
      * @param in The input stream to back the reader.
      * @param tempDir The directory in which to create temporary files for caching.
      * @param topTailCapacity The amount of memory to cache on the top and tail of each stream.
-     * @param closeStream Whether to close the underlying input stream when this reader is closed.     * @return
+     * @param closeStream Whether to close the underlying input stream when this reader is closed.
+     * @return The input stream reader.
      */
-    public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity, boolean closeStream) {
+    public static InputStreamReader getStreamReader(final InputStream in, File tempDir,
+                                                    int topTailCapacity, boolean closeStream) {
         final WindowCache cache;
         final InputStreamReader reader;
         if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_THRESHOLD) {
@@ -253,10 +265,9 @@ public final class ResourceUtils {
 
     /**
      * COnverts an long to base 128 integer.
-     * @param value Value to convet to base 128 integer.
-     * @return Base 128Integer.
+     * @param value Value to convert to base 128 integer.
+     * @param values char array to populate.
      */
-
     public static void getBase128IntegerCharArray(long value, char[] values) {
         // Use printable characters in this range:
         // ASCII & UTF-8: 33 - 126 (no space) = 94 values.

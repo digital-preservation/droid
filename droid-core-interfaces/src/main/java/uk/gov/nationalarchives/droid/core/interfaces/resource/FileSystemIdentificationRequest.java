@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
-
-//BNO-BS2 - replace this import with AbstractReader or WindowReader
-// in package net.byteseek.io.reader
 import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.FileReader;
@@ -78,13 +77,13 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
      * {@inheritDoc}
      */
     @Override
-    public final void open(final File file) throws IOException {
+    public final void open(final File theFile) throws IOException {
         // Use a caching strategy that uses soft references, to allow the GC to reclaim
         // cached file bytes in low memory conditions.
-        final WindowCache cache = new TopAndTailFixedLengthCache(file.length(), TOP_TAIL_BUFFER_CAPACITY);
-        fileReader = new FileReader(file, cache);
-        ((FileReader)fileReader).useSoftWindows(true);
-        this.file = file;
+        final WindowCache cache = new TopAndTailFixedLengthCache(theFile.length(), TOP_TAIL_BUFFER_CAPACITY);
+        fileReader = new FileReader(theFile, cache);
+        ((FileReader) fileReader).useSoftWindows(true);
+        this.file = theFile;
         fileReader.getWindow(0); // force read of first block to generate any IO exceptions.
     }
 
@@ -151,16 +150,14 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
     @Override
     public byte getByte(long position) throws IOException {
         final int result = fileReader.readByte(position);
-        if (result <0 ) {
+        if (result < 0) {
             throw new IOException("No byte at position " + position);
         }
         return (byte) result;
     }
 
     @Override
-	public WindowReader getWindowReader() {
-		return fileReader;
-	}
-
-
+    public WindowReader getWindowReader() {
+        return fileReader;
+    }
 }

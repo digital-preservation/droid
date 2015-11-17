@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2015, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,10 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import org.apache.commons.compress.compressors.gzip.GzipUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,6 +42,10 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.compress.compressors.gzip.GzipUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Utilities.
@@ -76,8 +76,8 @@ public final class ArchiveFileUtils {
         final String parentScheme = parent.getScheme();
         final String parentSsp = parent.getSchemeSpecificPart();
 
-        final StringBuilder builder = new StringBuilder(parentSsp.length() +
-                ARCHIVE_DELIMITER.length() + zipEntry.length());
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + zipEntry.length());
         builder.append("zip:").append(parentScheme);
         String newScheme = builder.toString();
         builder.setLength(0);
