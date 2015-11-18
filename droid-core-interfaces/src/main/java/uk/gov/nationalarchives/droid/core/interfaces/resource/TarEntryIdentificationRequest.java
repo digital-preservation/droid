@@ -91,7 +91,11 @@ public class TarEntryIdentificationRequest implements IdentificationRequest<Inpu
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
         if (readSize != size) {
-            log.warn("The tar entry states it is " + size + " in length, but reading it produced: " + readSize);
+            String identifier = "";
+            if(getIdentifier() != null && getIdentifier().getUri() != null) {
+                identifier = getIdentifier().getUri().toString();
+            }
+            log.warn("The tar entry " + identifier + "  states it is " + size + " in length, but reading it produced: " + readSize);
             size = readSize;
         }
     }
