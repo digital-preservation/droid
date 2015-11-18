@@ -290,13 +290,17 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             parentsPrefixString = parentId.getPath();
             node.setParentId(parentId.getId());
         }
-        final StringBuilder builder = new StringBuilder(5 + parentsPrefixString.length());
+
+        int parentsPrefixStringLength = parentsPrefixString != null ? parentsPrefixString.length() : 0;
+
+        final StringBuilder builder = new StringBuilder(5 + parentsPrefixStringLength);
         builder.append(parentsPrefixString);
         final char[] nodeValue = new char[5];
         ResourceUtils.getBase128IntegerCharArray(nodeId, nodeValue);
         builder.append(nodeValue);
         node.setPrefix(builder.toString());
-        builder.setLength(parentsPrefixString.length());
+        //builder.setLength(parentsPrefixString.length());
+        builder.setLength(parentsPrefixStringLength);
         ResourceUtils.getBase128IntegerCharArray(nodeId + 1, nodeValue);
         builder.append(nodeValue);
         node.setPrefixPlusOne(builder.toString());
