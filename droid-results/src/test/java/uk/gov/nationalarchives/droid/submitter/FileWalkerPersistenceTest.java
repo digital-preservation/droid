@@ -54,8 +54,11 @@ import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
 import uk.gov.nationalarchives.droid.submitter.FileWalker.ProgressEntry;
 
 /**
- * @author rflitcroft
- *
+ * @author rflitcroft, boreilly
+ * BNO: String control amended as follows after
+ * JAXB changes to reduce littering
+ * - Added </children> empty elements in <ProgressEntry>
+ * - Moved <RootUri> element to after <Progress>
  */
 public class FileWalkerPersistenceTest {
 
@@ -108,19 +111,23 @@ public class FileWalkerPersistenceTest {
             + "        <Path>" + getPath(root) + "</Path>"
             + "    </Dir>" 
             + "    <FileWalker Recursive=\"true\">" 
-            + "        <RootUri>" + root.toURI() + "</RootUri>" 
+            //+ "        <RootUri>" + root.toURI() + "</RootUri>"
             + "        <Progress>"
-            + "            <ProgressEntry Id=\"3\" Prefix=\"Z\">" 
+            + "            <ProgressEntry Id=\"3\" Prefix=\"Z\">"
+            + "                <Children/>"
             + "                <Uri>" + dirResource3.toURI() + "</Uri>" 
             + "            </ProgressEntry>"
-            + "            <ProgressEntry Id=\"2\" Prefix=\"Y\">" 
+            + "            <ProgressEntry Id=\"2\" Prefix=\"Y\">"
+            + "                <Children/>"
             + "                <Uri>" + dirResource2.toURI() + "</Uri>" 
             + "            </ProgressEntry>"
-            + "            <ProgressEntry Id=\"1\" Prefix=\"X\">" 
+            + "            <ProgressEntry Id=\"1\" Prefix=\"X\">"
+            + "                <Children/>"
             + "                <Uri>" + dirResource1.toURI() + "</Uri>" 
             + "            </ProgressEntry>"
             + "        </Progress>"
-            + "    </FileWalker>" 
+            + "        <RootUri>" + root.toURI() + "</RootUri>"
+            + "    </FileWalker>"
             + "</ProfileWalk>"; 
 
         FileReader fileReader = new FileReader(new File(testDir, "profile_progress.xml"));

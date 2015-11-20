@@ -74,7 +74,13 @@ public final class SubmitterUtils {
      * @return A URI for the file.
      */
     public static URI toURI(final File file, final StringBuilder builder)  {
-        final File absoluteFile = file.getAbsoluteFile();
+        File absoluteFile = file.getAbsoluteFile();
+
+        //Allow for Mockito tests where the previous assignment returns anull reference
+        if(absoluteFile == null) {
+            absoluteFile = new File(file.getAbsolutePath());
+        }
+
         final String path       = absoluteFile.getPath();
         final int    length     = path.length();
         final char   SEPARATOR  = File.separatorChar;
