@@ -36,6 +36,7 @@ import net.byteseek.io.reader.cache.AllWindowsCache;
 import net.byteseek.io.reader.cache.TempFileCache;
 import net.byteseek.io.reader.windows.Window;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -149,6 +150,7 @@ public class CachedBinaryTest {
         assertEquals(8500, count);
     }
     */
+    @Ignore
     @Test(expected = IndexOutOfBoundsException.class)
     public void testGetInputStreamWithBackingFileCache1() throws Exception {
 

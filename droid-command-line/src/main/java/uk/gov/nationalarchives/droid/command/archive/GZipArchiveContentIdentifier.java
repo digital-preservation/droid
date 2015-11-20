@@ -58,9 +58,7 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
     private static final long SIZE = 12L;
     private static final long TIME = 13L;
 
-    private BinarySignatureIdentifier binarySignatureIdentifier;
-    private ContainerSignatureDefinitions containerSignatureDefinitions;
-    
+
     /**
      * 
      * @param binarySignatureIdentifier     binary signature identifier
