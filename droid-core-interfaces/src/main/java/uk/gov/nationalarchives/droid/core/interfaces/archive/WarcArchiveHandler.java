@@ -194,7 +194,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
             String entryName = entryPath.substring(querylessPath.lastIndexOf('/') + 1);
             String prefixPath = entryUri.substring(0, entryUri.length() - entryName.length());
             ResourceId correlationId = parentId; // by default, files are correlated to the parent.
-            String requestUri = entry.getHttpHeader().requestUri;
+
 
             // If there is a path, get the actual correlation id for its parent folder:
             if (!prefixPath.isEmpty()) {
@@ -202,7 +202,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                 // If we haven't seen the path before, add the ancestor folders not yet seen:
                 if (correlationId == null) {
                     correlationId = processAncestorFolders(WEB_ARCHIVE_TYPE, prefixPath,
-                            requestUri, parentId, parentName, directories);
+                            entryUri, parentId, parentName, directories);
                 }
             }
             // if the file name (including querystring) is > 4096 chars, truncate it for the DB
