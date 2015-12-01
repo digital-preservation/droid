@@ -110,7 +110,7 @@ public class TarArchiveHandler implements ArchiveHandler {
          * {@inheritDoc}
          */
         @Override
-        protected TarArchiveEntry getNextEntry(TarArchiveInputStream stream) throws IOException {
+        protected TarArchiveEntry getNextEntry() throws IOException {
             return getInputStream().getNextTarEntry();
         }
         

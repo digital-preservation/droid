@@ -62,6 +62,8 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
     private Long size;
     private WindowReader reader;
 
+    private boolean closeStream = true;
+
 
     private Log log = LogFactory.getLog(this.getClass());
     
@@ -74,11 +76,18 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
     public ZipEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
                                   File tempDir) {
         this.identifier = identifier;
-        size = metaData.getSize();
-        fileName = metaData.getName();
-        extension = ResourceUtils.getExtension(fileName);
+        this.size = metaData.getSize();
+        this.fileName = metaData.getName();
+        this.extension = ResourceUtils.getExtension(fileName);
         this.tempDir = tempDir;
         this.requestMetaData = metaData;
+    }
+
+    public ZipEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
+                                         File tempDir, boolean closeStream) {
+        this(metaData, identifier, tempDir);
+        this.closeStream = closeStream;
+
     }
     
     /**
@@ -86,7 +95,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
      */
     @Override
     public final void open(final InputStream in) throws IOException {
-        reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY);
+        reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY, closeStream);
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
         if (readSize != size) {

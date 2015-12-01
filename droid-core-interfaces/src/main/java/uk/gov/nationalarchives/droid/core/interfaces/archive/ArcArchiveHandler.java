@@ -113,7 +113,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
          * {@inheritDoc}
          */
         @Override
-        protected ArcRecordBase getNextEntry(InputStream in) throws IOException {
+        protected ArcRecordBase getNextEntry() throws IOException {
             ArcRecordBase base = null;
             //get the next real ARC record (not header) and return it as an ArcRecord
             if (this.iterator.hasNext()) {

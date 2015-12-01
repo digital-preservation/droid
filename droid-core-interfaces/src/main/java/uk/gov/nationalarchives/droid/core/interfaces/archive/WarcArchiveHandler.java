@@ -113,7 +113,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
          * {@inheritDoc}
          */
         @Override
-        protected WarcRecord getNextEntry(InputStream in) throws IOException {
+        protected WarcRecord getNextEntry() throws IOException {
             WarcRecord record = null;
             if (this.iterator.hasNext()) {
                 record = this.iterator.next();

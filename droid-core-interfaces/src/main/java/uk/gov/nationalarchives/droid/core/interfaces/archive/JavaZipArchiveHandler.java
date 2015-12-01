@@ -187,7 +187,7 @@ public class JavaZipArchiveHandler implements ArchiveHandler {
          * {@inheritDoc}
          */
         @Override
-        protected ZipEntry getNextEntry(ZipInputStream stream) throws IOException {
+        protected ZipEntry getNextEntry() throws IOException {
             return next();
         }
     }

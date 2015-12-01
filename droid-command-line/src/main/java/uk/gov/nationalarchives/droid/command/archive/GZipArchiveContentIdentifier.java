@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.command.archive;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
@@ -96,9 +97,9 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
         final GZipIdentificationRequest gzRequest = new GZipIdentificationRequest(
                 metaData, identifier, tmpDir);
 
-        GzipCompressorInputStream gzin = null;
+        GZIPInputStream gzin = null;
         try {
-            gzin = new GzipCompressorInputStream(request.getSourceInputStream());
+            gzin = new GZIPInputStream(request.getSourceInputStream());
             gzRequest.open(gzin);
             final IdentificationResultCollection gzResults =
                     binarySignatureIdentifier.matchBinarySignatures(gzRequest);
