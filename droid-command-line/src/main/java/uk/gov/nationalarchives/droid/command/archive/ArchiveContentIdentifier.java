@@ -50,15 +50,15 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollect
  */
 
 public abstract class ArchiveContentIdentifier {
-
+    // CHECKSTYLE:OFF  Doesn't like protected members but I think their use is justified here.
     protected String slash;
     protected String slash1;
     protected BinarySignatureIdentifier binarySignatureIdentifier;
     protected ContainerSignatureDefinitions containerSignatureDefinitions;
     protected File tmpDir;
     protected String path;
+    // CHECKSTYLE:ON
     private Boolean expandWebArchives;
-
 
     /**
      * Initialization of instance values must be explicitly called by all children.
