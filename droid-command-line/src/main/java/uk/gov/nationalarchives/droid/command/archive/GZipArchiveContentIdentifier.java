@@ -117,6 +117,13 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
                     throw new CommandExecutionException(ioe.getMessage(), ioe);
                 }
             }
+            if (gzRequest != null) {
+                try {
+                    gzRequest.close();
+                } catch (IOException ioe) {
+                    throw new CommandExecutionException(ioe.getMessage(), ioe);
+                }
+            }
         }
     }
 
