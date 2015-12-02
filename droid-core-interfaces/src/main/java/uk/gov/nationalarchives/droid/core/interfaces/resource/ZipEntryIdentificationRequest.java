@@ -46,7 +46,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
 /**
  * Identification request encapsulating a zipped resource.
- * @author rflitcroft, mpalmer
+ * @author rflitcroft, mpalmer, boreilly
  *
  */
 public class ZipEntryIdentificationRequest implements IdentificationRequest<InputStream> {
@@ -83,6 +83,13 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
         this.requestMetaData = metaData;
     }
 
+    /**
+     * Constructs a new Zip file resource.
+     * @param metaData meta data about the request
+     * @param identifier request identifier
+     * @param tempDir the location to write temp files.
+     * @param closeStream Whether to close the underlying input stream when the reader created in [open] is closed.
+     */
     public ZipEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
                                          File tempDir, boolean closeStream) {
         this(metaData, identifier, tempDir);
