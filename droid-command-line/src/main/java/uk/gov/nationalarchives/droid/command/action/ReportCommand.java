@@ -41,7 +41,6 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

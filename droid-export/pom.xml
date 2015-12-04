@@ -95,23 +95,12 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-<!-- BNO added spring-context and removed spring and spring-beans -->
-<dependency>
+    <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <scope>runtime</scope>
    </dependency>
-<!-- <dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring</artifactId>
-<scope>runtime</scope>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-beans</artifactId>
-<scope>runtime</scope>
-</dependency> -->
-        <dependency>
+   <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>

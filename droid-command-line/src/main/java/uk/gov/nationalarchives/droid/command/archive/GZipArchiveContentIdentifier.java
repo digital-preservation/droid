@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.zip.GZIPInputStream;
@@ -86,7 +85,7 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
      */
 
     public final void identify(final URI uri, final IdentificationRequest request)
-            throws CommandExecutionException {
+        throws CommandExecutionException {
 
         final String newPath = "gzip:" + slash1 + path + request.getFileName() + "!" + slash;
         slash1 = "";
