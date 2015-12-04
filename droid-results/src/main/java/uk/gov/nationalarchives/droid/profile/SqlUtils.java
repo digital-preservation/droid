@@ -45,9 +45,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +53,24 @@ import java.util.Map;
  *
  */
 public final class SqlUtils {
+
+    private final static int NODE_COL_INDEX = 1;
+    private final static int EXTENSION_MISMATCH_COL_INDEX = 2;
+    private final static int FINISHED_TIMESTAMP_COL_INDEX = 3;
+    private final static int EXTENSION__COL_INDEX = 5;
+    private final static int HASH_COL_INDEX = 6;
+    private final static int IDINT_COL_INDEX = 7;
+    private final static int LAST_MOD_COL_INDEX = 8;
+    private final static int NAME_COL_INDEX = 9;
+    private final static int NODE_STATUS_COL_INDEX = 10;
+    private final static int RESOURCE_TYPE_COL_INDEX = 11;
+    private final static int SIZE_COL_INDEX = 12;
+    private final static int PARENT_ID_COL_INDEX = 13;
+    private final static int PREFIX_COL_INDEX = 14;
+    private final static int PREFIX_PLUS_ONE_COL_INDEX = 15;
+    private final static int URI_COL_INDEX = 17;
+    private final static int FILTER_STATUS_COL_INDEX = 20;
+
 
     private SqlUtils() {
     }
@@ -89,11 +105,13 @@ public final class SqlUtils {
     public static String transformEJBtoSQLFields(String ejbFragment,
             String nodePrefix, String formatPrefix) {
         return ejbFragment.replace("profileResourceNode.metaData.name", 
-                        nodePrefix + ".name ")
+                        //nodePrefix + ".name ")
+                        nodePrefix + ".u_name ")
                 .replace("profileResourceNode.metaData.size", 
                         nodePrefix + ".file_size")
                 .replace("profileResourceNode.metaData.extension", 
-                        nodePrefix + ".extension")
+                        //nodePrefix + ".extension")
+                        nodePrefix + ".u_extension")
                 .replace("profileResourceNode.identificationCount",
                         nodePrefix + ".identification_count")
                 .replace("profileResourceNode.metaData.lastModifiedDate",
@@ -109,7 +127,8 @@ public final class SqlUtils {
                 .replace("format.mimeType",
                         formatPrefix + ".mime_type")
                 .replace("format.name",
-                        formatPrefix + ".name")
+                        //formatPrefix + ".name")
+                        formatPrefix + ".u_name")
                 .replace("format.puid",
                         formatPrefix + ".puid")
                 .replace("extensionMismatch", "extension_mismatch"); 
@@ -170,26 +189,26 @@ public final class SqlUtils {
      */
     public static ProfileResourceNode buildProfileResourceNode(final ResultSet nodeResults) throws SQLException {
         // Get data from result set:
-        final Long node_id                   = nodeResults.getLong(1);
-        final Boolean extension_mismatch     = nodeResults.getBoolean(2);
-        final Date finished_timestamp        = getNullableTimestamp(3, nodeResults);
+        final Long node_id                   = nodeResults.getLong(NODE_COL_INDEX);
+        final Boolean extension_mismatch     = nodeResults.getBoolean(EXTENSION_MISMATCH_COL_INDEX);
+        final Date finished_timestamp        = getNullableTimestamp(FINISHED_TIMESTAMP_COL_INDEX, nodeResults);
         //final Integer identification_count   = nodeResults.getInt(4); this is set on the node by adding identifications.
-        final String extension               = getNullableString(5, nodeResults);
-        final String hash                    = getNullableString(6, nodeResults);
-        final Integer idInt                  = getNullableInteger(7, nodeResults);
+        final String extension               = getNullableString(EXTENSION__COL_INDEX, nodeResults);
+        final String hash                    = getNullableString(HASH_COL_INDEX, nodeResults);
+        final Integer idInt                  = getNullableInteger(IDINT_COL_INDEX, nodeResults);
         final IdentificationMethod idMethod  = idInt == null? null : IdentificationMethod.values()[idInt];
-        final Date last_mod                  = getNullableTimestamp(8, nodeResults);
+        final Date last_mod                  = getNullableTimestamp(LAST_MOD_COL_INDEX, nodeResults);
         final Long last_modified             = last_mod == null? null : last_mod.getTime();
-        final String name                    = nodeResults.getString(9);
-        final Integer nodeS                  = getNullableInteger(10, nodeResults);
+        final String name                    = nodeResults.getString(NAME_COL_INDEX);
+        final Integer nodeS                  = getNullableInteger(NODE_STATUS_COL_INDEX, nodeResults);
         final NodeStatus nodeStatus          = nodeS == null? null : NodeStatus.values()[nodeS];
-        final Integer rType                  = getNullableInteger(11, nodeResults);
+        final Integer rType                  = getNullableInteger(RESOURCE_TYPE_COL_INDEX, nodeResults);
         final ResourceType resourceType      = rType == null? null : ResourceType.values()[rType];
-        final Long size                      = getNullableLong(12, nodeResults);
-        final Long parentId                  = getNullableLong(13, nodeResults);
-        final String prefix                  = getNullableString(14, nodeResults);
-        final String prefixPlusOne           = getNullableString(15, nodeResults);
-        final String uriString               = nodeResults.getString(17);
+        final Long size                      = getNullableLong(SIZE_COL_INDEX, nodeResults);
+        final Long parentId                  = getNullableLong(PARENT_ID_COL_INDEX, nodeResults);
+        final String prefix                  = getNullableString(PREFIX_COL_INDEX, nodeResults);
+        final String prefixPlusOne           = getNullableString(PREFIX_PLUS_ONE_COL_INDEX, nodeResults);
+        final String uriString               = nodeResults.getString(URI_COL_INDEX);
         final URI uri;
         try {
             uri = new URI(uriString);
@@ -197,8 +216,8 @@ public final class SqlUtils {
             throw new SQLException("The URI for the node obtained from the database: [" + uriString + "] could not be converted into a URI", e);
         }
         int filterStatus = 1;
-        if (getNumberOfColumns(nodeResults) > 17) {
-            filterStatus = nodeResults.getInt(18);
+        if (getNumberOfColumns(nodeResults) > URI_COL_INDEX) {
+            filterStatus = nodeResults.getInt(FILTER_STATUS_COL_INDEX);
         }
 
         // Create the node

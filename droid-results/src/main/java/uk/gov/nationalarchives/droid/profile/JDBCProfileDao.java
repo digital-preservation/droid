@@ -49,8 +49,11 @@ import java.util.*;
 public class JDBCProfileDao implements ProfileDao {
 
     private static final String INSERT_FORMAT            = "INSERT INTO FORMAT (PUID,MIME_TYPE,NAME,VERSION) VALUES (?,?,?,?)";
-    private static final String FIND_CHILD_NODES         = "SELECT * FROM PROFILE_RESOURCE_NODE WHERE PARENT_ID=?";
-    private static final String FIND_TOP_LEVEL_CHILDREN = "SELECT * FROM PROFILE_RESOURCE_NODE WHERE PARENT_ID IS NULL";
+    private static final String SELECT_MAIN              = "SELECT NODE_ID, EXTENSION_MISMATCH, FINISHED_TIMESTAMP, IDENTIFICATION_COUNT, EXTENSION, HASH, " +
+                                                            "IDENTIFICATION_METHOD, LAST_MODIFIED_DATE, NAME, NODE_STATUS, RESOURCE_TYPE, FILE_SIZE, " +
+                                                            "PARENT_ID, PREFIX, PREFIX_PLUS_ONE, TEXT_ENCODING, URI FROM PROFILE_RESOURCE_NODE ";
+    private static final String FIND_CHILD_NODES         = SELECT_MAIN + "WHERE PARENT_ID=?";
+    private static final String FIND_TOP_LEVEL_CHILDREN  = SELECT_MAIN +  "WHERE PARENT_ID IS NULL";
     private static final String FIND_CHILDREN            = "SELECT ID.NODE_ID, ID.PUID FROM IDENTIFICATION AS ID " +
                                                            "INNER JOIN PROFILE_RESOURCE_NODE AS PRN " +
                                                            "ON ID.NODE_ID = PRN.NODE_ID";
