@@ -113,7 +113,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                                                         "PRIMARY KEY(NODE_ID, PUID))";
     private static String CREATE_TABLE_PRN = "CREATE TABLE PROFILE_RESOURCE_NODE (NODE_ID BIGINT NOT NULL, EXTENSION_MISMATCH BOOLEAN NOT NULL, " +
                                                 "FINISHED_TIMESTAMP TIMESTAMP, IDENTIFICATION_COUNT INTEGER, EXTENSION VARCHAR(255), " +
-                                                "HASH VARCHAR(64), IDENTIFICATION_METHOD INTEGER, LAST_MODIFIED_DATE TIMESTAMP, NAME VARCHAR(255) NOT NULL, " +
+                                                "HASH VARCHAR(64), IDENTIFICATION_METHOD INTEGER, LAST_MODIFIED_DATE TIMESTAMP, NAME VARCHAR(1000) NOT NULL, " +
                                                 "NODE_STATUS INTEGER, RESOURCE_TYPE INTEGER NOT NULL, FILE_SIZE BIGINT, PARENT_ID BIGINT, PREFIX VARCHAR(255), " +
                                                 "PREFIX_PLUS_ONE VARCHAR(255), TEXT_ENCODING INTEGER, URI VARCHAR(4000) NOT NULL, " +
                                                 "U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION)), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), " +
