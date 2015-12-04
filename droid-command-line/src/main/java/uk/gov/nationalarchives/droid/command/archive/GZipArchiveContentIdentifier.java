@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+//import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;

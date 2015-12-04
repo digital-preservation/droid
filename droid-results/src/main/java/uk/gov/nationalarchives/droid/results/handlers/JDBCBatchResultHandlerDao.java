@@ -118,18 +118,16 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                                                 "PREFIX_PLUS_ONE VARCHAR(255), TEXT_ENCODING INTEGER, URI VARCHAR(4000) NOT NULL, " +
                                                 "U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION)), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), " +
                                                 "PRIMARY KEY (NODE_ID))";
-    //private static String CREATE_IDX_MIME_TYPE_ON_FORMAT = "CREATE INDEX IDX_MIME_TYPE ON FORMAT (MIME_TYPE)";
-    private static String CREATE_IDX_FORMAT_NAME_ON_FORMAT = "CREATE INDEX IDX_FORMAT_NAME ON FORMAT (NAME)";
-    //private static String CREATE_IDX_EXT_MISMATCH_ON_PRN = "CREATE INDEX IDX_EXTENSION_MISMATCH ON PROFILE_RESOURCE_NODE (EXTENSION_MISMATCH)";
-    //private static String CREATE_IDX_ID_COUNT_ON_PRN = "CREATE INDEX IDX_ID_COUNT ON PROFILE_RESOURCE_NODE (IDENTIFICATION_COUNT)";
-    //private static String CREATE_IDX_PRN_EXT_ON_PRN = "CREATE INDEX IDX_PRN_EXTENSION ON PROFILE_RESOURCE_NODE (EXTENSION)";
+    private static String CREATE_IDX_MIME_TYPE_ON_FORMAT = "CREATE INDEX IDX_MIME_TYPE ON FORMAT (MIME_TYPE)";
+    private static String CREATE_IDX_FORMAT_NAME_ON_FORMAT = "CREATE INDEX IDX_FORMAT_NAME ON FORMAT (U_NAME)";
+
+    private static String CREATE_IDX_ID_COUNT_ON_PRN = "CREATE INDEX IDX_ID_COUNT ON PROFILE_RESOURCE_NODE (IDENTIFICATION_COUNT)";
     private static String CREATE_IDX_PRN_EXT_ON_PRN = "CREATE INDEX IDX_PRN_EXTENSION ON PROFILE_RESOURCE_NODE (U_EXTENSION)";
-    //private static String CREATE_IDX_PRN_HASH_TYPE_ON_PRN = "CREATE INDEX IDX_PRN_HASH ON PROFILE_RESOURCE_NODE (HASH)";
-    //private static String CREATE_IDX_PRN_ID_METHOD_ON_PRN = "CREATE INDEX IDX_PRN_ID_METHOD ON PROFILE_RESOURCE_NODE (IDENTIFICATION_METHOD)";
+    private static String CREATE_IDX_PRN_ID_METHOD_ON_PRN = "CREATE INDEX IDX_PRN_ID_METHOD ON PROFILE_RESOURCE_NODE (IDENTIFICATION_METHOD)";
     private static String CREATE_IDX_PRN_LAST_MODIFIED_ON_PRN = "CREATE INDEX IDX_PRN_LAST_MODIFIED ON PROFILE_RESOURCE_NODE (LAST_MODIFIED_DATE)";
-    //private static String CREATE_IDX_PRN_NAME_ON_PRN = "CREATE INDEX IDX_PRN_NAME ON PROFILE_RESOURCE_NODE (NAME)";
-    //private static String CREATE_IDX_PRN_NODE_STATUS_ON_PRN = "CREATE INDEX IDX_PRN_NODE_STATUS ON PROFILE_RESOURCE_NODE (NODE_STATUS)";
-    //private static String CREATE_IDX_ID_RESOURCE_ON_PRN = "CREATE INDEX IDX_PRN_ID_RESOURCETYPE ON PROFILE_RESOURCE_NODE (RESOURCE_TYPE)";
+    private static String CREATE_IDX_PRN_NAME_ON_PRN = "CREATE INDEX IDX_PRN_NAME ON PROFILE_RESOURCE_NODE (NAME)";
+    private static String CREATE_IDX_PRN_NODE_STATUS_ON_PRN = "CREATE INDEX IDX_PRN_NODE_STATUS ON PROFILE_RESOURCE_NODE (NODE_STATUS)";
+    private static String CREATE_IDX_ID_RESOURCE_ON_PRN = "CREATE INDEX IDX_PRN_ID_RESOURCETYPE ON PROFILE_RESOURCE_NODE (RESOURCE_TYPE)";
     private static String CREATE_IDX_PRN_FILE_SIZE_ON_PRN = "CREATE INDEX IDX_PRN_FILE_SIZE ON PROFILE_RESOURCE_NODE (FILE_SIZE)";
     private static String CREATE_IDX_PARENT_ID_ON_PRN = "CREATE INDEX IDX_PARENT_ID ON PROFILE_RESOURCE_NODE (PARENT_ID)";
     private static String CREATE_IDX_PREFIX_ON_PRN = "CREATE INDEX IDX_PREFIX ON PROFILE_RESOURCE_NODE (PREFIX)";
@@ -138,10 +136,6 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     //private static String CREATE_IDX_URI_ON_PRN = "CREATE INDEX IDX_URI ON PROFILE_RESOURCE_NODE (URI)";
     private static String IDENTIFICATION_CONSTRAINT_1 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_FH484CCWWL4E5W9QUQKE4N6RI FOREIGN KEY (PUID) REFERENCES FORMAT";
     private static String IDENTIFICATION_CONSTRAINT_2 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_TPXMO6PPUXECKDRELN5PT5E39 FOREIGN KEY (NODE_ID) REFERENCES PROFILE_RESOURCE_NODE";
-
-    //TODO: May not need these mnow we're not using Hibernate?
-    private static String CREATE_UNIQUE_KEY = "create table hibernate_unique_key ( next_hi integer )";
-    private static String INSERT_UNIQUE_KEY = "insert into hibernate_unique_key values ( 0 )";
 
     private static boolean freshTemplate;
     private final static Object locker = new Object();
@@ -297,17 +291,16 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 createProfileResourceNodeTable.execute();
 
                 List<String> createIndexesAndConstraints = new ArrayList<String>(19);
-                //createIndexesAndConstraints.add(CREATE_IDX_MIME_TYPE_ON_FORMAT);
+                createIndexesAndConstraints.add(CREATE_IDX_MIME_TYPE_ON_FORMAT);
                 createIndexesAndConstraints.add(CREATE_IDX_FORMAT_NAME_ON_FORMAT);
                 //createIndexesAndConstraints.add(CREATE_IDX_EXT_MISMATCH_ON_PRN);
-                //createIndexesAndConstraints.add(CREATE_IDX_ID_COUNT_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_ID_COUNT_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PRN_EXT_ON_PRN);
-                //createIndexesAndConstraints.add(CREATE_IDX_PRN_HASH_TYPE_ON_PRN);
-                //createIndexesAndConstraints.add(CREATE_IDX_PRN_ID_METHOD_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_ID_METHOD_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PRN_LAST_MODIFIED_ON_PRN);
-                //createIndexesAndConstraints.add(CREATE_IDX_PRN_NAME_ON_PRN);
-                //createIndexesAndConstraints.add(CREATE_IDX_PRN_NODE_STATUS_ON_PRN);
-                //createIndexesAndConstraints.add(CREATE_IDX_ID_RESOURCE_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_NAME_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_PRN_NODE_STATUS_ON_PRN);
+                createIndexesAndConstraints.add(CREATE_IDX_ID_RESOURCE_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PRN_FILE_SIZE_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PARENT_ID_ON_PRN);
                 createIndexesAndConstraints.add(CREATE_IDX_PREFIX_ON_PRN);
@@ -328,10 +321,17 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             } catch (SQLException e) {
                 throw e;
             } finally {
-                createFormatTable.close();
-                createIdentificationTable.close();
-                createProfileResourceNodeTable.close();
-                conn.close();
+                AutoCloseable[] autoclosables = new AutoCloseable[] {createFormatTable,
+                        createIdentificationTable, createProfileResourceNodeTable, conn};
+                for(AutoCloseable a : autoclosables) {
+                    if(a != null) {
+                        try {
+                            a.close();
+                        } catch (Exception e) {
+                            log.error(e);
+                        }
+                    }
+                }
             }
         } catch (SQLException e) {
             log.error("A database exception occurred getting when creating the Derby database for a fresh install.", e);

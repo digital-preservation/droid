@@ -34,8 +34,6 @@ package uk.gov.nationalarchives.droid.command.archive;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -85,14 +83,11 @@ public class ZipArchiveContentIdentifier extends ArchiveContentIdentifier {
         setSlash1("");
         InputStream zipIn = null; 
         try {
-            zipIn = request.getSourceInputStream(); 
-            //final ZipArchiveInputStream in = new ZipArchiveInputStream(zipIn);
-            final ZipInputStream in = new ZipInputStream(zipIn);
+            zipIn = request.getSourceInputStream();
+            final ZipArchiveInputStream in = new ZipArchiveInputStream(zipIn);
             try {
-                //ZipArchiveEntry entry = null;
-                ZipEntry entry = null;
-                //while ((entry = (ZipArchiveEntry) in.getNextZipEntry()) != null) {
-                while ((entry = in.getNextEntry()) != null) {
+                ZipArchiveEntry entry = null;
+                while ((entry = (ZipArchiveEntry) in.getNextZipEntry()) != null) {
                     final String name = entry.getName();
                     if (!entry.isDirectory()) {
                         final RequestMetaData metaData = new RequestMetaData(entry.getSize(), 2L, name);
@@ -102,8 +97,6 @@ public class ZipArchiveContentIdentifier extends ArchiveContentIdentifier {
                         expandContainer(zipRequest, in, newPath);
                     }
                 }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
             } finally {
                 if (in != null) {
                     in.close();
