@@ -79,8 +79,8 @@
        One method&nbsp;of duplicate detection is to use content hashes. If two files have the same
       hash value, then they are overwhelmingly likely to have identical content.&nbsp;The odds of
       two arbitrary files having the same hash value by accident are less than 1 in
-      18,000,000,000,000,000,000, which is very, very low (these odds are for MD5, with SHA256 the 
-      odds become orders of magnitude lower still).&nbsp;DROID can generate content hashes
+      18,000,000,000,000,000,000, which is very, very low (these odds are for MD5, with SHA1, and then SHA256 
+      the odds become orders of magnitude lower still).&nbsp;DROID can generate content hashes
       for your files, but note that DROID will not locate files with the same hash value for you,
       only generate them in the first place. &nbsp;If you export your profiles to a CSV file and
       import them into software like Excel or Access, you can query for files which have the same
@@ -137,18 +137,20 @@
       "../Images/Icon_External_Link.png">&nbsp;text, which can be used as a signature to identify
       the content of a file. &nbsp;DROID can generate hashes called "<a href=
       "http://en.wikipedia.org/wiki/MD5">MD5</a>"<img src=
-      "../Images/Icon_External_Link.png">&nbsp; or <a href=
+      "../Images/Icon_External_Link.png">&nbsp;, or <a href=
+      "http://en.wikipedia.org/wiki/SHA-1">SHA1</a>"<img src=
+      "../Images/Icon_External_Link.png">&nbsp;, or <a href=
       "http://en.wikipedia.org/wiki/SHA256">SHA256</a>"<img src=
-      "../Images/Icon_External_Link.png">&nbsp;, which are both fairly fast to produce (relative
+      "../Images/Icon_External_Link.png">&nbsp;, which are fairly fast to produce (relative
       to other hashing algorithms). 
     </p>
     <p>
-       Hashes are useful to locate duplicates in the files you profile,&nbsp;and to match with
-      common files which have published hash values. &nbsp;However, MD5 hashes are not resistant to
+      Hashes are useful to locate duplicates in the files you profile,&nbsp;and to match with
+      common files which have published hash values. However, MD5 hashes are not resistant to
       malicious attack - an attacker can create files which have the same hash but with different
       content. &nbsp;The goal of hashing in DROID&nbsp;is not to provide a cryptographic assurance
       of uniqueness, only to locate likely duplicates and to&nbsp;link to forensic hash databases
-      (most of which use MD5). SHA256 is more recent and more secure than MD5, but should still not be 
+      (most of which use MD5). SHA1 and SHA256 are more recent and more secure than MD5, but should still not be 
       taken to provide an absolute guarantee of uniqueness.
     </p>
     <p>

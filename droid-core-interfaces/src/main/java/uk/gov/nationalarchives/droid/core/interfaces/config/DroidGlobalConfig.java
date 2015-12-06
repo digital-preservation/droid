@@ -280,6 +280,7 @@ public class DroidGlobalConfig {
         List<String> availableHashAlgorithms = new ArrayList<String>();
 
         availableHashAlgorithms.add("md5");
+        availableHashAlgorithms.add("sha1");
         availableHashAlgorithms.add("sha256");
 
         allSettings.put(AVAILABLE_HASH_ALGORITHMS, availableHashAlgorithms);
