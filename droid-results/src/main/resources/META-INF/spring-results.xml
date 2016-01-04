@@ -282,6 +282,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
    
    <!-- BNO: these changes were made in SHA256 branch but didn't appear to get pulled down from GitHub --> 
  <bean id="md5HashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator"/>
+ <bean id="sha1HashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.SHA1HashGenerator"/>
  <bean id="sha256HashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.SHA256HashGenerator"/>
     
     <bean id="submissionQueue" class="uk.gov.nationalarchives.droid.submitter.JaxBSubmissionQueueDao">

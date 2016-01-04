@@ -33,10 +33,7 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.xml.bind.JAXBException;
 
