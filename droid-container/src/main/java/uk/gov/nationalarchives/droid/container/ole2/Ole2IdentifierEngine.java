@@ -74,7 +74,10 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
                 // whether the reader has been assigned - if not, this is probably due to an Out Of Memory error,
                 // possibly caused by a low heap size.
                 if (reader == null) {
-                    throw new IOException(String.format(NO_READER_ERROR, request.getIdentifier().getUri()));
+                    //request.getIdentifier() is null when running in command line 'no profile' mode.
+                    String identifier = request.getIdentifier() != null
+                            ? request.getIdentifier().getUri().toString() : "the current container file";
+                    throw new IOException(String.format(NO_READER_ERROR, identifier));
                 }
             }
             DirectoryEntry root = reader.getRoot();
