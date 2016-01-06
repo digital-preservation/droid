@@ -105,7 +105,8 @@ public class JDBCResultHandler implements ResultHandler {
             node.setZeroIdentifications();
         } else {
             final List<IdentificationResult> theResults = results.getResults();
-            final int numResults = theResults.size(); // garbage reduction: use an indexed loop to avoid allocating an iterator.
+            final int numResults = theResults.size();
+            // garbage reduction: use an indexed loop to avoid allocating an iterator.
             for (int i = 0; i < numResults; i++) {
                 final IdentificationResult result = theResults.get(i);
                 node.getMetaData().setIdentificationMethod(result.getMethod());

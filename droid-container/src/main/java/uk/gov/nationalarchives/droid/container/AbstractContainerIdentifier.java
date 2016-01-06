@@ -91,7 +91,8 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
         process(request, matches);
         final IdentificationResultCollection results = new IdentificationResultCollection(request);
         final List<ContainerSignatureMatch> matchList = matches.getContainerSignatureMatches();
-        final int numMatches = matchList.size(); // garbage reduction: use an indexed loop rather than allocating an iterator.
+        // garbage reduction: use an indexed loop rather than allocating an iterator.
+        final int numMatches = matchList.size();
         for (int i = 0; i < numMatches; i++) {
             final ContainerSignatureMatch match = matchList.get(i);
             if (match.isMatch()) {

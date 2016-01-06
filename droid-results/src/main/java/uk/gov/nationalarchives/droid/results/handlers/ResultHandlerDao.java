@@ -31,13 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.results.handlers;
 
-import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
+import java.util.List;
+import java.util.Map;
+
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Operations for persistence.
@@ -88,7 +87,7 @@ public interface ResultHandlerDao {
      *
      * @return A map of all formats against their PUID values.
      */
-    Map<String,Format> getPUIDFormatMap();
+    Map<String, Format> getPUIDFormatMap();
 
     /**
      * @param nodeId the Id of the node to load
@@ -102,8 +101,10 @@ public interface ResultHandlerDao {
      */
     void deleteNode(Long nodeId);
 
-    // BNO: Added for new method in JDBCBatchResulthandlerDao.  Haven't previously published this interface
-    // via an API etc. ASAIK so shouldn't break anything...
+    /**
+     * BNO: Added for new method in JDBCBatchResulthandlerDao, for customising behaviour for new vs existing
+     * installations.  Haven't previously published this interface via an API etc. ASAIK so shouldn't break anything...
+     */
     void initialiseForNewTemplate();
 
 }

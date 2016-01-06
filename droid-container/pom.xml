@@ -37,7 +37,7 @@
                 </executions>
                 <configuration>
                     <configLocation>/checkstyle-main.xml</configLocation>
-                    <failOnViolation>false</failOnViolation>
+                    <failOnViolation>true</failOnViolation>
                     <enableFilesSummary>true</enableFilesSummary>
                     <suppressionsLocation>${basedir}/checkstyle/suppressions.xml</suppressionsLocation>
                     <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>

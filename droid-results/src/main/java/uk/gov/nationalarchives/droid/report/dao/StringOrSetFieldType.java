@@ -127,7 +127,12 @@ public class StringOrSetFieldType implements ReportFieldType {
     }
 
 
-    //@Override
+    /**
+     * Returns a list of ReportLineItems from a ResultSet.
+     * @param results ResultSet The result set from which to extract ReportLineItems
+     * @return A list of ReportLineItems extracted from the ResultSet
+     * @throws SQLException SQL Exception
+     */
     public List<ReportLineItem> populateReportedData(ResultSet results) throws SQLException {
 
         List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
@@ -141,8 +146,8 @@ public class StringOrSetFieldType implements ReportFieldType {
                 int numberOfColumns = results.getMetaData().getColumnCount();
                 Object[] resultsArray =  new Object[numberOfColumns];
 
-                for(int i=0;i<numberOfColumns;i++) {
-                    resultsArray[i] = results.getObject(i+1);
+                for (int i = 0; i < numberOfColumns; i++) {
+                    resultsArray[i] = results.getObject(i + 1);
                 }
 
                 //Object[] resultsArray = (Object[]) res;

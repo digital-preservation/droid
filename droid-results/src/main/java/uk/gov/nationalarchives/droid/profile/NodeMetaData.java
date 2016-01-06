@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.profile;
 
 import java.util.Date;
+
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
@@ -146,7 +147,7 @@ public class NodeMetaData {
      *            the extension to set
      */
     public void setExtension(String extension) {
-        this.extension = extension == null? null : extension.toLowerCase();
+        this.extension = extension == null ? null : extension.toLowerCase();
     }
 
     /**

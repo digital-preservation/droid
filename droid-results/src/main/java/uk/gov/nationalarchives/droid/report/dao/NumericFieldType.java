@@ -149,8 +149,8 @@ public class NumericFieldType implements ReportFieldType {
 
             Object[] resultsArray =  new Object[numberOfColumns];
 
-            for(int i=0;i<numberOfColumns;i++) {
-                resultsArray[i] = results.getObject(i+1);
+            for (int i = 0; i < numberOfColumns; i++) {
+                resultsArray[i] = results.getObject(i + 1);
             }
 
             Object count   = resultsArray[COUNT_INDEX];
@@ -164,7 +164,7 @@ public class NumericFieldType implements ReportFieldType {
             // Unclear as why we're casting to BigInteger - if we actually need the additional range then
             // we lose it anyway when calling longValue() which only returns the lower 64 bits!  Seems
             // better to just throw an exception!
-            // Unfortunately we do need to use an Object array and then cast - most calls will return a long but not all!
+            // Unfortunately we do need to use an Object array and then cast -most calls will return a long but not all!
              /*
             if (count != null)   { reportLineItem.setCount(new Long((Integer) count)); }
             if (sum != null)     { reportLineItem.setSum(((BigInteger) sum).longValue()); }
@@ -177,7 +177,7 @@ public class NumericFieldType implements ReportFieldType {
                 reportLineItem.setCount(Long.valueOf(count.toString()));
             }
 
-            if(sum !=null) {
+            if (sum != null) {
                 reportLineItem.setSum(Long.valueOf(sum.toString()));
             }
 

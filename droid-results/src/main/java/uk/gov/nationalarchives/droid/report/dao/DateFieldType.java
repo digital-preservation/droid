@@ -138,8 +138,13 @@ public class DateFieldType implements ReportFieldType {
     }
 
 
-    //@Override
-    public List<ReportLineItem> populateReportedData(ResultSet results) throws SQLException{
+    /**
+     * Returns a list of ReportLineItems from a ResultSet.
+     * @param results The ResultSet from which to extract ReportLineItems
+     * @return A list of ReportLineItems
+     * @throws SQLException SQL Exception
+     */
+    public List<ReportLineItem> populateReportedData(ResultSet results) throws SQLException {
 
         List<ReportLineItem> lineItems = new ArrayList<ReportLineItem>();
 
@@ -149,8 +154,8 @@ public class DateFieldType implements ReportFieldType {
             int numberOfColumns = results.getMetaData().getColumnCount();
             Object[] resultsArray =  new Object[numberOfColumns];
 
-            for(int i=0;i<numberOfColumns;i++) {
-                resultsArray[i] = results.getObject(i+1);
+            for (int i = 0; i < numberOfColumns; i++) {
+                resultsArray[i] = results.getObject(i + 1);
             }
 
             //Object[] resultsArray = (Object[]) res;

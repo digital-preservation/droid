@@ -32,7 +32,6 @@
 package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.File;
-import java.net.URI;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -47,8 +46,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  */
 public class DirectoryEventHandler {
 
+    private static final int URI_STRING_BUILDER_CAPACITY = 1024;
+
     private ResultHandler resultHandler;
-    private StringBuilder URI_STRING_BUILDER = new StringBuilder(1024);
+    private StringBuilder uriStringBuilder = new StringBuilder(URI_STRING_BUILDER_CAPACITY);
 
     /**
      * Handles a directory.
@@ -67,7 +68,7 @@ public class DirectoryEventHandler {
                 dir.lastModified(),
                 depth == 0 ? dir.getAbsolutePath() : dir.getName());
         
-        RequestIdentifier identifier = new RequestIdentifier(SubmitterUtils.toURI(dir, URI_STRING_BUILDER));
+        RequestIdentifier identifier = new RequestIdentifier(SubmitterUtils.toURI(dir, uriStringBuilder));
         identifier.setParentResourceId(parentId);
         result.setRequestMetaData(metaData);
         result.setIdentifier(identifier);

@@ -46,8 +46,6 @@ import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Criterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.SqlUtils;
-import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
-import uk.gov.nationalarchives.droid.profile.SqlUtils;
 
 /**
  * JDBC implementation of JpaPlanetsXMLDaoImpl.
@@ -88,7 +86,7 @@ public class SqlReportDaoImpl implements ReportDao {
         Connection connection = null;
 
         final String sqlQuery = getQueryString(reportField, groupByFields, filter);
-        try{
+        try {
             connection = this.datasource.getConnection();
             statement = connection.prepareStatement(sqlQuery);
             setFilterParameters(statement, filter);
@@ -96,17 +94,17 @@ public class SqlReportDaoImpl implements ReportDao {
             List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
             reportData = reportField.getType().populateReportedData(resultset);
             return reportData;
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             log.error("Error executing report query", ex);
         } finally {
             try {
-                if(resultset != null) {
+                if (resultset != null) {
                     resultset.close();
                 }
-                if(statement != null) {
+                if (statement != null) {
                     statement.close();
                 }
-                if(connection != null) {
+                if (connection != null) {
                     connection.close();
                 }
             } catch (SQLException e) {
@@ -223,8 +221,12 @@ public class SqlReportDaoImpl implements ReportDao {
     private boolean filterOnFormats(final String queryString) {
         return queryString.contains(formatfilter);
     }
-    
-    
+
+    /**
+     *
+     * @param queryString
+     * @return
+     */
     private boolean filterOnFormatMetadata(final String queryString) {
         return queryString.contains("formatfilter.name") || queryString.contains("formatfilter.mime_type");
     }
@@ -233,13 +235,20 @@ public class SqlReportDaoImpl implements ReportDao {
     private boolean groupOnPUID(ReportFieldEnum groupByField) {
         return groupByField.equals(ReportFieldEnum.PUID);
     }
-    
-    
+
+    /**
+     * Checks whether the group by field is either mime type or file format.
+     * @param groupByField ReportFieldEnum
+     * @return Boolean indicating whether or not the group field is either mime type or file format
+     */
     private boolean groupOnFormatMetadata(ReportFieldEnum groupByField) {
         return groupByField.equals(ReportFieldEnum.FILE_FORMAT)
                 || groupByField.equals(ReportFieldEnum.MIME_TYPE);
     }
-    
+
+    /**
+     * Private class to model the filter information
+     */
     private class FilterInfo {
         private String filterSubQuery = "";
         private Object[] filterValues = new Object[0];
@@ -260,8 +269,12 @@ public class SqlReportDaoImpl implements ReportDao {
             filterValues = values;
         }
     }
-    
 
+    /**
+     * Sets filter parameters within a PreparedStatement containing placeholders for the values.
+     * @param s The PreparedStatement in which to set filter parameters.
+     * @param filter a filter containing parameters to set.
+     */
     private void setFilterParameters(PreparedStatement s, Criterion filter) {
 
         final FilterInfo filterInfo = getFilterInfo(filter);
@@ -298,11 +311,18 @@ public class SqlReportDaoImpl implements ReportDao {
         }
     }
 
+    /**
+     * Sets the datasource.
+     * @param datasource datasource to set for the DAO
+     */
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
     }
 
-
+    /**
+     * Returns the datasource.
+     * @return the datasource
+     */
     public DataSource getDatasource() {
         return this.datasource;
     }

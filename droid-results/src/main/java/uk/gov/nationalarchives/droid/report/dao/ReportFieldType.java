@@ -60,10 +60,14 @@ public interface ReportFieldType {
      *            result set from database.
      * @return ReportData
      */
-
     List<ReportLineItem> populateReportedData(List<?> results);
 
-    //BNO
+    /**
+     * Retrieve ReportLineItems from a ResultSet.
+     * @param results ResultSet
+     * @return a List of ReportLineItems
+     * @throws SQLException SQL Exception
+     */
     List<ReportLineItem> populateReportedData(ResultSet results) throws SQLException;
 
     /**

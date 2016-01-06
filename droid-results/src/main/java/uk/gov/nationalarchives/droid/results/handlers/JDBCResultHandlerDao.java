@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package uk.gov.nationalarchives.droid.results.handlers;
-
+//CHECKSTYLE:OFF  Class Not currently used.
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
@@ -49,12 +49,12 @@ import java.util.*;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
-
 /**
  * An implementation of the ResultHandlerDao interface, using JDBC to access the profile database directly.
  *
  * @author Matt Palmer
  */
+
 public class JDBCResultHandlerDao implements ResultHandlerDao {
 
     private static String INSERT_PROFILE_RESOURCE_NODE =
@@ -383,30 +383,35 @@ public class JDBCResultHandlerDao implements ResultHandlerDao {
 
     private List<Format> loadAllFormats() {
         final List<Format> formats = new ArrayList<Format>(2000);
+        PreparedStatement loadFormat = null;
+        ResultSet results = null;
+
         try {
             final Connection conn = datasource.getConnection();
             try {
-                final PreparedStatement loadFormat = conn.prepareStatement(SELECT_FORMATS);
-                try {
-                    final ResultSet results = loadFormat.executeQuery();
-                    try {
-                        while (results.next()) {
-                            formats.add(SqlUtils.buildFormat(results));
-                        }
-                    } finally {
-                        results.close();
-                    }
-                } finally {
+                loadFormat = conn.prepareStatement(SELECT_FORMATS);
+                results = loadFormat.executeQuery();
+
+                while (results.next()) {
+                    formats.add(SqlUtils.buildFormat(results));
+                }
+            } finally {
+                if ( loadFormat != null) {
                     loadFormat.close();
                 }
-            } finally{
-                conn.close();
+
+                if (results != null) {
+                    results.close();
+                }
+
+                if (conn != null) {
+                    conn.close();
+                }
             }
         } catch (SQLException e) {
             log.error("A database exception occurred getting all formats.", e);
         }
         return formats;
     }
-
-
 }
+//CHECKSTYLE:ON

@@ -75,10 +75,9 @@ public interface ProfileDao {
      */
     List<ProfileResourceNode> findProfileResourceNodes(Long parentId, Filter filter);
 
-//    /**
-//     * @return the root node ID.
-//     */
-//    long createRootNode();
+    /**
+     * Allows for customised initialisation behaviour (e.g. for new versus existing installation).
+     */
     void initialise();
 
 }

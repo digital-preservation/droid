@@ -306,6 +306,10 @@ public class ProfileResourceNode {
         this.finished = date;
     }
 
+    /**
+     *
+     * @return  The date and time that processing was completed for the resource node.
+     */
     public Date getFinished() {
         return finished;
     }

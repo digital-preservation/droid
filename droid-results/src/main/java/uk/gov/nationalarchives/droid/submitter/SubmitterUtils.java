@@ -43,9 +43,9 @@ import java.net.URISyntaxException;
  */
 public final class SubmitterUtils {
 
-    private SubmitterUtils() { }
+    private static final char FORWARD_SLASH = '/';
 
-    private static char FORWARD_SLASH = '/';
+    private SubmitterUtils() { }
 
     /**
      * Determines via best effort if the file system on which the file resides is available.
@@ -73,23 +73,25 @@ public final class SubmitterUtils {
      * @param builder A StringBuilder to help build the URI path.
      * @return A URI for the file.
      */
+    //CHECKSTYLE:OFF  Too complex
     public static URI toURI(final File file, final StringBuilder builder)  {
+
         File absoluteFile = file.getAbsoluteFile();
 
         //Allow for Mockito tests where the previous assignment returns anull reference
-        if(absoluteFile == null) {
+        if (absoluteFile == null) {
             absoluteFile = new File(file.getAbsolutePath());
         }
 
         final String path       = absoluteFile.getPath();
         final int    length     = path.length();
-        final char   SEPARATOR  = File.separatorChar;
+        final char   separator  = File.separatorChar;
 
         // check how many start slashes we need.
         int numStartSlashes = 0;
-        if (path.charAt(0) != SEPARATOR) {
+        if (path.charAt(0) != separator) {
             numStartSlashes = 1;
-        } else if (path.charAt(1) == SEPARATOR) {
+        } else if (path.charAt(1) == separator) {
             numStartSlashes = 2;
         }
 
@@ -102,12 +104,12 @@ public final class SubmitterUtils {
         }
 
         // append path (transforming separators to forward slashes if necessary):
-        if (SEPARATOR == FORWARD_SLASH) {
+        if (separator == FORWARD_SLASH) {
             builder.append(path);
         } else {
             for (int charIndex = 0; charIndex < length; charIndex++) {
                 final char theChar = path.charAt(charIndex);
-                if (theChar == SEPARATOR) {
+                if (theChar == separator) {
                     builder.append(FORWARD_SLASH);
                 } else {
                     builder.append(theChar);
@@ -116,8 +118,8 @@ public final class SubmitterUtils {
         }
 
         // ensure we have a closing slash if the file is a directory:
-        if (path.charAt(path.length() - 1) != SEPARATOR &&
-                absoluteFile.isDirectory()) {
+        if (path.charAt(path.length() - 1) != separator
+                && absoluteFile.isDirectory()) {
             builder.append(FORWARD_SLASH);
         }
 
@@ -127,6 +129,7 @@ public final class SubmitterUtils {
         } catch (URISyntaxException e) {
             // ignore - should never happen.
         }
+        //CHECKSTYLE:ON
         return uri;
     }
 

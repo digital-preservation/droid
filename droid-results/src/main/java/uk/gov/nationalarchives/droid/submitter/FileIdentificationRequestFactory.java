@@ -31,14 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
+import java.io.File;
+
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @author rflitcroft

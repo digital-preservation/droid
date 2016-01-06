@@ -31,47 +31,68 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.*;
-
 /**
  * Created by Matt Palmer on 19/06/15.
  */
 public class JDBCProfileDao implements ProfileDao {
-
-    private static final String INSERT_FORMAT            = "INSERT INTO FORMAT (PUID,MIME_TYPE,NAME,VERSION) VALUES (?,?,?,?)";
-    private static final String SELECT_MAIN              = "SELECT NODE_ID, EXTENSION_MISMATCH, FINISHED_TIMESTAMP, IDENTIFICATION_COUNT, EXTENSION, HASH, " +
-                                                            "IDENTIFICATION_METHOD, LAST_MODIFIED_DATE, NAME, NODE_STATUS, RESOURCE_TYPE, FILE_SIZE, " +
-                                                            "PARENT_ID, PREFIX, PREFIX_PLUS_ONE, TEXT_ENCODING, URI FROM PROFILE_RESOURCE_NODE ";
+    //CHECKSTYLE:OFF  Sql Statements can break the rules, e.g. commas quite legitimate...
+    private static final String INSERT_FORMAT = "INSERT INTO FORMAT (PUID,MIME_TYPE,NAME,VERSION) VALUES (?,?,?,?)";
+    private static final String SELECT_MAIN = "SELECT NODE_ID, EXTENSION_MISMATCH, FINISHED_TIMESTAMP, IDENTIFICATION_COUNT, EXTENSION, HASH, "
+                                                   + "IDENTIFICATION_METHOD, LAST_MODIFIED_DATE, NAME, NODE_STATUS, RESOURCE_TYPE, FILE_SIZE, "
+                                                   + "PARENT_ID, PREFIX, PREFIX_PLUS_ONE, TEXT_ENCODING, URI FROM PROFILE_RESOURCE_NODE ";
     private static final String FIND_CHILD_NODES         = SELECT_MAIN + "WHERE PARENT_ID=?";
     private static final String FIND_TOP_LEVEL_CHILDREN  = SELECT_MAIN +  "WHERE PARENT_ID IS NULL";
-    private static final String FIND_CHILDREN            = "SELECT ID.NODE_ID, ID.PUID FROM IDENTIFICATION AS ID " +
-                                                           "INNER JOIN PROFILE_RESOURCE_NODE AS PRN " +
-                                                           "ON ID.NODE_ID = PRN.NODE_ID";
+    private static final String FIND_CHILDREN            = "SELECT ID.NODE_ID, ID.PUID FROM IDENTIFICATION AS ID "
+                                                           + "INNER JOIN PROFILE_RESOURCE_NODE AS PRN "
+                                                           + "ON ID.NODE_ID = PRN.NODE_ID";
     private static final String FIND_CHILD_IDS           = FIND_CHILDREN + " AND PRN.PARENT_ID = ?";
     private static final String FIND_TOP_LEVEL_CHILD_IDS = FIND_CHILDREN + " AND PRN.PARENT_ID IS NULL";
 
     private static final String dummyPuid = "INSERT INTO FORMAT (PUID,MIME_TYPE,NAME,VERSION) VALUES ('','','','')";
+    //CHECKSTYLE:ON
+    private static final int FORMAT_PUID_INDEX = 1;
+    private static final int FORMAT_MIME_TYPE_INDEX = 2;
+    private static final int FORMAT_NAME_INDEX = 3;
+    private static final int FORMAT_VERSION_INDEX = 4;
 
     private final Log log = LogFactory.getLog(getClass());
 
     private DataSource datasource;
     private ResultHandlerDao resultHandlerDao;
 
-
+    /**
+     *
+     * @param datasource The SQL datasource to use.
+     */
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
     }
 
+    /**
+     *
+     * @param resultHandlerDao The resultHandlerDao to assign.
+     */
     public void setResultHandlerDao(ResultHandlerDao resultHandlerDao) {
         this.resultHandlerDao = resultHandlerDao;
     }
@@ -92,12 +113,14 @@ public class JDBCProfileDao implements ProfileDao {
         try {
             final Connection conn = datasource.getConnection();
             try {
-                //BNO getInsertFormatStatement tries to convert the empty Puid to NULL, casuing a failed database insert.
-                //So as a workaround for now we specify the SQL directly for this case.
-                final PreparedStatement insertFormat = (format == Format.NULL) ? conn.prepareStatement(dummyPuid) : getInsertFormatStatement(conn, format);
+                // BNO getInsertFormatStatement tries to convert the empty Puid to NULL, causing a failed
+                // database insert. So as a workaround for now we specify the SQL directly for this case.
+                final PreparedStatement insertFormat =
+                        (format == Format.NULL)
+                                ? conn.prepareStatement(dummyPuid) : getInsertFormatStatement(conn, format);
                 insertFormat.execute();
                 conn.commit();
-            } finally{
+            } finally {
                 conn.close();
             }
         } catch (SQLException e) {
@@ -114,16 +137,16 @@ public class JDBCProfileDao implements ProfileDao {
             final Connection conn = datasource.getConnection();
             try {
                 // Get the nodes which are children of the parent id:
-                final String query = parentId == null? FIND_TOP_LEVEL_CHILDREN : FIND_CHILD_NODES;
+                final String query = parentId == null ? FIND_TOP_LEVEL_CHILDREN : FIND_CHILD_NODES;
                 final PreparedStatement findChildren = conn.prepareStatement(query);
                 if (parentId != null) {
                     SqlUtils.setNullableLong(1, parentId, findChildren);
                 }
                 final ResultSet children = findChildren.executeQuery();
-                final List<ProfileResourceNode> childNodes= buildNodes(children);
+                final List<ProfileResourceNode> childNodes = buildNodes(children);
                 loadIdentifications(parentId, conn, childNodes);
                 return childNodes;
-            } finally{
+            } finally {
                 conn.close();
             }
         } catch (SQLException e) {
@@ -154,7 +177,7 @@ public class JDBCProfileDao implements ProfileDao {
                 //TODO: deal with filter status.
                 loadIdentifications(parentId, conn, filteredNodes);
                 return filteredNodes;
-            } finally{
+            } finally {
                 conn.close();
             }
         } catch (SQLException e) {
@@ -165,13 +188,14 @@ public class JDBCProfileDao implements ProfileDao {
 
     @Override
     public void initialise() {
-        PopulateResultHandlerReferenceData();
+        populateResultHandlerReferenceData();
     }
 
 
-    private void loadIdentifications(Long parentId, Connection conn, List<ProfileResourceNode> childNodes) throws SQLException {
+    private void loadIdentifications(Long parentId, Connection conn, List<ProfileResourceNode> childNodes)
+        throws SQLException {
         if (childNodes.size() > 0) {
-            final String childQuery = parentId == null? FIND_TOP_LEVEL_CHILD_IDS : FIND_CHILD_IDS;
+            final String childQuery = parentId == null ? FIND_TOP_LEVEL_CHILD_IDS : FIND_CHILD_IDS;
             final PreparedStatement findIdentifications = conn.prepareStatement(childQuery);
             if (parentId != null) {
                 SqlUtils.setNullableLong(1, parentId, findIdentifications);
@@ -186,12 +210,14 @@ public class JDBCProfileDao implements ProfileDao {
                                      final Long parentId) throws SQLException {
         final Object[] parameters = queryBuilder.getValues();
         int paramCount = 1;
+        String nullFilterMessage = "A null filter parameter was encountered at position ";
+
         // Set the filter parameters for the first part of the query.
         for (final Object parameter : parameters) {
             if (parameter != null) {
                 SqlUtils.setNonNullableParameter(paramCount++, parameter, statement);
             } else {
-                log.warn("A null filter parameter was encountered at position " + (paramCount - 1));
+                log.warn(nullFilterMessage + (paramCount - 1));
             }
         }
         // Set the same filter parameters for the second part of the query.
@@ -199,7 +225,7 @@ public class JDBCProfileDao implements ProfileDao {
             if (parameter != null) {
                 SqlUtils.setNonNullableParameter(paramCount++, parameter, statement);
             } else {
-                log.warn("A null filter parameter was encountered at position " + (paramCount - 1));
+                log.warn(nullFilterMessage + (paramCount - 1));
             }
         }
         // Set the parent id of the children if not null.
@@ -256,16 +282,16 @@ public class JDBCProfileDao implements ProfileDao {
 
     private PreparedStatement getInsertFormatStatement(Connection conn, Format format) throws SQLException {
         final PreparedStatement insertFormat = conn.prepareStatement(INSERT_FORMAT);
-        insertFormat.setString(    1, format.getPuid());
-        SqlUtils.setNullableString(2, format.getMimeType(), insertFormat);
-        SqlUtils.setNullableString(3, format.getName(), insertFormat);
-        SqlUtils.setNullableString(4, format.getVersion(), insertFormat);
+        insertFormat.setString(FORMAT_PUID_INDEX, format.getPuid());
+        SqlUtils.setNullableString(FORMAT_MIME_TYPE_INDEX, format.getMimeType(), insertFormat);
+        SqlUtils.setNullableString(FORMAT_NAME_INDEX, format.getName(), insertFormat);
+        SqlUtils.setNullableString(FORMAT_VERSION_INDEX, format.getVersion(), insertFormat);
         return insertFormat;
     }
 
     private List<ProfileResourceNode> buildNodes(final ResultSet children) throws SQLException {
         final List<ProfileResourceNode> childNodes = new ArrayList<ProfileResourceNode>(32);
-        while(children.next()) {
+        while (children.next()) {
             final ProfileResourceNode child = SqlUtils.buildProfileResourceNode(children);
             if (child.getFilterStatus() > 0) {
                 childNodes.add(child);
@@ -276,9 +302,9 @@ public class JDBCProfileDao implements ProfileDao {
 
     private void addIdentificationsToNodes(final ResultSet identifications,
                                            final List<ProfileResourceNode> childNodes,
-                                           final Map<String,Format> puidFormatMap) throws SQLException {
-        final Map<Long,ProfileResourceNode> nodeIdMap = buildNodeIdMap(childNodes);
-        while(identifications.next()) {
+                                           final Map<String, Format> puidFormatMap) throws SQLException {
+        final Map<Long, ProfileResourceNode> nodeIdMap = buildNodeIdMap(childNodes);
+        while (identifications.next()) {
             final ProfileResourceNode node   = nodeIdMap.get(identifications.getLong(1));
             final Format              format = puidFormatMap.get(identifications.getString(2));
             if (node != null && format != null) {
@@ -287,8 +313,8 @@ public class JDBCProfileDao implements ProfileDao {
         }
     }
 
-    private Map<Long,ProfileResourceNode> buildNodeIdMap(List<ProfileResourceNode> nodes) {
-        final Map<Long,ProfileResourceNode> nodeIdMap = new HashMap<Long,ProfileResourceNode>(nodes.size() * 2);
+    private Map<Long, ProfileResourceNode> buildNodeIdMap(List<ProfileResourceNode> nodes) {
+        final Map<Long, ProfileResourceNode> nodeIdMap = new HashMap<Long, ProfileResourceNode>(nodes.size() * 2);
         for (final ProfileResourceNode node : nodes) {
             nodeIdMap.put(node.getId(), node);
         }
@@ -299,10 +325,10 @@ public class JDBCProfileDao implements ProfileDao {
         return parentId == null ? "is null" : " = ?";
     }
 
-    private void PopulateResultHandlerReferenceData() {
-        if(this.resultHandlerDao instanceof JDBCBatchResultHandlerDao) {
+    private void populateResultHandlerReferenceData() {
+        if (this.resultHandlerDao instanceof JDBCBatchResultHandlerDao) {
             //initalize the formats
-            JDBCBatchResultHandlerDao batchResultHandler = (JDBCBatchResultHandlerDao)this.resultHandlerDao;
+            JDBCBatchResultHandlerDao batchResultHandler = (JDBCBatchResultHandlerDao) this.resultHandlerDao;
             batchResultHandler.initialiseForNewTemplate();
         }
     }

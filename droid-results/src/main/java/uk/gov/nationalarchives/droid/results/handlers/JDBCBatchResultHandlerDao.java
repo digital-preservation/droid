@@ -31,8 +31,25 @@
  */
 package uk.gov.nationalarchives.droid.results.handlers;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
@@ -43,102 +60,110 @@ import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.SqlUtils;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
-
-
 /**
  * An implementation of the ResultHandlerDao interface, using JDBC to access the profile database directly.
  *
- * @author Matt Palmer
+ * @author Matt Palmer, boreilly
  */
 public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
+
+    //CHECKSTYLE:OFF  Various formatting issues with SQL Statements.  E.g. some longer thgan 120 lines but
+    // splitting them likely to hamper rather than assist readability here.
 
     // How many results in the batch before committing.
     public static final int BATCH_LIMIT = 100;
 
     // A "poison-pill" node info to signal to the writing thread that
     // it should terminate and commit any results so far.
-    private static NodeInfo COMMIT_SO_FAR = new NodeInfo(null, false);
+    private static final NodeInfo COMMIT_SO_FAR = new NodeInfo(null, false);
 
-    private static String INSERT_PROFILE_RESOURCE_NODE =
+    private static final String INSERT_PROFILE_RESOURCE_NODE =
             "INSERT INTO PROFILE_RESOURCE_NODE " +
                     "(NODE_ID,EXTENSION_MISMATCH,FINISHED_TIMESTAMP,IDENTIFICATION_COUNT," +
                     " EXTENSION,HASH,IDENTIFICATION_METHOD,LAST_MODIFIED_DATE,NAME,NODE_STATUS," +
                     " RESOURCE_TYPE,FILE_SIZE,PARENT_ID,PREFIX,PREFIX_PLUS_ONE,URI) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-    private static String INSERT_IDENTIFICATIONS       = "INSERT INTO IDENTIFICATION (NODE_ID,PUID) VALUES ";
-    private static String INSERT_ZERO_IDENTIFICATIONS  = INSERT_IDENTIFICATIONS + "(?,'')";
-    private static String INSERT_ONE_IDENTIFICATION    = INSERT_IDENTIFICATIONS + "(?,?)";
-    private static String INSERT_TWO_IDENTIFICATIONS   = INSERT_IDENTIFICATIONS + "(?,?),(?,?)";
-    private static String INSERT_THREE_IDENTIFICATIONS = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?)";
-    private static String INSERT_FOUR_IDENTIFICATIONS  = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?)";
-    private static String INSERT_FIVE_IDENTIFICATIONS  = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?)";
-    private static String INSERT_SIX_IDENTIFICATIONS   = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
-    private static String INSERT_SEVEN_IDENTIFICATIONS = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
-    private static String INSERT_EIGHT_IDENTIFICATIONS = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
-    private static String INSERT_NINE_IDENTIFICATIONS  = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
-    private static String INSERT_TEN_IDENTIFICATIONS   = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
+    private static final String INSERT_IDENTIFICATIONS       = "INSERT INTO IDENTIFICATION (NODE_ID,PUID) VALUES ";
+    private static final String INSERT_ZERO_IDENTIFICATIONS  = INSERT_IDENTIFICATIONS + "(?,'')";
+    private static final String INSERT_ONE_IDENTIFICATION    = INSERT_IDENTIFICATIONS + "(?,?)";
+    private static final String INSERT_TWO_IDENTIFICATIONS   = INSERT_IDENTIFICATIONS + "(?,?),(?,?)";
+    private static final String INSERT_THREE_IDENTIFICATIONS = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?)";
+    private static final String INSERT_FOUR_IDENTIFICATIONS  = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?)";
+    private static final String INSERT_FIVE_IDENTIFICATIONS  = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?)";
+    private static final String INSERT_SIX_IDENTIFICATIONS   = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
+    private static final String INSERT_SEVEN_IDENTIFICATIONS = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
+    private static final String INSERT_EIGHT_IDENTIFICATIONS = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
+    private static final String INSERT_NINE_IDENTIFICATIONS  = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
+    private static final String INSERT_TEN_IDENTIFICATIONS   = INSERT_IDENTIFICATIONS + "(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?)";
 
-    private static String[] INSERT_IDENTIFICATION      = {
-            INSERT_ZERO_IDENTIFICATIONS, INSERT_ONE_IDENTIFICATION,
-            INSERT_TWO_IDENTIFICATIONS, INSERT_THREE_IDENTIFICATIONS, INSERT_FOUR_IDENTIFICATIONS,
-            INSERT_FIVE_IDENTIFICATIONS, INSERT_SIX_IDENTIFICATIONS, INSERT_SEVEN_IDENTIFICATIONS,
-            INSERT_EIGHT_IDENTIFICATIONS, INSERT_NINE_IDENTIFICATIONS, INSERT_TEN_IDENTIFICATIONS};
+    private static final String[] INSERT_IDENTIFICATION      = {
+        INSERT_ZERO_IDENTIFICATIONS, INSERT_ONE_IDENTIFICATION,
+        INSERT_TWO_IDENTIFICATIONS, INSERT_THREE_IDENTIFICATIONS, INSERT_FOUR_IDENTIFICATIONS,
+        INSERT_FIVE_IDENTIFICATIONS, INSERT_SIX_IDENTIFICATIONS, INSERT_SEVEN_IDENTIFICATIONS,
+        INSERT_EIGHT_IDENTIFICATIONS, INSERT_NINE_IDENTIFICATIONS, INSERT_TEN_IDENTIFICATIONS, };
 
-    private static String UPDATE_NODE_STATUS           = "UPDATE PROFILE_RESOURCE_NODE SET NODE_STATUS = ? WHERE NODE_ID = ?";
-    private static String DELETE_NODE                  = "DELETE FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
-    private static String SELECT_FORMAT                = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT WHERE PUID = ?";
+    private static final String UPDATE_NODE_STATUS = "UPDATE PROFILE_RESOURCE_NODE SET NODE_STATUS = ? WHERE NODE_ID = ?";
+    private static final String DELETE_NODE = "DELETE FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
+    private static final String SELECT_FORMAT = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT WHERE PUID = ?";
 
-    private static String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
-    private static String SELECT_FORMATS               = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT";
-    private static String SELECT_PROFILE_RESOURCE_NODE = "SELECT NODE_ID, EXTENSION_MISMATCH, FINISHED_TIMESTAMP, IDENTIFICATION_COUNT, EXTENSION, HASH, " +
-                                                         "IDENTIFICATION_METHOD, LAST_MODIFIED_DATE, NAME, NODE_STATUS, RESOURCE_TYPE, FILE_SIZE, " +
-                                                         "PARENT_ID, PREFIX, PREFIX_PLUS_ONE, TEXT_ENCODING, URI FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
+    private static final String SELECT_FORMAT_COUNT = "SELECT COUNT('x') AS total FROM FORMAT";
+    private static final String SELECT_FORMATS = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT";
+    private static final String SELECT_PROFILE_RESOURCE_NODE =
+            "SELECT NODE_ID, EXTENSION_MISMATCH, FINISHED_TIMESTAMP, IDENTIFICATION_COUNT, EXTENSION, HASH, "
+            + "IDENTIFICATION_METHOD, LAST_MODIFIED_DATE, NAME, NODE_STATUS, RESOURCE_TYPE, FILE_SIZE, "
+            + "PARENT_ID, PREFIX, PREFIX_PLUS_ONE, TEXT_ENCODING, URI FROM PROFILE_RESOURCE_NODE WHERE NODE_ID = ?";
 
-    private static String SELECT_IDENTIFICATIONS       = "SELECT NODE_ID, PUID FROM IDENTIFICATION WHERE NODE_ID = ?";
-    private static String DELETE_IDENTIFICATIONS       = "DELETE FROM IDENTIFICATION WHERE NODE_ID = ?";
-    private static String MAX_NODE_ID_QUERY            = "SELECT MAX(NODE_ID) FROM PROFILE_RESOURCE_NODE";
+    private static final String SELECT_IDENTIFICATIONS = "SELECT NODE_ID, PUID FROM IDENTIFICATION WHERE NODE_ID = ?";
+    private static final String DELETE_IDENTIFICATIONS = "DELETE FROM IDENTIFICATION WHERE NODE_ID = ?";
+    private static final String MAX_NODE_ID_QUERY = "SELECT MAX(NODE_ID) FROM PROFILE_RESOURCE_NODE";
 
     //DDL statements
-    private static String CREATE_TABLE_FORMAT = "CREATE TABLE FORMAT (PUID VARCHAR(255) NOT NULL, MIME_TYPE VARCHAR(255), NAME VARCHAR(255), " +
-                                                "VERSION VARCHAR(255), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), PRIMARY KEY (PUID))";
-    private static String CREATE_TABLE_IDENTIFICATION = "CREATE TABLE IDENTIFICATION (NODE_ID BIGINT NOT NULL, PUID VARCHAR(255) NOT NULL, " +
-                                                        "PRIMARY KEY(NODE_ID, PUID))";
-    private static String CREATE_TABLE_PRN = "CREATE TABLE PROFILE_RESOURCE_NODE (NODE_ID BIGINT NOT NULL, EXTENSION_MISMATCH BOOLEAN NOT NULL, " +
-                                                "FINISHED_TIMESTAMP TIMESTAMP, IDENTIFICATION_COUNT INTEGER, EXTENSION VARCHAR(255), " +
-                                                "HASH VARCHAR(64), IDENTIFICATION_METHOD INTEGER, LAST_MODIFIED_DATE TIMESTAMP, NAME VARCHAR(1000) NOT NULL, " +
-                                                "NODE_STATUS INTEGER, RESOURCE_TYPE INTEGER NOT NULL, FILE_SIZE BIGINT, PARENT_ID BIGINT, PREFIX VARCHAR(255), " +
-                                                "PREFIX_PLUS_ONE VARCHAR(255), TEXT_ENCODING INTEGER, URI VARCHAR(4000) NOT NULL, " +
-                                                "U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION)), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), " +
-                                                "PRIMARY KEY (NODE_ID))";
-    private static String CREATE_IDX_MIME_TYPE_ON_FORMAT = "CREATE INDEX IDX_MIME_TYPE ON FORMAT (MIME_TYPE)";
-    private static String CREATE_IDX_FORMAT_NAME_ON_FORMAT = "CREATE INDEX IDX_FORMAT_NAME ON FORMAT (U_NAME)";
+    private static final String CREATE_TABLE_FORMAT =
+            "CREATE TABLE FORMAT (PUID VARCHAR(255) NOT NULL, MIME_TYPE VARCHAR(255), NAME VARCHAR(255), "
+            + "VERSION VARCHAR(255), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), PRIMARY KEY (PUID))";
+    private static final String CREATE_TABLE_IDENTIFICATION =
+            "CREATE TABLE IDENTIFICATION (NODE_ID BIGINT NOT NULL, PUID VARCHAR(255) NOT NULL, "
+            + "PRIMARY KEY(NODE_ID, PUID))";
+    private static final String CREATE_TABLE_PRN = "CREATE TABLE PROFILE_RESOURCE_NODE (NODE_ID BIGINT NOT NULL, EXTENSION_MISMATCH BOOLEAN NOT NULL, "
+                                                + "FINISHED_TIMESTAMP TIMESTAMP, IDENTIFICATION_COUNT INTEGER, EXTENSION VARCHAR(255), "
+                                                + "HASH VARCHAR(64), IDENTIFICATION_METHOD INTEGER, LAST_MODIFIED_DATE TIMESTAMP, NAME VARCHAR(1000) NOT NULL, "
+                                                + "NODE_STATUS INTEGER, RESOURCE_TYPE INTEGER NOT NULL, FILE_SIZE BIGINT, PARENT_ID BIGINT, PREFIX VARCHAR(255), "
+                                                + "PREFIX_PLUS_ONE VARCHAR(255), TEXT_ENCODING INTEGER, URI VARCHAR(4000) NOT NULL, "
+                                                + "U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION)), U_NAME GENERATED ALWAYS AS (UPPER(NAME)), "
+                                                + "PRIMARY KEY (NODE_ID))";
+    private static final String CREATE_IDX_MIME_TYPE_ON_FORMAT = "CREATE INDEX IDX_MIME_TYPE ON FORMAT (MIME_TYPE)";
+    private static final String CREATE_IDX_FORMAT_NAME_ON_FORMAT = "CREATE INDEX IDX_FORMAT_NAME ON FORMAT (U_NAME)";
 
-    private static String CREATE_IDX_ID_COUNT_ON_PRN = "CREATE INDEX IDX_ID_COUNT ON PROFILE_RESOURCE_NODE (IDENTIFICATION_COUNT)";
-    private static String CREATE_IDX_PRN_EXT_ON_PRN = "CREATE INDEX IDX_PRN_EXTENSION ON PROFILE_RESOURCE_NODE (U_EXTENSION)";
-    private static String CREATE_IDX_PRN_ID_METHOD_ON_PRN = "CREATE INDEX IDX_PRN_ID_METHOD ON PROFILE_RESOURCE_NODE (IDENTIFICATION_METHOD)";
-    private static String CREATE_IDX_PRN_LAST_MODIFIED_ON_PRN = "CREATE INDEX IDX_PRN_LAST_MODIFIED ON PROFILE_RESOURCE_NODE (LAST_MODIFIED_DATE)";
-    private static String CREATE_IDX_PRN_NAME_ON_PRN = "CREATE INDEX IDX_PRN_NAME ON PROFILE_RESOURCE_NODE (NAME)";
-    private static String CREATE_IDX_PRN_NODE_STATUS_ON_PRN = "CREATE INDEX IDX_PRN_NODE_STATUS ON PROFILE_RESOURCE_NODE (NODE_STATUS)";
-    private static String CREATE_IDX_ID_RESOURCE_ON_PRN = "CREATE INDEX IDX_PRN_ID_RESOURCETYPE ON PROFILE_RESOURCE_NODE (RESOURCE_TYPE)";
-    private static String CREATE_IDX_PRN_FILE_SIZE_ON_PRN = "CREATE INDEX IDX_PRN_FILE_SIZE ON PROFILE_RESOURCE_NODE (FILE_SIZE)";
-    private static String CREATE_IDX_PARENT_ID_ON_PRN = "CREATE INDEX IDX_PARENT_ID ON PROFILE_RESOURCE_NODE (PARENT_ID)";
-    private static String CREATE_IDX_PREFIX_ON_PRN = "CREATE INDEX IDX_PREFIX ON PROFILE_RESOURCE_NODE (PREFIX)";
-    private static String CREATE_IDX_PREFIX_PLUS_ONE_ON_PRN = "CREATE INDEX IDX_PREFIX_PLUS_ONE ON PROFILE_RESOURCE_NODE (PREFIX_PLUS_ONE)";
+    private static final String CREATE_IDX_ID_COUNT_ON_PRN = "CREATE INDEX IDX_ID_COUNT ON PROFILE_RESOURCE_NODE (IDENTIFICATION_COUNT)";
+    private static final String CREATE_IDX_PRN_EXT_ON_PRN = "CREATE INDEX IDX_PRN_EXTENSION ON PROFILE_RESOURCE_NODE (U_EXTENSION)";
+    private static final String CREATE_IDX_PRN_ID_METHOD_ON_PRN = "CREATE INDEX IDX_PRN_ID_METHOD ON PROFILE_RESOURCE_NODE (IDENTIFICATION_METHOD)";
+    private static final String CREATE_IDX_PRN_LAST_MODIFIED_ON_PRN = "CREATE INDEX IDX_PRN_LAST_MODIFIED ON PROFILE_RESOURCE_NODE (LAST_MODIFIED_DATE)";
+    private static final String CREATE_IDX_PRN_NAME_ON_PRN = "CREATE INDEX IDX_PRN_NAME ON PROFILE_RESOURCE_NODE (NAME)";
+    private static final String CREATE_IDX_PRN_NODE_STATUS_ON_PRN = "CREATE INDEX IDX_PRN_NODE_STATUS ON PROFILE_RESOURCE_NODE (NODE_STATUS)";
+    private static final String CREATE_IDX_ID_RESOURCE_ON_PRN = "CREATE INDEX IDX_PRN_ID_RESOURCETYPE ON PROFILE_RESOURCE_NODE (RESOURCE_TYPE)";
+    private static final String CREATE_IDX_PRN_FILE_SIZE_ON_PRN = "CREATE INDEX IDX_PRN_FILE_SIZE ON PROFILE_RESOURCE_NODE (FILE_SIZE)";
+    private static final String CREATE_IDX_PARENT_ID_ON_PRN = "CREATE INDEX IDX_PARENT_ID ON PROFILE_RESOURCE_NODE (PARENT_ID)";
+    private static final String CREATE_IDX_PREFIX_ON_PRN = "CREATE INDEX IDX_PREFIX ON PROFILE_RESOURCE_NODE (PREFIX)";
+    private static final String CREATE_IDX_PREFIX_PLUS_ONE_ON_PRN = "CREATE INDEX IDX_PREFIX_PLUS_ONE ON PROFILE_RESOURCE_NODE (PREFIX_PLUS_ONE)";
     //private static String CREATE_IDX_TEXT_ENCODING_ON_PRN = "CREATE INDEX IDX_TEXT_ENCODING ON PROFILE_RESOURCE_NODE (TEXT_ENCODING)";
     //private static String CREATE_IDX_URI_ON_PRN = "CREATE INDEX IDX_URI ON PROFILE_RESOURCE_NODE (URI)";
-    private static String IDENTIFICATION_CONSTRAINT_1 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_FH484CCWWL4E5W9QUQKE4N6RI FOREIGN KEY (PUID) REFERENCES FORMAT";
-    private static String IDENTIFICATION_CONSTRAINT_2 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_TPXMO6PPUXECKDRELN5PT5E39 FOREIGN KEY (NODE_ID) REFERENCES PROFILE_RESOURCE_NODE";
+    private static final String IDENTIFICATION_CONSTRAINT_1 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_FH484CCWWL4E5W9QUQKE4N6RI FOREIGN KEY (PUID) REFERENCES FORMAT";
+    private static final String IDENTIFICATION_CONSTRAINT_2 = "ALTER TABLE IDENTIFICATION ADD CONSTRAINT FK_TPXMO6PPUXECKDRELN5PT5E39 FOREIGN KEY (NODE_ID) REFERENCES PROFILE_RESOURCE_NODE";
+
+    private static final String CREATE_UCASE_PRN_EXTN_COL = "ALTER TABLE PROFILE_RESOURCE_NODE ADD COLUMN U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION))";
+    private static final String CREATE_UCASE_PRN_NAME_COL = "ALTER TABLE PROFILE_RESOURCE_NODE ADD COLUMN U_NAME GENERATED ALWAYS AS (UPPER(NAME))";
+    private static final String CREATE_UCASE_FMT_NAME_COL = "ALTER TABLE FORMAT ADD COLUMN U_NAME GENERATED ALWAYS AS (UPPER(NAME))";
+    //CHECKSTYLE:ON
+    private static final int PRN_COL_COUNT_SANS_UCASE_COLS = 17;
+    private static final int PRN_COL_COUNT_WITH_UCASE_COLS = 19;
 
     private static boolean freshTemplate;
-    private final static Object locker = new Object();
+    private static final Object LOCKER = new Object();
+
+    private static final int BLOCKING_QUEUE_SIZE = 256;
+    private static final int MOST_RECENTLY_ADDED_NODE_CACHE_SIZE = 512;
+    private static final int PUID_FORMAT_MAP_SIZE = 2500;
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -146,20 +171,13 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private AtomicLong nodeIds;
 
     private List<Format> formats;
-    private Map<String, Format> puidFormatMap = new HashMap<String,Format>(2500);
+    private Map<String, Format> puidFormatMap = new HashMap<String, Format>(PUID_FORMAT_MAP_SIZE);
 
-    private BlockingQueue<NodeInfo> blockingQueue = new ArrayBlockingQueue<NodeInfo>(256);
-    private MostRecentlyAddedNodeCache nodeCache  = new MostRecentlyAddedNodeCache(512);
+    private BlockingQueue<NodeInfo> blockingQueue = new ArrayBlockingQueue<NodeInfo>(BLOCKING_QUEUE_SIZE);
+    private MostRecentlyAddedNodeCache nodeCache  = new MostRecentlyAddedNodeCache(MOST_RECENTLY_ADDED_NODE_CACHE_SIZE);
 
     private Thread databaseWriterThread;
     private DatabaseWriter writer;
-
-    private final static int PRN_COL_COUNT_SANS_UCASE_COLS = 17;
-    private final static int PRN_COL_COUNT_WITH_UCASE_COLS = 19;
-
-    private static String CREATE_UCASE_PRN_EXTN_COL = "ALTER TABLE PROFILE_RESOURCE_NODE ADD COLUMN U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION))";
-    private static String CREATE_UCASE_PRN_NAME_COL = "ALTER TABLE PROFILE_RESOURCE_NODE ADD COLUMN U_NAME GENERATED ALWAYS AS (UPPER(NAME))";
-    private static String CREATE_UCASE_FMT_NAME_COL = "ALTER TABLE FORMAT ADD COLUMN U_NAME GENERATED ALWAYS AS (UPPER(NAME))";
 
     @Override
     public void init() {
@@ -170,8 +188,8 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         // we can't just create the schema then call setUpFormatsAndDatabaseWriter() because the format data won't
         // have been populated. This is handled by ProfileContextLocator-generateNewDatabaseAndTemplates
         //  -profileManager.initProfile, after this class has been instantiated by Spring...
-        synchronized (locker) {
-            if(!getIsFreshTemplate()) {
+        synchronized (LOCKER) {
+            if (!getIsFreshTemplate()) {
                 checkCreateUpperCaseColumns();
                 setUpFormatsAndDatabaseWriter();
             } else {
@@ -184,15 +202,16 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     public void initialiseForNewTemplate() {
 
         if (JDBCBatchResultHandlerDao.getIsFreshTemplate()) {
-            log.error("Cannot initialise the JDBCBatchResultHandlerDao because it is still in fresh template mode and the format reference data has not yet been populated");
+            log.error("Cannot initialise the JDBCBatchResultHandlerDao because it is still in fresh template mode and "
+                    + "the format reference data has not yet been populated");
             return;
         }
 
-        synchronized (locker) {
+        synchronized (LOCKER) {
             // Check if already initialised - this will be the case if we;re starting from an existing template
             // since then the formats and database writer will have been set up in the init() method
             boolean alreadyInitialised = this.formats != null;
-            if(!alreadyInitialised) {
+            if (!alreadyInitialised) {
                 setUpFormatsAndDatabaseWriter();
             }
         }
@@ -204,7 +223,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     // an existing template which does not have the columns.  However, the check
     // creates additional overhead in opening profiles - consider removing in a future
     // release when we can assume most people will have a template that already includes these columns.
-    private void checkCreateUpperCaseColumns () {
+    private void checkCreateUpperCaseColumns() {
 
         Connection conn = null;
         PreparedStatement loadNode = null;
@@ -221,9 +240,10 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
             switch(numberOfColumnsInPrnTable) {
                 case PRN_COL_COUNT_SANS_UCASE_COLS:
-                    String[] statements = {CREATE_UCASE_PRN_EXTN_COL, CREATE_UCASE_PRN_NAME_COL, CREATE_UCASE_FMT_NAME_COL };
+                    String[] statements =
+                    {CREATE_UCASE_PRN_EXTN_COL, CREATE_UCASE_PRN_NAME_COL, CREATE_UCASE_FMT_NAME_COL };
 
-                    for(String s : statements) {
+                    for (String s : statements) {
                         try {
                             createColumn = conn.prepareStatement(s);
                             x = createColumn.executeUpdate();
@@ -250,7 +270,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 if (result != null) {
                     loadNode.close();
                 }
-                if(conn != null) {
+                if (conn != null) {
                     conn.rollback();
                     conn.close();
                 }
@@ -261,17 +281,16 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         }
     }
 
-    private void setUpFormatsAndDatabaseWriter () {
+    private void setUpFormatsAndDatabaseWriter() {
         formats = loadAllFormats();
         for (final Format format : formats) {
             puidFormatMap.put(format.getPuid(), format);
         }
         nodeIds = new AtomicLong(getMaxNodeId() + 1);
         createAndRunDatabaseWriterThread();
-
     }
 
-
+    //CHECKSTYLE:OFF        Nested tries and too many statements
     private void createSchemaOnFreshTemplate() {
 
         try {
@@ -322,20 +341,23 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 throw e;
             } finally {
                 AutoCloseable[] autoclosables = new AutoCloseable[] {createFormatTable,
-                        createIdentificationTable, createProfileResourceNodeTable, conn};
+                        createIdentificationTable, createProfileResourceNodeTable, conn,};
                 for(AutoCloseable a : autoclosables) {
-                    if(a != null) {
+                    if (a != null) {
                         try {
                             a.close();
+                        //CHECKSTYLE:OFF    Have to catch generic exception from close()
                         } catch (Exception e) {
                             log.error(e);
                         }
+                        //CHECKSTYLE:ON
                     }
                 }
             }
         } catch (SQLException e) {
             log.error("A database exception occurred getting when creating the Derby database for a fresh install.", e);
         }
+        //CHECKSTYLE:ON
     }
 
     @Override
@@ -375,10 +397,12 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         }
 
         int parentsPrefixStringLength = parentsPrefixString != null ? parentsPrefixString.length() : 0;
+        final int buliderBaseSize = 5;
+        final int nodeValueSize = 5;
 
-        final StringBuilder builder = new StringBuilder(5 + parentsPrefixStringLength);
+        final StringBuilder builder = new StringBuilder(buliderBaseSize + parentsPrefixStringLength);
         builder.append(parentsPrefixString);
-        final char[] nodeValue = new char[5];
+        final char[] nodeValue = new char[nodeValueSize];
         ResourceUtils.getBase128IntegerCharArray(nodeId, nodeValue);
         builder.append(nodeValue);
         node.setPrefix(builder.toString());
@@ -392,6 +416,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public Format loadFormat(final String puid) {
+        //CHECKSTYLE:OFF   Nested tries
         Format format = null;
         try {
             final Connection conn = datasource.getConnection();
@@ -410,13 +435,14 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 } finally {
                     loadFormat.close();
                 }
-            } finally{
+            } finally {
                 conn.close();
             }
         } catch (SQLException e) {
             log.error("A database exception occurred loading a format with puid " + puid, e);
         }
         return format;
+        //CHECKSTYLE:ON
     }
 
     @Override
@@ -431,6 +457,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public ProfileResourceNode loadNode(Long nodeId) {
+        //CHECKSTYLE:OFF   Nested tries and line length
         ProfileResourceNode node = null;
         synchronized (nodeCache) { // different threads can add nodes at any time.
             node = nodeCache.get(nodeId);
@@ -448,7 +475,8 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                         final ResultSet nodeResults = loadNode.executeQuery();
                         try {
                             if (nodeResults.next()) {
-                                final PreparedStatement loadIdentifications = conn.prepareStatement(SELECT_IDENTIFICATIONS);
+                                final PreparedStatement loadIdentifications =
+                                        conn.prepareStatement(SELECT_IDENTIFICATIONS);
                                 loadIdentifications.setLong(1, nodeId);
                                 final ResultSet idResults = loadIdentifications.executeQuery();
                                 node = SqlUtils.buildProfileResourceNode(nodeResults);
@@ -466,12 +494,14 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             } catch (SQLException e) {
                 log.error("A database exception occurred loading a node with id " + nodeId, e);
             }
+            //CHECKSTYLE:ON
         }
         return node;
     }
 
     @Override
     public void deleteNode(Long nodeId) {
+        //CHECKSTYLE:OFF     Nested tries.
         try {
             final Connection conn = datasource.getConnection();
             try {
@@ -496,20 +526,28 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         } catch (SQLException e) {
             log.error("A database exception occurred deleting a node with id " + nodeId, e);
         }
+        //CHECKSTYLE:ON
     }
 
-    //BNO - to allow for the datasource to be referenced from JDBCSqlItemReader when called from ExportTask
-    public DataSource getDatasource () {
+    /**
+     * To allow for the datasource to be referenced from JDBCSqlItemReader when called from ExportTask.
+     * @return the datasource
+     */
+    public DataSource getDatasource() {
         return this.datasource;
     }
 
-
+    /**
+     * Sets the datasource. - to allow it to be referenced from JDBCSqlItemReader when called from ExportTask.
+     * @param datasource datasource to set
+     */
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
     }
 
     private long getMaxNodeId() {
         long maxId = 0;
+        //CHECKSTYLE:OFF - Nested tries
         try {
             final Connection conn = datasource.getConnection();
             try {
@@ -526,19 +564,19 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 } finally {
                     maxNodes.close();
                 }
-            } finally{
+            } finally {
                 conn.close();
             }
         } catch (SQLException e) {
             log.error("A database exception occurred finding the maximum id in the database", e);
         }
         return maxId;
+        //CHECKSTYLE:ON
     }
 
     private List<Format> loadAllFormats() {
-        //final List<Format> formats = new ArrayList<Format>(2000); // about 1500 formats as of 2015.
-
-        List<Format> formats = null;
+        //CHECKSTYLE:OFF   Nested try depth..
+        List<Format> formatsList = null;
         try {
             final Connection conn = datasource.getConnection();
             try {
@@ -547,14 +585,14 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 final ResultSet rsFormatCount = getFormatCount.executeQuery();
                 rsFormatCount.next();
                 final int formatCount = rsFormatCount.getInt("total");
-                formats = new ArrayList<Format>(formatCount);
+                formatsList = new ArrayList<Format>(formatCount);
 
                 final PreparedStatement loadFormat = conn.prepareStatement(SELECT_FORMATS);
                 try {
                     final ResultSet results = loadFormat.executeQuery();
                     try {
                         while (results.next()) {
-                            formats.add(SqlUtils.buildFormat(results));
+                            formatsList.add(SqlUtils.buildFormat(results));
                         }
                     } finally {
                         results.close();
@@ -562,13 +600,14 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 } finally {
                     loadFormat.close();
                 }
-            } finally{
+            } finally {
                 conn.close();
             }
         } catch (SQLException e) {
             log.error("A database exception occurred getting all formats.", e);
         }
-        return formats;
+        return formatsList;
+        //CHECKSTYLE:ON
     }
 
     private void createAndRunDatabaseWriterThread() {
@@ -583,27 +622,46 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         databaseWriterThread.start();
     }
 
+    /**
+     * Cleans up resources after profile processing completed.
+     */
     public void cleanup() {
         System.out.println("Cleaning up JDBCBatchResultHandlerDao");
         this.writer.closeResources();
     }
 
-
-    public synchronized static void setIsFreshTemplate(boolean isFreshTemplate) {
+    /**
+     * Used to indicate whether DROID is running in "fresh temple" mode, e.g. after a new install.
+     * @param isFreshTemplate Whether or not this instance is instantiated by DROID running with a fresh template.
+     */
+    public static synchronized void setIsFreshTemplate(boolean isFreshTemplate) {
         freshTemplate = isFreshTemplate;
     }
 
+    /**
+     * Used to indicate whether DROID is running in "fresh temple" mode, e.g. after a new install.
+     * @return Whether or not this instance is instantiated by DROID running with a fresh template.
+     */
     public static boolean getIsFreshTemplate() {
         return freshTemplate;
     }
 
     private static class NodeInfo {
-        public ProfileResourceNode node;
-        public boolean             insertNode;
+
+        private ProfileResourceNode node;
+        private boolean insertNode;
 
         public NodeInfo(ProfileResourceNode node, boolean insertNode) {
             this.node = node;
             this.insertNode = insertNode;
+        }
+
+        public ProfileResourceNode getNode() {
+            return node;
+        }
+
+        public boolean isInsertNode() {
+            return insertNode;
         }
     }
 
@@ -620,12 +678,13 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
      *                       We will use synchronization in the calling class to provide thread-safety,
      *                       since there is no ConcurrentLinkedHashMap in the JDK by default.
      */
-    private class MostRecentlyAddedNodeCache extends LinkedHashMap<Long, ProfileResourceNode> {
+    private final class MostRecentlyAddedNodeCache extends LinkedHashMap<Long, ProfileResourceNode> {
 
+        private static final float LOAD_FACTOR = 1.1f;
         private final int capacity;
 
         private MostRecentlyAddedNodeCache(int capacity) {
-            super(capacity + 1, 1.1f, false);
+            super(capacity + 1, LOAD_FACTOR, false);
             this.capacity = capacity;
         }
 
@@ -633,15 +692,30 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         protected boolean removeEldestEntry(final Map.Entry<Long, ProfileResourceNode> eldest) {
             return size() > capacity;
         }
-
     }
-
 
     /**
      * Class to run in a thread which takes from the blocking queue and batch commits
      * to the database.
      */
     private static class DatabaseWriter implements Runnable {
+
+        private static final int INSERT_NODE_URI_INDEX = 16;
+        private static final int INSERT_NODE_PREFIX_PLUS_ONE_INDEX = 15;
+        private static final int INSERT_NODE_PREFIX_INDEX = 14;
+        private static final int INSERT_NODE_PARENT_ID_INDEX = 13;
+        private static final int INSERT_NODE_SIZE_INDEX = 12;
+        private static final int INSERT_NODE_RESOURCE_TYPE_INDEX = 11;
+        private static final int INSERT_NODE_STATUS_INDEX = 10;
+        private static final int INSERT_NODE_NAME_INDEX = 9;
+        private static final int INSERT_NODE_MOD_DATE_INDEX = 8;
+        private static final int INSERT_NODE_METHOD_INDEX = 7;
+        private static final int INSERT_NODE_HASH_INDEX = 6;
+        private static final int INSERT_NODE_EXT_INDEX = 5;
+        private static final int INSERT_NODE_NUM_IDENTS_INDEX = 4;
+        private static final int INSERT_NODE_FINISHED_INDEX = 3;
+        private static final int INSERT_NODE_MISMATCH_INDEX = 2;
+        private static final int INSERT_NODE_ID_INDEX = 1;
 
         private final Log log = LogFactory.getLog(getClass());
         private BlockingQueue<NodeInfo> blockingQueue;
@@ -672,7 +746,9 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             connection = datasource.getConnection();
             insertNodeStatement = connection.prepareStatement(INSERT_PROFILE_RESOURCE_NODE);
             updateNodeStatement = connection.prepareStatement(UPDATE_NODE_STATUS);
-            insertIdentifications = new HashMap<Integer, PreparedStatement>(64);
+            final int maxStatements = 64;
+
+            insertIdentifications = new HashMap<Integer, PreparedStatement>(maxStatements);
             for (int i = 0; i < INSERT_IDENTIFICATION.length; i++) {
                 final PreparedStatement insertStatement = connection.prepareStatement(INSERT_IDENTIFICATION[i]);
                 insertIdentifications.put(i, insertStatement);
@@ -690,12 +766,12 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                     } else {
                         try {
                             if (info.insertNode) { // are we inserting a node, or updating one already saved?
-                                batchInsertNode(info.node);
+                                batchInsertNode(info.getNode());
                             } else {
-                                updateNodeStatus(info.node);
+                                updateNodeStatus(info.getNode());
                             }
                         } catch (SQLException e) {
-                            log.error("A database problem occurred inserting a node: " + info.node, e);
+                            log.error("A database problem occurred inserting a node: " + info.getNode(), e);
                         }
                     }
                 }
@@ -728,6 +804,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             }
         }
 
+        //CHECKSTYLE:OFF  Too many statements..
         private void batchInsertNode(final ProfileResourceNode node) throws SQLException {
             // insert main node:
             final long nodeId = node.getId();
@@ -748,28 +825,28 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             final String nodePrefix = node.getPrefix();
             final String nodePrefixPlusOne = node.getPrefixPlusOne();
             final PreparedStatement insertNode = insertNodeStatement;
-            insertNode.setLong(1, nodeId);
-            insertNode.setBoolean(2, mismatch);
-            SqlUtils.setNullableTimestamp(3, finished, insertNode);
-            SqlUtils.setNullableInteger(   4,  numIdentifications, insertNode);
-            SqlUtils.setNullableString(    5,  extension, insertNode);
-            SqlUtils.setNullableString(    6,  hash, insertNode);
-            SqlUtils.setNullableEnumAsInt( 7, method, insertNode);
-            SqlUtils.setNullableTimestamp( 8, modDate, insertNode);
-            insertNode.setString(          9,  name);
-            SqlUtils.setNullableEnumAsInt( 10, nodeStatus, insertNode);
-            SqlUtils.setNullableEnumAsInt( 11, resourceType, insertNode);
-            SqlUtils.setNullableLong(      12, size, insertNode);
-            SqlUtils.setNullableLong(      13, nodeParentId, insertNode);
-            SqlUtils.setNullableString(    14, nodePrefix, insertNode);
-            SqlUtils.setNullableString(    15, nodePrefixPlusOne, insertNode);
-            insertNode.setString(          16, uri);
+            insertNode.setLong(INSERT_NODE_ID_INDEX, nodeId);
+            insertNode.setBoolean(INSERT_NODE_MISMATCH_INDEX, mismatch);
+            SqlUtils.setNullableTimestamp(INSERT_NODE_FINISHED_INDEX, finished, insertNode);
+            SqlUtils.setNullableInteger(INSERT_NODE_NUM_IDENTS_INDEX,  numIdentifications, insertNode);
+            SqlUtils.setNullableString(INSERT_NODE_EXT_INDEX,  extension, insertNode);
+            SqlUtils.setNullableString(INSERT_NODE_HASH_INDEX,  hash, insertNode);
+            SqlUtils.setNullableEnumAsInt(INSERT_NODE_METHOD_INDEX, method, insertNode);
+            SqlUtils.setNullableTimestamp(INSERT_NODE_MOD_DATE_INDEX, modDate, insertNode);
+            insertNode.setString(INSERT_NODE_NAME_INDEX,  name);
+            SqlUtils.setNullableEnumAsInt(INSERT_NODE_STATUS_INDEX, nodeStatus, insertNode);
+            SqlUtils.setNullableEnumAsInt(INSERT_NODE_RESOURCE_TYPE_INDEX, resourceType, insertNode);
+            SqlUtils.setNullableLong(INSERT_NODE_SIZE_INDEX, size, insertNode);
+            SqlUtils.setNullableLong(INSERT_NODE_PARENT_ID_INDEX, nodeParentId, insertNode);
+            SqlUtils.setNullableString(INSERT_NODE_PREFIX_INDEX, nodePrefix, insertNode);
+            SqlUtils.setNullableString(INSERT_NODE_PREFIX_PLUS_ONE_INDEX, nodePrefixPlusOne, insertNode);
+            insertNode.setString(INSERT_NODE_URI_INDEX, uri);
             insertNode.addBatch();
 
             // insert its identifications:
             //TODO: check for NULL format weirdness...
 
-            final int identifications = numIdentifications == null? 0 : numIdentifications;
+            final int identifications = numIdentifications == null ? 0 : numIdentifications;
             final PreparedStatement statement = getIdentificationStatement(identifications);
             if (identifications == 0) {
                 statement.setLong(1, nodeId);
@@ -785,6 +862,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
             commitBatchIfLargeEnough();
         }
+        //CHECKSTYLE:ON
 
         private void updateNodeStatus(final ProfileResourceNode node) throws SQLException {
             final Long nodeId = node.getId();
@@ -792,14 +870,16 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 NodeMetaData nm = node.getMetaData();
                 if (nm != null) {
                     SqlUtils.setNullableEnumAsInt(1, nm.getNodeStatus(), updateNodeStatement);
-                    updateNodeStatement.setLong(  2, nodeId);
+                    updateNodeStatement.setLong(2, nodeId);
                     updateNodeStatement.addBatch();
                     commitBatchIfLargeEnough();
                 } else {
-                    log.error("A node was flagged for status update, but had no status metadata. Node id was: " + nodeId);
+                    log.error("A node was flagged for status update, but had no status metadata. Node id was: "
+                            + nodeId);
                 }
             } else {
-                log.error("A node was flagged for status update, but it did not have an id already.  Parent id was: " + node.getParentId());
+                log.error("A node was flagged for status update, but it did not have an id already.  Parent id was: "
+                        + node.getParentId());
             }
         }
 
@@ -816,7 +896,8 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
                     // Insert identifications of new nodes:
                     for (final PreparedStatement identifications : insertIdentifications.values()) {
-                        identifications.executeBatch(); //TODO: optimise? what about identification statements not used in this run?
+                        identifications.executeBatch();
+                        //TODO: optimise? what about identification statements not used in this run?
                     }
                     connection.commit();
                 } catch (SQLException e) {
@@ -844,7 +925,12 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         }
 
         private String buildInsertIdentificationString(final int numIdentifications) {
-            final StringBuilder builder = new StringBuilder(60 + numIdentifications * 6);
+
+            final int baseInsertStatementSize = 60;
+            final int sizeForEachIdentification = 6;
+
+            final StringBuilder builder =
+                    new StringBuilder(baseInsertStatementSize + numIdentifications * sizeForEachIdentification);
             builder.append(INSERT_IDENTIFICATIONS);
             for (int i = 0; i < numIdentifications - 1; i++) {
                 builder.append("(?,?),");
@@ -852,7 +938,5 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             builder.append("(?,?)");
             return builder.toString();
         }
-
     }
-
 }

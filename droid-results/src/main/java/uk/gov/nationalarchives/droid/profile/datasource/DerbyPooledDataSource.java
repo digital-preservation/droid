@@ -32,7 +32,12 @@
 package uk.gov.nationalarchives.droid.profile.datasource;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLNonTransientConnectionException;
+import java.sql.Statement;
 import java.util.logging.Logger;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -77,9 +82,6 @@ public class DerbyPooledDataSource extends BasicDataSource {
             String message = String.format("Invalid driver class name: %s", driverClassName);
             log.error(message, e);
             throw new RuntimeException(message, e);
-        }  catch (Exception e) {
-            String s = e.getMessage();
-            log.error(s);
         }
     }
     

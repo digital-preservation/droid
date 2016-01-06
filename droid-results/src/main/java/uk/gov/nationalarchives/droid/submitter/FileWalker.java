@@ -94,11 +94,19 @@ public class FileWalker {
         setRootUri(root);
     }
 
+    /**
+     *
+     * @return the current root Uri.
+     */
     @XmlElement(name = "RootUri")
     public URI getRootUri() {
         return root;
     }
 
+    /**
+     *
+     * @param rootUri the Uri to set.
+     */
     public void setRootUri(URI rootUri) {
         this.root = rootUri;
         this.topLevelAbsolutePath = new File(root).getAbsolutePath();
@@ -152,6 +160,13 @@ public class FileWalker {
         }
     }
 
+    /**
+     *
+     * @param dir file.
+     * @param depth depth to which to check
+     * @return false if directory yet to be processed, otherwise true
+     * @throws IOException An error occurs in accessing the resource
+     */
     protected boolean handleDirectory(File dir, int depth) throws IOException {
         boolean processDir = true;
 
@@ -175,6 +190,13 @@ public class FileWalker {
         return processDir;
     }
 
+    /**
+     *
+     * @param directory directory to handle.
+     * @param depth depth to which to check
+     * @param children array of files
+     * @throws IOException An error occurs in accessing the resource
+     */
     protected void handleDirectoryStart(File directory, int depth, File[] children)
         throws IOException {
         
@@ -188,8 +210,14 @@ public class FileWalker {
         progress.push(new ProgressEntry(directory, directoryId, children));
     }
 
+    /**
+     *
+     * @param file file to hanndle.
+     * @param depth level to whhich to check
+     * @throws IOException  An error occurs in accessing the resource
+     */
     protected void handleFile(File file, int depth)
-            throws IOException {
+        throws IOException {
 
         if (!SubmitterUtils.isFileSystemAvailable(file, topLevelAbsolutePath)) {
             log.error(String.format(FILE_SYSTEM_UNAVAILABLE, file.getAbsolutePath()));
@@ -211,7 +239,12 @@ public class FileWalker {
         }
         progressEntry.removeChild(file);
     }
-    
+
+    /**
+     *
+     * @param directory directory.
+     * @param depth depth to which to check.
+     */
     protected void handleDirectoryEnd(File directory, int depth) {
         
         if (fastForward) {
@@ -334,16 +367,27 @@ public class FileWalker {
             this.children = children;
         }
 
-
+        /**
+         *
+         * @return the current directory as a URI.
+         */
         @XmlElement(name = "Uri")
         public URI getUri() {
-            return directory.toURI();
+            return this.directory.toURI();
         }
 
-        public void setUri(URI directory) {
-            this.directory = new File(directory);
+        /**
+         * Sets the current directory as a URI.
+         * @param theDirectory a URI representing the directory to set.
+         */
+        public void setUri(URI theDirectory) {
+            this.directory = new File(theDirectory);
         }
 
+        /**
+         * Gets a list of child URIs.
+         * @return   A list of child URIs
+         */
         @XmlElementWrapper(name = "Children")
         @XmlElement(name = "ChildUri")
         public List<URI> getChildUri() {
@@ -358,6 +402,10 @@ public class FileWalker {
             return result;
         }
 
+        /**
+         * Set child URLs of the current one in the tree.
+         * @param childURIs List of chile URLs
+         */
         public void setChildUri(List<URI> childURIs) {
             if (childURIs != null) {
                 this.children = new File[childURIs.size()];

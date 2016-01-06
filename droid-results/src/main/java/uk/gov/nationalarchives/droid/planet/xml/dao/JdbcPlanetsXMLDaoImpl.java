@@ -31,17 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.planet.xml.dao;
 
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
-import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
-import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
-import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
-import uk.gov.nationalarchives.droid.profile.SqlUtils;
-import uk.gov.nationalarchives.droid.profile.referencedata.Format;
-
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -53,6 +42,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
+import uk.gov.nationalarchives.droid.profile.SqlUtils;
+import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 /**
  * JDBC implementation of JpaPlanetsXMLDaoImpl.
  * 
@@ -68,13 +68,24 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
     private static final String ZERO = "0";
     private static final int FOLDER_TYPE = 0;
 
+    private static final String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS TOTAL FROM FORMAT";
+    private static final String SELECT_FORMATS               = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT";
+    private static final String SELECT_PRN_COUNT             = "SELECT COUNT(*) FROM PROFILE_RESOURCE_NODE p ";
+
+    private static final int FORMAT_MAP_SIZE = 2500;
+
+    private static final String FILTER_FORMAT_SQL_JOIN =
+            " inner join identification i on p.node_id = i.node_id inner join format f on f.puid = i.puid ";
+
+    private static final String TOTAL = "total";
+    private static final String AND_RESOURCE_TYPE = "and p.resource_type = ? ";
+    private static final String FROM_PROFILE_RESOURCE_NODE = "from profile_resource_node  p ";
+    private static final String FILE_COUNT = "file_count";
+    private static final String FILE_SIZE = "file_size";
+    private static final String WHERE_NODE_STATUS_OR = " where (p.node_status = ? or p.node_status = ?) ";
+
     private String filterQueryString = "";
 
-    private static String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
-    private static String SELECT_FORMATS               = "SELECT PUID, MIME_TYPE, NAME, VERSION FROM FORMAT";
-
-    private static final String FILTER_FORMAT_SQL_JOIN = " inner join identification i on p.node_id = i.node_id inner join format f on f.puid = i.puid ";
-    private Object[] filterParams;
     private boolean filterEnabled;
     private boolean formatCriteriaExist;
     private QueryBuilder queryBuilder;
@@ -86,24 +97,27 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
     private Map<String, Format> puidFormatMap;
 
+    /**
+     * Default constructor.
+     */
     public JdbcPlanetsXMLDaoImpl() {
 
     }
 
+    //CHECKSTYLE:OFF  Too complex
     /**
      * {@inheritDoc}
      */
     @Override
-   // @Transactional(propagation = Propagation.REQUIRED)
     public PlanetsXMLData getDataForPlanetsXML(Filter filter) {
 
         if (this.puidFormatMap == null) {
             List<Format> formats = null;
             try {
-                this.puidFormatMap = new HashMap<String,Format>(2500);
+                this.puidFormatMap = new HashMap<String, Format>(FORMAT_MAP_SIZE);
                 formats = loadAllFormats();
             } catch (SQLException e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
             for (final Format format : formats) {
                 puidFormatMap.put(format.getPuid(), format);
@@ -129,14 +143,14 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
             if (this.puidFormatMap == null) {
 
                 List<Format> formats = loadAllFormats();
-                this.puidFormatMap = new HashMap<String,Format>(formats.size());
+                this.puidFormatMap = new HashMap<String, Format>(formats.size());
 
                 for (final Format format : formats) {
                     puidFormatMap.put(format.getPuid(), format);
                 }
             }
 
-            this.connection =  this.datasource.getConnection();;
+            this.connection = this.datasource.getConnection();
             planetXMLData = new PlanetsXMLData();
             planetXMLData.setProfileStat(getProfileStat());
             planetXMLData.setGroupByPuid(getGroupByPuid());
@@ -146,21 +160,24 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
             log.error(ex.getMessage(),  ex);
         } finally {
             try {
-                if(this.connection != null) {this.connection.close();}
-            } catch(SQLException ex) {
+                if (this.connection != null) {
+                    this.connection.close();
+                }
+            } catch (SQLException ex) {
                 log.error(ex.getMessage(), ex);
             }
 
         }
         return planetXMLData;
     }
+//CHECKSTYLE:ON
 
-
-    private void setFilterParameters(QueryBuilder queryBuilder, PreparedStatement profileStatement, int startPosition) throws SQLException {
+    private void setFilterParameters(QueryBuilder builder, PreparedStatement profileStatement, int startPosition)
+        throws SQLException {
 
         int pos = startPosition;
 
-        for (Object value : queryBuilder.getValues()) {
+        for (Object value : builder.getValues()) {
             Object value2 = SqlUtils.transformParameterToSQLValue(value);
 
             String className = value2.getClass().getSimpleName();
@@ -170,7 +187,7 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
                     profileStatement.setString(pos++, (String) value2);
                     break;
                 case Date:
-                    java.util.Date d = (java.util.Date)value2;
+                    java.util.Date d = (java.util.Date) value2;
                     profileStatement.setDate(pos++, new java.sql.Date(d.getTime()));
                     break;
                 case Long:
@@ -185,8 +202,8 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
             }
         }
     }
-
-    private ProfileStat getProfileStat() throws  SQLException{
+    //CHECKSTYLE:OFF
+    private ProfileStat getProfileStat() throws  SQLException {
         ProfileStat profileStat = new ProfileStat();
 
         StringBuilder sb = new StringBuilder("SELECT   min(p.file_size) as smallest, max(p.file_size) as largest, ");
@@ -195,20 +212,22 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
         PreparedStatement statement = null;
         ResultSet resultset = null;
-        QueryBuilder queryBuilder = null;
+
 
         try {
             int paramIndex = 1;
 
-            if(filterEnabled) {
-                if(this.filterQueryString == "" ) {
+            String whereClause = " where p.resource_type != ?  ";
+
+            if (filterEnabled) {
+                if (this.filterQueryString.equals("")) {
                     log.error(" JDBC Planets XML - Expected to find a filter but it was not found!");
                 }
 
                 if (this.formatCriteriaExist) {
                     sb.append(FILTER_FORMAT_SQL_JOIN);
                 }
-                sb.append(" where p.resource_type != ?  ");
+                sb.append(whereClause);
                 sb.append(this.filterQueryString);
 
                 statement = this.connection.prepareStatement(sb.toString());
@@ -216,18 +235,18 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
                 setFilterParameters(this.queryBuilder, statement, paramIndex);
             } else {
-                sb.append(" where p.resource_type != ?  ");
+                sb.append(whereClause);
                 statement = this.connection.prepareStatement(sb.toString());
                 statement.setInt(paramIndex, FOLDER_TYPE);
             }
 
             resultset = statement.executeQuery();
 
-            if(resultset.next()) {
+            if (resultset.next()) {
                 profileStat.setProfileSmallestSize(BigInteger.valueOf(resultset.getInt("smallest")));
                 profileStat.setProfileLargestSize(BigInteger.valueOf(resultset.getInt("largest")));
                 profileStat.setProfileMeanSize(resultset.getBigDecimal("mean").setScale(1));
-                profileStat.setProfileTotalSize(BigInteger.valueOf(resultset.getInt("total")));
+                profileStat.setProfileTotalSize(BigInteger.valueOf(resultset.getInt(TOTAL)));
             }
 
             setTotalUnreadableFiles(profileStat);
@@ -236,23 +255,18 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
         } catch (SQLException e) {
             throw e;
-        } catch (Exception e) {
-            log.error(e);
         } finally {
-
             try {
-                if(resultset != null) { resultset.close();}
-                if(statement != null) {statement.close();}
+                if (resultset != null) { resultset.close(); }
+                if (statement != null) { statement.close(); }
             } catch (SQLException e) {
                 log.error(e);
             }
         }
 
-
-
         return profileStat;
     }
-
+//CHECKSTYLE:ON
     /**
      * @param profileStat
      */
@@ -282,17 +296,17 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
         }
         */
 
-        StringBuilder sb = new StringBuilder("SELECT count(*) from profile_resource_node p ");
+        StringBuilder sb = new StringBuilder(SELECT_PRN_COUNT);
         if (this.formatCriteriaExist) {
             sb.append(FILTER_FORMAT_SQL_JOIN);
         }
         sb.append(" where p.node_status NOT IN (?, ?) ");
-        //BNO: this is the equivalent  of previous Hibernate version which would amount to and p.resource_type = 0 OR p.resource_type != 0
-        //So presumably not what was intended !
+        //BNO: this is the equivalent  of previous Hibernate version which would amount to:
+        // and p.resource_type = 0 OR p.resource_type != 0. So presumably not what was intended !
         //sb.append("and p.resource_type = 0 OR p.resource_type != ? ");
         sb.append("and  p.resource_type != ? ");
 
-        if(this.filterEnabled && this.filterQueryString != "") {
+        if (this.filterEnabled && !this.filterQueryString.equals("")) {
             sb.append(this.filterQueryString);
         }
 
@@ -306,17 +320,17 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
             statement.setInt(index++, NodeStatus.ACCESS_DENIED.ordinal());
             statement.setInt(index++, NodeStatus.NOT_FOUND.ordinal());
             statement.setInt(index++, ResourceType.FOLDER.ordinal());
-            if(this.filterEnabled && this.filterQueryString != "") {
+            if (this.filterEnabled && !this.filterQueryString.equals("")) {
                 setFilterParameters(this.queryBuilder, statement, index);
             }
             resultset = statement.executeQuery();
 
-            if(resultset.next()) {
+            if (resultset.next()) {
                 profileStat.setProfileTotalReadableFiles(BigInteger.valueOf(resultset.getInt(1)));
             }
         } finally {
-            if(resultset != null){resultset.close();}
-            if(statement != null){statement.close();}
+            if (resultset != null) { resultset.close(); }
+            if (statement != null) { statement.close(); }
         }
     }
 
@@ -324,38 +338,15 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
      * @param profileStat
      */
     private void setTotalUnreadableFolders(ProfileStat profileStat) throws SQLException {
-       /*
-        Query queryForTotalUnreadableFolders = entityManager
-                .createQuery("SELECT  count(*) "
-                        + "from  ProfileResourceNode profileResourceNode "
-                        + "where (metaData.nodeStatus = ? or metaData.nodeStatus = ?)  "
-                        + "and metaData.resourceType = ? "
-                        + filterQueryString);
 
-        int index = 1;
-        queryForTotalUnreadableFolders.setParameter(index++, NodeStatus.ACCESS_DENIED);
-        queryForTotalUnreadableFolders.setParameter(index++, NodeStatus.NOT_FOUND);
-        queryForTotalUnreadableFolders.setParameter(index++, ResourceType.FOLDER);
-
-        setFilterParameters(queryForTotalUnreadableFolders, index);
-        List<?> results = queryForTotalUnreadableFolders.getResultList();
-        if (results != null && !results.isEmpty()) {
-            for (Object res : results) {
-
-                profileStat.setProfileTotalUnReadableFolders(new BigInteger(res
-                        .toString()));
-            }
-        }
-        */
-
-        StringBuilder sb = new StringBuilder("SELECT count(*) from profile_resource_node p ");
+        StringBuilder sb = new StringBuilder(SELECT_PRN_COUNT);
         if (this.formatCriteriaExist) {
             sb.append(FILTER_FORMAT_SQL_JOIN);
         }
-        sb.append(" where (p.node_status = ? or p.node_status = ?) ");
-        sb.append("and p.resource_type = ? ");
+        sb.append(WHERE_NODE_STATUS_OR);
+        sb.append(AND_RESOURCE_TYPE);
 
-        if(this.filterEnabled && this.filterQueryString != "") {
+        if (this.filterEnabled && !this.filterQueryString.equals("")) {
             sb.append(this.filterQueryString);
         }
 
@@ -369,24 +360,24 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
             statement.setInt(index++, NodeStatus.ACCESS_DENIED.ordinal());
             statement.setInt(index++, NodeStatus.NOT_FOUND.ordinal());
             statement.setInt(index++, ResourceType.FOLDER.ordinal());
-            if(this.filterEnabled && this.filterQueryString != "") {
+            if (this.filterEnabled && !this.filterQueryString.equals("")) {
                 setFilterParameters(this.queryBuilder, statement, index);
             }
             resultset = statement.executeQuery();
 
-            if(resultset.next()) {
+            if (resultset.next()) {
                 profileStat.setProfileTotalUnReadableFolders(BigInteger.valueOf(resultset.getInt(1)));
             }
         } finally {
-            if(resultset != null){resultset.close();}
-            if(statement != null){statement.close();}
+            if (resultset != null) { resultset.close(); }
+            if (statement != null) { statement.close(); }
         }
     }
 
     /**
      * @param profileStat
      */
-    private void setTotalUnreadableFiles(ProfileStat profileStat) throws  SQLException{
+    private void setTotalUnreadableFiles(ProfileStat profileStat) throws  SQLException {
         /*
             Query queryForTotalUnreadableFiles = entityManager
                 .createQuery("SELECT count(*) "
@@ -411,14 +402,14 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
         }
         */
 
-        StringBuilder sb = new StringBuilder("SELECT count(*) from profile_resource_node p ");
+        StringBuilder sb = new StringBuilder(SELECT_PRN_COUNT);
         if (this.formatCriteriaExist) {
             sb.append(FILTER_FORMAT_SQL_JOIN);
         }
-        sb.append(" where (p.node_status = ? or p.node_status = ?) ");
+        sb.append(WHERE_NODE_STATUS_OR);
         sb.append("and p.resource_type != ? ");
 
-        if(this.filterEnabled && this.filterQueryString != "") {
+        if (this.filterEnabled && !this.filterQueryString.equals("")) {
             sb.append(this.filterQueryString);
         }
 
@@ -432,17 +423,17 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
             statement.setInt(index++, NodeStatus.ACCESS_DENIED.ordinal());
             statement.setInt(index++, NodeStatus.NOT_FOUND.ordinal());
             statement.setInt(index++, ResourceType.FOLDER.ordinal());
-            if(this.filterEnabled && this.filterQueryString != "") {
+            if (this.filterEnabled && !this.filterQueryString.equals("")) {
                 setFilterParameters(this.queryBuilder, statement, index);
             }
             resultset = statement.executeQuery();
 
-            if(resultset.next()) {
+            if (resultset.next()) {
                 profileStat.setProfileTotalUnReadableFiles(BigInteger.valueOf(resultset.getInt(1)));
             }
         } finally {
-            if(resultset != null){resultset.close();}
-            if(statement != null){statement.close();}
+            if (resultset != null) { resultset.close(); }
+            if (statement != null) { statement.close(); }
         }
     }
 
@@ -450,52 +441,17 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
         List<GroupByYearSizeAndCountRow> dataList = new ArrayList<GroupByYearSizeAndCountRow>();
         GroupByYearSizeAndCountRow groupByYearSizeAndCountRow = null;
-        /*
-        Query q = entityManager
-                .createQuery("SELECT   year(profileResourceNode.metaData.lastModifiedDate), "
-                        + "count(*), sum(profileResourceNode.metaData.size) "
-                        + "from ProfileResourceNode  profileResourceNode "
-                        + "where profileResourceNode.metaData.resourceType != ? "
-                        + filterQueryString
-                        + " group by year(profileResourceNode.metaData.lastModifiedDate) ");
 
-        int index = 1;
-        q.setParameter(index++, ResourceType.FOLDER);
-        
-        setFilterParameters(q, index);
-        List<?> results = q.getResultList();
-        if (results != null && !results.isEmpty()) {
-            for (Object res : results) {
-                groupByYearSizeAndCountRow = new GroupByYearSizeAndCountRow();
-                Object[] aaa = (Object[]) res;
-                if (aaa[0] != null) {
-                    groupByYearSizeAndCountRow.setYear(new Integer(aaa[0]
-                            .toString()));
-                }
-                if (aaa[1] != null) {
-                    groupByYearSizeAndCountRow.setCount(new BigInteger(aaa[1]
-                            .toString()));
-                }
-                if (aaa[2] != null) {
-                    groupByYearSizeAndCountRow.setSize(new BigDecimal(aaa[2]
-                            .toString()));
-                }
-                dataList.add(groupByYearSizeAndCountRow);
-
-            }
-
-        }
-        */
         StringBuilder sb = new StringBuilder("SELECT year(p.last_modified_date) as file_year, ");
         sb.append("count(*) as file_count, sum(p.file_size) as file_size ");
-        sb.append("from profile_resource_node  p ");
+        sb.append(FROM_PROFILE_RESOURCE_NODE);
 
         if (this.formatCriteriaExist) {
             sb.append(FILTER_FORMAT_SQL_JOIN);
         }
         sb.append("where p.resource_type != ? ");
 
-        if(this.filterEnabled && this.filterQueryString != "") {
+        if (this.filterEnabled && !this.filterQueryString.equals("")) {
             sb.append(this.filterQueryString);
         }
         sb.append(" group by year(p.last_modified_date)");
@@ -508,92 +464,36 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
         try {
             statement = this.connection.prepareStatement(sb.toString());
             statement.setInt(index++, ResourceType.FOLDER.ordinal());
-            if(this.filterEnabled && this.filterQueryString != "") {
+            if (this.filterEnabled && !this.filterQueryString.equals("")) {
                 setFilterParameters(this.queryBuilder, statement, index);
             }
             resultset = statement.executeQuery();
 
-            while(resultset.next()) {
+            while (resultset.next()) {
                 groupByYearSizeAndCountRow = new GroupByYearSizeAndCountRow();
                 groupByYearSizeAndCountRow.setYear(resultset.getInt("file_year"));
-                groupByYearSizeAndCountRow.setCount(BigInteger.valueOf(resultset.getLong("file_count")));
-                groupByYearSizeAndCountRow.setSize(resultset.getBigDecimal("file_size").setScale(1));
+                groupByYearSizeAndCountRow.setCount(BigInteger.valueOf(resultset.getLong(FILE_COUNT)));
+                groupByYearSizeAndCountRow.setSize(resultset.getBigDecimal(FILE_SIZE).setScale(1));
                 dataList.add(groupByYearSizeAndCountRow);
             }
         } finally {
-            if(resultset != null){resultset.close();}
-            if(statement != null){statement.close();}
+            if (resultset != null) { resultset.close(); }
+            if (statement != null) { statement.close(); }
         }
 
         return dataList;
     }
-
+    //CHECKSTYLE:OFF  Too many statements...
     private List<GroupByPuidSizeAndCountRow> getGroupByPuid() throws SQLException {
         List<GroupByPuidSizeAndCountRow> dataList = new ArrayList<GroupByPuidSizeAndCountRow>();
         GroupByPuidSizeAndCountRow groupByPuidSizeAndCountRow = null;
-        /*
-        Query q = entityManager
-                .createQuery("SELECT  f.puid, count(*), sum(profileResourceNode.metaData.size) "
-                        + "from ProfileResourceNode profileResourceNode "
-                        + "inner join profileResourceNode.formatIdentifications f "
-                        + "where  profileResourceNode.metaData.resourceType != ? "
-                        + filterQueryString + " group by f.puid ");
-
-        int index = 1;
-        q.setParameter(index++, ResourceType.FOLDER);
-
-        setFilterParameters(q, index);
-        List<?> results = q.getResultList();
-        if (results != null && !results.isEmpty()) {
-            for (Object res : results) {
-                groupByPuidSizeAndCountRow = new GroupByPuidSizeAndCountRow();
-
-                Object[] aaa = (Object[]) res;
-                String puid = "";
-                if (aaa[0] != null) {
-                    puid = new String(aaa[0].toString());
-                }
-                groupByPuidSizeAndCountRow.setPuid(puid);
-                if (aaa[1] != null) {
-                    groupByPuidSizeAndCountRow.setCount(new BigInteger(aaa[1]
-                            .toString()));
-                }
-                if (aaa[2] != null) {
-                    groupByPuidSizeAndCountRow.setSize(new BigDecimal(aaa[2]
-                            .toString()));
-                }
-                
-                // FIXME: N + 1 SELECTS ??????? WHY???
-                String query = "from Format  where puid =:puid";
-
-                Query detailsQuery = entityManager.createQuery(query);
-
-                detailsQuery.setParameter("puid", puid);
-
-                Format format = (Format) detailsQuery.getSingleResult();
-                groupByPuidSizeAndCountRow.setFormatName(format.getName());
-                groupByPuidSizeAndCountRow
-                        .setFormatVersion(format.getVersion());
-                groupByPuidSizeAndCountRow.setMimeType(format.getMimeType());
-
-                dataList.add(groupByPuidSizeAndCountRow);
-            }
-
-        }
-
-                        .createQuery("SELECT  f.puid, count(*), sum(profileResourceNode.metaData.size) "
-                        + "from ProfileResourceNode profileResourceNode "
-                        + "inner join profileResourceNode.formatIdentifications f "
-                        + "where  profileResourceNode.metaData.resourceType != ? "
-                        + filterQueryString + " group by f.puid ");
-        */
 
         StringBuilder sb = new StringBuilder("SELECT f.puid, count(*) as file_count, sum(p.file_size) as file_size ");
-        sb.append("from profile_resource_node  p ");
+        sb.append(FROM_PROFILE_RESOURCE_NODE);
         sb.append(FILTER_FORMAT_SQL_JOIN);
         sb.append(" where p.resource_type != ? ");
 
-        if(this.filterEnabled && this.filterQueryString != "") {
+        if (this.filterEnabled && !this.filterQueryString.equals("")) {
             sb.append(this.filterQueryString);
         }
         sb.append(" group by f.puid ");
@@ -606,22 +506,17 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
         try {
             statement = this.connection.prepareStatement(sb.toString());
             statement.setInt(index++, ResourceType.FOLDER.ordinal());
-            if(this.filterEnabled && this.filterQueryString != "") {
+            if (this.filterEnabled && !this.filterQueryString.equals("")) {
                 setFilterParameters(this.queryBuilder, statement, index);
             }
             resultset = statement.executeQuery();
-/*
-            groupByPuidSizeAndCountRow.setFormatName(format.getName());
-            groupByPuidSizeAndCountRow
-                    .setFormatVersion(format.getVersion());
-            groupByPuidSizeAndCountRow.setMimeType(format.getMimeType());
-   */
-            while(resultset.next()) {
+
+            while (resultset.next()) {
                 groupByPuidSizeAndCountRow = new GroupByPuidSizeAndCountRow();
                 String puid = resultset.getString("puid");
-                BigInteger fileCount = BigInteger.valueOf(resultset.getLong("file_count"));
+                BigInteger fileCount = BigInteger.valueOf(resultset.getLong(FILE_COUNT));
                 groupByPuidSizeAndCountRow.setCount(fileCount);
-                BigDecimal fileSize = resultset.getBigDecimal("file_size").setScale(1);
+                BigDecimal fileSize = resultset.getBigDecimal(FILE_SIZE).setScale(1);
                 groupByPuidSizeAndCountRow.setSize(fileSize);
 
                 Format format = puidFormatMap.get(puid);
@@ -633,23 +528,35 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
                 dataList.add(groupByPuidSizeAndCountRow);
             }
         } finally {
-            if(resultset != null){resultset.close();}
-            if(statement != null){statement.close();}
+            if (resultset != null) { resultset.close(); }
+            if (statement != null) { statement.close(); }
         }
 
         return dataList;
     }
+//CHECKSTYLE:ON
 
+    /**
+     * Set the data source.
+     * @param datasource The data source to set.
+     */
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
     }
 
+    /**
+     * Get the data source.
+     * @return The data source
+     */
     public DataSource getDatasource() {
         return this.datasource;
     }
 
-    private List<Format> loadAllFormats() throws SQLException{
-
+    /**
+     * Load all the formats.
+     */
+    private List<Format> loadAllFormats() throws SQLException {
+        //CHECKSTYLE:OFF
         List<Format> formats = null;
         try {
             final Connection conn = datasource.getConnection();
@@ -657,7 +564,7 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
                 final PreparedStatement getFormatCount = conn.prepareStatement(SELECT_FORMAT_COUNT);
                 final ResultSet rsFormatCount = getFormatCount.executeQuery();
                 rsFormatCount.next();
-                final int formatCount = rsFormatCount.getInt("total");
+                final int formatCount = rsFormatCount.getInt(TOTAL);
                 formats = new ArrayList<Format>(formatCount);
 
                 final PreparedStatement loadFormat = conn.prepareStatement(SELECT_FORMATS);
@@ -673,12 +580,13 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
                 } finally {
                     loadFormat.close();
                 }
-            } finally{
+            } finally {
                 conn.close();
             }
         } catch (SQLException e) {
             throw e;
         }
         return formats;
+        //CHECKSTYLE:ON
     }
 }

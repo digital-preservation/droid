@@ -49,11 +49,14 @@ import uk.gov.nationalarchives.droid.profile.ProfileSpec;
  */
 public class ProfileSpecJobCounter implements Callable<Long> {
 
+    /**
+     * Limit of depth to progress.
+     */
+    public static final int PROGRESS_DEPTH_LIMIT = 4; // If set to -1, do all files and folders.
+
     private ProfileSpec profileSpec;
     private long count;
     private volatile boolean cancelled;
-
-    public final static int PROGRESS_DEPTH_LIMIT = 4; // If set to -1, do all files and folders.
 
     /**
      * @param profileSpec the profile spec to size
