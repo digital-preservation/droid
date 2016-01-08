@@ -58,7 +58,7 @@ public class SimpleDqlParserFilterGrammarTest {
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
         assertEquals(CriterionOperator.EQ, criterion.getOperator());
-        assertEquals("foo bar", criterion.getValue());
+        assertEquals("foo bar".toUpperCase(), criterion.getValue());
         
     }
 
@@ -72,7 +72,7 @@ public class SimpleDqlParserFilterGrammarTest {
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
         assertEquals(CriterionOperator.EQ, criterion.getOperator());
-        assertEquals("foo \" bar", criterion.getValue());
+        assertEquals("foo \" bar".toUpperCase(), criterion.getValue());
         
     }
 
@@ -86,7 +86,7 @@ public class SimpleDqlParserFilterGrammarTest {
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
         assertEquals(CriterionOperator.EQ, criterion.getOperator());
-        assertEquals("foo ' bar", criterion.getValue());
+        assertEquals("foo ' bar".toUpperCase(), criterion.getValue());
         
     }
 
@@ -225,7 +225,7 @@ public class SimpleDqlParserFilterGrammarTest {
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
         assertEquals(CriterionOperator.NOT_CONTAINS, criterion.getOperator());
-        assertEquals("foo", criterion.getValue());
+        assertEquals("foo".toUpperCase(), criterion.getValue());
         
     }
 
@@ -237,7 +237,7 @@ public class SimpleDqlParserFilterGrammarTest {
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
         assertEquals(CriterionOperator.NOT_STARTS_WITH, criterion.getOperator());
-        assertEquals("foo", criterion.getValue());
+        assertEquals("foo".toUpperCase(), criterion.getValue());
     }
 
     @Test
@@ -248,6 +248,6 @@ public class SimpleDqlParserFilterGrammarTest {
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
         assertEquals(CriterionOperator.NOT_ENDS_WITH, criterion.getOperator());
-        assertEquals("foo", criterion.getValue());
+        assertEquals("foo".toUpperCase(), criterion.getValue());
     }
 }

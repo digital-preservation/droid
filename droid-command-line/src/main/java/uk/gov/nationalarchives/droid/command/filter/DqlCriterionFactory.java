@@ -211,6 +211,21 @@ public final class DqlCriterionFactory {
         protected String toTypedValue(String s) {
             return s;
         }
+
+        @Override
+        public void setValue(String value) {
+
+            CriterionFieldEnum cfe = this.getField();
+
+            if (cfe != null && (cfe == CriterionFieldEnum.FILE_FORMAT
+                    || cfe == CriterionFieldEnum.FILE_NAME
+                    || cfe == CriterionFieldEnum.FILE_EXTENSION)) {
+                super.setValue(toTypedValue(value).toUpperCase());
+            } else {
+                super.setValue(toTypedValue(value));
+            }
+        }
+
     }
 
     private static class LongCriterion extends AbstractFilterCriterion<Long> {
