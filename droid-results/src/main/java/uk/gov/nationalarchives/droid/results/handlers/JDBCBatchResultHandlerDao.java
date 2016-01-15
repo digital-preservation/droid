@@ -619,15 +619,22 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             throw new RuntimeException("Could not initialise the database writer - fatal error.", e);
         }
         databaseWriterThread = new Thread(writer);
-        databaseWriterThread.start();
+
+        try {
+            databaseWriterThread.join();
+            databaseWriterThread.start();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Cleans up resources after profile processing completed.
      */
     public void cleanup() {
-        System.out.println("Cleaning up JDBCBatchResultHandlerDao, calling closeResources()");
-        this.writer.closeResources();
+        System.out.println("In cleanUp() not doing anything...");
+        //System.out.println("Cleaning up JDBCBatchResultHandlerDao, calling closeResources()");
+        //this.writer.closeResources();
     }
 
     /**
