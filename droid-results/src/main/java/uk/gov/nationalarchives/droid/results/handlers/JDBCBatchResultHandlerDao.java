@@ -626,7 +626,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
      * Cleans up resources after profile processing completed.
      */
     public void cleanup() {
-        //System.out.println("Cleaning up JDBCBatchResultHandlerDao");
+        System.out.println("Cleaning up JDBCBatchResultHandlerDao, calling closeResources()");
         this.writer.closeResources();
     }
 
@@ -779,12 +779,14 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 log.debug("The database writer thread was interrupted.", e);
             }
             //TODO: unless the thread is interrupted, how does it clean up resources?
+            System.out.println("Calling closeResources() from  the run method");
             closeResources();
         }
 
 
 
         private void closeResources() {
+            System.out.println("In JDBCBatchResultHandlerDao - closeResources()");
             for (final PreparedStatement statement : insertIdentifications.values()) {
                 try {
                     statement.close();
