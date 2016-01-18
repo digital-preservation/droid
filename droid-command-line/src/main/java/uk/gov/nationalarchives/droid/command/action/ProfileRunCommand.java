@@ -83,9 +83,10 @@ public class ProfileRunCommand implements DroidCommand {
                 public void onProgress(Integer progress) {
                 }
             };
-            
+            Thread.sleep(1000);
             profileManager.save(profile.getUuid(), new File(destination), progressCallback);
             profileManager.closeProfile(profile.getUuid());
+
         } catch (ProfileManagerException e) {
             throw new CommandExecutionException(e);
         } catch (InterruptedException e) {
