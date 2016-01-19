@@ -52,7 +52,9 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  *
  */
 public class ProfileRunCommand implements DroidCommand {
-    
+
+    private static final int SLEEP_TIME = 1000;
+
     private String destination;
     private String[] resources;
     private boolean recursive;
@@ -60,7 +62,7 @@ public class ProfileRunCommand implements DroidCommand {
     private ProfileManager profileManager;
     private SignatureManager signatureManager;
     private LocationResolver locationResolver;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +85,8 @@ public class ProfileRunCommand implements DroidCommand {
                 public void onProgress(Integer progress) {
                 }
             };
-            Thread.sleep(1000);
+
+            Thread.sleep(SLEEP_TIME);
             profileManager.save(profile.getUuid(), new File(destination), progressCallback);
             profileManager.closeProfile(profile.getUuid());
 
