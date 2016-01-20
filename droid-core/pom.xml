@@ -67,10 +67,12 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
   	</dependency>
+        <!--
   	<dependency>
             <groupId>com.google.code.byteseek</groupId>
             <artifactId>byteseek</artifactId>
   	</dependency>
+  	-->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
