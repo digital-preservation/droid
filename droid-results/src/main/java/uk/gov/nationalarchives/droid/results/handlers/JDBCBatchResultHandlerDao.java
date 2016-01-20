@@ -633,7 +633,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
      */
     public void cleanup() {
         //System.out.println("In cleanUp() not doing anything...");
-        System.out.println("Cleaning up JDBCBatchResultHandlerDao, calling closeResources()");
+        //System.out.println("Cleaning up JDBCBatchResultHandlerDao, calling closeResources()");
         this.writer.closeResources();
     }
 
