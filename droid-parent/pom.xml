@@ -256,7 +256,7 @@
                         <exclude>**/tmp/**</exclude>
                         <exclude>**/droid-test-db/**</exclude>
                         <exclude>**/package-info.java</exclude>
-                        <exclude>empty.txt</exclude>
+                        <exclude>**/empty.txt</exclude>
                     </excludes>
                 </configuration>
                 <executions>
