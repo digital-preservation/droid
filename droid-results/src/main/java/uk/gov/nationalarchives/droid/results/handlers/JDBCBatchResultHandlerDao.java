@@ -793,7 +793,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
 
         private void closeResources() {
-            System.out.println("In JDBCBatchResultHandlerDao - closeResources()");
+            //System.out.println("In JDBCBatchResultHandlerDao - closeResources()");
             for (final PreparedStatement statement : insertIdentifications.values()) {
                 try {
                     statement.close();
