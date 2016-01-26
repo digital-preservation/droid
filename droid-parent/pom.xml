@@ -257,6 +257,8 @@
                         <exclude>**/droid-test-db/**</exclude>
                         <exclude>**/package-info.java</exclude>
                         <exclude>**/empty.txt</exclude>
+                        <exclude>**/service.properties</exclude>
+                        <exclude>**/profile.xml</exclude>
                     </excludes>
                 </configuration>
                 <executions>

@@ -178,6 +178,124 @@
             </Files>
         </ContainerSignature>
 
+        <ContainerSignature Id="1100" ContainerType="OLE2">
+            <Description>Microsoft Word 97 OLE2 Template</Description>
+            <Files>
+                <File>
+                    <Path>WordDocument</Path>
+                </File>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="1100">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>10 00 00 00 'Word.Document.8' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                
+                <File>
+                    <Path>WordDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="1100">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="10" SubSeqMaxOffset="10">
+	                                    <Sequence>[&amp;01]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="1105" ContainerType="OLE2">
+            <Description>Microsoft Word 97 OLE2 Template Password Protected</Description>
+            <Files>
+                <File>
+                    <Path>WordDocument</Path>
+                </File>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="1105">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>10 00 00 00 'Word.Document.8' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                
+                <File>
+                    <Path>WordDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="1105">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="10" SubSeqMaxOffset="10">
+	                                    <Sequence>[&amp;01][&amp;01]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="1110" ContainerType="OLE2">
+            <Description>Microsoft Word 97 OLE2 Password Protected</Description>
+            <Files>
+                <File>
+                    <Path>WordDocument</Path>
+                </File>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="1110">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>10 00 00 00 'Word.Document.8' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                
+                <File>
+                    <Path>WordDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="1110">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="11" SubSeqMaxOffset="11">
+	                                    <Sequence>[&amp;01]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                
+            </Files>
+        </ContainerSignature> 
+
+
         <ContainerSignature Id="2000" ContainerType="OLE2">
             <Description>Microsoft Excel 5.0/95 OLE2</Description>
             <Files>
@@ -886,6 +1004,43 @@
                 </File>
             </Files>
         </ContainerSignature> 
+
+        <ContainerSignature Id="6005" ContainerType="ZIP">
+            <Description>Open Document Text 1.0</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="319">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.sun.xml.writer'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="323">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.0' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
         
         <ContainerSignature Id="6010" ContainerType="ZIP">
             <Description>Open Document Text 1.1</Description>
@@ -977,6 +1132,42 @@
 	                            <ByteSequence Reference="BOFoffset">
 	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
 	                                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.spreadsheet'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>content.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="323">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'office:document-content'</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0">
+	                                    <Sequence>'office:version=' [22 27] '1.0' [22 27]</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>    
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="7005" ContainerType="ZIP">
+            <Description>Open Document Spreadsheet 1.0</Description>
+            <Files>
+                <File>
+                    <Path>META-INF/manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="320">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'manifest:media-type="application/vnd.sun.xml.calc'</Sequence>
 	                                </SubSequence>
 	                            </ByteSequence>
 	                        </InternalSignature>
@@ -1605,7 +1796,27 @@
                     <Path>Dgn~H</Path>
                 </File>
             </Files>
-        </ContainerSignature> 
+        </ContainerSignature>
+
+	<ContainerSignature Id="18010" ContainerType="ZIP">
+		<Description>3MF 3D Manufacturing Format</Description> 
+		<Files>
+			<File>
+				<Path>[Content_Types].xml</Path> 
+				<BinarySignatures>
+					<InternalSignatureCollection>
+						<InternalSignature ID="18010">
+							<ByteSequence>
+								<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+									<Sequence>'ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"'</Sequence> 
+								</SubSequence>
+							</ByteSequence>
+						</InternalSignature>
+					</InternalSignatureCollection>
+				</BinarySignatures>
+			</File>
+		</Files>
+	</ContainerSignature> 
 
 	<ContainerSignature Id="19000" ContainerType="ZIP">
             <Description>GeoGebra 2</Description>
@@ -2017,6 +2228,416 @@
             	</Files>
 	</ContainerSignature>
 
+	<ContainerSignature Id="22500" ContainerType="OLE2">
+		<Description>Serif DrawPlus Drawing 3</Description> 
+		<Files>	
+			<File>
+                    		<Path>SummaryInformation</Path>
+                    		<BinarySignatures>
+                        		<InternalSignatureCollection>
+	                        		<InternalSignature ID="22500">
+	                            			<ByteSequence Reference="BOFoffset">
+	                                			<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    				<Sequence>'Serif DrawPlus 3'</Sequence>
+	                               				</SubSequence>
+	                         			</ByteSequence>
+	                        		</InternalSignature>
+	                 		</InternalSignatureCollection>
+                    		</BinarySignatures>
+                	</File>
+            	</Files>
+	</ContainerSignature>
+
+	<ContainerSignature Id="22510" ContainerType="OLE2">
+		<Description>Serif DrawPlus Drawing 4</Description> 
+		<Files>	
+			<File>
+                    		<Path>SummaryInformation</Path>
+                    		<BinarySignatures>
+                        		<InternalSignatureCollection>
+	                        		<InternalSignature ID="22510">
+	                            			<ByteSequence Reference="BOFoffset">
+	                                			<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    				<Sequence>'Serif DrawPlus 4'</Sequence>
+	                               				</SubSequence>
+	                         			</ByteSequence>
+	                        		</InternalSignature>
+	                 		</InternalSignatureCollection>
+                    		</BinarySignatures>
+                	</File>
+            	</Files>
+	</ContainerSignature>
+
+	<ContainerSignature Id="22520" ContainerType="OLE2">
+		<Description>Serif DrawPlus Drawing 5</Description> 
+		<Files>	
+			<File>
+                    		<Path>SummaryInformation</Path>
+                    		<BinarySignatures>
+                        		<InternalSignatureCollection>
+	                        		<InternalSignature ID="22520">
+	                            			<ByteSequence Reference="BOFoffset">
+	                                			<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    				<Sequence>'Serif DrawPlus 5'</Sequence>
+	                               				</SubSequence>
+	                         			</ByteSequence>
+	                        		</InternalSignature>
+	                 		</InternalSignatureCollection>
+                    		</BinarySignatures>
+                	</File>
+            	</Files>
+	</ContainerSignature>
+
+        <ContainerSignature Id="23000" ContainerType="OLE2">
+            <Description>StarOffice Writer 3.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>StarWriterDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>'SW3HDR'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="23010" ContainerType="OLE2">
+            <Description>StarOffice Writer 4.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>StarWriterDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23010">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>'SW4HDR'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="23020" ContainerType="OLE2">
+            <Description>StarOffice Writer 5.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>StarWriterDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23020">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>'SW5HDR'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="23100" ContainerType="OLE2">
+            <Description>StarOffice Draw 3.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23100">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarDraw 3.0'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarDrawDocument'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="23105" ContainerType="OLE2">
+            <Description>StarOffice Draw 3.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23105">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'draw_StarDraw_30'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="23110" ContainerType="OLE2">
+            <Description>StarOffice Draw 4.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23110">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarImpress 4.0'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarDrawDocument'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="23120" ContainerType="OLE2">
+            <Description>StarOffice Draw 5.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23120">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'Drawing'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarDraw 5.0'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="23125" ContainerType="OLE2">
+            <Description>StarOffice Draw 5.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23125">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'draw_StarDraw_50'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="23200" ContainerType="OLE2">
+            <Description>StarOffice Impress 3.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23200">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'Presentation'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarDrawDocument'00 00 00 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="23210" ContainerType="OLE2">
+            <Description>StarOffice Impress 4.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23210">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'Presentation'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarDrawDocument 4.0'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="23220" ContainerType="OLE2">
+            <Description>StarOffice Impress 5.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23220">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'Presentation'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarImpress 5.0'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="23300" ContainerType="OLE2">
+            <Description>StarOffice Calc 3.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23300">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarCalcDocument'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature> 
+
+        <ContainerSignature Id="23310" ContainerType="OLE2">
+            <Description>StarOffice Calc 4.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23310">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarCalc 4.0'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="23320" ContainerType="OLE2">
+            <Description>StarOffice Calc 5.x OLE2</Description>
+            <Files>
+                <File>
+                    <Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="23320">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>'StarCalc 5.0'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="24000" ContainerType="OLE2">
+            <Description>Quattro Pro Spreadsheet 7-8</Description>
+            <Files>
+                <File>
+                    <Path>PerfectOffice_MAIN</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="24000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>00 00 02 00 07 10</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="24010" ContainerType="OLE2">
+            <Description>Quattro Pro Spreadsheet 9</Description>
+            <Files>
+                <File>
+                    <Path>NativeContent_MAIN</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="24010">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="4" SubSeqMaxOffset="0">
+	                                    <Sequence>'QPW9'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
     </ContainerSignatures>
     <FileFormatMappings>
     
@@ -2038,6 +2659,13 @@
 	<FileFormatMapping signatureId="1080" Puid="fmt/599" />
     	<!--  Microsoft Word (Generic) 6.0-2003 (OLE2)-->
         <FileFormatMapping signatureId="1090" Puid="fmt/609"/>
+    	<!--  Microsoft Word 97 OLE2 Template (OLE2)-->
+        <FileFormatMapping signatureId="1100" Puid="x-fmt/45"/>
+    	<!--  Microsoft Word 97 OLE2 Template Password Protected (OLE2)-->
+        <FileFormatMapping signatureId="1105" Puid="fmt/755"/>
+    	<!--  Microsoft Word 97 OLE2 Password Protected (OLE2)-->
+        <FileFormatMapping signatureId="1110" Puid="fmt/754"/>
+
         
         <!--  Microsoft Excel 5.0/95 (OLE2)-->
         <FileFormatMapping signatureId="2000" Puid="fmt/59"/>
@@ -2061,6 +2689,7 @@
   	<FileFormatMapping signatureId="2090" Puid="fmt/627" />
 	<!-- Microsoft Excel Macro-enabled add-in (ZIP)-->
 	<FileFormatMapping signatureId="2100" Puid="fmt/628" />
+
         <!-- Microsoft PowerPoint 2000 (OLE2)-->
         <FileFormatMapping signatureId="3000" Puid="fmt/126"/>        
         <!-- Microsoft PowerPoint 2007 OOXML (ZIP)-->
@@ -2085,6 +2714,7 @@
 	<FileFormatMapping signatureId="3100" Puid="fmt/633" />  
 	<!--  Microsoft PowerPoint Macro-enabled slide (ZIP)-->
 	<FileFormatMapping signatureId="3110" Puid="fmt/636" />	
+
         <!-- Microsoft Project 4.0 (OLE2)-->
         <FileFormatMapping signatureId="4000" Puid="x-fmt/243"/>
         <!-- Microsoft Project 98 (OLE2)-->
@@ -2113,6 +2743,8 @@
         
         <!-- Open Document Text 1.0 (ZIP)-->
         <FileFormatMapping signatureId="6000" Puid="fmt/136"/>
+        <!-- Open Document Text 1.0 (ZIP)-->
+        <FileFormatMapping signatureId="6005" Puid="fmt/136"/>
         <!-- Open Document Text 1.1 (ZIP)-->
         <FileFormatMapping signatureId="6010" Puid="fmt/290"/>
         <!-- Open Document Text 1.2 (ZIP)-->
@@ -2120,6 +2752,8 @@
                 
         <!-- Open Document Spreadsheet 1.0 (ZIP)-->
         <FileFormatMapping signatureId="7000" Puid="fmt/137"/>
+        <!-- Open Document Spreadsheet 1.0 (ZIP)-->
+        <FileFormatMapping signatureId="7005" Puid="fmt/137"/>
         <!-- Open Document Spreadsheet 1.1 (ZIP)-->
         <FileFormatMapping signatureId="7010" Puid="fmt/294"/>
         <!-- Open Document Spreadsheet 1.2 (ZIP)-->
@@ -2146,7 +2780,7 @@
         <FileFormatMapping signatureId="12000" Puid="x-fmt/430"/>
         
         <!-- Microsoft Visio Document generic, 2000, 2003 (OLE2) -->
-		<FileFormatMapping signatureId="13000" Puid="fmt/442"/>
+	<FileFormatMapping signatureId="13000" Puid="fmt/442"/>
         <FileFormatMapping signatureId="13010" Puid="x-fmt/258"/>
         <FileFormatMapping signatureId="13020" Puid="fmt/443"/>
 
@@ -2177,6 +2811,8 @@
         
 	<!--  Bentley V8 DGN (OLE2)-->
         <FileFormatMapping signatureId="18000" Puid="fmt/502"/>
+	<!--  3MF 3D Manufacturing Format (ZIP)-->
+        <FileFormatMapping signatureId="18010" Puid="fmt/829"/>
 
 	<!--  GeoGebra 2 (ZIP)-->
         <FileFormatMapping signatureId="19000" Puid="fmt/617"/>
@@ -2223,6 +2859,50 @@
 	<FileFormatMapping signatureId="22120" Puid="fmt/680" />
 	<!--  Serif PagePlus Publication Home Office (OLE2)-->
 	<FileFormatMapping signatureId="22200" Puid="fmt/681" />
+
+	<!--  Serif DrawPlus Drawing 3 (OLE2)-->
+	<FileFormatMapping signatureId="22500" Puid="fmt/827" />
+	<!--  Serif DrawPlus Drawing 4 (OLE2)-->
+	<FileFormatMapping signatureId="22510" Puid="fmt/852" />
+	<!--  Serif DrawPlus Drawing 5 (OLE2)-->
+	<FileFormatMapping signatureId="22520" Puid="fmt/853" />
+
+	<!--  StarOffice Writer 3.x (OLE2)-->
+	<FileFormatMapping signatureId="23000" Puid="fmt/812" />
+	<!--  StarOffice Writer 4.x (OLE2)-->
+	<FileFormatMapping signatureId="23010" Puid="fmt/813" />
+	<!--  StarOffice Writer 5.x (OLE2)-->
+	<FileFormatMapping signatureId="23020" Puid="x-fmt/400" />
+
+	<!--  StarOffice Draw 3.x (OLE2)-->
+	<FileFormatMapping signatureId="23100" Puid="fmt/810" />
+	<!--  StarOffice Draw 3.x (OLE2)-->
+	<FileFormatMapping signatureId="23105" Puid="fmt/810" />
+	<!--  StarOffice Draw 4.x (OLE2)-->
+	<FileFormatMapping signatureId="23110" Puid="fmt/811" />
+	<!--  StarOffice Draw 5.x (OLE2)-->
+	<FileFormatMapping signatureId="23120" Puid="x-fmt/401" />
+	<!--  StarOffice Draw 5.x (OLE2)-->
+	<FileFormatMapping signatureId="23125" Puid="x-fmt/401" />
+
+	<!--  StarOffice Impress 3.x (OLE2)-->
+	<FileFormatMapping signatureId="23200" Puid="fmt/814" />
+	<!--  StarOffice Impress 4.x (OLE2)-->
+	<FileFormatMapping signatureId="23210" Puid="fmt/815" />
+	<!--  StarOffice Impress 5.x (OLE2)-->
+	<FileFormatMapping signatureId="23220" Puid="x-fmt/360" />
+
+	<!--  StarOffice Calc 3.x (OLE2)-->
+	<FileFormatMapping signatureId="23300" Puid="fmt/808" />
+	<!--  StarOffice Calc 4.x (OLE2)-->
+	<FileFormatMapping signatureId="23310" Puid="fmt/809" />
+	<!--  StarOffice Calc 5.x (OLE2)-->
+	<FileFormatMapping signatureId="23320" Puid="x-fmt/359" />
+
+	<!--  Quattro Pro Spreadsheet 7-8 (OLE2)-->
+	<FileFormatMapping signatureId="24000" Puid="fmt/836" />
+	<!--  Quattro Pro Spreadsheet 9 onwards (OLE2)-->
+	<FileFormatMapping signatureId="24010" Puid="fmt/837" />
 
     </FileFormatMappings>
   

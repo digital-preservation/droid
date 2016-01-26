@@ -70,7 +70,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class OdfIdentifierTest {
 
     private ZipIdentifier odfIdentifier;
-    public static final String CONTAINER_SIGNATUE_FILE = "container-signature-20120828.xml";
+    public static final String CONTAINER_SIGNATUE_FILE = "container-signature-20160121.xml";
     
     
     @Before

@@ -59,9 +59,9 @@ public class GZipArchiveContentIdentifierTest {
     private GZipArchiveContentIdentifier gZipArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V82.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V84.xml";
     private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20150307.xml";
+            "src/test/resources/signatures/container-signature-20160121.xml";
     private String gZipFile =
             "src/test/resources/testfiles/test.gz";
     
