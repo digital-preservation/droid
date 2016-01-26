@@ -52,7 +52,7 @@ from a command-line console, you can set the executable permission by using
 these commands:
 
   chmod +x droid.sh
-  chmod +x droid-ui-6.1.5.jar
-  chmod +x droid-command-line-6.1.5.jar
+  chmod +x droid-ui-6.1.6.jar
+  chmod +x droid-command-line-6.1.6.jar
 
 To set executable permissions from your graphical file manager, please refer to the help for your particular system.
