@@ -1,3 +1,11 @@
+Version 6.1.6
+ * Signature updates: Signature file release 84, Container file 20160121
+ * Hibernate replaced by JDBC code, and Byteseek 1.1.1 by Byteseek 2.0 for improved profiling and export performance
+ * Now includes functionality to process the contents of ARC and WARC (web archive) files
+ * Added SHA1 to the hash algorithms available when profiling
+ * Filtering is now case-insensitive on file name, extension and format name
+ * Minor updates to help pages
+
 Version 6.1.5
  * Signature updates: Signature file release 77, Container file 20140624
  * Minor updates to help pages
