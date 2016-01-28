@@ -340,6 +340,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             } catch (SQLException e) {
                 throw e;
             } finally {
+                /*
                 AutoCloseable[] autoclosables = new AutoCloseable[] {createFormatTable,
                         createIdentificationTable, createProfileResourceNodeTable, conn,};
                 for(AutoCloseable a : autoclosables) {
@@ -353,6 +354,28 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                         //CHECKSTYLE:ON
                     }
                 }
+                */
+                //AutoCloseable is new in java 7 - needs to compile for Java 6....
+                //CHECKSTYLE:OFF    Have to catch generic exception from close()
+                PreparedStatement[] statements = new PreparedStatement[] {createFormatTable,
+                        createIdentificationTable, createProfileResourceNodeTable,};
+                for (PreparedStatement a : statements) {
+                    if (a != null) {
+                        try {
+                            a.close();
+
+                        } catch (Exception e) {
+                            log.error(e);
+                        }
+                    }
+                }
+
+                try {
+                    conn.close();
+                } catch (Exception e) {
+                    log.error(e);
+                }
+                //CHECKSTYLE:ON
             }
         } catch (SQLException e) {
             log.error("A database exception occurred getting when creating the Derby database for a fresh install.", e);
