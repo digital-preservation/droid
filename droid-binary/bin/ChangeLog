@@ -4,6 +4,7 @@ Version 6.1.6
  * Now includes functionality to process the contents of ARC and WARC (web archive) files
  * Added SHA1 to the hash algorithms available when profiling
  * Filtering is now case-insensitive on file name, extension and format name
+ * Fix for intermittent skipping of OLE2 containers due to memory pressure (github issue #67) (such cases now logged)
  * Minor updates to help pages
 
 Version 6.1.5
