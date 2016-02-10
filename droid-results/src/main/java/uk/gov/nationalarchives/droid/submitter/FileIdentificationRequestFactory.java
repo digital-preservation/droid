@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
+import java.io.File;
+
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
@@ -41,13 +43,14 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * @author rflitcroft
  *
  */
-public class FileIdentificationRequestFactory implements IdentificationRequestFactory {
+public class FileIdentificationRequestFactory implements IdentificationRequestFactory<File> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
+    public final IdentificationRequest<File> newRequest(RequestMetaData metaData,
+                                                        RequestIdentifier identifier) {
         return new FileSystemIdentificationRequest(metaData, identifier);
     }
     

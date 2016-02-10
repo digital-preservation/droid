@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -252,6 +252,7 @@ public class FFSignatureFile extends SimpleElement {
      * and before the FFSignatureFile class is used.
       */
     public final void prepareForUse() {
+        //BNO: Called when profile initialised.
         this.prepareInternalSignatures();
     }
 
@@ -323,6 +324,7 @@ public class FFSignatureFile extends SimpleElement {
      * to ensure its own best performance.
      */
     private void prepareInternalSignatures() {
+        //BNO: Called when profile initialised
         this.setAllSignatureFileFormats();
         this.intSigs.prepareForUse();
         intSigs.sortSignatures(new InternalSignatureComparator());
@@ -492,8 +494,10 @@ public class FFSignatureFile extends SimpleElement {
      * @param targetFile The binary file to be identified
      */
     public final void runFileIdentification(final ByteReader targetFile) {
-        List<InternalSignature> matchingSigs = intSigs.getMatchingSignatures(targetFile, maxBytesToScan);
-        for (InternalSignature internalSig : matchingSigs) {
+        final List<InternalSignature> matchingSigs = intSigs.getMatchingSignatures(targetFile, maxBytesToScan);
+        final int numSigs = matchingSigs.size(); // reduce garbage: use an indexed loop rather than an iterator.
+        for (int i = 0; i < numSigs; i++) {
+            final InternalSignature internalSig = matchingSigs.get(i);
             targetFile.setPositiveIdent();
             final int numFileFormats = internalSig.getNumFileFormats();
             for (int fileFormatIndex = 0; fileFormatIndex < numFileFormats; fileFormatIndex++) {
@@ -501,6 +505,7 @@ public class FFSignatureFile extends SimpleElement {
                     new FileFormatHit(internalSig.getFileFormat(fileFormatIndex), 
                                       FileFormatHit.HIT_TYPE_POSITIVE_GENERIC_OR_SPECIFIC,
                                       internalSig.isSpecific(), "");
+
                 targetFile.addHit(fileHit);
             }
         }

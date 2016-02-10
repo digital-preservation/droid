@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  */
 public class DirectoryEventHandler {
 
+    private static final int URI_STRING_BUILDER_CAPACITY = 1024;
+
     private ResultHandler resultHandler;
-    
+    private StringBuilder uriStringBuilder = new StringBuilder(URI_STRING_BUILDER_CAPACITY);
+
     /**
      * Handles a directory.
      * @param dir the directory to handle
@@ -65,7 +68,7 @@ public class DirectoryEventHandler {
                 dir.lastModified(),
                 depth == 0 ? dir.getAbsolutePath() : dir.getName());
         
-        RequestIdentifier identifier = new RequestIdentifier(dir.toURI());
+        RequestIdentifier identifier = new RequestIdentifier(SubmitterUtils.toURI(dir, uriStringBuilder));
         identifier.setParentResourceId(parentId);
         result.setRequestMetaData(metaData);
         result.setIdentifier(identifier);

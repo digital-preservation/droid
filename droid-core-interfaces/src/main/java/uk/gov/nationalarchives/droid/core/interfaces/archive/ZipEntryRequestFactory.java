@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import java.io.InputStream;
+
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentificationRequest;
@@ -41,17 +43,16 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ZipEntryIdentifica
  * @author rflitcroft
  *
  */
-public class ZipEntryRequestFactory extends AbstractArchiveRequestFactory {
+public class ZipEntryRequestFactory extends AbstractArchiveRequestFactory<InputStream> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final ZipEntryIdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
+    public final ZipEntryIdentificationRequest newRequest(RequestMetaData metaData,
+                                                          RequestIdentifier identifier) {
         
-        final ZipEntryIdentificationRequest request = new ZipEntryIdentificationRequest(
-                metaData, identifier, getTempDirLocation());
-        return request;
+        return new ZipEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
     }
     
 }

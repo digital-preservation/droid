@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,13 +69,14 @@
  */
 package uk.gov.nationalarchives.droid.core.signature;
 
+import net.byteseek.io.reader.WindowReader;
 
 /**
  * Interface for accessing the bytes from a file, URL or stream.
- * 
+ *
  * <p>Create an instance with <code>AbstractByteReader.newByteReader()</code>.</p>
  *
- * @author linb
+ * @author linb, boreilly
  */
 public interface ByteReader {
 
@@ -191,16 +192,12 @@ public interface ByteReader {
      */
     byte getByte(long fileIndex);
 
+
     /**
-     * This is provided to avoid having to call getByte on this class.
-     * Since getting bytes is called orders of magnitude more than anything
-     * else it is extremely performance sensitive.
-     * If the implementing class has direct access to bytes, return itself.
-     * If not, return a child object which does implementing the 
-     * net.domesdaybook.reader interface instead. 
-     * @return An object which can read bytes.
+     * Gets the the associated WindowReader object.
+     * @return a Byteseek2 WindowReader.
      */
-    net.domesdaybook.reader.ByteReader getReader();
+    WindowReader getWindowReader();
     
     /**
      * Returns the number of bytes in the file.

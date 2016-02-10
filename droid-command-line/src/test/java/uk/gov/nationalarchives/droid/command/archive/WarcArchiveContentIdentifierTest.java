@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,9 +59,9 @@ public class WarcArchiveContentIdentifierTest {
     private WarcArchiveContentIdentifier warcArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V78.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V84.xml";
     private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20140922.xml";
+            "src/test/resources/signatures/container-signature-20160121.xml";
     private String warcFile =
             "src/test/resources/testfiles/expanded.warc";
     
@@ -113,8 +113,9 @@ public class WarcArchiveContentIdentifierTest {
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
 
-            InputStream warcStream = new FileInputStream(file);
-            request.open(warcStream);
+            //InputStream warcStream = new FileInputStream(file);
+            //request.open(warcStream);
+            request.open(file);
             warcArchiveContentIdentifier.identify(uri, request);
         } catch (Exception e) {
             throw new CommandExecutionException(e);

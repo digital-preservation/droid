@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,13 +33,6 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
-import org.hibernate.annotations.Index;
-
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
@@ -48,7 +41,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
  * @author rflitcroft
  * 
  */
-@Embeddable
 public class NodeMetaData {
     
     private static final int MAX_HASH_LENGTH = 64;
@@ -56,42 +48,44 @@ public class NodeMetaData {
     // limit of the path+query components of URL length in IE is 2048
     private static final int MAX_STRING_LENGTH = 4095;
 
-    @Index(name = "idx_prn_file_size")
-    @Column(name = "file_size")
     private Long size;
     
-    @Index(name = "idx_prn_last_modified")
-    @Column(name = "last_modified_date")
     private Date lastModifiedDate;
 
-    @Index(name = "idx_prn_name")
-    @Column(length = MAX_STRING_LENGTH, name = "name", nullable = false)
     private String name;
 
-    @Index(name = "idx_prn_extension")
-    @Column(name = "extension")
     private String extension;
 
-    @Index(name = "idx_prn_node_status")
-    @Column(name = "node_status")
-    @Enumerated(EnumType.ORDINAL)
     private NodeStatus nodeStatus;
 
-    @Index(name = "idx_prn_id_method")
-    @Column(name = "identification_method")
-    @Enumerated(EnumType.ORDINAL)
     private IdentificationMethod identificationMethod;
 
-    
-    @Index(name = "idx_prn_id_resourceType")
-    @Column(name = "resource_type", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
     private ResourceType  resourceType;
     
-    @Index(name = "idx_prn_hash")
-    @Column(name = "hash", length = MAX_HASH_LENGTH)
     private String hash;
-  
+
+    /**
+     * Default constructor.
+     */
+    public NodeMetaData() {
+    }
+
+    /**
+     * Copy constructor for a NodeMetaData.
+     *
+     * @param toCopy The metadata to copy.
+     */
+    public NodeMetaData(NodeMetaData toCopy) {
+        this.size                 = toCopy.size;
+        this.lastModifiedDate     = toCopy.lastModifiedDate;
+        this.name                 = toCopy.name;
+        this.extension            = toCopy.extension;
+        this.nodeStatus           = toCopy.nodeStatus;
+        this.identificationMethod = toCopy.identificationMethod;
+        this.resourceType         = toCopy.resourceType;
+        this.hash                 = toCopy.hash;
+    }
+
     /**
      * @return the size
      */
@@ -153,7 +147,7 @@ public class NodeMetaData {
      *            the extension to set
      */
     public void setExtension(String extension) {
-        this.extension = extension.toLowerCase();
+        this.extension = extension == null ? null : extension.toLowerCase();
     }
 
     /**

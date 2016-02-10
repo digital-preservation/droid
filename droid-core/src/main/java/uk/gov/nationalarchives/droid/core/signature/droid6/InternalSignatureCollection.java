@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,6 +77,8 @@ public class InternalSignatureCollection extends SimpleElement {
     /**
      * Default size of signature collection.
      */
+
+    //BNO there is one instance of this for the entire profile - not each request
     private static final int DEFAULT_COLLECTION_SIZE = 10;
     
     private List<InternalSignature> intSigs = new ArrayList<InternalSignature>(DEFAULT_COLLECTION_SIZE);
@@ -91,6 +93,7 @@ public class InternalSignatureCollection extends SimpleElement {
      * @return A list of the internal signatures which matched. 
      */
     public List<InternalSignature> getMatchingSignatures(ByteReader targetFile, long maxBytesToScan) {
+        //BNO: intSigs here represents all the available binary signatures..
         List<InternalSignature> matchingSigs = new ArrayList<InternalSignature>();
         if (targetFile.getNumBytes() > 0) {
             final int stop = intSigs.size();
@@ -109,6 +112,7 @@ public class InternalSignatureCollection extends SimpleElement {
      * Prepares the internal signatures in the collection for use.
      */
     public void prepareForUse() {
+        //BNO: Called once when initialising the profile.
         for (Iterator<InternalSignature> sigIterator = intSigs.iterator(); sigIterator.hasNext();) {
             InternalSignature sig = sigIterator.next();
             sig.prepareForUse();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -181,10 +181,9 @@ public class NoProfileRunCommand implements DroidCommand {
             identifier.setParentId(1L);
             
             InputStream in = null;
-            IdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
+            IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
             try {
-                in = new FileInputStream(file);
-                request.open(in);
+                request.open(file);
                 IdentificationResultCollection results =
                     binarySignatureIdentifier.matchBinarySignatures(request);
                 

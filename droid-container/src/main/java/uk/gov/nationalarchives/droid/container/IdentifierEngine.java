@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,5 +49,5 @@ public interface IdentifierEngine {
      * 
      * @throws IOException if a problem occurred with processing
      */
-    void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException;
+    void process(IdentificationRequest  request, ContainerSignatureMatchCollection matches) throws IOException;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,38 +38,33 @@ import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.domesdaybook.reader.ByteReader;
+import net.byteseek.io.reader.WindowReader;
+import net.byteseek.io.reader.ReaderInputStream;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
+
 
 /**
  * Encapsulates a request for a WARC entry.
  * @author rflitcroft
  *
  */
-public class WebArchiveEntryIdentificationRequest implements IdentificationRequest {
+public class WebArchiveEntryIdentificationRequest implements IdentificationRequest<InputStream> {
 
     private static final int BUFFER_CACHE_CAPACITY = 16;
-
     private static final int CAPACITY = 32 * 1024; // 50 kB
-    
-    private Long size;
+    private static final int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
+
     private final String extension;
-    
-    private CachedBytes cachedBinary;
-
     private final String fileName;
-    private File tempFile;
-
-    private final int lruCapacity;
-    private final int bufferCapacity;
-    private File tempDir;
-    
     private final RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
-    
+
+    private File tempDir;
+    private Long size;
+    private WindowReader reader;
+
     private Log log = LogFactory.getLog(this.getClass());
     
     /**
@@ -78,27 +73,10 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
      * @param tempDir the location to write temp files.
      */
     public WebArchiveEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier, File tempDir) {
-        this(metaData, identifier, BUFFER_CACHE_CAPACITY, CAPACITY, tempDir);
-    }
-    
-    /**
-     * @param metaData the request meta data
-     * @param identifier the request identifier
-     * @param lruCapacity the buffer cache capacity
-     * @param bufferCapacity the buffer capacity
-     * @param tempDir the location to write temp files.
-     */
-    WebArchiveEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
-            int lruCapacity, int bufferCapacity, File tempDir) {
         this.identifier = identifier;
-        size = metaData.getSize();
-        
-        fileName = metaData.getName();
-        //extension = FilenameUtils.getExtension(fileName);
-        extension = ResourceUtils.getExtension(fileName);
-        
-        this.lruCapacity = lruCapacity;
-        this.bufferCapacity = bufferCapacity;
+        this.size = metaData.getSize();
+        this.fileName = metaData.getName();
+        this.extension = ResourceUtils.getExtension(fileName);
         this.tempDir = tempDir;
         this.requestMetaData = metaData;
     }
@@ -108,24 +86,9 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
      */
     @Override
     public final void open(InputStream in) throws IOException {
-        /* using normal stream access and CachedByteArrays */
-        byte[] firstBuffer = new byte[bufferCapacity];
-        int bytesRead = ResourceUtils.readBuffer(in, firstBuffer);
-        if (bytesRead < 1) {
-            firstBuffer = new byte[0];
-            cachedBinary = new CachedByteArray(firstBuffer, 0);
-            size = 0L;
-        } else if (bytesRead < bufferCapacity) {
-            // size the buffer to the amount of bytes available:
-            // firstBuffer = Arrays.copyOf(firstBuffer, bytesRead);
-            cachedBinary = new CachedByteArray(firstBuffer, bytesRead);
-            size = (long) bytesRead;
-        } else {
-            cachedBinary = new CachedByteArrays(lruCapacity, bufferCapacity, firstBuffer, bufferCapacity);
-            tempFile = ArchiveFileUtils.writeEntryToTemp(tempDir, firstBuffer, in);
-            cachedBinary.setSourceFile(tempFile);
-            size = tempFile.length();
-        }
+        reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY);
+        // Force read of entire input stream to build reader and remove dependence on source input stream.
+        size = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
     }
 
 
@@ -135,23 +98,7 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
      */
     @Override
     public final void close() throws IOException {
-        try {
-            if (cachedBinary != null) {
-                cachedBinary.close();
-                cachedBinary = null;
-            }
-        } finally {
-            if (tempFile != null) {
-                if (!tempFile.delete() && tempFile.exists()) {
-                    String message = String.format("Could not delete temporary file [%s] for arc entry [%s]. "
-                            + "Will try to delete on exit.", 
-                            tempFile.getAbsolutePath(), identifier.getUri().toString());
-                    log.warn(message);
-                    tempFile.deleteOnExit();
-                }
-                tempFile = null;
-            }
-        }
+        reader.close();
     }
     
     /**
@@ -172,14 +119,6 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
     }   
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final byte getByte(long position) {
-        return cachedBinary.readByte(position);
-    }
-        
     /**
      * {@inheritDoc}
      */
@@ -205,48 +144,14 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
     }
 
     /**
-     * @return the raf
-     */
-    final CachedBytes getCache() {
-        return cachedBinary;
-    }
-    
-    /**
      * {@inheritDoc}
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
-        return cachedBinary.getSourceInputStream();
+        return new ReaderInputStream(reader, false);
     }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @throws IOException 
-     */
-    @Override
-    public final File getSourceFile() throws IOException {
-        if (tempFile == null) {
-            final InputStream stream = cachedBinary.getSourceInputStream();
-            try {
-                tempFile = ResourceUtils.createTemporaryFileFromStream(tempDir, stream);
-            } finally {
-                if (stream != null) {
-                    stream.close();
-                }
-            }
-        }
-        return tempFile;
-    }    
-    
-    /**
-     * @return the tempFile
-     */
-    final File getTempFile() {
-        return tempFile;
-    }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -254,7 +159,7 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
     public final RequestMetaData getRequestMetaData() {
         return requestMetaData;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -263,12 +168,19 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
         return identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public final ByteReader getReader() {
-        return cachedBinary;
+    public byte getByte(long position) throws IOException {
+        final int result = reader.readByte(position);
+        if (result < 0) {
+            throw new IOException("No byte at position " + position);
+        }
+        return (byte) result;
     }
+
+    @Override
+    public WindowReader getWindowReader() {
+        return reader;
+    }
+
 
 }

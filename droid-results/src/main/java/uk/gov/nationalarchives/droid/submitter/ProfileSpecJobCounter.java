@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,10 +49,15 @@ import uk.gov.nationalarchives.droid.profile.ProfileSpec;
  */
 public class ProfileSpecJobCounter implements Callable<Long> {
 
+    /**
+     * Limit of depth to progress.
+     */
+    public static final int PROGRESS_DEPTH_LIMIT = 4; // If set to -1, do all files and folders.
+
     private ProfileSpec profileSpec;
     private long count;
     private volatile boolean cancelled;
-    
+
     /**
      * @param profileSpec the profile spec to size
      */
@@ -99,7 +104,7 @@ public class ProfileSpecJobCounter implements Callable<Long> {
         private boolean recursive;
 
         public LukeFileWalker(URI root, boolean recursive) {
-            super(null, recursive ? -1 : 1);
+            super(null, recursive ? PROGRESS_DEPTH_LIMIT : 1);
             this.recursive = recursive;
             this.root = new File(root);
         }

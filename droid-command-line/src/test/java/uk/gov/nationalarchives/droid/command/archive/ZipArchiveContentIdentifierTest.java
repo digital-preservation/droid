@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,9 +59,9 @@ public class ZipArchiveContentIdentifierTest {
     private ZipArchiveContentIdentifier zipArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V78.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V84.xml";
     private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20140922.xml";
+            "src/test/resources/signatures/container-signature-20160121.xml";
     private String zipFile =
             "src/test/resources/testfiles/test.zip";
     
@@ -112,9 +112,7 @@ public class ZipArchiveContentIdentifierTest {
                 new RequestMetaData(file.length(), file.lastModified(), fileName);
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
-
-            InputStream zipStream = new FileInputStream(file);
-            request.open(zipStream);
+            request.open(file);
             zipArchiveContentIdentifier.identify(uri, request);
         } catch (IOException e) {
             throw new CommandExecutionException(e);

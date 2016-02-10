@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,7 @@ import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.WebArchiveEntryIdentificationRequest;
 
 /**
  *
@@ -59,9 +60,9 @@ public class ArcArchiveContentIdentifierTest {
     private ArcArchiveContentIdentifier arcArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V78.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V84.xml";
     private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20140922.xml";
+            "src/test/resources/signatures/container-signature-20160121.xml";
     private String arcFile =
             "src/test/resources/testfiles/expanded.arc";
     
@@ -110,8 +111,8 @@ public class ArcArchiveContentIdentifierTest {
             fileName = file.getCanonicalPath();
             RequestMetaData metaData =
                 new RequestMetaData(file.length(), file.lastModified(), fileName);
-            FileSystemIdentificationRequest request =
-                new FileSystemIdentificationRequest(metaData, identifier);
+            WebArchiveEntryIdentificationRequest request =
+                new WebArchiveEntryIdentificationRequest(metaData, identifier, new File("src/test/resources/temp"));
 
             InputStream arcStream = new FileInputStream(file);
             request.open(arcStream);

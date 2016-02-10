@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,24 +76,24 @@ public class ZipArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @throws CommandExecutionException When an exception happens during execution
      * @throws CommandExecutionException When an exception happens during archive file access
      */
-    public void identify(final URI uri, final IdentificationRequest request)
+    public void identify(final URI uri, final IdentificationRequest  request)
         throws CommandExecutionException {
 
         final String newPath = makeContainerURI("zip", request.getFileName());
         setSlash1("");
         InputStream zipIn = null; 
         try {
-            zipIn = request.getSourceInputStream(); 
+            zipIn = request.getSourceInputStream();
             final ZipArchiveInputStream in = new ZipArchiveInputStream(zipIn);
             try {
-                ZipArchiveEntry entry = null; 
+                ZipArchiveEntry entry = null;
                 while ((entry = (ZipArchiveEntry) in.getNextZipEntry()) != null) {
                     final String name = entry.getName();
                     if (!entry.isDirectory()) {
-                        final RequestMetaData metaData = new RequestMetaData(1L, 2L, name);
+                        final RequestMetaData metaData = new RequestMetaData(entry.getSize(), 2L, name);
                         final RequestIdentifier identifier = new RequestIdentifier(uri);
                         final ZipEntryIdentificationRequest zipRequest =
-                            new ZipEntryIdentificationRequest(metaData, identifier, getTmpDir());
+                            new ZipEntryIdentificationRequest(metaData, identifier, getTmpDir(), false);
                         expandContainer(zipRequest, in, newPath);
                     }
                 }

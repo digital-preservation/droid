@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -107,7 +107,7 @@ public enum DroidGlobalProperty {
     /** Generate hashes for each file analysed?. */
     GENERATE_HASH("profile.generateHash", PropertyType.BOOLEAN, true),
 
-    /** Default hash algorithm to use (currently only md5, sha256 available). */
+    /** Default hash algorithm to use (currently only md5, sha1, sha256 available). */
     HASH_ALGORITHM("profile.hashAlgorithm", PropertyType.TEXT, true),
 
     /** CSV Export one row per format. */

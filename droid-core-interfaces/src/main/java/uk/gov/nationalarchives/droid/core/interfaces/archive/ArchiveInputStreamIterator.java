@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,7 @@ public abstract class ArchiveInputStreamIterator<T, U extends InputStream> imple
     public final boolean hasNext() {
         if (next == null) {
             try {
-                next = getNextEntry(in);
+                next = getNextEntry();
             } catch (IOException e) {
                 throw new ArchiveIterationException(e.getMessage(), e);
             }
@@ -83,11 +83,10 @@ public abstract class ArchiveInputStreamIterator<T, U extends InputStream> imple
     
     /**
      * Gets the next entry from the stream given.
-     * @param stream the stream
      * @return the next archived entry
      * @throws IOException if the stream could not be read
      */
-    protected abstract T getNextEntry(U stream) throws IOException;
+    protected abstract T getNextEntry() throws IOException;
 
     /**
      * {@inheritDoc}
@@ -102,7 +101,7 @@ public abstract class ArchiveInputStreamIterator<T, U extends InputStream> imple
             next = null;
         } else {
             try {
-                nextEntry = getNextEntry(in);
+                nextEntry = getNextEntry();
             } catch (IOException e) {
                 throw new ArchiveIterationException(e.getMessage(), e);
             }

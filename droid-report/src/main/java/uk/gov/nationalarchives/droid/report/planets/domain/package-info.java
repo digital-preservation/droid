@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives &lt;mailto:pronom@nationalarchives.gsi.gov.uk/&gt;
+ * Copyright (c) 2016, The National Archives &lt;mailto:pronom@nationalarchives.gsi.gov.uk/&gt;
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

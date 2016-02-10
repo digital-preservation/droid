@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -48,29 +50,50 @@ import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
  *
- * @author rbrennan
+ * @author rbrennan, boreilly
  */
 public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
 
+    private static final String NO_READER_ERROR =
+            "No reader was obtained for %s. This may be due to low memory conditions. "
+                    + "Try running with a larger heap size!";
+    private static final Log LOG = LogFactory.getLog(Ole2IdentifierEngine.class);
+
+    //CHECKSTYLE:OFF - cyclomatic complexity too high.
     @Override
     public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
+        //CHECKSTYLE:ON
         final InputStream in = request.getSourceInputStream();
+        POIFSFileSystem reader = null;
         try {
-            POIFSFileSystem reader = new POIFSFileSystem(in);
+            try {
+                reader = new POIFSFileSystem(in);
+            } finally {
+                // We can get Out Of Memory errors when attempting to instantiate the POIFSFileSystem.  However, these
+                // are handled internally by POIFS and not propogated to the calling code.  Therefore we check here
+                // whether the reader has been assigned - if not, this is probably due to an Out Of Memory error,
+                // possibly caused by a low heap size.
+                if (reader == null) {
+                    //request.getIdentifier() is null when running in command line 'no profile' mode.
+                    String identifier = request.getIdentifier() != null
+                            ? request.getIdentifier().getUri().toString() : "the current container file";
+                    throw new IOException(String.format(NO_READER_ERROR, identifier));
+                }
+            }
             DirectoryEntry root = reader.getRoot();
             for (Iterator<Entry> it = root.getEntries(); it.hasNext();) {
                 Entry entry = it.next();
                 String entryName = entry.getName().trim();
-    
+
                 boolean needsBinaryMatch = false;
-    
+
                 for (ContainerSignatureMatch match : matches.getContainerSignatureMatches()) {
                     match.matchFileEntry(entryName);
                     if (match.needsBinaryMatch(entryName)) {
                         needsBinaryMatch = true;
                     }
                 }
-                
+
                 if (needsBinaryMatch) {
                     DocumentInputStream docIn = null;
                     ByteReader byteReader = null;
@@ -90,10 +113,17 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
                     }
                 }
             }
+        } catch (IOException e) {
+            //System.out.println(e.getMessage());
+            LOG.error(e.getMessage());
         } finally {
+            if (reader != null) {
+                reader.close();
+            }
+
             if (in != null) {
                 in.close();
             }
         }
-    }   
+    }
 }

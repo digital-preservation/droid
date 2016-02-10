@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class TrueZipArchiveHandler implements ArchiveHandler {
 
     private AsynchDroid droidCore;
-    private IdentificationRequestFactory factory;
+    private IdentificationRequestFactory<InputStream> factory;
     private ResultHandler resultHandler;    
     
     /**
@@ -68,8 +68,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      */
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        
-        final BasicZipFile zipFile = new BasicZipFile(request.getSourceFile());
+        final BasicZipFile zipFile = new BasicZipFile(new ReaderReadOnlyFile(request.getWindowReader()));
         try {
             Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
                 @Override
@@ -231,7 +230,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         /**
          * Finds the longest path which has been seen before (if any),
          * and adds all the subsequent folders which haven't been seen.
-         * @param prefixPath the path of 
+         * @param path the path of
          */
         private ResourceId processAncestorFolders(String path) {
             // Split the path string into a list of ancestor paths:

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.results.handlers;
 
+import java.util.List;
+import java.util.Map;
+
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
@@ -43,12 +46,26 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 public interface ResultHandlerDao {
 
     /**
+     * Do anything required to start up the result handler.
+     */
+    void init();
+
+    /**
      * Saves a new identification to the database.
+     *
      * @param node the result to save
      * @param parentId the node's parent ID
      */
     void save(ProfileResourceNode node, ResourceId parentId);
 
+    /**
+     * Ensure that all results so far are committed.
+     * <p>
+     * Some implementations may commit each result as they are saved, in which case this will do nothing.
+     * Other implementations may batch up results to improve performance.  In the event that a profile is paused
+     * or finishes naturally, commit() should be called to flush out any un-committed results to the database.
+     */
+    void commit();
 
     /**.
      * Loads a Format. 
@@ -56,6 +73,21 @@ public interface ResultHandlerDao {
      * @return the format.
      */
     Format loadFormat(String puid);
+
+    /**
+     * Gets a list of all formats which can be recognised.
+     *
+     * @return a list of all formats.
+     */
+    List<Format> getAllFormats();
+
+    /**
+     * Gets a map of all formats against their PUID values,
+     * allowing the fast look up of a Format object from the PUID.
+     *
+     * @return A map of all formats against their PUID values.
+     */
+    Map<String, Format> getPUIDFormatMap();
 
     /**
      * @param nodeId the Id of the node to load
@@ -68,5 +100,11 @@ public interface ResultHandlerDao {
      * @param nodeId the noe to remove
      */
     void deleteNode(Long nodeId);
+
+    /**
+     * BNO: Added for new method in JDBCBatchResulthandlerDao, for customising behaviour for new vs existing
+     * installations.  Haven't previously published this interface via an API etc. ASAIK so shouldn't break anything...
+     */
+    void initialiseForNewTemplate();
 
 }

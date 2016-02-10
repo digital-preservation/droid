@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.report.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,6 +125,58 @@ public class StringOrSetFieldType implements ReportFieldType {
         }
         return reportData;
     }
+
+
+    /**
+     * Returns a list of ReportLineItems from a ResultSet.
+     * @param results ResultSet The result set from which to extract ReportLineItems
+     * @return A list of ReportLineItems extracted from the ResultSet
+     * @throws SQLException SQL Exception
+     */
+    public List<ReportLineItem> populateReportedData(ResultSet results) throws SQLException {
+
+        List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
+
+        ReportLineItem reportLineItem = null;
+
+        while (results.next()) {
+            reportLineItem = new ReportLineItem();
+            if (isGroupByExists) {
+
+                int numberOfColumns = results.getMetaData().getColumnCount();
+                Object[] resultsArray =  new Object[numberOfColumns];
+
+                for (int i = 0; i < numberOfColumns; i++) {
+                    resultsArray[i] = results.getObject(i + 1);
+                }
+
+                //Object[] resultsArray = (Object[]) res;
+                Object count = resultsArray[COUNT_INDEX];
+                if (count != null) {
+                    Long value = new Long((Integer) count);
+                    reportLineItem.setCount(value);
+                }
+
+                List<String> values = new ArrayList<String>();
+                for (int valueIndex = 0; valueIndex < groupingFields.size(); valueIndex++) {
+                    values.add(getFieldValue(resultsArray[GROUP_INDEX + valueIndex]));
+                }
+                reportLineItem.setGroupByValues(values);
+
+            } else {
+                //BNO:  any reason we can't just retrieve directly as long - if the cast will always work?
+                Object res = results.getObject(1);
+                if (res != null) {
+                    Long value = new Long((Integer) res);
+                    reportLineItem.setCount(value);
+                }
+            }
+
+            reportData.add(reportLineItem);
+        }
+        return reportData;
+    }
+
 
     private String getFieldValue(Object value) {
         return (value == null) ? "" : value.toString();

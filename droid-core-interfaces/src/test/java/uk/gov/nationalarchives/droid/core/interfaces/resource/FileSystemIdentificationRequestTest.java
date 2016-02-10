@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -63,9 +64,8 @@ public class FileSystemIdentificationRequestTest {
         metaData = new RequestMetaData(file.length(), file.lastModified(), "testXmlFile.xml");
         identifier = new RequestIdentifier(file.toURI());
         fileRequest = new FileSystemIdentificationRequest(
-                metaData, identifier,
-                3, 5);
-        fileRequest.open(new FileInputStream(file));
+                metaData, identifier);
+        fileRequest.open(file);
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
         char[] buffer = new char[8192];
@@ -81,26 +81,29 @@ public class FileSystemIdentificationRequestTest {
     public void tearDown() throws IOException {
         fileRequest.close();
     }
-    
+
+    //TODO:MP: no longer have binary cache, rewrite test?
+    /*
     @Test
     public void testOneArgContructor() throws IOException {
         file = new File(getClass().getResource("/testXmlFile.xml").getFile());
         fileRequest = new FileSystemIdentificationRequest(
                 new RequestMetaData(12L, 13L, "testXmlFile.xml"), identifier);
         
-        fileRequest.open(new FileInputStream(file));
+        fileRequest.open(file);
         CachedBytes cache = fileRequest.getCache();
         //assertEquals(1, cache.getBuffers().size());
         assertNotNull(cache.getSourceFile());
     }
-    
+    */
+
     @Test
     public void testGetSize() {
         assertEquals(file.length(), fileRequest.size());
     }
     
     @Test
-    public void testGetEveryByteSequencially() {
+    public void testGetEveryByteSequencially() throws IOException {
         
         int size = (int) fileRequest.size();
         byte[] bin = new byte[size];
@@ -115,15 +118,14 @@ public class FileSystemIdentificationRequestTest {
         
         try {
             fileRequest.getByte(i);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [" + i + "]", e.getMessage());
+            fail("Expected IOException.");
+        } catch (IOException e) {
         }
         
     }
     
     @Test
-    public void testGetByte3FollowedByByte42() {
+    public void testGetByte3FollowedByByte42() throws IOException {
         
         assertEquals(fileData.getBytes()[3], fileRequest.getByte(3));
         assertEquals(fileData.getBytes()[42], fileRequest.getByte(42));
@@ -132,7 +134,7 @@ public class FileSystemIdentificationRequestTest {
     }
 
     @Test
-    public void testGetByte42FollowedByByte3() {
+    public void testGetByte42FollowedByByte3() throws IOException {
         
         assertEquals(fileData.getBytes()[42], fileRequest.getByte(42));
         assertEquals(fileData.getBytes()[3], fileRequest.getByte(3));
@@ -141,28 +143,25 @@ public class FileSystemIdentificationRequestTest {
     }
 
     @Test
-    public void testGetLastByteFollowedByOneByteTooMany() {
+    public void testGetLastByteFollowedByOneByteTooMany() throws IOException {
         
         assertEquals(fileData.getBytes()[(int) file.length() - 1], fileRequest.getByte(file.length() - 1));
         try {
             fileRequest.getByte(file.length());
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [" + file.length() + "]", e.getMessage());
+            fail("Expected IOException.");
+        } catch (IOException  e) {
         }
         //assertEquals(3, fileRequest.getCache().getBuffers().size());
-        
     }
 
     @Test
-    public void testGetByte42FollowedByByteMillion() {
+    public void testGetByte42FollowedByByteMillion() throws IOException {
         
         assertEquals(fileData.getBytes()[42], fileRequest.getByte(42));
         try {
             fileRequest.getByte(1000000L);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [1000000]", e.getMessage());
+            fail("Expected IOException.");
+        } catch (IOException e) {
         }
         
     }

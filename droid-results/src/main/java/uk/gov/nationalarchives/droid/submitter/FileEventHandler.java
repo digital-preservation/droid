@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@
 package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 
@@ -56,13 +55,17 @@ import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
  */
 public class FileEventHandler {
 
+    private static final int URI_STRING_BUILDER_CAPACITY = 1024;
+
     private final Log log = LogFactory.getLog(getClass());
 
     private AsynchDroid droidCore;
     private ResultHandler resultHandler;
-    private IdentificationRequestFactory requestFactory;
+    private IdentificationRequestFactory<File> requestFactory;
 
     private SubmissionThrottle submissionThrottle;
+
+    private StringBuilder uriStringBuilder = new StringBuilder(URI_STRING_BUILDER_CAPACITY);
 
     /**
      * Default Constructor.
@@ -91,27 +94,16 @@ public class FileEventHandler {
      */
     public void onEvent(File file, ResourceId parentId, ResourceId nodeId) {
 
-        URI uri = file.toURI();
+        URI uri = SubmitterUtils.toURI(file, uriStringBuilder);
         RequestMetaData metaData = new RequestMetaData(file.length(), file
                 .lastModified(), file.getName());
 
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
-        
-        IdentificationRequest request = requestFactory.newRequest(metaData, identifier);
+        IdentificationRequest<File> request = requestFactory.newRequest(metaData, identifier);
         try {
-            FileInputStream in = new FileInputStream(file);
-            try {
-                request.open(in);
-                //log.debug(String.format(
-                //        "Submitting job [%s]; parent id [%s] to droid.", uri,
-                //        parentId));
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
-            }
+            request.open(file);
             droidCore.submit(request);
             submissionThrottle.apply();
         } catch (IOException e) {

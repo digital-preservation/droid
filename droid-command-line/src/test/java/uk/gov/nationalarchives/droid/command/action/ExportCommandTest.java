@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,8 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import uk.gov.nationalarchives.droid.command.filter.AntlrDqlParser;
+//import uk.gov.nationalarchives.droid.command.filter.AntlrDqlParser;
+import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
@@ -125,7 +126,8 @@ public class ExportCommandTest {
         when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
-        command.setDqlFilterParser(new AntlrDqlParser());
+        //command.setDqlFilterParser(new AntlrDqlParser());
+        command.setDqlFilterParser(new SimpleDqlFilterParser());
         
         String[] profileList = new String[] {"foo1"};
         command.setProfiles(profileList);

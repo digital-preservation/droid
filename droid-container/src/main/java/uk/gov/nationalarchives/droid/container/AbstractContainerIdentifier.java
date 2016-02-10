@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -89,9 +89,12 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
             maxBytesToScan);
 
         process(request, matches);
-        
         final IdentificationResultCollection results = new IdentificationResultCollection(request);
-        for (final ContainerSignatureMatch match : matches.getContainerSignatureMatches()) {
+        final List<ContainerSignatureMatch> matchList = matches.getContainerSignatureMatches();
+        // garbage reduction: use an indexed loop rather than allocating an iterator.
+        final int numMatches = matchList.size();
+        for (int i = 0; i < numMatches; i++) {
+            final ContainerSignatureMatch match = matchList.get(i);
             if (match.isMatch()) {
                 List<FileFormatMapping> mappings = formats.get(match.getSignature().getId());
                 for (final FileFormatMapping mapping : mappings) {
@@ -113,7 +116,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
      * @param matches a List of container signature potential matches.
      * @throws IOException if the input stream could not be read
      */
-    protected abstract void process(IdentificationRequest request, 
+    protected abstract void process(IdentificationRequest  request,
             ContainerSignatureMatchCollection matches) throws IOException;
     
     /**

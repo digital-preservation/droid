@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,10 +37,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 /**
  * Interface for Creating new identification requests.
- * @author rflitcroft
- *
+ * @author rflitcroft, mpalmer
+ * @param <T> The type of byte source backing the identification request.
  */
-public interface IdentificationRequestFactory {
+public interface IdentificationRequestFactory<T> {
 
     /**
      * @param metaData metadata about the request
@@ -48,6 +48,6 @@ public interface IdentificationRequestFactory {
      * @return a new identification request
      * 
      */
-    IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier);
-    
+    IdentificationRequest<T> newRequest(RequestMetaData metaData, RequestIdentifier identifier);
+
 }

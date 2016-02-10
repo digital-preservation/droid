@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -32,175 +32,178 @@
 
 -->
 <html>
-  <head>
+<head>
     <meta content="text/html; charset=Cp1252" http-equiv="Content-Type">
     <meta content="Helen" name="generator">
     <title>Using content hashes</title>
-  </head>
-  <body>
-    <table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
-      <tr>
+</head>
+<body>
+<table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
+    <tr>
         <td width="396">
-          <a id="Information" name="Information"><img src="../Images/droidlogo.gif"></a> 
+            <a id="Information" name="Information"><img src="../Images/droidlogo.gif"></a>
         </td>
         <td bgcolor="#555555" width="100%">
-          <h5 align="center">
-             <b><font color="#ffffff" size="5" face=
-            "SansSerif, Verdana, Arial, Helvetica">Detecting duplicate files</font></b>
-          </h5>
+            <h5 align="center">
+                <b><font color="#ffffff" size="5" face=
+                        "SansSerif, Verdana, Arial, Helvetica">Detecting duplicate files</font></b>
+            </h5>
         </td>
-      </tr>
-    </table>
-    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
-      <tr>
+    </tr>
+</table>
+<table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+    <tr>
         <td width="34%">
-          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+            <a href="Welcome to DROID.html">Welcome to DROID</a>
         </td>
         <td width="33%">
-          <a href="Information collected by DROID.html">Information collected</a> 
+            <a href="Information collected by DROID.html">Information collected</a>
         </td>
         <td align="right" width="33%">
-          <img src="../Images/Filter small.png"><a href="Explore the results.html">Filter your
-          results</a> 
+            <img src="../Images/Filter small.png"><a href="Explore the results.html">Filter your
+            results</a>
         </td>
-      </tr>
-    </table>
-    <p>
-       &nbsp;<b><a id="Duplicates" name="Duplicates"><font size="5">Duplicate files</font></a></b>
-    </p>
-    <p>
-       It is very common to find that files are duplicated in different areas of your filing
-      systems.&nbsp; Some estimates show&nbsp;that around 30&#37; of all file storage consists of
-      duplicate files. &nbsp;This can happen because many users save the same files from email
-      attachments, or they take a backup copy of files while they are working on them, but don&#39;t
-      end up changing most of them.&nbsp;
-    </p>
-    <p>
-       One method&nbsp;of duplicate detection is to use content hashes. If two files have the same
-      hash value, then they are overwhelmingly likely to have identical content.&nbsp;The odds of
-      two arbitrary files having the same hash value by accident are less than 1 in
-      18,000,000,000,000,000,000, which is very, very low (these odds are for MD5, with SHA256 the 
-      odds become orders of magnitude lower still).&nbsp;DROID can generate content hashes
-      for your files, but note that DROID will not locate files with the same hash value for you,
-      only generate them in the first place. &nbsp;If you export your profiles to a CSV file and
-      import them into software like Excel or Access, you can query for files which have the same
-      hash.&nbsp;
-    </p>
-    <p>
-       Another method of locating duplicate files (without using hashes) is to search for folder
-      names containing words like, &#39;backup&#39;, &#39;temp&#39; and &#39;old&#39;, as users frequently name folders or
-      files with these words if they intend them to be temporary copies. Another, more time
-      consuming method, is by examining the names of files and folders. If there are areas with
-      very similar (or identical names), then you may have duplicate information within
-      them.&nbsp;&nbsp;However, both of these methods can only give you an indication that there
-      may be duplication and a high degree of manual review will still be required to assure
-      yourself that the file contents are really duplicated.&nbsp;
-    </p>
-    <p>
-       If you do find duplicate files, you must decide how to deal with them. Clearly you will need
-      to keep at least one of them, but you will have to decide which, if any, can be safely
-      removed.&nbsp; There are risks to digital continuity in deleting files, so you should take
-      into account several considerations before deleting duplicates:
-    </p>
-    <ul type="disc">
-      <li>
+    </tr>
+</table>
+<p>
+    &nbsp;<b><a id="Duplicates" name="Duplicates"><font size="5">Duplicate files</font></a></b>
+</p>
+<p>
+    It is very common to find that files are duplicated in different areas of your filing
+    systems.&nbsp; Some estimates show&nbsp;that around 30&#37; of all file storage consists of
+    duplicate files. &nbsp;This can happen because many users save the same files from email
+    attachments, or they take a backup copy of files while they are working on them, but don&#39;t
+    end up changing most of them.&nbsp;
+</p>
+<p>
+    One method&nbsp;of duplicate detection is to use content hashes. If two files have the same
+    hash value, then they are overwhelmingly likely to have identical content.&nbsp;The odds of
+    two arbitrary files having the same hash value by accident are less than 1 in
+    18,000,000,000,000,000,000, which is very, very low (these odds are for MD5, with SHA1, and then SHA256
+    the odds become orders of magnitude lower still).&nbsp;DROID can generate content hashes
+    for your files, but note that DROID will not locate files with the same hash value for you,
+    only generate them in the first place. &nbsp;If you export your profiles to a CSV file and
+    import them into software like Excel or Access, you can query for files which have the same
+    hash.&nbsp;
+</p>
+<p>
+    Another method of locating duplicate files (without using hashes) is to search for folder
+    names containing words like, &#39;backup&#39;, &#39;temp&#39; and &#39;old&#39;, as users frequently name folders or
+    files with these words if they intend them to be temporary copies. Another, more time
+    consuming method, is by examining the names of files and folders. If there are areas with
+    very similar (or identical names), then you may have duplicate information within
+    them.&nbsp;&nbsp;However, both of these methods can only give you an indication that there
+    may be duplication and a high degree of manual review will still be required to assure
+    yourself that the file contents are really duplicated.&nbsp;
+</p>
+<p>
+    If you do find duplicate files, you must decide how to deal with them. Clearly you will need
+    to keep at least one of them, but you will have to decide which, if any, can be safely
+    removed.&nbsp; There are risks to digital continuity in deleting files, so you should take
+    into account several considerations before deleting duplicates:
+</p>
+<ul type="disc">
+    <li>
         not all users may have access to all copies of a duplicate file
-      </li>
-      <li>
+    </li>
+    <li>
         the duplicate files may have different metadata. For example, the location of a file in a
         filing structure can provide essential context. Or there may be important audit metadata
         showing that different people opened the different duplicates
-      </li>
-      <li>
+    </li>
+    <li>
         a duplicate file may provide context to the surrounding data it was stored next to. The
         loss of this context could render the meaning of the surrounding files unclear or
         unintelligible
-      </li>
-      <li>
+    </li>
+    <li>
         large areas of duplication may be for test or development environments, and therefore will
         be necessary for systems development.
-      </li>
-    </ul>
-    <p>
-       You can mitigate some of the risks related to loss of context by leaving shortcuts (or
-      symbolic links in a UNIX file system) to the &#39;master file&#39; when you delete a duplicate.
-    </p>
-    <p>
-       &nbsp;
-    </p>
-    <p>
-       <b><font size="5">What are hashes</font></b>
-    </p>
-    <p>
-       Hashes are long numbers, often represented as <a href=
-      "http://en.wikipedia.org/wiki/Hexadecimal">hexadecimal</a> <img src=
-      "../Images/Icon_External_Link.png">&nbsp;text, which can be used as a signature to identify
-      the content of a file. &nbsp;DROID can generate hashes called "<a href=
-      "http://en.wikipedia.org/wiki/MD5">MD5</a>"<img src=
-      "../Images/Icon_External_Link.png">&nbsp; or <a href=
-      "http://en.wikipedia.org/wiki/SHA256">SHA256</a>"<img src=
-      "../Images/Icon_External_Link.png">&nbsp;, which are both fairly fast to produce (relative
-      to other hashing algorithms). 
-    </p>
-    <p>
-       Hashes are useful to locate duplicates in the files you profile,&nbsp;and to match with
-      common files which have published hash values. &nbsp;However, MD5 hashes are not resistant to
-      malicious attack - an attacker can create files which have the same hash but with different
-      content. &nbsp;The goal of hashing in DROID&nbsp;is not to provide a cryptographic assurance
-      of uniqueness, only to locate likely duplicates and to&nbsp;link to forensic hash databases
-      (most of which use MD5). SHA256 is more recent and more secure than MD5, but should still not be 
-      taken to provide an absolute guarantee of uniqueness.
-    </p>
-    <p>
-       &nbsp;
-    </p>
-    <p>
-       <b><a id="ForensicDatabases" name="ForensicDatabases"><font size="5">Forensic Hash
-      Databases</font></a></b>
-    </p>
-    <p>
-       Forensic hash databases are published databases of hash values for files which are widely
-      found. &nbsp;These can allow you to detect whether the files in your systems are common, well
-      known files (such as Windows system files), whether they contain known illegal content, and
-      in some cases, malware such as viruses. &nbsp;&nbsp;Knowing which files are well known
-      outside your organisation can support information policy and decision making.&nbsp; For
-      example, you may discover that a lot of storage space is being taken up with multiple copies
-      of files which are easily replaced from install CDs. Files which are not well known probably
-      contain unique content, and would be hard to replace if deleted.
-    </p>
-    <p>
-       There are a variety of content hash databases available. One such database is:
-    </p>
-    <ul type="disc">
-      <li>
+    </li>
+</ul>
+<p>
+    You can mitigate some of the risks related to loss of context by leaving shortcuts (or
+    symbolic links in a UNIX file system) to the &#39;master file&#39; when you delete a duplicate.
+</p>
+<p>
+    &nbsp;
+</p>
+<p>
+    <b><font size="5">What are hashes</font></b>
+</p>
+<p>
+    Hashes are long numbers, often represented as <a href=
+                                                             "http://en.wikipedia.org/wiki/Hexadecimal">hexadecimal</a> <img src=
+                                                                                                                                     "../Images/Icon_External_Link.png">&nbsp;text, which can be used as a signature to identify
+    the content of a file. &nbsp;DROID can generate hashes called "<a href=
+                                                                              "http://en.wikipedia.org/wiki/MD5">MD5</a>"<img src=
+                                                                                                                                      "../Images/Icon_External_Link.png">&nbsp;, or <a href=
+                                                                                                                                                                                               "http://en.wikipedia.org/wiki/SHA-1">SHA1</a>"<img src=
+                                                                                                                                                                                                                                                          "../Images/Icon_External_Link.png">&nbsp;, or <a href=
+                                                                                                                                                                                                                                                                                                                   "http://en.wikipedia.org/wiki/SHA256">SHA256</a>"<img src=
+                                                                                                                                                                                                                                                                                                                                                                                 "../Images/Icon_External_Link.png">&nbsp;, which are fairly fast to produce (relative
+    to other hashing algorithms).
+</p>
+<p>
+    Hashes are useful to locate duplicates in the files you profile,&nbsp;and to match with
+    common files which have published hash values. However, MD5 hashes are not resistant to
+    malicious attack - an attacker can create files which have the same hash but with different
+    content. &nbsp;The goal of hashing in DROID&nbsp;is not to provide a cryptographic assurance
+    of uniqueness, only to locate likely duplicates and to&nbsp;link to forensic hash databases
+    (most of which use MD5). SHA1 and SHA256 are more recent and more secure than MD5, but should still not be
+    taken to provide an absolute guarantee of uniqueness.
+</p>
+<p>
+    &nbsp;
+</p>
+<p>
+    <b><a id="ForensicDatabases" name="ForensicDatabases"><font size="5">Forensic Hash
+        Databases</font></a></b>
+</p>
+<p>
+    Forensic hash databases are published databases of hash values for files which are widely
+    found. &nbsp;These can allow you to detect whether the files in your systems are common, well
+    known files (such as Windows system files), whether they contain known illegal content, and
+    in some cases, malware such as viruses. &nbsp;&nbsp;Knowing which files are well known
+    outside your organisation can support information policy and decision making.&nbsp; For
+    example, you may discover that a lot of storage space is being taken up with multiple copies
+    of files which are easily replaced from install CDs. Files which are not well known probably
+    contain unique content, and would be hard to replace if deleted.
+</p>
+<p>
+    There are a variety of content hash databases available. One such database is:
+</p>
+<ul type="disc">
+    <li>
         <a href="http://www.nsrl.nist.gov/">National Software Reference Library</a> <img src=
-        "../Images/Icon_External_Link.png">
-      </li>
-    </ul>
-    <p>
-       Note that DROID does not link your files to these hash databases. It merely generates a
-      compatible hash for each of your files, which you can then use to link with them. You will
-      require additional technical assistance to perform these links.
-    </p>
-    <p>
-       &nbsp;
-    </p>
-    <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
-      <tr>
+                                                                                                 "../Images/Icon_External_Link.png">
+    </li>
+</ul>
+<p>
+    Note that DROID does not link your files to these hash databases. It merely generates a
+    compatible hash for each of your files, which you can then use to link with them. You will
+    require additional technical assistance to perform these links.
+</p>
+<p>
+    &nbsp;
+</p>
+<table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
+    <tr>
         <td width="34%">
-          <a href="Welcome to DROID.html">Welcome to DROID</a> 
+            <a href="Welcome to DROID.html">Welcome to DROID</a>
         </td>
         <td width="33%">
-          <a href="Information collected by DROID.html">Information collected</a> 
+            <a href="Information collected by DROID.html">Information collected</a>
         </td>
         <td align="right" width="33%">
-          <img src="../Images/Filter small.png"><a href="Explore the results.html">Filter your
-          results</a> 
+            <img src="../Images/Filter small.png"><a href="Explore the results.html">Filter your
+            results</a>
         </td>
-      </tr>
-    </table>
-    <h6>
-       &nbsp;&nbsp;&nbsp;
-    </h6>
-  </body>
+    </tr>
+</table>
+<h6>
+    &nbsp;&nbsp;&nbsp;
+</h6>
+</body>
 </html>
+

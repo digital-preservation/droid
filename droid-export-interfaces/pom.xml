@@ -104,12 +104,5 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!-- BNO removed as should be covered by spring-context in 4.0.3 -->
-<!-- <dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-beans</artifactId>
-<scope>test</scope>
-</dependency>
--->
   </dependencies>
 </project>

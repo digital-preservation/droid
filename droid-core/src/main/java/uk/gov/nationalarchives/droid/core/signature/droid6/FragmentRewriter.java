@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -107,17 +107,25 @@ public final class FragmentRewriter {
             char theChar = fragment.charAt(charIndex);
 
             // substitute characters if needed, or just add them:
-            if (inSet > 0 && !inCaseSensitiveString && !inCaseInsensitiveString) {
-                if (theChar == INVERTED_OLD) {
-                    builder.append(INVERTED_NEW);
-                } else if (theChar == RANGE_OLD) {
-                    builder.append(RANGE_NEW);
+            if (!inCaseSensitiveString && !inCaseInsensitiveString) {
+                if (inSet > 0) {
+                    if (theChar == RANGE_OLD) {
+                        builder.append(RANGE_NEW);
+                    } else if (theChar != INVERTED_OLD) {
+                        builder.append(theChar);
+                    }
                 } else {
-                    builder.append(theChar);
+                    if (theChar == OPENSET && charIndex + 1 < length
+                            && fragment.charAt(charIndex + 1) == INVERTED_OLD) {
+                        builder.append(INVERTED_NEW).append(OPENSET);
+                    } else {
+                        builder.append(theChar);
+                    }
                 }
             } else {
                 builder.append(theChar);
             }
+
 
             // Determine if we are in sets or strings
             if (theChar == QUOTE && !inCaseInsensitiveString) {

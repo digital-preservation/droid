@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,8 +39,6 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
@@ -66,7 +64,7 @@ public final class DroidCommandLine {
     public static final int WRAP_WIDTH = 120;
     
     /**Logger Log4j.*/
-    private Log log = LogFactory.getLog(this.getClass());
+    //private Log log = LogFactory.getLog(this.getClass());
     //private static Logger log = Logger.getLogger(DroidCommandLine.class);
     
 
@@ -159,7 +157,12 @@ public final class DroidCommandLine {
      */
     public static void main(final String[] args) throws CommandLineException {
 
-        RuntimeConfig.configureRuntimeEnvironment();
+        //BNO: The configureRuntimeEnvironment() method was getting called twice as it is also
+        // the first call in  commandLine.processExecution() below.  This was causing a problem
+        // with the log configuration file path getting appended to the current directory thereby
+        // producing an invalid file path, e.g. C:\Projects\Droid\droid\file:\C:\Users\Brian\.droid6\log4j.properties.
+        // There appears to be no other reason for the 2 calls so I have sinply removed the first call here.
+        //RuntimeConfig.configureRuntimeEnvironment();
 
         GlobalContext context = new SpringUiContext();
         
@@ -167,8 +170,6 @@ public final class DroidCommandLine {
     
         DroidCommandLine commandLine = new DroidCommandLine(args);
         returnCode = commandLine.processExecution();
-
-
 
         System.exit(returnCode);
     }
@@ -202,7 +203,7 @@ public final class DroidCommandLine {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printWrapped(err, WRAP_WIDTH, ceex.getMessage());
             err.close();
-            log.error("Droid Execution Error", ceex);
+            //log.error("Droid Execution Error", ceex);
             throw ceex;
 
         } catch (CommandLineException clex) {
@@ -211,7 +212,7 @@ public final class DroidCommandLine {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printWrapped(err, WRAP_WIDTH, clex.getMessage());
             err.close();
-            log.error("Droid CommandLineException", clex);
+            //log.error("Droid CommandLineException", clex);
             throw clex;
         }
 

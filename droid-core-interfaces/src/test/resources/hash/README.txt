@@ -1,5 +1,5 @@
 ====
-    Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -32,5 +32,7 @@
 
 The file commons-collections-3.2.1-bin.zip in this directory has a known MD5 hash of:
  23925dbfaf3c266b487c264c1a643b51
+ Its SHA1 hash is:
+ a8145a4737bc7dbc192e7ca49d563f598e9e07a4
  Its SHA256 hash is:
  759d425105e23ba7016396b7dba776fc14a0e962bcf19a9f2fcf5efa1d23f45b

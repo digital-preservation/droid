@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,39 +31,64 @@
  */
 package uk.gov.nationalarchives.droid.profile.referencedata;
 
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.sql.DataSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import uk.gov.nationalarchives.droid.profile.SqlUtils;
 
 /**
  * @author Alok Kumar Dash
  * 
  */
 
-
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private static final String SELECT_FORMATS = "SELECT * FROM FORMAT";
+    private final Log log = LogFactory.getLog(getClass());
+    private DataSource datasource;
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public List<Format> getFormats() {
-        Query q = null;
-        List<Format> formats = null;
+        final List<Format> formats = new ArrayList<Format>(2000); // about 1500 formats as of 2015.
+        ResultSet results = null;
+        PreparedStatement loadFormat = null;
+        try {
+            final Connection conn = datasource.getConnection();
+            try {
+                loadFormat = conn.prepareStatement(SELECT_FORMATS);
 
-        String query = "from Format order by name";
-        q = entityManager.createQuery(query);
-
-        formats = q.getResultList();
-
+                results = loadFormat.executeQuery();
+                while (results.next()) {
+                    formats.add(SqlUtils.buildFormat(results));
+                }
+            } finally {
+                results.close();
+                loadFormat.close();
+                conn.close();
+            }
+        } catch (SQLException e) {
+            log.error("A database exception occurred getting all formats.", e);
+        }
         return formats;
     }
 
+    /**
+     *
+     * @param datasource  The datasource to use.
+     */
+    public void setDatasource(DataSource datasource) {
+        this.datasource = datasource;
+    }
 }

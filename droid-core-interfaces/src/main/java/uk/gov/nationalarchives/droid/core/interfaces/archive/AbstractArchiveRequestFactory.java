@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,10 +34,11 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import java.io.File;
 
 /**
- * @author rflitcroft
+ * @author rflitcroft, mpalmer
+ * @param <T> the type of byte source to open in the identification request.
  *
  */
-public abstract class AbstractArchiveRequestFactory implements IdentificationRequestFactory {
+public abstract class AbstractArchiveRequestFactory<T> implements IdentificationRequestFactory<T> {
  
     private File tempDirLocation;
     

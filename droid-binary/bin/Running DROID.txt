@@ -1,5 +1,5 @@
 ====
-    Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -46,13 +46,13 @@ Executable permissions
 On Linux or Mac platforms, you may have to set "executable" permissions to be
 allowed to run DROID by your operating system.  You should set the executable
 permission on the "droid.sh" file.  You may have to also set executable
-permissions on the two .jar files: "droid-ui-6.1.4.jar" and
-"droid-command-line-6.1.4.jar", depending on your system.  If you are running
+permissions on the two .jar files: "droid-ui-6.1.6.jar" and
+"droid-command-line-6.1.6.jar", depending on your system.  If you are running
 from a command-line console, you can set the executable permission by using
 these commands:
 
   chmod +x droid.sh
-  chmod +x droid-ui-6.1.5.jar
-  chmod +x droid-command-line-6.1.5.jar
+  chmod +x droid-ui-6.1.6.jar
+  chmod +x droid-command-line-6.1.6.jar
 
 To set executable permissions from your graphical file manager, please refer to the help for your particular system.

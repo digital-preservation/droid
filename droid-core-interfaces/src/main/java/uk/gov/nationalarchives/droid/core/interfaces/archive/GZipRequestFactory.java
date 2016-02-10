@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import java.io.InputStream;
+
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.GZipIdentificationRequest;
@@ -40,15 +42,15 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * @author rflitcroft
  *
  */
-public class GZipRequestFactory extends AbstractArchiveRequestFactory {
+public class GZipRequestFactory extends AbstractArchiveRequestFactory<InputStream> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
-        final IdentificationRequest request = new GZipIdentificationRequest(metaData, 
-                identifier, getTempDirLocation());
-        return request;
+    public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
+                                                  RequestIdentifier identifier) {
+        return new GZipIdentificationRequest(metaData, identifier, getTempDirLocation());
     }
+
 }

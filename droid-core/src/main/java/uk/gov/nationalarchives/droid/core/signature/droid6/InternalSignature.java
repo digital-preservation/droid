@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -228,7 +228,11 @@ public class InternalSignature extends SimpleElement {
         calculateSignatureSortOrder();
         return false;
     }
-    
+
+    //TODO: this doesn't work when the signature is part of a container signature.
+    //      Or rather, it works but has no format information, since we don't bind
+    //      file formats to binary signatures used internally in container signatures.
+    //      Therefore, you get a warning about the sig, but no information about the format it relates to.
     private String getPerformanceWarningMessage() {
         return String.format("Signature [id:%d] will always scan up to maximum bytes.  "
                 + "Matches formats: %s", intSigID, getFileFormatDescriptions());
@@ -392,6 +396,7 @@ public class InternalSignature extends SimpleElement {
      */
     public final boolean matches(final ByteReader targetFile, final long maxBytesToScan) {
         boolean matchResult = true;
+        //BNO Byte sequences within the current signature
         final List<ByteSequence> sequences = byteSequences;
         final int numseqs = sequences.size();
         //check each byte sequence in turn - stop as soon as one is found to be non-compliant

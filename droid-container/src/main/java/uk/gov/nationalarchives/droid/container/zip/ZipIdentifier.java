@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ public class ZipIdentifier extends AbstractContainerIdentifier {
      * {@inheritDoc}
      */
     @Override
-    public final void process(final IdentificationRequest request, 
+    public final void process(final IdentificationRequest request,
         final ContainerSignatureMatchCollection matches) throws IOException {
         
         getIdentifierEngine().process(request, matches);

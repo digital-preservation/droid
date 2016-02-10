@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../droidDbUnit.dtd">
+
+<dataset> 
+
+   <PROFILE_RESOURCE_NODE NODE_ID="1"  EXTENSION_MISMATCH="0" NAME="dir1"  RESOURCE_TYPE="2" PREFIX="AA" PREFIX_PLUS_ONE="AB" URI="file:/dir1/"/>
+   <PROFILE_RESOURCE_NODE NODE_ID="11" EXTENSION_MISMATCH="0" EXTENSION="exe" NAME="file1.exe" NODE_STATUS="1" RESOURCE_TYPE="1" FILE_SIZE="256" PREFIX="AAA" PREFIX_PLUS_ONE="AAB" URI="file:/dir1/file1.exe" PARENT_ID="1"/>
+   <PROFILE_RESOURCE_NODE NODE_ID="12" EXTENSION_MISMATCH="0" EXTENSION="doc" NAME="file2.doc" NODE_STATUS="1" RESOURCE_TYPE="1" FILE_SIZE="256" PREFIX="AAB" PREFIX_PLUS_ONE="AAC" URI="file:/dir1/file2.doc" PARENT_ID="1"/>
+   
+   
+   <IDENTIFICATION NODE_ID="11" PUID="fmt/alok"/>
+   <IDENTIFICATION NODE_ID="12" PUID="fmt/alok"/>
+   <IDENTIFICATION NODE_ID="1" PUID="NONE"/>
+</dataset>

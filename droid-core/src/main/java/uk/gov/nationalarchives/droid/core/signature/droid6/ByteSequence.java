@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,9 +82,14 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import net.byteseek.io.reader.WindowReader;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -159,6 +164,14 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * The value of the quote character.
      */
     private static final int QUOTE_CHARACTER_VALUE = 39;
+    /**
+     * Error message when excption reading a byte from position
+     */
+    private static final String BYTE_READ_ERROR = "An error occurred reading a byte at position ";
+    /**
+    *Use static log for optimmal performance..
+     */
+    private  static final Log LOGGER = LogFactory.getLog(ByteSequence.class);
     
     private List<SubSequence> subSequences = new ArrayList<SubSequence>();
     private SubSequence[] sequences = new SubSequence[0];
@@ -175,7 +188,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     private int sortOrder;
 
     private boolean isInvalidByteSequence;
-    
+
     /**
      * 
      * @return Whether the byte sequence is anchored to the beginning of a file.
@@ -352,7 +365,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * @param targetFile
      * @return
      */
-    private int getIndirectOffset(final ByteReader targetFile) {
+    private int getIndirectOffset(final ByteReader targetFile) throws IOException {
         int offset = 0;
         if (this.hasIndirectOffset) {
             long power = 1;
@@ -362,25 +375,37 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                 offsetLocation = targetFile.getNumBytes() - offsetLocation - 1;
             }
 
-            final net.domesdaybook.reader.ByteReader reader = targetFile.getReader();
+            final WindowReader reader = targetFile.getWindowReader();
 
             // In the case of indirect BOF or indirect EOF bytesequences,
             // We need to read the file to get the offset.
             if (bigEndian) {
                 for (int byteIndex = offsetLength - 1; byteIndex > -1; byteIndex--) {
-                    final Byte fileByte = reader.readByte(offsetLocation + byteIndex);
-                    int byteValue = fileByte.intValue();
-                    byteValue = (byteValue >= 0) ? byteValue : byteValue + BYTEVALUES;
-                    offset += power * byteValue;
-                    power *= BYTEVALUES;
+                    final int byteValue = reader.readByte(offsetLocation + byteIndex);
+                    if (byteValue >= 0) {
+                        offset += power * byteValue;
+                        power *= BYTEVALUES;
+                    } else {
+                        throw new IOException(BYTE_READ_ERROR
+                                + (offsetLocation + byteIndex));
+                    }
                 }
             } else {
                 for (int byteIndex = 0; byteIndex < offsetLength; byteIndex++) {
+                    final int byteValue = reader.readByte(offsetLocation + byteIndex);
+                    if (byteValue >= 0) {
+                        offset += power * byteValue;
+                        power *= BYTEVALUES;
+                    } else {
+                        throw new IOException(BYTE_READ_ERROR + (offsetLocation + byteIndex));
+                    }
+                    /*
                     final Byte fileByte = reader.readByte(offsetLocation + byteIndex);
                     int byteValue = fileByte.intValue();
                     byteValue = (byteValue >= 0) ? byteValue : byteValue + BYTEVALUES;
                     offset += power * byteValue;
                     power *= BYTEVALUES;
+                    */
                 }
             }
         }
@@ -410,25 +435,38 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
             for (int subSequenceIndex = seq.length - 1; matchResult && subSequenceIndex >= 0; subSequenceIndex--) {
                 final SubSequence subseq = seq[subSequenceIndex];
                 final long currentFilePos = targetFile.getFileMarker();
-                matchResult = subseq.findSequenceFromPosition(
+               /* matchResult = subseq.findSequenceFromPosition(
                         currentFilePos, targetFile, maxBytesToScan, false, fixedSubsequence);
+                 */
+                matchResult = subseq.findSequenceFromPosition(
+                         currentFilePos, targetFile, maxBytesToScan, false, fixedSubsequence);
+                        
                 fixedSubsequence = false;
             }
         } else {
             fixedSubsequence = this.anchoredToBOF;
-            final long offset = getIndirectOffset(targetFile);
-            targetFile.setFileMarker(offset);
-            for (int subSequenceIndex = 0; matchResult && subSequenceIndex < seq.length; subSequenceIndex++) {
-                final SubSequence subseq = seq[subSequenceIndex];
-                final long currentFilePos = targetFile.getFileMarker();
-                matchResult = subseq.findSequenceFromPosition(
-                        currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
-                fixedSubsequence = false;
+            try {
+                final long offset = getIndirectOffset(targetFile);
+                targetFile.setFileMarker(offset);
+                for (int subSequenceIndex = 0; matchResult && subSequenceIndex < seq.length; subSequenceIndex++) {
+                    final SubSequence subseq = seq[subSequenceIndex];
+                    final long currentFilePos = targetFile.getFileMarker();
+                    /*matchResult = subseq.findSequenceFromPosition(
+                            currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
+                    */
+                    matchResult = subseq.findSequenceFromPosition(
+                            currentFilePos, targetFile, maxBytesToScan, fixedSubsequence, false);
+
+                    fixedSubsequence = false;
+                }
+            } catch (IOException io) {
+                LOGGER.error(String.format("Error processing file: %s. for byte sequence match",
+                        targetFile.getFileName()), io);
+                return false;
             }
         }
         return matchResult;
     }
-
 
     /**
      * 
@@ -514,17 +552,17 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
             final StringBuffer buffer, final int minGap, final int maxGap) {
         if (maxGap < 0) {
             if (minGap > 0) {
-                final String formatString = prettyPrint ? "  {%d-*}  " : "{%d-*}";
+                final String formatString = prettyPrint ? "  .{%d-*}  " : ".{%d-*}";
                 buffer.append(String.format(formatString, minGap));
             } else {
-                buffer.append(prettyPrint ? "  *  " : "*");
+                buffer.append(prettyPrint ? "  .*  " : ".*");
             }
         } else if (minGap > 0 || maxGap > 0) {
             if (minGap == maxGap) { // defined offset
-                final String formatString = prettyPrint ? " {%d} " : "{%d}";
+                final String formatString = prettyPrint ? " .{%d} " : ".{%d}";
                 buffer.append(String.format(formatString, minGap));
             } else {
-                final String formatString = prettyPrint ? " {%d-%d} " : "{%d-%d}";
+                final String formatString = prettyPrint ? " .{%d-%d} " : ".{%d-%d}";
                 buffer.append(String.format(formatString, minGap, maxGap));
             }
         }

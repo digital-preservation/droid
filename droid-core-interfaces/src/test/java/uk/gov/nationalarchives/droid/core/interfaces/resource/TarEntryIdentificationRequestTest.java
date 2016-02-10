@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,10 +36,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.FileUtils;
@@ -51,6 +47,8 @@ import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
+
+import static org.junit.Assert.*;
 
 
 public class TarEntryIdentificationRequestTest {
@@ -93,7 +91,7 @@ public class TarEntryIdentificationRequestTest {
                 break;
             }
         }
-        tarResource = new TarEntryIdentificationRequest(metaData, identifier, 3, 5, tmpDir);
+        tarResource = new TarEntryIdentificationRequest(metaData, identifier, tmpDir);
         tarResource.open(in);
     }
     
@@ -102,7 +100,9 @@ public class TarEntryIdentificationRequestTest {
         in.close();
         tarResource.close();
     }
-    
+
+    //TODO:MP: no longer have source files or binary caches, rewrite this test.
+    /*
     @Test
     public void testTwoArgContructor() throws IOException {
         tarResource = new TarEntryIdentificationRequest(metaData, identifier, tmpDir);
@@ -110,7 +110,8 @@ public class TarEntryIdentificationRequestTest {
         //assertEquals(1, tarResource.getCache().getBuffers().size());
         assertNull(tarResource.getCache().getSourceFile());
     }
-    
+    */
+
     @Test
     public void testGetSize() {
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
@@ -120,7 +121,7 @@ public class TarEntryIdentificationRequestTest {
     }
     
     @Test
-    public void testGetEveryByteSequencially() {
+    public void testGetEveryByteSequencially() throws IOException {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         int resourceSize = (int) tarResource.size();
@@ -136,15 +137,14 @@ public class TarEntryIdentificationRequestTest {
         
         try {
             tarResource.getByte(i);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [" + i + "]", e.getMessage());
+            fail("Expected IOException.");
+        } catch (IOException io) {
         }
         
     }
     
     @Test
-    public void testGetByte3FollowedByByte42() {
+    public void testGetByte3FollowedByByte42()  throws IOException  {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         assertEquals(expected.getBytes()[3], tarResource.getByte(3));
@@ -154,7 +154,7 @@ public class TarEntryIdentificationRequestTest {
     }
 
     @Test
-    public void testGetByte42FollowedByByte3() {
+    public void testGetByte42FollowedByByte3()  throws IOException {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         assertEquals(expected.getBytes()[42], tarResource.getByte(42));
@@ -164,30 +164,28 @@ public class TarEntryIdentificationRequestTest {
     }
 
     @Test
-    public void testGetByte42FollowedByByte49() {
+    public void testGetByte42FollowedByByte49()  throws IOException {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         assertEquals(expected.getBytes()[42], tarResource.getByte(42));
         try {
             tarResource.getByte(49);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [49]", e.getMessage());
+            fail("Expected IOException");
+        } catch (IOException e) {
         }
         //assertEquals(3, tarResource.getCache().getBuffers().size());
         
     }
 
     @Test
-    public void testGetByte42FollowedByByte10000() {
+    public void testGetByte42FollowedByByte10000()  throws IOException  {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         assertEquals(expected.getBytes()[42], tarResource.getByte(42));
         try {
             tarResource.getByte(10000);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [10000]", e.getMessage());
+            fail("Expected IOException.");
+        } catch (IOException e) {
         }
         
     }
@@ -202,14 +200,6 @@ public class TarEntryIdentificationRequestTest {
                 tarResource.getIdentifier().getUri().toString());
         assertEquals(metaData, tarResource.getRequestMetaData());
         
-    }
-    
-    @Test
-    public void testCloseDeletesTheBinaryCacheFile() throws IOException {
-        assertTrue(tarResource.getTempFile().exists());
-        tarResource.close();
-        //assertFalse(tarResource.getTempFile().exists());
-        assertTrue(tarResource.getTempFile() == null);
     }
 
 }

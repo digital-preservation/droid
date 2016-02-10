@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.container;
 
 import java.io.File;
+import java.io.InputStream;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -42,7 +43,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * @author rflitcroft
  *
  */
-public class ContainerFileIdentificationRequestFactory implements IdentificationRequestFactory {
+public class ContainerFileIdentificationRequestFactory implements IdentificationRequestFactory<InputStream> {
 
     private File tempDirLocation;
     
@@ -50,7 +51,8 @@ public class ContainerFileIdentificationRequestFactory implements Identification
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
+    public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
+                                                  RequestIdentifier identifier) {
         return new ContainerFileIdentificationRequest(getTempDirLocation());
     }
     

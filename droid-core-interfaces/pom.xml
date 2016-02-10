@@ -5,7 +5,7 @@
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
         <version>6.1.6-SNAPSHOT</version>
-   <relativePath>../droid-parent</relativePath>
+        <relativePath>../droid-parent</relativePath>
     </parent>
   
     <artifactId>droid-core-interfaces</artifactId>
@@ -98,12 +98,6 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!-- BNO removed -->
-<!-- <dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-beans</artifactId>
-<scope>test</scope>
-</dependency> -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -138,7 +132,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.4</version>
+            <version>1.10</version>
         </dependency>
         <dependency>
             <groupId>de.schlichtherle</groupId>
@@ -156,9 +150,16 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.google.code.byteseek</groupId>
             <artifactId>byteseek</artifactId>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>net.byteseek</groupId>
+            <artifactId>byteseek</artifactId>
+            <version>2.0.1</version>
         </dependency>
   </dependencies>
 </project>

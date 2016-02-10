@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,13 +83,12 @@ public class BofEofOffsetBugFixTest {
         assertTrue(file.exists());
         URI resourceUri = file.toURI();
   
-        InputStream in = new FileInputStream(file);
         RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), SCANFILE);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
         
-        IdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
-        request.open(in);
+        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        request.open(file);
 
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
         List<IdentificationResult> results = resultsCollection.getResults();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import java.io.InputStream;
+
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
@@ -40,17 +42,15 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.TarEntryIdentifica
  * @author rflitcroft
  *
  */
-public class TarEntryRequestFactory extends AbstractArchiveRequestFactory {
+public class TarEntryRequestFactory extends AbstractArchiveRequestFactory<InputStream> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
-        final IdentificationRequest request =
-            new TarEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
-        
-        return request;
+    public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
+                                                               RequestIdentifier identifier) {
+        return new TarEntryIdentificationRequest(metaData, identifier, getTempDirLocation());
     }
 
 }

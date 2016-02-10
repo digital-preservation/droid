@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,11 +85,17 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
-import net.domesdaybook.expression.compiler.sequence.SequenceMatcherCompiler;
-import net.domesdaybook.expression.parser.ParseException;
-import net.domesdaybook.matcher.sequence.SequenceMatcher;
-import net.domesdaybook.reader.ByteReader;
+import java.io.IOException;
+import java.util.List;
 
+import net.byteseek.compiler.CompileException;
+import net.byteseek.compiler.matcher.SequenceMatcherCompiler;
+import net.byteseek.io.reader.WindowReader;
+import net.byteseek.matcher.MatchResult;
+import net.byteseek.matcher.sequence.SequenceMatcher;
+import net.byteseek.searcher.Searcher;
+import net.byteseek.searcher.bytes.ByteMatcherSearcher;
+import net.byteseek.searcher.sequence.horspool.HorspoolFinalFlagSearcher;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 
 
@@ -111,12 +117,15 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 public class SideFragment extends SimpleElement {
     
     private static final String FRAGMENT_PARSE_ERROR = "The signature fragment [%s] could not be parsed. "
-        + "The error returned was [%s]"; 
+        + "The error returned was [%s]";
+
+    private static final SequenceMatcherCompiler EXPRESSION_COMPILER = new SequenceMatcherCompiler();
 
     private int myPosition;
     private int myMinOffset;
     private int myMaxOffset;
     private SequenceMatcher matcher;
+    private Searcher searcher;
     private boolean isInvalidFragment;
   
     /* setters */
@@ -169,14 +178,17 @@ public class SideFragment extends SimpleElement {
      */
     public final void setFragment(final String expression) {
         try {
-            SequenceMatcherCompiler compiler = new SequenceMatcherCompiler();
             final String transformed = FragmentRewriter.rewriteFragment(expression);
-            matcher = compiler.compile(transformed);
-        } catch (ParseException ex) {
+            matcher = EXPRESSION_COMPILER.compile(transformed);
+            if (matcher.length() == 1) {
+                searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0));
+            } else {
+                searcher = new HorspoolFinalFlagSearcher(matcher);
+            }
+        } catch (CompileException ex) {
             final String warning = String.format(FRAGMENT_PARSE_ERROR, expression, ex.getMessage());
             isInvalidFragment = true;
             getLog().warn(warning);            
-            //throw new IllegalArgumentException(expression, ex);
         }
     }
     
@@ -250,15 +262,46 @@ public class SideFragment extends SimpleElement {
         setFragment(this.getText());
     }
 
+    
+    
     /**
      * Matches the fragment against the position in the ByteReader given.
      * 
      * @param bytes The byte reader to match the bytes with.
      * @param matchFrom The position to match from.
      * @return Whether the fragment matches at the position given.
+     * @throws IOException If a problem occurs reading the underlying file or stream
      */
-    public final boolean matchesBytes(final ByteReader bytes, final long matchFrom) {
+    public final boolean matchesBytes(final WindowReader bytes, final long matchFrom) throws IOException {
         return matcher.matches(bytes, matchFrom);
+    }
+
+    /**
+     * Finds the fragment looking forwards from 'from' up to 'to'.
+     *
+     * @param bytes a Byteseek WindowReader object
+     * @param from the position within bytes from which to start searching
+     * @param to the position within bytes at which to end searching
+     * @return A list of match results
+     * @throws IOException If a problem occurs reading the underlying file or stream
+     */
+    public final List<MatchResult> findFragmentForwards(final WindowReader bytes,
+                                                        final long from, final long to) throws IOException {
+        return searcher.searchForwards(bytes, from, to);
+    }
+
+    /**
+     * Finds the fragment looking backwards from 'from' back to 'to'.
+     *
+     * @param bytes a Byteseek WindowReader object
+     * @param from the position within bytes from which to start searching
+     * @param to the position within bytes at which to end searching
+     * @return A list of match results
+     * @throws IOException If a problem occurs reading the underlying file or stream
+     */
+    public final List<MatchResult> findBackwards(final WindowReader bytes,
+                                                 final long from, final long to) throws IOException {
+        return searcher.searchBackwards(bytes, from, to);
     }
 
 
@@ -271,5 +314,10 @@ public class SideFragment extends SimpleElement {
      */
     public final String toRegularExpression(final boolean prettyPrint) {
         return matcher == null ? "" : matcher.toRegularExpression(prettyPrint);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + '[' + toRegularExpression(true) + ']';
     }
 }

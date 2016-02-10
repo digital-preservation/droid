@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -55,6 +56,8 @@ import uk.gov.nationalarchives.droid.submitter.ProfileWalkState.WalkStatus;
  */
 public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
+    private static final int URI_BUILDER_SIZE = 1204;
+
     private final Log log = LogFactory.getLog(getClass());
 
     private FileEventHandler fileEventHandler;
@@ -62,7 +65,9 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
     private ProgressMonitor progressMonitor;
     
     private transient volatile boolean cancelled;
-    
+
+    private StringBuilder uriBuilder = new StringBuilder(URI_BUILDER_SIZE);
+
     /**
      * {@inheritDoc}
      */
@@ -102,7 +107,10 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
                     @Override
                     public ResourceId handle(File file, int depth, ProgressEntry parent) { 
-                        progressMonitor.startJob(file.toURI());
+                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
+                                || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
+                            progressMonitor.startJob(toURI(file));
+                        }
                         ResourceId parentId = parent == null ? null : parent.getResourceId();
                         fileEventHandler.onEvent(file, parentId, null);
                         return null;
@@ -112,7 +120,10 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 fileWalker.setDirectoryHandler(new FileWalkerHandler() {
                     @Override
                     public ResourceId handle(File file, int depth, ProgressEntry parent) {
-                        progressMonitor.startJob(file.toURI());
+                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
+                                || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
+                            progressMonitor.startJob(toURI(file));
+                        }
                         ResourceId parentId = parent == null ? null : parent.getResourceId();
                         return directoryEventHandler.onEvent(file, parentId, depth, false);
                     }
@@ -121,7 +132,10 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 fileWalker.setRestrictedDirectoryHandler(new FileWalkerHandler() {
                     @Override
                     public ResourceId handle(File file, int depth, ProgressEntry parent) {
-                        progressMonitor.startJob(file.toURI());
+                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
+                                || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
+                            progressMonitor.startJob(toURI(file));
+                        }
                         ResourceId parentId = parent == null ? null : parent.getResourceId();
                         return directoryEventHandler.onEvent(file, parentId, depth, true);
                     }
@@ -187,5 +201,10 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
     public FileEventHandler getFileEventHandler() {
         return fileEventHandler;
     }
-    
+
+
+    private URI toURI(File file) {
+        return SubmitterUtils.toURI(file, uriBuilder);
+    }
+
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,11 +37,11 @@ import java.util.List;
 
 import de.schlichtherle.util.zip.BasicZipFile;
 import de.schlichtherle.util.zip.ZipEntry;
-
 import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ReaderReadOnlyFile;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -50,9 +50,32 @@ import uk.gov.nationalarchives.droid.core.signature.ByteReader;
  */
 public class ZipIdentifierEngine extends AbstractIdentifierEngine {
 
+
+    // Use built in java zip processing.
+    /*
     @Override
     public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
-        BasicZipFile zipFile = new BasicZipFile(request.getSourceFile());
+        InputStream in = request.getSourceInputStream();
+        try {
+            final ZipInputStream zin = new ZipInputStream(in);
+            try {
+                // For each entry:
+                for (String entryName : matches.getAllFileEntries()) {
+                    //TODO:MP rewrite zip identifier engine to use built-in java processing.
+
+                }
+            } finally {
+                zin.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+    */
+
+    @Override
+    public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
+        BasicZipFile zipFile = new BasicZipFile(new ReaderReadOnlyFile(request.getWindowReader()));
         try {
             // For each entry:
             for (String entryName : matches.getAllFileEntries()) {
@@ -64,7 +87,7 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
                     try {
                         reader = newByteReader(stream);
                         // For each signature to match:
-                        List<ContainerSignatureMatch> matchList = matches.getContainerSignatureMatches(); 
+                        List<ContainerSignatureMatch> matchList = matches.getContainerSignatureMatches();
                         for (ContainerSignatureMatch match : matchList) {
                             match.matchBinaryContent(entryName, reader);
                         }
@@ -81,44 +104,6 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
         } finally {
             zipFile.close();
         }
-        
-        // 
-        
-        
-        
-        /* old code using apache commons zip file processing.
-         * very slow to process a ziparchiveinputstream across all entries
-         * and is NOT recommended (even by apache).  Will sometimes not
-         * return entries in the zip file correctly, as it has to infer
-         * them as it scans the stream, rather than looking at the actual
-         * zip entry directory (which is at the end of a zip file).
-        ZipArchiveInputStream zipIn = new ZipArchiveInputStream(buf);
-        
-        // try to match against each ZIP signature
-        for (ZipArchiveEntry entry = zipIn.getNextZipEntry(); 
-            entry != null; 
-            entry = zipIn.getNextZipEntry()) {
-            
-            String entryName = entry.getName();
-
-            boolean needsBinaryMatch = false;
-
-            for (ContainerSignatureMatch match : matches) {
-                match.matchFileEntry(entryName);
-                if (match.needsBinaryMatch(entryName)) {
-                    needsBinaryMatch = true;
-                    break;
-                }
-            }
-            
-            ByteReader byteReader = null;
-            if (needsBinaryMatch) {
-                byteReader = newByteReader(zipIn);
-                for (ContainerSignatureMatch match : matches) {
-                    match.matchBinaryContent(entryName, byteReader);
-                }
-            }
-        }
-        */
     }
+
 }

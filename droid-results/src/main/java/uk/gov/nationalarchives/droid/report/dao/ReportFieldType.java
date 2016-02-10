@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.report.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -58,8 +60,15 @@ public interface ReportFieldType {
      *            result set from database.
      * @return ReportData
      */
-
     List<ReportLineItem> populateReportedData(List<?> results);
+
+    /**
+     * Retrieve ReportLineItems from a ResultSet.
+     * @param results ResultSet
+     * @return a List of ReportLineItems
+     * @throws SQLException SQL Exception
+     */
+    List<ReportLineItem> populateReportedData(ResultSet results) throws SQLException;
 
     /**
      * Returns field string to be used in the query. 

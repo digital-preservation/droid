@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,9 +75,9 @@ public interface ProfileDao {
      */
     List<ProfileResourceNode> findProfileResourceNodes(Long parentId, Filter filter);
 
-//    /**
-//     * @return the root node ID.
-//     */
-//    long createRootNode();
+    /**
+     * Allows for customised initialisation behaviour (e.g. for new versus existing installation).
+     */
+    void initialise();
 
 }

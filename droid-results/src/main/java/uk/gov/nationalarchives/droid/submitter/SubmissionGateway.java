@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -252,7 +252,8 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     /**
-     * @param results
+     * @param request  The archive request to handle.
+     * @param results The previous identification results for the archive format.
      * @return
      */
     private boolean handleArchive(IdentificationRequest request, 
@@ -274,6 +275,8 @@ public class SubmissionGateway implements AsynchDroid {
             jobCounter.decrement();
             jobCountDecremented = true;
             try {
+                //BNO: Does this always return the same archive handler for any given container format?
+                //And will it end up using the same submission gateway, or a new one with a different thread pool?
                 ArchiveHandler handler = archiveHandlerFactory.getHandler(archiveFormat);
                 handler.handle(request);
                 // CHECKSTYLE:OFF
@@ -331,11 +334,14 @@ public class SubmissionGateway implements AsynchDroid {
     }
     
     /**
-     * @param results
+     * @param results A previous identification of an archival format.
      * @return format or null
      */
     private String getArchiveFormat(IdentificationResultCollection results) {
-        for (IdentificationResult result : results.getResults()) {
+        final List<IdentificationResult> theResults = results.getResults();
+        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
             String format = archiveFormatResolver.forPuid(result.getPuid());
             if (format != null) { // exit on the first non-null format met
                 if (processArchives && !processWebArchives && isWebArchiveFormat(format)) {
@@ -360,7 +366,10 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     private String getContainerFormat(IdentificationResultCollection results) {
-        for (IdentificationResult result : results.getResults()) {
+        final List<IdentificationResult> theResults = results.getResults();
+        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
             final String format = containerFormatResolver.forPuid(result.getPuid());
             if (format != null) {
                 return format;

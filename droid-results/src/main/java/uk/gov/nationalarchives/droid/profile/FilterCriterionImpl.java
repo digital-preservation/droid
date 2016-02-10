@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -204,8 +204,10 @@ public class FilterCriterionImpl implements FilterCriterion {
         Object o;
         switch (fieldType) {
             case FILE_EXTENSION:
-            case FILE_FORMAT:
             case FILE_NAME:
+            case FILE_FORMAT:
+                o = s.toUpperCase();
+                break;
             case PUID:
             case MIME_TYPE:
                 o = s;

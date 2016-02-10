@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,7 +52,9 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  *
  */
 public class ProfileRunCommand implements DroidCommand {
-    
+
+    private static final int SLEEP_TIME = 1000;
+
     private String destination;
     private String[] resources;
     private boolean recursive;
@@ -60,7 +62,7 @@ public class ProfileRunCommand implements DroidCommand {
     private ProfileManager profileManager;
     private SignatureManager signatureManager;
     private LocationResolver locationResolver;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,9 +85,11 @@ public class ProfileRunCommand implements DroidCommand {
                 public void onProgress(Integer progress) {
                 }
             };
-            
+
+            Thread.sleep(SLEEP_TIME);
             profileManager.save(profile.getUuid(), new File(destination), progressCallback);
             profileManager.closeProfile(profile.getUuid());
+
         } catch (ProfileManagerException e) {
             throw new CommandExecutionException(e);
         } catch (InterruptedException e) {

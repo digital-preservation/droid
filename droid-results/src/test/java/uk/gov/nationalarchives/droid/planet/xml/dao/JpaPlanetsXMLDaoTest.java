@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.planet.xml.dao;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,9 +68,7 @@ import uk.gov.nationalarchives.droid.profile.FilterImpl;
  * @author Alok Kumar Dash
  * create planets xml using different mechanism now.
  */
-@Ignore
-// BNO: Commented out as causes compilation failure with Java 8 build...
-//@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml",
         "classpath*:META-INF/spring-results.xml",
         "classpath*:META-INF/spring-test.xml" })
@@ -89,13 +88,13 @@ public class JpaPlanetsXMLDaoTest {
     @BeforeClass
     public static void getTestData() throws Exception {
         testData = new FlatXmlDataSetBuilder().build(JpaPlanetsXMLDaoTest.class
-                .getResource("planets-xml-test-data.xml"));
-        System.setProperty("hibernate.generateDdl", "true");
+                .getResource("planets-xml-test-data-sans-formats.xml"));
+        //System.setProperty("hibernate.generateDdl", "true");
     }
 
     @AfterClass
     public static void tearDown() {
-        System.clearProperty("hibernate.generateDdl");
+        //System.clearProperty("hibernate.generateDdl");
     }
 
     @Test
@@ -182,6 +181,7 @@ public class JpaPlanetsXMLDaoTest {
     @After
     public void tearDownTestData() throws Exception {
         conn = getConnection();
+
         try {
             DatabaseOperation.DELETE.execute(conn, testData);
         } finally {
@@ -190,7 +190,10 @@ public class JpaPlanetsXMLDaoTest {
     }
 
     protected IDatabaseConnection getConnection() throws Exception {
-        return new DatabaseConnection(DataSourceUtils.getConnection(dataSource));
+
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        con.setAutoCommit(true);
+        return new DatabaseConnection(con);
     }
 
 }

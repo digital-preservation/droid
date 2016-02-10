@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,52 +31,44 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import net.domesdaybook.reader.ByteReader;
+import net.byteseek.io.reader.WindowReader;
 
 /**
  * Encapsulates an identification request.
+ *
  * @author rflitcroft
  *
+ * @param <T> The type of byte source to open from.
  */
-public interface IdentificationRequest {
+public interface IdentificationRequest<T> {
+
 
     /**
      * Returns a byte at the position specified.
      * @param position the position of the byte .
-     * @return an array of bytes.
+     * @return the byte at that position.
+     * @throws IOException if there was a problem reading the byte.
      */
-    byte getByte(long position);
-    
+    byte getByte(long position) throws IOException;
+
     /**
-     * Returns a byte reader for fast access to the bytes by
-     * the binary signature engine.  If the identification request can provide
-     * fast access to the bytes directly, then it can implement the ByteReader
-     * interface and return itself.  If it relies on a child object to cache and
-     * return bytes, then that object should implement the ByteReader interface.
-     * 
-     * <p>Avoids an additional read byte method call on IdentificationRequest
-     * if it relies on a child object to provide access to the bytes.
-     * Even though each call is a tiny amount of time, the additional method
-     * calls add up, as reading a byte is the most called method in the
-     * entirety of droid - by orders of magnitude.  It makes a real difference
-     * to the processing speed to avoid additional call overhead here.
-     * Done only as a result of profiling the software.</p>
-     * 
-     * @return A net.domesdaybook.reader.ByteReader object,
+     * Returns a window reader for the byte source represented by this identification request.
+     *
+     * @return A window reader for the bytes represented by this identification request.
      */
-    ByteReader getReader();
+    WindowReader getWindowReader();
     
     /**
      * Returns the file name. 
      * @return the file name
      */
-    String getFileName();
     
+    String getFileName();
+
     /**
      * @return the size of the resource in bytes.
      */
@@ -100,28 +92,18 @@ public interface IdentificationRequest {
      * 
      * @return an InputStream which will read the binary data which formed the source
      * of this request.  
+     * @return
      * @throws IOException  if there was an error reading from the binary source
      */
     InputStream getSourceInputStream() throws IOException;
     
-
-    /**
-     * This method returns a file for the bytes underlying the identification request.
-     * Implementations should make a best effort to return an actual file, rather than null.
-     * This may involve creating a temporary file from the source input stream, if necessary.
-     * 
-     * @return A source file for this identification request. 
-     * @throws IOException  if there was an error reading from the binary source 
-     */
-    File getSourceFile() throws IOException;
-    
-    
     /**
      * Opens the request's input stream for reading.
-     * @param in the input stream to use.
+     * @param bytesource The byte source to open from.
      * @throws IOException if the input stream could not be opened
      */
-    void open(InputStream in) throws IOException;
+    //void open(InputStream in) throws IOException;
+    void open(T bytesource) throws IOException;
 
     /**
      * @return the meta data.

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,6 @@ import java.util.concurrent.Semaphore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
@@ -119,8 +117,10 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    //@Transactional(propagation = Propagation.REQUIRED)
     public void initProfile(URI signatureFileUri) throws SignatureFileException {
+
+
         // pre-populate with available file formats
 
         SignatureParser sigParser = new SaxSignatureFileParser(signatureFileUri);
@@ -135,6 +135,11 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             }
         };
         sigParser.formats(callback);
+
+        //This will populate the internal list of formats and database writer for the JDBC Batch Results Handler
+        //, which could not be done in the init method since we were using a fresh template.  If we're not using
+        // the JDBC REsults handler, the call does nothing.
+        profileDao.initialise();
     }
 
     /**
@@ -384,7 +389,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<ProfileResourceNode> findAllProfileResourceNodes(Long parentId) {
         final Filter filter = profileInstance.getFilter();
         if (filter.isEnabled() && filter.hasCriteria()) {

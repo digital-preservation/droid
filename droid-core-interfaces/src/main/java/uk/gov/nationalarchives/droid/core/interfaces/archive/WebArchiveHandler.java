@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,23 +31,24 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-
-
 
 /**
  * @author rflitcroft
@@ -59,6 +60,11 @@ public abstract class WebArchiveHandler {
      * Save importing all the http codes
      */
     protected static final int HTTP_ACCEPTED = 200;
+    /**
+     * Get the log to be shared by all instances of this class.
+     */
+    protected static final Log LOGGER = LogFactory.getLog(WebArchiveHandler.class);
+
     private AsynchDroid droidCore;
     private IdentificationRequestFactory factory;
     private ResultHandler resultHandler;

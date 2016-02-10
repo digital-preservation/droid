@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -211,6 +211,21 @@ public final class DqlCriterionFactory {
         protected String toTypedValue(String s) {
             return s;
         }
+
+        @Override
+        public void setValue(String value) {
+
+            CriterionFieldEnum cfe = this.getField();
+
+            if (cfe != null && (cfe == CriterionFieldEnum.FILE_FORMAT
+                    || cfe == CriterionFieldEnum.FILE_NAME
+                    || cfe == CriterionFieldEnum.FILE_EXTENSION)) {
+                super.setValue(toTypedValue(value).toUpperCase());
+            } else {
+                super.setValue(toTypedValue(value));
+            }
+        }
+
     }
 
     private static class LongCriterion extends AbstractFilterCriterion<Long> {

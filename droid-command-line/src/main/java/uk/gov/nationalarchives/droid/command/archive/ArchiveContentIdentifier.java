@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,15 +50,15 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollect
  */
 
 public abstract class ArchiveContentIdentifier {
-
-    private String slash;
-    private String slash1;
-    private BinarySignatureIdentifier binarySignatureIdentifier;
-    private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private File tmpDir;
-    private String path;
+    // CHECKSTYLE:OFF  Doesn't like protected members but I think their use is justified here.
+    protected String slash;
+    protected String slash1;
+    protected BinarySignatureIdentifier binarySignatureIdentifier;
+    protected ContainerSignatureDefinitions containerSignatureDefinitions;
+    protected File tmpDir;
+    protected String path;
+    // CHECKSTYLE:ON
     private Boolean expandWebArchives;
-
 
     /**
      * Initialization of instance values must be explicitly called by all children.

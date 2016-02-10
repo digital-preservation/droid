@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,48 +31,45 @@
  */
 package uk.gov.nationalarchives.droid.report.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Criterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.SqlUtils;
 
 /**
- * JPA implementation of JpaPlanetsXMLDaoImpl.
+ * JDBC implementation of JpaPlanetsXMLDaoImpl.
  * 
- * @author Alok Kumar Dash.
+ * @author Alok Kumar Dash. , Brian O'Reilly
  */
 public class SqlReportDaoImpl implements ReportDao {
 
     private static String formatfilter = "formatfilter";
     
     private final Log log = LogFactory.getLog(getClass());
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    private DataSource datasource;
 
     /**
      * Flushes the DROID entity manager.
      */
     void flush() {
-        entityManager.flush();
+       // entityManager.flush();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField) {
         return getReportData(filter, reportField, new ArrayList<GroupByField>());
     }
@@ -81,29 +78,53 @@ public class SqlReportDaoImpl implements ReportDao {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField, 
+    public List<ReportLineItem> getReportData(Criterion filter, ReportFieldEnum reportField,
             List<GroupByField> groupByFields) {
-        final Query query = getQuery(reportField, groupByFields, filter);
-        final List<?> results = query.getResultList();
-        List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
-        if (results != null && !results.isEmpty()) {
-            reportData = reportField.getType().populateReportedData(results);
+
+        PreparedStatement statement = null;
+        ResultSet resultset = null;
+        Connection connection = null;
+
+        final String sqlQuery = getQueryString(reportField, groupByFields, filter);
+        try {
+            connection = this.datasource.getConnection();
+            statement = connection.prepareStatement(sqlQuery);
+            setFilterParameters(statement, filter);
+            resultset = statement.executeQuery();
+            List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
+            reportData = reportField.getType().populateReportedData(resultset);
+            return reportData;
+        } catch (SQLException ex) {
+            log.error("Error executing report query", ex);
+        } finally {
+            try {
+                if (resultset != null) {
+                    resultset.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //e.printStackTrace();
+                log.error("Error closing statement or results set during report generation", e);
+            }
+
         }
-        return reportData;        
+        return null;
+
     }
-    
-    
-    private Query getQuery(ReportFieldEnum reportField, List<GroupByField> groupByFields, Criterion filter) {
+
+
+    private String getQueryString(ReportFieldEnum reportField, List<GroupByField> groupByFields, Criterion filter) {
         final String selectStatement = getSelectStatement(reportField, groupByFields);
         final FilterInfo filterInfo = getFilterInfo(filter);
         final String groupingStatement = getGroupingStatement(groupByFields);
         final String queryString = selectStatement + filterInfo.getFilterSubQuery() + groupingStatement;
-        final Query query = entityManager.createNativeQuery(queryString);
-        setFilterParameters(query, filterInfo.getFilterValues());
-        return query;
+        return queryString;
     }
-    
     
     // Get select statement for aggregate queries on the report field, 
     // including any grouping field in the results.
@@ -200,8 +221,12 @@ public class SqlReportDaoImpl implements ReportDao {
     private boolean filterOnFormats(final String queryString) {
         return queryString.contains(formatfilter);
     }
-    
-    
+
+    /**
+     *
+     * @param queryString
+     * @return
+     */
     private boolean filterOnFormatMetadata(final String queryString) {
         return queryString.contains("formatfilter.name") || queryString.contains("formatfilter.mime_type");
     }
@@ -210,13 +235,20 @@ public class SqlReportDaoImpl implements ReportDao {
     private boolean groupOnPUID(ReportFieldEnum groupByField) {
         return groupByField.equals(ReportFieldEnum.PUID);
     }
-    
-    
+
+    /**
+     * Checks whether the group by field is either mime type or file format.
+     * @param groupByField ReportFieldEnum
+     * @return Boolean indicating whether or not the group field is either mime type or file format
+     */
     private boolean groupOnFormatMetadata(ReportFieldEnum groupByField) {
         return groupByField.equals(ReportFieldEnum.FILE_FORMAT)
                 || groupByField.equals(ReportFieldEnum.MIME_TYPE);
     }
-    
+
+    /**
+     * Private class to model the filter information
+     */
     private class FilterInfo {
         private String filterSubQuery = "";
         private Object[] filterValues = new Object[0];
@@ -237,14 +269,61 @@ public class SqlReportDaoImpl implements ReportDao {
             filterValues = values;
         }
     }
-    
-    
-    private void setFilterParameters(Query q, Object[] filterParams) {
-        int pos = 1;
+
+    /**
+     * Sets filter parameters within a PreparedStatement containing placeholders for the values.
+     * @param s The PreparedStatement in which to set filter parameters.
+     * @param filter a filter containing parameters to set.
+     */
+    private void setFilterParameters(PreparedStatement s, Criterion filter) {
+
+        final FilterInfo filterInfo = getFilterInfo(filter);
+        Object[] filterParams = filterInfo.getFilterValues();
+        int pos = 0;
         for (Object param : filterParams) {
             Object transformedValue = SqlUtils.transformParameterToSQLValue(param);
-            q.setParameter(pos++, transformedValue);
+
+            try {
+                String className = transformedValue.getClass().getSimpleName();
+                //Java 6 doesn't support switch on string!!
+                switch (SqlUtils.ClassName.valueOf(className)) {
+                    case String:
+                        s.setString(++pos, (String) transformedValue);
+                        break;
+                    case Date:
+                        java.util.Date d = (java.util.Date) transformedValue;
+                        s.setDate(++pos, new java.sql.Date(d.getTime()));
+                        break;
+                    case Long:
+                        s.setLong(++pos, (Long) transformedValue);
+                        break;
+                    case Integer:
+                        s.setInt(++pos, (Integer) transformedValue);
+                        break;
+                    default:
+                        log.error("Invalid filter parameter type in SQLReportDaoImpl.java");
+                        break;
+                }
+            } catch (SQLException e) {
+                //e.printStackTrace();
+                log.error(e);
+            }
         }
-    }       
-    
+    }
+
+    /**
+     * Sets the datasource.
+     * @param datasource datasource to set for the DAO
+     */
+    public void setDatasource(DataSource datasource) {
+        this.datasource = datasource;
+    }
+
+    /**
+     * Returns the datasource.
+     * @return the datasource
+     */
+    public DataSource getDatasource() {
+        return this.datasource;
+    }
 }

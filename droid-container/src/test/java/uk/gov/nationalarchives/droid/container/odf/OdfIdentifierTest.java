@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,7 +70,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class OdfIdentifierTest {
 
     private ZipIdentifier odfIdentifier;
-    public static final String CONTAINER_SIGNATUE_FILE = "container-signature-20120828.xml";
+    public static final String CONTAINER_SIGNATUE_FILE = "container-signature-20160121.xml";
     
     
     @Before

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.domesdaybook.reader.ByteReader;
+//BNO-BS2 - replace this import with AbstractReader or WindowReader
+//in package net.byteseek.io.reader
+import net.byteseek.io.reader.ReaderInputStream;
+import net.byteseek.io.reader.WindowReader;
 
 //CHECKSTYLE:OFF - getting wrong import order - no idea why.
 import org.apache.commons.io.FilenameUtils;
@@ -45,30 +48,22 @@ import org.apache.commons.logging.LogFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 
 /**
- * @author rflitcroft
+ * @author rflitcroft, mpalmer
  *
  */
-public class GZipIdentificationRequest implements IdentificationRequest {
+public class GZipIdentificationRequest implements IdentificationRequest<InputStream> {
 
-    private static final int BUFFER_CACHE_CAPACITY = 16;
-    private static final int CAPACITY = 32 * 1024; 
+    private static final int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
 
     private final String extension;
     private final String fileName;
     private long size;
-
-    private CachedBytes cachedBinary;
-    private File tempFile;
-
-    private final int bufferCapacity;
-    private final int lruCapacity;
     private File tempDir;
-    
     private RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
+    private WindowReader reader;
     
     private Log log = LogFactory.getLog(this.getClass());
     
@@ -78,31 +73,15 @@ public class GZipIdentificationRequest implements IdentificationRequest {
      * @param identifier request identification object
      * @param tempDir the location to write temp files.
      */
-    public GZipIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier, File tempDir) {
-        this(metaData, identifier, BUFFER_CACHE_CAPACITY, CAPACITY, tempDir);
-    }
-
-    /**
-     * Constructs a new GZip file resource.
-     * @param metaData the name of the tar entry
-     * @param identifier request identification object
-     * @param bufferCapacity the buffer cache capacity
-     * @param lruCapacity the cache block size
-     * @param tempDir the location to write temp files.
-     */
-    GZipIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
-            int lruCapacity, int bufferCapacity, File tempDir) {
+    public GZipIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
+                                     File tempDir) {
         this.identifier = identifier;
         
         String path = identifier.getUri().getSchemeSpecificPart();
-        //extension = FilenameUtils.getExtension(path);
         extension = ResourceUtils.getExtension(path);
         fileName = FilenameUtils.getName(path);
-        this.bufferCapacity = bufferCapacity;
-        this.lruCapacity = lruCapacity;
         this.tempDir = tempDir;
         this.requestMetaData = metaData;
-
     }
     
     /**
@@ -110,43 +89,9 @@ public class GZipIdentificationRequest implements IdentificationRequest {
      */
     @Override
     public final void open(InputStream in) throws IOException {
-        /* using normal stream access and CachedByteArrays */
-        byte[] firstBuffer = new byte[bufferCapacity];
-        int bytesRead = ResourceUtils.readBuffer(in, firstBuffer);
-        if (bytesRead < 1) {
-            firstBuffer = new byte[0];
-            cachedBinary = new CachedByteArray(firstBuffer, 0);
-            size = 0L;
-        } else if (bytesRead < bufferCapacity) {
-            // size the buffer to the amount of bytes available:
-            // firstBuffer = Arrays.copyOf(firstBuffer, bytesRead);
-            cachedBinary = new CachedByteArray(firstBuffer, bytesRead);
-            size = (long) bytesRead;
-        } else {
-            cachedBinary = new CachedByteArrays(lruCapacity, bufferCapacity, firstBuffer, bufferCapacity);
-            tempFile = ArchiveFileUtils.writeEntryToTemp(tempDir, firstBuffer, in);
-            cachedBinary.setSourceFile(tempFile);
-            size = tempFile.length();
-        }                
-        /* using nio and byte buffers:
-        ReadableByteChannel channel = Channels.newChannel(in);
-        ByteBuffer buffer = ByteBuffer.allocateDirect(bufferCapacity);
-        
-        int bytesRead = 0;
-        do {
-            bytesRead = channel.read(buffer);
-        } while (bytesRead >= 0 && buffer.hasRemaining());
-        
-        cachedBinary = new CachedByteBuffers(lruCapacity, bufferCapacity, buffer);
-        if (buffer.limit() == buffer.capacity()) {
-            tempFile = ArchiveFileUtils.writeEntryToTemp(tempDir, buffer, channel);
-            cachedBinary.setSourceFile(tempFile);
-            size = tempFile.length();
-            
-        } else {
-            size = buffer.limit();
-        }
-        */
+        reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY);
+        // Force read of entire input stream to build reader and remove dependence on source input stream.
+        size = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
     }
 
     /**
@@ -155,50 +100,9 @@ public class GZipIdentificationRequest implements IdentificationRequest {
      */
     @Override
     public final void close() throws IOException {
-        try {
-            if (cachedBinary != null) {
-                cachedBinary.close();
-                cachedBinary = null;
-            }
-        } finally {
-            if (tempFile != null) {
-                if (!tempFile.delete() && tempFile.exists()) {
-                    String message = String.format("Could not delete temporary file [%s] for gzip entry [%s]. "
-                            + "Will try to delete on exit.",
-                            tempFile.getAbsolutePath(), identifier.getUri().toString());
-                    log.warn(message);
-                    tempFile.deleteOnExit();
-                }
-                tempFile = null;
-            }
-        }
+        reader.close();
     }
     
-    /**
-     * Really ensure that temporary files are deleted, if the close method is not called.  
-     * Do not rely on this - this is just a double-double safety measure to avoid leaving 
-     * temporary files hanging around.
-     * {@inheritDoc}
-     */
-    @Override
-    //CHECKSTYLE:OFF
-    public void finalize() throws Throwable {
-    //CHECKSTYLE:ON
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
-    }    
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final byte getByte(long position) {
-        return cachedBinary.readByte(position);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -223,27 +127,14 @@ public class GZipIdentificationRequest implements IdentificationRequest {
         return size;
     }
 
-    /**
-     * @return the internal binary cache;
-     */
-    final CachedBytes getCache() {
-        return cachedBinary;
-    }
-    
+
     /**
      * {@inheritDoc}
-     * @throws IOException on failure to get InputStream
+     * @throws IOException 
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
-        return cachedBinary.getSourceInputStream();
-    }
-    
-    /**
-     * @return the tempFile
-     */
-    final File getTempFile() {
-        return tempFile;
+        return new ReaderInputStream(reader, false);
     }
     
     /**
@@ -253,7 +144,7 @@ public class GZipIdentificationRequest implements IdentificationRequest {
     public final RequestMetaData getRequestMetaData() {
         return requestMetaData;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -262,31 +153,17 @@ public class GZipIdentificationRequest implements IdentificationRequest {
         return identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public final ByteReader getReader() {
-        return cachedBinary;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @throws IOException on failure to create File from Stream
-     */
-    @Override
-    public final File getSourceFile() throws IOException {
-        if (tempFile == null) {
-            final InputStream stream = cachedBinary.getSourceInputStream();
-            try {
-                tempFile = ResourceUtils.createTemporaryFileFromStream(tempDir, stream);
-            } finally {
-                if (stream != null) {
-                    stream.close();
-                }
-            }
+    public byte getByte(long position) throws IOException {
+        final int result = reader.readByte(position);
+        if (result < 0) {
+            throw new IOException("No byte at position " + position);
         }
-        return tempFile;
+        return (byte) result;
     }
 
+    @Override
+    public WindowReader getWindowReader() {
+        return reader;
+    }
 }

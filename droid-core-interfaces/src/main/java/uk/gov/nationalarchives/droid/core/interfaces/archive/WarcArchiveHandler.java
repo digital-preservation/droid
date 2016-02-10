@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -90,7 +90,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
 
     /**
      * Adapts the JWAT ByteCountingPushbackInputStream to generate warc entries.
-     * @author gseaman
+     * @author gseaman, boreilly
      *
      */
     private static final class WarcArchiveEntryIterator
@@ -104,7 +104,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                 WarcReader warcReader = WarcReaderFactory.getReader(in);
                 this.iterator = warcReader.iterator();
             } catch (IOException e) {
-                // TODO log
+                LOGGER.error(e);
                 System.err.println(e);
             }
         }
@@ -113,7 +113,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
          * {@inheritDoc}
          */
         @Override
-        protected WarcRecord getNextEntry(InputStream in) throws IOException {
+        protected WarcRecord getNextEntry() throws IOException {
             WarcRecord record = null;
             if (this.iterator.hasNext()) {
                 record = this.iterator.next();
@@ -194,7 +194,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
             String entryName = entryPath.substring(querylessPath.lastIndexOf('/') + 1);
             String prefixPath = entryUri.substring(0, entryUri.length() - entryName.length());
             ResourceId correlationId = parentId; // by default, files are correlated to the parent.
-            String requestUri = entry.getHttpHeader().requestUri;
+
 
             // If there is a path, get the actual correlation id for its parent folder:
             if (!prefixPath.isEmpty()) {
@@ -202,7 +202,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                 // If we haven't seen the path before, add the ancestor folders not yet seen:
                 if (correlationId == null) {
                     correlationId = processAncestorFolders(WEB_ARCHIVE_TYPE, prefixPath,
-                            requestUri, parentId, parentName, directories);
+                            entryUri, parentId, parentName, directories);
                 }
             }
             // if the file name (including querystring) is > 4096 chars, truncate it for the DB

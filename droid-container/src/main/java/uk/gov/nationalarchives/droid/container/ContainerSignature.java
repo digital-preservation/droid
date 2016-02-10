@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * @author rflitcroft
@@ -60,7 +61,9 @@ public class ContainerSignature {
     @XmlElementWrapper(name = "Files")
     @XmlElement(name = "File")
     private List<ContainerFile> files;
-    
+
+    @XmlTransient
+    private Map<String, ContainerFile> filesMap;
     /**
      * @return the description
      */
@@ -79,12 +82,14 @@ public class ContainerSignature {
      * @return the files
      */
     public Map<String, ContainerFile> getFiles() {
-        Map<String, ContainerFile> filesMap = new HashMap<String, ContainerFile>();
-        
-        for (ContainerFile f : files) {
-            filesMap.put(f.getPath(), f);
+        if (filesMap == null) {
+            filesMap = new HashMap<String, ContainerFile>();
+            final int numFiles = files.size();
+            for (int i = 0; i < numFiles; i++) {
+                final ContainerFile file = files.get(i);
+                filesMap.put(file.getPath(), file);
+            }
         }
-        
         return filesMap;
     }
     

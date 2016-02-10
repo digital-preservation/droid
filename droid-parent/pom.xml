@@ -16,7 +16,7 @@
     <name>droid-parent</name>
     <description>A tool developed by the UK National Archives to perform automated batch identification of file formats.</description>
     <url>http://digital-preservation.github.com/droid/</url>
-    <inceptionYear>2012</inceptionYear>
+    <inceptionYear>2016</inceptionYear>
   
     <organization>
         <name>The National Archives</name>
@@ -77,17 +77,10 @@
         <project.build.target>1.6</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
-        <spring.version>4.0.3.RELEASE</spring.version> <!-- TODO upgrade -->
-        <!-- hibernate.version>3.4.0.GA</hibernate.version -->
-        <hibernate.core.version>4.3.5.Final</hibernate.core.version> <!-- TODO upgrade. Will also need to upgrade Spring -->
-        <hibernate.version>4.3.5.Final</hibernate.version>
-<!-- BNO added this as version is different from latest hibernate -->
-<!-- hibernate.annotations.version>3.5.6-Final</hibernate.annotations.version -->
-        <!-- derby.version>10.8.2.2</derby.version -->
+        <spring.version>4.0.3.RELEASE</spring.version>
         <derby.version>10.10.2.0</derby.version>
-        <antlr.version>3.2</antlr.version>
-        <cxf.version>2.2.12</cxf.version> <!-- TODO upgrade? -->
-        <aspectj.version>1.7.2</aspectj.version> <!-- TODO upgrade? -->
+        <cxf.version>2.2.12</cxf.version>
+        <aspectj.version>1.8.7</aspectj.version>
     </properties>
   
     <build>
@@ -104,12 +97,6 @@
                     <version>2.5</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.antlr</groupId>
-                    <artifactId>antlr3-maven-plugin</artifactId>
-                    <version>${antlr.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-codegen-plugin</artifactId>
                     <version>${cxf.version}</version>
                 </plugin>
@@ -126,7 +113,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.9.1</version> <!-- >= 2.12 would get rid of the erroneous LICENSE.txt stack dumps in debug --> 
+                    <version>2.12</version> <!-- >= 2.12 would get rid of the erroneous LICENSE.txt stack dumps in debug -->
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -158,11 +145,13 @@
                     <artifactId>maven-source-plugin</artifactId>
                     <version>2.1.2</version>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.8.1</version>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
@@ -186,6 +175,7 @@
                     <version>2.3</version>
                 </plugin>
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <!--
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -211,6 +201,7 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
+                -->
             </plugins>
         </pluginManagement>
         
@@ -238,6 +229,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
@@ -245,7 +237,7 @@
                 <configuration>
                     <header>../droid-parent/header.txt</header>
                     <failIfMissing>true</failIfMissing>
-                    <aggregate>true</aggregate> <!-- if this module references other modules, then check those too -->
+                    <aggregate>true</aggregate>
                     <strictCheck>true</strictCheck>
                     <properties>
                         <year>${project.inceptionYear}</year>
@@ -258,12 +250,15 @@
                         <exclude>header.txt</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>src-header.txt</exclude>
-                        <exclude>**/test_sig_files/**</exclude> <!-- TODO move test sig files to the src/test/resources folder -->
+                        <exclude>**/test_sig_files/**</exclude>
                         <exclude>**/DROID_SignatureFile_*.xml</exclude>
                         <exclude>**/container-signature*.xml</exclude>
                         <exclude>**/tmp/**</exclude>
                         <exclude>**/droid-test-db/**</exclude>
                         <exclude>**/package-info.java</exclude>
+                        <exclude>**/empty.txt</exclude>
+                        <exclude>**/service.properties</exclude>
+                        <exclude>**/profile.xml</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -276,6 +271,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
@@ -302,6 +298,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -310,6 +307,7 @@
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -357,49 +355,51 @@
                     </execution>
                 </executions>
             </plugin>
+<!-- N.B. sourceFileExcludes won't work till version 2.11 is released 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <links>
-                        <link>${project.url}</link>
-                        <link>${project.organization.url}</link>
-                    </links>
-                    <!-- this won't work till version 2.11 is released -->
-                    <sourceFileExcludes>
-                        <exclude>**/package-info.java</exclude>
-                    </sourceFileExcludes>    
-                    <packagesheader>DROID Packages</packagesheader>
-                    <doctitle>DROID 6.1.5-SNAPSHOT</doctitle>
-                    <windowtitle>DROID 6.1.5-SNAPSHOT</windowtitle>
-                    <bottom>
-                        <![CDATA[
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-javadoc-plugin</artifactId>
+    <configuration>
+        <links>
+            <link>${project.url}</link>
+            <link>${project.organization.url}</link>
+        </links>
+                  
+            <sourceFileExcludes>
+                <exclude>**/package-info.java</exclude>
+            </sourceFileExcludes>
+            <packagesheader>DROID Packages</packagesheader>
+        <doctitle>DROID 6.1.5-SNAPSHOT</doctitle>
+        <windowtitle>DROID 6.1.5-SNAPSHOT</windowtitle>
+        <bottom>
+            <![CDATA[
 Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organization.url}">${project.organization.name}</a>. All Rights Reserved
 ]]>
-                    </bottom>
-                    <archive>
-                        <manifest>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Source-Revision>${buildNumber}</Source-Revision>
-                            <Build-Timestamp>${timestamp}</Build-Timestamp>
-                            <Source-Repository>${project.scm.connection}</Source-Repository>
-                            <Description>${project.description}</Description>
-                            <Website>${project.url}</Website>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+        </bottom>
+        <archive>
+            <manifest>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+                <Source-Revision>${buildNumber}</Source-Revision>
+                <Build-Timestamp>${timestamp}</Build-Timestamp>
+                <Source-Repository>${project.scm.connection}</Source-Repository>
+                <Description>${project.description}</Description>
+                <Website>${project.url}</Website>
+            </manifestEntries>
+        </archive>
+    </configuration>
+    <executions>
+        <execution>
+            <id>attach-javadocs</id>
+            <goals>
+                <goal>jar</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -448,11 +448,13 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     
     <dependencyManagement>
         <dependencies>
+            <!--
             <dependency>
                 <groupId>com.google.code.byteseek</groupId>
                 <artifactId>byteseek</artifactId>
                 <version>1.1.1</version>
             </dependency>
+            -->
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
@@ -513,28 +515,12 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <artifactId>spring-core</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-<dependency>
+            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-<!--
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-beans</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-aspects</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring</artifactId>
-<version>${spring.version}</version>
-</dependency> -->
-<dependency>
+            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
@@ -558,6 +544,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
+                <!-- N.B. May need 4.4 still for some tests -->
                 <version>4.11</version>
             </dependency>
             <dependency>
@@ -579,16 +566,6 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
    <groupId>org.dbunit</groupId>
    <artifactId>dbunit</artifactId>
                 <version>2.4.8</version>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr-runtime</artifactId>
-                <version>${antlr.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr</artifactId>
-                <version>${antlr.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

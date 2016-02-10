@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,16 +81,21 @@ public class JpaProfileDaoTest {
 
     @BeforeClass
     public static void getTestData() throws Exception {
+        //BNO - now using test data without formats as these are pre-populated in the test database and not deleted
+        // after each tests.  This change is necessiated by the move to the JDBSBatchResultsHandler. With the
+        // ole approach we would have had to find a way to load the test formats after the class had ben initialised,
+        // tricky due to the way the whole fresh vs existing template behaviour works.  See comments in init method
+        // of JDBCBatchResultsHandler
         testData = new FlatXmlDataSetBuilder().build(
-                JpaProfileDaoTest.class.getResource("results-test-data.xml"));
-        System.setProperty("hibernate.generateDdl", "true");
+                JpaProfileDaoTest.class.getResource("results-test-data-sans-formats.xml"));
+        //System.setProperty("hibernate.generateDdl", "true");
         System.setProperty("maxBytesToScan", "65536");
         System.setProperty("matchAllExtensions", "false");
     }
     
     @AfterClass
     public static void tearDown() {
-        System.clearProperty("hibernate.generateDdl");
+        //System.clearProperty("hibernate.generateDdl");
     }
 
 

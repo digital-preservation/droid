@@ -1,6 +1,6 @@
 ####BSD License for DROID (Digital Record Object Identification)
 
-Copyright (c) 2012, The National Archives. All rights reserved.
+Copyright (c) 2016, The National Archives. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

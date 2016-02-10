@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,11 +38,6 @@ import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -51,6 +46,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+
+import static org.junit.Assert.*;
 
 public class ZipEntryIdentificationRequestTest {
 
@@ -94,10 +91,10 @@ public class ZipEntryIdentificationRequestTest {
         //when(metaData.getSize()).thenReturn(entry.getSize());
         //when(metaData.getName()).thenReturn("profile.xml");
         
-        zipResource = new ZipEntryIdentificationRequest(metaData, identifier, 3, 5, tmpDir);
+        zipResource = new ZipEntryIdentificationRequest(metaData, identifier, tmpDir);
         zipResource.open(in);
         //assertEquals(1, zipResource.getCache().getBuffers().size());
-        assertNotNull(zipResource.getCache().getSourceFile());
+        //assertNotNull(zipResource.getCache().getSourceFile());
     }
     
     @After
@@ -105,7 +102,9 @@ public class ZipEntryIdentificationRequestTest {
         zipResource.close();
         in.close();
     }
-    
+
+    //TODO:MP: no longer have binary cache or getsourcefile.  rewrite test?>
+    /*
     @Test
     public void testTwoArgContructor() throws Exception {
 
@@ -117,7 +116,8 @@ public class ZipEntryIdentificationRequestTest {
         assertNull(zipResource.getCache().getSourceFile());
         assertEquals(identifier, zipResource.getIdentifier());
     }
-    
+    */
+
     @Test
     public void testGetSize() {
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
@@ -126,7 +126,7 @@ public class ZipEntryIdentificationRequestTest {
     }
     
     @Test
-    public void testGetEveryByteSequencially() {
+    public void testGetEveryByteSequencially() throws IOException {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         int size = (int) zipResource.size();
@@ -142,15 +142,14 @@ public class ZipEntryIdentificationRequestTest {
         
         try {
             zipResource.getByte(i);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [" + i + "]", e.getMessage());
+            fail("Expected IOException");
+        } catch (IOException e) {
         }
         
     }
     
     @Test
-    public void testGetByte3FollowedByByte42() {
+    public void testGetByte3FollowedByByte42() throws IOException {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         assertEquals(expected.getBytes()[3], zipResource.getByte(3));
@@ -160,7 +159,7 @@ public class ZipEntryIdentificationRequestTest {
     }
 
     @Test
-    public void testGetByte42FollowedByByte3() {
+    public void testGetByte42FollowedByByte3() throws IOException {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         assertEquals(expected.getBytes()[42], zipResource.getByte(42));
@@ -170,30 +169,28 @@ public class ZipEntryIdentificationRequestTest {
     }
 
     @Test
-    public void testGetByte42FollowedByByte49() {
+    public void testGetByte42FollowedByByte49() throws IOException {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         assertEquals(expected.getBytes()[42], zipResource.getByte(42));
         try {
             zipResource.getByte(49);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [49]", e.getMessage());
+            fail("Expected IOException");
+        } catch (IOException e) {
         }
         //assertEquals(3, zipResource.getCache().getBuffers().size());
         
     }
 
     @Test
-    public void testGetByte42FollowedByByte10000() {
+    public void testGetByte42FollowedByByte10000() throws IOException {
         
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><profiles/>";
         assertEquals(expected.getBytes()[42], zipResource.getByte(42));
         try {
             zipResource.getByte(10000);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [10000]", e.getMessage());
+            fail("Expected IOException");
+        } catch (IOException e) {
         }
         
     }
@@ -209,12 +206,5 @@ public class ZipEntryIdentificationRequestTest {
         
     }
     
-    @Test
-    public void testCloseDeletesTheBinaryCacheFile() throws IOException {
-        assertTrue(zipResource.getTempFile().exists());
-        zipResource.close();
-        //assertFalse(zipResource.getTempFile().exists());
-        assertTrue(zipResource.getTempFile() == null);
-    }
 
 }

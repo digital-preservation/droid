@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,8 +54,11 @@ import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
 import uk.gov.nationalarchives.droid.submitter.FileWalker.ProgressEntry;
 
 /**
- * @author rflitcroft
- *
+ * @author rflitcroft, boreilly
+ * BNO: String control amended as follows after
+ * JAXB changes to reduce littering
+ * - Added </children> empty elements in <ProgressEntry>
+ * - Moved <RootUri> element to after <Progress>
  */
 public class FileWalkerPersistenceTest {
 
@@ -83,9 +86,9 @@ public class FileWalkerPersistenceTest {
         
         final File root = new File("root");
         FileWalker filewalker = new FileWalker(root.toURI(), true);
-        progress.push(new ProgressEntry(dirResource1.toURI(), 1, "X", null));
-        progress.push(new ProgressEntry(dirResource2.toURI(), 2, "Y", null));
-        progress.push(new ProgressEntry(dirResource3.toURI(), 3, "Z", null));
+        progress.push(new ProgressEntry(dirResource1, 1, "X", null));
+        progress.push(new ProgressEntry(dirResource2, 2, "Y", null));
+        progress.push(new ProgressEntry(dirResource3, 3, "Z", null));
         
         filewalker.setProgress(progress);
         
@@ -108,19 +111,23 @@ public class FileWalkerPersistenceTest {
             + "        <Path>" + getPath(root) + "</Path>"
             + "    </Dir>" 
             + "    <FileWalker Recursive=\"true\">" 
-            + "        <RootUri>" + root.toURI() + "</RootUri>" 
+            //+ "        <RootUri>" + root.toURI() + "</RootUri>"
             + "        <Progress>"
-            + "            <ProgressEntry Id=\"3\" Prefix=\"Z\">" 
+            + "            <ProgressEntry Id=\"3\" Prefix=\"Z\">"
+            + "                <Children/>"
             + "                <Uri>" + dirResource3.toURI() + "</Uri>" 
             + "            </ProgressEntry>"
-            + "            <ProgressEntry Id=\"2\" Prefix=\"Y\">" 
+            + "            <ProgressEntry Id=\"2\" Prefix=\"Y\">"
+            + "                <Children/>"
             + "                <Uri>" + dirResource2.toURI() + "</Uri>" 
             + "            </ProgressEntry>"
-            + "            <ProgressEntry Id=\"1\" Prefix=\"X\">" 
+            + "            <ProgressEntry Id=\"1\" Prefix=\"X\">"
+            + "                <Children/>"
             + "                <Uri>" + dirResource1.toURI() + "</Uri>" 
             + "            </ProgressEntry>"
             + "        </Progress>"
-            + "    </FileWalker>" 
+            + "        <RootUri>" + root.toURI() + "</RootUri>"
+            + "    </FileWalker>"
             + "</ProfileWalk>"; 
 
         FileReader fileReader = new FileReader(new File(testDir, "profile_progress.xml"));

@@ -104,6 +104,12 @@
 				</executions>
 			</plugin>
 		</plugins>
+
+		<testResources>
+			<testResource>
+				<directory>${project.basedir}/src/test/resources</directory>
+			</testResource>
+		</testResources>
 	</build>
 
 	<dependencies>
@@ -134,10 +140,6 @@
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- BNO: removed spring artefact and added spring-context, spring-orm 
-			and spring-tx. Also hibernate-validator -->
-		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring</artifactId> 
-			</dependency> -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -168,26 +170,6 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.core.version}</version>
-			<!--version>${hibernate.version}</version -->
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-		<!-- BNO this is the latest release version of ejb3-persistence as of April 
-			2014 -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>ejb3-persistence</artifactId>
-			<version>1.0.2.GA</version>
-		</dependency>
-		<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-annotations</artifactId> 
-			<version>${hibernate.annotations.version}</version> </dependency> -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>

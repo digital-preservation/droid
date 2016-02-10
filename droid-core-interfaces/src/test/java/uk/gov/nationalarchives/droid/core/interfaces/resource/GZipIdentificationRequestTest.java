@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,10 +38,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.FileUtils;
@@ -53,6 +49,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+
+import static org.junit.Assert.*;
 
 /**
  * @author rflitcroft
@@ -102,7 +100,7 @@ public class GZipIdentificationRequestTest {
         identifier = new RequestIdentifier(URI.create(GzipUtils.getUncompressedFilename(file.toURI().toString())));
         gzRequest = new GZipIdentificationRequest(
                 metaData, identifier,
-                100, 12000, new File("tmp"));
+                new File("tmp"));
         GzipCompressorInputStream in = new GzipCompressorInputStream(new FileInputStream(file));
         gzRequest.open(in);
     }
@@ -111,7 +109,9 @@ public class GZipIdentificationRequestTest {
     public void tearDown() throws IOException {
         gzRequest.close();
     }
-    
+
+    //TODO:MP no longer have cache objects - rewrite this test.
+    /*
     @Test
     public void testOneArgContructor() throws IOException {
         file = new File(getClass().getResource("/testXmlFile.xml.gz").getFile());
@@ -126,14 +126,15 @@ public class GZipIdentificationRequestTest {
         //assertEquals(1, cache.getBuffers().size());
         assertNotNull(cache.getSourceFile());
     }
-    
+    */
+
     @Test
     public void testGetSize() {
         assertEquals(fileData.length(), gzRequest.size());
     }
     
     @Test
-    public void testGetEveryByteSequencially() {
+    public void testGetEveryByteSequencially() throws IOException {
         
         int size = (int) gzRequest.size();
         byte[] bin = new byte[size];
@@ -147,15 +148,14 @@ public class GZipIdentificationRequestTest {
         
         try {
             gzRequest.getByte(i);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [" + i + "]", e.getMessage());
+            fail("Expected IOException.");
+        } catch (IOException e) {
         }
         
     }
     
     @Test
-    public void testGetByte3FollowedByByte42() {
+    public void testGetByte3FollowedByByte42() throws IOException {
         
         assertEquals(fileData.getBytes()[3], gzRequest.getByte(3));
         assertEquals(fileData.getBytes()[42], gzRequest.getByte(42));
@@ -163,7 +163,7 @@ public class GZipIdentificationRequestTest {
     }
 
     @Test
-    public void testGetByte42FollowedByByte3() {
+    public void testGetByte42FollowedByByte3() throws IOException {
         
         assertEquals(fileData.getBytes()[42], gzRequest.getByte(42));
         assertEquals(fileData.getBytes()[3], gzRequest.getByte(3));
@@ -171,27 +171,25 @@ public class GZipIdentificationRequestTest {
     }
 
     @Test
-    public void testGetLastByteFollowedByOneByteTooMany() {
+    public void testGetLastByteFollowedByOneByteTooMany() throws IOException {
         
         assertEquals(fileData.getBytes()[(int) file.length() - 1], gzRequest.getByte(file.length() - 1));
         try {
             gzRequest.getByte(fileData.length());
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [" + fileData.length() + "]", e.getMessage());
+            fail("Expected IOException");
+        } catch (IOException e) {
         }
         
     }
 
     @Test
-    public void testGetByte42FollowedByByteMillion() {
+    public void testGetByte42FollowedByByteMillion() throws IOException {
         
         assertEquals(fileData.getBytes()[42], gzRequest.getByte(42));
         try {
             gzRequest.getByte(1000000L);
-            //fail("Expected IndexOutOfBoundsException.");
-        } catch (IndexOutOfBoundsException e) {
-            //assertEquals("No byte at position [1000000]", e.getMessage());
+            fail("Expected IOException.");
+        } catch (IOException e) {
         }
         
     }
@@ -209,10 +207,4 @@ public class GZipIdentificationRequestTest {
         
     }
     
-    @Test
-    public void testCloseDeletesTheBinaryCacheFile() throws IOException {
-        assertTrue(gzRequest.getTempFile().exists());
-        gzRequest.close();
-        assertTrue(gzRequest.getTempFile() == null);
-    }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,9 @@ import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
+
+//BNO-BS2
+import net.byteseek.io.reader.WindowReader;
 
 /**
  * Adapts an IdentificationRequest to the ByteReader interface.
@@ -100,7 +103,12 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
      */
     @Override
     public final byte getByte(long fileIndex) {
-        return request.getByte(fileIndex);
+        try {
+            return request.getByte(fileIndex);
+        } catch (IOException ex) {
+            throw new RuntimeException("Something went horribly wrong trying to get a byte at position "
+                    + fileIndex, ex);
+        }
     }
 
     /**
@@ -235,15 +243,9 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
         this.fileMarker = fileMarker;
     }
 
-    /**
-     * @see uk.gov.nationalarchives.droid.core.signature.ByteReader#getReader()
-     * @return a ByteReader
-     */
+    //BNO-BS2
     @Override
-    public final net.domesdaybook.reader.ByteReader getReader() {
-        return request.getReader();
+    public WindowReader getWindowReader() {
+        return request.getWindowReader();
     }
-    
-    
-    
 }

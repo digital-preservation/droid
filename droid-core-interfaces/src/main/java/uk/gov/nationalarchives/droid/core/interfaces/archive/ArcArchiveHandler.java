@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -90,7 +90,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
 
     /**
      * Adapts the JWAT ByteCountingPushbackInputStream to generate arc entries.
-     * @author gseaman
+     * @author gseaman, boreilly
      *
      */
     private static final class ArcArchiveEntryIterator
@@ -104,7 +104,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
                 ArcReader arcReader = ArcReaderFactory.getReader(in);
                 this.iterator = arcReader.iterator();
             } catch (IOException e) {
-                // TODO log
+                LOGGER.error(e);
                 System.err.println(e);
             }
         }
@@ -113,7 +113,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
          * {@inheritDoc}
          */
         @Override
-        protected ArcRecordBase getNextEntry(InputStream in) throws IOException {
+        protected ArcRecordBase getNextEntry() throws IOException {
             ArcRecordBase base = null;
             //get the next real ARC record (not header) and return it as an ArcRecord
             if (this.iterator.hasNext()) {
@@ -185,7 +185,6 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
         protected void handleEntry(ArcRecordBase entry) throws IOException {
             final int maxLEN = 4095;
 
-            //String entryUri = entry.getUrl().toString();
             String entryUri = entry.getUrlStr();
             String entryPath = new URL(entryUri).getFile();
             // remove querystring to get prefix (may include slashes)
@@ -194,7 +193,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
             String entryName = entryPath.substring(querylessPath.lastIndexOf('/') + 1);
             String prefixPath = entryUri.substring(0, entryUri.length() - entryName.length());
             ResourceId correlationId = parentId; // by default, files are correlated to the parent.
-            String requestUri = entry.getHttpHeader().requestUri;
+
 
             // If there is a path, get the actual correlation id for its parent folder:
             if (!prefixPath.isEmpty()) {
@@ -202,7 +201,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
                 // If we haven't seen the path before, add the ancestor folders not yet seen:
                 if (correlationId == null) {
                     correlationId = processAncestorFolders(WEB_ARCHIVE_TYPE, prefixPath,
-                        requestUri, parentId, parentName, directories);
+                            entryUri, parentId, parentName, directories);
                 }
             }
             // if the file name (including querystring) is > 4096 chars, truncate it for the DB

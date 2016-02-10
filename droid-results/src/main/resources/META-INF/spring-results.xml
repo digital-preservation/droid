@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2012, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -159,12 +159,27 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="containerPuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
     </bean>
 
-    <bean id="profileDao" class="uk.gov.nationalarchives.droid.profile.JpaProfileDaoImpl"/>
-    <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JpaPlanetsXMLDaoImpl"/>
-    <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl"/>
-    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandlerDao"/>
-    <bean id="referenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl"/>
-    
+    <bean id="profileDao" class="uk.gov.nationalarchives.droid.profile.JDBCProfileDao">
+        <property name="datasource" ref="dataSource"/>
+        <property name="resultHandlerDao" ref="resultsDao"/>
+    </bean>
+
+   <bean id="planetsDao" class="uk.gov.nationalarchives.droid.planet.xml.dao.JdbcPlanetsXMLDaoImpl">
+       <property name = "datasource" ref="dataSource"/>
+   </bean>
+
+    <bean id="reportDao" class="uk.gov.nationalarchives.droid.report.dao.SqlReportDaoImpl">
+        <property name = "datasource" ref="dataSource"/>
+    </bean>
+
+    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao" init-method="init" destroy-method="cleanup">
+        <property name = "datasource" ref="dataSource"/>
+    </bean>
+
+    <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl">
+        <property name = "datasource" ref="dataSource"/>
+    </bean>
+
     <bean id="referenceDataService" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataServiceImpl"/>
     
     <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileInstanceManagerImpl">
@@ -188,29 +203,16 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="profileWalkerDao" class="uk.gov.nationalarchives.droid.submitter.ProfileWalkerDao">
         <property name="profileHomeDir" value="${profileHome}"/>
     </bean>
-    
-     <!-- Hibernate item reader. Replace with sql item reader.
-<bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.HibernateItemReader" scope="prototype">
-<property name="sessionFactory" ref="sessionFactory"/>
-<property name="fetchSize" value="200"/>
-<property name="chunkSize" value="1000"/>
-</bean>
--->
 
-    <bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.SqlItemReader" scope="prototype">
-       <property name="sessionFactory" ref="sessionFactory"/>
-       <property name="fetchSize" value="200"/>
-       <property name="chunkSize" value="1000"/>
+    <bean id="nodeItemReader" class="uk.gov.nationalarchives.droid.profile.export.JDBCSqlItemReader" scope="prototype">
+        <!--<constructor-arg ref="typeParameterClass" /> -->
+        <property name="resultHandlerDao" ref="resultsDao" />
+        <property name="fetchSize" value="200"/>
+        <property name="chunkSize" value="1000"/>
     </bean>
-
 
     <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
-    
-    <bean id="sessionFactory" class="uk.gov.nationalarchives.droid.profile.export.HibernateSessionFactoryLocator"
-        factory-method="getSessionFactory" lazy-init="true">
-        <constructor-arg ref="entityManagerFactory"/>
-    </bean>
-    
+
     <bean id="droid" class="uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier" init-method="init">
         <property name="signatureFile" value="${signatureFilePath}"/>
     </bean>
@@ -239,11 +241,17 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
 
 <!-- database result handler commits on every node -->
-    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.ResultHandlerImpl" init-method="init">
+    <!--
+    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandler" init-method="init">
         <property name="resultHandlerDao" ref="resultsDao"/>
         <property name="progressMonitor" ref="progressMonitor"/>
     </bean>
-    
+    -->
+    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.JDBCResultHandler" init-method="init">
+        <property name="resultHandlerDao" ref="resultsDao"/>
+        <property name="progressMonitor" ref="progressMonitor"/>
+    </bean>
+
     <!-- experimental batching database result handler commits in batches.
 <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.BatchResultHandler" init-method="init">
 <property name="progressMonitor" ref="progressMonitor"/>
@@ -274,6 +282,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
    
    <!-- BNO: these changes were made in SHA256 branch but didn't appear to get pulled down from GitHub --> 
  <bean id="md5HashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator"/>
+ <bean id="sha1HashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.SHA1HashGenerator"/>
  <bean id="sha256HashGenerator" class="uk.gov.nationalarchives.droid.core.interfaces.hash.SHA256HashGenerator"/>
     
     <bean id="submissionQueue" class="uk.gov.nationalarchives.droid.submitter.JaxBSubmissionQueueDao">
