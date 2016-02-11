@@ -67,7 +67,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
  */
 public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
 
-    //CHECKSTYLE:OFF  Various formatting issues with SQL Statements.  E.g. some longer thgan 120 lines but
+    //CHECKSTYLE:OFF  Various formatting issues with SQL Statements.  E.g. some longer than 120 lines but
     // splitting them likely to hamper rather than assist readability here.
 
     // How many results in the batch before committing.
@@ -154,6 +154,8 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private static final String CREATE_UCASE_PRN_EXTN_COL = "ALTER TABLE PROFILE_RESOURCE_NODE ADD COLUMN U_EXTENSION GENERATED ALWAYS AS (UPPER(EXTENSION))";
     private static final String CREATE_UCASE_PRN_NAME_COL = "ALTER TABLE PROFILE_RESOURCE_NODE ADD COLUMN U_NAME GENERATED ALWAYS AS (UPPER(NAME))";
     private static final String CREATE_UCASE_FMT_NAME_COL = "ALTER TABLE FORMAT ADD COLUMN U_NAME GENERATED ALWAYS AS (UPPER(NAME))";
+
+    private static final String ALTER_NAME_COLUMN_SIZE = "ALTER TABLE PROFILE_RESOURCE_NODE ALTER COLUMN NAME SET DATA TYPE VARCHAR(1000)";
     //CHECKSTYLE:ON
     private static final int PRN_COL_COUNT_SANS_UCASE_COLS = 17;
     private static final int PRN_COL_COUNT_WITH_UCASE_COLS = 19;
@@ -223,6 +225,9 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     // an existing template which does not have the columns.  However, the check
     // creates additional overhead in opening profiles - consider removing in a future
     // release when we can assume most people will have a template that already includes these columns.
+    // In addition, we increase the size of the NAME column in the PROFILE_RESOURCE_NODE table to 1000
+    // characters (it was 255 in the previous DROID version).  This is required to accommodate the long
+    // extracted names in ARC and WARC files.
     private void checkCreateUpperCaseColumns() {
 
         Connection conn = null;
@@ -241,12 +246,15 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             switch(numberOfColumnsInPrnTable) {
                 case PRN_COL_COUNT_SANS_UCASE_COLS:
                     String[] statements =
-                    {CREATE_UCASE_PRN_EXTN_COL, CREATE_UCASE_PRN_NAME_COL, CREATE_UCASE_FMT_NAME_COL };
+                    {ALTER_NAME_COLUMN_SIZE, CREATE_UCASE_PRN_EXTN_COL, CREATE_UCASE_PRN_NAME_COL,
+                        CREATE_UCASE_FMT_NAME_COL, };
 
                     for (String s : statements) {
                         try {
                             createColumn = conn.prepareStatement(s);
                             x = createColumn.executeUpdate();
+                        } catch (SQLException ex) {
+                            log.error(ex.getMessage());
                         } finally {
                             createColumn.close();
                         }
