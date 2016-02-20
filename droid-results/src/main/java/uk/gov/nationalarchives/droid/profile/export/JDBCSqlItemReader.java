@@ -48,6 +48,7 @@ import java.util.Collections;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -183,6 +184,10 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                             break;
                         }
                     }
+                }
+
+                if (metaData.getResourceType() != ResourceType.FOLDER && profileResourceNode.getIdentificationCount() == null) {
+                    profileResourceNode.setZeroIdentifications();
                 }
 
                 return new ProfileResourceNode(profileResourceNode);
