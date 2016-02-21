@@ -48,7 +48,6 @@ import java.util.Collections;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -140,6 +139,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      * Reads the next profileResourceNode from the cursor.
      * @return The ProfileResourceNode to read, or null if there are no further nodes.
      */
+    //CHECKSTYLE:OFF  One statement too many ...
     @SuppressWarnings("unchecked")
     private ProfileResourceNode readNode() {
 
@@ -186,7 +186,8 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                     }
                 }
 
-                if (metaData.getResourceType() != ResourceType.FOLDER && profileResourceNode.getIdentificationCount() == null) {
+                if (metaData.getResourceType() != ResourceType.FOLDER
+                    && profileResourceNode.getIdentificationCount() == null) {
                     profileResourceNode.setZeroIdentifications();
                 }
 
@@ -200,7 +201,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
         return null;
     }
-
+    //CHECKSTYLE:ON
     /**
      *
      * @return The item read from the  cursor (which must be a ProfileResourceNode or subclass thereof
