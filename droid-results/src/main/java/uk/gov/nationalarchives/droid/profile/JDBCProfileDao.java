@@ -46,6 +46,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
@@ -309,6 +310,14 @@ public class JDBCProfileDao implements ProfileDao {
             final Format              format = puidFormatMap.get(identifications.getString(2));
             if (node != null && format != null) {
                 node.addFormatIdentification(format);
+            }
+
+            // Identification count will be null by default.  Set it to zero if there are no identificatiosn, so that
+            // the GUI displays the appropriate icon.
+            for(ProfileResourceNode child : childNodes) {
+                if(child.getIdentificationCount() == null && child.getMetaData().getResourceType() != ResourceType.FOLDER) {
+                    child.setZeroIdentifications();
+                }
             }
         }
     }
