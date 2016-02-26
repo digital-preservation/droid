@@ -314,8 +314,9 @@ public class JDBCProfileDao implements ProfileDao {
 
             // Identification count will be null by default.  Set it to zero if there are no identificatiosn, so that
             // the GUI displays the appropriate icon.
-            for(ProfileResourceNode child : childNodes) {
-                if(child.getIdentificationCount() == null && child.getMetaData().getResourceType() != ResourceType.FOLDER) {
+            for (ProfileResourceNode child : childNodes) {
+                if (child.getIdentificationCount() == null
+                    && child.getMetaData().getResourceType() != ResourceType.FOLDER) {
                     child.setZeroIdentifications();
                 }
             }
