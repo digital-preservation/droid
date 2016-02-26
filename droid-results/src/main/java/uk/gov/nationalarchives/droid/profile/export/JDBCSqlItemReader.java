@@ -154,10 +154,14 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
                 metaData.setName(cursor.getString(NAME));
                 metaData.setExtension(cursor.getString("EXTENSION"));
-                metaData.setSize(cursor.getLong("FILE_SIZE"));
                 metaData.setIdentificationMethod(IdentificationMethod.getIdentifationMethodForOrdinal(
                         cursor.getInt("IDENTIFICATION_METHOD")));
                 metaData.setResourceType(ResourceType.getResourceTypeForOrdinal(cursor.getInt("RESOURCE_TYPE")));
+
+                if (metaData.getResourceType() != ResourceType.FOLDER) {
+                    metaData.setSize(cursor.getLong("FILE_SIZE"));
+                } 
+
                 metaData.setHash(cursor.getString("HASH"));
                 metaData.setNodeStatus(NodeStatus.DONE);
 
