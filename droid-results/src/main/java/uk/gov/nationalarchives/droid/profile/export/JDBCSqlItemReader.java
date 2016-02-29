@@ -160,7 +160,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
                 if (metaData.getResourceType() != ResourceType.FOLDER) {
                     metaData.setSize(cursor.getLong("FILE_SIZE"));
-                } 
+                }
 
                 metaData.setHash(cursor.getString("HASH"));
                 metaData.setNodeStatus(NodeStatus.DONE);

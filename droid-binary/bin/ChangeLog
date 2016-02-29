@@ -1,3 +1,8 @@
+Version 6.2.1 Minor bugfix release
+* Byteseek version now 2.0.3 (includes bug fix for matching a single byte that can be one of three or more values)
+* Bug Fix: Profile export now prints zeros where a file has no identifications
+* Bug Fix: GUI now displays the correct icon in an expanded tree for files with no identifications
+
 Version 6.2
  * Signature updates: Signature file release 84, Container file 20160121
  * Hibernate replaced by JDBC code, and Byteseek 1.1.1 by Byteseek 2.0 for improved profiling and export performance
