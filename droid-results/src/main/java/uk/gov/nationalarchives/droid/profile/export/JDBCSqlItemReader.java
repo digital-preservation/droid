@@ -139,6 +139,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      * Reads the next profileResourceNode from the cursor.
      * @return The ProfileResourceNode to read, or null if there are no further nodes.
      */
+    //CHECKSTYLE:OFF  One statement too many ...
     @SuppressWarnings("unchecked")
     private ProfileResourceNode readNode() {
 
@@ -153,10 +154,14 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
                 metaData.setName(cursor.getString(NAME));
                 metaData.setExtension(cursor.getString("EXTENSION"));
-                metaData.setSize(cursor.getLong("FILE_SIZE"));
                 metaData.setIdentificationMethod(IdentificationMethod.getIdentifationMethodForOrdinal(
                         cursor.getInt("IDENTIFICATION_METHOD")));
                 metaData.setResourceType(ResourceType.getResourceTypeForOrdinal(cursor.getInt("RESOURCE_TYPE")));
+
+                if (metaData.getResourceType() != ResourceType.FOLDER) {
+                    metaData.setSize(cursor.getLong("FILE_SIZE"));
+                }
+
                 metaData.setHash(cursor.getString("HASH"));
                 metaData.setNodeStatus(NodeStatus.DONE);
 
@@ -185,6 +190,11 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                     }
                 }
 
+                if (metaData.getResourceType() != ResourceType.FOLDER
+                    && profileResourceNode.getIdentificationCount() == null) {
+                    profileResourceNode.setZeroIdentifications();
+                }
+
                 return new ProfileResourceNode(profileResourceNode);
             }
         } catch (URISyntaxException ex) {
@@ -195,7 +205,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
         return null;
     }
-
+    //CHECKSTYLE:ON
     /**
      *
      * @return The item read from the  cursor (which must be a ProfileResourceNode or subclass thereof
