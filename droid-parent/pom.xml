@@ -10,7 +10,7 @@
   
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.1.6-SNAPSHOT</version>
+    <version>6.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
   
     <name>droid-parent</name>
@@ -498,7 +498,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-configuration</groupId>
