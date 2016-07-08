@@ -920,10 +920,28 @@ public class SubSequence extends SimpleElement {
                                             matchPosition - matchLength, -1, 0);
                             matchFound = leftFragmentPositions.length > 0;
 
+                            boolean leftMostFragmentPositionInvalid = true;
+
+                            if (matchFound) {
+                                long leftMostFragmentPosition = leftFragmentPositions[0];
+
+                                // BNO: If the fragment found is beyond the minimum offset, we already know its offset
+                                // is invalid.  If it is greater than the maximum offset however, we need to check for
+                                // and further occurrences that may be positioned before the maximum offset.
+                                if (leftMostFragmentPosition >= this.minSeqOffset) {
+                                    leftMostFragmentPositionInvalid = ((leftMostFragmentPosition > this.maxSeqOffset
+                                    )
+                                            && checkLeftmostFragmentForInvalidOffset(windowReader,
+                                            targetFile.getFileMarker() -1,
+                                            matchPosition - matchLength -1,
+                                            this.maxSeqOffset,
+                                            this.minSeqOffset));
+                                }
+                            }
 //                            // check BOF max seq offset (bugfix)
                             if (matchFound
                                     && bofSubsequence
-                                    && leftFragmentPositions[0] > this.maxSeqOffset) {
+                                    && leftMostFragmentPositionInvalid) {
                                 matchFound = false;
                             }
                         }
@@ -1287,8 +1305,40 @@ public class SubSequence extends SimpleElement {
         }
 
         return outArray;
+
     }
+
     // CHECKSTYLE:ON
+
+    // This method exists to cater for situations where the first (or only)  left fragment in a subsequence
+    // occurs more than once before the main byte sequence.  In these cases, the initial check may find an occurrence
+    // to the right of this one (i.e. closer to the main byte sequence) and determine that there is no match when
+    // this occurrence is beyond the minimum offset.  So we need to check for any further occurrences to see if there
+    // is one that occurs in the byte stream at a position at or before the allowed maximum offset.
+    private boolean checkLeftmostFragmentForInvalidOffset(WindowReader windowReader,  long leftBytePos,
+                                                          long rightBytePos, final long maxOffset,
+                                                          final long minOffset) {
+
+        long[] fragmentPositions;
+        long currentLeftBytePos = leftBytePos;
+        long currentRightBytePos = rightBytePos;
+
+        do {
+            fragmentPositions =
+                    bytePosForLeftFragments(windowReader, currentLeftBytePos--,
+                            currentRightBytePos--, -1, 0);
+        } while (fragmentPositions.length > 0 && fragmentPositions[0] > maxOffset);
+
+
+        if (fragmentPositions.length == 0 || fragmentPositions[0] > maxOffset || fragmentPositions[0] < minOffset) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
     private LeftFragment getRawLeftFragment(final int theIndex) {
         return leftFragments.get(theIndex);
     }
