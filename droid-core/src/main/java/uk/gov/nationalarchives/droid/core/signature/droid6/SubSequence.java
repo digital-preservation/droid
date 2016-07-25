@@ -112,6 +112,7 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.byteseek.matcher.sequence.SequenceMatcher;
@@ -923,17 +924,17 @@ public class SubSequence extends SimpleElement {
                             boolean leftMostFragmentPositionInvalid = true;
 
                             if (matchFound) {
-                                long leftMostFragmentPosition = leftFragmentPositions[0];
+                                long rightByteStartPosition = leftFragmentPositions[0];
 
                                 // BNO: If the fragment found is beyond the minimum offset, we already know its offset
                                 // is invalid.  If it is greater than the maximum offset however, we need to check for
-                                // and further occurrences that may be positioned before the maximum offset.
-                                if (leftMostFragmentPosition >= this.minSeqOffset) {
-                                    leftMostFragmentPositionInvalid = ((leftMostFragmentPosition > this.maxSeqOffset
+                                // any further occurrences that may be positioned before the maximum offset.
+                                if (rightByteStartPosition >= this.minSeqOffset) {
+                                    leftMostFragmentPositionInvalid = ((rightByteStartPosition > this.maxSeqOffset
                                     )
                                             && checkLeftmostFragmentForInvalidOffset(windowReader,
-                                            targetFile.getFileMarker() -1,
-                                            matchPosition - matchLength -1,
+                                            0,
+                                            rightByteStartPosition,
                                             this.maxSeqOffset,
                                             this.minSeqOffset));
                                 }
@@ -1308,13 +1309,139 @@ public class SubSequence extends SimpleElement {
 
     }
 
+    // Similar to above, but allows the caller to pass in his own List<List<SideFragment>> instead of using
+    // the class member orderedLeftFragments
+    private long[] bytePosForLeftFragments(final WindowReader bytes, final long leftBytePos, final long rightBytePos,
+                                           final int searchDirection, final int offsetRange,
+                                           List<List<SideFragment>> fragments) {
+
+        final boolean leftFrag = true;
+
+        // set up loop start and end depending on search order:
+        final int numFragPos = Math.min(this.numLeftFragmentPositions, fragments.size()); // getNumFragmentPositions(leftFrag);
+        long startPos;
+        int posLoopStart;
+        if (searchDirection == 1) {
+            startPos = leftBytePos;
+            posLoopStart = numFragPos;
+        } else {
+            startPos = rightBytePos;
+            posLoopStart = 1;
+        }
+
+        // Calculate the total possible number of options in all the fragments:
+        //TODO: can most of this calculation be done up front?
+        int totalNumOptions = offsetRange + 1;
+        for (int iFragPos = 1; iFragPos <= numFragPos; iFragPos++) {
+            totalNumOptions = totalNumOptions * this.getNumAlternativeFragments(leftFrag, iFragPos);
+        }
+
+        //now set up the array so that it can potentially hold all possibilities
+        long[] markerPos = new long[totalNumOptions];
+        for (int iOffset = 0; iOffset <= offsetRange; iOffset++) {
+            markerPos[iOffset] = startPos + iOffset * searchDirection;
+        }
+        int numOptions = 1 + offsetRange;
+
+        // Search for the fragments:
+        boolean seqNotFound = false;
+        for (int iFragPos = posLoopStart; (!seqNotFound) && (iFragPos <= numFragPos) && (iFragPos >= 1);
+             iFragPos -= searchDirection) {
+            final List<SideFragment> fragmentsAtPosition = fragments.get(iFragPos - 1);
+            final int numAltFrags = fragmentsAtPosition.size();
+            //array to store possible end positions after this fragment position has been examined
+            long[] tempEndPos = new long[numAltFrags * numOptions];
+
+            int numEndPos = 0;
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                //will now look for all matching alternative sequence at the current end positions
+                for (int iAlt = 0; iAlt < numAltFrags; iAlt++) {
+                    final SideFragment fragment = fragmentsAtPosition.get(iAlt);
+                    long tempFragEnd;
+                    if (searchDirection == 1) {
+                        tempFragEnd =
+                                this.endBytePosForSeqFrag(bytes, markerPos[iOption],
+                                        rightBytePos, true, searchDirection,
+                                        iFragPos, fragment);
+                    } else {
+                        tempFragEnd =
+                                this.endBytePosForSeqFrag(bytes, leftBytePos,
+                                        markerPos[iOption], true, searchDirection,
+                                        iFragPos, fragment);
+                    }
+                    if (tempFragEnd > -1L) { // a match has been found
+                        tempEndPos[numEndPos] = tempFragEnd + searchDirection;
+                        numEndPos += 1;
+                    }
+                }
+            }
+            if (numEndPos == 0) {
+                seqNotFound = true;
+            } else {
+                numOptions = 0;
+                for (int iOption = 0; iOption < numEndPos; iOption++) {
+                    //eliminate any repeated end positions
+                    boolean addEndPos = true;
+                    for (int iMarker = 0; iMarker < numOptions; iMarker++) {
+                        if (markerPos[iMarker] == tempEndPos[iOption]) {
+                            addEndPos = false;
+                            break;
+                        }
+                    }
+                    if (addEndPos) {
+                        markerPos[numOptions] = tempEndPos[iOption];
+                        numOptions++;
+                    }
+                }
+            }
+        }
+
+        //prepare array to be returned
+        if (seqNotFound) {
+            // no possible positions found, return 0 length array
+            return new long[0];
+        }
+        // return ordered array of possibilities
+        long[] outArray = new long[numOptions];
+
+        // convert values to negative temporarily so that reverse sort order
+        // can be obtained for a right to left search direction
+        if (searchDirection < 0) {
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                markerPos[iOption] = -markerPos[iOption];
+            }
+        }
+
+        //sort the values in the array
+        Arrays.sort(markerPos, 0, numOptions);
+
+        //convert values back to positive now that a reverse sort order has been obtained
+        if (searchDirection < 0) {
+            for (int iOption = 0; iOption < numOptions; iOption++) {
+                markerPos[iOption] = -markerPos[iOption];
+            }
+        }
+
+        //copy to a new array which has precisely the correct length
+        System.arraycopy(markerPos, 0, outArray, 0, numOptions);
+
+        //correct the value
+        for (int iOption = 0; iOption < numOptions; iOption++) {
+            outArray[iOption] -= searchDirection;
+        }
+
+        return outArray;
+
+    }
     // CHECKSTYLE:ON
 
     // This method exists to cater for situations where the first (or only)  left fragment in a subsequence
-    // occurs more than once before the main byte sequence.  In these cases, the initial check may find an occurrence
-    // to the right of this one (i.e. closer to the main byte sequence) and determine that there is no match when
-    // this occurrence is beyond the minimum offset.  So we need to check for any further occurrences to see if there
-    // is one that occurs in the byte stream at a position at or before the allowed maximum offset.
+    // occurs more than once to the left of the main byte sequence.  In these cases, the initial check will find the
+    // instance closest to the main byte sequence that meets the fragment's offset requirements. However, if this
+    // instance is beyond the maximum offset for the sequence as a whole, the whole sequence would previously be set to
+    // not match - even though there may be further instances of the leftmost fragment at less than or equal to the
+    // maximum sequence offset. So we need to check for any further occurrences to see if there is one that occurs in
+    // the byte stream at a position at or before the allowed maximum offset.
     private boolean checkLeftmostFragmentForInvalidOffset(WindowReader windowReader,  long leftBytePos,
                                                           long rightBytePos, final long maxOffset,
                                                           final long minOffset) {
@@ -1323,10 +1450,14 @@ public class SubSequence extends SimpleElement {
         long currentLeftBytePos = leftBytePos;
         long currentRightBytePos = rightBytePos;
 
+        List<List<SideFragment>> furthestLeftFragment =
+                this.orderedLeftFragments.subList(orderedLeftFragments.size() -1,orderedLeftFragments.size());
+
         do {
             fragmentPositions =
-                    bytePosForLeftFragments(windowReader, currentLeftBytePos--,
-                            currentRightBytePos--, -1, 0);
+                    bytePosForLeftFragments(windowReader, currentLeftBytePos,
+                            currentRightBytePos, -1, 0, furthestLeftFragment);
+            currentRightBytePos = fragmentPositions[0];
         } while (fragmentPositions.length > 0 && fragmentPositions[0] > maxOffset);
 
 
