@@ -924,17 +924,17 @@ public class SubSequence extends SimpleElement {
                             boolean leftMostFragmentPositionInvalid = true;
 
                             if (matchFound) {
-                                long rightByteStartPosition = leftFragmentPositions[0];
+                                long currentLeftmostFragmentPosition = leftFragmentPositions[0];
 
                                 // BNO: If the fragment found is beyond the minimum offset, we already know its offset
                                 // is invalid.  If it is greater than the maximum offset however, we need to check for
                                 // any further occurrences that may be positioned before the maximum offset.
-                                if (rightByteStartPosition >= this.minSeqOffset) {
-                                    leftMostFragmentPositionInvalid = ((rightByteStartPosition > this.maxSeqOffset
+                                if (currentLeftmostFragmentPosition >= this.minSeqOffset) {
+                                    leftMostFragmentPositionInvalid = ((currentLeftmostFragmentPosition > this.maxSeqOffset
                                     )
                                             && checkLeftmostFragmentForInvalidOffset(windowReader,
                                             0,
-                                            rightByteStartPosition,
+                                            currentLeftmostFragmentPosition,
                                             this.maxSeqOffset,
                                             this.minSeqOffset));
                                 }
