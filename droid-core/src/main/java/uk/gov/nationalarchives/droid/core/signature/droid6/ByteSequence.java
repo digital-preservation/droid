@@ -165,9 +165,9 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      */
     private static final int QUOTE_CHARACTER_VALUE = 39;
     /**
-     * Error message when excption reading a byte from position
+     * Error message when excption reading a byte from positionInFile
      */
-    private static final String BYTE_READ_ERROR = "An error occurred reading a byte at position ";
+    private static final String BYTE_READ_ERROR = "An error occurred reading a byte at positionInFile ";
     /**
     *Use static log for optimmal performance..
      */

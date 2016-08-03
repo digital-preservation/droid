@@ -130,13 +130,13 @@ public class SideFragment extends SimpleElement {
   
     /* setters */
     /**
-     * @param thePosition the position of the fragment in the
+     * @param thePosition the positionInFile of the fragment in the
      * list of SideFragments held to the left or right of a
      * subsequence.  
      * 
-     * Individual fragments can have the same position as each other -
+     * Individual fragments can have the same positionInFile as each other -
      * this is how alternatives are represented -
-     * as different fragments with the same position.
+     * as different fragments with the same positionInFile.
      */
     public final void setPosition(final int thePosition) {
         this.myPosition = thePosition;
@@ -216,7 +216,7 @@ public class SideFragment extends SimpleElement {
     /* getters */
     /**
      * 
-     * @return the position of this fragment.
+     * @return the positionInFile of this fragment.
      */
     public final int getPosition() {
         return myPosition;
@@ -265,11 +265,11 @@ public class SideFragment extends SimpleElement {
     
     
     /**
-     * Matches the fragment against the position in the ByteReader given.
+     * Matches the fragment against the positionInFile in the ByteReader given.
      * 
      * @param bytes The byte reader to match the bytes with.
-     * @param matchFrom The position to match from.
-     * @return Whether the fragment matches at the position given.
+     * @param matchFrom The positionInFile to match from.
+     * @return Whether the fragment matches at the positionInFile given.
      * @throws IOException If a problem occurs reading the underlying file or stream
      */
     public final boolean matchesBytes(final WindowReader bytes, final long matchFrom) throws IOException {
@@ -280,8 +280,8 @@ public class SideFragment extends SimpleElement {
      * Finds the fragment looking forwards from 'from' up to 'to'.
      *
      * @param bytes a Byteseek WindowReader object
-     * @param from the position within bytes from which to start searching
-     * @param to the position within bytes at which to end searching
+     * @param from the positionInFile within bytes from which to start searching
+     * @param to the positionInFile within bytes at which to end searching
      * @return A list of match results
      * @throws IOException If a problem occurs reading the underlying file or stream
      */
@@ -294,8 +294,8 @@ public class SideFragment extends SimpleElement {
      * Finds the fragment looking backwards from 'from' back to 'to'.
      *
      * @param bytes a Byteseek WindowReader object
-     * @param from the position within bytes from which to start searching
-     * @param to the position within bytes at which to end searching
+     * @param from the positionInFile within bytes from which to start searching
+     * @param to the positionInFile within bytes at which to end searching
      * @return A list of match results
      * @throws IOException If a problem occurs reading the underlying file or stream
      */
