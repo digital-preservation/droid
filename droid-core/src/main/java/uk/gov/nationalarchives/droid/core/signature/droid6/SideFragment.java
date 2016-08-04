@@ -85,6 +85,7 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.List;
 
@@ -114,7 +115,7 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
  * @author Matt Palmer
  * @version 6.0.0
  */
-public class SideFragment extends SimpleElement {
+public class SideFragment extends SimpleElement implements Cloneable{
     
     private static final String FRAGMENT_PARSE_ERROR = "The signature fragment [%s] could not be parsed. "
         + "The error returned was [%s]";
@@ -319,5 +320,21 @@ public class SideFragment extends SimpleElement {
     @Override
     public String toString() {
         return getClass().getSimpleName() + '[' + toRegularExpression(true) + ']';
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    //TODO: I think a shallow clone will be OK here but need to check...
+    public SideFragment copy() {
+        SideFragment copy = null;
+        try {
+            copy =  (SideFragment)this.clone();
+        }  catch (CloneNotSupportedException e) {
+            System.out.println("Error cloning fragment " + this.toString()+ ":" + e.getMessage());
+        }
+        return  copy;
     }
 }
