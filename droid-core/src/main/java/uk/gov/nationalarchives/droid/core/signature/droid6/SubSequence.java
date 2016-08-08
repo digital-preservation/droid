@@ -1734,7 +1734,9 @@ public class SubSequence extends SimpleElement {
             fragmentPositions =
                     bytePosForLeftFragments(windowReader, leftBytePos,
                             currentRightBytePos, -1, 0, leftFragOpt);
-            currentRightBytePos = fragmentPositions[0];
+            if(fragmentPositions.length  > 0) {
+                currentRightBytePos = fragmentPositions[0] - 1;
+            }
         } while (fragmentPositions.length > 0 && fragmentPositions[0] > maxOffset);
 
 
