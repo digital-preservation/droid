@@ -1213,48 +1213,51 @@ public class SubSequence extends SimpleElement {
                         FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                         fragmentHits.push(fragmentHit);
                     } else {
-                        //No match was found for the current fragment.  Check back through any earlier fragment matches
-                        //to see if there are any further occurences of a fragment within its offset range, and if so,
-                        //revert to that point and resume checking from there.
-                        while (!fragmentHits.empty()) {
-                            FragmentHit lastGoodFragRef = fragmentHits.pop();
-                            //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
-                            // to test for a further match based on a new offset defined from the previous position.  We need to use a clone
-                            // because this class instance is used to check multiple files and the revised check only applies to this specific file.
-                            // alternatively we could copy the original list at the outset but this would potentially create additional objects
-                            // on the heap unnecessarily and impact performance.
-                            fragment = fragments.get(lastGoodFragRef.getFragmentPosition() -1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
+                        //Assuming we're on the final possible fragment for this position...
+                        if(iAlt == numAltFrags - 1) {
+                            //No match was found for the current fragment.  Check back through any earlier fragment matches
+                            //to see if there are any further occurences of a fragment within its offset range, and if so,
+                            //revert to that point and resume checking from there.
+                            while (!fragmentHits.empty()) {
+                                FragmentHit lastGoodFragRef = fragmentHits.pop();
+                                //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
+                                // to test for a further match based on a new offset defined from the previous position.  We need to use a clone
+                                // because this class instance is used to check multiple files and the revised check only applies to this specific file.
+                                // alternatively we could copy the original list at the outset but this would potentially create additional objects
+                                // on the heap unnecessarily and impact performance.
+                                fragment = fragments.get(lastGoodFragRef.getFragmentPosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
 
-                            //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
-                            //or right of the earlier match.
-                            fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int)lastGoodFragRef.getOffsetFound(), 0));
-                            fragment.setMaxOffset(fragment.getMaxOffset() - (int)lastGoodFragRef.getOffsetFound());
+                                //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
+                                //or right of the earlier match.
+                                fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) lastGoodFragRef.getOffsetFound(), 0));
+                                fragment.setMaxOffset(fragment.getMaxOffset() - (int) lastGoodFragRef.getOffsetFound());
 
-                            //Check for a further occurrence of the fragment beyond the last match position
-                            if (searchDirection == 1) {
-                                tempFragEnd =
-                                        this.endBytePosForSeqFrag(bytes, lastGoodFragRef.getPositionInFile(),
-                                                rightBytePos, false, searchDirection,
-                                                lastGoodFragRef.getFragmentPosition(), fragment);
-                            } else {
-                                tempFragEnd =
-                                        this.endBytePosForSeqFrag(bytes, leftBytePos,
-                                                lastGoodFragRef.getPositionInFile(), false, searchDirection,
-                                                lastGoodFragRef.getFragmentPosition(), fragment);
-                            }
+                                //Check for a further occurrence of the fragment beyond the last match position
+                                if (searchDirection == 1) {
+                                    tempFragEnd =
+                                            this.endBytePosForSeqFrag(bytes, lastGoodFragRef.getPositionInFile(),
+                                                    rightBytePos, false, searchDirection,
+                                                    lastGoodFragRef.getFragmentPosition(), fragment);
+                                } else {
+                                    tempFragEnd =
+                                            this.endBytePosForSeqFrag(bytes, leftBytePos,
+                                                    lastGoodFragRef.getPositionInFile(), false, searchDirection,
+                                                    lastGoodFragRef.getFragmentPosition(), fragment);
+                                }
 
-                            if(tempFragEnd  > -1L) {
-                                tempEndPos[numEndPos] = tempFragEnd + searchDirection;
-                                numEndPos += 1;
-                                iFragPos = lastGoodFragRef.getFragmentPosition();
+                                if (tempFragEnd > -1L) {
+                                    tempEndPos[numEndPos] = tempFragEnd + searchDirection;
+                                    numEndPos += 1;
+                                    iFragPos = lastGoodFragRef.getFragmentPosition();
 
-                                //Add the newly found fragment instance to the top of the stack and reset the loop
-                                // position to resume checking for further fragments from that point.
-                                long offSetFound = markerPos[iOption]- tempFragEnd;
-                                FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
-                                fragmentHits.push(fragmentHit);
+                                    //Add the newly found fragment instance to the top of the stack and reset the loop
+                                    // position to resume checking for further fragments from that point.
+                                    long offSetFound = markerPos[iOption] - tempFragEnd;
+                                    FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos - 1], offSetFound);
+                                    fragmentHits.push(fragmentHit);
 
-                                break;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1600,49 +1603,52 @@ public class SubSequence extends SimpleElement {
                         FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                         fragmentHits.push(fragmentHit);
                     } else {
-                        //No match was found for the current fragment.  Check back through any earlier fragment matches
-                        //to see if there are any further occurences of a fragment within its offset range, and if so,
-                        //revert to that point and resume checking from there.
-                        while (!fragmentHits.empty()) {
+                        //Assuming we're on the final possible fragment for this position...
+                        if(iAlt == numAltFrags - 1) {
+                            //No match was found for the current fragment.  Check back through any earlier fragment matches
+                            //to see if there are any further occurences of a fragment within its offset range, and if so,
+                            //revert to that point and resume checking from there.
+                            while (!fragmentHits.empty()) {
 
-                            FragmentHit lastGoodFragRef = fragmentHits.pop();
-                            //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
-                            // to test for a further match based on a new offset defined from the previous position.  We need to use a clone
-                            // because this class instance is used to check multiple files and the revised check only applies to this specific file.
-                            // alterantively we could copy the original list at the outset but this would potentially create additional objects
-                            // on the heap unnecessarily and impact performance.
-                            fragment = fragments.get(lastGoodFragRef.getFragmentPosition() -1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
+                                FragmentHit lastGoodFragRef = fragmentHits.pop();
+                                //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
+                                // to test for a further match based on a new offset defined from the previous position.  We need to use a clone
+                                // because this class instance is used to check multiple files and the revised check only applies to this specific file.
+                                // alternatively we could copy the original list at the outset but this would potentially create additional objects
+                                // on the heap unnecessarily and impact performance.
+                                fragment = fragments.get(lastGoodFragRef.getFragmentPosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
 
-                            //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
-                            //or right of the earlier match.
-                            fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int)lastGoodFragRef.getOffsetFound(), 0));
-                            fragment.setMaxOffset(fragment.getMaxOffset() - (int)lastGoodFragRef.getOffsetFound());
+                                //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
+                                //or right of the earlier match.
+                                fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) lastGoodFragRef.getOffsetFound(), 0));
+                                fragment.setMaxOffset(fragment.getMaxOffset() - (int) lastGoodFragRef.getOffsetFound());
 
-                            //Check for a further occurrence of the fragment beyond the last match position
-                            if (searchDirection == 1) {
-                                tempFragEnd =
-                                        this.endBytePosForSeqFrag(bytes, lastGoodFragRef.getPositionInFile(),
-                                                rightBytePos, true, searchDirection,
-                                                lastGoodFragRef.getFragmentPosition(), fragment);
-                            } else {
-                                tempFragEnd =
-                                        this.endBytePosForSeqFrag(bytes, leftBytePos,
-                                                lastGoodFragRef.getPositionInFile(), true, searchDirection,
-                                                lastGoodFragRef.getFragmentPosition(), fragment);
-                            }
+                                //Check for a further occurrence of the fragment beyond the last match position
+                                if (searchDirection == 1) {
+                                    tempFragEnd =
+                                            this.endBytePosForSeqFrag(bytes, lastGoodFragRef.getPositionInFile(),
+                                                    rightBytePos, true, searchDirection,
+                                                    lastGoodFragRef.getFragmentPosition(), fragment);
+                                } else {
+                                    tempFragEnd =
+                                            this.endBytePosForSeqFrag(bytes, leftBytePos,
+                                                    lastGoodFragRef.getPositionInFile(), true, searchDirection,
+                                                    lastGoodFragRef.getFragmentPosition(), fragment);
+                                }
 
-                            if(tempFragEnd  > -1L) {
-                                tempEndPos[numEndPos] = tempFragEnd + searchDirection;
-                                numEndPos += 1;
-                                iFragPos = lastGoodFragRef.getFragmentPosition();
+                                if (tempFragEnd > -1L) {
+                                    tempEndPos[numEndPos] = tempFragEnd + searchDirection;
+                                    numEndPos += 1;
+                                    iFragPos = lastGoodFragRef.getFragmentPosition();
 
-                                //Add the newly found fragment instance to the top of the stack and reset the loop
-                                // position to resume checking for further fragments from that point.
-                                long offSetFound = markerPos[iOption]- tempFragEnd;
-                                FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
-                                fragmentHits.push(fragmentHit);
+                                    //Add the newly found fragment instance to the top of the stack and reset the loop
+                                    // position to resume checking for further fragments from that point.
+                                    long offSetFound = markerPos[iOption] - tempFragEnd;
+                                    FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos - 1], offSetFound);
+                                    fragmentHits.push(fragmentHit);
 
-                                break;
+                                    break;
+                                }
                             }
                         }
                     }
