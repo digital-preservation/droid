@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FFSignatureFile xmlns="http://www.nationalarchives.gov.uk/pronom/SignatureFile" DateCreated="2016-07-18T13:00:00" Version="94" >
+    <InternalSignatureCollection>
+		<InternalSignature ID="1200" Specificity="Specific">
+			<ByteSequence Endianness="Little-endian" Reference="BOFoffset">
+				<SubSequence MinFragLength="10" Position="1" SubSeqMaxOffset="15" SubSeqMinOffset="1">
+					<Sequence>AF8703CD</Sequence>
+					<LeftFragment MaxOffset="1" MinOffset="1" Position="1">CCDD</LeftFragment>
+					<LeftFragment MaxOffset="20" MinOffset="1" Position="1">AABB</LeftFragment>
+				</SubSequence>
+			</ByteSequence>
+		</InternalSignature>
+	</InternalSignatureCollection>
+	<FileFormatCollection>
+        <FileFormat ID="1200" Name="Right Fragment Test" PUID="dev/1200">
+            <InternalSignatureID>1200</InternalSignatureID>
+				<Extension>ext</Extension>
+        </FileFormat>
+    </FileFormatCollection>
+</FFSignatureFile>

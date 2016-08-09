@@ -57,13 +57,16 @@ public class ReverseScanBugFixTest {
     private final String SIGFILE = "ReverseScan_SignatureFile.xml";
     private final String SCANFILE = "ReverseScan.enl";
 
-    private final int EXPECTED_HITS = 0;
+    //BNO - changed for Droid 6.2.2 - see also new test classes LeftFragmentVariableOffsetTest
+    // and RightFragmentVariableOffsetTest in uk.gov.nationalarchives.droid.core.fragments
+    //private final int EXPECTED_HITS = 0;
+    private final int EXPECTED_HITS = 1;
     private final String EXPECTED_PUID = "x-fmt/757";
 
     @Test
     public void testReverseScan() throws Exception {
     
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
         droid.setSignatureFile(TESTAREA + SIGFILE);
         try {
             droid.init();
