@@ -145,6 +145,9 @@ import net.byteseek.compiler.matcher.SequenceMatcherCompiler;
  * @author Martin Waller
  * @author Matt Palmer
  * @version 6.0.0
+ *
+ * @author  Brian O'Reilly
+ * @version 6.2.2
  */
 public class SubSequence extends SimpleElement {
 
@@ -1213,11 +1216,13 @@ public class SubSequence extends SimpleElement {
                         FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                         fragmentHits.push(fragmentHit);
                     } else {
-                        //Assuming we're on the final possible fragment for this position...
-                        if(iAlt == numAltFrags - 1) {
+                        //Assuming we're on the final possible fragment for this position and none so far have matched...
+                        if(iAlt == numAltFrags - 1 && numEndPos == 0) {
                             //No match was found for the current fragment.  Check back through any earlier fragment matches
                             //to see if there are any further occurences of a fragment within its offset range, and if so,
                             //revert to that point and resume checking from there.
+                            boolean revertSucceeded = false;
+
                             while (!fragmentHits.empty()) {
                                 FragmentHit lastGoodFragRef = fragmentHits.pop();
                                 //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
@@ -1249,6 +1254,8 @@ public class SubSequence extends SimpleElement {
                                     tempEndPos[numEndPos] = tempFragEnd + searchDirection;
                                     numEndPos += 1;
                                     iFragPos = lastGoodFragRef.getFragmentPosition();
+                                    iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
+                                    revertSucceeded = true;
 
                                     //Add the newly found fragment instance to the top of the stack and reset the loop
                                     // position to resume checking for further fragments from that point.
@@ -1259,6 +1266,7 @@ public class SubSequence extends SimpleElement {
                                     break;
                                 }
                             }
+                            if(revertSucceeded) {break;}
                         }
                     }
                 }
@@ -1603,11 +1611,14 @@ public class SubSequence extends SimpleElement {
                         FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                         fragmentHits.push(fragmentHit);
                     } else {
-                        //Assuming we're on the final possible fragment for this position...
-                        if(iAlt == numAltFrags - 1) {
+                        //Assuming we're on the final possible fragment for this position and none so far have matched...
+                        if(iAlt == numAltFrags - 1  && numEndPos == 0) {
                             //No match was found for the current fragment.  Check back through any earlier fragment matches
                             //to see if there are any further occurences of a fragment within its offset range, and if so,
                             //revert to that point and resume checking from there.
+
+                            boolean revertSucceeded = false;
+
                             while (!fragmentHits.empty()) {
 
                                 FragmentHit lastGoodFragRef = fragmentHits.pop();
@@ -1640,6 +1651,8 @@ public class SubSequence extends SimpleElement {
                                     tempEndPos[numEndPos] = tempFragEnd + searchDirection;
                                     numEndPos += 1;
                                     iFragPos = lastGoodFragRef.getFragmentPosition();
+                                    iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
+                                    revertSucceeded = true;
 
                                     //Add the newly found fragment instance to the top of the stack and reset the loop
                                     // position to resume checking for further fragments from that point.
@@ -1650,6 +1663,7 @@ public class SubSequence extends SimpleElement {
                                     break;
                                 }
                             }
+                            if(revertSucceeded) {break;}
                         }
                     }
                 }
