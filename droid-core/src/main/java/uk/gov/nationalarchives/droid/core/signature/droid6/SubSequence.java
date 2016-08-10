@@ -1194,6 +1194,7 @@ public class SubSequence extends SimpleElement {
 
             for (int iOption = 0; iOption < numOptions; iOption++) {
                 //will now look for all matching alternative sequence at the current end positions
+                FRAGS_AT_POSITION:
                 for (int iAlt = 0; iAlt < numAltFrags; iAlt++) {
                     SideFragment fragment = fragmentsAtPosition.get(iAlt);
                     long tempFragEnd;
@@ -1221,7 +1222,6 @@ public class SubSequence extends SimpleElement {
                             //No match was found for the current fragment.  Check back through any earlier fragment matches
                             //to see if there are any further occurences of a fragment within its offset range, and if so,
                             //revert to that point and resume checking from there.
-                            boolean revertSucceeded = false;
 
                             while (!fragmentHits.empty()) {
                                 FragmentHit lastGoodFragRef = fragmentHits.pop();
@@ -1251,22 +1251,21 @@ public class SubSequence extends SimpleElement {
                                 }
 
                                 if (tempFragEnd > -1L) {
-                                    tempEndPos[numEndPos] = tempFragEnd + searchDirection;
-                                    numEndPos += 1;
-                                    iFragPos = lastGoodFragRef.getFragmentPosition();
-                                    iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
-                                    revertSucceeded = true;
-
                                     //Add the newly found fragment instance to the top of the stack and reset the loop
                                     // position to resume checking for further fragments from that point.
-                                    long offSetFound = markerPos[iOption] - tempFragEnd;
-                                    FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos - 1], offSetFound);
+                                    tempEndPos[numEndPos] = tempFragEnd + searchDirection;
+                                    iFragPos = lastGoodFragRef.getFragmentPosition();
+                                    iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
+                                    //Get the offset of this new instance of the current fragment from the previous
+                                    //fragment, or main sequence if this is the first fragment.
+                                    long newOffSetFoundFromPreviousMatch = tempEndPos[numEndPos] - lastGoodFragRef.getPositionInFile() + lastGoodFragRef.getOffsetFound();
+                                    FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos], newOffSetFoundFromPreviousMatch);
                                     fragmentHits.push(fragmentHit);
+                                    numEndPos += 1;
 
-                                    break;
+                                    break FRAGS_AT_POSITION;
                                 }
                             }
-                            if(revertSucceeded) {break;}
                         }
                     }
                 }
@@ -1587,6 +1586,8 @@ public class SubSequence extends SimpleElement {
             int numEndPos = 0;
             for (int iOption = 0; iOption < numOptions; iOption++) {
                 //will now look for all matching alternative sequence at the current end positions
+
+                FRAGS_AT_POSITION:
                 for (int iAlt = 0; iAlt < numAltFrags; iAlt++) {
                     SideFragment fragment = fragmentsAtPosition.get(iAlt);
                     long tempFragEnd;
@@ -1607,7 +1608,8 @@ public class SubSequence extends SimpleElement {
 
                         //Get the offset at which the fragment was actually found, and add to the stack as the last
                         // successful fragment match.
-                        long offSetFound = markerPos[iOption]- tempFragEnd;
+                        //long offSetFound = markerPos[iOption]- tempFragEnd;
+                        long offSetFound = markerPos[iOption] - tempFragEnd - fragment.getNumBytes() + 1;
                         FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                         fragmentHits.push(fragmentHit);
                     } else {
@@ -1616,8 +1618,6 @@ public class SubSequence extends SimpleElement {
                             //No match was found for the current fragment.  Check back through any earlier fragment matches
                             //to see if there are any further occurences of a fragment within its offset range, and if so,
                             //revert to that point and resume checking from there.
-
-                            boolean revertSucceeded = false;
 
                             while (!fragmentHits.empty()) {
 
@@ -1649,21 +1649,20 @@ public class SubSequence extends SimpleElement {
 
                                 if (tempFragEnd > -1L) {
                                     tempEndPos[numEndPos] = tempFragEnd + searchDirection;
-                                    numEndPos += 1;
-                                    iFragPos = lastGoodFragRef.getFragmentPosition();
-                                    iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
-                                    revertSucceeded = true;
-
                                     //Add the newly found fragment instance to the top of the stack and reset the loop
                                     // position to resume checking for further fragments from that point.
-                                    long offSetFound = markerPos[iOption] - tempFragEnd;
-                                    FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos - 1], offSetFound);
+                                    iFragPos = lastGoodFragRef.getFragmentPosition();
+                                    iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
+                                    //Get the offset of this new instance of the current fragment from the previous
+                                    //fragment, or main sequence if this is the first fragment.
+                                    long newOffSetFoundFromPreviousMatch = (lastGoodFragRef.getPositionInFile() - tempFragEnd) + lastGoodFragRef.getOffsetFound() +1;
+                                    FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos], newOffSetFoundFromPreviousMatch);
                                     fragmentHits.push(fragmentHit);
+                                    numEndPos += 1;
 
-                                    break;
+                                    break FRAGS_AT_POSITION;
                                 }
                             }
-                            if(revertSucceeded) {break;}
                         }
                     }
                 }

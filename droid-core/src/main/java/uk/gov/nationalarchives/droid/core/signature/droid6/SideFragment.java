@@ -114,6 +114,9 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
  * @author Martin Waller
  * @author Matt Palmer
  * @version 6.0.0
+ * @author Brian O Reilly
+ * @version 6.2.2
+ *
  */
 public class SideFragment extends SimpleElement implements Cloneable{
     
@@ -327,7 +330,6 @@ public class SideFragment extends SimpleElement implements Cloneable{
         return super.clone();
     }
 
-    //TODO: I think a shallow clone will be OK here but need to check...
     public SideFragment copy() {
         SideFragment copy = null;
         try {
