@@ -1170,7 +1170,11 @@ public class SubSequence extends SimpleElement {
         //now set up the array so that it can potentially hold all possibilities
         int totalNumOptions = offsetRange + 1;
 
-        Stack<FragmentHit> fragmentHits = new Stack<FragmentHit>();
+        Stack<FragmentHit> fragmentHits = null;
+
+        if(fragments.size() > 1) {
+            fragmentHits = new Stack<FragmentHit>();
+        }
 
         for (int iFragPos = 1; iFragPos <= numFragPos; iFragPos++) {
             totalNumOptions = totalNumOptions * this.getNumAlternativeFragments(leftFrag, iFragPos);
@@ -1213,9 +1217,11 @@ public class SubSequence extends SimpleElement {
 
                         //Get the offset at which the fragment was actually found, and add to the stack as the last
                         // successful fragment match.
-                        long offSetFound = tempFragEnd - markerPos[iOption];
-                        FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
-                        fragmentHits.push(fragmentHit);
+                        if (fragmentHits != null) {
+                            long offSetFound = tempFragEnd - markerPos[iOption] - fragment.getNumBytes() + 1;
+                            FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
+                            fragmentHits.push(fragmentHit);
+                        }
                     } else {
                         //Assuming we're on the final possible fragment for this position and none so far have matched...
                         if(iAlt == numAltFrags - 1 && numEndPos == 0) {
@@ -1223,19 +1229,23 @@ public class SubSequence extends SimpleElement {
                             //to see if there are any further occurences of a fragment within its offset range, and if so,
                             //revert to that point and resume checking from there.
 
-                            while (!fragmentHits.empty()) {
+                            while (fragmentHits != null &&  !fragmentHits.empty()) {
                                 FragmentHit lastGoodFragRef = fragmentHits.pop();
                                 //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
                                 // to test for a further match based on a new offset defined from the previous position.  We need to use a clone
                                 // because this class instance is used to check multiple files and the revised check only applies to this specific file.
-                                // alternatively we could copy the original list at the outset but this would potentially create additional objects
+                                // alternatively we could copy the original list at the outset but this would potentially cr
+                                // eate additional objects
                                 // on the heap unnecessarily and impact performance.
                                 fragment = fragments.get(lastGoodFragRef.getFragmentPosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
 
                                 //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
                                 //or right of the earlier match.
-                                fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) lastGoodFragRef.getOffsetFound(), 0));
-                                fragment.setMaxOffset(fragment.getMaxOffset() - (int) lastGoodFragRef.getOffsetFound());
+                                fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) lastGoodFragRef.getOffsetFound()  - fragment.getNumBytes(), 0));
+                                fragment.setMaxOffset(fragment.getMaxOffset() - (int) lastGoodFragRef.getOffsetFound()  - fragment.getNumBytes());
+                                if(fragment.getMaxOffset() < 0) {
+                                    break;
+                                }
 
                                 //Check for a further occurrence of the fragment beyond the last match position
                                 if (searchDirection == 1) {
@@ -1572,8 +1582,12 @@ public class SubSequence extends SimpleElement {
         // Search for the fragments:
         boolean seqNotFound = false;
 
-        //FragmentMonitor fragmentMonitor = new FragmentMonitor(fragments);
-        Stack<FragmentHit> fragmentHits = new Stack<FragmentHit>();
+        Stack<FragmentHit> fragmentHits = null;
+
+        if(fragments.size() > 1) {
+            fragmentHits = new Stack<FragmentHit>();
+        }
+
 
         for (int iFragPos = posLoopStart; (!seqNotFound) && (iFragPos <= numFragPos) && (iFragPos >= 1);
              // so for r-l left search i.e. -1, this is effectively iFragPos++...
@@ -1609,9 +1623,11 @@ public class SubSequence extends SimpleElement {
                         //Get the offset at which the fragment was actually found, and add to the stack as the last
                         // successful fragment match.
                         //long offSetFound = markerPos[iOption]- tempFragEnd;
-                        long offSetFound = markerPos[iOption] - tempFragEnd - fragment.getNumBytes() + 1;
-                        FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
-                        fragmentHits.push(fragmentHit);
+                        if (fragmentHits != null) {
+                            long offSetFound = markerPos[iOption] - tempFragEnd - fragment.getNumBytes() + 1;
+                            FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
+                            fragmentHits.push(fragmentHit);
+                        }
                     } else {
                         //Assuming we're on the final possible fragment for this position and none so far have matched...
                         if(iAlt == numAltFrags - 1  && numEndPos == 0) {
@@ -1619,7 +1635,7 @@ public class SubSequence extends SimpleElement {
                             //to see if there are any further occurences of a fragment within its offset range, and if so,
                             //revert to that point and resume checking from there.
 
-                            while (!fragmentHits.empty()) {
+                            while (fragmentHits != null && !fragmentHits.empty()) {
 
                                 FragmentHit lastGoodFragRef = fragmentHits.pop();
                                 //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
@@ -1631,8 +1647,11 @@ public class SubSequence extends SimpleElement {
 
                                 //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
                                 //or right of the earlier match.
-                                fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) lastGoodFragRef.getOffsetFound(), 0));
-                                fragment.setMaxOffset(fragment.getMaxOffset() - (int) lastGoodFragRef.getOffsetFound());
+                                fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) lastGoodFragRef.getOffsetFound()- fragment.getNumBytes(), 0));
+                                fragment.setMaxOffset(fragment.getMaxOffset() - (int) lastGoodFragRef.getOffsetFound() - fragment.getNumBytes());
+                                if(fragment.getMaxOffset() < 0) {
+                                    break;
+                                }
 
                                 //Check for a further occurrence of the fragment beyond the last match position
                                 if (searchDirection == 1) {
