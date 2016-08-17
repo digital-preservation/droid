@@ -110,6 +110,7 @@
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -303,6 +304,10 @@ public class SubSequence extends SimpleElement {
     public final int getNumAlternativeFragments(final boolean leftFrag, final int thePosition) {
         return leftFrag ? this.orderedLeftFragments.get(thePosition - 1).size()
                 : this.orderedRightFragments.get(thePosition - 1).size();
+    }
+
+    public final int getNumAlternativeFragments(final int thePosition, List<List<SideFragment>> orderedFragments) {
+            return orderedFragments.get(thePosition - 1).size();
     }
 
     /**
@@ -848,7 +853,7 @@ public class SubSequence extends SimpleElement {
                         // Check that any right fragments, behind our sequence, match.
                         if (hasRightFragments) {
 
-                            OffSetPosition fragmentFoundPos = new OffSetPosition();
+                            OffSetPositions fragmentFoundPos = new OffSetPositions();
                             final long[] rightFragmentPositions =
                                     bytePosForRightFragments(windowReader, matchPosition + matchLength,
                                             targetFile.getFileMarker(), 1, 0, orderedRightFragments, fragmentFoundPos);
@@ -959,34 +964,38 @@ public class SubSequence extends SimpleElement {
                         boolean matchFound = true;
                         if (hasLeftFragments) { // Check that any left fragments, behind our sequence match:
 
-                            OffSetPosition fragmentFoundPos = new OffSetPosition();
+                            OffSetPositions fragmentOffsetFoundPos = new OffSetPositions(orderedLeftFragments);
 
                             final long[] leftFragmentPositions =
                                     bytePosForLeftFragments(windowReader, targetFile.getFileMarker(),
-                                            matchPosition - matchLength, -1, 0, orderedLeftFragments, fragmentFoundPos);
+                                            matchPosition - matchLength, -1, 0, orderedLeftFragments, fragmentOffsetFoundPos);
                             matchFound = leftFragmentPositions.length > 0;
 
                             boolean leftMostFragmentPositionInvalid = true;
 
+
                             if (matchFound) {
-                                long currentLeftmostFragmentPosition = leftFragmentPositions[0];
+                                long currentNearestBOFLeftmostFragmentPosition = leftFragmentPositions[leftFragmentPositions.length -1];
+                                long currentFurthestBOFLeftmostFragmentPosition = leftFragmentPositions.length > 1 ? leftFragmentPositions[0] :currentNearestBOFLeftmostFragmentPosition;
 
                                 // Get the fragment option furthest to the left of the main sequence (and nearest the
                                 // start of the file).
                                 List<List<SideFragment>> furthestLeftFragmentOption =
                                         this.orderedLeftFragments.subList(orderedLeftFragments.size() -1,orderedLeftFragments.size());
 
+                                fragmentOffsetFoundPos = fragmentOffsetFoundPos.getLast();
+
                                 // BNO: If the fragment found is beyond the minimum offset, we already know its offset
                                 // is invalid.  If it is greater than the maximum offset however, we need to check for
                                 // any further occurrences that may be positioned before the maximum offset.
-                                if (currentLeftmostFragmentPosition >= this.minSeqOffset) {
-                                    leftMostFragmentPositionInvalid = ((currentLeftmostFragmentPosition > this.maxSeqOffset
+                                if (currentNearestBOFLeftmostFragmentPosition >= this.minSeqOffset) {
+                                    leftMostFragmentPositionInvalid = ((currentFurthestBOFLeftmostFragmentPosition > this.maxSeqOffset
                                     )
                                             && checkLeftFragmentForInvalidOffset(windowReader,
                                             0,
-                                            currentLeftmostFragmentPosition,
+                                            currentNearestBOFLeftmostFragmentPosition,
                                             this.maxSeqOffset,
-                                            this.minSeqOffset, furthestLeftFragmentOption, fragmentFoundPos));
+                                            this.minSeqOffset, furthestLeftFragmentOption, fragmentOffsetFoundPos));
                                 }
                             }
 //                            // check BOF max seq offset (bugfix)
@@ -1163,7 +1172,7 @@ public class SubSequence extends SimpleElement {
     //Similar to above, but user can pass in the list of fragments.
     private long[] bytePosForRightFragments(final WindowReader bytes, final long leftBytePos, final long rightBytePos,
                                             final int searchDirection, final int offsetRange,
-                                            List<List<SideFragment>> fragments, OffSetPosition offsetFoundPosition) {
+                                            List<List<SideFragment>> fragments, OffSetPositions offsetFoundPosition) {
         //CHECKSTYLE:ON
         final boolean leftFrag = false;
         long startPos = leftBytePos;
@@ -1586,7 +1595,7 @@ public class SubSequence extends SimpleElement {
     // the class member orderedLeftFragments
     private long[] bytePosForLeftFragments(final WindowReader bytes, final long leftBytePos, final long rightBytePos,
                                            final int searchDirection, final int offsetRange,
-                                           List<List<SideFragment>> fragments,  OffSetPosition offsetFoundPosition) {
+                                           List<List<SideFragment>> fragments,  OffSetPositions offsetFoundPositions) {
 
         final boolean leftFrag = true;
 
@@ -1606,7 +1615,8 @@ public class SubSequence extends SimpleElement {
         //TODO: can most of this calculation be done up front?
         int totalNumOptions = offsetRange + 1;
         for (int iFragPos = 1; iFragPos <= numFragPos; iFragPos++) {
-            totalNumOptions = totalNumOptions * this.getNumAlternativeFragments(leftFrag, iFragPos);
+            //totalNumOptions = totalNumOptions * this.getNumAlternativeFragments(leftFrag, iFragPos);
+            totalNumOptions = totalNumOptions * this.getNumAlternativeFragments(iFragPos, fragments);
         }
 
         //now set up the array so that it can potentially hold all possibilities
@@ -1619,14 +1629,8 @@ public class SubSequence extends SimpleElement {
         // Search for the fragments:
         boolean seqNotFound = false;
 
-        //Avoid the overhead of the stack unless we really need it - if we only have one fragment position, we
-        //just need to note the offset it was found at in case we need to look for further occurrences.
-        Stack<FragmentHit> fragmentHits = null;
-        long finalFragmentOffsetFoundPosition = 0L;
-
-        if(fragments.size() > 1) {
-            fragmentHits = new Stack<FragmentHit>();
-        }
+        //TODO: Posisbly avoid the overhead of the stack if there's only one fragment position and option?
+        Stack<FragmentHit> fragmentHits = new Stack<FragmentHit>();
 
         for (int iFragPos = posLoopStart; (!seqNotFound) && (iFragPos <= numFragPos) && (iFragPos >= 1);
              // so for r-l left search i.e. -1, this is effectively iFragPos++...
@@ -1648,10 +1652,11 @@ public class SubSequence extends SimpleElement {
                     // to take account of the previous occurrence in relation to the previous fragment position (or main
                     // sequence).  We'll need to clone the fragment in such cases as the adjustment applies only for
                     // the current file!
-                    if(offsetFoundPosition != null && offsetFoundPosition.getPosition() != -1) {
+                    if(offsetFoundPositions != null && offsetFoundPositions.getPosition(iOption, iAlt) != -1) {
                         fragment = fragment.copy();
-                        fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) offsetFoundPosition.getPosition() - fragment.getNumBytes(), 0));
-                        fragment.setMaxOffset(fragment.getMaxOffset() - (int) offsetFoundPosition.getPosition() - fragment.getNumBytes());
+                        long previousInstanceOffsetFoundPosition = offsetFoundPositions.getPosition(iOption, iAlt);
+                        fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) previousInstanceOffsetFoundPosition - fragment.getNumBytes(), 0));
+                        fragment.setMaxOffset(fragment.getMaxOffset() - (int) previousInstanceOffsetFoundPosition - fragment.getNumBytes());
                         if (fragment.getMaxOffset() < 0) {
                             continue;
                         }
@@ -1680,10 +1685,16 @@ public class SubSequence extends SimpleElement {
                             long offSetFound = markerPos[iOption] - tempFragEnd - fragment.getNumBytes() + 1;
                             FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                             fragmentHits.push(fragmentHit);
-                        } else {
-                            //TODO: Do we need to allow for multiple final fragment options with potentially different sizes?
-                            finalFragmentOffsetFoundPosition =  markerPos[iOption] - tempFragEnd - fragment.getNumBytes() + 1;
                         }
+
+                        /*else {
+                            //We have only one fragment position and are not usinng the stack
+                            //TODO: Do we need to allow for multiple final fragment options with potentially different sizes?
+                            long currentPos = markerPos[iOption] - tempFragEnd - fragment.getNumBytes() + 1;
+
+                            if()
+                            finalFragmentOffsetFoundPosition =
+                        }*/
                     } else {
                         //Assuming we're on the final possible fragment for this position and none so far have matched...
                         if(iAlt == numAltFrags - 1  && numEndPos == 0) {
@@ -1763,11 +1774,12 @@ public class SubSequence extends SimpleElement {
             }
         }
 
-        if (offsetFoundPosition != null) {
+        if (offsetFoundPositions != null) {
             if(fragmentHits !=null  && fragmentHits.size() > 0) {
-                offsetFoundPosition.setPosition(fragmentHits.get(fragmentHits.size() -1).getOffsetFound());
-            } else  {
-                offsetFoundPosition.setPosition(finalFragmentOffsetFoundPosition);
+                FragmentHit[] hitsByFilePosition = new FragmentHit[fragmentHits.size()];
+                fragmentHits.toArray(hitsByFilePosition);
+                Arrays.sort(hitsByFilePosition);
+                offsetFoundPositions.setPosition(hitsByFilePosition[0].getOffsetFound());
             }
         }
 
@@ -1824,14 +1836,11 @@ public class SubSequence extends SimpleElement {
     private boolean checkLeftFragmentForInvalidOffset(WindowReader windowReader, final long leftBytePos,
                                                       final long rightBytePos, final long maxOffset,
                                                       final long minOffset, List<List<SideFragment>>  leftFragOpt,
-                                                      OffSetPosition lastOffsetFoundPosition) {
+                                                      OffSetPositions lastOffsetFoundPosition) {
 
         long[] fragmentPositions;
         long currentRightBytePos = rightBytePos;
 
-
-        List<List<SideFragment>> furthestLeftFragment =
-                this.orderedLeftFragments.subList(orderedLeftFragments.size() -1,orderedLeftFragments.size());
 
         do {
             fragmentPositions =
@@ -1840,7 +1849,7 @@ public class SubSequence extends SimpleElement {
             if(fragmentPositions.length  > 0) {
                 currentRightBytePos = fragmentPositions[0] - 1;
             }
-        } while (fragmentPositions.length > 0 && fragmentPositions[0] > maxOffset);
+        } while (fragmentPositions.length > 0 && fragmentPositions[fragmentPositions.length -1] > maxOffset);
 
 
         if (fragmentPositions.length == 0 || fragmentPositions[0] > maxOffset || fragmentPositions[0] < minOffset) {
@@ -1854,7 +1863,7 @@ public class SubSequence extends SimpleElement {
     private boolean checkRightFragmentForInvalidOffset(WindowReader windowReader, final long leftBytePos,
                                                        final long rightBytePos, final long maxOffset,
                                                        final long minOffset, List<List<SideFragment>>  rightFragOpt,
-                                                            OffSetPosition lastOffsetFoundPosition) {
+                                                            OffSetPositions lastOffsetFoundPosition) {
         long[] fragmentPositions;
         long currentLeftBytePos = leftBytePos;
 
@@ -1886,7 +1895,7 @@ public class SubSequence extends SimpleElement {
     }
 
     // Helper class to hold history details of fragment matches for a given file.
-    private class FragmentHit {
+    private class FragmentHit implements Comparable<FragmentHit> {
 
         int fragmentIndex;
         int alternativeFragmentNumber;
@@ -1916,23 +1925,67 @@ public class SubSequence extends SimpleElement {
         public long getOffsetFound() {
             return offsetFound;
         }
+
+        @Override
+        public int compareTo(FragmentHit other) {
+
+            int result;
+
+            if(this.getPositionInFile() > other.getPositionInFile()) {
+                result = 1;
+            } else if (this.getPositionInFile() < other.getPositionInFile()) {
+                result = -1;
+            } else {
+                result = 0;
+            }
+            return result;
+        }
     }
 
-    private class OffSetPosition {
-        private long position = -1;
+    private class OffSetPositions {
+        private long[][] positions;
 
-        public OffSetPosition() {}
 
-        public OffSetPosition(long value) {
-            this.position = value;
+        public OffSetPositions() {}
+
+        public OffSetPositions(List<List<SideFragment>> fragments) {
+            this.positions = new long[fragments.size()][];
+            for (int i = 0; i < fragments.size(); i++) {
+                positions[i] = new long[fragments.get(i).size()];
+            }
         }
 
-        public void setPosition(long value) {
-            this.position = value;
+        public void setPosition(int fragPos, int altPos, long value) {
+            this.positions[fragPos][altPos] = value;
         }
 
-        public long getPosition() {
-            return position;
+        public long getPosition(int fragPos, int altPos) {
+            return this.positions[fragPos][altPos];
+        }
+
+        public long getFirstPositionInFile ()  {
+            if (positions == null) {
+                return -1;
+            }
+
+            long temp = Long.MAX_VALUE;
+            for(int i = 0;i<positions.length; i++) {
+                for(int j = 0;j<positions[i].length; j++) {
+                    if(positions[i][j] < temp) {
+                        temp = positions[i][j];
+                    }
+                }
+            }
+            return temp;
+
+        }
+
+        public OffSetPositions getLast() {
+
+            long[] last = positions[positions.length -1];
+            positions = new long[0][];
+            positions[0] = last;
+            return this;
         }
     }
 }
