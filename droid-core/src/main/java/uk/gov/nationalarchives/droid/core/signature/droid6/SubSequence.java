@@ -1631,8 +1631,12 @@ public class SubSequence extends SimpleElement {
         // Search for the fragments:
         boolean seqNotFound = false;
 
-        //TODO: Possisbly avoid the overhead of the stack if there's only one fragment position and option?
-        Stack<FragmentHit> fragmentHits = new Stack<FragmentHit>();
+        //Stack to store intermediate fragment hits.
+        //Avoid the overhead of the stack though if there's only one fragment option
+        Stack<FragmentHit> fragmentHits = null;
+        if(fragments.size() > 1) {
+            fragmentHits= new Stack<FragmentHit>();
+        }
 
         boolean recheckingFinalFragmentOption = finalOffsetFoundPositions != null && finalOffsetFoundPositions.getFirstPositionInFile() != -1;
 
@@ -1657,14 +1661,13 @@ public class SubSequence extends SimpleElement {
                     // sequence).  We'll need to clone the fragment in such cases as the adjustment applies only for
                     // the current file!
                     // If it's more than 1 we're not on a recheck of the final fragment...
-                    int previousInstanceOffsetFoundPosition = 0;
-                    long previousInstanceFilePosition = 0;
-                    if( recheckingFinalFragmentOption) {
+                    long previousInstanceOffsetFoundPosition = finalOffsetFoundPositions == null ? -1 : finalOffsetFoundPositions.getOffsetPosition(iAlt);
+                    long previousInstanceFilePosition = -1;
+                    if(finalOffsetFoundPositions != null && recheckingFinalFragmentOption && previousInstanceOffsetFoundPosition != -1) {
                         fragment = fragment.copy();
-                         previousInstanceOffsetFoundPosition = (int)finalOffsetFoundPositions.getOffsetPosition(iAlt);
-                        previousInstanceFilePosition = finalOffsetFoundPositions.getFilePosition(iAlt);
-                        fragment.setMinOffset(Math.max(fragment.getMinOffset() - previousInstanceOffsetFoundPosition - fragment.getNumBytes()  - (int)(previousInstanceFilePosition - rightBytePos), 0));
-                        fragment.setMaxOffset(fragment.getMaxOffset() - previousInstanceOffsetFoundPosition - fragment.getNumBytes() - (int)(previousInstanceFilePosition - rightBytePos)) ;
+                            previousInstanceFilePosition = finalOffsetFoundPositions.getFilePosition(iAlt);
+                            fragment.setMinOffset((int)Math.max(fragment.getMinOffset() - previousInstanceOffsetFoundPosition - fragment.getNumBytes()  - (previousInstanceFilePosition - rightBytePos) + 1, 0));
+                            fragment.setMaxOffset((int)(fragment.getMaxOffset() - previousInstanceOffsetFoundPosition - fragment.getNumBytes() - (previousInstanceFilePosition - rightBytePos) + 1)) ;
                         if (fragment.getMaxOffset() < 0) {
                             continue;
                         }
@@ -1696,8 +1699,7 @@ public class SubSequence extends SimpleElement {
                         //Get the offset at which the fragment was actually found, and add to the stack as the last
                         // successful fragment match.
                         //long offSetFound = markerPos[iOption]- tempFragEnd;
-                        if (fragmentHits != null) {
-
+                        if (fragmentHits != null && iFragPos < numFragPos) {
                             FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                             fragmentHits.push(fragmentHit);
                         }
@@ -1713,8 +1715,10 @@ public class SubSequence extends SimpleElement {
 
                         // Record the fragment positin to pass back, if we're on the final option
                         if(iFragPos == numFragPos) {
-                            //TODO: Long or INt??
-                            finalOffsetFoundPositions.setPosition(iAlt, (int)offSetFound, tempFragEnd);
+                            //TODO: Long or INT.  ?? Suggest longs throughout...
+                            if(finalOffsetFoundPositions != null) {
+                                finalOffsetFoundPositions.setPosition(iAlt, (int)offSetFound, tempFragEnd);
+                            }
                         }
                     } else {
                         //Assuming we're on the final possible fragment for this position and none so far have matched...
@@ -1795,13 +1799,13 @@ public class SubSequence extends SimpleElement {
             }
         }
 
-        if (finalOffsetFoundPositions != null) {
+/*        if (finalOffsetFoundPositions != null) {
             if(fragmentHits !=null  && fragmentHits.size() > 0) {
                 FragmentHit[] hitsByFilePosition = new FragmentHit[fragmentHits.size()];
                 fragmentHits.toArray(hitsByFilePosition);
                 Arrays.sort(hitsByFilePosition);
             }
-        }
+        }*/
 
         if (fragmentHits != null) {
             fragmentHits.clear();
