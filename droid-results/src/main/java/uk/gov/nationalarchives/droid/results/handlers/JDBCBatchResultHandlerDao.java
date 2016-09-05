@@ -184,12 +184,22 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     @Override
     public void init() {
 
-        // BNO: Need to allow for the possibility that we're dealing with a fresh DROID install (or first run
-        // after a new signature?). In which case, the call to setUpFormatsAndDatabaseWriter() will fail since
-        // the database schema objects (created by hibernate in previous versions of DROID) will not exist.  Moreover,
-        // we can't just create the schema then call setUpFormatsAndDatabaseWriter() because the format data won't
-        // have been populated. This is handled by ProfileContextLocator-generateNewDatabaseAndTemplates
-        //  -profileManager.initProfile, after this class has been instantiated by Spring...
+        // BNO: We need to allow for three possible scenarios:
+        // (i) we're dealing with a fresh DROID install. In which case, the
+        // call to setUpFormatsAndDatabaseWriter() would fail since the database schema objects (created by hibernate in
+        // previous versions of DROID) will not yet exist.  Moreover, we can't just create the schema then call
+        // setUpFormatsAndDatabaseWriter() because the format data won't have been populated. This is handled for 'normal'
+        // profile runs ((iii) below) via ProfileContextLocator-generateNewDatabaseAndTemplates -profileManager.initProfile, after
+        // this present classhas been instantiated by Spring. So in this scenario, we just want to create the schema
+        // here.
+        //(ii) A further twist occurs where we are not dealing with a fresh DROID install, but this is the first profile
+        // run after installing a new signature file (or reverting to an earlier pre-installed signature file in
+        // preferences).  In this scenario, the database objects will exist but the format-puid map will not have
+        // been populated by the spring initialisation - so the setUpFormatsAndDatabaseWriter call will not find any
+        // formats to load. See also comments under initialiseForNewTemplate()
+        // (iii) A 'normal' profile run, i.e. not a fresh install and we have alreday had one or more runs using the
+        // signature file currently specified in preferences.  In this case, the database schema will already exist and
+        //the Spring call to init() will populate the PUID-format mapping.
         synchronized (LOCKER) {
             if (!getIsFreshTemplate()) {
                 checkCreateUpperCaseColumns();
@@ -210,9 +220,18 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         }
 
         synchronized (LOCKER) {
-            // Check if already initialised - this will be the case if we;re starting from an existing template
-            // since then the formats and database writer will have been set up in the init() method
-            boolean alreadyInitialised = this.formats != null;
+
+            // Check if already initialised - this will be the case if we're starting from an existing template
+            // since then the formats and database writer will have been set up in the init() method.  However
+            // if this is the first profile run after installing a new template (but not a fresh DROID install)
+            // this.formats will be non-null but zer length since the form,ats will not have been loaded
+            // not have been loaded yet via Spring, in the earlier init() call, so we need to deal with this here.
+            // See also init() comments above.
+            //TODO: This really is all rather messy - but it solves the problem whereby the first profile run
+            //after installing a new signature file was always blank - because the format-puid mapping was not
+            // populated.  Need to review the whole new install/new sig file template management in
+            // ProfileContextLocator etc. at some point!
+            boolean alreadyInitialised = this.formats != null && this.formats.size() > 0;
             if (!alreadyInitialised) {
                 setUpFormatsAndDatabaseWriter();
             }
@@ -295,7 +314,14 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             puidFormatMap.put(format.getPuid(), format);
         }
         nodeIds = new AtomicLong(getMaxNodeId() + 1);
-        createAndRunDatabaseWriterThread();
+
+        //Formats will not have been populated if this method is called from init() and this is the first run for a new
+        // template (See comments under init(), scenario (ii)).  In which case, we delay creating the writer until the
+        // format-puid mapping is populated om the subsequent call from initialiseForNewTemplate().
+        if(formats.size() > 0 && this.writer == null) {
+            createAndRunDatabaseWriterThread();
+        }
+
     }
 
     //CHECKSTYLE:OFF        Nested tries and too many statements
