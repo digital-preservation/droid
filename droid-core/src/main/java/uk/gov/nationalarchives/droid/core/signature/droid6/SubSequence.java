@@ -119,6 +119,7 @@ import net.byteseek.matcher.sequence.SequenceMatcher;
 import net.byteseek.searcher.Searcher;
 import net.byteseek.searcher.bytes.ByteMatcherSearcher;
 import net.byteseek.searcher.sequence.horspool.HorspoolFinalFlagSearcher;
+import org.apache.commons.lang.ArrayUtils;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 import net.byteseek.compiler.CompileException;
@@ -180,6 +181,12 @@ public class SubSequence extends SimpleElement {
     private boolean hasRightFragments;
 
     private String subsequenceText;
+
+    private boolean[] orderedRightFragsHaveVariableOffset;
+    private boolean[] orderedLeftFragsHaveVariableOffset;
+    private boolean useLeftFragmentBackTrack;
+    private boolean useRightFragmentBackTrack;
+
 
     /**
      *
@@ -420,6 +427,14 @@ public class SubSequence extends SimpleElement {
             final int currentPosition = fragment.getPosition();
             orderedLeftFragments.get(currentPosition - 1).add(fragment);
         }
+
+        //For each fragment position, reccrd whether or not the constituent fragments include at least
+        // one fragment where the minimum and maximum offsets differ.
+        orderedLeftFragsHaveVariableOffset = new boolean[orderedLeftFragments.size()];
+        for(int i = 0; i< orderedLeftFragments.size(); i++) {
+            orderedLeftFragsHaveVariableOffset[i] = fragmentsContainVariableOffset(orderedLeftFragments.get(i));
+        }
+        useLeftFragmentBackTrack = orderedLeftFragments.size() > 1 &&  ArrayUtils.contains(orderedLeftFragsHaveVariableOffset, true);
     }
 
     private void buildOrderedRightFragments() {
@@ -445,6 +460,14 @@ public class SubSequence extends SimpleElement {
             final int currentPosition = fragment.getPosition();
             orderedRightFragments.get(currentPosition - 1).add(fragment);
         }
+
+        //For each fragment position, reccrd whether or not the constituent fragments include at least
+        // one fragment where the minimum and maximum offsets differ.
+        orderedRightFragsHaveVariableOffset = new boolean[orderedRightFragments.size()];
+        for(int i = 0; i< orderedRightFragments.size(); i++) {
+            orderedRightFragsHaveVariableOffset[i] = fragmentsContainVariableOffset(orderedRightFragments.get(i));
+        }
+        useRightFragmentBackTrack = orderedRightFragments.size() > 1 &&  ArrayUtils.contains(orderedRightFragsHaveVariableOffset, true);
     }
 
     /**
@@ -1047,6 +1070,8 @@ public class SubSequence extends SimpleElement {
             getLog().debug(e.getMessage());
         } catch (IOException e) {
             getLog().error(e.getMessage());
+        } catch (Exception e) {
+            getLog().debug(e.getMessage());
         }
         //CHECKSTYLE:ON
         return entireSequenceFound;
@@ -1215,7 +1240,7 @@ public class SubSequence extends SimpleElement {
         // reset and reused for subsequent files.- to avoid the overhead of repeatedly copying the fragments.
         // Need to evaluate memory usage etc.
         Stack<FragmentHit> fragmentHits = null;
-        if(fragments.size() > 1) {
+        if(this.useRightFragmentBackTrack) {
             fragmentHits= new Stack<FragmentHit>();
         }
 
@@ -1281,15 +1306,17 @@ public class SubSequence extends SimpleElement {
                         //Get the offset at which the fragment was actually found,
                         long offSetFound = tempFragEnd - markerPos[iOption] - fragment.getNumBytes() + 1;
 
-                         // and add to the stack as the last successful fragment match.  Unless we're on the last fragment
-                        // position, oin which case we won't need to roll back so no need t add.
-                        if (fragmentHits != null && iFragPos < numFragPos) {
+                        // ...and, if the current or following fragment position has a variable offset,  add to the
+                        // stack as the last successful fragment match and current backtrack target.
+                        if (fragmentHits != null && iFragPos < numFragPos  &&
+                                (this.orderedRightFragsHaveVariableOffset[iFragPos] || this.orderedRightFragsHaveVariableOffset[iFragPos -1])
+                                ) {
 
                             FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                             fragmentHits.push(fragmentHit);
                         }
 
-                        // Record the fragment positi0n to pass back, if we're on the final option
+                        // Record the fragment position to pass back, if we're on the final option
                         if(iFragPos == numFragPos) {
                             //TODO: Long or INT.  ?? Suggest longs throughout...
                             if(finalOffsetFoundPositions != null) {
@@ -1307,10 +1334,9 @@ public class SubSequence extends SimpleElement {
                                 FragmentHit lastGoodFragRef = fragmentHits.pop();
                                 //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
                                 // to test for a further match based on a new offset defined from the previous position.  We need to use a clone
-                                // because this class instance is used to check multiple files and the revised check only applies to this specific file.
-                                // alternatively we could copy the original list at the outset but this would potentially cr
-                                // eate additional objects
-                                // on the heap unnecessarily and impact performance.
+                                // because this class instance is used to check multiple files on different threads and the revised check only applies to this specific file.
+                                // alternatively we could copy the original list at the outset but this would potentially
+                                // create additional objects on the heap unnecessarily and impact performance.
                                 fragment = fragments.get(lastGoodFragRef.getFragmentPosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
 
                                 //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
@@ -1663,7 +1689,7 @@ public class SubSequence extends SimpleElement {
         // reset and reused for subsequent files.- to avoid the overhead of repeatedly copying the fragments.
         // Need to evaluate memory usage etc.
         Stack<FragmentHit> fragmentHits = null;
-        if(fragments.size() > 1) {
+        if(this.useLeftFragmentBackTrack) {
             fragmentHits= new Stack<FragmentHit>();
         }
 
@@ -1721,17 +1747,19 @@ public class SubSequence extends SimpleElement {
                         tempEndPos[numEndPos] = tempFragEnd + searchDirection;
                         numEndPos += 1;
 
+                        //Get the offset at which the fragment was actually found,
                         long    offSetFound = markerPos[iOption] - tempFragEnd - fragment.getNumBytes() + 1;
 
-                        //Get the offset at which the fragment was actually found, and add to the stack as the last
-                        // successful fragment match.
-                        //long offSetFound = markerPos[iOption]- tempFragEnd;
-                        if (fragmentHits != null && iFragPos < numFragPos) {
+                        // ...and, if the current or following fragment position has a variable offset,  add to the
+                        // stack as the last successful fragment match and current backtrack target.
+                        if (fragmentHits != null && iFragPos < numFragPos  &&
+                                (this.orderedLeftFragsHaveVariableOffset[iFragPos]  || this.orderedLeftFragsHaveVariableOffset[iFragPos -1])
+                                ) {
                             FragmentHit fragmentHit = new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos -1 ], offSetFound);
                             fragmentHits.push(fragmentHit);
                         }
 
-                        // Record the fragment position to pass back, if we're on the final option
+                        // Record the fragment position to pass back, if we're on the final fragment position
                         if(iFragPos == numFragPos) {
                             //TODO: Long or INT.  ?? Suggest longs throughout but this involves refactoring elsewhere...
                             if(finalOffsetFoundPositions != null) {
@@ -1750,13 +1778,13 @@ public class SubSequence extends SimpleElement {
                                 FragmentHit lastGoodFragRef = fragmentHits.pop();
                                 //Retrieve the fragment that corresponds to the last successful match.  Create a copy of this fragment which can then be used
                                 // to test for a further match based on a new offset defined from the previous position.  We need to use a clone
-                                // because this class instance is used to check multiple files and the revised check only applies to this specific file.
+                                // because this class instance is used to check multiple files on different threads and the revised check only applies to this specific file.
                                 // alternatively we could copy the original list at the outset but this would potentially create additional objects
                                 // on the heap unnecessarily and impact performance.
                                 fragment = fragments.get(lastGoodFragRef.getFragmentPosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
 
                                 //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
-                                //or right of the earlier match.
+                                //of the earlier match.
                                 fragment.setMinOffset(Math.max(fragment.getMinOffset() - (int) lastGoodFragRef.getOffsetFound()- fragment.getNumBytes(), 0));
                                 fragment.setMaxOffset(fragment.getMaxOffset() - (int) lastGoodFragRef.getOffsetFound() - fragment.getNumBytes());
                                 if(fragment.getMaxOffset() < 0) {
@@ -1961,6 +1989,20 @@ public class SubSequence extends SimpleElement {
         return rightFragments.get(theIndex);
     }
 
+    private boolean fragmentsContainVariableOffset(List<SideFragment> fragmentList) {
+
+        boolean hasAtLeastOneVariableOffset = false;
+
+            for(SideFragment fragment: fragmentList) {
+                if(fragment.getMinOffset() != fragment.getMaxOffset()) {
+                    hasAtLeastOneVariableOffset = true;
+                    break ;
+                }
+            }
+
+        return hasAtLeastOneVariableOffset;
+    }
+
     /**
      * Helper class to hold history details of fragment matches found whilst checking a file
      * for matches against the left and/or right fragments in a binary signature.
@@ -2108,5 +2150,6 @@ public class SubSequence extends SimpleElement {
             }
             return temp == Long.MAX_VALUE ? NO_OFFSET_POSITION_FOUND : temp;
         }
+
     }
 }
