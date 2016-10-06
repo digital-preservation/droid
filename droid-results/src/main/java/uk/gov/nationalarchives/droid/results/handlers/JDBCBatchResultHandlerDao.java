@@ -188,10 +188,10 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         // (i) we're dealing with a fresh DROID install. In which case, the
         // call to setUpFormatsAndDatabaseWriter() would fail since the database schema objects (created by hibernate in
         // previous versions of DROID) will not yet exist.  Moreover, we can't just create the schema then call
-        // setUpFormatsAndDatabaseWriter() because the format data won't have been populated. This is handled for 'normal'
-        // profile runs ((iii) below) via ProfileContextLocator-generateNewDatabaseAndTemplates -profileManager.initProfile, after
-        // this present classhas been instantiated by Spring. So in this scenario, we just want to create the schema
-        // here.
+        // setUpFormatsAndDatabaseWriter() because the format data won't have been populated. This is handled for
+        // 'normal' profile runs ((iii) below). via ProfileContextLocator-generateNewDatabaseAndTemplates
+        // -profileManager.initProfile, after this present class has been instantiated by Spring. So in this scenario,
+        // we just want to create the schema here.
         //(ii) A further twist occurs where we are not dealing with a fresh DROID install, but this is the first profile
         // run after installing a new signature file (or reverting to an earlier pre-installed signature file in
         // preferences).  In this scenario, the database objects will exist but the format-puid map will not have
@@ -318,7 +318,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         //Formats will not have been populated if this method is called from init() and this is the first run for a new
         // template (See comments under init(), scenario (ii)).  In which case, we delay creating the writer until the
         // format-puid mapping is populated om the subsequent call from initialiseForNewTemplate().
-        if(formats.size() > 0 && this.writer == null) {
+        if (formats.size() > 0 && this.writer == null) {
             createAndRunDatabaseWriterThread();
         }
 
