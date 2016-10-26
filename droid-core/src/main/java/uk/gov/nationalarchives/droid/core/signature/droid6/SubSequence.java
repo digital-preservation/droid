@@ -1299,6 +1299,7 @@ public class SubSequence extends SimpleElement {
                                 this.endBytePosForSeqFrag(bytes, markerPos[iOption],
                                         rightBytePos, false, searchDirection, iFragPos, fragment);
                     }
+
                     if (tempFragEnd > -1) { // a match has been found
                         tempEndPos[numEndPos] = tempFragEnd + searchDirection;
                         numEndPos += 1;
@@ -1325,7 +1326,7 @@ public class SubSequence extends SimpleElement {
                         }
                     } else {
                         //Assuming we're on the final possible fragment for this position and none so far have matched...
-                        if(iAlt == numAltFrags - 1 && numEndPos == 0) {
+                        if(iAlt == numAltFrags - 1 && numEndPos == 0 && iOption == numOptions -1) {
                             //No match was found for the current fragment.  Check back through any earlier fragment matches
                             //to see if there are any further occurences of a fragment within its offset range, and if so,
                             //revert to that point and resume checking from there.
