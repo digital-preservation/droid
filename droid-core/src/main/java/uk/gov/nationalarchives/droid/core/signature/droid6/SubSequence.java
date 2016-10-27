@@ -1338,7 +1338,7 @@ public class SubSequence extends SimpleElement {
                                 // because this class instance is used to check multiple files on different threads and the revised check only applies to this specific file.
                                 // alternatively we could copy the original list at the outset but this would potentially
                                 // create additional objects on the heap unnecessarily and impact performance.
-                                fragment = fragments.get(lastGoodFragRef.getFragmentPosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
+                                fragment = fragments.get(lastGoodFragRef.getFragmentSignaturePosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
 
                                 //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
                                 //or right of the earlier match.
@@ -1353,19 +1353,19 @@ public class SubSequence extends SimpleElement {
                                     tempFragEnd =
                                             this.endBytePosForSeqFrag(bytes, lastGoodFragRef.getPositionInFile(),
                                                     rightBytePos, false, searchDirection,
-                                                    lastGoodFragRef.getFragmentPosition(), fragment);
+                                                    lastGoodFragRef.getFragmentSignaturePosition(), fragment);
                                 } else {
                                     tempFragEnd =
                                             this.endBytePosForSeqFrag(bytes, leftBytePos,
                                                     lastGoodFragRef.getPositionInFile(), false, searchDirection,
-                                                    lastGoodFragRef.getFragmentPosition(), fragment);
+                                                    lastGoodFragRef.getFragmentSignaturePosition(), fragment);
                                 }
 
                                 if (tempFragEnd > -1L) {
                                     //Add the newly found fragment instance to the top of the stack and reset the loop
                                     // position to resume checking for further fragments from that point.
                                     tempEndPos[numEndPos] = tempFragEnd + searchDirection;
-                                    iFragPos = lastGoodFragRef.getFragmentPosition();
+                                    iFragPos = lastGoodFragRef.getFragmentSignaturePosition();
                                     iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
                                     //Get the offset of this new instance of the current fragment from the previous
                                     //fragment, or main sequence if this is the first fragment.
@@ -1782,7 +1782,7 @@ public class SubSequence extends SimpleElement {
                                 // because this class instance is used to check multiple files on different threads and the revised check only applies to this specific file.
                                 // alternatively we could copy the original list at the outset but this would potentially create additional objects
                                 // on the heap unnecessarily and impact performance.
-                                fragment = fragments.get(lastGoodFragRef.getFragmentPosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
+                                fragment = fragments.get(lastGoodFragRef.getFragmentSignaturePosition() - 1).get(lastGoodFragRef.getAlternativeFragmentNumber()).copy();
 
                                 //Adjust the offsets so that we now look for a further occurrence of the fragment to the left
                                 //of the earlier match.
@@ -1797,19 +1797,19 @@ public class SubSequence extends SimpleElement {
                                     tempFragEnd =
                                             this.endBytePosForSeqFrag(bytes, lastGoodFragRef.getPositionInFile(),
                                                     rightBytePos, true, searchDirection,
-                                                    lastGoodFragRef.getFragmentPosition(), fragment);
+                                                    lastGoodFragRef.getFragmentSignaturePosition(), fragment);
                                 } else {
                                     tempFragEnd =
                                             this.endBytePosForSeqFrag(bytes, leftBytePos,
                                                     lastGoodFragRef.getPositionInFile(), true, searchDirection,
-                                                    lastGoodFragRef.getFragmentPosition(), fragment);
+                                                    lastGoodFragRef.getFragmentSignaturePosition(), fragment);
                                 }
 
                                 if (tempFragEnd > -1L) {
                                     tempEndPos[numEndPos] = tempFragEnd + searchDirection;
                                     //Add the newly found fragment instance to the top of the stack and reset the loop
                                     // position to resume checking for further fragments from that point.
-                                    iFragPos = lastGoodFragRef.getFragmentPosition();
+                                    iFragPos = lastGoodFragRef.getFragmentSignaturePosition();
                                     iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
                                     //Get the offset of this new instance of the current fragment from the previous
                                     //fragment, or main sequence if this is the first fragment.
@@ -2010,25 +2010,31 @@ public class SubSequence extends SimpleElement {
      */
     private class FragmentHit implements Comparable<FragmentHit> {
 
-        int fragmentIndex;
+        int fragmentSignaturePosition;
         int alternativeFragmentNumber;
         long positionInFile;
         long offsetFound;
 
         /**
          *
-         * @param fragmentIndex  The index of the fragment position to whihc the fragment hit relates.
-         * @param alternativeFragmentNumber The index of the fragment within the List<SideFragment> in which it resides,
-         *                       in other words the index for the fragment option for a given fragment position.  Usually
-         *                       0 since mostly there is only one alternative fragment at any given position.
+         * @param fragmentSignaturePosition  The index of the fragment position in the signature to which the fragment
+         *                                   hit relates.
+         *                       This is 1 based and  correlates with the "Position" attribute in the RightFragment or
+         *                       LeftFragment element in the signature file.
+         * @param alternativeFragmentNumber The zero-base index of the fragment within the List<SideFragment> in which
+         *                       it resides, in other words the index for the fragment option for a given fragment
+         *                       position. Usually 0 since mostly there is only one alternative fragment at any given
+         *                       position.
          * @param positionInFile The position within the byte stream at which the fragment was found . i.e for a left
-         *                       fragment the offset of the first byte in the fragment from BOF, and for a right
-         *                       fragment, the offset of the   last byte in the fragment from BOF.
+         *                       fragment the 1-based offset of the first byte in the fragment from BOF, and for a right
+         *                       fragment, the 1-based offset of the   last byte in the fragment from BOF.  Note the use
+         *                       of 1 based offsets here rather than the normal 0 based offsets - this corresponds to
+         *                       the return value assigned to tempEndFrag from calls to endBytePosForSeqFrag
          * @param offsetFound The offset at which the fragment was found, relative to the previous fragment
-         *                    (or main sequence if fragmentIndex is zero)
+         *                    (or main sequence if fragmentSignaturePosition is zero)
          */
-        public FragmentHit(int fragmentIndex, int alternativeFragmentNumber, long positionInFile, long offsetFound) {
-            this.fragmentIndex = fragmentIndex;
+        public FragmentHit(int fragmentSignaturePosition, int alternativeFragmentNumber, long positionInFile, long offsetFound) {
+            this.fragmentSignaturePosition = fragmentSignaturePosition;
             this.alternativeFragmentNumber = alternativeFragmentNumber;
             this.positionInFile = positionInFile;
             this.offsetFound = offsetFound;
@@ -2039,8 +2045,8 @@ public class SubSequence extends SimpleElement {
         }
 
 
-        public int getFragmentPosition() {
-            return fragmentIndex;
+        public int getFragmentSignaturePosition() {
+            return fragmentSignaturePosition;
         }
 
         public long getPositionInFile() {

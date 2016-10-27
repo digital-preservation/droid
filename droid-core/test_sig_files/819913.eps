@@ -1,0 +1,229 @@
+%!PS-Adobe-1.0
+%%Title: variables.ps - varible point sources in WMAP 5 year data
+%%Creator: Ned Wright
+%%BoundingBox: 39 89 573 702
+%%DocumentFonts: Helvetica Symbol
+%%Pages: 1
+%%EndComments
+
+/NP {newpath} def /S {stroke} def /SD {setdash} def /SRGB {setrgbcolor} def
+/M {moveto} def /L {lineto} def /RM {rmoveto} def /RL {rlineto} def
+/CPT {currentpoint} def /CLP {closepath} def
+
+/Tmin 0.5 def /Tmax 5.5 def           % range of x-axis variable
+/mumin -1 def /mumax 4 def     % range of y-axis variable
+/xmax 160 def
+/ymax 562 def
+/lentick 7 def
+
+/box {NP M CPT 4 1 roll exch L CPT exch pop L
+	CPT pop exch L CLP} def
+/SW {stringwidth} def
+/rshw {dup SW pop -1 mul 0 RM show} def
+/cshw {dup SW pop -0.5 mul 0 RM show} def
+/subshow {CPT gsave translate 0.75 dup scale (A) SW pop dup
+	-0.1 mul exch -0.7 mul M
+	show CPT pop 0.75 mul grestore 0 RM} def
+/supshow {CPT gsave translate 0.75 dup scale 0 (A) SW pop M
+	show CPT pop 0.75 mul grestore 0 RM} def
+/tophys {mumin sub mumax mumin sub div ymax mul exch
+	Tmin sub Tmax Tmin sub div xmax mul exch} def
+/pmt {tophys M} def
+/plt {tophys L} def
+% usage: (20) 20 tlabel
+/tlabel {dup NP mumin pmt 0 lentick RL S
+	dup NP mumax pmt 0 lentick -1 mul RL S
+	mumin tophys 20 sub M cshw} def
+% usage (100) 100 mulabel
+/mulabel {dup NP Tmin exch pmt lentick 0 RL S
+          dup NP Tmax exch pmt lentick -1 mul 0 RL S
+          Tmin exch pmt -5 -5 RM rshw} def
+/xlabel	{xmax 2 div -43 M cshw} def
+/ylsetup {gsave -35 ymax 2 div translate 90 rotate 0 0 M
+        SW pop -2 div 0 RM} def
+/ylabel {dup ylsetup show grestore} def
+/tenxmulabel {dup NP Tmin exch pmt lentick 0 RL S
+          dup NP Tmax exch pmt lentick -1 mul 0 RL S
+          Tmin exch pmt -5 -5 RM dup SW pop 0.75 mul
+	  (10) SW pop add -1 mul 0 RM (10) show supshow} def
+/fssfnt {findfont exch scalefont setfont} def
+/Hel {/Helvetica fssfnt} def
+/Sym {/Symbol fssfnt} def
+
+/P {12 Hel 0 setgray /lfm exch def /C exch def 
+	1 lfm C add 0.05 add pmt show ( C=) show C 10 string cvs show} def
+/e 0.01 def
+/ebar {/f exch def /x exch def
+	x f e add log C add NP pmt -5 0 RM 10 0 RL -5 0 RM
+	x f e sub dup 0 le {pop 0.001} if log C add plt -5 0 RM 10 0 RL S
+	x f dup 0 le {pop 0.001} if log C add tophys NP 2 0 360 arc fill} def
+
+/B {/e exch def /f5 exch def 5 f5 ebar
+    /e exch def /f4 exch def 4 f4 ebar
+    /e exch def /f3 exch def 3 f3 ebar
+    /e exch def /f2 exch def 2 f2 ebar
+    /e exch def /f1 exch def 1 f1 ebar
+    NP 1 f1 log C add pmt 2 f2 log C add plt 3 f3 log C add plt
+	4 f4 log C add plt 5 f5 log C add plt S} def
+/Kcolor {1 0 0 SRGB} def
+/Kacolor {0.7 0.4 0 SRGB} def
+/Qcolor {0 0.7 0 SRGB} def
+/Vcolor {0 0.4 1 SRGB} def
+/Wcolor {0.5 0 1 SRGB} def
+/K {Kcolor B} def
+/A {Kacolor B} def
+/Q {Qcolor B} def
+/V {Vcolor B} def
+/W {Wcolor B} def
+
+%%Page: 1 1
+
+gsave 92 133 translate 2 setlinewidth
+
+% fort.2
+gsave 0 0 xmax ymax box clip
+% data goes here
+(J1256-0547) 2.4 1.40 P
+23.53 0.12 14.30 0.12 13.85 0.12 15.74 0.13 15.89 0.13 K
+24.78 0.20 15.05 0.21 14.04 0.20 17.43 0.21 17.60 0.21 A
+24.94 0.24 14.66 0.24 14.42 0.24 17.82 0.24 17.93 0.23 Q
+23.84 0.42 13.03 0.42 13.32 0.43 16.67 0.42 17.29 0.42 V
+18.10 0.77 10.00 0.78 10.68 0.78 13.38 0.78 14.03 0.78 W
+(J2258-2757) 2.2 0.99 P
+ 9.29 0.12  5.90 0.12  4.56 0.12  3.09 0.12  2.34 0.12 K
+ 9.75 0.19  5.76 0.19  4.48 0.19  2.92 0.20  2.43 0.20 A
+ 9.66 0.22  5.74 0.22  4.81 0.22  2.31 0.23  1.95 0.23 Q
+ 8.48 0.41  5.10 0.41  4.07 0.41  2.11 0.40  2.86 0.40 V
+ 6.53 0.76  3.84 0.77  4.21 0.76  1.44 0.77  1.24 0.77 W
+(J1337-1257) 1.3 0.90 P
+ 6.08 0.13  4.31 0.13  7.10 0.13  6.47 0.13  3.87 0.13 K
+ 6.59 0.21  4.37 0.21  7.97 0.21  6.64 0.21  4.27 0.21 A
+ 6.90 0.24  4.37 0.24  7.98 0.24  6.90 0.24  4.07 0.24 Q
+ 6.53 0.42  3.79 0.42  7.86 0.42  6.46 0.43  3.65 0.42 V
+ 4.03 0.75  3.52 0.74  5.82 0.75  3.94 0.76  3.41 0.75 W
+(J0721+7122) 1.0 0.51 P
+ 0.80 0.10  1.64 0.10  2.81 0.10  1.63 0.10  0.97 0.10 K
+ 0.78 0.15  2.10 0.15  3.23 0.15  2.10 0.15  0.94 0.15 A
+ 1.08 0.17  2.40 0.17  3.10 0.17  2.09 0.17  0.90 0.17 Q
+ 0.37 0.29  2.32 0.29  3.26 0.29  2.17 0.30  1.27 0.29 V
+ 0.75 0.48  1.31 0.47  2.78 0.47  1.46 0.47  1.50 0.47 W
+(J1159+2914) -0.4 0.59 P
+ 3.35 0.11  1.76 0.11  0.79 0.11  1.38 0.12  2.55 0.11 K
+ 3.47 0.19  1.92 0.19  0.93 0.19  1.79 0.19  2.71 0.19 A
+ 3.33 0.22  1.85 0.22  1.08 0.22  1.75 0.22  2.73 0.21 Q
+ 2.86 0.40  1.50 0.40  1.01 0.40  1.33 0.40  2.94 0.39 V
+ 2.51 0.70  1.21 0.70  0.55 0.70  2.49 0.69  3.91 0.69 W
+
+3 0.5 pmt 16 Hel (K Ka Q V W) SW pop -2 div 0 RM
+Kcolor (K ) show
+Kacolor (Ka ) show
+Qcolor (Q ) show
+Vcolor (V ) show
+Wcolor (W) show
+
+grestore % stop clipping
+0 0 xmax ymax box S
+16 Hel
+1 1 5 {dup 10 string cvs exch tlabel} for
+-1 1 4 {dup 10 string cvs exch mulabel} for
+24 Hel
+(log(Fn [Jy])+C) ylsetup (log\(F) show 24 Sym (n) subshow
+24 Hel ( [Jy]\)+C) show grestore
+/lentick 4 def
+-8 2 38 {10 div () exch mulabel} for
+/lentick 7 def
+(Year) xlabel
+
+% fort.3
+xmax 0 translate
+gsave 0 0 xmax ymax box clip
+% data goes here
+(J1229+0203) 2.3 1.38 P
+20.05 0.12 21.03 0.12 16.15 0.12 16.57 0.12 23.33 0.12 K
+18.45 0.21 19.35 0.20 14.10 0.21 14.91 0.20 24.08 0.20 A
+17.27 0.24 17.64 0.24 12.32 0.24 13.46 0.24 22.43 0.24 Q
+14.69 0.42 14.93 0.43 10.19 0.42 11.96 0.43 21.04 0.43 V
+ 9.65 0.76 10.70 0.74  6.68 0.75  9.72 0.75 15.21 0.75 W
+(J0538-4405) 1.9 0.93 P
+ 7.55 0.10  4.92 0.10  3.58 0.10  6.07 0.10  4.81 0.10 K
+ 8.22 0.17  5.26 0.17  3.59 0.17  6.84 0.17  5.28 0.17 A
+ 8.54 0.19  5.06 0.19  3.49 0.19  7.25 0.19  5.14 0.19 Q
+ 7.60 0.33  4.81 0.33  2.86 0.33  6.68 0.33  4.92 0.33 V
+ 6.90 0.59  3.61 0.59  3.28 0.58  5.76 0.59  3.83 0.58 W
+(J2056-4716) 1.3 0.64 P
+ 1.23 0.11  1.41 0.11  2.31 0.11  3.56 0.11  2.20 0.11 K
+ 1.05 0.18  1.30 0.18  3.39 0.18  4.38 0.18  2.47 0.18 A
+ 0.97 0.21  1.55 0.21  3.21 0.21  4.04 0.21  2.28 0.21 Q
+ 1.01 0.38  1.54 0.37  3.00 0.37  3.55 0.38  2.28 0.38 V
+ 1.51 0.72  0.94 0.71  3.44 0.72  2.07 0.72  0.95 0.72 W
+(J1635+3807) 0.2 0.76 P
+ 4.48 0.10  4.24 0.10  3.76 0.10  3.46 0.10  2.73 0.10 K
+ 5.63 0.17  4.60 0.17  4.41 0.17  3.68 0.17  3.09 0.17 A
+ 5.80 0.17  5.08 0.17  3.71 0.17  3.36 0.18  2.80 0.17 Q
+ 5.77 0.33  4.31 0.32  3.05 0.33  3.21 0.33  2.46 0.33 V
+ 4.32 0.61  3.99 0.61  3.15 0.61  2.31 0.61  1.98 0.61 W
+(J2232+1144) -0.8 0.84 P
+ 3.33 0.12  3.21 0.12  2.39 0.12  2.91 0.12  4.58 0.12 K
+ 3.45 0.20  3.76 0.20  2.91 0.20  3.41 0.20  5.75 0.20 A
+ 3.79 0.23  3.58 0.23  2.99 0.23  3.90 0.23  5.98 0.23 Q
+ 3.87 0.41  4.00 0.41  3.14 0.41  4.12 0.41  6.96 0.40 V
+ 3.58 0.68  4.31 0.70  1.91 0.69  4.25 0.68  5.75 0.69 W
+grestore % stop clipping
+0 0 xmax ymax box S
+16 Hel
+1 1 5 {dup 10 string cvs exch tlabel} for
+-1 1 4 {() exch mulabel} for
+24 Hel
+(Year) xlabel
+/lentick 4 def
+-8 2 38 {10 div () exch mulabel} for
+/lentick 7 def
+
+% fort.4
+xmax 0 translate
+gsave 0 0 xmax ymax box clip
+% data goes here
+(J0423-0120) 2.6 1.09 P
+ 7.15 0.13 10.86 0.13 11.51 0.13  6.00 0.13  3.63 0.13 K
+ 7.21 0.21 11.65 0.21 12.37 0.21  5.83 0.22  3.68 0.21 A
+ 6.86 0.28 11.90 0.27 10.92 0.27  5.62 0.28  3.64 0.27 Q
+ 6.60 0.43 10.88 0.43 10.04 0.43  4.75 0.44  2.73 0.44 V
+ 3.68 0.79  7.45 0.79  7.85 0.78  2.54 0.82  3.15 0.78 W
+(J0403-3604) 2.1 0.76 P
+ 2.59 0.10  4.23 0.10  4.94 0.10  3.27 0.10  1.37 0.10 K
+ 2.96 0.16  5.11 0.16  5.82 0.16  3.31 0.16  1.47 0.16 A
+ 2.49 0.17  5.38 0.17  5.64 0.17  3.10 0.17  1.27 0.17 Q
+ 2.47 0.32  4.95 0.31  5.32 0.32  2.88 0.31  1.14 0.32 V
+ 2.48 0.56  3.95 0.56  4.55 0.56  2.55 0.56  1.48 0.57 W
+(J0635-7517) 1.4 0.70 P
+ 4.47 0.08  5.02 0.08  4.39 0.08  3.72 0.08  3.00 0.08 K
+ 4.44 0.13  4.78 0.13  3.97 0.13  3.31 0.13  2.82 0.13 A
+ 3.98 0.15  4.63 0.15  3.44 0.15  3.10 0.15  2.74 0.15 Q
+ 3.66 0.27  3.09 0.27  2.50 0.27  1.82 0.28  2.08 0.27 V
+ 2.25 0.52  2.40 0.52  2.78 0.52  2.21 0.53  1.89 0.52 W
+(J1642+3948) 0.3 0.88 P
+ 7.60 0.10  6.37 0.10  6.31 0.10  5.35 0.10  5.44 0.10 K
+ 7.28 0.17  6.24 0.17  5.95 0.17  5.12 0.17  5.18 0.17 A
+ 6.70 0.18  5.69 0.18  5.45 0.18  4.55 0.18  4.80 0.18 Q
+ 5.79 0.34  4.91 0.34  4.82 0.34  4.21 0.34  4.49 0.34 V
+ 5.17 0.58  3.38 0.59  3.33 0.59  3.32 0.59  3.76 0.58 W
+(J0440-4333) 0 0.57 P
+ 3.34 0.12  3.18 0.12  2.37 0.12  1.76 0.12  1.38 0.12 K
+ 3.69 0.19  2.85 0.19  2.38 0.19  1.43 0.19  1.39 0.19 A
+ 3.36 0.18  2.90 0.18  2.10 0.18  1.24 0.18  1.18 0.17 Q
+ 2.51 0.34  2.15 0.34  1.84 0.35  1.17 0.35  0.73 0.34 V
+ 2.30 0.66  1.13 0.65  0.80 0.66  0.92 0.67  0.11 0.66 W
+grestore % stop clipping
+0 0 xmax ymax box S
+16 Hel
+1 1 5 {dup 10 string cvs exch tlabel} for
+-1 1 4 {() exch mulabel} for
+24 Hel
+(Year) xlabel
+/lentick 4 def
+-8 2 38 {10 div () exch mulabel} for
+/lentick 7 def
+
+grestore showpage
+%%EOF
+

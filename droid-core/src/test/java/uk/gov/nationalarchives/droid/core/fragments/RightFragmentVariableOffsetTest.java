@@ -190,9 +190,9 @@ public class RightFragmentVariableOffsetTest {
     }
 
     /*
-    ** In this test, the sequence is defined with a variable offset range from EOF, and there are 2 right fragments.
-    * The second fragment occurs once, at an valid in relation to the first fragment.  However, it lies beyond the
-    * maximum offset from EOF for the sequence as a whole.  Therefore, no match shoudl be identified - unlike in
+    * In this test, the sequence is defined with a variable offset range from EOF, and there are 2 right fragments.
+    * The second fragment occurs once, at an offset valid in relation to the first fragment.  However, it lies beyond
+    * the maximum offset from EOF for the sequence as a whole.  Therefore, no match shoudl be identified - unlike in
     * previous versions of DROID. (This test will fail in DROID 6.2.1).
     */
     @Test
@@ -230,6 +230,65 @@ public class RightFragmentVariableOffsetTest {
             IdentificationResult result = iter.next();
             assertEquals(expectedPuid, result.getPuid());
         }
+    }
 
+    /*
+    * Similar to above but more subtle.  A real world example though raised in Github - see
+    * https://github.com/digital-preservation/droid/issues/104.
+    * There's only one right fragment position but four options with differing sizes.
+    * Two of the options consist of a single byte, the other two are two bytes - but use only the bytes in the single
+    * byte options.
+    * The right fragment must be at an offset of 0 from the main sequence 2525454F46, and also at an offset of 0
+    * from EOF. On the first pass, the match fails because the rightmost fragment found does not meet the
+    * requirement to be at an offset of 0 from EOF.  So we need to go and check for  further occurrence. The test
+    * signature file has two signatures that are identical except that the second one has an additional right
+    * right fragment option. The 1st signatures has the options 0D, 0A and 0D0A.  This means that the final bytes
+    * of the file must match one of the following:
+    * - 2525454F460D
+    * - 2525454F460A
+    * - 2525454F460D0A
+    * The second signature has the additional fragment option 0A0A.  So the final bytes of the file can now also match:
+    * - 2525454F460A0A
+    * The test file ends with these bytes so should match the 2nd signature but not the first.
+    * These test signatures are based on signature ID 190 in the current signature file (v.88).  The current live
+    * version does not have the additional option so would fail with this DROID build. However, it would pass with
+    * earlier versions of DROID up to 6.2.1 because they do not correctly enforce the EOF offset for the sequence
+    * as a whole - and ths match against 2525454F460A even though the EOF offset for this pattern  is 1, not zero.
+    */
+    @Test
+    public void testEdsFile() throws Exception {
+
+        final String sigFile1 = "DROID_SignatureFile_x-fmt-91-only.xml";
+        final String fileToScan = "819913.eps";
+        final String expectedPuid = "x-fmt/91a";
+
+        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        droid.setSignatureFile(TESTAREA + sigFile1);
+        try {
+            droid.init();
+        } catch (SignatureParseException x) {
+            assertEquals("Can't parse signature file", x.getMessage());
+        }
+        File file = new File(TESTAREA + fileToScan);
+        assertTrue(file.exists());
+        URI resourceUri = file.toURI();
+
+        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), fileToScan);
+        RequestIdentifier identifier = new RequestIdentifier(resourceUri);
+        identifier.setParentId(1L);
+
+        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        request.open(file);
+
+        IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
+        List<IdentificationResult> results = resultsCollection.getResults();
+
+        assertEquals(1, results.size());
+
+        Iterator<IdentificationResult> iter = results.iterator();
+        while (iter.hasNext()) {
+            IdentificationResult result = iter.next();
+            assertEquals(expectedPuid, result.getPuid());
+        }
     }
 }
