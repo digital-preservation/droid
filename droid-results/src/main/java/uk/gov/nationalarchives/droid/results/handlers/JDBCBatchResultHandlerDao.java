@@ -232,6 +232,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             // populated.  Need to review the whole new install/new sig file template management in
             // ProfileContextLocator etc. at some point!
             boolean alreadyInitialised = this.formats != null && this.formats.size() > 0;
+            
             if (!alreadyInitialised) {
                 setUpFormatsAndDatabaseWriter();
             }
