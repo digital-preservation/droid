@@ -180,7 +180,6 @@ public class NoProfileRunCommand implements DroidCommand {
             RequestIdentifier identifier = new RequestIdentifier(uri);
             identifier.setParentId(1L);
             
-            InputStream in = null;
             IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
             try {
                 request.open(file);
@@ -194,12 +193,10 @@ public class NoProfileRunCommand implements DroidCommand {
             } catch (IOException e) {
                 throw new CommandExecutionException(e);
             } finally {
-                if (in != null) {
+                if (request != null) {
                     try {
                     	request.close();
                     	file=null;
-                    	in.close();
-                        
                     } catch (IOException e) {
                         throw new CommandExecutionException(e);
                     }
