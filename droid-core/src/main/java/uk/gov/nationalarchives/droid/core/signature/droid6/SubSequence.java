@@ -787,7 +787,6 @@ public class SubSequence extends SimpleElement {
         }
 
         // Write out the anchor sequence:
-        //regularExpression.append(ByteSequence.bytesToString(prettyPrint, byteSequence));
         regularExpression.append(matcher.toRegularExpression(prettyPrint));
 
         // Write out the right fragments:
@@ -939,13 +938,17 @@ public class SubSequence extends SimpleElement {
                                 // is invalid.  If it is greater than the maximum offset however, we need to check for
                                 // any further occurrences that may be positioned at or before the maximum offset, but
                                 // not before the minimum offset.
-                                if((currentFurthestEOFRightmostFragmentPosition) <= (lastBytePositionInFile - this.minSeqOffset)) {
+                                //If the current subsequence is not the first or only one in the sequence, we need
+                                //to allow for any earlier subsequences, since offsets are relative to the previous
+                                // subsequence.  If it's the first or only seqeunce, the offsets will be relative to BOF.
+
+                                if((currentFurthestEOFRightmostFragmentPosition) <= (position - this.minSeqOffset)) {
                                     rightMostFragmentPositionInvalid =
-                                            currentNearestEOFRightmostFragmentPosition < (lastBytePositionInFile - this.maxSeqOffset)
+                                            currentNearestEOFRightmostFragmentPosition < (position - this.maxSeqOffset)
                                             &&
                                             checkRightFragmentForInvalidOffset(
                                             windowReader, currentNearestEOFRightmostFragmentPosition + 1,
-                                            lastBytePositionInFile, this.maxSeqOffset, this.minSeqOffset,
+                                            position, this.maxSeqOffset, this.minSeqOffset,
                                             furthestRightFragmentOption, finalOptionOffSetFoundPositions);
                                 }
                             }
@@ -988,8 +991,7 @@ public class SubSequence extends SimpleElement {
                     endSearchWindow  = maxBytesToScan;
                 }
 
-                // If we're starting outside a possible match positionInFile,
-                // don't continue:
+                // If we're starting outside a possible match positionInFile, don't continue:
                 if (startSearchWindow < firstPossibleBytePosition) {
                     return false;
                 }
@@ -1051,14 +1053,21 @@ public class SubSequence extends SimpleElement {
                                 // is invalid.  If it is greater than the maximum offset however, we need to check for
                                 // any further occurrences that may be positioned at or before the maximum offset, but
                                 // not before the minimum offset.
-                                if (currentNearestBOFLeftmostFragmentPosition >= this.minSeqOffset) {
-                                    leftMostFragmentPositionInvalid = ((currentFurthestBOFLeftmostFragmentPosition > this.maxSeqOffset
+
+                                //If the current subsequence is not the first or only one in the sequence, we need
+                                //to allow for any earlier subsequences, since offsets are relative to the previous
+                                // subsequence.  If it's the first or only seqeunce, the offsets will be relative to BOF.
+                                long minOffsetFromBOF = this.minSeqOffset + position;
+                                long maxOffsetFromBOF = this.maxSeqOffset + position;
+
+                                if (currentNearestBOFLeftmostFragmentPosition >= minOffsetFromBOF) {
+                                    leftMostFragmentPositionInvalid = ((currentFurthestBOFLeftmostFragmentPosition > maxOffsetFromBOF
                                     )
                                             && checkLeftFragmentForInvalidOffset(windowReader,
                                             0,
                                             currentNearestBOFLeftmostFragmentPosition,
-                                            this.maxSeqOffset,
-                                            this.minSeqOffset, furthestLeftFragmentOption, finalOptionOffSetFoundPositions));
+                                            maxOffsetFromBOF,
+                                            minOffsetFromBOF, furthestLeftFragmentOption, finalOptionOffSetFoundPositions));
                                 }
                             }
 //                            // check BOF max seq offset (bugfix)
@@ -1074,8 +1083,15 @@ public class SubSequence extends SimpleElement {
                                         bytePosForRightFragments(windowReader, matchPosition + 1,
                                                 lastBytePositionInFile, 1, 0, orderedRightFragments, null);
                                 matchFound = rightFragmentPositions.length > 0;
-
                                 // check EOF max seq offset (bugfix)
+                                // TODO: rightFragmentPositions[0] here = last byte of rightmost fragment offset from BOF
+                                // So  rightFragmentPositions[0] > position - this.maxSeqOffset would be more correct
+                                // here than rightFragmentPositions[0]> this.maxSeqOffset.
+                                // But this would still not be entirely right as we would also need to subtract
+                                // the number of bytes in the fragment - and how would we know which fragment was found
+                                // if there was more than one option of different sizes?
+                                // But not sure if this  matters anyway possibly the statement never evaluates to true:
+                                // - would eofSubsequence = true ever occur if searching forwards?
                                 if (matchFound
                                         && eofSubsequence
                                         && rightFragmentPositions[0] > this.maxSeqOffset) {
@@ -1106,7 +1122,6 @@ public class SubSequence extends SimpleElement {
         //CHECKSTYLE:ON
         return entireSequenceFound;
     }
-
 
     /**
      * Searches for the right fragments of this subsequence between the given byte
@@ -1446,11 +1461,8 @@ public class SubSequence extends SimpleElement {
                     ? lastStartPosInFile1 : lastStartPosInFile2;
         }
 
-        //keep searching until either the sequence fragment is found
-        // or until the end of the search area has been reached.
-        //compare sequence with file contents directly at fileMarker positionInFile
-        //boolean subSeqFound = false;
-        //while ((!subSeqFound) && ((searchDirectionL) * (lastStartPosInFile - startPosInFile) >= 0L)) {
+        //keep searching until either the sequence fragment is found or until the end of the search area has been
+        // reached. Compare sequence with file contents directly at fileMarker positionInFile
         while (searchDirectionL * (lastStartPosInFile - startPosInFile) >= 0L) {
             try {
                 if (fragment.matchesBytes(bytes, startPosInFile - byteOffset)) {
@@ -1748,7 +1760,6 @@ public class SubSequence extends SimpleElement {
         }
 
         return outArray;
-
     }
 
     // The following two  methods exist to cater for situations where the first (or only) left or right fragment in a
