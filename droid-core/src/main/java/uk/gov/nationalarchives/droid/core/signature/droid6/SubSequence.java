@@ -1056,7 +1056,7 @@ public class SubSequence extends SimpleElement {
 
                                 //If the current subsequence is not the first or only one in the sequence, we need
                                 //to allow for any earlier subsequences, since offsets are relative to the previous
-                                // subsequence.  If it's the first or only seqeunce, the offsets will be relative to BOF.
+                                // subsequence.  If it's the first or only sequence, the offsets will be relative to BOF.
                                 long minOffsetFromBOF = this.minSeqOffset + position;
                                 long maxOffsetFromBOF = this.maxSeqOffset + position;
 
