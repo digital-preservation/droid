@@ -1,3 +1,15 @@
+Version 6.3
+* Fixes for fragment offset issues:
+* (i) now checks that furthest left or right fragment is valid in terms of the overall sequence offset from BOF or EOF.
+* e.g. see https://github.com/digital-preservation/droid/issues/104.
+* (ii) now includes 'backtracking' behaviour where an intermediate fragment led to a failed identification because
+* a subsequent fragment offset does not match. The code now checks for a further valid occurrence of the intermediate
+* fragment that led to the failure, and if one is found, resumes checking for subsequent fragments from that point.
+* e.g. see https://github.com/digital-preservation/droid/issues/82
+* Fix for issue whereby there were sometimes no identifications found for the first profile run after installing
+* a new signature file (https://github.com/digital-preservation/droid/issues/97)
+
+
 Version 6.2.1 Minor bugfix release
 * Byteseek version now 2.0.3 (includes bug fix for matching a single byte that can be one of three or more values)
 * Bug Fix: Profile export now prints zeros where a file has no identifications
