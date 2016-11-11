@@ -11,11 +11,11 @@ x-fmt-384-signature-id-717.mov
 x-fmt-384-signature-id-760.mov
 x-fmt-384-signature-id-780.mov
 //x-fmt-412-signature-id-199.jar //Not identified in GUI.  Test identifies as x-fmt/412 but normal no profile run as x-fmt/263
-//fmt-292-signature-id-309.odp      -Not identified in GUI but name-based identification in test
-//fmt-292-signature-id-310.odp      -Not identified in GUI but name-based identification in test
-//fmt-293-signature-id-311.odp      -Not identified in GUI but name-based identification in test
-//fmt-294-signature-id-312.ods      -Not identified in GUI but name-based identification in test
-//fmt-294-signature-id-313.ods      -Not identified in GUI but name-based identification in test
-//fmt-295-signature-id-314.ods      -Not identified in GUI but name-based identification in test
-//fmt-482-signature-id-906.ibooks   -Not identified in GUI but name-based identification in test
-//fmt-483-signature-id-905.epub     -Not identified in GUI but name-based identification in test
+//fmt-292-signature-id-309.odp      -Not identified in GUI but name-based identification in test.
+//fmt-292-signature-id-310.odp      -Not identified in GUI but name-based identification in test.
+//fmt-293-signature-id-311.odp      -Not identified in GUI but name-based identification in test.
+//fmt-294-signature-id-312.ods      -Not identified in GUI but name-based identification in test.
+//fmt-294-signature-id-313.ods      -Not identified in GUI but name-based identification in test.
+//fmt-295-signature-id-314.ods      -Not identified in GUI but name-based identification in test.
+//fmt-482-signature-id-906.ibooks   -Not identified in GUI but name-based identification in test.
+//fmt-483-signature-id-905.epub     -Not identified in GUI but name-based identification in test.
