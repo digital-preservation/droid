@@ -61,6 +61,7 @@ public class NodeRenderer extends DefaultOutlineCellRenderer {
     private Icon folderResourceTypeNotDoneIcon;
     private Icon folderResourceTypeNotFoundIcon;
     private Icon folderResourceTypeAccessDeniedIcon;
+    private Icon folderResourceTypeEmptyIcon;
     private Icon folderResourceTypeErrorIcon;
     private Icon containerResourceTypeIcon;
     private Icon containerResourceTypeNotDoneIcon;
@@ -91,7 +92,8 @@ public class NodeRenderer extends DefaultOutlineCellRenderer {
         folderResourceTypeNotFoundIcon = getIconResource("folderResourceType_NOTFOUND");
         containerResourceTypeNotFoundIcon = getIconResource("containerResourceType_NOTFOUND");
         fileResourceTypeNotFoundIcon = getIconResource("fileResourceType_NOTFOUND");
-        
+
+        folderResourceTypeEmptyIcon = getIconResource("folderResourceType_EMPTY");
         folderResourceTypeAccessDeniedIcon = getIconResource("folderResourceType_ACCESSDENIED");
         containerResourceTypeAccessDeniedIcon = getIconResource("containerResourceType_ACCESSDENIED");
         fileResourceTypeAccessDeniedIcon = getIconResource("fileResourceType_ACCESSDENIED");
@@ -170,6 +172,9 @@ public class NodeRenderer extends DefaultOutlineCellRenderer {
                             break;
                         case ACCESS_DENIED:
                             icon = folderResourceTypeAccessDeniedIcon;
+                            break;
+                        case EMPTY:
+                            icon = folderResourceTypeEmptyIcon;
                             break;
                         case NOT_FOUND:
                             icon = folderResourceTypeNotFoundIcon;

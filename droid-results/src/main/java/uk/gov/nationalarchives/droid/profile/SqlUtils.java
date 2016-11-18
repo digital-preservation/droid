@@ -215,7 +215,7 @@ public final class SqlUtils {
         final Long lastModifiedTime             = lastModifiedDate == null ? null : lastModifiedDate.getTime();
         final String name                    = nodeResults.getString(NAME_COL_INDEX);
         final Integer nodeS                  = getNullableInteger(NODE_STATUS_COL_INDEX, nodeResults);
-        final NodeStatus nodeStatus          = nodeS == null ? null : NodeStatus.values()[nodeS];
+        NodeStatus nodeStatus          = nodeS == null ? null : NodeStatus.values()[nodeS];
         final Integer rType                  = getNullableInteger(RESOURCE_TYPE_COL_INDEX, nodeResults);
         final ResourceType resourceType      = rType == null ? null : ResourceType.values()[rType];
         final Long size                      = getNullableLong(SIZE_COL_INDEX, nodeResults);
@@ -225,6 +225,11 @@ public final class SqlUtils {
         final String uriString               = nodeResults.getString(URI_COL_INDEX);
         final URI uri;
 
+        boolean isEmpty = nodeResults.getBoolean("EMPTY_DIR");
+        if(isEmpty && nodeStatus == NodeStatus.DONE) {
+            nodeStatus = NodeStatus.EMPTY;
+        }
+
         try {
             uri = new URI(uriString);
         } catch (URISyntaxException e) {
@@ -232,7 +237,7 @@ public final class SqlUtils {
                     + "] could not be converted into a URI", e);
         }
         int filterStatus = 1;
-        if (getNumberOfColumns(nodeResults) > URI_COL_INDEX) {
+        if (getNumberOfColumns(nodeResults) > URI_COL_INDEX + 1) {
             filterStatus = nodeResults.getInt(FILTER_STATUS_COL_INDEX);
         }
 

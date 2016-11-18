@@ -61,7 +61,16 @@ public class JDBCProfileDao implements ProfileDao {
     private static final String INSERT_FORMAT = "INSERT INTO FORMAT (PUID,MIME_TYPE,NAME,VERSION) VALUES (?,?,?,?)";
     private static final String SELECT_MAIN = "SELECT NODE_ID, EXTENSION_MISMATCH, FINISHED_TIMESTAMP, IDENTIFICATION_COUNT, EXTENSION, HASH, "
                                                    + "IDENTIFICATION_METHOD, LAST_MODIFIED_DATE, NAME, NODE_STATUS, RESOURCE_TYPE, FILE_SIZE, "
-                                                   + "PARENT_ID, PREFIX, PREFIX_PLUS_ONE, TEXT_ENCODING, URI FROM PROFILE_RESOURCE_NODE ";
+                                                   + "PARENT_ID, PREFIX, PREFIX_PLUS_ONE, TEXT_ENCODING, URI, " +
+            "CASE \n" +
+            "\t\t  WHEN NODES.RESOURCE_TYPE = 0 THEN \n" +
+            "\t\t  \tCASE\n" +
+            "\t\t  \t\twhen NOT EXISTS(SELECT NODE2.PARENT_ID FROM PROFILE_RESOURCE_NODE NODE2 WHERE NODE2.PARENT_ID = NODES.NODE_ID) then true\n" +
+            "\t\t  \t\telse false\n" +
+            "\t\t  \tEND\n" +
+            "\t\t  ELSE false\n" +
+            "\t\tEND as EMPTY_DIR " +
+            "FROM PROFILE_RESOURCE_NODE NODES ";
     private static final String FIND_CHILD_NODES         = SELECT_MAIN + "WHERE PARENT_ID=?";
     private static final String FIND_TOP_LEVEL_CHILDREN  = SELECT_MAIN +  "WHERE PARENT_ID IS NULL";
     private static final String FIND_CHILDREN            = "SELECT ID.NODE_ID, ID.PUID FROM IDENTIFICATION AS ID "
