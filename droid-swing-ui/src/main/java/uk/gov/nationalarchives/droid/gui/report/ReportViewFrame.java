@@ -39,12 +39,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -127,10 +131,17 @@ public class ReportViewFrame extends JFrame {
         
         this.reportFile = reportXml;
         this.xslTransforms = transforms;
-        
+
+        // BNO, Nov 2016: Now we use a specific decoder and  InputStreamReader to force UTF-8 encoding
+        // (previously we used a FileWriter uses OS default encoding - this could lead to XML that was non UTF8
+        // despite the declaration saying it was, and a SAXParseException when processing the report)
+        CharsetDecoder decoder = Charset.forName("UTF-8").newDecoder();
+        FileInputStream inputStream = null;
         StringWriter out;
         try {
-            Reader sourceReader = new FileReader(reportXml);
+            //Reader sourceReader = new FileReader(reportXml);
+            inputStream = new FileInputStream(reportXml);
+            Reader sourceReader = new InputStreamReader(inputStream, decoder);
             out = new StringWriter();
             reportTransformer.transformUsingXsl(sourceReader, "Web page.html.xsl", out);
         } catch (FileNotFoundException e) {
@@ -139,6 +150,14 @@ public class ReportViewFrame extends JFrame {
         } catch (TransformerException e) {
             log.error(e);
             throw new RuntimeException(e);
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         try {

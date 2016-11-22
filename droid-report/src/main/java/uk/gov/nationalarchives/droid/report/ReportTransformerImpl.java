@@ -34,12 +34,17 @@ package uk.gov.nationalarchives.droid.report;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -114,7 +119,9 @@ public class ReportTransformerImpl implements ReportTransformer {
     
     private void transform(Reader sourceReader, InputStream xsl, Writer out) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Source transformSource = new StreamSource(xsl);
+        //Source transformSource = new StreamSource(xsl);
+        CharsetDecoder decoder = Charset.forName("UTF-8").newDecoder();
+        Source transformSource = new StreamSource(new InputStreamReader(xsl, decoder));
         Transformer transformer = transformerFactory.newTransformer(transformSource);
         Source source = new StreamSource(sourceReader);
         Result result = new StreamResult(out);
@@ -148,7 +155,9 @@ public class ReportTransformerImpl implements ReportTransformer {
             tmpXhtml.deleteOnExit();
         
             try {
-                FileWriter buffer = new FileWriter(tmpXhtml);
+                CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+                //FileWriter buffer = new FileWriter(tmpXhtml);
+                OutputStreamWriter buffer = new OutputStreamWriter(new FileOutputStream(tmpXhtml), encoder);
                 transformUsingXsl(in, transformLocation, buffer);
                 buffer.close();
                 
