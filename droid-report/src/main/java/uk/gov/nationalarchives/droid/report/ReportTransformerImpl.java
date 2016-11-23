@@ -69,6 +69,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
  */
 public class ReportTransformerImpl implements ReportTransformer {
 
+    private static final String UTF8 = "UTF-8";
+
     private DroidGlobalConfig globalConfig;
     private Log log = LogFactory.getLog(this.getClass());
     
@@ -120,7 +122,7 @@ public class ReportTransformerImpl implements ReportTransformer {
     private void transform(Reader sourceReader, InputStream xsl, Writer out) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         //Source transformSource = new StreamSource(xsl);
-        CharsetDecoder decoder = Charset.forName("UTF-8").newDecoder();
+        CharsetDecoder decoder = Charset.forName(UTF8).newDecoder();
         Source transformSource = new StreamSource(new InputStreamReader(xsl, decoder));
         Transformer transformer = transformerFactory.newTransformer(transformSource);
         Source source = new StreamSource(sourceReader);
@@ -155,7 +157,7 @@ public class ReportTransformerImpl implements ReportTransformer {
             tmpXhtml.deleteOnExit();
         
             try {
-                CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+                CharsetEncoder encoder = Charset.forName(UTF8).newEncoder();
                 //FileWriter buffer = new FileWriter(tmpXhtml);
                 OutputStreamWriter buffer = new OutputStreamWriter(new FileOutputStream(tmpXhtml), encoder);
                 transformUsingXsl(in, transformLocation, buffer);

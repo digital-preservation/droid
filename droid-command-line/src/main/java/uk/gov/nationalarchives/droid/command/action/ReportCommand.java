@@ -32,11 +32,13 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +77,8 @@ public class ReportCommand implements DroidCommand {
     private static final String DROID_REPORT_XML = "DROID Report XML";
     private static final String PDF_FORMAT = "PDF";
     private static final String XHTML_TRANSFORM_LOCATION = "Web page.html.xsl";
-    
+    private static final String UTF8 = "UTF-8";
+
     private String[] profiles;
     private ReportManager reportManager;
     private ProfileManager profileManager;
@@ -160,7 +163,8 @@ public class ReportCommand implements DroidCommand {
             // BNO, Nov 2016: Now we use a specific encoder and  OutputStreamWriter to force UTF-8 encoding
             // (previously we used a FileWriter uses OS default encoding - this could lead to XML that was non UTF8
             // despite the declaration saying it was, and a SAXParseException when processing the report)
-            CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+            CharsetEncoder encoder = Charset.forName(UTF8).newEncoder();
+            CharsetDecoder decoder = Charset.forName(UTF8).newDecoder();
             OutputStreamWriter tempReport = null;
 
             if (DROID_REPORT_XML.equalsIgnoreCase(reportOutputType)) {
@@ -173,7 +177,9 @@ public class ReportCommand implements DroidCommand {
                 tempReport = new OutputStreamWriter(new FileOutputStream(tempFile), encoder);
                 reportXmlWriter.writeReport(report, tempReport);
                 tempReport.close();
-                FileReader reader = new FileReader(tempFile);
+                //FileReader reader = new FileReader(tempFile);
+                encoder.reset();
+                InputStreamReader reader = new InputStreamReader(new FileInputStream(tempFile), decoder);
                 try {
                     if (PDF_FORMAT.equalsIgnoreCase(reportOutputType)) {
                         FileOutputStream out = new FileOutputStream(destination);
@@ -191,7 +197,9 @@ public class ReportCommand implements DroidCommand {
                         }
                     }
                 } finally {
-                    reader.close();
+                    if (reader != null) {
+                        reader.close();
+                    }
                     if (tempReport != null) {
                         tempReport.close();
                     }

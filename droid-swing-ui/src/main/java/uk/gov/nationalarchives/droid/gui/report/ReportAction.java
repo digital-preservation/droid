@@ -35,8 +35,11 @@ package uk.gov.nationalarchives.droid.gui.report;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -143,11 +146,14 @@ public class ReportAction extends SwingWorker<Void, Integer> {
         request.setReportSpec(reportSpec);
         request.setProfileIds(profileIds);
 
-        FileWriter fileWriter = null;
+        //FileWriter fileWriter = null;
+        OutputStreamWriter fileWriter = null;
         try {
+            CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
             targetFile = File.createTempFile("report~", ".xml", config.getTempDir());
             Report report = reportManager.generateReport(request, null, backgroundProgressObserver);
-            fileWriter = new FileWriter(targetFile);
+            //fileWriter = new FileWriter(targetFile);
+            fileWriter = new OutputStreamWriter(new FileOutputStream(targetFile), encoder);
             reportXmlWriter.writeReport(report, fileWriter);
         } catch (IOException e) {
             log.error(e);

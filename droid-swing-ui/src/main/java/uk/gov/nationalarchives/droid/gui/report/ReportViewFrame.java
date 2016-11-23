@@ -81,6 +81,7 @@ import uk.gov.nationalarchives.droid.report.ReportTransformer;
 public class ReportViewFrame extends JFrame {
 //CHECKSTYLE:ON
     private static final long serialVersionUID = 9212026527186933180L;
+    private static final String UTF8 = "UTF-8";
     
     private ReportTransformer reportTransformer;
     private ExportReportAction exportAction;
@@ -135,7 +136,7 @@ public class ReportViewFrame extends JFrame {
         // BNO, Nov 2016: Now we use a specific decoder and  InputStreamReader to force UTF-8 encoding
         // (previously we used a FileWriter uses OS default encoding - this could lead to XML that was non UTF8
         // despite the declaration saying it was, and a SAXParseException when processing the report)
-        CharsetDecoder decoder = Charset.forName("UTF-8").newDecoder();
+        CharsetDecoder decoder = Charset.forName(UTF8).newDecoder();
         FileInputStream inputStream = null;
         StringWriter out;
         try {
@@ -161,7 +162,8 @@ public class ReportViewFrame extends JFrame {
         }
 
         try {
-            InputStream in = new ByteArrayInputStream(out.getBuffer().toString().getBytes());
+            InputStream in = new ByteArrayInputStream(out.getBuffer().toString().getBytes(UTF8));
+
             xHTMLPanel1.setDocument(in, "");
             // CHECKSTYLE:OFF - XHTMLPanel API declares Exception - FFS..
         } catch (Exception e) {
