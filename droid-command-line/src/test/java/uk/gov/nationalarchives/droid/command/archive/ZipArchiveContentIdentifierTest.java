@@ -59,9 +59,9 @@ public class ZipArchiveContentIdentifierTest {
     private ZipArchiveContentIdentifier zipArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V84.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V88.xml";
     private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20160121.xml";
+            "src/test/resources/signatures/container-signature-20160927.xml";
     private String zipFile =
             "src/test/resources/testfiles/test.zip";
     

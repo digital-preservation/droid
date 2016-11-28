@@ -582,7 +582,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V84.xml",
+            "src/test/resources/signatures/DROID_SignatureFile_V88.xml",
             "--extension-list",
             "xml", "txt", "jp2", "jpg"
         };
@@ -617,7 +617,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V84.xml"
+            "src/test/resources/signatures/DROID_SignatureFile_V88.xml"
         };
 
         //NB: BNO - added this call as otherwise an error occurs when trying instantiate the log
