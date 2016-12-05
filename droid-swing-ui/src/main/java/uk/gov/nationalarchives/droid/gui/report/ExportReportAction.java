@@ -34,11 +34,15 @@ package uk.gov.nationalarchives.droid.gui.report;
 import java.awt.Window;
 import java.io.File;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +66,9 @@ import uk.gov.nationalarchives.droid.report.ReportTransformer;
 public class ExportReportAction {
 
     private static final String XHTML_TRANSFORM_LOCATION = "Web page.html.xsl";
+    private static final String UTF8 = "UTF-8";
+    private static final CharsetDecoder DECODER = Charset.forName(UTF8).newDecoder();
+    private static final CharsetEncoder ENCODER = Charset.forName(UTF8).newEncoder();
 
     private ReportTransformer reportTransformer;
     private SaveAsFileChooser exportFileChooser;
@@ -220,8 +227,9 @@ public class ExportReportAction {
                 File target = action.exportFileChooser.getSelectedFile();
                 logReportExport(target.getAbsolutePath());
                 FileOutputStream out = new FileOutputStream(target);
-                FileReader reader = new FileReader(action.droidReportXml);
+                InputStreamReader reader = new InputStreamReader(new FileInputStream(action.droidReportXml), DECODER);
                 action.reportTransformer.transformToPdf(reader, XHTML_TRANSFORM_LOCATION, out);
+                DECODER.reset();
             } catch (FileNotFoundException e) {
                 log.error(e);
                 throw new RuntimeException(e);
@@ -242,14 +250,17 @@ public class ExportReportAction {
             File target = action.exportFileChooser.getSelectedFile();
             logReportExport(target.getAbsolutePath());
             try {
-                FileWriter writer = new FileWriter(target);
-                FileReader reader = new FileReader(action.droidReportXml);
-                
+                //FileWriter writer = new FileWriter(target);
+                OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(target), ENCODER);
+                InputStreamReader reader = new InputStreamReader(new FileInputStream(action.droidReportXml), DECODER);
+
                 try {
                     IOUtils.copy(reader, writer);
                 } finally {
                     reader.close();
                     writer.close();
+                    ENCODER.reset();
+                    DECODER.reset();
                 }
             } catch (IOException e) {
                 log.error(e);
@@ -269,13 +280,15 @@ public class ExportReportAction {
             try {
                 File target = action.exportFileChooser.getSelectedFile();
                 logReportExport(target.getAbsolutePath());
-                FileWriter out = new FileWriter(target);
-                FileReader reader = new FileReader(action.droidReportXml);
+                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(target), ENCODER);
+                InputStreamReader reader = new InputStreamReader(new FileInputStream(action.droidReportXml), DECODER);
                 try {
                     action.reportTransformer.transformUsingXsl(reader, xslFile, out);
                 } finally {
                     out.close();
                     reader.close();
+                    ENCODER.reset();
+                    DECODER.reset();
                 }
             } catch (TransformerException e) {
                 log.error(e);
