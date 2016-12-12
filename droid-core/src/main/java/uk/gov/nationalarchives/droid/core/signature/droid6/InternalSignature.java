@@ -239,8 +239,8 @@ public class InternalSignature extends SimpleElement {
         return String.format("Signature [id:%d] will always scan up to maximum bytes.  ", intSigID)
                 +
                 (
-                    (formatDescriptions.length() > 0)
-                            ?
+                        (formatDescriptions.length() > 0)
+                                ?
                                 String.format("Matches formats: %s",  formatDescriptions) : ""
                 );
     }
