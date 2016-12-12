@@ -41,6 +41,7 @@
   <xsl:template match="Report">
     <html>
 	   <head>
+		 <meta charset="utf-8"/>
   		 <style type="text/css">
 			table.logo { width: 100%; padding: 0px; border: none; border: 1px solid #789DB3;}
 			table.logo td { border: none; background-color: #F4F4F4; vertical-align: middle; text-align: left;padding: 4px; }
