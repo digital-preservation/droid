@@ -251,6 +251,7 @@
                         <exclude>LICENSE</exclude>
                         <exclude>src-header.txt</exclude>
                         <exclude>**/test_sig_files/**</exclude>
+                        <exclude>**/test-skeletons/**</exclude>
                         <exclude>**/DROID_SignatureFile_*.xml</exclude>
                         <exclude>**/container-signature*.xml</exclude>
                         <exclude>**/tmp/**</exclude>
