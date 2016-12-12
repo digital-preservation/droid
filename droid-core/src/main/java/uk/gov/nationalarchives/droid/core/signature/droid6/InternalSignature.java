@@ -234,8 +234,15 @@ public class InternalSignature extends SimpleElement {
     //      file formats to binary signatures used internally in container signatures.
     //      Therefore, you get a warning about the sig, but no information about the format it relates to.
     private String getPerformanceWarningMessage() {
-        return String.format("Signature [id:%d] will always scan up to maximum bytes.  "
-                + "Matches formats: %s", intSigID, getFileFormatDescriptions());
+
+        String formatDescriptions = getFileFormatDescriptions();
+        return String.format("Signature [id:%d] will always scan up to maximum bytes.  ", intSigID)
+                +
+                (
+                        (formatDescriptions.length() > 0)
+                                ?
+                                String.format("Matches formats: %s",  formatDescriptions) : ""
+                );
     }
     
     /**

@@ -1,4 +1,5 @@
 Version 6.3
+* Signature updates: Signature file release 88, Container file 20160927
 * Fixes for fragment offset issues:
 * (i) now checks that furthest left or right fragment is valid in terms of the overall sequence offset from BOF or EOF.
 * e.g. see https://github.com/digital-preservation/droid/issues/104.
