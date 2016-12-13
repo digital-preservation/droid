@@ -6,3 +6,8 @@
 *.ear
 
 /*/target/
+
+.idea/**
+/*/.idea/**
+*.iml
+/*/*.iml
