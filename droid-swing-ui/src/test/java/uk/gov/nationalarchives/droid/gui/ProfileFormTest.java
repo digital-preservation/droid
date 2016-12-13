@@ -41,6 +41,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.profile.ProfileEventListener;
@@ -51,6 +52,7 @@ import uk.gov.nationalarchives.droid.profile.ProfileManager;
  * @author rflitcroft
  *
  */
+@Ignore("TODO not able to run Headless Mode")
 public class ProfileFormTest {
 
     @Test
