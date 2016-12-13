@@ -46,6 +46,7 @@ import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.ProfileSelectionDialog;
 
+@Ignore("TODO not able to run Headless Mode")
 public class SaveAllProfilesDialogTest {
 
     @Test
