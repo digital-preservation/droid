@@ -117,14 +117,15 @@ public class ContainerFile {
      * @return the compiled binarySignature
      */
     public InternalSignatureCollection getCompiledBinarySignatures() {
-        if (signatures == null && binarySignatures != null && !compileError) {
+        if (signatures == null && binarySignatures != null && !compileError) {      //TODO potential race condition
             BinarySignatureXMLParser<InternalSignatureCollection> signatureParser =
                 new BinarySignatureXMLParser<InternalSignatureCollection>();
             Element element = binarySignatures.getElement();
             try {
-                signatures = signatureParser.fromXmlElement(element);
+                InternalSignatureCollection signatures = signatureParser.fromXmlElement(element);
                 signatures.prepareForUse();
                 signatures.sortSignatures(new InternalSignatureComparator());
+                this.signatures = signatures;
             } catch (SignatureParseException e) {
                 compileError = true;
                 signatures = null;

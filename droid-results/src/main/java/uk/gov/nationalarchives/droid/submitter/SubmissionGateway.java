@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -105,7 +106,7 @@ public class SubmissionGateway implements AsynchDroid {
     private final JobCounter jobCounter = new JobCounter();
     private ReplaySubmitter replaySubmitter;
     
-    private Set<IdentificationRequest> requests = new HashSet<IdentificationRequest>();
+    private Set<IdentificationRequest> requests = Collections.synchronizedSet( new HashSet<IdentificationRequest>());
 
     
     /**
