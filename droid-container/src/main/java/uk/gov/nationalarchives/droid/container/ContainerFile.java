@@ -122,18 +122,18 @@ public class ContainerFile {
                 new BinarySignatureXMLParser<InternalSignatureCollection>();
             Element element = binarySignatures.getElement();
             try {
-                InternalSignatureCollection signatures = signatureParser.fromXmlElement(element);
-                signatures.prepareForUse();
-                signatures.sortSignatures(new InternalSignatureComparator());
-                this.signatures = signatures;
+                InternalSignatureCollection signaturesCollection = signatureParser.fromXmlElement(element);
+                signaturesCollection.prepareForUse();
+                signaturesCollection.sortSignatures(new InternalSignatureComparator());
+                this.signatures = signaturesCollection;
             } catch (SignatureParseException e) {
                 compileError = true;
-                signatures = null;
+                this.signatures = null;
                 String message = String.format("Could not parse signature:\n%s", element.getTextContent());
                 log.warn(message);
             }
         }
-        return signatures;
+        return this.signatures;
     }
     
 }

@@ -106,7 +106,7 @@ public class SubmissionGateway implements AsynchDroid {
     private final JobCounter jobCounter = new JobCounter();
     private ReplaySubmitter replaySubmitter;
     
-    private Set<IdentificationRequest> requests = Collections.synchronizedSet( new HashSet<IdentificationRequest>());
+    private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
     
     /**
