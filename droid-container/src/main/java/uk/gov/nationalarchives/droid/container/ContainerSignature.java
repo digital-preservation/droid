@@ -82,15 +82,14 @@ public class ContainerSignature {
      * @return the files
      */
     public Map<String, ContainerFile> getFiles() {
-        if (filesMap == null) {
-            filesMap = new HashMap<String, ContainerFile>();
-            final int numFiles = files.size();
-            for (int i = 0; i < numFiles; i++) {
-                final ContainerFile file = files.get(i);
-                filesMap.put(file.getPath(), file);
+        if (this.filesMap == null) {
+            Map<String, ContainerFile> containerFileMap = new HashMap<String, ContainerFile>();
+            for (ContainerFile file : files) {
+                containerFileMap.put(file.getPath(), file);
             }
+            this.filesMap = containerFileMap;
         }
-        return filesMap;
+        return this.filesMap;
     }
     
     /**
