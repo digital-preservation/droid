@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,12 +48,20 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
+import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
+
+import static uk.gov.nationalarchives.droid.profile.SqlUtils.*;
 
 /**
  * Created by Matt Palmer on 19/06/15.
@@ -91,12 +101,15 @@ public class JDBCProfileDao implements ProfileDao {
     private DataSource datasource;
     private ResultHandlerDao resultHandlerDao;
 
+    private JdbcTemplate jdbcTemplate;
+
     /**
      *
      * @param datasource The SQL datasource to use.
      */
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
+        this.jdbcTemplate = new JdbcTemplate(datasource);
     }
 
     /**
@@ -138,29 +151,91 @@ public class JDBCProfileDao implements ProfileDao {
         }
     }
 
+
+    private static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER = new RowMapper<ProfileResourceNode>() {
+        @Override
+        public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+            URI uri;
+            String uriString = rs.getString("URI");
+            try {
+                uri = new URI(uriString);
+
+            } catch (URISyntaxException e) {
+                throw new SQLException("The URI for the node obtained from the database: [" + uriString
+                        + "] could not be converted into a URI", e);
+            }
+
+            NodeMetaData nodeMetaData = new NodeMetaData();
+            ProfileResourceNode node = new ProfileResourceNode(uri);
+            node.setMetaData(nodeMetaData);
+
+            node.setId(rs.getLong("NODE_ID"));
+            node.setExtensionMismatch(rs.getBoolean("EXTENSION_MISMATCH"));
+            node.setFinished(getNullableTimestamp("FINISHED_TIMESTAMP", rs));
+
+                //getNullableLong("IDENTIFICATION_COUNT", rs); not used in original
+
+            nodeMetaData.setExtension(getNullableString("EXTENSION",rs));
+            nodeMetaData.setHash(getNullableString("HASH",rs));
+
+            Integer identificationMethodIndex = getNullableInteger("IDENTIFICATION_METHOD", rs);
+            nodeMetaData.setIdentificationMethod(identificationMethodIndex == null ? null : IdentificationMethod.values()[identificationMethodIndex]);
+
+            nodeMetaData.setLastModifiedDate(getNullableTimestamp("LAST_MODIFIED_DATE",rs));
+            nodeMetaData.setName(rs.getString("NAME"));
+
+            Integer nodeStatusIndex = getNullableInteger("NODE_STATUS", rs);
+            nodeMetaData.setNodeStatus( nodeStatusIndex == null ? null : NodeStatus.values()[nodeStatusIndex]);
+
+            nodeMetaData.setResourceType(ResourceType.values()[rs.getInt("RESOURCE_TYPE")]);
+
+            nodeMetaData.setSize(getNullableLong("FILE_SIZE", rs));
+            node.setParentId(getNullableLong("PARENT_ID",rs));
+            node.setPrefix(getNullableString("PREFIX", rs));
+            node.setPrefixPlusOne(getNullableString("PREFIX_PLUS_ONE",rs));
+                //getNullableInteger("TEXT_ENCODING",rs); we dont using this in original
+
+            node.setFilterStatus(1); //TODO What is this?
+
+            boolean emptyDir = rs.getBoolean("EMPTY_DIR");
+            if(emptyDir && nodeMetaData.getNodeStatus() == NodeStatus.DONE) {
+                nodeMetaData.setNodeStatus(NodeStatus.EMPTY);
+            }
+
+
+            return node;
+        }
+    };
+
+
+
     /**
      * {@inheritDoc}
      */
     @Override
     public List<ProfileResourceNode> findProfileResourceNodes(final Long parentId) {
+
         try {
-            final Connection conn = datasource.getConnection();
-            try {
-                // Get the nodes which are children of the parent id:
-                final String query = parentId == null ? FIND_TOP_LEVEL_CHILDREN : FIND_CHILD_NODES;
-                final PreparedStatement findChildren = conn.prepareStatement(query);
-                if (parentId != null) {
-                    SqlUtils.setNullableLong(1, parentId, findChildren);
-                }
-                final ResultSet children = findChildren.executeQuery();
-                final List<ProfileResourceNode> childNodes = buildNodes(children);
-                loadIdentifications(parentId, conn, childNodes);
-                return childNodes;
-            } finally {
-                conn.close();
+            final List<ProfileResourceNode> childNodes;
+            if (parentId == null) {
+                childNodes = jdbcTemplate.query(FIND_TOP_LEVEL_CHILDREN, PROFILE_RESOURCE_NODE_ROW_MAPPER);
+            } else {
+                childNodes = jdbcTemplate.query(FIND_CHILD_NODES, PROFILE_RESOURCE_NODE_ROW_MAPPER, parentId);
             }
-        } catch (SQLException e) {
-            log.error("A database exception occurred finding nodes with parent id " + parentId, e);
+
+
+            jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
+                @Override
+                public Boolean doInConnection(Connection con) throws SQLException, DataAccessException {
+                    loadIdentifications(parentId, con, childNodes);
+                    return false;
+                }
+            });
+
+            return childNodes;
+        }catch (DataAccessException ex) {
+            log.error("A database exception occurred finding nodes with parent id " + parentId, ex);
         }
         return Collections.emptyList();
     }
