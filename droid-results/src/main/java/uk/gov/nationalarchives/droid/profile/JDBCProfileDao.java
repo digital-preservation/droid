@@ -33,8 +33,6 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -154,7 +152,7 @@ public class JDBCProfileDao implements ProfileDao {
         }
     }
 
-    private static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_FILTER = new RowMapper<ProfileResourceNode>() {
+    public static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_FILTER = new RowMapper<ProfileResourceNode>() {
         @Override
         public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
             ProfileResourceNode node = PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(rs, rowNum);
@@ -164,7 +162,7 @@ public class JDBCProfileDao implements ProfileDao {
         }
     };
 
-    private static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FILDER = new RowMapper<ProfileResourceNode>() {
+    public static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER = new RowMapper<ProfileResourceNode>() {
 
         @Override
         public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -182,7 +180,7 @@ public class JDBCProfileDao implements ProfileDao {
     };
 
 
-    private static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER = new RowMapper<ProfileResourceNode>() {
+    public static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER = new RowMapper<ProfileResourceNode>() {
         @Override
         public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -243,9 +241,9 @@ public class JDBCProfileDao implements ProfileDao {
         try {
             final List<ProfileResourceNode> childNodes;
             if (parentId == null) {
-                childNodes = jdbcTemplate.query(FIND_TOP_LEVEL_CHILDREN, PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FILDER);
+                childNodes = jdbcTemplate.query(FIND_TOP_LEVEL_CHILDREN, PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER);
             } else {
-                childNodes = jdbcTemplate.query(FIND_CHILD_NODES, PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FILDER, parentId);
+                childNodes = jdbcTemplate.query(FIND_CHILD_NODES, PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER, parentId);
             }
 
             loadIdentifications(parentId, childNodes);

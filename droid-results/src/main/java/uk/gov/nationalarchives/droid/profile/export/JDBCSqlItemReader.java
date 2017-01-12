@@ -31,14 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.profile.export;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLDataException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -51,14 +48,13 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
-import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemReader;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemReaderCallback;
 import uk.gov.nationalarchives.droid.export.interfaces.JobCancellationException;
+import uk.gov.nationalarchives.droid.profile.JDBCProfileDao;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.SqlUtils;
@@ -74,6 +70,15 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     private static final String PUID = "PUID";
     private static final String NODE_ID = "NODE_ID";
     private static final String NAME = "NAME";
+    private static final String EMPTY_FOLTER_SUBSELECT = " CASE \n" +
+            "\t\t  WHEN p.RESOURCE_TYPE = 0 THEN \n" +
+            "\t\t  \tCASE\n" +
+            "\t\t  \t\twhen NOT EXISTS(SELECT NODE2.PARENT_ID FROM PROFILE_RESOURCE_NODE NODE2 WHERE NODE2.PARENT_ID = p.NODE_ID) then true\n" +
+            "\t\t  \t\telse false\n" +
+            "\t\t  \tEND\n" +
+            "\t\t  ELSE false\n" +
+            "\t\tEND as EMPTY_DIR,  ";
+
 
     private static final String SELECT_PROFILE_ALL_FIELDS = "select p.*, ";
 
@@ -90,6 +95,8 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     private final Log log = LogFactory.getLog(getClass());
 
     private final Class<T> typeParameterClass;
+
+    private Filter filter = null;
 
     //For use in determining filter parameter types so we can set these to the correct SQL type.
     private  enum ClassName {
@@ -146,37 +153,19 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
         try {
             if (cursor.next()) {
 
-                NodeMetaData metaData = new NodeMetaData();
-                Timestamp timestamp = cursor.getTimestamp("LAST_MODIFIED_DATE");
-                if (timestamp != null) {
-                    metaData.setLastModified(timestamp.getTime());
+                ProfileResourceNode profileResourceNode;
+                if(filter != null) {
+                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(cursor, 0);
+                }else {
+                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER.mapRow(cursor, 0);
                 }
-
-                metaData.setName(cursor.getString(NAME));
-                metaData.setExtension(cursor.getString("EXTENSION"));
-                metaData.setIdentificationMethod(IdentificationMethod.getIdentifationMethodForOrdinal(
-                        cursor.getInt("IDENTIFICATION_METHOD")));
-                metaData.setResourceType(ResourceType.getResourceTypeForOrdinal(cursor.getInt("RESOURCE_TYPE")));
-
-                if (metaData.getResourceType() != ResourceType.FOLDER) {
-                    metaData.setSize(cursor.getLong("FILE_SIZE"));
-                }
-
-                metaData.setHash(cursor.getString("HASH"));
-                metaData.setNodeStatus(NodeStatus.DONE);
-
-                ProfileResourceNode profileResourceNode = new ProfileResourceNode(new URI(cursor.getString("URI")));
-                Long currentNodeId = cursor.getLong(NODE_ID);
-                profileResourceNode.setId(currentNodeId);
-                profileResourceNode.setParentId(cursor.getLong("PARENT_ID"));
-                profileResourceNode.setExtensionMismatch(cursor.getBoolean("EXTENSION_MISMATCH"));
-                profileResourceNode.setMetaData(metaData);
+                NodeMetaData metaData = profileResourceNode.getMetaData();
 
                 int numberOfIdentifications =  cursor.getInt("id_count");
 
                 for (int i = numberOfIdentifications; i > 0; i--) {
                     String puid = cursor.getString(PUID);
-                    if (cursor.getLong(NODE_ID) == currentNodeId) {
+                    if (cursor.getLong(NODE_ID) == profileResourceNode.getId()) {
                         Format format = this.identificationReader.getFormatForPuid(puid);
                         profileResourceNode.addFormatIdentification(format);
                     } else {
@@ -197,8 +186,6 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
                 return new ProfileResourceNode(profileResourceNode);
             }
-        } catch (URISyntaxException ex) {
-            log.error("Syntax error reading Profile resource Node in JDBCSqlItemReader class", ex);
         } catch (SQLException ex) {
             log.error("SQL Exception error reading Profile resource Node in JDBCSqlItemReader class", ex);
         }
@@ -261,6 +248,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      */
     //@Override
     public void open(Filter filter) {
+        this.filter = filter;
         this.cursor = getProfileCursor(filter);
     }
 
@@ -358,6 +346,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                 }
             } else {
                 queryString = SELECT_PROFILE_ALL_FIELDS;
+                queryString += EMPTY_FOLTER_SUBSELECT;
                 queryString += "(select count('x') from identification i1 where i1.node_id = p.node_id) AS id_count, i.PUID ";
                 queryString += "from profile_resource_node p  inner join identification i on p.node_id = i.node_id order by p.node_id";
                 profileStatement = conn.prepareStatement(queryString);
@@ -365,7 +354,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
             profileResultSet = profileStatement.executeQuery();
 
         } catch (SQLException ex) {
-            log.error("A database exception occurred retrieving nodes " + ex);
+            log.error("A database exception occurred retrieving nodes ", ex);
         }
 
         return profileResultSet;
