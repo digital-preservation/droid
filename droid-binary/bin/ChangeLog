@@ -9,6 +9,7 @@ Version 6.3
 * e.g. see https://github.com/digital-preservation/droid/issues/82
 * Fix for issue whereby there were sometimes no identifications found for the first profile run after installing
 * a new signature file (https://github.com/digital-preservation/droid/issues/97)
+* Fix multiple identification bug for MS Office 2007 documents.
 
 
 Version 6.2.1 Minor bugfix release
