@@ -48,6 +48,7 @@ import org.apache.commons.logging.LogFactory;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
+import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
@@ -128,7 +129,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 //ProfileResourceNode parent = node.getParent();
                 //nodeEntries.add(parent != null ? nullSafeNumber(parent.getId()) : "");
                 nodeEntries.add(nullSafeNumber(node.getParentId()));
-                nodeEntries.add(node.getUri().toString());
+                nodeEntries.add(DroidUrlFormat.format(node.getUri()));
                 nodeEntries.add(toFilePath(node.getUri()));
                 nodeEntries.add(toFileName(metaData.getName()));
                 nodeEntries.add(nullSafeName(metaData.getIdentificationMethod()));
@@ -169,7 +170,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                         nullSafeNumber(node.getId()),
                         //parent != null ? nullSafeNumber(parent.getId()) : "",
                         nullSafeNumber(node.getParentId()),
-                        node.getUri().toString(),
+                        DroidUrlFormat.format(node.getUri()),
                         toFilePath(node.getUri()),
                         toFileName(metaData.getName()),
                         nullSafeName(metaData.getIdentificationMethod()),
