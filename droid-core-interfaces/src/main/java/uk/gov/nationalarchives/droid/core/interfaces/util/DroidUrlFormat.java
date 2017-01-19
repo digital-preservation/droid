@@ -49,13 +49,20 @@ public final class DroidUrlFormat {
     };
 
     /**
-     * Format URI. This method try to replace all special character which can be in URL path.
+     * Format URI base on Droid specific rules.
+     * <ul>
+     *     <li>Works only for <i>file</i> scheme</li>
+     *     <li>Other schemas use default {@link URI#toString()}</li>
+     * </ul>
      * @param uri URI.
      * @return String where are all possible "dangerous" character replaced with %xx encoding.
      */
     public static String format(URI uri) {
 
         StringBuilder b = new StringBuilder();
+        if (!"file".equals(uri.getScheme())) {
+            return uri.toString();
+        }
 
         b.append(uri.getScheme()).append(':');
 

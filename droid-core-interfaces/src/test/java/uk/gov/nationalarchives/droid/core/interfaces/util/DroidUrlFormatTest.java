@@ -76,7 +76,9 @@ public class DroidUrlFormatTest {
              "file:/home/rhubner/ffmpeg_build/strange%20filenames/%F0%9D%95%8B%F0%9D%95%99%F0%9D%95%96%20%F0%9D%95%A2%F0%9D%95%A6%F0%9D%95%9A%F0%9D%95%94%F0%9D%95%9C%20%F0%9D%95%93%F0%9D%95%A3%F0%9D%95%A0%F0%9D%95%A8%F0%9D%95%9F%20%F0%9D%95%97%F0%9D%95%A0%F0%9D%95%A9%20%F0%9D%95%9B%F0%9D%95%A6%F0%9D%95%9E%F0%9D%95%A1%F0%9D%95%A4%20%F0%9D%95%A0%F0%9D%95%A7%F0%9D%95%96%F0%9D%95%A3%20%F0%9D%95%A5%F0%9D%95%99%F0%9D%95%96%20%F0%9D%95%9D%F0%9D%95%92%F0%9D%95%AB%F0%9D%95%AA%20%F0%9D%95%95%F0%9D%95%A0%F0%9D%95%98"},
             {"file:/home/rhubner/ffmpeg_build/strange%20filenames/....", "file:/home/rhubner/ffmpeg_build/strange%20filenames/...."},
             {"file:/home/rhubner/ffmpeg_build/strange%20filenames/%5C.%5C.", "file:/home/rhubner/ffmpeg_build/strange%20filenames/%5C.%5C."},
-            {"file:/home/rhubner/ffmpeg_build/strange%20filenames/......", "file:/home/rhubner/ffmpeg_build/strange%20filenames/......"}
+            {"file:/home/rhubner/ffmpeg_build/strange%20filenames/......", "file:/home/rhubner/ffmpeg_build/strange%20filenames/......"},
+            {"zip:zip:file:/home/rhubner/Downloads/squirrelsql-3.7.1-optional.zip!/squirrelsql-3.7.1-optional/plugins/laf/skinlf-theme-packs/whistlerthemepack.zip!/gtk/file55.png",
+                    "zip:zip:file:/home/rhubner/Downloads/squirrelsql-3.7.1-optional.zip!/squirrelsql-3.7.1-optional/plugins/laf/skinlf-theme-packs/whistlerthemepack.zip!/gtk/file55.png"}
     };
 
     @Test
