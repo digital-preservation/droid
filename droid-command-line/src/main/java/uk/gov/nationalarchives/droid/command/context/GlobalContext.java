@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.command.context;
 
+import java.io.Closeable;
+
 import uk.gov.nationalarchives.droid.command.action.CheckSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.ConfigureDefaultSignatureFileVersionCommand;
 import uk.gov.nationalarchives.droid.command.action.DisplayDefaultSignatureFileVersionCommand;
@@ -49,7 +51,7 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
  * @author rflitcroft
  *
  */
-public interface GlobalContext {
+public interface GlobalContext extends AutoCloseable {
 
     /**
      * 
@@ -81,6 +83,7 @@ public interface GlobalContext {
     /**
      * 
      */
+    @Override
     void close();
 
     /**

@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.command.context;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import uk.gov.nationalarchives.droid.command.action.CheckSignatureUpdateCommand;
@@ -51,44 +52,34 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
  * @author rflitcroft
  *
  */
-public class SpringUiContext implements GlobalContext {
+public final class SpringUiContext implements GlobalContext {
 
-    private static boolean open;
+    private final AbstractXmlApplicationContext context;
     
     /**
-     * Default constructor.
+     * private constructor.
      */
-    public SpringUiContext() { }
+    private SpringUiContext(AbstractXmlApplicationContext context) {
+        this.context = context;
+    }
 
     /**
-     * Evil lazy singleton holder for the Spring context.
-     * @author rflitcroft
-     *
+     * Factory method to create instance of GlobalContext. Global context IS NOT singleton.
+     * @return Instance of GlobalContext.
      */
-    private static final class LazyHolder {
-        private static final ClassPathXmlApplicationContext CONTEXT;
-        
-        static {
-            CONTEXT = new ClassPathXmlApplicationContext("classpath*:/META-INF/ui-spring.xml");
-            CONTEXT.registerShutdownHook();
-            open = true;
-        }
-        
-        private LazyHolder() { }
+    public static GlobalContext getInstance() {
+        AbstractXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath*:/META-INF/ui-spring.xml");
+        context.registerShutdownHook();
+
+        return new SpringUiContext(context);
     }
-    
-    private static ClassPathXmlApplicationContext getContext() {
-        
-        return LazyHolder.CONTEXT;
-    }
-    
 
     /**
      * {@inheritDoc}
      */
     @Override
     public DroidGlobalConfig getGlobalConfig() {
-        return (DroidGlobalConfig) getContext().getBean("globalConfig");
+        return context.getBean("globalConfig", DroidGlobalConfig.class);
     }
 
     /**
@@ -96,7 +87,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public ProfileRunCommand getProfileRunCommand() {
-        return (ProfileRunCommand) getContext().getBean("profileRunCommand");
+        return context.getBean("profileRunCommand", ProfileRunCommand.class);
     }
 
     /**
@@ -104,7 +95,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public NoProfileRunCommand getNoProfileRunCommand() {
-        return (NoProfileRunCommand) getContext().getBean("noProfileRunCommand");
+        return context.getBean("noProfileRunCommand", NoProfileRunCommand.class);
     }
 
     /**
@@ -112,7 +103,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public ExportCommand getExportCommand(ExportOptions opt) {
-        ExportCommand command = (ExportCommand) getContext().getBean("exportCommand");
+        ExportCommand command = context.getBean("exportCommand", ExportCommand.class);
         command.setExportOptions(opt);
         return command;
     }
@@ -122,7 +113,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public ReportCommand getReportCommand() {
-        return (ReportCommand) getContext().getBean("reportCommand");
+        return context.getBean("reportCommand", ReportCommand.class);
     }
     
     /**
@@ -130,7 +121,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public CheckSignatureUpdateCommand getCheckSignatureUpdateCommand() {
-        return (CheckSignatureUpdateCommand) getContext().getBean("checkSignatureUpdateCommand");
+        return context.getBean("checkSignatureUpdateCommand", CheckSignatureUpdateCommand.class);
     }
     
     /**
@@ -138,7 +129,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public DownloadSignatureUpdateCommand getDownloadSignatureUpdateCommand() {
-        return (DownloadSignatureUpdateCommand) getContext().getBean("downloadSignatureUpdateCommand");
+        return (DownloadSignatureUpdateCommand) context.getBean("downloadSignatureUpdateCommand", DownloadSignatureUpdateCommand.class);
     }
     
     /**
@@ -146,8 +137,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public DisplayDefaultSignatureFileVersionCommand getDisplayDefaultSignatureFileVersionCommand() {
-        return (DisplayDefaultSignatureFileVersionCommand) getContext()
-            .getBean("displayDefaultSignatureVersion");
+        return context.getBean("displayDefaultSignatureVersion", DisplayDefaultSignatureFileVersionCommand.class);
     }
     
     /**
@@ -155,8 +145,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public ConfigureDefaultSignatureFileVersionCommand getConfigureDefaultSignatureFileVersionCommand() {
-        return (ConfigureDefaultSignatureFileVersionCommand) getContext()
-            .getBean("configureDefaultSignatureVersion");
+        return context.getBean("configureDefaultSignatureVersion", ConfigureDefaultSignatureFileVersionCommand.class);
     }
     
     /**
@@ -164,7 +153,7 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public ListAllSignatureFilesCommand getListAllSignatureFilesCommand() {
-        return (ListAllSignatureFilesCommand) getContext().getBean("listAllSignatureFilesCommand");
+        return context.getBean("listAllSignatureFilesCommand", ListAllSignatureFilesCommand.class);
     }
     
     /**
@@ -172,18 +161,15 @@ public class SpringUiContext implements GlobalContext {
      */
     @Override
     public void close() {
-        if (open) {
-            getContext().close();
-        }
+        context.close();
     }
-
 
     /**
      * {@inheritDoc}
      */
     @Override
     public ListReportsCommand getListReportsCommand() {
-        return (ListReportsCommand) getContext().getBean("listReportsCommand");
+        return context.getBean("listReportsCommand", ListReportsCommand.class);
     }
 
 }
