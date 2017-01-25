@@ -31,8 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.command.context;
 
-import java.io.Closeable;
-
 import uk.gov.nationalarchives.droid.command.action.CheckSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.ConfigureDefaultSignatureFileVersionCommand;
 import uk.gov.nationalarchives.droid.command.action.DisplayDefaultSignatureFileVersionCommand;

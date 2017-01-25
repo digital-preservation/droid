@@ -31,8 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.command;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.apache.commons.cli.CommandLine;
@@ -42,7 +40,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 
-import org.apache.cxf.common.i18n.Exception;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
 import uk.gov.nationalarchives.droid.command.action.CommandFactoryImpl;
@@ -166,13 +163,9 @@ public final class DroidCommandLine implements AutoCloseable {
         // producing an invalid file path, e.g. C:\Projects\Droid\droid\file:\C:\Users\Brian\.droid6\log4j.properties.
         // There appears to be no other reason for the 2 calls so I have sinply removed the first call here.
         RuntimeConfig.configureRuntimeEnvironment();
-
-        int returnCode = 0;
     
-        try(DroidCommandLine commandLine = new DroidCommandLine(args)) {
-            returnCode = commandLine.processExecution();
-
-            System.exit(returnCode);
+        try (DroidCommandLine commandLine = new DroidCommandLine(args)) {
+            commandLine.processExecution();
         }
 
     }
@@ -196,7 +189,7 @@ public final class DroidCommandLine implements AutoCloseable {
 
             run();
             
-            out.close();
+            out.flush(); //Only flush. Never close System.out
             context.close();
 
         } catch (CommandExecutionException ceex) {
@@ -204,7 +197,7 @@ public final class DroidCommandLine implements AutoCloseable {
             PrintWriter err = new PrintWriter(System.err);
             HelpFormatter formatter = new HelpFormatter();
             formatter.printWrapped(err, WRAP_WIDTH, ceex.getMessage());
-            err.close();
+            err.flush(); //Only flush. Never close System.err
             //log.error("Droid Execution Error", ceex);
             throw ceex;
 
@@ -213,7 +206,7 @@ public final class DroidCommandLine implements AutoCloseable {
             PrintWriter err = new PrintWriter(System.err);
             HelpFormatter formatter = new HelpFormatter();
             formatter.printWrapped(err, WRAP_WIDTH, clex.getMessage());
-            err.close();
+            err.flush(); //Only flush. Never close System.err
             //log.error("Droid CommandLineException", clex);
             throw clex;
         }
