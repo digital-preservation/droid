@@ -45,6 +45,9 @@ public class TestContexCleanup {
     @Test()
     public void testTwice() throws CommandLineException {
 
+        //don't exit from VM.
+        DroidCommandLine.systemExit = false;
+
         String[] args = new String[] {
                 "-Nr",
                 "src/test/resources/testfiles",

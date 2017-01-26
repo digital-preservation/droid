@@ -62,7 +62,14 @@ public final class DroidCommandLine implements AutoCloseable {
     public static final String USAGE = "droid [options]";
     /** Wrap width. */
     public static final int WRAP_WIDTH = 120;
-    
+
+    //CHECKSTYLE:OFF
+    /**
+     * For testing. @see{uk.gov.nationalarchives.droid.command.TestContexCleanup}
+     */
+    public static boolean systemExit = true;
+    //CHECKSTYLE:ON
+
     /**Logger Log4j.*/
     //private Log log = LogFactory.getLog(this.getClass());
     //private static Logger log = Logger.getLogger(DroidCommandLine.class);
@@ -163,11 +170,16 @@ public final class DroidCommandLine implements AutoCloseable {
         // producing an invalid file path, e.g. C:\Projects\Droid\droid\file:\C:\Users\Brian\.droid6\log4j.properties.
         // There appears to be no other reason for the 2 calls so I have sinply removed the first call here.
         RuntimeConfig.configureRuntimeEnvironment();
-    
+
+        int returnCode = 0;
+
         try (DroidCommandLine commandLine = new DroidCommandLine(args)) {
-            commandLine.processExecution();
+            returnCode = commandLine.processExecution();
         }
 
+        if (systemExit) {
+            System.exit(returnCode);
+        }
     }
 
     /**
