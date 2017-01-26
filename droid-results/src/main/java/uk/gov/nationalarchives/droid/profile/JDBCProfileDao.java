@@ -35,35 +35,136 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import static java.sql.Types.VARCHAR;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import javax.sql.DataSource;
 
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
+
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
-import uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
+import uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDao;
 
-import static uk.gov.nationalarchives.droid.profile.SqlUtils.*;
-import static java.sql.Types.VARCHAR;
+
+
+
+import static uk.gov.nationalarchives.droid.profile.SqlUtils.getNullableTimestamp;
+import static uk.gov.nationalarchives.droid.profile.SqlUtils.getNullableString;
+import static uk.gov.nationalarchives.droid.profile.SqlUtils.getNullableInteger;
+import static uk.gov.nationalarchives.droid.profile.SqlUtils.getNullableLong;
+
+//import static uk.gov.nationalarchives.droid.profile.SqlUtils.;
 
 /**
  * Created by Matt Palmer on 19/06/15.
  */
 public class JDBCProfileDao implements ProfileDao {
+
+    /**
+     Row mappr for result sets with filter.
+     */
+    public static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_FILTER = new RowMapper<ProfileResourceNode>() {
+        @Override
+        public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
+            ProfileResourceNode node = PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(rs, rowNum);
+            node.setFilterStatus(rs.getInt("FILTERSTATUS"));
+
+            return node;
+        }
+    };
+
+    /**
+     * Row mapper for result sets with empty folder case.
+     */
+    public static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER = new RowMapper<ProfileResourceNode>() {
+
+        @Override
+        public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
+            ProfileResourceNode node = PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(rs, rowNum);
+            NodeMetaData nodeMetaData = node.getMetaData();
+
+            boolean emptyDir = rs.getBoolean("EMPTY_DIR");
+
+            if (emptyDir && nodeMetaData.getNodeStatus() == NodeStatus.DONE) {
+                nodeMetaData.setNodeStatus(NodeStatus.EMPTY);
+            }
+
+            return node;
+        }
+    };
+
+    //CHECKSTYLE:OFF impossible to disable only one rule with anotation.
+    /**
+     * <i>Abstract </i>Generic row mapper for <i>node</i>. Don't properly set all properties. Used in other mappers.
+     */
+    public static final  RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER = new RowMapper<ProfileResourceNode>() {
+
+        @Override
+        public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+            URI uri;
+            String uriString = rs.getString("URI");
+            try {
+                uri = new URI(uriString);
+
+            } catch (URISyntaxException e) {
+                throw new SQLException("The URI for the node obtained from the database: [" + uriString
+                        + "] could not be converted into a URI", e);
+            }
+
+            NodeMetaData nodeMetaData = new NodeMetaData();
+            ProfileResourceNode node = new ProfileResourceNode(uri);
+            node.setMetaData(nodeMetaData);
+
+            node.setId(rs.getLong("NODE_ID"));
+            node.setExtensionMismatch(rs.getBoolean("EXTENSION_MISMATCH"));
+            node.setFinished(getNullableTimestamp("FINISHED_TIMESTAMP", rs));
+
+            //getNullableLong("IDENTIFICATION_COUNT", rs); not used in original
+
+            nodeMetaData.setExtension(getNullableString("EXTENSION", rs));
+            nodeMetaData.setHash(getNullableString("HASH", rs));
+
+            Integer identificationMethodIndex = getNullableInteger("IDENTIFICATION_METHOD", rs);
+            nodeMetaData.setIdentificationMethod(identificationMethodIndex == null ? null : IdentificationMethod.values()[identificationMethodIndex]);
+
+            nodeMetaData.setLastModifiedDate(getNullableTimestamp("LAST_MODIFIED_DATE", rs));
+            nodeMetaData.setName(rs.getString("NAME"));
+
+            Integer nodeStatusIndex = getNullableInteger("NODE_STATUS", rs);
+            nodeMetaData.setNodeStatus(nodeStatusIndex == null ? null : NodeStatus.values()[nodeStatusIndex]);
+
+            nodeMetaData.setResourceType(ResourceType.values()[rs.getInt("RESOURCE_TYPE")]);
+
+            nodeMetaData.setSize(getNullableLong("FILE_SIZE", rs));
+            node.setParentId(getNullableLong("PARENT_ID", rs));
+            node.setPrefix(getNullableString("PREFIX", rs));
+            node.setPrefixPlusOne(getNullableString("PREFIX_PLUS_ONE", rs));
+            //getNullableInteger("TEXT_ENCODING",rs); we dont using this in original
+
+            node.setFilterStatus(1);    //Filter status. Default 1
+
+            return node;
+        }
+    };
+    //CHECKSTYLE:ON impossible to disable only one rule with anotation.
+
     //CHECKSTYLE:OFF  Sql Statements can break the rules, e.g. commas quite legitimate...
     private static final String INSERT_FORMAT = "INSERT INTO FORMAT (PUID,MIME_TYPE,NAME,VERSION) VALUES (?,?,?,?)";
     private static final String SELECT_MAIN = "SELECT NODE_ID, EXTENSION_MISMATCH, FINISHED_TIMESTAMP, IDENTIFICATION_COUNT, EXTENSION, HASH, "
@@ -132,103 +233,28 @@ public class JDBCProfileDao implements ProfileDao {
     public void saveFormat(final Format format) {
 
         try {
-            if(format == Format.NULL) {
+            if (format == Format.NULL) {
                 // BNO getInsertFormatStatement tries to convert the empty Puid to NULL, causing a failed
                 // database insert. So as a workaround for now we specify the SQL directly for this case.
                 jdbcTemplate.update(dummyPuid);
-            }else {
+            } else {
                 //JDBC template handle null values when we provide types.
                 jdbcTemplate.update(INSERT_FORMAT, new Object[] {
                         format.getPuid(),
                         format.getMimeType(),
                         format.getName(),
-                        format.getVersion()
+                        format.getVersion(),
                 }, new int[] {
-                        VARCHAR,VARCHAR, VARCHAR, VARCHAR
+                    VARCHAR, VARCHAR, VARCHAR, VARCHAR,
                 });
             }
-        }catch (DataAccessException ex) {
+        } catch (DataAccessException ex) {
+            //CHECKSTYLE:OFF
             log.error("A database exception occurred inserting a format " + format == null ? "NULL" : format , ex);
+            //CHECKSTYLE:ON
         }
     }
 
-    public static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_FILTER = new RowMapper<ProfileResourceNode>() {
-        @Override
-        public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
-            ProfileResourceNode node = PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(rs, rowNum);
-            node.setFilterStatus(rs.getInt("FILTERSTATUS"));
-
-            return node;
-        }
-    };
-
-    public static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER = new RowMapper<ProfileResourceNode>() {
-
-        @Override
-        public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
-            ProfileResourceNode node = PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(rs, rowNum);
-            NodeMetaData nodeMetaData = node.getMetaData();
-
-            boolean emptyDir = rs.getBoolean("EMPTY_DIR");
-
-            if(emptyDir && nodeMetaData.getNodeStatus() == NodeStatus.DONE) {
-                nodeMetaData.setNodeStatus(NodeStatus.EMPTY);
-            }
-
-            return node;
-        }
-    };
-
-
-    public static final RowMapper<ProfileResourceNode> PROFILE_RESOURCE_NODE_ROW_MAPPER = new RowMapper<ProfileResourceNode>() {
-        @Override
-        public ProfileResourceNode mapRow(ResultSet rs, int rowNum) throws SQLException {
-
-            URI uri;
-            String uriString = rs.getString("URI");
-            try {
-                uri = new URI(uriString);
-
-            } catch (URISyntaxException e) {
-                throw new SQLException("The URI for the node obtained from the database: [" + uriString
-                        + "] could not be converted into a URI", e);
-            }
-
-            NodeMetaData nodeMetaData = new NodeMetaData();
-            ProfileResourceNode node = new ProfileResourceNode(uri);
-            node.setMetaData(nodeMetaData);
-
-            node.setId(rs.getLong("NODE_ID"));
-            node.setExtensionMismatch(rs.getBoolean("EXTENSION_MISMATCH"));
-            node.setFinished(getNullableTimestamp("FINISHED_TIMESTAMP", rs));
-
-                //getNullableLong("IDENTIFICATION_COUNT", rs); not used in original
-
-            nodeMetaData.setExtension(getNullableString("EXTENSION",rs));
-            nodeMetaData.setHash(getNullableString("HASH",rs));
-
-            Integer identificationMethodIndex = getNullableInteger("IDENTIFICATION_METHOD", rs);
-            nodeMetaData.setIdentificationMethod(identificationMethodIndex == null ? null : IdentificationMethod.values()[identificationMethodIndex]);
-
-            nodeMetaData.setLastModifiedDate(getNullableTimestamp("LAST_MODIFIED_DATE",rs));
-            nodeMetaData.setName(rs.getString("NAME"));
-
-            Integer nodeStatusIndex = getNullableInteger("NODE_STATUS", rs);
-            nodeMetaData.setNodeStatus( nodeStatusIndex == null ? null : NodeStatus.values()[nodeStatusIndex]);
-
-            nodeMetaData.setResourceType(ResourceType.values()[rs.getInt("RESOURCE_TYPE")]);
-
-            nodeMetaData.setSize(getNullableLong("FILE_SIZE", rs));
-            node.setParentId(getNullableLong("PARENT_ID",rs));
-            node.setPrefix(getNullableString("PREFIX", rs));
-            node.setPrefixPlusOne(getNullableString("PREFIX_PLUS_ONE",rs));
-                //getNullableInteger("TEXT_ENCODING",rs); we dont using this in original
-
-            node.setFilterStatus(1);    //Filter status. Default 1
-
-            return node;
-        }
-    };
 
 
 
@@ -249,7 +275,7 @@ public class JDBCProfileDao implements ProfileDao {
             loadIdentifications(parentId, childNodes);
 
             return childNodes;
-        }catch (DataAccessException ex) {
+        } catch (DataAccessException ex) {
             log.error("A database exception occurred finding nodes with parent id " + parentId, ex);
         }
         return Collections.emptyList();
@@ -281,11 +307,11 @@ public class JDBCProfileDao implements ProfileDao {
             System.arraycopy(queryParameters, 0, doubleParameters, 0, queryParameters.length);
             System.arraycopy(queryParameters, 0, doubleParameters, queryParameters.length, queryParameters.length);
 
-            List<ProfileResourceNode> nodes = jdbcTemplate.query(query,PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_FILTER, doubleParameters);
+            List<ProfileResourceNode> nodes = jdbcTemplate.query(query, PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_FILTER, doubleParameters);
 
             final List<ProfileResourceNode> filteredNodes = new ArrayList<>();
-            for(ProfileResourceNode node : nodes) {
-                if(node.getFilterStatus() > 0) {
+            for (ProfileResourceNode node : nodes) {
+                if (node.getFilterStatus() > 0) {
                     filteredNodes.add(node);
                 }
             }
@@ -294,7 +320,7 @@ public class JDBCProfileDao implements ProfileDao {
 
 
             return filteredNodes;
-        }catch (DataAccessException ex) {
+        } catch (DataAccessException ex) {
             log.error("A database exception occurred finding filtered nodes with parent id " + parentId == null ? "NULL" : parentId, ex);
         }
         return Collections.emptyList();
@@ -311,15 +337,15 @@ public class JDBCProfileDao implements ProfileDao {
 
             final ResultSetExtractor extractor = new ResultSetExtractor() {
                 @Override
-                public Object extractData(ResultSet rs) throws SQLException, DataAccessException {
+                public Object extractData(ResultSet rs) throws SQLException {
                     addIdentificationsToNodes(rs, childNodes, resultHandlerDao.getPUIDFormatMap());
                     return null;
                 }
             };
 
-            if(parentId == null) {
+            if (parentId == null) {
                 jdbcTemplate.query(FIND_TOP_LEVEL_CHILD_IDS, extractor);
-            }else {
+            } else {
                 jdbcTemplate.query(FIND_CHILD_IDS, new Object[] {parentId}, extractor);
             }
         }
@@ -393,7 +419,7 @@ public class JDBCProfileDao implements ProfileDao {
         }
     }
 
-    private Map<Long, ProfileResourceNode> buildNodeIdMap(List<ProfileResourceNode> nodes) {
+    private Map<Long, ProfileResourceNode> buildNodeIdMap(final List<ProfileResourceNode> nodes) {
         final Map<Long, ProfileResourceNode> nodeIdMap = new HashMap<Long, ProfileResourceNode>(nodes.size() * 2);
         for (final ProfileResourceNode node : nodes) {
             nodeIdMap.put(node.getId(), node);
@@ -401,7 +427,7 @@ public class JDBCProfileDao implements ProfileDao {
         return nodeIdMap;
     }
 
-    private String getParentIdQuery(Long parentId) {
+    private String getParentIdQuery(final Long parentId) {
         return parentId == null ? "is null" : " = ?";
     }
 

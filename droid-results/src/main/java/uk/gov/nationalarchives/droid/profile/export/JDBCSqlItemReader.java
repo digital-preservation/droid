@@ -70,14 +70,14 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     private static final String PUID = "PUID";
     private static final String NODE_ID = "NODE_ID";
     private static final String NAME = "NAME";
-    private static final String EMPTY_FOLTER_SUBSELECT = " CASE \n" +
-            "\t\t  WHEN p.RESOURCE_TYPE = 0 THEN \n" +
-            "\t\t  \tCASE\n" +
-            "\t\t  \t\twhen NOT EXISTS(SELECT NODE2.PARENT_ID FROM PROFILE_RESOURCE_NODE NODE2 WHERE NODE2.PARENT_ID = p.NODE_ID) then true\n" +
-            "\t\t  \t\telse false\n" +
-            "\t\t  \tEND\n" +
-            "\t\t  ELSE false\n" +
-            "\t\tEND as EMPTY_DIR,  ";
+    private static final String EMPTY_FOLTER_SUBSELECT = " CASE \n"
+            + "\t\t  WHEN p.RESOURCE_TYPE = 0 THEN \n"
+            + "\t\t  \tCASE\n"
+            + "\t\t  \t\twhen NOT EXISTS(SELECT NODE2.PARENT_ID FROM PROFILE_RESOURCE_NODE NODE2 WHERE NODE2.PARENT_ID = p.NODE_ID) then true\n"
+            + "\t\t  \t\telse false\n"
+            + "\t\t  \tEND\n"
+            + "\t\t  ELSE false\n"
+            + "\t\tEND as EMPTY_DIR,  ";
 
 
     private static final String SELECT_PROFILE_ALL_FIELDS = "select p.*, ";
@@ -96,7 +96,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
     private final Class<T> typeParameterClass;
 
-    private Filter filter = null;
+    private Filter filter;
 
     //For use in determining filter parameter types so we can set these to the correct SQL type.
     private  enum ClassName {
@@ -211,11 +211,11 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     /**
      *
      * @param callback the callback with items read
-     * @param filter an optional filter
+     * @param itemFilter an optional filter
      * @throws JobCancellationException If the caller cancels the operation
      */
-    public void readAll(ItemReaderCallback<T> callback, Filter filter) throws JobCancellationException {
-        open(filter);
+    public void readAll(ItemReaderCallback<T> callback, Filter itemFilter) throws JobCancellationException {
+        open(itemFilter);
 
         this.identificationReader = new IdentificationReader();
 
@@ -243,13 +243,13 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     /**
      * Opens this item reader for reading.
      * 
-     * @param filter
+     * @param itemFilter
      *            an optional filter
      */
     //@Override
-    public void open(Filter filter) {
-        this.filter = filter;
-        this.cursor = getProfileCursor(filter);
+    public void open(Filter itemFilter) {
+        this.filter = itemFilter;
+        this.cursor = getProfileCursor(itemFilter);
     }
 
     /**

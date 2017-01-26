@@ -52,6 +52,7 @@ public enum NodeStatus {
     /** Nodes with identification error.   */
     ERROR("Error", "An unexpected error has occurred while processing the resource."),
 
+    /** Folder nodes which don't have any child. */
     EMPTY("Empty", "Folder or container is empty");
     
     
