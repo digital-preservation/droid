@@ -163,7 +163,7 @@ public class ExportReportAction {
         for (ExportType exporter : exportTypes) {
             exportFileChooser.addChoosableFileFilterWithDefaultExtension(exporter, exporter.getFileExtension());
         }
-        if(exportFileChooser.getFileFilter() == null && exportTypes.size() > 0) {
+        if (exportFileChooser.getFileFilter() == null && exportTypes.size() > 0) {
             exportFileChooser.setFileFilter(exportTypes.get(0));
         }
     }
