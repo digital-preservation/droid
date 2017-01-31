@@ -313,7 +313,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                 queryString += "where p.node_id IN (SELECT p2.node_id FROM profile_resource_node p2 ";
                 queryString += " INNER JOIN identification i2 ON p2.node_id = i2.node_id ";
                 queryString += "INNER JOIN format f2 on i2.puid = f2.puid ";
-                queryString += "WHERE " + sqlFilter.replace("f.", "f2.") + ") order by p.node_id";
+                queryString += "WHERE " + sqlFilter.replace("f.", "f2.") + ") order by p.uri,p.node_id";
 
                 int i = 0;
 
@@ -348,7 +348,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                 queryString = SELECT_PROFILE_ALL_FIELDS;
                 queryString += EMPTY_FOLTER_SUBSELECT;
                 queryString += "(select count('x') from identification i1 where i1.node_id = p.node_id) AS id_count, i.PUID ";
-                queryString += "from profile_resource_node p  inner join identification i on p.node_id = i.node_id order by p.node_id";
+                queryString += "from profile_resource_node p  inner join identification i on p.node_id = i.node_id order by p.uri,p.node_id";
                 profileStatement = conn.prepareStatement(queryString);
             }
             profileResultSet = profileStatement.executeQuery();
