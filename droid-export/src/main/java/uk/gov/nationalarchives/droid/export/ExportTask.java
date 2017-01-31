@@ -31,14 +31,14 @@
  */
 package uk.gov.nationalarchives.droid.export;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Writer;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.FileOutputStream;
+import java.io.File;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,6 +67,9 @@ import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 public class ExportTask implements Runnable {
 
     private static final String PROJECT_NOT_AVAILABLE_FOR_EXPORT = "Profile not available for export: %s";
+    private static final int BOM_1 = 0xEF;
+    private static final int BOM_2 = 0xBB;
+    private static final int BOM_3 = 0xBF;
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -75,6 +78,7 @@ public class ExportTask implements Runnable {
     private final Filter filterOverride;
     private final ExportOptions options;
     private final String outputEncoding;
+    private final boolean bom;
     private final ItemWriter<ProfileResourceNode> itemWriter;
     private final ProfileContextLocator profileContextLocator;
 
@@ -87,18 +91,20 @@ public class ExportTask implements Runnable {
      * @param filterOverride the override filter
      * @param options options for the export file format
      * @param outputEncoding A charset encoding for the output file, or null indicates platform locale encoding
+     * @param bom Add bom to the file.
      * @param itemWriter The writer for writing the export items
      * @param profileContextLocator locator of the profile context
      */
     public ExportTask(final String destination, final List<String> profileIds,
             final Filter filterOverride, final ExportOptions options,
-            final String outputEncoding, final ItemWriter<ProfileResourceNode> itemWriter,
+            final String outputEncoding, final boolean bom, final ItemWriter<ProfileResourceNode> itemWriter,
             final ProfileContextLocator profileContextLocator) {
         this.destination = destination;
         this.profileIds = profileIds;
         this.filterOverride = filterOverride;
         this.options = options;
         this.outputEncoding = outputEncoding;
+        this.bom = bom;
         this.itemWriter = itemWriter;
         this.profileContextLocator = profileContextLocator;
     }
@@ -144,10 +150,9 @@ public class ExportTask implements Runnable {
 
         //set encoding of output file
         if (outputEncoding != null) {
-            writer = new BufferedWriter(newOutputFileWriterEncoded(outputEncoding, new File(destination)));
+            writer = newOutputFileWriterEncoded(outputEncoding, new File(destination));
         } else {
-            //leave to platform to determine encoding
-            writer = new BufferedWriter(new FileWriter(destination));
+            writer = newOutputFileWriterEncoded(Charset.defaultCharset().name(), new File(destination));
         }
 
         return writer;
@@ -165,7 +170,17 @@ public class ExportTask implements Runnable {
      *  a writer for the file
      */
     protected Writer newOutputFileWriterEncoded(final String encoding, final File f) throws IOException {
-        return new OutputStreamWriter(new FileOutputStream(f), encoding);
+        final Charset charset = Charset.forName(encoding);
+
+        OutputStream outputStream = new FileOutputStream(f);
+        if (bom) {
+            outputStream.write(BOM_1);
+            outputStream.write(BOM_2);
+            outputStream.write(BOM_3);
+            outputStream.flush();
+        }
+
+        return new OutputStreamWriter(outputStream, encoding);
     }
 
 

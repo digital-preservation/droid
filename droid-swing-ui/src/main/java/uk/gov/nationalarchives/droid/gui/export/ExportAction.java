@@ -58,6 +58,7 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     private File destination;
     private ExportOptions options;
     private String outputEncoding;
+    private boolean bom;
     private List<String> profileIds;
     private ActionDoneCallback<ExportAction> callback;
     
@@ -96,7 +97,8 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      */
     @Override
     protected Void doInBackground() {
-        exportTask = exportManager.exportProfiles(profileIds, destination.getPath(), null, options, outputEncoding);
+        exportTask = exportManager.exportProfiles(profileIds, destination.getPath(), null, options,
+                outputEncoding, bom);
         try {
             exportTask.get();
         } catch (InterruptedException e) {
@@ -164,5 +166,12 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     public void setOutputEncoding(final String outputEncoding) {
         this.outputEncoding = outputEncoding;
     }
-    
+
+    /**
+     * Set's encoding BOM flag.
+     * @param bom Bom flag.
+     */
+    public void setBom(boolean bom) {
+        this.bom = bom;
+    }
 }
