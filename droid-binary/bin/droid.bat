@@ -40,7 +40,7 @@ REM =========
 
 REM Default user dir: 
 REM -----------------
-REM This is where droid will place user settings 
+REM This is where DROID will place user settings 
 REM If not set, it will default to a directory called ".droid6"
 REM under the user's home directory.
 REM Also configure this property using the environment variable: droidUserDir
@@ -50,7 +50,7 @@ REM SET droidUser=
 
 REM Default temporary file dir:
 REM ---------------------------
-REM This is where droid will place temporary working files,
+REM This is where DROID will place temporary working files,
 REM including decompressed archival files and working profile databases.
 REM If not set, it will default to the droidUserDir 
 REM (by default, under the user's home directory)
@@ -61,7 +61,7 @@ REM SET droidTemp=
 
 REM Default log dir: 
 REM ----------------
-REM This is where droid will write its log files.
+REM This is where DROID will write its log files.
 REM If not set, it will default to a folder called "logs"
 REM under the droidUserDir.
 REM Also configure this property using the environment variable: droidLogDir
@@ -82,9 +82,9 @@ REM SET log4j=
 REM Default console logging level:
 REM ------------------------------
 REM This allows you to set the default logging level used by
-REM DROID when logging to the command line console.  If not set,
+REM DROID when logging to the command-line console.  If not set,
 REM it defaults to INFO level logging, unless running in quiet
-REM mode from the command-line, in which case the log level is
+REM mode from the command line, in which case the log level is
 REM overridden to be ERROR.
 REM SET logLevel=INFO
 
@@ -100,53 +100,53 @@ REM SET droidMemory=512
 
 REM Assemble options
 REM ================
-REM default to using 512 megabytes of memory if no other settings provided:
-SET DROIDOPTIONS="-Xmx512m"
+REM Default to using 512 megabytes of memory if no other settings provided:
+SET DROID_OPTIONS="-Xmx512m"
 
 IF "%droidMemory%"=="" GOTO UserDir
-SET DROIDOPTIONS="-Xmx%droidMemory%m"
+SET DROID_OPTIONS="-Xmx%droidMemory%m"
 
 :UserDir
 IF "%droidUser%"=="" GOTO TempDir
-SET DROIDOPTIONS=%DROIDOPTIONS% "-DdroidUserDir=%droidUser%"
+SET DROID_OPTIONS=%DROID_OPTIONS% "-DdroidUserDir=%droidUser%"
 
 :TempDir
 IF "%droidTemp%"=="" GOTO LogOptions
-SET DROIDOPTIONS=%DROIDOPTIONS% "-DdroidTempDir=%droidTemp%"
+SET DROID_OPTIONS=%DROID_OPTIONS% "-DdroidTempDir=%droidTemp%"
 
 :LogOptions
 IF "%droidLog%"=="" GOTO Log4JConfig
-SET DROIDOPTIONS=%DROIDOPTIONS% "-DdroidLogDir=%droidLog%"
+SET DROID_OPTIONS=%DROID_OPTIONS% "-DdroidLogDir=%droidLog%"
 
 :Log4JConfig
 IF "%log4j%"=="" GOTO LogLevel
-SET DROIDOPTIONS=%DROIDOPTIONS% "-Dlog4j.configuration=%log4j%"
+SET DROID_OPTIONS=%DROID_OPTIONS% "-Dlog4j.configuration=%log4j%"
 
 :LogLevel
 IF "%logLevel%"=="" GOTO RunDROID
-SET DROIDOPTIONS=%DROIDOPTIONS% "-DconsoleLogThreshold=%logLevel%"
+SET DROID_OPTIONS=%DROID_OPTIONS% "-DconsoleLogThreshold=%logLevel%"
 
 
 REM Run DROID:
 REM ==========
 :RunDROID
 
-REM ECHO Running DROID with the following options: %DROIDOPTIONS%
+REM Infer DROID_HOME from script location
+SET DROID_HOME=%~dp0
 
-REM Choose whether to run the command line or gui version of DROID:
+REM ECHO Running DROID with the following options: %DROID_OPTIONS%
+
+REM Choose whether to run the command-line or GUI version of DROID:
 IF "%1"=="" GOTO NOPARAM
 
 :PARAM
-REM has command line parameters passed - run command line version:
-java %DROIDOPTIONS% -jar droid-command-line-6.3.jar %*
+REM Has command-line parameters -- run command-line version:
+java %DROID_OPTIONS% -jar "%DROID_HOME%droid-command-line-6.3.jar" %*
 
 GOTO end
 
 :NOPARAM
-REM no command line parameters passed - run GUI version:
-start javaw %DROIDOPTIONS% -jar droid-ui-6.3.jar
+REM No command-line parameters passed -- run GUI version:
+start javaw %DROID_OPTIONS% -jar "%DROID_HOME%droid-ui-6.3.jar"
 
 :END
-
-
-
