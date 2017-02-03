@@ -40,7 +40,7 @@
 
 # Default work dir: droidUserDir
 # ------------------------------
-# This is where droid will place user settings
+# This is where DROID will place user settings
 # If not set, it will default to a directory called ".droid6" 
 # under the user's home directory.
 # It can be configured using this property, or by an environment
@@ -49,7 +49,7 @@ droidUserDir=""
 
 # Default work dir: droidTempDir
 # ------------------------------
-# This is where droid will create temporary files.
+# This is where DROID will create temporary files.
 # If not set, it will default to a directory called "tmp" 
 # under the droid user directory.
 # It can be configured using this property, or by an environment
@@ -58,13 +58,12 @@ droidTempDir=""
 
 # Default log dir: droidLogDir
 # ----------------------------
-# This is where droid will write its log files.
+# This is where DROID will write its log files.
 # If not set, it will default to a folder called "logs"
 # under the droidWorkDir.
 # It can be configured using this property, or by an environment
 # variable of the same name.
 droidLogDir=""
-
 
 # Log configuration: log4j
 # ------------------------
@@ -74,7 +73,6 @@ droidLogDir=""
 # It can be configured using this setting, or by an environment
 # variable called log4j.configuration
 log4j=""
-
 
 # Default console logging level
 # -----------------------------
@@ -91,22 +89,40 @@ logLevel=""
 droidMemory="512m"
 
 
-
 # Run DROID:
 # ==========
+
+# Infer DROID_HOME from script location
+SCRIPT=$0
+
+# Resolve absolute and relative symlinks
+while [ -h "$SCRIPT" ]; do
+    LS=$( ls -ld "$SCRIPT" )
+    LINK=$( expr "$LS" : '.*-> \(.*\)$' )
+    if expr "$LINK" : '/.*' > /dev/null; then
+        SCRIPT="$LINK"
+    else
+        SCRIPT="$( dirname "$SCRIPT" )/$LINK"
+    fi
+done
+
+# Store absolute location
+CWD=$( pwd )
+DROID_HOME="$( cd "$(dirname "$SCRIPT" )" && pwd )"
+cd "$CWD"
 
 # Collect settings into runtime options for droid:
 OPTIONS=""
 
-# Detect if we are running on a mac or not:
-os=`uname`
-if [ "Darwin" = "$os" ]; then
+# Detect if we are running on a Mac:
+OS=$( uname )
+if [ "Darwin" = "$OS" ]; then
     OPTIONS=$OPTIONS" -Xdock:name=DROID"
     OPTIONS=$OPTIONS" -Dcom.apple.mrj.application.growbox.intrudes=false"
     OPTIONS=$OPTIONS" -Dcom.apple.mrj.application.live-resize=true"
 fi
 
-# Build command line options from the settings above:
+# Build command-line options from the settings above:
 if [ -n "$droidMemory" ]; then
     OPTIONS=$OPTIONS" -Xmx$droidMemory"
 fi
@@ -128,9 +144,9 @@ fi
 
 # echo "Running DROID with these options: $OPTIONS $@"
 
-# Run the command line or user interface version with the options:
+# Run the command-line or user interface version with the options:
 if [ $# -gt 0 ]; then
-    java $OPTIONS -jar droid-command-line-6.3.jar "$@"
+    java $OPTIONS -jar "$DROID_HOME/droid-command-line-6.3.jar" "$@"
 else
-    java $OPTIONS -jar droid-ui-6.3.jar
+    java $OPTIONS -jar "$DROID_HOME/droid-ui-6.3.jar"
 fi
