@@ -10,7 +10,7 @@
   
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.3.1-SNAPSHOT</version>
+    <version>6.4-SNAPSHOT</version>
     <packaging>pom</packaging>
   
     <name>droid-parent</name>
