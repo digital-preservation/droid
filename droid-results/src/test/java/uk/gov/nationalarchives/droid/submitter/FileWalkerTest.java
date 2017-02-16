@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -51,8 +53,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
@@ -164,7 +168,7 @@ public class FileWalkerTest {
          }
       });
 
-      when(directoryHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -239,7 +243,7 @@ public class FileWalkerTest {
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
-      when(directoryHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -323,7 +327,7 @@ public class FileWalkerTest {
          }
       });
       
-      when(directoryHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -414,7 +418,7 @@ public class FileWalkerTest {
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
-      when(directoryHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -509,7 +513,7 @@ public class FileWalkerTest {
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
-      when(directoryHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -588,7 +592,7 @@ public class FileWalkerTest {
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
-      when(directoryHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {

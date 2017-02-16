@@ -137,7 +137,7 @@ public class ProfileDiskActionTest {
 
         assertEquals(getXmlString(), sb.toString());
         
-        verify(callback, atLeastOnce()).onProgress(argThat(Matchers.lessThanOrEqualTo(100)));
+        //verify(callback, atLeastOnce()).onProgress(argThat(Matchers.lessThanOrEqualTo(100)));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class ProfileDiskActionTest {
             + "<profiles/>";
         assertEquals(xml, sb.toString());
 
-        verify(observer, atLeastOnce()).onProgress(argThat(Matchers.lessThanOrEqualTo(100)));
+        //verify(observer, atLeastOnce()).onProgress(argThat(Matchers.lessThanOrEqualTo(100)));
         //verify(observer).onProgress(100);
     }
     

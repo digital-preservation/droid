@@ -289,7 +289,7 @@ public class SubmissionGateway implements AsynchDroid {
                 }
                 final String message = String.format(ARCHIVE_ERROR, 
                         archiveFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
-                log.warn(message);
+                log.warn(message, e);
                 resultHandler.handleError(new IdentificationException(
                         request, IdentificationErrorType.OTHER, e));
             } finally {

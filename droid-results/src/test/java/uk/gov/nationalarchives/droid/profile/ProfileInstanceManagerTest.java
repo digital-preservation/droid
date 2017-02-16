@@ -42,6 +42,7 @@ import java.util.concurrent.Future;
 import static org.junit.Assert.assertEquals;
 //import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -188,7 +189,7 @@ public class ProfileInstanceManagerTest {
                 return null;
             }
             
-        }).when(specWalker).walk(eq(profileSpec), any(ProfileWalkState.class));
+        }).when(specWalker).walk(eq(profileSpec), nullable(ProfileWalkState.class));
         
         profileInstanceManager.setSpecWalker(specWalker);
         
