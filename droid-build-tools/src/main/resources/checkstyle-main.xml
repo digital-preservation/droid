@@ -179,7 +179,9 @@
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
     <module name="MutableException"/>
-    <module name="ThrowsCount"/>
+    <module name="ThrowsCount">
+      <property name="max" value="4"/>
+    </module>
     <module name="RightCurly"/>
     <module name="MethodTypeParameterName"/>
     <module name="HiddenField">

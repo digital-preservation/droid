@@ -37,15 +37,18 @@ import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
 import com.github.stephenc.javaisotools.vfs.provider.iso.IsoFileSystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.*;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ISOImageArchiveHandler.ISOImageArchiveWalker;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.ISOImageIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -63,6 +66,7 @@ public class ISOImageArchiveHandlerTest {
     public void testImageWalker() throws Exception {
         AsynchDroid droid = mock(AsynchDroid.class);
         IdentificationRequestFactory<InputStream> factory = mock(IdentificationRequestFactory.class);
+
         ResultHandler resultHandler = mock(ResultHandler.class);
         Iso9660FileSystem filesystem = mock(Iso9660FileSystem.class);
         RequestIdentifier requestIdentifier = new RequestIdentifier(new URI("mock://some/path/to/iso"));
@@ -87,21 +91,110 @@ public class ISOImageArchiveHandlerTest {
         when(contentDir.isDirectory()).thenReturn(true);
 
 
+        List<Iso9660FileEntry> entryList = new ArrayList<>();
+        entryList.add(rootEntry);
+        entryList.add(contentDir);
 
+        walker.walk(entryList);
 
-
-
+        verify(resultHandler, atLeastOnce()).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
 
         assertTrue(true);
 
     }
 
+    @Test
+    public void testWithOneFile() throws Exception {
+        AsynchDroid droid = mock(AsynchDroid.class);
+        IdentificationRequestFactory<InputStream> factory = mock(IdentificationRequestFactory.class);
+        when(factory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class))).thenReturn(mock(IdentificationRequest.class));
 
 
+        ResultHandler resultHandler = mock(ResultHandler.class);
+        when(resultHandler.handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean())).thenReturn(mock(ResourceId.class));
+
+        Iso9660FileSystem filesystem = mock(Iso9660FileSystem.class);
+        RequestIdentifier requestIdentifier = new RequestIdentifier(new URI("mock://some/path/to/iso"));
+        requestIdentifier.setNodeId(10L);
+
+        ISOImageArchiveWalker walker = new ISOImageArchiveWalker(droid, factory, resultHandler, filesystem,  requestIdentifier);
 
 
+        Iso9660FileEntry rootEntry = mock(Iso9660FileEntry.class);
+        when(rootEntry.getName()).thenReturn(".");
+        when(rootEntry.getPath()).thenReturn("");
+        when(rootEntry.isDirectory()).thenReturn(true);
+
+        Iso9660FileEntry contentDir = mock(Iso9660FileEntry.class);
+        when(contentDir.getName()).thenReturn("content");
+        when(contentDir.getPath()).thenReturn("content/");
+        when(contentDir.isDirectory()).thenReturn(true);
+
+        Iso9660FileEntry testFile = mock(Iso9660FileEntry.class);
+        when(contentDir.getName()).thenReturn("test.txt");
+        when(contentDir.getPath()).thenReturn("content/text.txt");
+        when(contentDir.isDirectory()).thenReturn(true);
 
 
+        List<Iso9660FileEntry> entryList = new ArrayList<>();
+        entryList.add(rootEntry);
+        entryList.add(contentDir);
+        entryList.add(testFile);
 
+        walker.walk(entryList);
+
+        verify(resultHandler, atLeastOnce()).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
+        verify(droid, atLeastOnce()).submit(any(IdentificationRequest.class));
+
+        assertTrue(true);
+
+    }
+
+    @Test
+    public void testWithOneFileWithWrongOrder() throws Exception {
+        AsynchDroid droid = mock(AsynchDroid.class);
+        IdentificationRequestFactory<InputStream> factory = mock(IdentificationRequestFactory.class);
+        when(factory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class))).thenReturn(mock(IdentificationRequest.class));
+
+
+        ResultHandler resultHandler = mock(ResultHandler.class);
+        when(resultHandler.handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean())).thenReturn(mock(ResourceId.class));
+        Iso9660FileSystem filesystem = mock(Iso9660FileSystem.class);
+        RequestIdentifier requestIdentifier = new RequestIdentifier(new URI("mock://some/path/to/iso"));
+        requestIdentifier.setNodeId(10L);
+
+        ISOImageArchiveWalker walker = new ISOImageArchiveWalker(droid, factory, resultHandler, filesystem,  requestIdentifier);
+
+
+        Iso9660FileEntry rootEntry = mock(Iso9660FileEntry.class);
+        when(rootEntry.getName()).thenReturn(".");
+        when(rootEntry.getPath()).thenReturn("");
+        when(rootEntry.isDirectory()).thenReturn(true);
+
+        Iso9660FileEntry contentDir = mock(Iso9660FileEntry.class);
+        when(contentDir.getName()).thenReturn("content");
+        when(contentDir.getPath()).thenReturn("content/");
+        when(contentDir.isDirectory()).thenReturn(true);
+
+        Iso9660FileEntry testFile = mock(Iso9660FileEntry.class);
+        when(contentDir.getName()).thenReturn("test.txt");
+        when(contentDir.getPath()).thenReturn("content/text.txt");
+        when(contentDir.isDirectory()).thenReturn(false);
+
+
+        List<Iso9660FileEntry> entryList = new ArrayList<>();
+        entryList.add(rootEntry);
+        entryList.add(testFile);
+        entryList.add(contentDir);
+
+        walker.walk(entryList);
+
+        InOrder inOrder = inOrder(resultHandler, droid);
+
+        inOrder.verify(resultHandler, atLeastOnce()).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
+        inOrder.verify(droid, atLeastOnce()).submit(any(IdentificationRequest.class));
+
+        assertTrue(true);
+    }
 
 }

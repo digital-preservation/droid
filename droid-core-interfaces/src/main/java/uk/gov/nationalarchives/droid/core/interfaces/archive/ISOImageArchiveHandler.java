@@ -31,15 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
-import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.*;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -48,10 +39,29 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
+import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
+
+import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
+import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+
+
 /**
  * Created by rhubner on 2/13/17.
  */
 public class ISOImageArchiveHandler implements ArchiveHandler {
+
+    private static final String PATH_SPLITTER = "!";
 
     private AsynchDroid droid;
     private IdentificationRequestFactory<InputStream> factory;
@@ -64,11 +74,15 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
         Iso9660FileSystem fileSystem = new Iso9660FileSystem(req.getFile(), true);
 
-        ISOImageArchiveWalker walker = new ISOImageArchiveWalker(droid, factory, resultHandler, fileSystem, request.getIdentifier());
+        ISOImageArchiveWalker walker = new ISOImageArchiveWalker(droid, factory, resultHandler,
+                fileSystem, request.getIdentifier());
         walker.walk(fileSystem);
 
     }
 
+    /**
+     * Internal walker implementation.
+     */
     public static class ISOImageArchiveWalker extends ArchiveFileWalker<Iso9660FileEntry> {
 
         private final AsynchDroid droid;
@@ -85,6 +99,14 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
         private final Log log = LogFactory.getLog(this.getClass());
 
 
+        /**
+         * Create instance.
+         * @param droid async droid.
+         * @param factory factory for identification requests.
+         * @param resultHandler result handler(used for directory handling).
+         * @param fileSystem Original iso file system.
+         * @param requestIdentifier ReqIdentifier.
+         */
         public ISOImageArchiveWalker(AsynchDroid droid, IdentificationRequestFactory<InputStream> factory,
                                      ResultHandler resultHandler,
                                      Iso9660FileSystem fileSystem, RequestIdentifier requestIdentifier) {
@@ -98,43 +120,45 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
         }
 
 
-        final void submitFile(Iso9660FileEntry entry) throws IOException, URISyntaxException {
+        private void submitFile(Iso9660FileEntry entry) throws IOException, URISyntaxException {
             String path = FilenameUtils.getPath(entry.getPath());
             String name = entry.getName();
 
 
             ResourceId correlationId = this.directories.get(path);
-            if(correlationId == null) {
-                correlationId = parentId;
+            if (correlationId == null) {
+                correlationId = submitDirectory(path, path, entry.getLastModifiedTime());
             }
 
 
             InputStream entryInputStream = fileSystem.getInputStream(entry);
 
-            RequestIdentifier identifier = new RequestIdentifier(new URI("iso://" + parentUri.toString() + "!" + URLEncoder.encode(path + name, "UTF-8")));
+            RequestIdentifier identifier = new RequestIdentifier(new URI("iso://" + parentUri.toString()
+                    + PATH_SPLITTER + URLEncoder.encode(path + name, "UTF-8")));
             identifier.setAncestorId(originatorNodeId);
             identifier.setParentResourceId(correlationId);
 
-            RequestMetaData metaData = new RequestMetaData(entry.getSize(), entry.getLastModifiedTime(), entry.getName());
+            RequestMetaData metaData = new RequestMetaData(entry.getSize(),
+                    entry.getLastModifiedTime(), entry.getName());
 
             IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
             request.open(entryInputStream);
             droid.submit(request);
         }
 
-        private ResourceId submitDirectory(Iso9660FileEntry entry) throws URISyntaxException {
-            log.info("processing directory : " + entry.getPath());
+        private ResourceId submitDirectory(String path, String name, long lastModifiedTime) throws URISyntaxException {
+            log.info("processing directory : " + path);
 
-            if(".".equals(entry.getName())) {   //Root directory is always "." (dot)
+            if (".".equals(name)) {   //Root directory is always "." (dot)
                 directories.put("", parentId);
             }
 
-            String name = entry.getPath();
             ResourceId resourceId = directories.get(name);
             if (resourceId == null) {
 
-                RequestMetaData metaData = new RequestMetaData(null, entry.getLastModifiedTime(), entry.getName());
-                RequestIdentifier identifier = new RequestIdentifier(new URI(parentUri.toString() + "!" + entry.getName()));
+                RequestMetaData metaData = new RequestMetaData(null, lastModifiedTime, name);
+                RequestIdentifier identifier = new RequestIdentifier(new URI(parentUri.toString()
+                        + PATH_SPLITTER + name));
 
                 IdentificationResultImpl result = new IdentificationResultImpl();
                 result.setRequestMetaData(metaData);
@@ -150,11 +174,11 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
         @Override
         protected void handleEntry(Iso9660FileEntry entry) throws IOException {
             try {
-              if(entry.isDirectory()) {
-                  submitDirectory(entry);
-              }else {
+                if (entry.isDirectory()) {
+                    submitDirectory(entry.getPath(), entry.getName(), entry.getLastModifiedTime());
+                } else {
                     submitFile(entry);
-              }
+                }
             } catch (URISyntaxException e) {
                 throw new IOException("Wrong URI syntax", e);
             }
@@ -162,14 +186,26 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
     }
 
+    /**
+     * Set factory.
+     * @param factory f.
+     */
     public void setFactory(IdentificationRequestFactory<InputStream> factory) {
         this.factory = factory;
     }
 
+    /**
+     * Sed droid.
+     * @param droid d.
+     */
     public void setDroid(AsynchDroid droid) {
         this.droid = droid;
     }
 
+    /**
+     * Set result set handler.
+     * @param resultHandler h.
+     */
     public void setResultHandler(ResultHandler resultHandler) {
         this.resultHandler = resultHandler;
     }
