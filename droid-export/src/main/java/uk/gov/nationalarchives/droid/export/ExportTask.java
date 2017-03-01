@@ -170,7 +170,6 @@ public class ExportTask implements Runnable {
      *  a writer for the file
      */
     protected Writer newOutputFileWriterEncoded(final String encoding, final File f) throws IOException {
-        final Charset charset = Charset.forName(encoding);
 
         OutputStream outputStream = new FileOutputStream(f);
         if (bom) {
