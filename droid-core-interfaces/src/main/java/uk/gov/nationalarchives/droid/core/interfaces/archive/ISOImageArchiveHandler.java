@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -62,6 +63,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class ISOImageArchiveHandler implements ArchiveHandler {
 
     private static final String PATH_SPLITTER = "!";
+    private static final String UTF_8 = "UTF-8";
 
     private AsynchDroid droid;
     private IdentificationRequestFactory<InputStream> factory;
@@ -91,7 +93,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
 
         private final Iso9660FileSystem fileSystem;
-        private final ResourceId parentId;
+        private final ResourceId rootParentId;
         private final URI parentUri;
         private final long originatorNodeId;
 
@@ -110,13 +112,15 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
         public ISOImageArchiveWalker(AsynchDroid droid, IdentificationRequestFactory<InputStream> factory,
                                      ResultHandler resultHandler,
                                      Iso9660FileSystem fileSystem, RequestIdentifier requestIdentifier) {
+
             this.droid = droid;
             this.factory = factory;
             this.resultHandler = resultHandler;
             this.fileSystem = fileSystem;
-            this.parentId = requestIdentifier.getResourceId();
+            this.rootParentId = requestIdentifier.getResourceId();
             this.parentUri = requestIdentifier.getUri();
             this.originatorNodeId = requestIdentifier.getNodeId();
+            directories.put("", rootParentId);  //Rood directory
         }
 
 
@@ -127,14 +131,14 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
             ResourceId correlationId = this.directories.get(path);
             if (correlationId == null) {
-                correlationId = submitDirectory(path, path, entry.getLastModifiedTime());
+                correlationId = submitDirectory(path, entry.getLastModifiedTime());
             }
 
 
             InputStream entryInputStream = fileSystem.getInputStream(entry);
 
             RequestIdentifier identifier = new RequestIdentifier(new URI("iso://" + parentUri.toString()
-                    + PATH_SPLITTER + URLEncoder.encode(path + name, "UTF-8")));
+                    + PATH_SPLITTER + URLEncoder.encode(path + name, UTF_8)));
             identifier.setAncestorId(originatorNodeId);
             identifier.setParentResourceId(correlationId);
 
@@ -146,26 +150,35 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
             droid.submit(request);
         }
 
-        private ResourceId submitDirectory(String path, String name, long lastModifiedTime) throws URISyntaxException {
-            log.info("processing directory : " + path);
 
-            if (".".equals(name)) {   //Root directory is always "." (dot)
-                directories.put("", parentId);
-            }
+        private ResourceId submitDirectory(String path, long lastModifiedTime)
+            throws URISyntaxException, UnsupportedEncodingException {
+
+            String parentPath = FilenameUtils.getPath(path.substring(0, path.length() - 1));
+
+            String name = FilenameUtils.getName(path.substring(0, path.length() - 1));
+
+            log.info("processing path: " + path + " name: " + name);
 
             ResourceId resourceId = directories.get(name);
             if (resourceId == null) {
 
+                ResourceId parentID = directories.get(parentPath);
+                if (parentID == null) {
+                    parentID = submitDirectory(parentPath, lastModifiedTime);
+                }
+
                 RequestMetaData metaData = new RequestMetaData(null, lastModifiedTime, name);
+                String escapedName = URLEncoder.encode(name, UTF_8);
                 RequestIdentifier identifier = new RequestIdentifier(new URI(parentUri.toString()
-                        + PATH_SPLITTER + name));
+                        + PATH_SPLITTER + escapedName));    //TODO fix URI
 
                 IdentificationResultImpl result = new IdentificationResultImpl();
                 result.setRequestMetaData(metaData);
                 result.setIdentifier(identifier);
 
-                resourceId = resultHandler.handleDirectory(result, parentId, false);
-                this.directories.put(name, resourceId);
+                resourceId = resultHandler.handleDirectory(result, parentID, false);
+                this.directories.put(path, resourceId);
 
             }
             return resourceId;
@@ -175,7 +188,9 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
         protected void handleEntry(Iso9660FileEntry entry) throws IOException {
             try {
                 if (entry.isDirectory()) {
-                    submitDirectory(entry.getPath(), entry.getName(), entry.getLastModifiedTime());
+                    if (!"".equals(entry.getPath())) {   //NOT for root directory
+                        submitDirectory(entry.getPath(), entry.getLastModifiedTime());
+                    }
                 } else {
                     submitFile(entry);
                 }

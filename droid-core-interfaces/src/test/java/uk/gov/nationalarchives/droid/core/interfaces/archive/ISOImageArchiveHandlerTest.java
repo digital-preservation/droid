@@ -41,9 +41,11 @@ import org.mockito.InOrder;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.nationalarchives.droid.core.interfaces.*;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ISOImageArchiveHandler.ISOImageArchiveWalker;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ISOImageIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,6 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 /**
@@ -66,6 +69,8 @@ public class ISOImageArchiveHandlerTest {
     public void testImageWalker() throws Exception {
         AsynchDroid droid = mock(AsynchDroid.class);
         IdentificationRequestFactory<InputStream> factory = mock(IdentificationRequestFactory.class);
+        when(factory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class))).thenReturn(mock(IdentificationRequest.class));
+
 
         ResultHandler resultHandler = mock(ResultHandler.class);
         Iso9660FileSystem filesystem = mock(Iso9660FileSystem.class);
@@ -88,7 +93,7 @@ public class ISOImageArchiveHandlerTest {
         Iso9660FileEntry testFile = mock(Iso9660FileEntry.class);
         when(contentDir.getName()).thenReturn("test.txt");
         when(contentDir.getPath()).thenReturn("content/text.txt");
-        when(contentDir.isDirectory()).thenReturn(true);
+        when(contentDir.isDirectory()).thenReturn(false);
 
 
         List<Iso9660FileEntry> entryList = new ArrayList<>();
@@ -97,7 +102,7 @@ public class ISOImageArchiveHandlerTest {
 
         walker.walk(entryList);
 
-        verify(resultHandler, atLeastOnce()).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
+        verify(resultHandler, times(1)).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
 
         assertTrue(true);
 
@@ -131,9 +136,9 @@ public class ISOImageArchiveHandlerTest {
         when(contentDir.isDirectory()).thenReturn(true);
 
         Iso9660FileEntry testFile = mock(Iso9660FileEntry.class);
-        when(contentDir.getName()).thenReturn("test.txt");
-        when(contentDir.getPath()).thenReturn("content/text.txt");
-        when(contentDir.isDirectory()).thenReturn(true);
+        when(testFile.getName()).thenReturn("test.txt");
+        when(testFile.getPath()).thenReturn("content/test.txt");
+        when(testFile.isDirectory()).thenReturn(false);
 
 
         List<Iso9660FileEntry> entryList = new ArrayList<>();
@@ -177,9 +182,9 @@ public class ISOImageArchiveHandlerTest {
         when(contentDir.isDirectory()).thenReturn(true);
 
         Iso9660FileEntry testFile = mock(Iso9660FileEntry.class);
-        when(contentDir.getName()).thenReturn("test.txt");
-        when(contentDir.getPath()).thenReturn("content/text.txt");
-        when(contentDir.isDirectory()).thenReturn(false);
+        when(testFile.getName()).thenReturn("test.txt");
+        when(testFile.getPath()).thenReturn("content/test.txt");
+        when(testFile.isDirectory()).thenReturn(false);
 
 
         List<Iso9660FileEntry> entryList = new ArrayList<>();
@@ -191,10 +196,42 @@ public class ISOImageArchiveHandlerTest {
 
         InOrder inOrder = inOrder(resultHandler, droid);
 
-        inOrder.verify(resultHandler, atLeastOnce()).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
-        inOrder.verify(droid, atLeastOnce()).submit(any(IdentificationRequest.class));
+        inOrder.verify(resultHandler, times(1)).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
+        inOrder.verify(droid, times(1)).submit(any(IdentificationRequest.class));
 
         assertTrue(true);
     }
+
+
+    @Test
+    public void testWIthIsoFile() throws Exception {
+
+        IdentificationRequestFactory<InputStream> factory = new ISOEntryRequestFactory();
+
+        AsynchDroid droid = mock(AsynchDroid.class);
+
+        ResultHandler resultHandler = mock(ResultHandler.class);
+        when(resultHandler.handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean())).thenReturn(mock(ResourceId.class));
+
+        ISOImageArchiveHandler isoImageArchiveHandler = new ISOImageArchiveHandler();
+        isoImageArchiveHandler.setDroid(droid);
+        isoImageArchiveHandler.setFactory(factory);
+        isoImageArchiveHandler.setResultHandler(resultHandler);
+
+
+        RequestMetaData requestMetaData = new RequestMetaData(393216L, 1L, "testiso.iso");
+        RequestIdentifier identifier = new RequestIdentifier(new URI("file://testiso.iso"));
+        identifier.setNodeId(1L);
+
+        FileSystemIdentificationRequest req = new FileSystemIdentificationRequest(requestMetaData, identifier);
+        req.open(new File("./src/test/resources/testiso.iso"));
+        isoImageArchiveHandler.handle(req);
+
+        verify(droid, times(6)).submit(any(IdentificationRequest.class));
+
+        verify(resultHandler, times(3)).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
+
+    }
+
 
 }
