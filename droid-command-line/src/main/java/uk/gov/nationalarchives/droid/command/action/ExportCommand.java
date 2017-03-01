@@ -97,7 +97,7 @@ public class ExportCommand implements DroidCommand {
             //default to UTF-8
             final String outputEncoding = "UTF-8"; //TODO set encoding from command line option
             final Future<?> fProfiles = exportManager.exportProfiles(profileIds, destination, filter,
-                    options, outputEncoding);
+                    options, outputEncoding, false);
             fProfiles.get();
         } catch (InterruptedException e) {
             throw new CommandExecutionException(e);

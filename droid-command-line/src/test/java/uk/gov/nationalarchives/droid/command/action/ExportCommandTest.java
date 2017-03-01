@@ -90,7 +90,7 @@ public class ExportCommandTest {
         when(profileManager.open(eq(new File("foo3")), any(ProgressObserver.class))).thenReturn(profile3);
         
         Future future = mock(Future.class);
-        when(exportManager.exportProfiles(any(List.class), eq(destination), (Filter) isNull(), eq(ExportOptions.ONE_ROW_PER_FORMAT), eq("UTF-8"))).thenReturn(future);
+        when(exportManager.exportProfiles(any(List.class), eq(destination), (Filter) isNull(), eq(ExportOptions.ONE_ROW_PER_FORMAT), eq("UTF-8"), eq(false))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
         
@@ -107,7 +107,7 @@ public class ExportCommandTest {
             "profile1", "profile2", "profile3",
         };
         
-        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8");
+        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8", false);
         
     }
 
@@ -123,7 +123,7 @@ public class ExportCommandTest {
         when(profileManager.open(eq(new File("foo1")), any(ProgressObserver.class))).thenReturn(profile1);
         
         Future future = mock(Future.class);
-        when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class))).thenReturn(future);
+        when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
         //command.setDqlFilterParser(new AntlrDqlParser());
@@ -152,7 +152,7 @@ public class ExportCommandTest {
         
         ArgumentCaptor<Filter> filterCaptor = ArgumentCaptor.forClass(Filter.class);
         verify(exportManager).exportProfiles(eq(Arrays.asList(expectedExportedProfiles)), 
-                eq("destination"), filterCaptor.capture(), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class));
+                eq("destination"), filterCaptor.capture(), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false));
 
         
         Filter filter = filterCaptor.getValue();

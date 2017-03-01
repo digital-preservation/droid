@@ -64,7 +64,7 @@ public class ExportTaskTest {
         final String destination = tempFile.getAbsolutePath();
         final String encoding = null; //i.e. platform dependent
 
-        final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, itemWriter, null));
+        final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, false, itemWriter, null));
         pmExportTask.run();
 
         verify(pmExportTask, never()).newOutputFileWriterEncoded(encoding, tempFile);
@@ -75,7 +75,7 @@ public class ExportTaskTest {
         final String destination = tempFile.getAbsolutePath();
         final String encoding = "UTF-8";
 
-        final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, itemWriter, null));
+        final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, false, itemWriter, null));
         pmExportTask.run();
 
         verify(pmExportTask, times(1)).newOutputFileWriterEncoded(encoding, tempFile);

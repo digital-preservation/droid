@@ -64,9 +64,10 @@ public interface ExportManager {
      * @param filter optional filter
      * @param options the options for export.
      * @param outputEncoding The character encoding to use in the output, null to use default encoding
+     * @param bom BOM flag.
      * @return future for cancelling the task. 
      */
     Future<?> exportProfiles(List<String> profileIds, String destination,
-            Filter filter, ExportOptions options, String outputEncoding);
+            Filter filter, ExportOptions options, String outputEncoding, boolean bom);
 
 }

@@ -158,6 +158,15 @@ public class ExportDialog extends JDialog {
         final CharsetEncodingItem encoding = (CharsetEncodingItem) cmdEncoding.getSelectedItem();
         return encoding.getCharset().name();
     }
+
+    /**
+     * Get BOM flag for output encoding.
+     * @return BOM flag status.
+     */
+    public boolean isBom() {
+        final CharsetEncodingItem encoding = (CharsetEncodingItem) cmdEncoding.getSelectedItem();
+        return encoding.isBom();
+    }
     
     /**
      * 
@@ -369,6 +378,7 @@ public class ExportDialog extends JDialog {
     class CharsetEncodingItem {
         private final String label;
         private final Charset charset;
+        private final boolean bom;
 
         /**
          * @param label  The label to use in the combobox item
@@ -377,6 +387,18 @@ public class ExportDialog extends JDialog {
         public CharsetEncodingItem(final String label, final Charset charset) {
             this.label = label;
             this.charset = charset;
+            this.bom = false;
+        }
+
+        /**
+         * @param label  The label to use in the combobox item
+         * @param charset The character encoding value
+         * @param bom Add BOM to the file.
+         */
+        public CharsetEncodingItem(String label, Charset charset, boolean bom) {
+            this.label = label;
+            this.charset = charset;
+            this.bom = bom;
         }
 
         /**
@@ -398,6 +420,14 @@ public class ExportDialog extends JDialog {
         }
 
         /**
+         * Gets bom.
+         * @return bom flag.
+         */
+        public boolean isBom() {
+            return bom;
+        }
+
+        /**
          * Returns the label
          *
          * @return The label
@@ -411,10 +441,13 @@ public class ExportDialog extends JDialog {
     private ComboBoxModel getOutputEncodings() {
         final DefaultComboBoxModel model = new DefaultComboBoxModel();
         final Charset defaultEncoding = Charset.defaultCharset();
-        model.addElement(new CharsetEncodingItem("UTF 8", Charset.forName("UTF-8")));
+        final Charset utf8 = Charset.forName("UTF-8");
+
+        model.addElement(new CharsetEncodingItem("UTF 8", utf8));
         model.addElement(
             new CharsetEncodingItem("Platform Specific (" +  defaultEncoding.name() + ")", defaultEncoding)
         );
+        model.addElement(new CharsetEncodingItem("UTF 8 with BOM", utf8, true));
         
         return model;
     }
