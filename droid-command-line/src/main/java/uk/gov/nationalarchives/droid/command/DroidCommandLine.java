@@ -56,13 +56,20 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
  * @author rflitcroft, Alok Kumar Dash
  * 
  */
-public final class DroidCommandLine {
+public final class DroidCommandLine implements AutoCloseable {
 
     /** Options message. */
     public static final String USAGE = "droid [options]";
     /** Wrap width. */
     public static final int WRAP_WIDTH = 120;
-    
+
+    //CHECKSTYLE:OFF
+    /**
+     * For testing. @see{uk.gov.nationalarchives.droid.command.TestContexCleanup}
+     */
+    public static boolean systemExit = true;
+    //CHECKSTYLE:ON
+
     /**Logger Log4j.*/
     //private Log log = LogFactory.getLog(this.getClass());
     //private static Logger log = Logger.getLogger(DroidCommandLine.class);
@@ -70,7 +77,7 @@ public final class DroidCommandLine {
 
 
     private final String[] args;
-    private GlobalContext context = new SpringUiContext();
+    private GlobalContext context = SpringUiContext.getInstance();
     
 
 
@@ -162,16 +169,17 @@ public final class DroidCommandLine {
         // with the log configuration file path getting appended to the current directory thereby
         // producing an invalid file path, e.g. C:\Projects\Droid\droid\file:\C:\Users\Brian\.droid6\log4j.properties.
         // There appears to be no other reason for the 2 calls so I have sinply removed the first call here.
-        //RuntimeConfig.configureRuntimeEnvironment();
+        RuntimeConfig.configureRuntimeEnvironment();
 
-        GlobalContext context = new SpringUiContext();
-        
         int returnCode = 0;
-    
-        DroidCommandLine commandLine = new DroidCommandLine(args);
-        returnCode = commandLine.processExecution();
 
-        System.exit(returnCode);
+        try (DroidCommandLine commandLine = new DroidCommandLine(args)) {
+            returnCode = commandLine.processExecution();
+        }
+
+        if (systemExit) {
+            System.exit(returnCode);
+        }
     }
 
     /**
@@ -180,8 +188,7 @@ public final class DroidCommandLine {
      * @throws CommandLineException on bad command
      */
     public int processExecution() throws CommandLineException {
-        
-        RuntimeConfig.configureRuntimeEnvironment();
+
         PrintWriter out = new PrintWriter(System.out);
         
         final CommandFactoryImpl localCommandFactory = new CommandFactoryImpl(context, out);
@@ -194,7 +201,7 @@ public final class DroidCommandLine {
 
             run();
             
-            out.close();
+            out.flush(); //Only flush. Never close System.out
             context.close();
 
         } catch (CommandExecutionException ceex) {
@@ -202,7 +209,7 @@ public final class DroidCommandLine {
             PrintWriter err = new PrintWriter(System.err);
             HelpFormatter formatter = new HelpFormatter();
             formatter.printWrapped(err, WRAP_WIDTH, ceex.getMessage());
-            err.close();
+            err.flush(); //Only flush. Never close System.err
             //log.error("Droid Execution Error", ceex);
             throw ceex;
 
@@ -211,7 +218,7 @@ public final class DroidCommandLine {
             PrintWriter err = new PrintWriter(System.err);
             HelpFormatter formatter = new HelpFormatter();
             formatter.printWrapped(err, WRAP_WIDTH, clex.getMessage());
-            err.close();
+            err.flush(); //Only flush. Never close System.err
             //log.error("Droid CommandLineException", clex);
             throw clex;
         }
@@ -243,4 +250,8 @@ public final class DroidCommandLine {
         return cli;
     }
 
+    @Override
+    public void close() {
+        this.getContext().close();
+    }
 }

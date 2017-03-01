@@ -79,7 +79,7 @@
     <module name="OuterTypeNumber"/>
     <module name="LineLength">
       <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
-      <property name="max" value="120"/>
+      <property name="max" value="160"/>
       <property name="tabWidth" value="4"/>
     </module>
     <module name="LocalFinalVariableName"/>

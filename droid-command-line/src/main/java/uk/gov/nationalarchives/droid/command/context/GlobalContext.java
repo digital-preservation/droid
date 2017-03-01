@@ -49,7 +49,7 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
  * @author rflitcroft
  *
  */
-public interface GlobalContext {
+public interface GlobalContext extends AutoCloseable {
 
     /**
      * 
@@ -81,6 +81,7 @@ public interface GlobalContext {
     /**
      * 
      */
+    @Override
     void close();
 
     /**
