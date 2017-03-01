@@ -106,12 +106,14 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
         if (readSize != size) {
+            //Sometimes ZipEntry don't contain information about length,crc, ....
+            //For more details : "ZipArchiveInputStream vs ZipFile" apache commons-compress documentation.
             String resourceIdentifier = "";
             if (getIdentifier() != null && getIdentifier().getUri() != null) {
                 resourceIdentifier = getIdentifier().getUri().toString();
             }
 
-            log.warn("The zip entry " + resourceIdentifier + " states it is " + size
+            log.info("The zip entry " + resourceIdentifier + " states it is " + size
                     + " in length, but reading it produced: " + readSize);
             size = readSize;
         }
