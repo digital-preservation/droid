@@ -204,7 +204,7 @@ public class ISOImageArchiveHandlerTest {
 
 
     @Test
-    public void testWIthIsoFile() throws Exception {
+    public void testWithIsoFile() throws Exception {
 
         IdentificationRequestFactory<InputStream> factory = new ISOEntryRequestFactory();
 

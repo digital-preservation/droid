@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,7 +93,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
         private final Iso9660FileSystem fileSystem;
         private final ResourceId rootParentId;
-        private final URI parentUri;
+        private final URI isoFileUri;
         private final long originatorNodeId;
 
         private final Map<String, ResourceId> directories = new HashMap<String, ResourceId>();
@@ -118,7 +117,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
             this.resultHandler = resultHandler;
             this.fileSystem = fileSystem;
             this.rootParentId = requestIdentifier.getResourceId();
-            this.parentUri = requestIdentifier.getUri();
+            this.isoFileUri = requestIdentifier.getUri();
             this.originatorNodeId = requestIdentifier.getNodeId();
             directories.put("", rootParentId);  //Rood directory
         }
@@ -137,13 +136,12 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
             InputStream entryInputStream = fileSystem.getInputStream(entry);
 
-            RequestIdentifier identifier = new RequestIdentifier(new URI("iso://" + parentUri.toString()
-                    + PATH_SPLITTER + URLEncoder.encode(path + name, UTF_8)));
+            RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toIsoImageUri(isoFileUri, path + name));
             identifier.setAncestorId(originatorNodeId);
             identifier.setParentResourceId(correlationId);
 
             RequestMetaData metaData = new RequestMetaData(entry.getSize(),
-                    entry.getLastModifiedTime(), entry.getName());
+                    entry.getLastModifiedTime(), name);
 
             IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
             request.open(entryInputStream);
@@ -169,9 +167,8 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
                 }
 
                 RequestMetaData metaData = new RequestMetaData(null, lastModifiedTime, name);
-                String escapedName = URLEncoder.encode(name, UTF_8);
-                RequestIdentifier identifier = new RequestIdentifier(new URI(parentUri.toString()
-                        + PATH_SPLITTER + escapedName));    //TODO fix URI
+
+                RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toIsoImageUri(isoFileUri, path));
 
                 IdentificationResultImpl result = new IdentificationResultImpl();
                 result.setRequestMetaData(metaData);
