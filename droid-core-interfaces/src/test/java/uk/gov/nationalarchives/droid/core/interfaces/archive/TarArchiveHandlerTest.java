@@ -69,7 +69,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * @author rflitcroft
  *
  */
-@RunWith(MockitoJUnitRunner.class)
 public class TarArchiveHandlerTest {
 
     @Test
@@ -89,13 +88,12 @@ public class TarArchiveHandlerTest {
         while ((entry = tarIn.getNextEntry()) != null) {
             URI expectedUri = ArchiveFileUtils.toTarUri(file.toURI(), entry.getName());
             IdentificationRequest mockRequest = mock(IdentificationRequest.class);
-//            when(mockRequest.toString()).thenReturn(expectedUri.toString());
             
             RequestIdentifier expectedIdentifier = new RequestIdentifier(expectedUri);
             expectedIdentifier.setParentResourceId(expectedParentId);
             expectedIdentifier.setAncestorId(10L);
 
-//            when(mockRequest.getIdentifier()).thenReturn(expectedIdentifier);
+            when(mockRequest.getIdentifier()).thenReturn(expectedIdentifier);
             mockRequests.add(mockRequest);
             when(factory.newRequest(any(RequestMetaData.class), eq(expectedIdentifier)))
                 .thenReturn(mockRequests.get(count));

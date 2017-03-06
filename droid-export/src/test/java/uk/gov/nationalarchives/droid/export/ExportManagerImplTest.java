@@ -63,7 +63,6 @@ import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
  * @author rflitcroft
  *
  */
-@RunWith(MockitoJUnitRunner.class)
 public class ExportManagerImplTest {
 
     private ExportManagerImpl exportManager;
