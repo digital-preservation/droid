@@ -67,18 +67,23 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
     private AsynchDroid droid;
     private IdentificationRequestFactory<InputStream> factory;
     private ResultHandler resultHandler;
+    private final Log log = LogFactory.getLog(this.getClass());
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
 
-        FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
+        if (request.getClass().isAssignableFrom(FileSystemIdentificationRequest.class)) {
 
-        Iso9660FileSystem fileSystem = new Iso9660FileSystem(req.getFile(), true);
+            FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
 
-        ISOImageArchiveWalker walker = new ISOImageArchiveWalker(droid, factory, resultHandler,
-                fileSystem, request.getIdentifier());
-        walker.walk(fileSystem);
+            Iso9660FileSystem fileSystem = new Iso9660FileSystem(req.getFile(), true);
 
+            ISOImageArchiveWalker walker = new ISOImageArchiveWalker(droid, factory, resultHandler,
+                    fileSystem, request.getIdentifier());
+            walker.walk(fileSystem);
+        } else {
+            log.info("Identification request for ISO image ignored due to limited support.");
+        }
     }
 
     /**

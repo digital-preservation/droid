@@ -42,6 +42,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.nationalarchives.droid.core.interfaces.*;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ISOImageArchiveHandler.ISOImageArchiveWalker;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.GZipIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ISOImageIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
@@ -233,5 +234,27 @@ public class ISOImageArchiveHandlerTest {
 
     }
 
+    @Test
+    public void testIgnoreOtherIdentificationRequest() throws Exception {
 
+        IdentificationRequestFactory<InputStream> factory = mock(ISOEntryRequestFactory.class);
+        AsynchDroid droid = mock(AsynchDroid.class);
+        ResultHandler resultHandler = mock(ResultHandler.class);
+
+        ISOImageArchiveHandler isoImageArchiveHandler = new ISOImageArchiveHandler();
+        isoImageArchiveHandler.setDroid(droid);
+        isoImageArchiveHandler.setFactory(factory);
+        isoImageArchiveHandler.setResultHandler(resultHandler);
+
+
+        RequestMetaData requestMetaData = new RequestMetaData(393216L, 1L, "testiso.iso");
+        RequestIdentifier identifier = new RequestIdentifier(new URI("file://testiso.iso"));
+        identifier.setNodeId(1L);
+
+        GZipIdentificationRequest request = new GZipIdentificationRequest(requestMetaData, identifier, new File(""));
+
+        isoImageArchiveHandler.handle(request);
+
+        verifyZeroInteractions(factory, droid, resultHandler);
+    }
 }
