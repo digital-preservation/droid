@@ -33,7 +33,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import java.io.IOException;
 
-import de.schlichtherle.io.rof.AbstractReadOnlyFile;
+import de.schlichtherle.truezip.rof.AbstractReadOnlyFile;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.windows.Window;
 

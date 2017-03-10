@@ -242,10 +242,13 @@
 			<artifactId>xmlunit</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
-			<groupId>de.schlichtherle</groupId>
-			<artifactId>truezip</artifactId>
+			<groupId>de.schlichtherle.truezip</groupId>
+			<artifactId>truezip-driver-zip</artifactId>
 		</dependency>
+
+
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-jaxws_2.1_spec</artifactId>

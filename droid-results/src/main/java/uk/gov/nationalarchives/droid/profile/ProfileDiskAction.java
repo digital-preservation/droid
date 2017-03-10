@@ -47,9 +47,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.schlichtherle.util.zip.BasicZipFile;
-import de.schlichtherle.util.zip.ZipEntry;
-import de.schlichtherle.util.zip.ZipOutputStream;
+import de.schlichtherle.truezip.zip.ZipFile;
+import de.schlichtherle.truezip.zip.ZipEntry;
+import de.schlichtherle.truezip.zip.ZipOutputStream;
 
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
@@ -235,7 +235,7 @@ public class ProfileDiskAction {
             FileUtils.deleteDirectory(destination);
         }
 
-        BasicZipFile zip = new BasicZipFile(source);
+        ZipFile zip = new ZipFile(source);
         
         try {
             // count the zip entries so we can do progress bar

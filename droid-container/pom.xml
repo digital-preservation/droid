@@ -123,8 +123,8 @@
                 <version>3.1</version>
         </dependency>
         <dependency>
-                <groupId>de.schlichtherle</groupId>
-                <artifactId>truezip</artifactId>
+            <groupId>de.schlichtherle.truezip</groupId>
+            <artifactId>truezip-driver-zip</artifactId>
         </dependency>
         <dependency>
                 <groupId>org.apache.poi</groupId>

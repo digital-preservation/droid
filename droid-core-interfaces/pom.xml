@@ -135,8 +135,8 @@
             <version>1.10</version>
         </dependency>
         <dependency>
-            <groupId>de.schlichtherle</groupId>
-            <artifactId>truezip</artifactId>
+            <groupId>de.schlichtherle.truezip</groupId>
+            <artifactId>truezip-driver-zip</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
