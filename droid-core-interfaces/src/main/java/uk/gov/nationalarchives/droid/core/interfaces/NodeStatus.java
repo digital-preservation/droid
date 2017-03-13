@@ -50,7 +50,10 @@ public enum NodeStatus {
     ACCESS_DENIED("Access denied", "Read access was denied to the resource."),
 
     /** Nodes with identification error.   */
-    ERROR("Error", "An unexpected error has occurred while processing the resource.");
+    ERROR("Error", "An unexpected error has occurred while processing the resource."),
+
+    /** Folder nodes which don't have any child. */
+    EMPTY("Empty", "Folder or container is empty");
     
     
     private String status;

@@ -225,6 +225,7 @@ public final class SqlUtils {
         final String uriString               = nodeResults.getString(URI_COL_INDEX);
         final URI uri;
 
+
         try {
             uri = new URI(uriString);
         } catch (URISyntaxException e) {
@@ -284,6 +285,19 @@ public final class SqlUtils {
     }
 
     /**
+     * Retrieves an integer value (or null) from a given position in a ResultSet.
+     * @param column Column name within ResultSet to look for an integer value
+     * @param results The ResultSet from which to retrieve the integer value
+     * @return An integer value or null
+     * @throws SQLException SQL Exception
+     */
+    public static Integer getNullableInteger(final String column,
+                                             final ResultSet results) throws SQLException {
+        final int value = results.getInt(column);
+        return results.wasNull() ? null : value;
+    }
+
+    /**
      * Retrieves a string value (or null) from a given position in a ResultSet.
      * @param position Column index within ResultSet to look for a string
      * @param results The ResultSet from which to retrieve the string
@@ -293,6 +307,19 @@ public final class SqlUtils {
     public static String getNullableString(final int position,
                                            final ResultSet results) throws SQLException {
         final String value = results.getString(position);
+        return results.wasNull() ? null : value;
+    }
+
+    /**
+     * Retrieves a string value (or null) from a given position in a ResultSet.
+     * @param column Column name within ResultSet to look for a string
+     * @param results The ResultSet from which to retrieve the string
+     * @return A string or null
+     * @throws SQLException SQL Exception
+     */
+    public static String getNullableString(final String column,
+                                           final ResultSet results) throws SQLException {
+        final String value = results.getString(column);
         return results.wasNull() ? null : value;
     }
 
@@ -310,6 +337,20 @@ public final class SqlUtils {
     }
 
     /**
+     * Retrieves a long value (or null) from a given position in a ResultSet.
+     * @param column Column name within ResultSet to look for a long value
+     * @param results The ResultSet from which to retrieve the long value
+     * @return A long value or null
+     * @throws SQLException SQL Exception
+     */
+    public static Long getNullableLong(final String column,
+                                       final ResultSet results) throws SQLException {
+        final Long value = results.getLong(column);
+        return results.wasNull() ? null : value;
+    }
+
+
+    /**
      * Retrieves a timestamp value (or null) from a given position in a ResultSet.
      * @param position Column index within ResultSet to look for a timestamp
      * @param results The ResultSet from which to retrieve the timestamp
@@ -319,6 +360,19 @@ public final class SqlUtils {
     public static Date getNullableTimestamp(final int position,
                                             final ResultSet results) throws SQLException {
         final Date value = results.getTimestamp(position);
+        return results.wasNull() ? null : value;
+    }
+
+    /**
+     * Retrieves a timestamp value (or null) from a given position in a ResultSet.
+     * @param column Column index within ResultSet to look for a timestamp
+     * @param results The ResultSet from which to retrieve the timestamp
+     * @return A timestamp value or null
+     * @throws SQLException SQL Exception
+     */
+    public static Date getNullableTimestamp(final String column,
+                                            final ResultSet results) throws SQLException {
+        final Date value = results.getTimestamp(column);
         return results.wasNull() ? null : value;
     }
 
