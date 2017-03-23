@@ -52,6 +52,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="ARC" value-ref="arcHandler"/>
                 <entry key="WARC" value-ref="warcHandler"/>
                 <entry key="BZ" value-ref="bzipHandler"/>
+                <entry key="7Z" value-ref="sevenZipHandler"/>
             </map>
         </property>
     </bean>
@@ -115,6 +116,13 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="droidCore" ref="submissionGateway"/>
         <property name="resultHandler" ref="databaseResultHandler"/>
     </bean>
+    <bean id="sevenZipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.SevenZipArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.SevenZipRequestFactory" parent="archiveRequestFactory"/>
+        </property>
+        <property name="droid" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
     <bean id="bzipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.BZipArchiveHandler">
         <property name="factory">
             <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.BZipRequestFactory" parent="archiveRequestFactory"/>
@@ -151,6 +159,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="ARC" value="${archive.arc}"/>
                 <entry key="WARC" value="${archive.warc}"/>
                 <entry key="BZ" value="${archive.bz}"/>
+                <entry key="7Z" value="${archive.7z}"/>
             </map>
         </property>
     </bean>

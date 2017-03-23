@@ -160,4 +160,12 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
     public WindowReader getWindowReader() {
         return fileReader;
     }
+
+    /**
+     * Return file associate with identification reques.
+     * @return File
+     */
+    public File getFile() {
+        return file;
+    }
 }
