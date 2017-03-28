@@ -35,8 +35,9 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.List;
 
-import de.schlichtherle.util.zip.BasicZipFile;
-import de.schlichtherle.util.zip.ZipEntry;
+
+import de.schlichtherle.truezip.zip.ZipEntry;
+import de.schlichtherle.truezip.zip.ZipFile;
 import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
@@ -75,7 +76,8 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
 
     @Override
     public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
-        BasicZipFile zipFile = new BasicZipFile(new ReaderReadOnlyFile(request.getWindowReader()));
+        //rof, DEFAULT_CHARSET, true, false
+        ZipFile zipFile = new ZipFile(new ReaderReadOnlyFile(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
         try {
             // For each entry:
             for (String entryName : matches.getAllFileEntries()) {

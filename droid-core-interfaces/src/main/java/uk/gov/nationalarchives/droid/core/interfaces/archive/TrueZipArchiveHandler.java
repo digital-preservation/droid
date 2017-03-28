@@ -42,8 +42,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 
-import de.schlichtherle.util.zip.BasicZipFile;
-import de.schlichtherle.util.zip.ZipEntry;
+import de.schlichtherle.truezip.zip.ZipEntry;
+import de.schlichtherle.truezip.zip.ZipFile;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -52,7 +52,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-
 /**
  * @author a-mpalmer
  *
@@ -68,7 +67,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      */
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        final BasicZipFile zipFile = new BasicZipFile(new ReaderReadOnlyFile(request.getWindowReader()));
+        final ZipFile zipFile = new ZipFile(new ReaderReadOnlyFile(request.getWindowReader()));
         try {
             Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
                 @Override
@@ -124,7 +123,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      * @throws IOException if there was an error accessing the input stream 'in'
      */
     final void submit(ZipEntry entry, String entryName, URI parentName, 
-            BasicZipFile file, ResourceId correlationId, long originatorNodeId) 
+            ZipFile file, ResourceId correlationId, long originatorNodeId)
         throws IOException {
         
         long size = entry.getSize();
@@ -175,7 +174,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
 
         private final Enumeration entries;
         
-        public ZipFileIterator(BasicZipFile fileToIterate) {
+        public ZipFileIterator(ZipFile fileToIterate) {
             entries = fileToIterate.entries();
         }
         
@@ -213,13 +212,13 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      */
     private final class ZipArchiveWalker extends ArchiveFileWalker<ZipEntry> {
         
-        private final BasicZipFile zipFile;
+        private final ZipFile zipFile;
         private final ResourceId parentId;
         private final long originatorNodeId;
         private final URI parentName;
         private final Map<String, ResourceId> directories = new HashMap<String, ResourceId>();
         
-        ZipArchiveWalker(RequestIdentifier identifier, BasicZipFile zipFile) {
+        ZipArchiveWalker(RequestIdentifier identifier, ZipFile zipFile) {
             this.zipFile = zipFile;
             this.parentId = identifier.getResourceId();
             this.parentName = identifier.getUri();
