@@ -52,7 +52,8 @@ public class ArchiveHandlerFactoryTest {
     private ArchiveHandler tarHandler;
     private ArchiveHandler gzHandler;
     private ArchiveHandler arcHandler;
-    
+    private ArchiveHandler bzHandler;
+
     @Before
     public void setup() {
         factory = new ArchiveHandlerFactoryImpl();
@@ -61,14 +62,16 @@ public class ArchiveHandlerFactoryTest {
         tarHandler = mock(ArchiveHandler.class);
         gzHandler = mock(ArchiveHandler.class);
         arcHandler = mock(ArchiveHandler.class);
-        
+        bzHandler = mock(ArchiveHandler.class);
+
         Map<String, ArchiveHandler> handlers = new HashMap<String, ArchiveHandler>();
         
         handlers.put("ZIP", zipHandler);
         handlers.put("TAR", tarHandler);
         handlers.put("GZ", gzHandler);
         handlers.put("ARC", arcHandler);
-        
+        handlers.put("BZ", bzHandler);
+
         factory.setHandlers(handlers);
         
     }
@@ -80,6 +83,7 @@ public class ArchiveHandlerFactoryTest {
         assertEquals(tarHandler, factory.getHandler("TAR"));
         assertEquals(gzHandler, factory.getHandler("GZ"));
         assertEquals(arcHandler, factory.getHandler("ARC"));
+        assertEquals(bzHandler, factory.getHandler("BZ"));
     }
     
 }

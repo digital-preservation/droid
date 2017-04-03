@@ -195,6 +195,7 @@
                 <entry key="GZ" value="${archive.gz}"/>
                 <entry key="ARC" value="${archive.arc}"/>
                 <entry key="WARC" value="${archive.warc}"/>
+                <entry key="BZ" value="${archive.bz}"/>
             </map>
         </property>
     </bean>
@@ -207,6 +208,7 @@
                 <entry key="GZ" value-ref="gzHandler"/>
                 <entry key="ARC" value-ref="arcHandler"/>
                 <entry key="WARC" value-ref="warcHandler"/>
+                <entry key="BZ" value-ref="bzipHandler"/>
             </map>
         </property>
     </bean>
