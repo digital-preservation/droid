@@ -118,12 +118,12 @@ public final class ArchiveFileUtils {
     }
 
     /**
-     * Create URI for files inside ISO image.
-     * @param parent URI of parent ISO file. eg: file://home/user/isofile.iso
+     * Create URI for files inside RAR Archive.
+     * @param parent URI of parent RAR file. eg: file://home/user/myrar.rar
      * @param rarEntry Full path of entry inside iso image eg: /dir/another dir/file.txt
      * @return URI.
      */
-    public static URI toRarImageUri(URI parent, String rarEntry) {
+    public static URI toRarUri(URI parent, String rarEntry) {
         final String parentScheme = parent.getScheme();
         final String parentSsp = parent.getSchemeSpecificPart();
 

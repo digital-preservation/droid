@@ -54,6 +54,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="BZ" value-ref="bzipHandler"/>
                 <entry key="7Z" value-ref="sevenZipHandler"/>
                 <entry key="ISO" value-ref="isoHandler" />
+                <entry key="RAR" value-ref="rarHandler" />
             </map>
         </property>
     </bean>
@@ -159,6 +160,15 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="resultHandler" ref="databaseResultHandler" />
     </bean>
 
+    <bean id="rarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.RarArchiveHandler">
+        <property name="droid" ref="submissionGateway" />
+        <property name="resultHandler" ref="databaseResultHandler" />
+        <property name="identificationRequestFactory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.RarEntryRequestFactory" parent="archiveRequestFactory" />
+        </property>
+
+    </bean>
+
 
     <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
         <property name="puids">
@@ -171,6 +181,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="BZ" value="${archive.bz}"/>
                 <entry key="7Z" value="${archive.7z}"/>
                 <entry key="ISO" value="${archive.iso}" />
+                <entry key="RAR" value="${archive.rar}" />
             </map>
         </property>
     </bean>
