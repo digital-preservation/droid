@@ -36,13 +36,29 @@ import com.github.junrar.exception.RarException;
 import com.github.junrar.impl.FileVolumeManager;
 import com.github.junrar.rarfile.FileHeader;
 import org.junit.Test;
+import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by rhubner on 3/21/17.
@@ -52,18 +68,40 @@ public class RarArchiveHandlerTest {
     @Test
     public void simpleTest() throws IOException, RarException {
 
-        FileVolumeManager manager = new FileVolumeManager(new File("/home/rhubner/Downloads/sample.rar"));
+        FileVolumeManager manager = new FileVolumeManager(new File("./src/test/resources/sample.rar"));
         Archive archive = new Archive(manager);
-
         List<FileHeader> headers = archive.getFileHeaders();
-
-        assertEquals(1, headers.size());
-
+        assertEquals(9, headers.size());
         InputStream a = archive.getInputStream(headers.get(0));
-
         archive.close();
-
-
     }
 
+
+    @Test
+    public void testIdentificationInRar() throws URISyntaxException, IOException {
+
+        IdentificationRequestFactory<InputStream> factory = new RarEntryRequestFactory();
+
+        AsynchDroid droid = mock(AsynchDroid.class);
+        ResultHandler resultHandler = mock(ResultHandler.class);
+        when(resultHandler.handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean())).thenReturn(mock(ResourceId.class));
+
+        RarArchiveHandler rarHandler = new RarArchiveHandler();
+        rarHandler.setDroid(droid);
+        rarHandler.setIdentificationRequestFactory(factory);
+        rarHandler.setResultHandler(resultHandler);
+
+        RequestMetaData requestMetaData = new RequestMetaData(958L, 1L, "sample.rar");
+        RequestIdentifier identifier = new RequestIdentifier(new URI("file://sample.rar"));
+        identifier.setNodeId(1L);
+
+
+        FileSystemIdentificationRequest req = new FileSystemIdentificationRequest(requestMetaData, identifier);
+        req.open(new File("./src/test/resources/sample.rar"));
+        rarHandler.handle(req);
+
+        verify(droid, times(6)).submit(any(IdentificationRequest.class));
+        verify(resultHandler, times(3)).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
+
+    }
 }
