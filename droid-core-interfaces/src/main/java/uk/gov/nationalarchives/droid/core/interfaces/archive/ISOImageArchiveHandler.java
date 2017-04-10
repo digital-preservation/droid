@@ -140,17 +140,27 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
 
             InputStream entryInputStream = fileSystem.getInputStream(entry);
+            try {
+                RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toIsoImageUri(isoFileUri, path + name));
+                identifier.setAncestorId(originatorNodeId);
+                identifier.setParentResourceId(correlationId);
 
-            RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toIsoImageUri(isoFileUri, path + name));
-            identifier.setAncestorId(originatorNodeId);
-            identifier.setParentResourceId(correlationId);
+                RequestMetaData metaData = new RequestMetaData(entry.getSize(),
+                        entry.getLastModifiedTime(), name);
 
-            RequestMetaData metaData = new RequestMetaData(entry.getSize(),
-                    entry.getLastModifiedTime(), name);
+                IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
+                request.open(entryInputStream);
 
-            IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
-            request.open(entryInputStream);
-            droid.submit(request);
+                droid.submit(request);
+            }finally {
+                try {
+                    if(entryInputStream != null) {
+                        entryInputStream.close();
+                    }
+                }catch (IOException ex) {
+                    log.warn("failed to close entryInputStream", ex);
+                }
+            }
         }
 
 

@@ -37,6 +37,8 @@ import java.io.InputStream;
 
 import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
@@ -46,6 +48,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 public class ISOImageIdentificationRequest implements IdentificationRequest<InputStream> {
 
     private  static final int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
+
+    private final Log log = LogFactory.getLog(this.getClass());
 
     private final String extension;
     private final String fileName;
@@ -81,6 +85,12 @@ public class ISOImageIdentificationRequest implements IdentificationRequest<Inpu
     @Override
     public void open(InputStream in) throws IOException {
         reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY, true);
+        // Force read of entire input stream to build reader and remove dependence on source input stream.
+        final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
+        if (size != readSize) {
+            //Possible to change log level im future as we did in ZIP.
+            log.warn("Rar element metadata size is not same as read size : " + readSize);
+        }
     }
 
     @Override
