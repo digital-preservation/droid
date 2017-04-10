@@ -152,12 +152,12 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
                 request.open(entryInputStream);
 
                 droid.submit(request);
-            }finally {
+            } finally {
                 try {
-                    if(entryInputStream != null) {
+                    if (entryInputStream != null) {
                         entryInputStream.close();
                     }
-                }catch (IOException ex) {
+                } catch (IOException ex) {
                     log.warn("failed to close entryInputStream", ex);
                 }
             }
