@@ -171,7 +171,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
             String name = FilenameUtils.getName(path.substring(0, path.length() - 1));
 
-            log.info("processing path: " + path + " name: " + name);
+            log.debug("processing path: " + path + " name: " + name);
 
             ResourceId resourceId = directories.get(name);
             if (resourceId == null) {
