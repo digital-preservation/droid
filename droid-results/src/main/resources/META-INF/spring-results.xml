@@ -51,6 +51,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="GZ" value-ref="gzHandler"/>
                 <entry key="ARC" value-ref="arcHandler"/>
                 <entry key="WARC" value-ref="warcHandler"/>
+                <entry key="BZ" value-ref="bzipHandler"/>
             </map>
         </property>
     </bean>
@@ -97,16 +98,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="archiveRequestFactory" abstract="true">
         <property name="tempDirLocation" value="${tempDirLocation}"/>
     </bean>
-    <!--
-<bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipArchiveHandler">
-<property name="factory">
-<bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory" parent="archiveRequestFactory">
-</bean>
-</property>
-<property name="droidCore" ref="submissionGateway"/>
-<property name="resultHandler" ref="databaseResultHandler"/>
-</bean>
--->
     <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler">
         <property name="factory">
             <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory" parent="archiveRequestFactory">
@@ -120,6 +111,13 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="tarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarArchiveHandler">
         <property name="factory">
             <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarEntryRequestFactory" parent="archiveRequestFactory"/>
+        </property>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+    </bean>
+    <bean id="bzipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.BZipArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.BZipRequestFactory" parent="archiveRequestFactory"/>
         </property>
         <property name="droidCore" ref="submissionGateway"/>
         <property name="resultHandler" ref="databaseResultHandler"/>
@@ -152,6 +150,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="GZ" value="${archive.gz}"/>
                 <entry key="ARC" value="${archive.arc}"/>
                 <entry key="WARC" value="${archive.warc}"/>
+                <entry key="BZ" value="${archive.bz}"/>
             </map>
         </property>
     </bean>

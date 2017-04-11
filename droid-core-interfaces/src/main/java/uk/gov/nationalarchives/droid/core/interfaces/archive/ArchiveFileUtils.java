@@ -280,6 +280,34 @@ public final class ArchiveFileUtils {
         }
     }
 
+
+
+
+    /**
+     * @param parent the container file
+     * @return a BZIP URI
+     */
+    public static URI toBZipUri(URI parent) {
+
+        String parentScheme = parent.getScheme();
+        String parentSsp = parent.getSchemeSpecificPart();
+
+        String gzEntryName = GzipUtils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart()));
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + gzEntryName.length());
+        builder.append("bz:").append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(gzEntryName);
+        String newSSP = builder.toString();
+
+        try {
+            return new URI(newScheme, newSSP, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
     /**
      * @param requestUri a uri
      * @return the URI needed to replay this uri.
