@@ -117,6 +117,31 @@ public final class ArchiveFileUtils {
     }
 
     /**
+     * Builds a URI for a 7z file entry.
+     * @param parent the parent 7z file.
+     * @param sevenZipEntry the 7z entry
+     * @return the URI
+     */
+    public static URI toSevenZUri(URI parent, String sevenZipEntry) {
+        String parentScheme = parent.getScheme();
+        String parentSsp = parent.getSchemeSpecificPart();
+
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + sevenZipEntry.length());
+        builder.append("sevenz:").append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(sevenZipEntry));
+        String newSSP = builder.toString();
+
+        try {
+            return new URI(newScheme, newSSP, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Builds a URI for a webarchive file entry modelled on the apache-commons format used for tar files.
      * @param archiveType arc or warc
      * @param parent the parent file
