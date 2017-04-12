@@ -129,6 +129,7 @@ public class SevenZipEntryIdentificationRequest implements IdentificationRequest
      */
     public final void open(final InputStream in) throws IOException {
         reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY, true);
+        reader.length();
     }
 
     @Override
