@@ -76,7 +76,6 @@ public class SevenZArchiveHandlerTest {
         while ((entry = archiveInputStream.getNextEntry()) != null) {
             URI expectedUri = ArchiveFileUtils.toSevenZUri(file.toURI(), entry.getName());
             IdentificationRequest mockRequest = mock(IdentificationRequest.class);
-            when(mockRequest.toString()).thenReturn(expectedUri.toString());
             
             RequestIdentifier expectedIdentifier = new RequestIdentifier(expectedUri);
             expectedIdentifier.setParentResourceId(expectedParentId);
