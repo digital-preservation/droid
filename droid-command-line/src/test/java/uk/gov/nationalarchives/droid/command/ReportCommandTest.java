@@ -33,10 +33,13 @@ package uk.gov.nationalarchives.droid.command;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
@@ -47,8 +50,10 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -150,6 +155,6 @@ public class ReportCommandTest {
         assertEquals(1, reportRequest.getProfileIds().size());
         assertEquals("12345", reportRequest.getProfileIds().get(0));
         
-        verify(reportXmlWriter).writeReport(eq(report), any(FileWriter.class));
+        verify(reportXmlWriter).writeReport(eq(report), any(OutputStreamWriter.class));
     }
 }

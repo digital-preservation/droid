@@ -53,6 +53,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="WARC" value-ref="warcHandler"/>
                 <entry key="BZ" value-ref="bzipHandler"/>
                 <entry key="7Z" value-ref="sevenZipHandler"/>
+                <entry key="ISO" value-ref="isoHandler" />
             </map>
         </property>
     </bean>
@@ -150,6 +151,15 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="droidCore" ref="submissionGateway"/>
         <property name="resultHandler" ref="databaseResultHandler"/>
     </bean>
+    <bean id="isoHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ISOImageArchiveHandler">
+        <property name="factory">
+            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ISOEntryRequestFactory" parent="archiveRequestFactory" />
+        </property>
+        <property name="droid" ref="submissionGateway" />
+        <property name="resultHandler" ref="databaseResultHandler" />
+    </bean>
+
+
     <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
         <property name="puids">
             <map>
@@ -160,6 +170,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
                 <entry key="WARC" value="${archive.warc}"/>
                 <entry key="BZ" value="${archive.bz}"/>
                 <entry key="7Z" value="${archive.7z}"/>
+                <entry key="ISO" value="${archive.iso}" />
             </map>
         </property>
     </bean>

@@ -43,16 +43,16 @@ import java.util.zip.ZipFile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.apache.commons.io.FilenameUtils;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.AdditionalMatchers;
+
 
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
@@ -136,8 +136,7 @@ public class ProfileDiskActionTest {
         in.close();
 
         assertEquals(getXmlString(), sb.toString());
-        
-        verify(callback, atLeastOnce()).onProgress(argThat(Matchers.lessThanOrEqualTo(100)));
+        verify(callback, atLeastOnce()).onProgress(AdditionalMatchers.leq(100));
     }
 
     @Test
@@ -176,8 +175,8 @@ public class ProfileDiskActionTest {
             + "<profiles/>";
         assertEquals(xml, sb.toString());
 
-        verify(observer, atLeastOnce()).onProgress(argThat(Matchers.lessThanOrEqualTo(100)));
-        //verify(observer).onProgress(100);
+        verify(observer, atLeastOnce()).onProgress(AdditionalMatchers.leq(100));
+        verify(observer, atLeastOnce()).onProgress(100);
     }
     
     private void writeXmlData() throws Exception {

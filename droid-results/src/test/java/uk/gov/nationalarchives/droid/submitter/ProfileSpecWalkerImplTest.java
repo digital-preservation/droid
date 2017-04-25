@@ -53,6 +53,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.hamcrest.TypeSafeMatcher;
 
+import org.mockito.ArgumentMatcher;
+import org.mockito.internal.hamcrest.HamcrestArgumentMatcher;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
@@ -224,18 +226,16 @@ public class ProfileSpecWalkerImplTest {
                 (ResourceId) isNull());
 
         verify(fileEventHandler, never()).onEvent(
-                argThat(new TypeSafeMatcher<File>() {
+                argThat(new ArgumentMatcher<File>() {
                     @Override
-                    public void describeTo(Description arg0) {
-                        arg0
-                                .appendText("A Node with a File containing the String 'sub'");
-
+                    public boolean matches(File argument) {
+                        return argument.toString().contains("sub");
+                    }
+                    @Override
+                    public String toString() {
+                        return "A Node with a File containing the String 'sub'";
                     }
 
-                    @Override
-                    public boolean matchesSafely(File item) {
-                        return item.toString().contains("sub");
-                    }
                 }), (ResourceId) any(), (ResourceId) isNull());
     }
 
@@ -406,21 +406,20 @@ public class ProfileSpecWalkerImplTest {
                 (ResourceId) isNull());
     }
 
-    private static Matcher<File> newFileUriMatcher(final String fileName) {
-        return new TypeSafeMatcher<File>() {
+    private static ArgumentMatcher<File> newFileUriMatcher(final String fileName) {
+        return new ArgumentMatcher<File>() {
             @Override
-            public void describeTo(Description arg0) {
-                arg0.appendText("Matches " + new File(fileName));
-
-            }
-
-            @Override
-            public boolean matchesSafely(File item) {
+            public boolean matches(File argument) {
                 try {
-                    return item.equals(new File(fileName).getCanonicalFile());
+                    return argument.equals(new File(fileName).getCanonicalFile());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+            }
+
+            @Override
+            public String toString() {
+                return "Matches" + ((new File(fileName)).toString());
             }
         };
     }

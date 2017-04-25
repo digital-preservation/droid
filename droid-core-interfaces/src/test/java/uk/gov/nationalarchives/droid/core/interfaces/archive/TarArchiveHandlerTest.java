@@ -53,8 +53,10 @@ import static org.mockito.Mockito.when;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
@@ -86,7 +88,6 @@ public class TarArchiveHandlerTest {
         while ((entry = tarIn.getNextEntry()) != null) {
             URI expectedUri = ArchiveFileUtils.toTarUri(file.toURI(), entry.getName());
             IdentificationRequest mockRequest = mock(IdentificationRequest.class);
-            when(mockRequest.toString()).thenReturn(expectedUri.toString());
             
             RequestIdentifier expectedIdentifier = new RequestIdentifier(expectedUri);
             expectedIdentifier.setParentResourceId(expectedParentId);

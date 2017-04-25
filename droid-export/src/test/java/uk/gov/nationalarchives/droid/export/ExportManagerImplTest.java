@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -46,7 +47,9 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -118,7 +121,7 @@ public class ExportManagerImplTest {
                 }
                 return null;
             }
-        }).when(reader).readAll(any(ItemReaderCallback.class), any(Filter.class));
+        }).when(reader).readAll(any(ItemReaderCallback.class), nullable(Filter.class));
 
         List<String> profileIdList = new ArrayList<String>();
         profileIdList.add("profile1");

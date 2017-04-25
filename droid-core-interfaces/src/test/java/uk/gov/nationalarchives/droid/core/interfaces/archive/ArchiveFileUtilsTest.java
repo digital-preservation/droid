@@ -45,6 +45,15 @@ import org.junit.Test;
 public class ArchiveFileUtilsTest {
 
     @Test
+    public void testIsoImageUri() throws URISyntaxException {
+        URI parent = new URI("file://isoImage.iso");
+        String entryName = "sample.txt";
+
+        assertEquals("iso:file://isoImage.iso!/sample.txt", ArchiveFileUtils.toIsoImageUri(parent, entryName).toString());
+    }
+
+
+    @Test
     public void testBuildTarGzUri() throws URISyntaxException {
         URI parent = new URI("gz:http://anyhost/dir/mytar.tar.gz!/mytar.tar");
         String entryName = "path/in tar/README.txt";

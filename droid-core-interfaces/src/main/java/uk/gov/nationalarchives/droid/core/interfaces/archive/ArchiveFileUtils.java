@@ -90,6 +90,32 @@ public final class ArchiveFileUtils {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    /**
+     * Create URI for files inside ISO image.
+     * @param parent URI of parent ISO file. eg: file://home/user/isofile.iso
+     * @param imageEntry Full path of entry inside iso image eg: /dir/another dir/file.txt
+     * @return URI.
+     */
+    public static URI toIsoImageUri(URI parent, String imageEntry) {
+        final String parentScheme = parent.getScheme();
+        final String parentSsp = parent.getSchemeSpecificPart();
+
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + imageEntry.length());
+        builder.append("iso:").append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(imageEntry));
+        String newSSP = builder.toString();
+
+        try {
+            return new URI(newScheme, newSSP, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
+    }
     
     /**
      * Builds a URI for a tar file entry.

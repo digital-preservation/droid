@@ -90,6 +90,11 @@
     
     <dependencies>
         <dependency>
+            <groupId>com.github.stephenc.java-iso-tools</groupId>
+            <artifactId>iso9660-vfs-impl</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
         </dependency>
