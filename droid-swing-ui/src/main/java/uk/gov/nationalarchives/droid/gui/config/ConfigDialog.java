@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.gui.config;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -201,8 +202,6 @@ public class ConfigDialog extends JDialog {
         updateFrequencyButtonGroup = new ButtonGroup();
         csvExportButtonGroup = new ButtonGroup();
         buttonGroupExtension = new ButtonGroup();
-        jPanel4 = new JPanel();
-        jScrollPane1 = new JScrollPane();
         generalTabbedPane1 = new JTabbedPane();
         jPanel3 = new JPanel();
         jLabel3 = new JLabel();
@@ -222,6 +221,7 @@ public class ConfigDialog extends JDialog {
         jLabel10 = new JLabel();
         processWebArchivesCheckBox = new JCheckBox();
         jPanel2 = new JPanel();
+        jPanel1 = new JPanel();
         rowPerFileButton1 = new JRadioButton();
         rowPerFormatButton1 = new JRadioButton();
         jPanel5 = new JPanel();
@@ -241,18 +241,13 @@ public class ConfigDialog extends JDialog {
         jTextField1 = new JTextField();
         askToDownloadCheckBox = new JCheckBox();
         autoSetDefaultSignatureFileCheckBox = new JCheckBox();
-        okButton = new JButton();
+        pronomUrlResetButton = new JButton();
         cancelButton = new JButton();
+        okButton = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.title")); // NOI18N
-        setMinimumSize(new Dimension(500, 440));
-
-        jScrollPane1.setMinimumSize(new Dimension(450, 350));
-        jScrollPane1.setPreferredSize(new Dimension(507, 290));
-
-        generalTabbedPane1.setMinimumSize(new Dimension(470, 280));
-        generalTabbedPane1.setPreferredSize(new Dimension(470, 280));
+        setMinimumSize(new Dimension(500, 600));
 
         jPanel3.setPreferredSize(new Dimension(500, 380));
 
@@ -359,8 +354,7 @@ public class ConfigDialog extends JDialog {
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+        jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
@@ -373,39 +367,37 @@ public class ConfigDialog extends JDialog {
                             .addComponent(defaultSigFileComboBox1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(containerSigCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())
-                    .addGroup(Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField2)
-                        .addGap(14, 14, 14))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
-                            .addGroup(Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .addGap(0, 39, Short.MAX_VALUE)
-                                .addComponent(jLabel10, GroupLayout.PREFERRED_SIZE, 418, GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(jLabel4)
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel10, GroupLayout.PREFERRED_SIZE, 418, GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(generateHashCheckBox)
-                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                        .addComponent(hashAlgorithmCombo, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
                             .addComponent(processArchivesCheckBox)
                             .addComponent(rowPerFileButton2)
                             .addComponent(rowPerFormatButton2)
                             .addComponent(processWebArchivesCheckBox))
-                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(generateHashCheckBox)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(hashAlgorithmCombo, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(jTextField2, GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
+                        .addGap(20, 20, 20))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+        jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
@@ -417,34 +409,33 @@ public class ConfigDialog extends JDialog {
                     .addComponent(containerSigFileLabel))
                 .addGap(18, 18, 18)
                 .addComponent(processArchivesCheckBox)
-                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(processWebArchivesCheckBox)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
-                            .addComponent(generateHashCheckBox)
-                            .addComponent(hashAlgorithmCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextField2, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(generateHashCheckBox)
+                    .addComponent(hashAlgorithmCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(rowPerFileButton2)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(rowPerFormatButton2)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jLabel3)
                     .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel4))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(jLabel10)
-                .addGap(20, 20, 20))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle"), jPanel3); // NOI18N
 
-        jPanel2.setBorder(BorderFactory.createTitledBorder(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.border.title"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel1.border.title_1"))); // NOI18N
 
         csvExportButtonGroup.add(rowPerFileButton1);
         rowPerFileButton1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton1.text")); // NOI18N
@@ -464,25 +455,38 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(rowPerFileButton1)
-                    .addComponent(rowPerFormatButton1))
-                .addContainerGap(301, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
+                    .addComponent(rowPerFormatButton1, GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
+                    .addComponent(rowPerFileButton1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(rowPerFileButton1)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(rowPerFormatButton1)
-                .addContainerGap(310, Short.MAX_VALUE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(rowPerFormatButton1, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(424, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle_1"), jPanel2); // NOI18N
@@ -535,22 +539,20 @@ public class ConfigDialog extends JDialog {
 
         GroupLayout autoUpdatePanelLayout = new GroupLayout(autoUpdatePanel);
         autoUpdatePanel.setLayout(autoUpdatePanelLayout);
-        autoUpdatePanelLayout.setHorizontalGroup(
-            autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
+        autoUpdatePanelLayout.setHorizontalGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
             .addGroup(autoUpdatePanelLayout.createSequentialGroup()
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(updateOnStartupRadioButton)
                     .addGroup(autoUpdatePanelLayout.createSequentialGroup()
                         .addComponent(updateScheduleRadioButton)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(updateFrequencyTextBox, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(updateFrequencyTextBox, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jLabel6))
-                    .addComponent(updateOnStartupRadioButton))
-                .addGap(233, 233, 233))
+                        .addComponent(jLabel6)))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        autoUpdatePanelLayout.setVerticalGroup(
-            autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
+        autoUpdatePanelLayout.setVerticalGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
             .addGroup(autoUpdatePanelLayout.createSequentialGroup()
                 .addComponent(updateOnStartupRadioButton)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
@@ -572,7 +574,6 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        jLabel7.setFont(new Font("Tahoma", 1, 11)); // NOI18N
         jLabel7.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel6.text")); // NOI18N
 
         proxySettingsButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.proxySettingsButton.text")); // NOI18N
@@ -615,44 +616,44 @@ public class ConfigDialog extends JDialog {
             }
         });
 
+        pronomUrlResetButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.pronomUrlResetButton.text")); // NOI18N
+
         GroupLayout jPanel5Layout = new GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(Alignment.LEADING)
+        jPanel5Layout.setHorizontalGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pronomUrlResetButton)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(proxySettingsButton)
+                .addContainerGap())
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(askToDownloadCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(autoSetDefaultSignatureFileCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(autoUpdateCheckbox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel7)
-                            .addComponent(autoUpdatePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(autoUpdatePanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel5))
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+                                    .addComponent(containerSigUrl)
+                                    .addComponent(updateUrlTextBox)))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addGap(0, 253, Short.MAX_VALUE))
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, 303, GroupLayout.PREFERRED_SIZE))
-                            .addGroup(Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(proxySettingsButton)
-                                .addGap(21, 21, 21))
-                            .addGroup(jPanel5Layout.createParallelGroup(Alignment.TRAILING, false)
-                                .addGroup(jPanel5Layout.createSequentialGroup()
-                                    .addComponent(jLabel5)
-                                    .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(updateUrlTextBox, GroupLayout.PREFERRED_SIZE, 297, GroupLayout.PREFERRED_SIZE))
-                                .addGroup(Alignment.LEADING, jPanel5Layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(containerSigUrl, GroupLayout.PREFERRED_SIZE, 274, GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap())
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(askToDownloadCheckBox)
-                            .addComponent(autoSetDefaultSignatureFileCheckBox, GroupLayout.PREFERRED_SIZE, 215, GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(jTextField1)))
+                        .addContainerGap())))
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(Alignment.LEADING)
+        jPanel5Layout.setVerticalGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel7)
@@ -665,7 +666,9 @@ public class ConfigDialog extends JDialog {
                     .addComponent(containerSigUrl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(proxySettingsButton)
+                .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(proxySettingsButton)
+                    .addComponent(pronomUrlResetButton))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(autoUpdateCheckbox)
                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -678,38 +681,10 @@ public class ConfigDialog extends JDialog {
                 .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        jPanel5Layout.linkSize(SwingConstants.VERTICAL, new Component[] {containerSigUrl, updateUrlTextBox});
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel3.TabConstraints.tabTitle"), jPanel5); // NOI18N
-
-        jScrollPane1.setViewportView(generalTabbedPane1);
-
-        GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 28, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        okButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.okButton.text")); // NOI18N
-        okButton.setPreferredSize(new Dimension(65, 23));
-        okButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
 
         cancelButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.cancelButton.text")); // NOI18N
         cancelButton.addActionListener(new ActionListener() {
@@ -718,32 +693,39 @@ public class ConfigDialog extends JDialog {
             }
         });
 
+        okButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.okButton.text")); // NOI18N
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(39, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jPanel4, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(cancelButton)
-                        .addGap(31, 31, 31))))
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(okButton))
+                    .addComponent(generalTabbedPane1))
+                .addContainerGap())
         );
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {cancelButton, okButton});
 
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
+        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(generalTabbedPane1)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(okButton)
                     .addComponent(cancelButton))
-                .addGap(0, 15, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {cancelButton, okButton});
@@ -846,16 +828,16 @@ public class ConfigDialog extends JDialog {
     private JLabel jLabel6;
     private JLabel jLabel7;
     private JLabel jLabel9;
+    private JPanel jPanel1;
     private JPanel jPanel2;
     private JPanel jPanel3;
-    private JPanel jPanel4;
     private JPanel jPanel5;
-    private JScrollPane jScrollPane1;
     private JTextField jTextField1;
     private JTextField jTextField2;
     private JButton okButton;
     private JCheckBox processArchivesCheckBox;
     private JCheckBox processWebArchivesCheckBox;
+    private JButton pronomUrlResetButton;
     private JButton proxySettingsButton;
     private JRadioButton rowPerFileButton1;
     private JRadioButton rowPerFileButton2;
