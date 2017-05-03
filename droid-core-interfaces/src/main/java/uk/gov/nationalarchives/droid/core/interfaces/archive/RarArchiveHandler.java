@@ -197,7 +197,7 @@ public final class RarArchiveHandler implements ArchiveHandler {
             identifier.setAncestorId(originatorNodeId);
             identifier.setParentResourceId(correlationId);
 
-            RequestMetaData metaData = new RequestMetaData(entry.getUnpSize(),      //TODO test which size!!!
+            RequestMetaData metaData = new RequestMetaData(entry.getUnpSize(),
                     entry.getMTime().getTime(), name);
 
             IdentificationRequest<InputStream> request = identificationRequestFactory.newRequest(metaData, identifier);
