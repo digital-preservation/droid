@@ -116,6 +116,32 @@ public final class ArchiveFileUtils {
         }
 
     }
+
+    /**
+     * Create URI for files inside RAR Archive.
+     * @param parent URI of parent RAR file. eg: file://home/user/myrar.rar
+     * @param rarEntry Full path of entry inside iso image eg: /dir/another dir/file.txt
+     * @return URI.
+     */
+    public static URI toRarUri(URI parent, String rarEntry) {
+        final String parentScheme = parent.getScheme();
+        final String parentSsp = parent.getSchemeSpecificPart();
+
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + rarEntry.length());
+        builder.append("rar:").append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(rarEntry));
+        String newSSP = builder.toString();
+
+        try {
+            return new URI(newScheme, newSSP, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
     
     /**
      * Builds a URI for a tar file entry.

@@ -572,6 +572,12 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <artifactId>iso9660-vfs-impl</artifactId>
                 <version>2.0.1</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.beothorn</groupId>
+                <artifactId>junrar</artifactId>
+                <version>0.6</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     
