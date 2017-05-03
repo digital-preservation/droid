@@ -118,7 +118,11 @@ public final class DialogUtils {
      * @param e the exception that caused the message
      */
     public static void showSignatureUpdateErrorDialog(Frame parent, Throwable e) {
-        JOptionPane.showMessageDialog(parent, e.getLocalizedMessage(), SIGNATURE_UPDATE, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(parent,
+                "Error occurred while establishing a connection to Pronom server.\n"
+                        + "Check URL and proxy setting in Tools -> Preferences -> Signature Updates\n"
+                        + "Error detail : "
+                + e.getLocalizedMessage(), SIGNATURE_UPDATE, JOptionPane.ERROR_MESSAGE);
     }
     
     /**

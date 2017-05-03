@@ -31,10 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.gui.config;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,7 +56,6 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -100,6 +97,9 @@ public class ConfigDialog extends JDialog {
     public static final int OK = 1;
 
     private static final long serialVersionUID = -707594144365104572L;
+
+    private static final String PRONOM_SIGNATURE_URL_KEY = "pronom.update.url";
+    private static final String PRONOM_CONTAINER_URL_KEY = "container.update.url";
     
     private int response;
     private Map<String, Object> props = new HashMap<String, Object>();
@@ -617,6 +617,11 @@ public class ConfigDialog extends JDialog {
         });
 
         pronomUrlResetButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.pronomUrlResetButton.text")); // NOI18N
+        pronomUrlResetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                pronomUrlResetButtonActionPerformed(evt);
+            }
+        });
 
         GroupLayout jPanel5Layout = new GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -787,6 +792,13 @@ public class ConfigDialog extends JDialog {
     private void processWebArchivesCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processWebArchivesCheckBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_processWebArchivesCheckBoxActionPerformed
+
+    private void pronomUrlResetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_pronomUrlResetButtonActionPerformed
+        String pronomSignatureUrl = context.getGlobalConfig().getDefaultProperties().getString(PRONOM_SIGNATURE_URL_KEY);
+        String pronomContainerUrl = context.getGlobalConfig().getDefaultProperties().getString(PRONOM_CONTAINER_URL_KEY);
+        updateUrlTextBox.setText(pronomSignatureUrl);
+        containerSigUrl.setText(pronomContainerUrl);
+    }//GEN-LAST:event_pronomUrlResetButtonActionPerformed
 
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
