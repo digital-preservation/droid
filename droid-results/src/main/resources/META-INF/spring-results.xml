@@ -270,24 +270,10 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     </bean>
 
 
-<!-- database result handler commits on every node -->
-    <!--
-    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.JpaResultHandler" init-method="init">
-        <property name="resultHandlerDao" ref="resultsDao"/>
-        <property name="progressMonitor" ref="progressMonitor"/>
-    </bean>
-    -->
     <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.JDBCResultHandler" init-method="init">
         <property name="resultHandlerDao" ref="resultsDao"/>
         <property name="progressMonitor" ref="progressMonitor"/>
     </bean>
-
-    <!-- experimental batching database result handler commits in batches.
-<bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.BatchResultHandler" init-method="init">
-<property name="progressMonitor" ref="progressMonitor"/>
-<property name="entityManagerFactory" ref="entityManagerFactory"/>
-</bean>
--->
     
     <bean id="progressMonitor" class="uk.gov.nationalarchives.droid.results.handlers.ProgressMonitorImpl"/>
     
