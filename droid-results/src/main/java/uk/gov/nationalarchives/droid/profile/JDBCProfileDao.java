@@ -33,9 +33,10 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import static java.sql.Types.VARCHAR;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +49,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
@@ -233,21 +235,20 @@ public class JDBCProfileDao implements ProfileDao {
     public void saveFormat(final Format format) {
 
         try {
-            if (format == Format.NULL) {
-                // BNO getInsertFormatStatement tries to convert the empty Puid to NULL, causing a failed
-                // database insert. So as a workaround for now we specify the SQL directly for this case.
-                jdbcTemplate.update(dummyPuid);
-            } else {
-                //JDBC template handle null values when we provide types.
-                jdbcTemplate.update(INSERT_FORMAT, new Object[] {
-                        format.getPuid(),
-                        format.getMimeType(),
-                        format.getName(),
-                        format.getVersion(),
-                }, new int[] {
-                    VARCHAR, VARCHAR, VARCHAR, VARCHAR,
-                });
-            }
+            jdbcTemplate.execute(new ConnectionCallback<Void>() {
+                @Override
+                public Void doInConnection(Connection conn) throws SQLException {
+                    // BNO getInsertFormatStatement tries to convert the empty Puid to NULL, causing a failed
+                    // database insert. So as a workaround for now we specify the SQL directly for this case.
+                    try (final PreparedStatement insertFormat = (format == Format.NULL)
+                                    ? conn.prepareStatement(dummyPuid) : getInsertFormatStatement(conn, format)) {
+                        insertFormat.execute();
+                        conn.commit();  // rhubner - All connection have autoCommit(false). We need to commit manually.
+                                        // We can't use JdbcTemplate for inserts. Yet.
+                    }
+                    return null;
+                }
+            });
         } catch (DataAccessException ex) {
             //CHECKSTYLE:OFF
             log.error("A database exception occurred inserting a format " + format == null ? "NULL" : format , ex);
@@ -255,7 +256,14 @@ public class JDBCProfileDao implements ProfileDao {
         }
     }
 
-
+    private PreparedStatement getInsertFormatStatement(Connection conn, Format format) throws SQLException {
+        final PreparedStatement insertFormat = conn.prepareStatement(INSERT_FORMAT);
+        insertFormat.setString(FORMAT_PUID_INDEX, format.getPuid());
+        SqlUtils.setNullableString(FORMAT_MIME_TYPE_INDEX, format.getMimeType(), insertFormat);
+        SqlUtils.setNullableString(FORMAT_NAME_INDEX, format.getName(), insertFormat);
+        SqlUtils.setNullableString(FORMAT_VERSION_INDEX, format.getVersion(), insertFormat);
+        return insertFormat;
+    }
 
 
     /**
