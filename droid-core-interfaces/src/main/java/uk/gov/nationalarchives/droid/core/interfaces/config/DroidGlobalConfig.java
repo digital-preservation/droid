@@ -65,7 +65,7 @@ import static uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig
 public class DroidGlobalConfig {
 
     /** The name of the DROID properties file. */
-    public static final String DROID_PROPERTIES = "droid.properties";    
+    public static final String DROID_PROPERTIES = "droid.properties";
     
     /**
      * 
@@ -98,6 +98,7 @@ public class DroidGlobalConfig {
     private File filterDir;
     
     private PropertiesConfiguration props;
+    private PropertiesConfiguration defaultProps;
 
     private File profilesDir;
     private File tempDir;
@@ -176,7 +177,7 @@ public class DroidGlobalConfig {
 
         URL defaultPropsUrl = getClass().getClassLoader().getResource(
                 DEFAULT_DROID_PROPERTIES);
-        PropertiesConfiguration defaultProps = new PropertiesConfiguration(
+        defaultProps = new PropertiesConfiguration(
                 defaultPropsUrl);
 
         /**
@@ -242,6 +243,15 @@ public class DroidGlobalConfig {
      */
     public PropertiesConfiguration getProperties() {
         return props;
+    }
+
+    /**
+     * Return properties with droid default setting.
+     * Useful for proton URL reset ...
+     * @return Properties.
+     */
+    public PropertiesConfiguration getDefaultProperties() {
+        return defaultProps;
     }
 
     /**
