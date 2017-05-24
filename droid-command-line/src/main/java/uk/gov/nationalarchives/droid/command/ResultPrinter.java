@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.List;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
+import uk.gov.nationalarchives.droid.command.archive.Bzip2ArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.IsoArchiveContainerIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.SevenZipArchiveContainerIdentifier;
@@ -80,6 +81,7 @@ public class ResultPrinter {
     private static final String WARC_ARCHIVE = "fmt/289";
     private static final String ISO_9660 = "fmt/468";
     private static final String SEVEN_ZIP = "fmt/484";
+    private static final String BZIP2_ARCHIVE = "x-fmt/268";
 
     
     private BinarySignatureIdentifier binarySignatureIdentifier;
@@ -181,6 +183,11 @@ public class ResultPrinter {
                                 new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
                                         containerSignatureDefinitions, path, slash, slash1);
                         sevenZipArchiveContainerIdentifier.identify(results.getUri(), request);
+                    }else if(BZIP2_ARCHIVE.equals(puid)) {
+                        Bzip2ArchiveContentIdentifier bzip2ArchiveContentIdentifier =
+                                new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, webArchives);
+                        bzip2ArchiveContentIdentifier.identify(results.getUri(), request);
                     }
                 }
                 if (webArchives && !container) {
