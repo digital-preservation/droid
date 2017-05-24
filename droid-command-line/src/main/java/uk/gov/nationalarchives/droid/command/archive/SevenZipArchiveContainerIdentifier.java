@@ -32,15 +32,14 @@
 package uk.gov.nationalarchives.droid.command.archive;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
+import org.apache.ant.compress.util.SevenZStreamFactory;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.github.junrar.Archive;
-import com.github.junrar.exception.RarException;
-import com.github.junrar.impl.FileVolumeManager;
-import com.github.junrar.rarfile.FileHeader;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -48,16 +47,14 @@ import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RarIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-
-
+import uk.gov.nationalarchives.droid.core.interfaces.resource.SevenZipEntryIdentificationRequest;
 
 
 /**
  * Created by rhubner on 5/18/17.
  */
-public class RarArchiveContainerIdentifier extends ArchiveContentIdentifier {
+public class SevenZipArchiveContainerIdentifier extends ArchiveContentIdentifier {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
@@ -70,9 +67,9 @@ public class RarArchiveContainerIdentifier extends ArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public RarArchiveContainerIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
-                                         final ContainerSignatureDefinitions containerSignatureDefinitions,
-                                         final String path, final String slash, final String slash1) {
+    public SevenZipArchiveContainerIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
+                                              final ContainerSignatureDefinitions containerSignatureDefinitions,
+                                              final String path, final String slash, final String slash1) {
 
         super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, false);
     }
@@ -84,46 +81,101 @@ public class RarArchiveContainerIdentifier extends ArchiveContentIdentifier {
      */
     public void identify(final URI uri, final IdentificationRequest request) throws CommandExecutionException {
 
-        final String newPath = makeContainerURI("rar", request.getFileName());
+        final String newPath = makeContainerURI("7z", request.getFileName());
         setSlash1("");
 
         if (request.getClass().isAssignableFrom(FileSystemIdentificationRequest.class)) {
 
             FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
 
-            FileVolumeManager fileVolumeManager = new FileVolumeManager(req.getFile());
-
             try {
-                try (Archive archive = new Archive(fileVolumeManager)) {
-                    if (archive.isEncrypted()) {
-                        log.info("encrypted rar");
-                    } else {
-                        for (FileHeader entry : archive.getFileHeaders()) {
-                            processEntry(entry, archive, uri, newPath);
-                        }
+                SevenZStreamFactory sevenZStreamFactory = new SevenZStreamFactory();
+                try (ArchiveInputStream archiveStream = sevenZStreamFactory.getArchiveInputStream(req.getFile(), null)) {
+                    SevenZArchiveEntry entry;
+                    while ((entry = (SevenZArchiveEntry) archiveStream.getNextEntry()) != null) {
+                        processEntry(entry, archiveStream, uri, newPath);
                     }
                 }
             } catch (IOException e) {
-                throw new CommandExecutionException("IO error in RARFileSystem", e);
-            } catch (RarException ex) {
-                throw new CommandExecutionException("Rar exception in RARFileSystem", ex);
+                throw new CommandExecutionException("IO error in 7z FileSystem", e);
             }
         } else {
-            log.info("Identification request for RAR archive ignored due to limited support.");
+            log.info("Identification request for 7z archive ignored due to limited support.");
         }
 
     }
 
-    private void processEntry(FileHeader entry, Archive archive, URI uri, String newPath) throws CommandExecutionException, IOException, RarException {
-        String name = entry.getFileNameString();
-
+    private void processEntry(SevenZArchiveEntry entry, ArchiveInputStream archiveStream, URI uri, String newPath) throws CommandExecutionException {
+        String name = entry.getName();
         if (!entry.isDirectory()) {
-            final RequestMetaData metaData = new RequestMetaData(entry.getUnpSize(), 2L, name);
+            final RequestMetaData metaData = new RequestMetaData(entry.getSize(), 2L, name);
             final RequestIdentifier identifier = new RequestIdentifier(uri);
-            RarIdentificationRequest req = new RarIdentificationRequest(metaData, identifier, getTmpDir());
-            expandContainer(req, archive.getInputStream(entry), newPath);
+            SevenZipEntryIdentificationRequest req = new SevenZipEntryIdentificationRequest(metaData, identifier, getTmpDir());
+            expandContainer(req, new NotClosingInputStream(archiveStream), newPath);
         } else {
-            log.trace("processing directory : " + entry.getFileNameString());
+            log.info("processing directory : " + entry.getName());
         }
     }
+
+
+    /**
+     * This class delegate all method calls to original InputStrem except close() method.
+     */
+    private static final class NotClosingInputStream extends InputStream {
+
+        private ArchiveInputStream archiveInputStream;
+
+        public NotClosingInputStream(ArchiveInputStream archiveInputStream) {
+            this.archiveInputStream = archiveInputStream;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return  archiveInputStream.read();
+        }
+
+        @Override
+        public int read(byte[] b) throws IOException {
+            return archiveInputStream.read(b);
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            return archiveInputStream.read(b, off, len);
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            return archiveInputStream.skip(n);
+        }
+
+        @Override
+        public int available() throws IOException {
+            return archiveInputStream.available();
+        }
+
+        // CHECKSTYLE:OFF
+        @Override
+        public void close() throws IOException {
+            //do not close
+            ;
+        }
+        // CHECKSTYLE:ON
+
+        @Override
+        public void mark(int readlimit) {
+            archiveInputStream.mark(readlimit);
+        }
+
+        @Override
+        public void reset() throws IOException {
+            archiveInputStream.reset();
+        }
+
+        @Override
+        public boolean markSupported() {
+            return archiveInputStream.markSupported();
+        }
+    }
+
 }
