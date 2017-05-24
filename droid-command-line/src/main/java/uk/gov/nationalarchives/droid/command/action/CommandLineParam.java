@@ -108,6 +108,15 @@ public enum CommandLineParam {
         }
     },
 
+    /** Add BOM to file parameter.   */
+    BOM("B", "bom", I18N.EXPORT_WITH_BOM) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                CommandLine cli) throws CommandLineException {
+            return null;
+        }
+    },
+
     /** List of reports to be worked on. */
     REPORT("r", "report", true, 1, I18N.REPORT_HELP, filename()) {
         @Override
@@ -382,6 +391,7 @@ public enum CommandLineParam {
         options.addOption(WEB_ARCHIVES.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
+        options.addOption(BOM.newOption());
         
         OptionGroup filterOptions = new OptionGroup();
         filterOptions.addOption(ALL_FILTER.newOption());
@@ -459,6 +469,7 @@ public enum CommandLineParam {
         options.addOption(PROFILES.newOption());
         options.addOption(ANY_FILTER.newOption());
         options.addOption(ALL_FILTER.newOption());
+        options.addOption(BOM.newOption());
         
         return options;
     }

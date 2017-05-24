@@ -60,6 +60,7 @@ public class ExportCommand implements DroidCommand {
     private String destination;
     private CommandLineFilter cliFilter;
     private ExportOptions options;
+    private boolean bom;
     
     /**
      * {@inheritDoc}
@@ -97,7 +98,7 @@ public class ExportCommand implements DroidCommand {
             //default to UTF-8
             final String outputEncoding = "UTF-8"; //TODO set encoding from command line option
             final Future<?> fProfiles = exportManager.exportProfiles(profileIds, destination, filter,
-                    options, outputEncoding, false);
+                    options, outputEncoding, bom);
             fProfiles.get();
         } catch (InterruptedException e) {
             throw new CommandExecutionException(e);
@@ -184,4 +185,19 @@ public class ExportCommand implements DroidCommand {
         this.dqlFilterParser = dqlFilterParser;
     }
 
+    /**
+     *
+     * @return status of bom.
+     */
+    public boolean isBom() {
+        return bom;
+    }
+
+    /**
+     * Set to true to export with BOM in begining of file.
+     * @param bom Byte order mark.
+     */
+    public void setBom(boolean bom) {
+        this.bom = bom;
+    }
 }

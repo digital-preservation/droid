@@ -153,6 +153,9 @@ public final class I18N {
     /** No reports are defined. */
     public static final String NO_REPORTS_DEFINED = "reports.none";
 
+    /** Export contains BOM. */
+    public static final String EXPORT_WITH_BOM = "help.bom";
+
     private I18N() { }
     
     /**
