@@ -37,6 +37,7 @@ import java.util.List;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.IsoArchiveContainerIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.SevenZipArchiveContainerIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.ZipArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.ArcArchiveContentIdentifier;
@@ -78,6 +79,7 @@ public class ResultPrinter {
     private static final String OTHERARC_ARCHIVE = "fmt/410";
     private static final String WARC_ARCHIVE = "fmt/289";
     private static final String ISO_9660 = "fmt/468";
+    private static final String SEVEN_ZIP = "fmt/484";
 
     
     private BinarySignatureIdentifier binarySignatureIdentifier;
@@ -174,6 +176,11 @@ public class ResultPrinter {
                                 new IsoArchiveContainerIdentifier(binarySignatureIdentifier,
                                         containerSignatureDefinitions, path, slash, slash1);
                         isoArchiveContainerIdentifier.identify(results.getUri(), request);
+                    } else if(SEVEN_ZIP.equals(puid)) {
+                        SevenZipArchiveContainerIdentifier sevenZipArchiveContainerIdentifier =
+                                new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1);
+                        sevenZipArchiveContainerIdentifier.identify(results.getUri(), request);
                     }
                 }
                 if (webArchives && !container) {
