@@ -46,6 +46,7 @@ import javax.swing.tree.DefaultTreeModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
 import uk.gov.nationalarchives.droid.gui.util.DroidStringUtils;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
@@ -164,6 +165,7 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
     @Override
     protected void done() {
         try {
+            updateRootNode();
             if (!isCancelled()) {
                 get();
             }
@@ -179,6 +181,24 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    /**
+     * Update root "folder" node to park this folder as empty when is empty.
+     */
+    private void updateRootNode() {
+
+        List<ProfileResourceNode> rootNodeFromDb = profileManager.findRootNodes(profileForm.getProfile().getUuid());
+
+        if (rootNodeFromDb != null && rootNodeFromDb.size() == 1
+                && rootNodeFromDb.get(0).getMetaData().getNodeStatus() == NodeStatus.EMPTY) {
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
+            DefaultMutableTreeNode rootDir = (DefaultMutableTreeNode) root.getChildAt(0);
+            rootDir.setUserObject(rootNodeFromDb.get(0));
+            treeModel.reload(rootDir);
+        }
+
+    }
+
 
     /**
      * Sets the profile form.
