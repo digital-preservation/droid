@@ -189,14 +189,31 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
 
         List<ProfileResourceNode> rootNodeFromDb = profileManager.findRootNodes(profileForm.getProfile().getUuid());
 
-        if (rootNodeFromDb != null && rootNodeFromDb.size() == 1
-                && rootNodeFromDb.get(0).getMetaData().getNodeStatus() == NodeStatus.EMPTY) {
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
-            DefaultMutableTreeNode rootDir = (DefaultMutableTreeNode) root.getChildAt(0);
-            rootDir.setUserObject(rootNodeFromDb.get(0));
-            treeModel.reload(rootDir);
+        if (rootNodeFromDb != null && rootNodeFromDb.size() > 0) {
+            for (ProfileResourceNode node : rootNodeFromDb) {
+                if (node.getMetaData().getNodeStatus() == NodeStatus.EMPTY) {
+                    findAndUpdateNodeInGUI(node);
+                }
+            }
         }
 
+    }
+
+    /**
+     * Update root folder when is empty.
+     * @param node
+     */
+    private void findAndUpdateNodeInGUI(ProfileResourceNode node) {
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
+        for (int i = 0; i < root.getChildCount(); i++) {
+            DefaultMutableTreeNode dir = (DefaultMutableTreeNode) root.getChildAt(i);
+            ProfileResourceNode nodeFromGui = (ProfileResourceNode) dir.getUserObject();
+            if (nodeFromGui != null && node.getUri().equals(nodeFromGui.getUri())) {
+                dir.setUserObject(node);
+                treeModel.reload(dir);
+                break;
+            }
+        }
     }
 
 
