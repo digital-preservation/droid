@@ -46,6 +46,9 @@ import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.io.FilenameUtils;
 
+import org.apache.commons.io.input.BoundedInputStream;
+import org.apache.commons.io.input.CloseShieldInputStream;
+
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
@@ -73,12 +76,18 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
         if (windowReader instanceof FileReader) {
             FileReader fileReader = (FileReader) windowReader;
             File file = fileReader.getFile();
+
             SevenZFile sevenZFile = new SevenZFile(file);
+
             SevenZStreamFactory sevenZStreamFactory = new SevenZStreamFactory();
-            ArchiveInputStream archiveStream = sevenZStreamFactory.getArchiveInputStream(file, null);
-            final Iterable<SevenZArchiveEntry> entries = sevenZFile.getEntries();
-            SevenZArchiveWalker walker = new SevenZArchiveWalker(droid, factory, archiveStream, request.getIdentifier(), resultHandler);
-            walker.walk(entries);
+            try (ArchiveInputStream archiveStream = sevenZStreamFactory.getArchiveInputStream(file, null)) {
+                //Prevent to close input stream. We want to read all files in archive.
+                CloseShieldInputStream  closeShieldInputStream = new CloseShieldInputStream(archiveStream);
+
+                SevenZArchiveWalker walker = new SevenZArchiveWalker(droid, factory, closeShieldInputStream,
+                        request.getIdentifier(), resultHandler);
+                walker.walk(new SevenZipIteratorAdapter(archiveStream));
+            }
         }
     }
 
@@ -168,7 +177,9 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
                 identifier.setParentPrefix(null);
             }
             IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
-            request.open(in);
+            BoundedInputStream entryInputStream = new BoundedInputStream(in, entry.getSize());
+            entryInputStream.setPropagateClose(false);
+            request.open(entryInputStream);
             if (!entry.isDirectory()) {
                 droid.submit(request);
             }
