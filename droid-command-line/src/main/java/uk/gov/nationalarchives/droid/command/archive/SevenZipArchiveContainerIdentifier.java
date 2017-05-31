@@ -32,12 +32,12 @@
 package uk.gov.nationalarchives.droid.command.archive;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.ant.compress.util.SevenZStreamFactory;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -111,70 +111,11 @@ public class SevenZipArchiveContainerIdentifier extends ArchiveContentIdentifier
             final RequestMetaData metaData = new RequestMetaData(entry.getSize(), 2L, name);
             final RequestIdentifier identifier = new RequestIdentifier(uri);
             SevenZipEntryIdentificationRequest req = new SevenZipEntryIdentificationRequest(metaData, identifier, getTmpDir());
-            expandContainer(req, new NotClosingInputStream(archiveStream), newPath);
+            BoundedInputStream entryStream = new BoundedInputStream(archiveStream, entry.getSize());
+            entryStream.setPropagateClose(false);   //Don't close ArchiveStream!!!!
+            expandContainer(req, entryStream, newPath);
         } else {
-            log.info("processing directory : " + entry.getName());
-        }
-    }
-
-
-    /**
-     * This class delegate all method calls to original InputStrem except close() method.
-     */
-    private static final class NotClosingInputStream extends InputStream {
-
-        private ArchiveInputStream archiveInputStream;
-
-        public NotClosingInputStream(ArchiveInputStream archiveInputStream) {
-            this.archiveInputStream = archiveInputStream;
-        }
-
-        @Override
-        public int read() throws IOException {
-            return  archiveInputStream.read();
-        }
-
-        @Override
-        public int read(byte[] b) throws IOException {
-            return archiveInputStream.read(b);
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            return archiveInputStream.read(b, off, len);
-        }
-
-        @Override
-        public long skip(long n) throws IOException {
-            return archiveInputStream.skip(n);
-        }
-
-        @Override
-        public int available() throws IOException {
-            return archiveInputStream.available();
-        }
-
-        // CHECKSTYLE:OFF
-        @Override
-        public void close() throws IOException {
-            //do not close
-            ;
-        }
-        // CHECKSTYLE:ON
-
-        @Override
-        public void mark(int readlimit) {
-            archiveInputStream.mark(readlimit);
-        }
-
-        @Override
-        public void reset() throws IOException {
-            archiveInputStream.reset();
-        }
-
-        @Override
-        public boolean markSupported() {
-            return archiveInputStream.markSupported();
+            log.debug("processing directory : " + entry.getName());
         }
     }
 
