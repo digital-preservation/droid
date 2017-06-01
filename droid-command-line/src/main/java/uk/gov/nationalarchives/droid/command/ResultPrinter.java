@@ -35,7 +35,10 @@ import java.io.IOException;
 import java.util.List;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
+import uk.gov.nationalarchives.droid.command.archive.Bzip2ArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.IsoArchiveContainerIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.SevenZipArchiveContainerIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.ZipArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.archive.ArcArchiveContentIdentifier;
@@ -66,6 +69,20 @@ public class ResultPrinter {
     private static final String L_BRACKET = "(";
     private static final String R_BRACKET = ")";
     private static final String SPACE = " ";
+
+    private static final String OLE2_CONTAINER = "OLE2";
+    private static final String ZIP_CONTAINER = "ZIP";
+    private static final String ZIP_ARCHIVE = "x-fmt/263";
+    private static final String JIP_ARCHIVE = "x-fmt/412";
+    private static final String TAR_ARCHIVE = "x-fmt/265";
+    private static final String GZIP_ARCHIVE = "x-fmt/266";
+    private static final String ARC_ARCHIVE = "x-fmt/219";
+    private static final String OTHERARC_ARCHIVE = "fmt/410";
+    private static final String WARC_ARCHIVE = "fmt/289";
+    private static final String ISO_9660 = "fmt/468";
+    private static final String SEVEN_ZIP = "fmt/484";
+    private static final String BZIP2_ARCHIVE = "x-fmt/268";
+
     
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
@@ -77,15 +94,6 @@ public class ResultPrinter {
     private String wrongSlash;
     private boolean archives;
     private boolean webArchives;
-    private final String OLE2_CONTAINER = "OLE2";
-    private final String ZIP_CONTAINER = "ZIP";
-    private final String ZIP_ARCHIVE = "x-fmt/263";
-    private final String JIP_ARCHIVE = "x-fmt/412";
-    private final String TAR_ARCHIVE = "x-fmt/265";
-    private final String GZIP_ARCHIVE = "x-fmt/266";
-    private final String ARC_ARCHIVE = "x-fmt/219";
-    private final String OTHERARC_ARCHIVE = "fmt/410";
-    private final String WARC_ARCHIVE = "fmt/289";
     
     /**
      * Store signature files.
@@ -165,6 +173,21 @@ public class ResultPrinter {
                                 new ZipArchiveContentIdentifier(binarySignatureIdentifier,
                                     containerSignatureDefinitions, path, slash, slash1);
                         zipArchiveIdentifier.identify(results.getUri(), request);
+                    } else if(ISO_9660.equals(puid)) {
+                        IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
+                                new IsoArchiveContainerIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1);
+                        isoArchiveContainerIdentifier.identify(results.getUri(), request);
+                    } else if(SEVEN_ZIP.equals(puid)) {
+                        SevenZipArchiveContainerIdentifier sevenZipArchiveContainerIdentifier =
+                                new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1);
+                        sevenZipArchiveContainerIdentifier.identify(results.getUri(), request);
+                    }else if(BZIP2_ARCHIVE.equals(puid)) {
+                        Bzip2ArchiveContentIdentifier bzip2ArchiveContentIdentifier =
+                                new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, webArchives);
+                        bzip2ArchiveContentIdentifier.identify(results.getUri(), request);
                     }
                 }
                 if (webArchives && !container) {
