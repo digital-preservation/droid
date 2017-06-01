@@ -46,6 +46,7 @@ import javax.swing.tree.DefaultTreeModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
 import uk.gov.nationalarchives.droid.gui.util.DroidStringUtils;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
@@ -164,6 +165,7 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
     @Override
     protected void done() {
         try {
+            updateRootNode();
             if (!isCancelled()) {
                 get();
             }
@@ -179,6 +181,41 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    /**
+     * Update root "folder" node to park this folder as empty when is empty.
+     */
+    private void updateRootNode() {
+
+        List<ProfileResourceNode> rootNodeFromDb = profileManager.findRootNodes(profileForm.getProfile().getUuid());
+
+        if (rootNodeFromDb != null && rootNodeFromDb.size() > 0) {
+            for (ProfileResourceNode node : rootNodeFromDb) {
+                if (node.getMetaData().getNodeStatus() == NodeStatus.EMPTY) {
+                    findAndUpdateNodeInGUI(node);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Update root folder when is empty.
+     * @param node
+     */
+    private void findAndUpdateNodeInGUI(ProfileResourceNode node) {
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
+        for (int i = 0; i < root.getChildCount(); i++) {
+            DefaultMutableTreeNode dir = (DefaultMutableTreeNode) root.getChildAt(i);
+            ProfileResourceNode nodeFromGui = (ProfileResourceNode) dir.getUserObject();
+            if (nodeFromGui != null && node.getUri().equals(nodeFromGui.getUri())) {
+                dir.setUserObject(node);
+                treeModel.reload(dir);
+                break;
+            }
+        }
+    }
+
 
     /**
      * Sets the profile form.
