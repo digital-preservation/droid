@@ -46,6 +46,7 @@ import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -67,7 +68,12 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
         POIFSFileSystem reader = null;
         try {
             try {
-                reader = new POIFSFileSystem(in);
+                if (FileSystemIdentificationRequest.class.isAssignableFrom(request.getClass())) {
+                    FileSystemIdentificationRequest req = FileSystemIdentificationRequest.class.cast(request);
+                    reader = new POIFSFileSystem(req.getFile());
+                } else {
+                    reader = new POIFSFileSystem(in);
+                }
             } finally {
                 // We can get Out Of Memory errors when attempting to instantiate the POIFSFileSystem.  However, these
                 // are handled internally by POIFS and not propogated to the calling code.  Therefore we check here
