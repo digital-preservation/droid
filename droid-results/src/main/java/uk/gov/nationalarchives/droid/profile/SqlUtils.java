@@ -122,7 +122,7 @@ public final class SqlUtils {
                         nodePrefix + ".u_name ")
                 .replace("profileResourceNode.metaData.size", 
                         nodePrefix + ".file_size")
-                .replace("profileResourceNode.metaData.extension", 
+                .replace("profileResourceNode.metaData.extension ",
                         //nodePrefix + ".extension")
                         nodePrefix + ".u_extension")
                 .replace("profileResourceNode.identificationCount",
