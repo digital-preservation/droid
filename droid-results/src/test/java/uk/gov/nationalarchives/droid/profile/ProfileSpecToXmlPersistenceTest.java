@@ -166,7 +166,7 @@ public class ProfileSpecToXmlPersistenceTest {
         profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
 
         DateTime testDateTime = new DateTime(0L);
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.forTimeZone(TEST_TIME_ZONE));
         String control = "<Profile Id=\"untitled-1\">"
                 + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>"
                 + "  <ProfileSpec>"
