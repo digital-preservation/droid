@@ -45,8 +45,10 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -64,14 +66,25 @@ public class ProfileSpecToXmlPersistenceTest {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
     public static final String TEST_DATE = "2009-01-01 12:00:00 GMT";
+    private static final TimeZone TEST_TIME_ZONE = TimeZone.getTimeZone("Europe/London");
+
     File tmpDir;
 	File profileFile;
 
     private JaxbProfileSpecDao profileSpecJaxbDao;
 
+    private static TimeZone tz;
+
     @BeforeClass
     public static void init() {
+        tz = TimeZone.getDefault();
+        TimeZone.setDefault(TEST_TIME_ZONE);
         XMLUnit.setIgnoreWhitespace(true);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        TimeZone.setDefault(tz);
     }
 
     @Before
@@ -361,11 +374,13 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.setFilter(filter);
         
         profileSpecJaxbDao.saveProfile(profile, tmpDir);
-        
-        String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" 
-            + "<Profile>" 
-            + "    <CreatedDate>" 
-            +          ISODateTimeFormat.dateTime().print(profile.getDateCreated().getTime()) 
+
+        String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            + "<Profile>"
+            + "    <CreatedDate>"
+            +    ISODateTimeFormat.dateTime()
+                .withZone(DateTimeZone.forTimeZone(TEST_TIME_ZONE))
+                .print(profile.getDateCreated().getTime())
             + "</CreatedDate>"
             + "    <State>STOPPED</State>"
             + "    <Filter>"
