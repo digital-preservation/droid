@@ -61,8 +61,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
  * 
  */
 public class ProfileSpecToXmlPersistenceTest {
-	
-	File tmpDir;
+
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
+    public static final String TEST_DATE = "2009-01-01 12:00:00 GMT";
+    File tmpDir;
 	File profileFile;
 
     private JaxbProfileSpecDao profileSpecJaxbDao;
@@ -95,8 +97,6 @@ public class ProfileSpecToXmlPersistenceTest {
     @Test
     public void testSaveEmptyProfileSpecAsXml() throws Exception {
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
         File file = new File("profiles/untitled-1/profile.xml");
         FileUtils.deleteQuietly(file);
 
@@ -106,7 +106,7 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.changeState(ProfileState.STOPPED);
         profile.setUuid("untitled-1");
         profile.setProfileSpec(profileSpec);
-        profile.setDateCreated(df.parse("2009-01-01 12:00:00"));
+        profile.setDateCreated(DATE_FORMAT.parse(TEST_DATE));
         profile.setSignatureFileVersion(26);
 
         profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
@@ -148,8 +148,7 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.setSignatureFileVersion(26);
         profile.setUuid("untitled-1");
         profile.setProfileSpec(profileSpec);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        profile.setDateCreated(df.parse("2009-01-01 12:00:00"));
+        profile.setDateCreated(DATE_FORMAT.parse(TEST_DATE));
 
         profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
 
@@ -323,9 +322,7 @@ public class ProfileSpecToXmlPersistenceTest {
 
         assertEquals("STOPPED", profile.getState().name());
         assertEquals(120, profile.getThrottle());
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        assertEquals(df.parse("2009-07-01 00:00:00"), profile.getDateCreated());
+        assertEquals(DATE_FORMAT.parse("2009-07-01 00:00:00 GMT"), profile.getDateCreated());
 
         ProfileSpec profileSpec = profile.getProfileSpec();
 
