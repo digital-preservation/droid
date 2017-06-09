@@ -65,6 +65,10 @@
     <fileSet>
       <directory>bin</directory>
       <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>droid.sh</exclude>
+        <exclude>droid.bat</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
     	<includes>
@@ -73,4 +77,18 @@
     	<outputDirectory>/</outputDirectory>
     </fileSet>
   </fileSets>
+
+  <files>
+    <file>
+      <source>bin/droid.sh</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>bin/droid.bat</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+  </files>
+
 </assembly>

@@ -146,7 +146,7 @@ fi
 
 # Run the command-line or user interface version with the options:
 if [ $# -gt 0 ]; then
-    java $OPTIONS -jar "$DROID_HOME/droid-command-line-6.3.jar" "$@"
+    java $OPTIONS -jar "$DROID_HOME/droid-command-line-${project.version}.jar" "$@"
 else
-    java $OPTIONS -jar "$DROID_HOME/droid-ui-6.3.jar"
+    java $OPTIONS -jar "$DROID_HOME/droid-ui-${project.version}.jar"
 fi
