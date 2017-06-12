@@ -45,8 +45,10 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -61,15 +63,28 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
  * 
  */
 public class ProfileSpecToXmlPersistenceTest {
-	
-	File tmpDir;
+
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
+    public static final String TEST_DATE = "2009-01-01 12:00:00 GMT";
+    private static final TimeZone TEST_TIME_ZONE = TimeZone.getTimeZone("Europe/London");
+
+    File tmpDir;
 	File profileFile;
 
     private JaxbProfileSpecDao profileSpecJaxbDao;
 
+    private static TimeZone tz;
+
     @BeforeClass
     public static void init() {
+        tz = TimeZone.getDefault();
+        TimeZone.setDefault(TEST_TIME_ZONE);
         XMLUnit.setIgnoreWhitespace(true);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        TimeZone.setDefault(tz);
     }
 
     @Before
@@ -95,8 +110,6 @@ public class ProfileSpecToXmlPersistenceTest {
     @Test
     public void testSaveEmptyProfileSpecAsXml() throws Exception {
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
         File file = new File("profiles/untitled-1/profile.xml");
         FileUtils.deleteQuietly(file);
 
@@ -106,7 +119,7 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.changeState(ProfileState.STOPPED);
         profile.setUuid("untitled-1");
         profile.setProfileSpec(profileSpec);
-        profile.setDateCreated(df.parse("2009-01-01 12:00:00"));
+        profile.setDateCreated(DATE_FORMAT.parse(TEST_DATE));
         profile.setSignatureFileVersion(26);
 
         profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
@@ -148,13 +161,12 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.setSignatureFileVersion(26);
         profile.setUuid("untitled-1");
         profile.setProfileSpec(profileSpec);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        profile.setDateCreated(df.parse("2009-01-01 12:00:00"));
+        profile.setDateCreated(DATE_FORMAT.parse(TEST_DATE));
 
         profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
 
         DateTime testDateTime = new DateTime(0L);
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.forTimeZone(TEST_TIME_ZONE));
         String control = "<Profile Id=\"untitled-1\">"
                 + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>"
                 + "  <ProfileSpec>"
@@ -323,9 +335,7 @@ public class ProfileSpecToXmlPersistenceTest {
 
         assertEquals("STOPPED", profile.getState().name());
         assertEquals(120, profile.getThrottle());
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        assertEquals(df.parse("2009-07-01 00:00:00"), profile.getDateCreated());
+        assertEquals(DATE_FORMAT.parse("2009-07-01 00:00:00 GMT"), profile.getDateCreated());
 
         ProfileSpec profileSpec = profile.getProfileSpec();
 
@@ -364,11 +374,13 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.setFilter(filter);
         
         profileSpecJaxbDao.saveProfile(profile, tmpDir);
-        
-        String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" 
-            + "<Profile>" 
-            + "    <CreatedDate>" 
-            +          ISODateTimeFormat.dateTime().print(profile.getDateCreated().getTime()) 
+
+        String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            + "<Profile>"
+            + "    <CreatedDate>"
+            +    ISODateTimeFormat.dateTime()
+                .withZone(DateTimeZone.forTimeZone(TEST_TIME_ZONE))
+                .print(profile.getDateCreated().getTime())
             + "</CreatedDate>"
             + "    <State>STOPPED</State>"
             + "    <Filter>"
