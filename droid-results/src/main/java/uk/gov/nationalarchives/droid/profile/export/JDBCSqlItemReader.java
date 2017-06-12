@@ -154,8 +154,8 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
             if (cursor.next()) {
 
                 ProfileResourceNode profileResourceNode;
-                if(filter != null) {
-                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(cursor, 0);
+                if (filter != null && filter.isEnabled()) {
+                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_FILTER.mapRow(cursor, 0);
                 }else {
                     profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER.mapRow(cursor, 0);
                 }
