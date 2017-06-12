@@ -122,7 +122,9 @@ public final class SqlUtils {
                         nodePrefix + ".u_name ")
                 .replace("profileResourceNode.metaData.size", 
                         nodePrefix + ".file_size")
-                .replace("profileResourceNode.metaData.extension", 
+                .replace("profileResourceNode.metaData.extensionMismatch",
+                        nodePrefix + ".extension_mismatch")
+                .replace("profileResourceNode.metaData.extension",
                         //nodePrefix + ".extension")
                         nodePrefix + ".u_extension")
                 .replace("profileResourceNode.identificationCount",
@@ -135,8 +137,6 @@ public final class SqlUtils {
                         nodePrefix + ".identification_method")
                 .replace("profileResourceNode.metaData.nodeStatus",
                         nodePrefix + ".node_status")
-                .replace("profileResourceNode.metaData.extensionMismatch",
-                        nodePrefix + ".extension_mismatch")
                 .replace("format.mimeType",
                         formatPrefix + ".mime_type")
                 .replace("format.name",
