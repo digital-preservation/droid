@@ -73,9 +73,13 @@
     <module name="JavadocStyle">
       <property name="scope" value="public"/>
     </module>
-    <module name="LeftCurly">
-      <property name="maxLineLength" value="120"/>
-    </module>
+
+    <!--<module name="LeftCurly">-->
+
+    <!--deprecated since checkstyle 6.10 release-->
+      <!--<property name="maxLineLength" value="120"/>-->
+    <!--</module>-->
+
     <module name="OuterTypeNumber"/>
     <module name="LineLength">
       <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
@@ -93,7 +97,8 @@
     <module name="NoWhitespaceAfter">
       <property name="tokens" value="ARRAY_INIT,BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
     </module>
-    <module name="NoWhitespaceBefore"/>
+
+    <!-- Maybe in future we should return this to default -->
     <module name="NoWhitespaceBefore">
       <property name="allowLineBreaks" value="true"/>
       <property name="tokens" value="DOT"/>
@@ -112,7 +117,12 @@
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>
     <module name="RedundantImport"/>
-    <module name="RedundantModifier"/>
+
+    <!-- after all fix set to default -->
+    <module name="RedundantModifier">
+      <property name="tokens" value="METHOD_DEF, VARIABLE_DEF, ANNOTATION_FIELD_DEF, INTERFACE_DEF, CLASS_DEF"/>
+    </module>
+
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
     <module name="StaticVariableName"/>
@@ -121,18 +131,29 @@
     <module name="UpperEll"/>
     <module name="VisibilityModifier"/>
     <module name="WhitespaceAfter"/>
-    <module name="WhitespaceAround"/>
+
+    <module name="WhitespaceAround">
+      <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, DO_WHILE, EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, RCURLY, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN, LITERAL_ASSERT, TYPE_EXTENSION_AND" />
+    </module>
+
     <module name="GenericWhitespace"/>
     <module name="FinalClass"/>
     <module name="MissingSwitchDefault"/>
     <module name="MagicNumber"/>
-    <module name="Indentation"/>
+
+    <!-- temporary off -->
+    <!--<module name="Indentation"/>-->
+
+
     <module name="ArrayTrailingComma"/>
     <module name="FinalLocalVariable">
       <property name="severity" value="ignore"/>
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
-    <module name="EqualsAvoidNull"/>
+
+    <!-- temporary off -->
+    <!--<module name="EqualsAvoidNull"/>-->
+
     <module name="CyclomaticComplexity"/>
     <module name="NestedIfDepth">
       <property name="max" value="3"/>
@@ -169,10 +190,13 @@
     <module name="MultipleStringLiterals"/>
     <module name="MultipleVariableDeclarations"/>
     <module name="ParameterAssignment"/>
-    <module name="RedundantThrows">
-      <property name="logLoadErrors" value="true"/>
-      <property name="suppressLoadErrors" value="true"/>
-    </module>
+
+    <!--<module name="RedundantThrows">-->
+      <!--<property name="logLoadErrors" value="true"/>-->
+      <!--<property name="suppressLoadErrors" value="true"/>-->
+    <!--</module>-->
+
+    
     <module name="ReturnCount"/>
     <module name="StringLiteralEquality"/>
     <module name="UnnecessaryParentheses"/>
@@ -210,7 +234,11 @@
     <property name="format" value="\s+$"/>
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
   </module>
-  <module name="NewlineAtEndOfFile"/>
+
+  <module name="NewlineAtEndOfFile">
+    <property name="fileExtensions" value="java, xml"/>
+  </module>
+
   <module name="SuppressionCommentFilter">
     <property name="offCommentFormat" value="GEN-BEGIN|GEN-FIRST|CHECKSTYLE\:OFF"/>
     <property name="onCommentFormat" value="GEN-END|GEN-LAST|CHECKSTYLE\:ON"/>
