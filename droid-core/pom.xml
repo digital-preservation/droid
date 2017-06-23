@@ -54,19 +54,19 @@
     </build>
   
     <dependencies>
-  	<dependency>
+        <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-core-interfaces</artifactId>
             <version>${project.version}</version>
-  	</dependency>
+        </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
         </dependency>
-  	<dependency>
+        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-  	</dependency>
+        </dependency>
         <!--
   	<dependency>
             <groupId>com.google.code.byteseek</groupId>
