@@ -170,8 +170,8 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.huxhorn.lilith</groupId>
-            <artifactId>de.huxhorn.lilith.3rdparty.flyingsaucer.core-renderer</artifactId>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-core</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.help</groupId>

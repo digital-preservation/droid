@@ -82,7 +82,6 @@ public class ISOImageArchiveHandlerTest {
 
 
         Iso9660FileEntry rootEntry = mock(Iso9660FileEntry.class);
-        when(rootEntry.getName()).thenReturn(".");
         when(rootEntry.getPath()).thenReturn("");
         when(rootEntry.isDirectory()).thenReturn(true);
 
@@ -127,12 +126,10 @@ public class ISOImageArchiveHandlerTest {
 
 
         Iso9660FileEntry rootEntry = mock(Iso9660FileEntry.class);
-        when(rootEntry.getName()).thenReturn(".");
         when(rootEntry.getPath()).thenReturn("");
         when(rootEntry.isDirectory()).thenReturn(true);
 
         Iso9660FileEntry contentDir = mock(Iso9660FileEntry.class);
-        when(contentDir.getName()).thenReturn("content");
         when(contentDir.getPath()).thenReturn("content/");
         when(contentDir.isDirectory()).thenReturn(true);
 
@@ -173,12 +170,10 @@ public class ISOImageArchiveHandlerTest {
 
 
         Iso9660FileEntry rootEntry = mock(Iso9660FileEntry.class);
-        when(rootEntry.getName()).thenReturn(".");
         when(rootEntry.getPath()).thenReturn("");
         when(rootEntry.isDirectory()).thenReturn(true);
 
         Iso9660FileEntry contentDir = mock(Iso9660FileEntry.class);
-        when(contentDir.getName()).thenReturn("content");
         when(contentDir.getPath()).thenReturn("content/");
         when(contentDir.isDirectory()).thenReturn(true);
 

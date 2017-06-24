@@ -46,7 +46,8 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import com.opencsv.CSVWriter;
+
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
@@ -61,30 +62,33 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
  */
 public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
+    /**
+     * Headers used in the CSV output
+     */
+    static final String[] HEADERS = {
+            "ID",
+            "PARENT_ID",
+            "URI",
+            "FILE_PATH",
+            "NAME",
+            "METHOD",
+            "STATUS",
+            "SIZE",
+            "TYPE",
+            "EXT",
+            "LAST_MODIFIED",
+            "EXTENSION_MISMATCH",
+            "HASH",
+            "FORMAT_COUNT",
+            "PUID",
+            "MIME_TYPE",
+            "FORMAT_NAME",
+            "FORMAT_VERSION",
+    };
+
     private static final String FILE_URI_SCHEME = "file";
 
     private static final int HASH_ARRAY_INDEX = 12;
-
-    private static final String[] HEADERS = {
-        "ID",
-        "PARENT_ID",
-        "URI",
-        "FILE_PATH",
-        "NAME",
-        "METHOD",
-        "STATUS",
-        "SIZE",
-        "TYPE",
-        "EXT",
-        "LAST_MODIFIED",
-        "EXTENSION_MISMATCH",
-        "HASH",
-        "FORMAT_COUNT",
-        "PUID",
-        "MIME_TYPE",
-        "FORMAT_NAME",
-        "FORMAT_VERSION",
-    };
     
     private final Log log = LogFactory.getLog(getClass());
 

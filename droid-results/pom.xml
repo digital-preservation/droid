@@ -18,7 +18,7 @@
 		<developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
 		<url>scm:git:https://github.com/digital-preservation/droid.git</url>
 	  <tag>HEAD</tag>
-  </scm>
+	</scm>
 
 	<build>
 		<plugins>
@@ -108,12 +108,16 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>5.1.0.Final</version>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>4.0.3.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -128,7 +132,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>4.0.3.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 
 		<dependency>
@@ -160,14 +164,8 @@
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>2.2.2</version>
+			<version>3.2.5</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty</artifactId>
-			<version>6.1.26</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -199,7 +197,7 @@
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
-			<version>1.1</version>
+			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -216,13 +214,13 @@
 
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-jaxws_2.1_spec</artifactId>
-			<version>1.0</version>
+			<artifactId>geronimo-jaxws_2.2_spec</artifactId>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-			<version>1.1.2</version> <!-- TODO upgrade? -->
+			<version>1.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
@@ -246,7 +244,7 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 		</dependency>
-		<dependency>
+		<dependency> <!-- TODO replace with c3p0 -->
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.4</version>
@@ -258,7 +256,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.4.2</version>
+			<version>1.7.25</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>

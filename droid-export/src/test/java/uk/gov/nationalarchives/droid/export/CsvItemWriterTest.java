@@ -37,7 +37,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import com.opencsv.CSVWriter;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -46,6 +46,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -73,7 +74,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
  * Date: 26-Feb-2014
  * Details: Changed expectedString hash component  to  "%s_HASH"  instead of MD5_HASH" .
  * This is because, following the introduction of SHA256 as an additional option over and
- * above MD5, the actual hash header id constructed at run time in tbe application based on the config.
+ * above MD5, the actual hash header is constructed at run time in the application based on the config.
  * However, the test does not have access to the configuration, so testing against the placeholder is the
  * best approach and avoids introducing additional dependencies.
  */
@@ -115,27 +116,9 @@ public class CsvItemWriterTest {
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
         itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
         itemWriter.open(writer);
-        String expectedString =
-              "\"ID\","
-            + "\"PARENT_ID\","
-            + "\"URI\","
-            + "\"FILE_PATH\","
-            + "\"NAME\","
-            + "\"METHOD\","
-            + "\"STATUS\","
-            + "\"SIZE\","
-            + "\"TYPE\","
-            + "\"EXT\","
-            + "\"LAST_MODIFIED\","
-            + "\"EXTENSION_MISMATCH\","
-            + "\"HASH\","
-            + "\"FORMAT_COUNT\","
-            + "\"PUID\","
-            + "\"MIME_TYPE\","
-            + "\"FORMAT_NAME\","
-            + "\"FORMAT_VERSION\"\n";
-        
-        verify(writer).write(expectedString, 0, expectedString.length());
+        final String expectedString = "\"" + StringUtils.join(CsvItemWriter.HEADERS, "\",\"") + "\"\n";
+
+        verify(writer).write(expectedString);
     }
     
     @Test

@@ -78,10 +78,11 @@
         <project.build.target>1.7</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
-        <spring.version>4.0.3.RELEASE</spring.version>
-        <derby.version>10.10.2.0</derby.version>
+        <spring.version>4.3.9.RELEASE</spring.version>
+        <hibernate.version>5.4.1.Final</hibernate.version>
+        <derby.version>10.12.1.1</derby.version> <!-- TODO derby >10.13 requires Java 8 -->
         <cxf.version>2.3.1</cxf.version>
-        <aspectj.version>1.8.7</aspectj.version>
+        <aspectj.version>1.8.10</aspectj.version>
     </properties>
   
     <build>
@@ -446,17 +447,15 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     
     <dependencyManagement>
         <dependencies>
-            <!--
             <dependency>
-                <groupId>com.google.code.byteseek</groupId>
+                <groupId>net.byteseek</groupId>
                 <artifactId>byteseek</artifactId>
-                <version>1.1.1</version>
+                <version>2.0.3</version>
             </dependency>
-            -->
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>2.1</version> <!-- TODO upgrade? -->
+                <version>2.2.12</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
@@ -471,17 +470,17 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version>2.9.1</version>
+                <version>2.11.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.1.1</version>
+                <version>1.2</version>
             </dependency>
             <dependency>
                <groupId>commons-io</groupId>
                <artifactId>commons-io</artifactId>
-               <version>2.4</version>
+               <version>2.5</version>
             </dependency>
             <dependency>
                <groupId>commons-lang</groupId>
@@ -501,7 +500,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
-                <version>1.8</version>
+                <version>1.10</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -524,14 +523,19 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
-                <groupId>de.huxhorn.lilith</groupId>
-                <artifactId>de.huxhorn.lilith.3rdparty.flyingsaucer.core-renderer</artifactId>
-                <version>8RC1</version>
+                <groupId>org.xhtmlrenderer</groupId>
+                <artifactId>flying-saucer-core</artifactId>
+                <version>9.1.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xhtmlrenderer</groupId>
+                <artifactId>flying-saucer-pdf-itext5</artifactId>
+                <version>9.1.6</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>1.6.2</version>
+                <version>2.9.9</version>
             </dependency>
             <dependency>
                 <groupId>de.schlichtherle.truezip</groupId>
@@ -541,28 +545,27 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <!-- N.B. May need 4.4 still for some tests -->
-                <version>4.11</version>
+                <version>4.12</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.7.5</version>
+                <version>2.8.47</version>
             </dependency>
             <dependency>
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>
-                <version>1.3.04</version> <!-- TODO upgrade? -->
+                <version>1.4.01</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
-                <version>1.3</version>
+                <version>1.6</version>
             </dependency>
             <dependency>
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
-                <version>2.4.8</version>
+                <version>2.5.3</version>
             </dependency>
             <dependency>
                 <groupId>com.github.stephenc.java-iso-tools</groupId>
@@ -570,9 +573,9 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <version>2.0.1</version>
             </dependency>
             <dependency>
-                <groupId>com.github.beothorn</groupId>
+                <groupId>com.github.junrar</groupId>
                 <artifactId>junrar</artifactId>
-                <version>0.6</version>
+                <version>0.7</version>
             </dependency>
 
         </dependencies>
