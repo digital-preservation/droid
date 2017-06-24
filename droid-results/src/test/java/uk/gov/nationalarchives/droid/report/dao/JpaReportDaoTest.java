@@ -33,47 +33,39 @@ package uk.gov.nationalarchives.droid.report.dao;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
-
-import javax.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.database.statement.IStatementFactory;
-import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Criterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Restrictions;
+
+import javax.sql.DataSource;
 
 /**
  * @author Alok Kumar Dash, Brian O Reilly
@@ -340,29 +332,26 @@ public class JpaReportDaoTest {
 
             if(conn == null) {
                 InputStream in = null;
-                final BasicDataSource dataSource = new BasicDataSource() ;
+                final HikariConfig config = new HikariConfig();
+
                 try {
 
                     Properties prop = new Properties();
                     in = JpaReportDaoTest.class.getResourceAsStream("../../../../../../src/test/resources/jpa-test.properties");
 
                     prop.load(in);
-                    dataSource.setDriverClassName(prop.getProperty("datasource.driverClassName"));
-                    dataSource.setUrl(prop.getProperty("datasource.url"));
-                    dataSource.setUsername(prop.getProperty("datasource.username"));
-                    dataSource.setPassword(prop.getProperty("datasource.password"));
-                    dataSource.setMinIdle(Integer.parseInt(prop.getProperty("datasource.minIdle")));
-                    dataSource.setMaxActive(Integer.parseInt(prop.getProperty("datasource.maxActive")));
-                    dataSource.setInitialSize(Integer.parseInt(prop.getProperty("datasource.initialSize")));
+                    config.setDriverClassName(prop.getProperty("datasource.driverClassName"));
+                    config.setJdbcUrl(prop.getProperty("datasource.url"));
+                    config.setUsername(prop.getProperty("datasource.username"));
+                    config.setPassword(prop.getProperty("datasource.password"));
+                    config.setMaximumPoolSize(Integer.parseInt(prop.getProperty("datasource.maxActive")));
                 //Properties may not be accessible when running the  test from e.g. a Maven bukld via cmmand line
                 } catch (NullPointerException e) {
-                    dataSource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-                    dataSource.setUrl("jdbc:derby:droid-test-db;create=true");
-                    dataSource.setUsername("droid_user");
-                    dataSource.setPassword("droid_user");
-                    dataSource.setMinIdle(5);
-                    dataSource.setMaxActive(20);
-                    dataSource.setInitialSize(5);
+                    config.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
+                    config.setJdbcUrl("jdbc:derby:droid-test-db;create=true");
+                    config.setUsername("droid_user");
+                    config.setPassword("droid_user");
+                    config.setMaximumPoolSize(20);
                 } catch(IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -375,6 +364,7 @@ public class JpaReportDaoTest {
                     }
                 }
 
+                final DataSource dataSource = new HikariDataSource(config) ;
                 try {
                     con = dataSource.getConnection();
                     con.setAutoCommit(true);

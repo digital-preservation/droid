@@ -32,17 +32,15 @@
 package uk.gov.nationalarchives.droid.profile.datasource;
 
 import java.io.File;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLNonTransientConnectionException;
 import java.sql.Statement;
-import java.util.logging.Logger;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 
@@ -50,16 +48,25 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
  * @author rflitcroft
  *
  */
-public class DerbyPooledDataSource extends BasicDataSource {
- 
-    
+public class DerbyPooledDataSource extends HikariDataSource {
+
     private static final long serialVersionUID = -8613139738021279720L;
     private static final String NO_CREATE_URL = "{none}";
-    
+
     private final Log log = LogFactory.getLog(getClass());
-    
+    private final HikariConfig config;
     private String createUrl = NO_CREATE_URL;
-    
+
+    /**
+     * Constructor.
+     *
+     * @param config The configuration for the pool
+     */
+    public DerbyPooledDataSource(final HikariConfig config) {
+        super(config);
+        this.config = config;
+    }
+
     /**
      * Starts the database.
      * @throws SQLException if the database could not be booted.
@@ -70,9 +77,7 @@ public class DerbyPooledDataSource extends BasicDataSource {
                 new File(droidLogDir, "derby.log").getPath());
         //setPoolPreparedStatements(true);
         //setInitialSize(20); // initial size of connection pool.
-        setDefaultTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-        setDefaultAutoCommit(false);
-        log.debug(String.format("Booting database [%s]", getUrl()));
+        log.debug(String.format("Booting database [%s]", config.getJdbcUrl()));
         String url = getCreateURL();
         String driverClassName = getDriverClassName();
         try {
@@ -86,7 +91,7 @@ public class DerbyPooledDataSource extends BasicDataSource {
     }
     
     private String getCreateURL() {
-        String url = getUrl() + ";create=true";
+        String url = config.getJdbcUrl() + ";create=true";
         if (createUrl != null && !createUrl.isEmpty() && !NO_CREATE_URL.equals(createUrl)) {
             url = url + ";" + createUrl;
         }
@@ -99,16 +104,17 @@ public class DerbyPooledDataSource extends BasicDataSource {
     * database (with SQLstate 08006), so we catch this and log as debug, otherwise as an error.
     * @throws SQLException if the database could not be shutdown.
     */
-    public void shutdown() throws SQLException {
+    @Override
+    public void close() {
 
-        log.debug(String.format("Closing database [%s]", getUrl()));
-        close();
+        log.debug(String.format("Closing database [%s]", config.getJdbcUrl()));
+        super.close();
 
-        String url = getUrl() + ";shutdown=true";
+        String url = config.getJdbcUrl() + ";shutdown=true";
 
         try {
             DriverManager.getConnection(url);
-        } catch (SQLNonTransientConnectionException e) {
+        } catch (SQLException e) {
             if ("08006".equals(e.getSQLState())) {
                 log.debug(e.getMessage());
             } else {
@@ -123,12 +129,10 @@ public class DerbyPooledDataSource extends BasicDataSource {
      */
     public void freeze() {
         
-        log.debug(String.format("Freezing database [%s]", getUrl()));
+        log.debug(String.format("Freezing database [%s]", config.getJdbcUrl()));
         
-        try {
-            Statement s = DriverManager.getConnection(getUrl()).createStatement();
+        try (final Statement s = DriverManager.getConnection(config.getJdbcUrl()).createStatement()) {
             s.executeUpdate("CALL SYSCS_UTIL.SYSCS_FREEZE_DATABASE()");
-            s.close();
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
         }
@@ -139,12 +143,10 @@ public class DerbyPooledDataSource extends BasicDataSource {
      */
     public void thaw() {
         
-        log.debug(String.format("Derby thawing database [%s]", getUrl()));
+        log.debug(String.format("Derby thawing database [%s]", config.getJdbcUrl()));
         
-        try {
-            Statement s = DriverManager.getConnection(getUrl()).createStatement();
+        try (final Statement s = DriverManager.getConnection(config.getJdbcUrl()).createStatement()) {
             s.executeUpdate("CALL SYSCS_UTIL.SYSCS_UNFREEZE_DATABASE()");
-            s.close();
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
         }
@@ -156,10 +158,5 @@ public class DerbyPooledDataSource extends BasicDataSource {
      */
     public void setCreateUrl(final String createUrl) {
         this.createUrl = createUrl;
-    }
-
-    @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException();
     }
 }
