@@ -74,10 +74,10 @@
             <artifactId>geronimo-annotation_1.0_spec</artifactId>
             <version>1.1.1</version>
         </dependency>
-        <dependency> <!-- TODO switch to a faster library, perhaps Jackson CSV Parser or better -->
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>3.9</version>
+        <dependency>
+            <groupId>com.univocity</groupId>
+            <artifactId>univocity-parsers</artifactId>
+            <version>2.4.1</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

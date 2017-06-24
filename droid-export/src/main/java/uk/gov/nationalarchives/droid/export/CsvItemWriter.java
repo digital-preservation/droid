@@ -32,7 +32,6 @@
 package uk.gov.nationalarchives.droid.export;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
@@ -46,7 +45,9 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.opencsv.CSVWriter;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
+import com.univocity.parsers.common.TextWritingException;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
@@ -92,7 +93,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     
     private final Log log = LogFactory.getLog(getClass());
 
-    private CSVWriter csvWriter;
+    private CsvWriter csvWriter;
     private DroidGlobalConfig config;
     private FastDateFormat dateFormat = DateFormatUtils.ISO_DATETIME_FORMAT;
     private ExportOptions options = ExportOptions.ONE_ROW_PER_FILE;
@@ -154,11 +155,11 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 }
                 
 
-                csvWriter.writeNext(nodeEntries.toArray(new String[0]));
+                csvWriter.writeRow(nodeEntries.toArray(new String[0]));
             }
             csvWriter.flush();
             
-        } catch (IOException e) {
+        } catch (final TextWritingException e) {
             log.error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -191,12 +192,12 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                         format.getName(),
                         format.getVersion(),
                     };
-                    csvWriter.writeNext(nodeEntries);
+                    csvWriter.writeRow(nodeEntries);
                 }
             }
             csvWriter.flush();
             
-        } catch (IOException e) {
+        } catch (final TextWritingException e) {
             log.error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -205,7 +206,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     /**
      * @param csvWriter the csvWriter to write to.
      */
-    void setCsvWriter(CSVWriter csvWriter) {
+    void setCsvWriter(CsvWriter csvWriter) {
         this.csvWriter = csvWriter;
     }
 
@@ -213,8 +214,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
      * {@inheritDoc}
      */
     @Override
-    public void open(Writer writer) {
-        csvWriter = new CSVWriter(writer);
+    public void open(final Writer writer) {
+        final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
+        csvWriterSettings.setQuoteAllFields(true);
+        csvWriter = new CsvWriter(writer, csvWriterSettings);
         if (headers == null) {
             headers = HEADERS;
         }
@@ -224,7 +227,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         //    headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], hashName);
         //}
 
-        csvWriter.writeNext(headers);
+        csvWriter.writeHeaders(headers);
     }
 
     /**
@@ -241,11 +244,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
      */
     @Override
     public void close() {
-        try {
-            csvWriter.close();
-        } catch (IOException e) {
-            log.error("Error closing CSV output file.", e);
-        }
+        csvWriter.close();
     }
     
     private static String nullSafeName(Enum<?> value) {
@@ -282,6 +281,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     /**
      * @param headersToSet the headers to set
      */
+    @Override
     public void setHeaders(Map<String, String> headersToSet) {
 
         if (this.headers == null) {

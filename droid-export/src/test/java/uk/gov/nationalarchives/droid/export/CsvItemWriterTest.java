@@ -31,19 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.export;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.opencsv.CSVWriter;
-
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +44,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -83,9 +77,7 @@ public class CsvItemWriterTest {
 	private static DateTime testDateTime = new DateTime(12345678L);
     private CsvItemWriter itemWriter;
     private File destination;
-    private CSVWriter csvWriter;
     private DroidGlobalConfig config;
-    private boolean windows;
     private String testDateTimeString;
     
     @Before
@@ -95,269 +87,319 @@ public class CsvItemWriterTest {
         destination = new File(dir, "test1.csv");
         destination.delete();
         itemWriter = new CsvItemWriter();
-        csvWriter = mock(CSVWriter.class);
-        itemWriter.setCsvWriter(csvWriter);
         
         config = mock(DroidGlobalConfig.class);
         itemWriter.setConfig(config);
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
         testDateTimeString = dtf.print(testDateTime);
-        
     }
-    
+
+    @After
+    public void tearDown() {
+        itemWriter.close();
+    }
+
     @Test
     public void testWriteHeadersOnOpen() throws IOException {
-        Writer writer = mock(Writer.class);
-        
-        JobOptions jobOptions = mock(JobOptions.class);
-        when(jobOptions.getParameter("location")).thenReturn("test.csv");
+        try(final Writer writer = new StringWriter()) {
+            JobOptions jobOptions = mock(JobOptions.class);
+            when(jobOptions.getParameter("location")).thenReturn("test.csv");
 
-       // String hashAlgorithm = config.getProperties().getProperty("HASH_ALGORITHM").toString();
+            // String hashAlgorithm = config.getProperties().getProperty("HASH_ALGORITHM").toString();
+            when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
+            itemWriter.open(writer);
+            final String expectedString = toCsvLine(CsvItemWriter.HEADERS);
+
+            assertEquals(writer.toString(), expectedString);
+        }
+    }
+
+    private static String toCsvRow(final String[] values) {
+        return "\"" + StringUtils.join(values, "\",\"") + "\"";
+    }
+
+    private static String toCsvLine(final String[] values) {
+        return toCsvRow(values) + '\n';
+    }
+
+    @Test
+    public void testWriteNoNodes() throws IOException {
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
-        itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
-        itemWriter.open(writer);
-        final String expectedString = "\"" + StringUtils.join(CsvItemWriter.HEADERS, "\",\"") + "\"\n";
 
-        verify(writer).write(expectedString);
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            assertEquals(1, writer.toString().split("\n").length);
+        }
     }
-    
+
     @Test
-    public void testWriteNoNodes() {
+    public void testWriteOneNode() throws IOException {
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
-        
-        List<ProfileResourceNode> nodes = new ArrayList<ProfileResourceNode>();
-        itemWriter.write(nodes);
-        verify(csvWriter, never()).writeNext(any(String[].class));
-    }
 
-    @Test
-    public void testWriteOneNode() {
-        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
-        
-        List<ProfileResourceNode> nodes = new ArrayList<ProfileResourceNode>();
-        Format id = buildFormat(1);
-        ProfileResourceNode node = buildProfileResourceNode(1, 1001L);
-        node.addFormatIdentification(id);
-        nodes.add(node);
-        itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
-        itemWriter.write(nodes);
-        
-        String[] expectedEntry = new String[] {
-            "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
-            "file1.txt", 
-            "Signature", 
-            "Done", 
-            "1001", 
-            "File", 
-            "foo",
-            testDateTimeString,
-            "false",
-            "11111111111111111111111111111111",
-            "1",
-            "fmt/1",
-            "text/plain",
-            "Plain Text",
-            "1.0",
-        };
-        
-        verify(csvWriter).writeNext(expectedEntry);
-    }
-
-    @Test
-    public void testWriteNodeWithNullFormat() {
-        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
-        
-        List<ProfileResourceNode> nodes = new ArrayList<ProfileResourceNode>();
-        
-        Format id = Format.NULL;
-        ProfileResourceNode node = buildProfileResourceNode(1, 1001L);
-        node.addFormatIdentification(id);
-        
-        nodes.add(node);
-        itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
-        itemWriter.write(nodes);
-        
-        String[] expectedEntry = new String[] {
-            "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
-            "file1.txt", 
-            "Signature", 
-            "Done", 
-            "1001", 
-            "File", 
-            "foo", 
-            testDateTimeString,
-            "false",            
-            "11111111111111111111111111111111",
-            "",
-            null,
-            "",
-            "",
-            "",
-        };
-        
-        verify(csvWriter).writeNext(expectedEntry);
-    }
-
-    @Test
-    public void testWriteOneNodeWithNullSize() {
-        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
-        
-        List<ProfileResourceNode> nodes = new ArrayList<ProfileResourceNode>();
-        
-        Format id = buildFormat(1);
-        ProfileResourceNode node = buildProfileResourceNode(1, null);
-        node.addFormatIdentification(id);
-        
-        nodes.add(node);
-        itemWriter.write(nodes);
-        
-        String[] expectedEntry = new String[] {
-            "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
-            "file1.txt", 
-            "Signature", 
-            "Done", 
-            "", 
-            "File", 
-            "foo", 
-            testDateTimeString,
-            "false",            
-            "11111111111111111111111111111111",
-            "1",
-            "fmt/1",
-            "text/plain",
-            "Plain Text",
-            "1.0",
-        };
-        
-        verify(csvWriter).writeNext(expectedEntry);
-    }
-
-    @Test
-    public void testWriteOneNodeWithTwoFormatsWithOneRowPerFile() {
-        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
-        
-        List<ProfileResourceNode> nodes = new ArrayList<ProfileResourceNode>();
-        
-        Format id1 = buildFormat(1);
-        Format id2 = buildFormat(2);
-        
-        ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
-        node.addFormatIdentification(id1);
-        node.addFormatIdentification(id2);
-
-        nodes.add(node);
-        itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
-        itemWriter.write(nodes);
-        
-        String[] expectedEntry1 = new String[] {
-            "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
-            "file1.txt", 
-            "Signature", 
-            "Done", 
-            "1000", 
-            "File", 
-            "foo", 
-            testDateTimeString,
-            "false",            
-            "11111111111111111111111111111111",
-            "2",
-            "fmt/1",
-            "text/plain",
-            "Plain Text",
-            "1.0",
-            "fmt/2",
-            "text/plain",
-            "Plain Text",
-            "1.0",
-        };
-        
-        verify(csvWriter).writeNext(expectedEntry1);
-    }
-
-    @Test
-    public void testWriteOneNodeWithTwoFormatsWithOneRowPerFormat() {
-        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(true);
-        
-        List<ProfileResourceNode> nodes = new ArrayList<ProfileResourceNode>();
-        
-        Format id1 = buildFormat(1);
-        Format id2 = buildFormat(2);
-        
-        ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
-        node.addFormatIdentification(id1);
-        node.addFormatIdentification(id2);
-
-        nodes.add(node);
-        itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
-        itemWriter.write(nodes);
-        
-        String[] expectedEntry1 = new String[] {
-            "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
-            "file1.txt", 
-            "Signature", 
-            "Done", 
-            "1000", 
-            "File", 
-            "foo", 
-            testDateTimeString,
-            "false",            
-            "11111111111111111111111111111111",
-            "2",
-            "fmt/1",
-            "text/plain",
-            "Plain Text",
-            "1.0",
-        };
-        
-        String[] expectedEntry2 = new String[] {
-            "", "",
-            isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt", 
-            isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
-            "file1.txt", 
-            "Signature", 
-            "Done", 
-            "1000", 
-            "File", 
-            "foo", 
-            testDateTimeString,
-            "false",            
-            "11111111111111111111111111111111",
-            "2",
-            "fmt/2",
-            "text/plain",
-            "Plain Text",
-            "1.0",
-        };
-
-        verify(csvWriter).writeNext(expectedEntry1);
-        verify(csvWriter).writeNext(expectedEntry2);
-    }
-
-    @Test
-    public void testWriteTenNodes() {
-        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(true);
-
-        List<ProfileResourceNode> nodes = new ArrayList<ProfileResourceNode>();
-        
-        for (int i = 1; i <= 10; i++) {
-            ProfileResourceNode node = buildProfileResourceNode(i, (long) i); 
-            Format id = buildFormat(i);
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+            Format id = buildFormat(1);
+            ProfileResourceNode node = buildProfileResourceNode(1, 1001L);
             node.addFormatIdentification(id);
             nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedEntry = toCsvRow(new String[] {
+                    "", "",
+                    isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+                    "file1.txt",
+                    "Signature",
+                    "Done",
+                    "1001",
+                    "File",
+                    "foo",
+                    testDateTimeString,
+                    "false",
+                    "11111111111111111111111111111111",
+                    "1",
+                    "fmt/1",
+                    "text/plain",
+                    "Plain Text",
+                    "1.0",
+            });
+
+            final String[] lines = writer.toString().split("\n");
+
+            assertEquals(2, lines.length);
+            assertEquals(expectedEntry, lines[1]);
         }
-        
-        itemWriter.write(nodes);
-        verify(csvWriter, times(10)).writeNext(any(String[].class));
+    }
+
+    @Test
+    public void testWriteNodeWithNullFormat() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id = Format.NULL;
+            ProfileResourceNode node = buildProfileResourceNode(1, 1001L);
+            node.addFormatIdentification(id);
+
+            nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedEntry = toCsvRow(new String[] {
+                    "", "",
+                    isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+                    "file1.txt",
+                    "Signature",
+                    "Done",
+                    "1001",
+                    "File",
+                    "foo",
+                    testDateTimeString,
+                    "false",
+                    "11111111111111111111111111111111",
+                    "",
+                    null,
+                    "",
+                    "",
+                    "",
+            });
+
+            final String[] lines = writer.toString().split("\n");
+
+            assertEquals(2, lines.length);
+            assertEquals(expectedEntry, lines[1]);
+        }
+    }
+
+    @Test
+    public void testWriteOneNodeWithNullSize() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id = buildFormat(1);
+            ProfileResourceNode node = buildProfileResourceNode(1, null);
+            node.addFormatIdentification(id);
+
+            nodes.add(node);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedEntry = toCsvRow(new String[] {
+                    "", "",
+                    isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+                    "file1.txt",
+                    "Signature",
+                    "Done",
+                    "",
+                    "File",
+                    "foo",
+                    testDateTimeString,
+                    "false",
+                    "11111111111111111111111111111111",
+                    "1",
+                    "fmt/1",
+                    "text/plain",
+                    "Plain Text",
+                    "1.0",
+            });
+
+            final String[] lines = writer.toString().split("\n");
+
+            assertEquals(2, lines.length);
+            assertEquals(expectedEntry, lines[1]);
+        }
+    }
+
+    @Test
+    public void testWriteOneNodeWithTwoFormatsWithOneRowPerFile() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id1 = buildFormat(1);
+            Format id2 = buildFormat(2);
+
+            ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
+            node.addFormatIdentification(id1);
+            node.addFormatIdentification(id2);
+
+            nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedEntry1 = toCsvRow(new String[] {
+                    "", "",
+                    isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+                    "file1.txt",
+                    "Signature",
+                    "Done",
+                    "1000",
+                    "File",
+                    "foo",
+                    testDateTimeString,
+                    "false",
+                    "11111111111111111111111111111111",
+                    "2",
+                    "fmt/1",
+                    "text/plain",
+                    "Plain Text",
+                    "1.0",
+                    "fmt/2",
+                    "text/plain",
+                    "Plain Text",
+                    "1.0",
+            });
+
+            final String[] lines = writer.toString().split("\n");
+
+            assertEquals(2, lines.length);
+            assertEquals(expectedEntry1, lines[1]);
+        }
+    }
+
+    @Test
+    public void testWriteOneNodeWithTwoFormatsWithOneRowPerFormat() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(true);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id1 = buildFormat(1);
+            Format id2 = buildFormat(2);
+
+            ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
+            node.addFormatIdentification(id1);
+            node.addFormatIdentification(id2);
+
+            nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedEntry1 = toCsvRow(new String[] {
+                    "", "",
+                    isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+                    "file1.txt",
+                    "Signature",
+                    "Done",
+                    "1000",
+                    "File",
+                    "foo",
+                    testDateTimeString,
+                    "false",
+                    "11111111111111111111111111111111",
+                    "2",
+                    "fmt/1",
+                    "text/plain",
+                    "Plain Text",
+                    "1.0",
+            });
+
+            final String expectedEntry2 = toCsvRow(new String[] {
+                    "", "",
+                    isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+                    "file1.txt",
+                    "Signature",
+                    "Done",
+                    "1000",
+                    "File",
+                    "foo",
+                    testDateTimeString,
+                    "false",
+                    "11111111111111111111111111111111",
+                    "2",
+                    "fmt/2",
+                    "text/plain",
+                    "Plain Text",
+                    "1.0",
+            });
+
+            final String[] lines = writer.toString().split("\n");
+
+            assertEquals(3, lines.length);
+            assertEquals(expectedEntry1, lines[1]);
+            assertEquals(expectedEntry2, lines[2]);
+        }
+    }
+
+    @Test
+    public void testWriteTenNodes() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(true);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            for (int i = 1; i <= 10; i++) {
+                ProfileResourceNode node = buildProfileResourceNode(i, (long) i);
+                Format id = buildFormat(i);
+                node.addFormatIdentification(id);
+                nodes.add(node);
+            }
+
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String[] lines = writer.toString().split("\n");
+
+            assertEquals(11, lines.length);
+        }
     }
     
     private static boolean isNotWindows() {
