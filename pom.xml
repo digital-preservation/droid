@@ -48,6 +48,8 @@
                     <aggregate>false</aggregate>
                     <excludes>
                         <exclude>.idea/**</exclude>
+                        <exclude>pom.xml</exclude>
+                        <exclude>LICENSE</exclude>
                     </excludes>
                 </configuration>
             </plugin>

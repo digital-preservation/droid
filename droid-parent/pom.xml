@@ -77,12 +77,19 @@
         <project.build.source>1.7</project.build.source>
         <project.build.target>1.7</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
+
         <spring.version>4.3.9.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.12.1.1</derby.version> <!-- TODO derby >10.13 requires Java 8 -->
         <cxf.version>2.3.1</cxf.version>
         <aspectj.version>1.8.10</aspectj.version>
+        <java.iso-tools.version>2.0.1</java.iso-tools.version>
+        <flying-saucer.version>9.1.6</flying-saucer.version>
+        <truezip.version>7.7.10</truezip.version>
+        <jwat.version>1.0.6</jwat.version>
+        <hamcrest.version>1.3</hamcrest.version>
     </properties>
   
     <build>
@@ -214,8 +221,8 @@
                             <goal>analyze-only</goal>
                         </goals>
                         <configuration>
-                            <failOnWarning>false</failOnWarning>
-                            <ignoreNonCompile>true</ignoreNonCompile>
+                            <failOnWarning>true</failOnWarning>
+                            <ignoreNonCompile>false</ignoreNonCompile>
                         </configuration>
                     </execution>
                 </executions>
@@ -244,7 +251,9 @@
                     </properties>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <excludes>
-                     <exclude>.travis.yml</exclude>
+                        <exclude>.travis.yml</exclude>
+                        <exclude>pom.xml</exclude>
+                        <exclude>**/pom.xml</exclude>
                         <exclude>header.txt</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>src-header.txt</exclude>
@@ -258,6 +267,11 @@
                         <exclude>**/empty.txt</exclude>
                         <exclude>**/service.properties</exclude>
                         <exclude>**/profile.xml</exclude>
+                        <exclude>*.form</exclude>
+                        <exclude>*.tmp</exclude>
+                        <exclude>*.db</exclude>
+                        <exclude>*.GIF</exclude>
+                        <exclude>*.PNG</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -472,6 +486,11 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <artifactId>xercesImpl</artifactId>
                 <version>2.11.0</version>
             </dependency>
+            <!--dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging-api</artifactId>
+                <version>1.2</version>
+            </dependency -->
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
@@ -519,18 +538,23 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xhtmlrenderer</groupId>
                 <artifactId>flying-saucer-core</artifactId>
-                <version>9.1.6</version>
+                <version>${flying-saucer.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xhtmlrenderer</groupId>
                 <artifactId>flying-saucer-pdf-itext5</artifactId>
-                <version>9.1.6</version>
+                <version>${flying-saucer.version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -538,9 +562,34 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <version>2.9.9</version>
             </dependency>
             <dependency>
+                <groupId>org.jwat</groupId>
+                <artifactId>jwat-arc</artifactId>
+                <version>${jwat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jwat</groupId>
+                <artifactId>jwat-warc</artifactId>
+                <version>${jwat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jwat</groupId>
+                <artifactId>jwat-common</artifactId>
+                <version>${jwat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant-compress</artifactId>
+                <version>1.5</version>
+            </dependency>
+            <dependency>
                 <groupId>de.schlichtherle.truezip</groupId>
                 <artifactId>truezip-driver-zip</artifactId>
-                <version>7.7.10</version>
+                <version>${truezip.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.schlichtherle.truezip</groupId>
+                <artifactId>truezip-kernel</artifactId>
+                <version>${truezip.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -569,30 +618,37 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             </dependency>
             <dependency>
                 <groupId>com.github.stephenc.java-iso-tools</groupId>
+                <artifactId>loop-fs-iso-impl</artifactId>
+                <version>${java.iso-tools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.stephenc.java-iso-tools</groupId>
                 <artifactId>iso9660-vfs-impl</artifactId>
-                <version>2.0.1</version>
+                <version>${java.iso-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.junrar</groupId>
                 <artifactId>junrar</artifactId>
                 <version>0.7</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
-
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-    
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <pluginRepositories>
         <pluginRepository>
