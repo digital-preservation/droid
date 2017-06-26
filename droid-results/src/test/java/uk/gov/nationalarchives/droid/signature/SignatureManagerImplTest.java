@@ -31,8 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.signature;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -48,13 +50,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.Ignore;
+import org.junit.*;
 import org.mockito.ArgumentCaptor;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
@@ -63,6 +60,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureUpdateService;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -70,8 +68,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureUpdateSe
  */
 public class SignatureManagerImplTest {
 
-    private static File containerSigFileDir; 
-    private static File textSigFileDir; 
+    private static Path containerSigFileDir;
+    private static Path textSigFileDir;
     
     private SignatureManagerImpl signatureManager;
     private DroidGlobalConfig config;
@@ -80,34 +78,34 @@ public class SignatureManagerImplTest {
     private SignatureUpdateService containerSignatureService;
     private SignatureUpdateService textSignatureService;
     
-    @BeforeClass
-    public static void initTestFiles() {
+    @Before
+    public void initTestFiles() {
         createSigDirs();
     }
     
-    @AfterClass
-    public static void tearDownTestFiles() {
+    @After
+    public void tearDownTestFiles() {
         deleteSigDirs();
     }
     
     private static void createSigDirs() {
-        containerSigFileDir = new File("test_container_sig_files");
-        containerSigFileDir.mkdir();
+        containerSigFileDir = Paths.get("test_container_sig_files");
+        FileUtil.mkdirsQuietly(containerSigFileDir);
 
-        textSigFileDir = new File("test_text_sig_files");
-        textSigFileDir.mkdir();
+        textSigFileDir = Paths.get("test_text_sig_files");
+        FileUtil.mkdirsQuietly(textSigFileDir);
     }
     
     private static void deleteSigDirs() {
-        FileUtils.deleteQuietly(containerSigFileDir); 
-        FileUtils.deleteQuietly(textSigFileDir); 
+        FileUtil.deleteQuietly(containerSigFileDir);
+        FileUtil.deleteQuietly(textSigFileDir);
     }
     
     @Before
     public void setup() {
         signatureManager = new SignatureManagerImpl();
         config = mock(DroidGlobalConfig.class);
-        when(config.getSignatureFileDir()).thenReturn(new File("test_sig_files"));
+        when(config.getSignatureFileDir()).thenReturn(Paths.get("test_sig_files"));
         when(config.getContainerSignatureDir()).thenReturn(containerSigFileDir);
         when(config.getTextSignatureFileDir()).thenReturn(textSigFileDir);
         
@@ -202,14 +200,14 @@ public class SignatureManagerImplTest {
         deleteSigDirs();
         createSigDirs();
         
-        final File containerSigFile1 = new File(containerSigFileDir, "container_sigs-20100927.xml");
-        final File containerSigFile2 = new File(containerSigFileDir, "container_sigs-20100827.xml");
+        final Path containerSigFile1 = containerSigFileDir.resolve("container_sigs-20100927.xml");
+        final Path containerSigFile2 = containerSigFileDir.resolve("container_sigs-20100827.xml");
         
-        containerSigFile1.createNewFile();
-        containerSigFile2.createNewFile();
+        Files.createFile(containerSigFile1);
+        Files.createFile(containerSigFile2);
         
-        assertTrue(containerSigFile1.exists());
-        assertTrue(containerSigFile2.exists());
+        assertTrue(Files.exists(containerSigFile1));
+        assertTrue(Files.exists(containerSigFile2));
         
         Map<SignatureType, SortedMap<String, SignatureFileInfo>> sigFiles = 
             signatureManager.getAvailableSignatureFiles();
@@ -221,27 +219,27 @@ public class SignatureManagerImplTest {
         assertEquals(containerSigFile1, containerSigFiles.get("container_sigs-20100927").getFile());
         assertEquals(containerSigFile2, containerSigFiles.get("container_sigs-20100827").getFile());
 
-        assertEquals(new File(containerSigFileDir, "container_sigs-20100927.xml"), 
+        assertEquals(containerSigFileDir.resolve("container_sigs-20100927.xml"),
                 containerSigFiles.get("container_sigs-20100927").getFile());
     }
     
     @Test
     public void testGetDefaultContainerSignature() throws Exception {
-        final File containerSigFile1 = new File(containerSigFileDir, "container_sigs-20100927.xml");
-        final File containerSigFile2 = new File(containerSigFileDir, "container_sigs-20100827.xml");
+        final Path containerSigFile1 = containerSigFileDir.resolve("container_sigs-20100927.xml");
+        final Path containerSigFile2 = containerSigFileDir.resolve("container_sigs-20100827.xml");
         
-        final File textSigFile1 = new File(textSigFileDir, "text_sigs-20110927.xml");
-        final File textSigFile2 = new File(textSigFileDir, "text_sigs-20110827.xml");
+        final Path textSigFile1 = textSigFileDir.resolve("text_sigs-20110927.xml");
+        final Path textSigFile2 = textSigFileDir.resolve("text_sigs-20110827.xml");
 
-        containerSigFile1.createNewFile();
-        containerSigFile2.createNewFile();
-        textSigFile1.createNewFile();
-        textSigFile2.createNewFile();
+        Files.createFile(containerSigFile1);
+        Files.createFile(containerSigFile2);
+        Files.createFile(textSigFile1);
+        Files.createFile(textSigFile2);
         
-        assertTrue(containerSigFile1.exists());
-        assertTrue(containerSigFile2.exists());
-        assertTrue(textSigFile1.exists());
-        assertTrue(textSigFile2.exists());
+        assertTrue(Files.exists(containerSigFile1));
+        assertTrue(Files.exists(containerSigFile2));
+        assertTrue(Files.exists(textSigFile1));
+        assertTrue(Files.exists(textSigFile2));
         
         when(configuration.getString(DroidGlobalProperty.DEFAULT_BINARY_SIG_FILE_VERSION.getName()))
             .thenReturn("DROID_SignatureFile_V26");
@@ -251,7 +249,7 @@ public class SignatureManagerImplTest {
             .thenReturn("text_sigs-20110827");
         
         SignatureFileInfo sigInfo = signatureManager.getDefaultSignatures().get(SignatureType.CONTAINER);
-        assertEquals(new File(containerSigFileDir, "container_sigs-20100927.xml"), sigInfo.getFile());
+        assertEquals(containerSigFileDir.resolve("container_sigs-20100927.xml"), sigInfo.getFile());
         assertEquals(20100927, sigInfo.getVersion());
     }
     
@@ -264,14 +262,14 @@ public class SignatureManagerImplTest {
         deleteSigDirs();
         createSigDirs();
         
-        final File containerSigFile1 = new File(containerSigFileDir, "container_sigs-20100927.xml");
-        final File containerSigFile2 = new File(containerSigFileDir, "container_sigs-20100929.xml");
+        final Path containerSigFile1 = containerSigFileDir.resolve("container_sigs-20100927.xml");
+        final Path containerSigFile2 = containerSigFileDir.resolve("container_sigs-20100929.xml");
+
+        Files.createFile(containerSigFile1);
+        Files.createFile(containerSigFile2);
         
-        containerSigFile1.createNewFile();
-        containerSigFile2.createNewFile();
-        
-        assertTrue(containerSigFile1.exists());
-        assertTrue(containerSigFile2.exists());
+        assertTrue(Files.exists(containerSigFile1));
+        assertTrue(Files.exists(containerSigFile2));
 
         SignatureFileInfo sigFileInfo = signatureManager.getLatestSignatureFiles().get(SignatureType.CONTAINER);
         assertNull(sigFileInfo);
@@ -285,14 +283,14 @@ public class SignatureManagerImplTest {
         deleteSigDirs();
         createSigDirs();
         
-        final File containerSigFile1 = new File(containerSigFileDir, "container_sigs-20100827.xml");
-        final File containerSigFile2 = new File(containerSigFileDir, "container_sigs-20100828.xml");
+        final Path containerSigFile1 = containerSigFileDir.resolve("container_sigs-20100827.xml");
+        final Path containerSigFile2 = containerSigFileDir.resolve("container_sigs-20100828.xml");
+
+        Files.createFile(containerSigFile1);
+        Files.createFile(containerSigFile2);
         
-        containerSigFile1.createNewFile();
-        containerSigFile2.createNewFile();
-        
-        assertTrue(containerSigFile1.exists());
-        assertTrue(containerSigFile2.exists());
+        assertTrue(Files.exists(containerSigFile1));
+        assertTrue(Files.exists(containerSigFile2));
 
         SignatureFileInfo sigFileInfo = signatureManager.getLatestSignatureFiles().get(SignatureType.CONTAINER);
         assertEquals(latestContainerSigInfo, sigFileInfo);

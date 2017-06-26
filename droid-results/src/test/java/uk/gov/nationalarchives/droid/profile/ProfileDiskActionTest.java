@@ -31,16 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
@@ -55,6 +56,7 @@ import org.mockito.AdditionalMatchers;
 
 
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -62,88 +64,97 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  */
 public class ProfileDiskActionTest {
 	
-	File profilesDir;
-	File profileToSaveDir;
-	File profileToLoadDir;
-	File profileXml;
-	File dbDir;
-	File serviceProperties;
-	File file2;
-	File file3;
-	File file4;
-	File tmpDir;
-	File destination;
+	Path profilesDir;
+    Path profileToSaveDir;
+    Path profileToLoadDir;
+    Path profileXml;
+    Path dbDir;
+    Path serviceProperties;
+    Path file2;
+    Path file3;
+    Path file4;
+    Path tmpDir;
+    Path destination;
 		
 	@Before
 	public void setUp() throws Exception {
-		profilesDir = new File("profiles");
-		profilesDir.mkdir();
-		profileToSaveDir = new File(profilesDir, "profileToSave");
-		profileToSaveDir.mkdir();
-		profileToLoadDir = new File(profilesDir, "myProfile");
-		profileXml = new File(profileToSaveDir, "profile.xml");
-		profileXml.createNewFile();
+		profilesDir = Paths.get("profiles");
+        FileUtil.mkdirsQuietly(profilesDir);
+
+		profileToSaveDir = profilesDir.resolve("profileToSave");
+        FileUtil.mkdirsQuietly(profileToSaveDir);
+
+		profileToLoadDir = profilesDir.resolve("myProfile");
+
+		profileXml = profileToSaveDir.resolve("profile.xml");
+        Files.createFile(profileXml);
 		writeXmlData();
-		dbDir = new File(profileToSaveDir, "db");
-        dbDir.mkdir();
-        serviceProperties = new File(dbDir, "service.properties");
-        serviceProperties.createNewFile();
-        file2 = new File(dbDir,"file2");
-        file2.createNewFile();
-        file3 = new File(dbDir, "file3");
-        file3.createNewFile();
-        file4 = new File(dbDir, "file4");
-        file4.createNewFile();
-        tmpDir = new File("tmp");
-        tmpDir.mkdir();
-        destination = new File(tmpDir, "saved.drd");
+
+		dbDir = profileToSaveDir.resolve("db");
+        FileUtil.mkdirsQuietly(dbDir);
+
+        serviceProperties = dbDir.resolve("service.properties");
+        Files.createFile(serviceProperties);
+
+        file2 = dbDir.resolve("file2");
+        Files.createFile(file2);
+
+        file3 = dbDir.resolve("file3");
+        Files.createFile(file3);
+
+        file4 = dbDir.resolve("file4");
+        Files.createFile(file4);
+
+        tmpDir = Paths.get("tmp");
+        FileUtil.mkdirsQuietly(tmpDir);
+
+        destination = tmpDir.resolve("saved.drd");
 	}
 
 	@Test
     public void testSaveProfileToFile() throws Exception {
         ProgressObserver callback = mock(ProgressObserver.class);
         ProfileDiskAction action = new ProfileDiskAction();
-        action.saveProfile("profiles/" + "profileToSave", destination, callback);
+        action.saveProfile(Paths.get("profiles", "profileToSave"), destination, callback);
         //assertTrue(destination.exists());
 
         /* check the destination is a zip file with the following entries:
          * profile.xml file
          * db - directory (not empty)
          */
-        ZipFile savedFile = new ZipFile(destination);
+        try(final ZipFile savedFile = new ZipFile(destination.toFile())) {
 
-        Enumeration<? extends ZipEntry> entries = savedFile.entries();
-        List<String> entryNames = new ArrayList<String>();
-        while (entries.hasMoreElements()) {
-            entryNames.add(FilenameUtils.separatorsToUnix(entries.nextElement().getName()));
+            final Enumeration<? extends ZipEntry> entries = savedFile.entries();
+            final List<String> entryNames = new ArrayList<>();
+            while (entries.hasMoreElements()) {
+                entryNames.add(FilenameUtils.separatorsToUnix(entries.nextElement().getName()));
+            }
+            assertEquals(true, entryNames.contains("db/file2"));
+            assertEquals(true, entryNames.contains("db/file3"));
+            assertEquals(true, entryNames.contains("db/file4"));
+            assertEquals(true, entryNames.contains("db/service.properties"));
+            assertEquals(true, entryNames.contains("profile.xml"));
+
+            // uncompress the profiles.xml entry to make sure it was zipped OK.
+            try(final ZipFile saved = new ZipFile(destination.toFile());
+                    final InputStream in = saved.getInputStream(new ZipEntry("profile.xml"))) {
+                final StringBuilder sb = new StringBuilder();
+                int bytesIn = 0;
+                byte[] readBuffer = new byte[20];
+                while ((bytesIn = in.read(readBuffer)) != -1) {
+                    sb.append(new String(readBuffer, 0, bytesIn));
+                }
+
+                assertEquals(getXmlString(), sb.toString());
+                verify(callback, atLeastOnce()).onProgress(AdditionalMatchers.leq(100));
+            }
         }
-        assertEquals(true, entryNames.contains("db/file2"));
-        assertEquals(true, entryNames.contains("db/file3"));
-        assertEquals(true, entryNames.contains("db/file4"));
-        assertEquals(true, entryNames.contains("db/service.properties"));
-        assertEquals(true, entryNames.contains("profile.xml"));
-
-        // uncompress the profiles.xml entry to make sure it was zipped OK.
-        ZipFile saved = new ZipFile(destination);
-        InputStream in = saved.getInputStream(new ZipEntry("profile.xml"));
-
-        StringBuilder sb = new StringBuilder();
-        int bytesIn = 0;
-        byte[] readBuffer = new byte[20];
-        while ((bytesIn = in.read(readBuffer)) != -1) {
-            sb.append(new String(readBuffer, 0, bytesIn));
-        }
-        in.close();
-
-        assertEquals(getXmlString(), sb.toString());
-        verify(callback, atLeastOnce()).onProgress(AdditionalMatchers.leq(100));
     }
 
     @Test
     public void testLoadProfileFromFile() throws Exception {
-
-        File source = new File("test-profiles/saved.drd");
-        assertTrue(source.exists());
+        final Path source = Paths.get("test-profiles/saved.drd");
+        assertTrue(Files.exists(source));
 
         //File destination = new File(profilesDir, "myProfile");
         //FileUtils.deleteQuietly(destination);
@@ -153,12 +164,12 @@ public class ProfileDiskActionTest {
         ProfileDiskAction profileDiskAction = new ProfileDiskAction();
         profileDiskAction.load(source, profileToLoadDir, observer);
 
-        assertTrue(profileToLoadDir.isDirectory());
-        assertTrue(new File(profileToLoadDir + "/profile.xml").isFile());
-        assertTrue(new File(profileToLoadDir + "/db").isDirectory());
-        assertTrue(new File(profileToLoadDir + "/db/file2").isFile());
-        assertTrue(new File(profileToLoadDir + "/db/file3").isFile());
-        assertTrue(new File(profileToLoadDir + "/db/file4").isFile());
+        assertTrue(Files.isDirectory(profileToLoadDir));
+        assertTrue(Files.isRegularFile(profileToLoadDir.resolve("profile.xml")));
+        assertTrue(Files.isDirectory(profileToLoadDir.resolve("db")));
+        assertTrue(Files.isRegularFile(profileToLoadDir.resolve("db/file2")));
+        assertTrue(Files.isRegularFile(profileToLoadDir.resolve("db/file3")));
+        assertTrue(Files.isRegularFile(profileToLoadDir.resolve("db/file4")));
 
         // check that profiles.xml was unzipped OK
         InputStream in = new FileInputStream("profiles/myProfile/profile.xml");
@@ -180,9 +191,9 @@ public class ProfileDiskActionTest {
     }
     
     private void writeXmlData() throws Exception {
-        FileWriter out = new FileWriter(profileXml);
-        out.write(getXmlString());
-        out.close();
+        try(final Writer out = Files.newBufferedWriter(profileXml, UTF_8)) {
+            out.write(getXmlString());
+        }
     }
     
     private String getXmlString() {
@@ -191,39 +202,39 @@ public class ProfileDiskActionTest {
     }
     
     @After
-    public void tearDown() {
-    	if(destination.exists()) {
-    		destination.deleteOnExit();
+    public void tearDown() throws IOException {
+    	if(Files.exists(destination)) {
+    		destination.toFile().deleteOnExit();
     	}
-    	if(tmpDir.exists()) {
-    		tmpDir.deleteOnExit();
+    	if(Files.exists(tmpDir)) {
+    		tmpDir.toFile().deleteOnExit();
     	}
-    	if(file2.exists()){
-    		file2.delete();
+    	if(Files.exists(file2)){
+            Files.delete(file2);
     	}
-    	if(file3.exists()) {
-    		file3.delete();
+    	if(Files.exists(file3)) {
+            Files.delete(file3);
     	}
-    	if(file4.exists()) {
-    		file4.delete();
+    	if(Files.exists(file4)) {
+            Files.delete(file4);
     	}
-    	if(serviceProperties.exists()) {
-    		serviceProperties.delete();
+    	if(Files.exists(serviceProperties)) {
+            Files.delete(serviceProperties);
     	}
-    	if(dbDir.exists()) {
-    		dbDir.delete();
+    	if(Files.exists(dbDir)) {
+    		dbDir.toFile().deleteOnExit();
     	}
-    	if(profileXml.exists()) {
-    		profileXml.delete();
+    	if(Files.exists(profileXml)) {
+    		Files.delete(profileXml);
     	}
-    	if(profileToSaveDir.exists()) {
-    		profileToSaveDir.delete();
+    	if(Files.exists(profileToSaveDir)) {
+    		profileToSaveDir.toFile().deleteOnExit();
     	}
-    	if(profileToLoadDir.exists()) {
-    		profileToLoadDir.delete();
+    	if(Files.exists(profileToLoadDir)) {
+    		profileToLoadDir.toFile().deleteOnExit();
     	}
-    	if(profilesDir.exists()) {
-    		profilesDir.delete();
+    	if(Files.exists(profilesDir)) {
+    		profilesDir.toFile().deleteOnExit();
     	}
     }
 

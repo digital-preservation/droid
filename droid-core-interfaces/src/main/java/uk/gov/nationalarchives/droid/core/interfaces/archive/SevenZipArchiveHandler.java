@@ -31,10 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -75,12 +75,12 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
         WindowReader windowReader = request.getWindowReader();
         if (windowReader instanceof FileReader) {
             FileReader fileReader = (FileReader) windowReader;
-            File file = fileReader.getFile();
+            final Path file = fileReader.getFile().toPath();
 
-            SevenZFile sevenZFile = new SevenZFile(file);
+            SevenZFile sevenZFile = new SevenZFile(file.toFile());
 
             SevenZStreamFactory sevenZStreamFactory = new SevenZStreamFactory();
-            try (ArchiveInputStream archiveStream = sevenZStreamFactory.getArchiveInputStream(file, null)) {
+            try (ArchiveInputStream archiveStream = sevenZStreamFactory.getArchiveInputStream(file.toFile(), null)) {
                 //Prevent to close input stream. We want to read all files in archive.
                 CloseShieldInputStream  closeShieldInputStream = new CloseShieldInputStream(archiveStream);
 

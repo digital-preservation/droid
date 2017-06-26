@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.signature;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -44,7 +44,7 @@ public class SignatureFileInfo {
 
     private int version;
     private boolean deprecated;
-    private File file;
+    private Path file;
     private SignatureServiceException error;
     
     private SignatureType type;
@@ -125,14 +125,14 @@ public class SignatureFileInfo {
     /**
      * @return the uri
      */
-    public File getFile() {
+    public Path getFile() {
         return file;
     }
     
     /**
      * @param file the file to set
      */
-    public void setFile(File file) {
+    public void setFile(final Path file) {
         this.file = file;
     }
     

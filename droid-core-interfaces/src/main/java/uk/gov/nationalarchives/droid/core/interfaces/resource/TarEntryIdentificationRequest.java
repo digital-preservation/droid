@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,7 +59,7 @@ public class TarEntryIdentificationRequest implements IdentificationRequest<Inpu
     private final RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
 
-    private File tempDir;
+    private Path tempDir;
     private Long size;
     private WindowReader reader;
 
@@ -72,8 +72,8 @@ public class TarEntryIdentificationRequest implements IdentificationRequest<Inpu
      * @param identifier the request identifier
      * @param tempDir the location to write temp files.
      */
-    public TarEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
-                                  File tempDir) {
+    public TarEntryIdentificationRequest(final RequestMetaData metaData, final RequestIdentifier identifier,
+            final Path tempDir) {
         this.identifier = identifier;
         size = metaData.getSize();
         fileName = metaData.getName();

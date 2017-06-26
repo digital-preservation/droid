@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,10 +40,8 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -86,10 +84,10 @@ public class ProfileInstanceManagerTest {
         profileInstanceManager.setProfileDao(profileDao);
 
         ProfileSpec profileSpec = new ProfileSpec();
-        profileSpec.addResource(new FileProfileResource(new File("file/1")));
-        profileSpec.addResource(new FileProfileResource(new File("file/2")));
-        profileSpec.addResource(new FileProfileResource(new File("file/3")));
-        profileSpec.addResource(new FileProfileResource(new File("file/4")));
+        profileSpec.addResource(new FileProfileResource(Paths.get("file/1")));
+        profileSpec.addResource(new FileProfileResource(Paths.get("file/2")));
+        profileSpec.addResource(new FileProfileResource(Paths.get("file/3")));
+        profileSpec.addResource(new FileProfileResource(Paths.get("file/4")));
         
         ProfileInstance profile = new ProfileInstance();
         profile.setSignatureFileVersion(26);
@@ -100,7 +98,7 @@ public class ProfileInstanceManagerTest {
         ReferenceDataServiceImpl referenceDaoImplMock = mock(ReferenceDataServiceImpl.class);
         profileInstanceManager.setReferenceDataService(referenceDaoImplMock);
 
-        profileInstanceManager.initProfile(new File("test_sig_files/DROID_SignatureFile_V26.xml").toURI());
+        profileInstanceManager.initProfile(Paths.get("test_sig_files/DROID_SignatureFile_V26.xml").toUri());
         Collection<ProfileResourceNode> nodes = profileInstanceManager.findRootProfileResourceNodes();
         
         assertEquals(profileSpec.getResources().size(), nodes.size());
@@ -124,17 +122,17 @@ public class ProfileInstanceManagerTest {
         profileInstanceManager.setReferenceDataService(referenceDaoImplMock);
 
         ProfileSpec profileSpec = new ProfileSpec();
-        profileSpec.addResource(new FileProfileResource(new File("file/1")));
-        profileSpec.addResource(new FileProfileResource(new File("file/2")));
-        profileSpec.addResource(new FileProfileResource(new File("file/3")));
-        profileSpec.addResource(new FileProfileResource(new File("file/4")));
+        profileSpec.addResource(new FileProfileResource(Paths.get("file/1")));
+        profileSpec.addResource(new FileProfileResource(Paths.get("file/2")));
+        profileSpec.addResource(new FileProfileResource(Paths.get("file/3")));
+        profileSpec.addResource(new FileProfileResource(Paths.get("file/4")));
         
         ProfileInstance profile = new ProfileInstance();
         profile.setSignatureFileVersion(26);
         profile.setProfileSpec(profileSpec);
         
         profileInstanceManager.setProfile(profile);
-        profileInstanceManager.initProfile(new File("test_sig_files/DROID_SignatureFile_V26.xml").toURI());
+        profileInstanceManager.initProfile(Paths.get("test_sig_files/DROID_SignatureFile_V26.xml").toUri());
         Collection<ProfileResourceNode> nodes = profileInstanceManager.findRootProfileResourceNodes();
         
         Iterator<ProfileResourceNode> nodeIterator = nodes.iterator();
@@ -149,7 +147,7 @@ public class ProfileInstanceManagerTest {
 //        IdentificationJob identificationJob = mock(IdentificationJob.class);
 //        when(identificationJob.getStatus()).thenReturn(JobStatus.COMPLETE);
         
-        ProfileResourceNode node = new ProfileResourceNode(new File(filePath).toURI());
+        ProfileResourceNode node = new ProfileResourceNode(Paths.get(filePath).toUri());
 //       node.setJob(identificationJob);
         return node;
         
@@ -162,7 +160,7 @@ public class ProfileInstanceManagerTest {
 
         DirectoryProfileResource directoryResource = mock(DirectoryProfileResource.class);
         when(directoryResource.isRecursive()).thenReturn(true);
-        when(directoryResource.getUri()).thenReturn(new File(".").toURI());
+        when(directoryResource.getUri()).thenReturn(Paths.get(".").toUri());
         when(directoryResource.isDirectory()).thenReturn(true);
         profileSpec.addResource(directoryResource);
 
@@ -195,7 +193,7 @@ public class ProfileInstanceManagerTest {
         
         
         profileInstanceManager.setProfile(profile);
-        profileInstanceManager.initProfile(new File("test_sig_files/DROID_SignatureFile_V26.xml").toURI());
+        profileInstanceManager.initProfile(Paths.get("test_sig_files/DROID_SignatureFile_V26.xml").toUri());
         Future<?> profileTask = profileInstanceManager.start();
         
         Thread.sleep(100);

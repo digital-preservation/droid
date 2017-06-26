@@ -31,10 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -58,16 +58,16 @@ public class GZipArchiveHandlerTest {
     @Test
     public void testHandleGZipFile() throws Exception {
 
-        File file = new File(getClass().getResource("/testXmlFile.xml.gz").getFile());
+        final Path file = Paths.get(getClass().getResource("/testXmlFile.xml.gz").getFile());
 
         IdentificationRequest request = mock(IdentificationRequest.class);
         
         IdentificationRequestFactory factory = mock(IdentificationRequestFactory.class);
         
         
-        URI expectedUri = ArchiveFileUtils.toGZipUri(file.toURI());
+        URI expectedUri = ArchiveFileUtils.toGZipUri(file.toUri());
         
-        RequestIdentifier identifier = new RequestIdentifier(file.toURI());
+        RequestIdentifier identifier = new RequestIdentifier(file.toUri());
         identifier.setAncestorId(10L);
         identifier.setParentId(20L);
         identifier.setNodeId(30L);
@@ -87,7 +87,7 @@ public class GZipArchiveHandlerTest {
         
         IdentificationRequest originalRequest = mock(IdentificationRequest.class);
         when(originalRequest.getIdentifier()).thenReturn(identifier);
-        when(originalRequest.getSourceInputStream()).thenReturn(new FileInputStream(file));
+        when(originalRequest.getSourceInputStream()).thenReturn(Files.newInputStream(file));
         
         handler.handle(originalRequest);
         

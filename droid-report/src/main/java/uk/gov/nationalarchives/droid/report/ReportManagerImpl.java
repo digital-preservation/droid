@@ -31,9 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.report;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,6 +64,7 @@ import uk.gov.nationalarchives.droid.report.interfaces.ReportSpecDao;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpecItem;
 import uk.gov.nationalarchives.droid.report.planets.xml.PlanetsXMLGenerator;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author Alok Kumar Dash
@@ -188,15 +190,15 @@ public class ReportManagerImpl implements ReportManager {
     @Override
     public List<ReportSpec> listReportSpecs() {
         
-        File reportDefDir = config.getReportDefinitionDir();
+        final Path reportDefDir = config.getReportDefinitionDir();
         
-        FileFilter xslFileFilter = new FileFilter() {
+        final DirectoryStream.Filter<Path> xslFileFilter = new DirectoryStream.Filter<Path>() {
             @Override
-            public boolean accept(File f) {
+            public boolean accept(final Path f) {
                 // Only accept files with names conforming to the pattern:
                 // {DESCRIPTION}.{EXTENSION}.XSL
                 boolean result = false;
-                final String name = f.getName();
+                final String name = f.getFileName().toString();
                 if (FilenameUtils.isExtension(name, "xsl")) {
                     final String baseName = FilenameUtils.getBaseName(name);
                     result = baseName.indexOf('.') > -1;
@@ -204,43 +206,48 @@ public class ReportManagerImpl implements ReportManager {
                 return result;
             }
         };
-        
-        List<File> globalTransforms = new ArrayList<File>();
-        for (File transform : reportDefDir.listFiles(xslFileFilter)) {
-            globalTransforms.add(transform);
-        }
 
-        List<ReportSpec> reportSpecs = new ArrayList<ReportSpec>();
-        
-        FileFilter xmlFileFilter = new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return FilenameUtils.isExtension(f.getName(), "xml");
+        try {
+
+            final List<Path> globalTransforms = new ArrayList<>();
+            for (final Path transform : FileUtil.listFiles(reportDefDir, false, xslFileFilter)) {
+                globalTransforms.add(transform);
             }
-        };
-        
-        for (File reportDir : reportDefDir.listFiles()) {
-            if (reportDir.isDirectory()) {
-                // Get any local transforms in the directory:
-                List<File> reportTransforms = new ArrayList<File>();
-                for (File transform : reportDir.listFiles(xslFileFilter)) {
-                    reportTransforms.add(transform);
+
+            final List<ReportSpec> reportSpecs = new ArrayList<>();
+
+            final DirectoryStream.Filter<Path> xmlFileFilter = new DirectoryStream.Filter<Path>() {
+                @Override
+                public boolean accept(Path f) {
+                    return FilenameUtils.isExtension(f.getFileName().toString(), "xml");
                 }
-                reportTransforms.addAll(globalTransforms);
-                
-                // Get any reports in the directory:
-                for (File reportDef : reportDir.listFiles(xmlFileFilter)) {
-                    if (reportDef.isFile()) {
-                        ReportSpec reportSpec;
-                        reportSpec = reportSpecDao.readReportSpec(reportDef.getPath());
-                        reportSpec.setXslTransforms(reportTransforms);
-                        reportSpecs.add(reportSpec);
+            };
+
+            final List<Path> reportDirs = FileUtil.listFiles(reportDefDir, false, (DirectoryStream.Filter) null);
+            for (final Path reportDir : reportDirs) {
+                if (Files.isDirectory(reportDir)) {
+                    // Get any local transforms in the directory:
+                    final List<Path> reportTransforms = new ArrayList<>();
+                    for (final Path transform : FileUtil.listFiles(reportDir, false, xslFileFilter)) {
+                        reportTransforms.add(transform);
+                    }
+                    reportTransforms.addAll(globalTransforms);
+
+                    // Get any reports in the directory:
+                    for (final Path reportDef : FileUtil.listFiles(reportDir, false, xmlFileFilter)) {
+                        if (!Files.isDirectory(reportDef)) {
+                            final ReportSpec reportSpec = reportSpecDao.readReportSpec(reportDef);
+                            reportSpec.setXslTransforms(reportTransforms);
+                            reportSpecs.add(reportSpec);
+                        }
                     }
                 }
             }
+
+            return reportSpecs;
+        } catch (final IOException ioe) {
+            throw new RuntimeException(ioe);
         }
-        
-        return reportSpecs;
     }
     
     /**

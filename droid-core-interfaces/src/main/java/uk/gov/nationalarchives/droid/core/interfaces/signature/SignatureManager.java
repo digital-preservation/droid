@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.signature;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -78,6 +78,6 @@ public interface SignatureManager {
      * @return the siognature file info.
      * @throws SignatureFileException if the installation failed
      */
-    SignatureFileInfo install(SignatureType type, File signatureFile, boolean setDefault) throws SignatureFileException;
+    SignatureFileInfo install(SignatureType type, Path signatureFile, boolean setDefault) throws SignatureFileException;
 
 }

@@ -32,26 +32,25 @@
 package uk.gov.nationalarchives.droid.gui.report;
 
 import java.awt.Window;
-import java.io.File;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -66,16 +65,13 @@ import uk.gov.nationalarchives.droid.report.ReportTransformer;
 public class ExportReportAction {
 
     private static final String XHTML_TRANSFORM_LOCATION = "Web page.html.xsl";
-    private static final String UTF8 = "UTF-8";
-    private static final CharsetDecoder DECODER = Charset.forName(UTF8).newDecoder();
-    private static final CharsetEncoder ENCODER = Charset.forName(UTF8).newEncoder();
 
     private ReportTransformer reportTransformer;
     private SaveAsFileChooser exportFileChooser;
     
-    private File droidReportXml;
+    private Path droidReportXml;
     private List<ExportType> exportTypes;
-    private File lastSelectedDir;
+    private Path lastSelectedDir;
     private Log log = LogFactory.getLog(this.getClass());
     
     /**
@@ -84,14 +80,14 @@ public class ExportReportAction {
      * @param parent the parent GUI component.
      * @param xslTransforms a list of xsl transform files which can be applied to this report.
      */
-    public void execute(Window parent, List<File> xslTransforms) {
+    public void execute(final Window parent, final List<Path> xslTransforms) {
         setExportTypes(xslTransforms);
         setFileFilters();
         int result = exportFileChooser.showSaveDialog(parent);
         if (result == JFileChooser.APPROVE_OPTION) {
             ExportType exporter = (ExportType) exportFileChooser.getFileFilter();
             exporter.handleExport(this);
-            lastSelectedDir = exportFileChooser.getSelectedFile().getParentFile();
+            lastSelectedDir = exportFileChooser.getSelectedFile().toPath().getParent();
         }
     }
     
@@ -133,7 +129,7 @@ public class ExportReportAction {
 
     private void initialiseSaveAsDialog() {
         exportFileChooser = new SaveAsFileChooser();
-        exportFileChooser.setSelectedFile(lastSelectedDir);
+        exportFileChooser.setSelectedFile(lastSelectedDir.toFile());
         exportFileChooser.setAcceptAllFileFilterUsed(false);
         final String dialogTitle = "Export Report";
         exportFileChooser.setWarningDialogTitle(dialogTitle);
@@ -143,10 +139,10 @@ public class ExportReportAction {
         exportFileChooser.setDialogTitle(dialogTitle);
     }
     
-    private void setExportTypes(List<File> xslTransforms) {
+    private void setExportTypes(final List<Path> xslTransforms) {
         exportTypes = new ArrayList<ExportType>();
-        for (File xslFile : xslTransforms) {
-            final String baseName = FilenameUtils.getBaseName(xslFile.getName());
+        for (final Path xslFile : xslTransforms) {
+            final String baseName = FilenameUtils.getBaseName(xslFile.getFileName().toString());
             final int stop = baseName.indexOf('.');
             if (stop > -1) {
                 final String description = baseName.substring(0, stop);
@@ -178,7 +174,7 @@ public class ExportReportAction {
     /**
      * @param droidReportXml the droidReportXml to set
      */
-    public void setDroidReportXml(File droidReportXml) {
+    public void setDroidReportXml(final Path droidReportXml) {
         this.droidReportXml = droidReportXml;
     }
     
@@ -189,10 +185,10 @@ public class ExportReportAction {
     
     private abstract class ExportType extends FileFilter {
         static final String DESC_PATTERN = "%s (*.%s)";
-        private String fileExtension;
-        private String exportDescription;
+        private final String fileExtension;
+        private final String exportDescription;
         
-        public ExportType(String fileExtension, String exportDescription) {
+        public ExportType(final String fileExtension, final String exportDescription) {
             this.fileExtension = fileExtension;
             this.exportDescription = exportDescription;
         }        
@@ -207,14 +203,14 @@ public class ExportReportAction {
         }
         
         @Override
-        public boolean accept(File f) {
+        public boolean accept(final File f) {
             return f.isDirectory() || FilenameUtils.isExtension(f.getName(), fileExtension);
         }
 
         public abstract void handleExport(ExportReportAction action);
         
-        protected void logReportExport(String filename) {
-            String message = String.format("Exporting report as [%s] to: [%s]", exportDescription, filename); 
+        protected void logReportExport(final String filename) {
+            final String message = String.format("Exporting report as [%s] to: [%s]", exportDescription, filename);
             log.info(message);
         }
     }
@@ -225,18 +221,13 @@ public class ExportReportAction {
         }
         
         @Override
-        public void handleExport(ExportReportAction action) {
-            try {
-                File target = action.exportFileChooser.getSelectedFile();
-                logReportExport(target.getAbsolutePath());
-                FileOutputStream out = new FileOutputStream(target);
-                InputStreamReader reader = new InputStreamReader(new FileInputStream(action.droidReportXml), DECODER);
+        public void handleExport(final ExportReportAction action) {
+            final Path target = action.exportFileChooser.getSelectedFile().toPath();
+            logReportExport(target.toAbsolutePath().toString());
+            try (final Reader reader = Files.newBufferedReader(action.droidReportXml, UTF_8);
+                    final OutputStream out = new BufferedOutputStream(Files.newOutputStream(target))) {
                 action.reportTransformer.transformToPdf(reader, XHTML_TRANSFORM_LOCATION, out);
-                DECODER.reset();
-            } catch (FileNotFoundException e) {
-                log.error(e);
-                throw new RuntimeException(e);
-            } catch (ReportTransformException e) {
+            } catch (final IOException | ReportTransformException e) {
                 log.error(e);
                 throw new RuntimeException(e);
             }
@@ -247,24 +238,13 @@ public class ExportReportAction {
         public DroidXMLExportType() {
             super("xml", "DROID Report XML");
         }
-        
-        @Override
-        public void handleExport(ExportReportAction action) {
-            File target = action.exportFileChooser.getSelectedFile();
-            logReportExport(target.getAbsolutePath());
-            try {
-                //FileWriter writer = new FileWriter(target);
-                OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(target), ENCODER);
-                InputStreamReader reader = new InputStreamReader(new FileInputStream(action.droidReportXml), DECODER);
 
-                try {
-                    IOUtils.copy(reader, writer);
-                } finally {
-                    reader.close();
-                    writer.close();
-                    ENCODER.reset();
-                    DECODER.reset();
-                }
+        @Override
+        public void handleExport(final ExportReportAction action) {
+            final Path target = action.exportFileChooser.getSelectedFile().toPath();
+            logReportExport(target.toAbsolutePath().toString());
+            try {
+                Files.copy(action.droidReportXml, target);
             } catch (IOException e) {
                 log.error(e);
                 throw new RuntimeException(e);
@@ -273,36 +253,22 @@ public class ExportReportAction {
     }
     
     private class XSLExportType extends ExportType {
-        private File xslFile;
-        public XSLExportType(String fileExtension, String exportDescription, File xslFile) {
+        private Path xslFile;
+        public XSLExportType(final String fileExtension, final String exportDescription, final Path xslFile) {
             super(fileExtension, exportDescription);
             this.xslFile = xslFile;
         }
         @Override
-        public void handleExport(ExportReportAction action) {
-            try {
-                File target = action.exportFileChooser.getSelectedFile();
-                logReportExport(target.getAbsolutePath());
-                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(target), ENCODER);
-                InputStreamReader reader = new InputStreamReader(new FileInputStream(action.droidReportXml), DECODER);
-                try {
-                    action.reportTransformer.transformUsingXsl(reader, xslFile, out);
-                } finally {
-                    out.close();
-                    reader.close();
-                    ENCODER.reset();
-                    DECODER.reset();
-                }
-            } catch (TransformerException e) {
-                log.error(e);
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+        public void handleExport(final ExportReportAction action) {
+            final Path target = action.exportFileChooser.getSelectedFile().toPath();
+            logReportExport(target.toAbsolutePath().toString());
+            try (final Reader reader = Files.newBufferedReader(action.droidReportXml, UTF_8);
+                final Writer out = Files.newBufferedWriter(target, UTF_8)) {
+                action.reportTransformer.transformUsingXsl(reader, xslFile, out);
+            } catch (final TransformerException | IOException e) {
                 log.error(e);
                 throw new RuntimeException(e);
             }
         }        
     }
-    
-  
-    
 }

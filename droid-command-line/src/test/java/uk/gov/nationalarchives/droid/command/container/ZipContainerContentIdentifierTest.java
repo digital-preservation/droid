@@ -31,11 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.command.container;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +67,8 @@ public class ZipContainerContentIdentifierTest {
     private ContainerIdentifierInit containerIdentifierInit;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private Map<Integer, List<FileFormatMapping>> formats; 
-    private String containerSignatures =
-            "../droid-container/workDir/container-sigs/container-signature.xml";
+    private Path containerSignatures =
+            Paths.get("../droid-container/workDir/container-sigs/container-signature.xml");
     private String zipFile =
             "../droid-container/src/test/resources/word_ooxml.docx";
     
@@ -77,7 +78,7 @@ public class ZipContainerContentIdentifierTest {
         requestFactory = new ContainerFileIdentificationRequestFactory();
         zipIdentifierEngine = new ZipIdentifierEngine();
         containerIdentifierInit = new ContainerIdentifierInit();
-        formats = new HashMap<Integer, List<FileFormatMapping>>();
+        formats = new HashMap<>();
     }
     
     @After
@@ -97,8 +98,7 @@ public class ZipContainerContentIdentifierTest {
         Object object = zipContainerContentIdentifier.getIdentifierEngine();
         assertEquals(object.getClass(), zipIdentifierEngine.getClass());
         
-        try {
-            InputStream in = new FileInputStream(containerSignatures);
+        try(final InputStream in = Files.newInputStream(containerSignatures);) {
             ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
             containerSignatureDefinitions = parser.parse(in);
         } catch (SignatureParseException e) {
@@ -115,17 +115,17 @@ public class ZipContainerContentIdentifierTest {
         assertEquals(object.getClass(), formats.getClass());
 
         String fileName;
-        File file = new File(zipFile);
-        if (!file.exists()) {
+        final Path file = Paths.get(zipFile);
+        if (!Files.exists(file)) {
             fail("ZIP test file not found");
         }
-        URI uri = file.toURI();
+        URI uri = file.toUri();
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentId(1L);
         try {
-            fileName = file.getCanonicalPath();
-            RequestMetaData metaData =
-                new RequestMetaData(file.length(), file.lastModified(), fileName);
+            fileName = file.toAbsolutePath().toString();
+            RequestMetaData metaData = new RequestMetaData(
+                    Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileName);
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
             IdentificationResultCollection results =

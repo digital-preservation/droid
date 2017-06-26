@@ -31,9 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -53,7 +54,7 @@ import static org.junit.Assert.*;
 
 public class TarEntryIdentificationRequestTest {
 
-    private static File tmpDir;
+    private static Path tmpDir;
     private TarEntryIdentificationRequest tarResource;
     private String fileName;
     private TarArchiveInputStream in;
@@ -64,14 +65,14 @@ public class TarEntryIdentificationRequestTest {
     private RequestIdentifier identifier;
     
     @BeforeClass
-    public static void createTmpFileDirectory() {
-        tmpDir = new File("tmp");
-        tmpDir.mkdir();
+    public static void createTmpFileDirectory() throws IOException {
+        tmpDir = Paths.get("tmp");
+        Files.createDirectories(tmpDir);
     }
     
     @AfterClass
     public static void removeTmpDir() {
-        FileUtils.deleteQuietly(tmpDir);
+        FileUtils.deleteQuietly(tmpDir.toFile());
     }
     
     @Before
@@ -79,7 +80,7 @@ public class TarEntryIdentificationRequestTest {
         
         fileName = getClass().getResource("/saved.tar").getFile();
         
-        in = new TarArchiveInputStream(new FileInputStream(fileName));
+        in = new TarArchiveInputStream(Files.newInputStream(Paths.get(fileName)));
         TarArchiveEntry entry;
         while ((entry = in.getNextTarEntry()) != null) {
             entryName = entry.getName();
@@ -87,7 +88,7 @@ public class TarEntryIdentificationRequestTest {
                 size = entry.getSize();
                 modTime = entry.getModTime();
                 metaData = new RequestMetaData(modTime.getTime(), size, "profile.xml");
-                identifier = new RequestIdentifier(ArchiveFileUtils.toTarUri(new File(fileName).toURI(), entryName));
+                identifier = new RequestIdentifier(ArchiveFileUtils.toTarUri(Paths.get(fileName).toUri(), entryName));
                 break;
             }
         }
@@ -196,7 +197,7 @@ public class TarEntryIdentificationRequestTest {
         
         assertEquals("xml", tarResource.getExtension());
         assertEquals("profile.xml", tarResource.getFileName());
-        assertEquals("tar:" + new File(fileName).toURI() + "!/saved/profile.xml",
+        assertEquals("tar:" + Paths.get(fileName).toUri() + "!/saved/profile.xml",
                 tarResource.getIdentifier().getUri().toString());
         assertEquals(metaData, tarResource.getRequestMetaData());
         

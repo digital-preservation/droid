@@ -31,12 +31,15 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -63,29 +66,29 @@ import uk.gov.nationalarchives.droid.submitter.FileWalker.ProgressEntry;
 public class FileWalkerPersistenceTest {
 
     private ProfileWalkerDao profileWalkerDao;
-    private File testDir;
+    private Path testDir;
     
     @Before
-    public void setup() throws JAXBException {
+    public void setup() throws JAXBException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
         
         profileWalkerDao = new ProfileWalkerDao();
-        testDir = new File("tmp/" + getClass().getSimpleName());
-        testDir.mkdirs();
-        profileWalkerDao.setProfileHomeDir(testDir.getPath());
+        testDir = Paths.get("tmp/" + getClass().getSimpleName());
+        Files.createDirectories(testDir);
+        profileWalkerDao.setProfileHomeDir(testDir);
     }
     
     @Test
     public void testSaveProfileWithSerializedPofileSpecWalker() throws Exception {
         
-        final File dirResource1 = new File("root/dir");
-        final File dirResource2 = new File("root/dir/subDir");
-        final File dirResource3 = new File("root/dir/subdir1/subDir2");
+        final Path dirResource1 = Paths.get("root/dir");
+        final Path dirResource2 = Paths.get("root/dir/subDir");
+        final Path dirResource3 = Paths.get("root/dir/subdir1/subDir2");
         
-        Deque<ProgressEntry> progress = new ArrayDeque<ProgressEntry>();
+        final Deque<ProgressEntry> progress = new ArrayDeque<ProgressEntry>();
         
-        final File root = new File("root");
-        FileWalker filewalker = new FileWalker(root.toURI(), true);
+        final Path root = Paths.get("root");
+        FileWalker filewalker = new FileWalker(root.toUri(), true);
         progress.push(new ProgressEntry(dirResource1, 1, "X", null));
         progress.push(new ProgressEntry(dirResource2, 2, "Y", null));
         progress.push(new ProgressEntry(dirResource3, 3, "Z", null));
@@ -100,62 +103,52 @@ public class FileWalkerPersistenceTest {
         
         DateTime testDateTime = new DateTime(0L);
         DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
-        String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" 
-            + "<ProfileWalk Status=\"NOT_STARTED\">" 
-            + "    <Dir Recursive=\"true\">" 
-            + "        <Size>0</Size>" 
-            + "        <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>" 
-            + "        <Extension></Extension>" 
-            + "        <Name>root</Name>" 
-            + "        <Uri>" + root.toURI() + "</Uri>" 
-            + "        <Path>" + getPath(root) + "</Path>"
-            + "    </Dir>" 
-            + "    <FileWalker Recursive=\"true\">" 
-            //+ "        <RootUri>" + root.toURI() + "</RootUri>"
-            + "        <Progress>"
-            + "            <ProgressEntry Id=\"3\" Prefix=\"Z\">"
-            + "                <Children/>"
-            + "                <Uri>" + dirResource3.toURI() + "</Uri>" 
-            + "            </ProgressEntry>"
-            + "            <ProgressEntry Id=\"2\" Prefix=\"Y\">"
-            + "                <Children/>"
-            + "                <Uri>" + dirResource2.toURI() + "</Uri>" 
-            + "            </ProgressEntry>"
-            + "            <ProgressEntry Id=\"1\" Prefix=\"X\">"
-            + "                <Children/>"
-            + "                <Uri>" + dirResource1.toURI() + "</Uri>" 
-            + "            </ProgressEntry>"
-            + "        </Progress>"
-            + "        <RootUri>" + root.toURI() + "</RootUri>"
-            + "    </FileWalker>"
+        String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+            + "<ProfileWalk Status=\"NOT_STARTED\">\n"
+            + "    <Dir Recursive=\"true\">\n"
+            + "        <Size>-1</Size>\n"
+            + "        <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>\n"
+            + "        <Extension></Extension>\n"
+            + "        <Name>root</Name>\n"
+            + "        <Uri>" + root.toUri() + "</Uri>\n"
+            + "        <Path>" + getPath(root) + "</Path>\n"
+            + "    </Dir>\n"
+            + "    <FileWalker Recursive=\"true\">\n"
+            + "        <Progress>\n"
+            + "            <ProgressEntry Id=\"3\" Prefix=\"Z\">\n"
+            + "                <Children/>\n"
+            + "                <Uri>" + dirResource3.toUri() + "</Uri>\n"
+            + "            </ProgressEntry>\n"
+            + "            <ProgressEntry Id=\"2\" Prefix=\"Y\">\n"
+            + "                <Children/>\n"
+            + "                <Uri>" + dirResource2.toUri() + "</Uri>\n"
+            + "            </ProgressEntry>\n"
+            + "            <ProgressEntry Id=\"1\" Prefix=\"X\">\n"
+            + "                <Children/>\n"
+            + "                <Uri>" + dirResource1.toUri() + "</Uri>\n"
+            + "            </ProgressEntry>\n"
+            + "        </Progress>\n"
+            + "        <RootUri>" + root.toUri() + "</RootUri>\n"
+            + "    </FileWalker>\n"
             + "</ProfileWalk>"; 
 
-        FileReader fileReader = new FileReader(new File(testDir, "profile_progress.xml"));
-        
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        String line;
         System.out.println("Outputting profile_progress.xml");
-        while((line = bufferedReader.readLine()) != null) {
-        	System.out.println(line);
+        for(final String line : Files.readAllLines(testDir.resolve("profile_progress.xml"), UTF_8)) {
+            System.out.println(line);
         }
-        fileReader.close();
-        
-        StringReader controlReader = new StringReader(control);
-        BufferedReader bufferedControlReader = new BufferedReader(controlReader);
-        String controlLine ;
-        while((controlLine = bufferedControlReader.readLine()) != null) {
-        	System.out.println(controlLine);
+
+        System.out.println(control);
+
+        try(final Reader reader = Files.newBufferedReader(testDir.resolve("profile_progress.xml"), UTF_8)) {
+            final Diff diff = new Diff(new StringReader(control), reader);
+            assertTrue(diff.similar());
         }
-        bufferedControlReader.close();
-        
-        Diff diff = new Diff(new StringReader(control), new FileReader(new File(testDir, "profile_progress.xml")));
-        assertTrue(diff.similar());
     }
 
-    public String getPath(File file) {
-        String location = file.toURI().toString();
-        String decodedLocation = java.net.URLDecoder.decode(location);
-        int uriPrefix = decodedLocation.indexOf(":/");
+    public String getPath(final Path file) {
+        final String location = file.toUri().toString();
+        final String decodedLocation = java.net.URLDecoder.decode(location);
+        final int uriPrefix = decodedLocation.indexOf(":/");
         return decodedLocation.substring(uriPrefix + 2);
     }    
     

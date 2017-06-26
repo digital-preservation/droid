@@ -31,9 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.report.planets.xml;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -53,6 +55,7 @@ import uk.gov.nationalarchives.droid.planet.xml.dao.GroupByPuidSizeAndCountRow;
 import uk.gov.nationalarchives.droid.planet.xml.dao.GroupByYearSizeAndCountRow;
 import uk.gov.nationalarchives.droid.planet.xml.dao.PlanetsXMLData;
 import uk.gov.nationalarchives.droid.planet.xml.dao.ProfileStat;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author Alok Kumar Dash
@@ -63,14 +66,14 @@ public class PlanetsXMLGeneratorTest {
 
     private PlanetsXMLGenerator planetsGenerator;
     
-    private String filename =System.getProperty("user.home") + "\\.droid\\tmp" + "planets-test.xml";
+    private String filename = System.getProperty("user.home") + "\\.droid\\tmp" + "planets-test.xml";
     
-    private File destination = new File(filename);
+    private Path destination = Paths.get(filename);
 
     @Before
     public void setup() {
-        destination.delete();
-        assertFalse(destination.exists());
+        FileUtil.deleteQuietly(destination);
+        assertFalse(Files.exists(destination));
     }
     
     @After
@@ -125,7 +128,7 @@ public class PlanetsXMLGeneratorTest {
         planetsGenerator = new PlanetsXMLGenerator(filename, data);
         planetsGenerator.generate();
 
-        assertTrue(destination.exists());
+        assertTrue(Files.exists(destination));
     }
     
     @Ignore
@@ -175,6 +178,6 @@ public class PlanetsXMLGeneratorTest {
         planetsGenerator = new PlanetsXMLGenerator(filename, data);
         planetsGenerator.generate();
 
-        assertTrue(destination.exists());
+        assertTrue(Files.exists(destination));
     }
 }

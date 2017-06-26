@@ -34,15 +34,17 @@ package uk.gov.nationalarchives.droid.profile;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 
 import org.apache.commons.io.DirectoryWalker;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +54,7 @@ import de.schlichtherle.truezip.zip.ZipEntry;
 import de.schlichtherle.truezip.zip.ZipOutputStream;
 
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -79,34 +82,38 @@ public class ProfileDiskAction {
      * @throws IOException
      *             if a file IO operation failed
      */
-    public void saveProfile(String baseDir, java.io.File destination,
-            ProgressObserver callback) throws IOException {
+    public void saveProfile(final Path baseDir, final Path destination,
+            final ProgressObserver callback) throws IOException {
 
         log.info(String.format("Saving profile [%s] to [%s]", baseDir, destination));
         
-        File output = new File(destination.getAbsolutePath() + ".tmp~");
-        if (!output.delete() && output.exists()) {
+        final Path output = destination.resolveSibling(destination.getFileName().toString() + ".tmp~");
+        if (!FileUtil.deleteQuietly(output)) {
             String message = String.format("Could not delete original profile file: %s. "
-                    + "Will try to delete on exit.", output.getAbsolutePath());
+                    + "Will try to delete on exit.", output.toAbsolutePath().toString());
             log.warn(message);
-            output.deleteOnExit();
+            output.toFile().deleteOnExit();
         }
 
-        if (!output.createNewFile()) {
-            throw new IOException(String.format("Error creating tmp file [%s]", output));
+        if (!Files.exists(output)) {
+            try {
+                Files.createFile(output);
+            } catch (FileAlreadyExistsException e) {
+                throw new IOException(String.format("Error creating tmp file [%s]", output));
+            }
         }
 
-        ProfileWalker profileWalker = new ProfileWalker(new File(baseDir), output, callback);
+        final ProfileWalker profileWalker = new ProfileWalker(baseDir, output, callback);
 
         try {
             profileWalker.save();
             callback.onProgress(UNITY_PERCENT);
-            if (destination.exists()) {
-                if (!destination.delete()) {
+            if (Files.exists(destination)) {
+                if (!FileUtil.deleteQuietly(destination)) {
                     throw new IOException(String.format("Error removing old file [%s]", destination));
                 }
             }
-            if (!output.renameTo(destination)) {
+            if (!Files.exists(Files.move(output, destination))) {
                 throw new IOException(String.format("Error creating saved file [%s]", destination));
             }
         } finally {
@@ -121,12 +128,9 @@ public class ProfileDiskAction {
      * 
      */
     private final class ProfileWalker extends DirectoryWalker {
-
-        private String sourcePath;
-        private File destination;
-        //private ZipArchiveOutputStream out;
+        private Path destination;
         private ZipOutputStream out;
-        private File source;
+        private Path source;
         private ProgressObserver callback;
         private final long bytesToProcess;
         private long bytesProcessed;
@@ -134,14 +138,13 @@ public class ProfileDiskAction {
         /**
          *
          */
-        public ProfileWalker(File source, File destination,
-                ProgressObserver callback) {
-            sourcePath = source.getAbsolutePath() + File.separator;
+        public ProfileWalker(final Path source, final Path destination,
+                final ProgressObserver callback) {
             this.source = source;
             this.destination = destination;
             this.callback = callback;
 
-            bytesToProcess = FileUtils.sizeOfDirectory(source);
+            bytesToProcess = FileUtil.sizeQuietly(source);
         }
 
         /**
@@ -154,11 +157,11 @@ public class ProfileDiskAction {
 
         @SuppressWarnings("unchecked")
         @Override
-        protected void handleStart(File startDirectory, Collection results)
+        protected void handleStart(final File startDirectory, final Collection results)
             throws IOException {
 
             //out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(destination)));
-            out = new ZipOutputStream(new FileOutputStream(destination));
+            out = new ZipOutputStream(Files.newOutputStream(destination));
             out.setMethod(ZipEntry.DEFLATED); 
         }
 
@@ -183,35 +186,32 @@ public class ProfileDiskAction {
          */
         @SuppressWarnings("unchecked")
         @Override
-        protected void handleDirectoryStart(File directory, int depth, Collection results) {
+        protected void handleDirectoryStart(final File directory, final int depth, final Collection results) {
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        protected void handleFile(File file, int depth, Collection results)
+        protected void handleFile(final File file, final int depth, final Collection results)
             throws IOException {
 
-            String entryPath = getUnixStylePath(StringUtils.substringAfter(file
-                    .getAbsolutePath(), sourcePath));
+            final String entryPath = getUnixStylePath(StringUtils.substringAfter(file.getAbsolutePath(), source.toAbsolutePath().toString() + File.separator));
 
             //ZipArchiveEntry entry = (ZipArchiveEntry) out.createArchiveEntry(file, entryPath);
             //out.putArchiveEntry(entry);
-            ZipEntry entry = new ZipEntry(entryPath);
+            final ZipEntry entry = new ZipEntry(entryPath);
             out.putNextEntry(entry);
 
-            final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-            try {
+            try (final InputStream in = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
                 bytesProcessed = writeFile(in, out, callback, bytesProcessed, bytesToProcess);
             } finally {
                 //out.closeArchiveEntry();
                 out.closeEntry();
-                in.close();
             }
 
         }
 
         protected void save() throws IOException {
-            walk(source, Collections.EMPTY_LIST);
+            walk(source.toFile(), Collections.EMPTY_LIST);
         }
     }
 
@@ -227,27 +227,27 @@ public class ProfileDiskAction {
      * @throws IOException
      *             if the file operations failed
      */
-    public void load(File source, File destination, ProgressObserver observer)
+    public void load(final Path source, final Path destination, ProgressObserver observer)
         throws IOException {
 
         // Delete any remnants of this expanded profile
-        if (destination.exists()) {
-            FileUtils.deleteDirectory(destination);
+        if (Files.exists(destination)) {
+            FileUtil.deleteQuietly(destination);
         }
 
-        ZipFile zip = new ZipFile(source);
+        final ZipFile zip = new ZipFile(source.toFile());
         
         try {
             // count the zip entries so we can do progress bar
             long totalSize = 0L;
-            for (Enumeration<? extends ZipEntry> it = zip.entries(); it
+            for (final Enumeration<? extends ZipEntry> it = zip.entries(); it
                     .hasMoreElements();) {
                 ZipEntry e = it.nextElement();
                 totalSize += e.getSize();
             }
 
             long bytesSoFar = 0L;
-            for (Enumeration<? extends ZipEntry> it = zip.entries(); it
+            for (final Enumeration<? extends ZipEntry> it = zip.entries(); it
                     .hasMoreElements();) {
                 ZipEntry entry = it.nextElement();
                 
@@ -259,17 +259,14 @@ public class ProfileDiskAction {
                 // are created on - but this is not always done correctly.
                 final String entryName = getPlatformSpecificPath(entry.getName());
                 
-                File expandedFile = new File(destination + File.separator
-                        + entryName);
+                final Path expandedFile = destination.resolve(entryName);
 
-                BufferedInputStream in = new BufferedInputStream(zip
-                        .getInputStream(entry));
+                Files.createDirectories(expandedFile.getParent());
 
-                FileUtils.forceMkdir(expandedFile.getParentFile());
-                BufferedOutputStream out = new BufferedOutputStream(
-                        new FileOutputStream(expandedFile));
-
-                bytesSoFar = readFile(in, out, observer, bytesSoFar, totalSize);
+                try (final InputStream in = new BufferedInputStream(zip.getInputStream(entry));
+                        final OutputStream out = new BufferedOutputStream(Files.newOutputStream(expandedFile))) {
+                    bytesSoFar = readFile(in, out, observer, bytesSoFar, totalSize);
+                }
             }
             observer.onProgress(UNITY_PERCENT);
         } finally {
@@ -323,33 +320,23 @@ public class ProfileDiskAction {
     }
     
     
-    private long readFile(BufferedInputStream in, BufferedOutputStream out,
-            ProgressObserver observer, long bytesSoFar, long totalSize) 
+    private long readFile(final InputStream in, final OutputStream out,
+            final ProgressObserver observer, final long bytesSoFar, final long totalSize)
         throws IOException {
         long totalBytesRead = bytesSoFar;
-        try {
-            
-            int bytesIn = 0;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            while ((bytesIn = in.read(buffer)) != -1) {
-                totalBytesRead += bytesIn;
-                int progressSoFar = (int) ((UNITY_PERCENT * totalBytesRead) / totalSize);
-                observer.onProgress(progressSoFar);
-                out.write(buffer, 0, bytesIn);
-            }
-        } finally {
-            try {
-                in.close();
-            } finally {
-                out.close();
-            }
-                        
+        int bytesIn = 0;
+        byte[] buffer = new byte[BUFFER_SIZE];
+        while ((bytesIn = in.read(buffer)) != -1) {
+            totalBytesRead += bytesIn;
+            int progressSoFar = (int) ((UNITY_PERCENT * totalBytesRead) / totalSize);
+            observer.onProgress(progressSoFar);
+            out.write(buffer, 0, bytesIn);
         }
         return totalBytesRead;
     }
     
-    private long writeFile(BufferedInputStream in, ZipOutputStream out, //ZipArchiveOutputStream out,
-            ProgressObserver observer, long bytesSoFar, long totalSize) 
+    private long writeFile(final InputStream in, final ZipOutputStream out, //ZipArchiveOutputStream out,
+            final ProgressObserver observer, final long bytesSoFar, final long totalSize)
         throws IOException {
         long totalBytesWritten = bytesSoFar;
         int bytesIn = 0;

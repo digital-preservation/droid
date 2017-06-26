@@ -31,11 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.After;
 import static org.junit.Assert.fail;
 import org.junit.Before;
@@ -46,7 +47,6 @@ import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.WebArchiveEntryIdentificationRequest;
 
@@ -61,8 +61,8 @@ public class ArcArchiveContentIdentifierTest {
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
             "src/test/resources/signatures/DROID_SignatureFile_V91.xml";
-    private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20170330.xml";
+    private Path containerSignatures =
+            Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String arcFile =
             "src/test/resources/testfiles/expanded.arc";
     
@@ -75,8 +75,7 @@ public class ArcArchiveContentIdentifierTest {
         } catch (SignatureParseException e) {
             throw new CommandExecutionException("Can't parse signature file");
         }
-        try {
-            InputStream in = new FileInputStream(containerSignatures);
+        try (final InputStream in = Files.newInputStream(containerSignatures)) {
             ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
             containerSignatureDefinitions = parser.parse(in);
         } catch (SignatureParseException e) {
@@ -98,25 +97,25 @@ public class ArcArchiveContentIdentifierTest {
     
     @Test
     public void identifyArcArchiveTest() throws CommandExecutionException {
-
         String fileName;
-        File file = new File(arcFile);
-        if (!file.exists()) {
+        final Path file = Paths.get(arcFile);
+        if (!Files.exists(file)) {
             fail("ARC test file not found");
         }
-        URI uri = file.toURI();
+        URI uri = file.toUri();
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentId(1L);
         try {
-            fileName = file.getCanonicalPath();
-            RequestMetaData metaData =
-                new RequestMetaData(file.length(), file.lastModified(), fileName);
+            fileName = file.toAbsolutePath().toString();
+            RequestMetaData metaData = new RequestMetaData(
+                    Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileName);
             WebArchiveEntryIdentificationRequest request =
-                new WebArchiveEntryIdentificationRequest(metaData, identifier, new File("src/test/resources/temp"));
+                new WebArchiveEntryIdentificationRequest(metaData, identifier, Paths.get("src/test/resources/temp"));
 
-            InputStream arcStream = new FileInputStream(file);
-            request.open(arcStream);
-            arcArchiveContentIdentifier.identify(uri, request);
+            try(final InputStream arcStream = Files.newInputStream(file)) {
+                request.open(arcStream);
+                arcArchiveContentIdentifier.identify(uri, request);
+            }
         } catch (Exception e) {
             throw new CommandExecutionException(e);
         }

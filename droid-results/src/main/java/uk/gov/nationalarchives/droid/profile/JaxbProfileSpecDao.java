@@ -31,18 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.logging.Log;
@@ -74,13 +73,13 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
      * {@inheritDoc}
      */
     @Override
-    public ProfileInstance loadProfile(InputStream in) {
+    public ProfileInstance loadProfile(final InputStream in) {
         
         try {
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            ProfileInstance profile = (ProfileInstance) unmarshaller.unmarshal(in);
+            final Unmarshaller unmarshaller = context.createUnmarshaller();
+            final ProfileInstance profile = (ProfileInstance) unmarshaller.unmarshal(in);
             return profile;
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             log.error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -90,41 +89,15 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
      * {@inheritDoc}
      */
     @Override
-    public void saveProfile(ProfileInstance profile, File profileHomeDir) {
-        
-        File profileXml = new File(profileHomeDir, PROFILE_XML);
-        
-        OutputStream out = null;
-        try {
-            Marshaller m = context.createMarshaller();
+    public void saveProfile(final ProfileInstance profile, final Path profileHomeDir) {
+        final Path profileXml = profileHomeDir.resolve(PROFILE_XML);
+        try (final Writer out = Files.newBufferedWriter(profileXml, UTF_8)) {
+            final Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            out = new BufferedOutputStream(new FileOutputStream(profileXml));
             m.marshal(profile, out);
-        } catch (PropertyException e) {
+        } catch (final IOException | JAXBException e) {
             log.error(e);
             throw new RuntimeException(e);
-        } catch (FileNotFoundException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        } catch (JAXBException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        } finally {
-            closeOutputStream(out);
         }
     }
-
-    /**
-     * @param out
-     */
-    private void closeOutputStream(OutputStream out) {
-        if (out != null) {
-            try {
-                out.close();
-            } catch (IOException e) {
-                log.error("Error closing output stream: " + e.getMessage(), e);
-            }
-        }
-    }
-    
 }

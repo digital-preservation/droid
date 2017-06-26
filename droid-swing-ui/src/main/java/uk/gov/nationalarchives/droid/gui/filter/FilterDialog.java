@@ -38,10 +38,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
-import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -635,15 +638,13 @@ public class FilterDialog extends JDialog {
             // particular objects here.
             try {
                 FilterSpecDao reader = new JaxbFilterSpecDao();
-                FileInputStream in = new FileInputStream(filterFileChooser.getSelectedFile());
-                filterContext = reader.loadFilter(in);
-                in.close();
+                try (final InputStream in =
+                             new BufferedInputStream(Files.newInputStream(
+                                     filterFileChooser.getSelectedFile().toPath()))) {
+                    filterContext = reader.loadFilter(in);
+                }
                 loadFilter();
-            } catch (JAXBException e) {
-                JOptionPane.showMessageDialog(this, "There was a problem loading the filter.", "Filter warning", JOptionPane.ERROR_MESSAGE);
-            } catch (FileNotFoundException e) {
-                JOptionPane.showMessageDialog(this, "There was a problem loading the filter.", "Filter warning", JOptionPane.ERROR_MESSAGE);
-            } catch (IOException e) {
+            } catch (JAXBException | IOException e) {
                 JOptionPane.showMessageDialog(this, "There was a problem loading the filter.", "Filter warning", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -653,12 +654,11 @@ public class FilterDialog extends JDialog {
         if (applyValuesToContext()) {
             int result = filterFileChooser.showSaveDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                FileOutputStream out;
-                try {
-                    out = new FileOutputStream(filterFileChooser.getSelectedFile());
-                    FilterSpecDao writer = new JaxbFilterSpecDao();
+                try(final OutputStream out =
+                            new BufferedOutputStream(
+                                    Files.newOutputStream(filterFileChooser.getSelectedFile().toPath()))) {
+                    final FilterSpecDao writer = new JaxbFilterSpecDao();
                     writer.saveFilter(filterContext, out);
-                    out.close();
                 } catch (FileNotFoundException e) {
                     JOptionPane.showMessageDialog(this, "There was a problem saving the filter.", "Filter warning", JOptionPane.ERROR_MESSAGE);
                 } catch (JAXBException e) {

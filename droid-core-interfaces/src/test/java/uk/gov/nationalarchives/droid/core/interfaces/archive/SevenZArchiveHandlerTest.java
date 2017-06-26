@@ -43,9 +43,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,20 +62,20 @@ public class SevenZArchiveHandlerTest {
     @Test
     public void testHandleSevenZFile() throws Exception {
 
-        File file = new File(getClass().getResource("/saved.7z").getFile());
+        final Path file = Paths.get(getClass().getResource("/saved.7z").getFile());
 
         IdentificationRequestFactory factory = mock(IdentificationRequestFactory.class);
 
         List<IdentificationRequest> mockRequests = new ArrayList<>();
         SevenZStreamFactory sevenZStreamFactory = new SevenZStreamFactory();
-        ArchiveInputStream archiveInputStream = sevenZStreamFactory.getArchiveInputStream(file, null);
+        ArchiveInputStream archiveInputStream = sevenZStreamFactory.getArchiveInputStream(file.toFile(), null);
 
         ArchiveEntry entry;
         ResourceId expectedParentId = new ResourceId(30L, "");
 
         int count = 0;
         while ((entry = archiveInputStream.getNextEntry()) != null) {
-            URI expectedUri = ArchiveFileUtils.toSevenZUri(file.toURI(), entry.getName());
+            URI expectedUri = ArchiveFileUtils.toSevenZUri(file.toUri(), entry.getName());
             IdentificationRequest mockRequest = mock(IdentificationRequest.class);
             
             RequestIdentifier expectedIdentifier = new RequestIdentifier(expectedUri);
@@ -100,14 +101,14 @@ public class SevenZArchiveHandlerTest {
         handler.setResultHandler(resultHandler);
         
         IdentificationRequest originalRequest = mock(IdentificationRequest.class);
-        RequestIdentifier originalIdentifier = new RequestIdentifier(file.toURI());
+        RequestIdentifier originalIdentifier = new RequestIdentifier(file.toUri());
         originalIdentifier.setAncestorId(10L);
         originalIdentifier.setParentId(20L);
         originalIdentifier.setNodeId(30L);
         
         when(originalRequest.getIdentifier()).thenReturn(originalIdentifier);
-        when(originalRequest.getSourceInputStream()).thenReturn(new FileInputStream(file));
-        when(originalRequest.getWindowReader()).thenReturn(new net.byteseek.io.reader.FileReader(file));
+        when(originalRequest.getSourceInputStream()).thenReturn(Files.newInputStream(file));
+        when(originalRequest.getWindowReader()).thenReturn(new net.byteseek.io.reader.FileReader(file.toFile()));
         handler.handle(originalRequest);
 
         verify(droidCore).submit(mockRequests.get(2));

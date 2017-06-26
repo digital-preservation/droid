@@ -31,7 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -72,11 +74,11 @@ public class JaxBSubmissionQueueDao implements SubmissionQueue {
     @Override
     public SubmissionQueueData list() {
         
-        File in = new File(targetFileName);
-        if (in.exists()) {
+        Path in = Paths.get(targetFileName);
+        if (Files.exists(in)) {
             try {
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                return (SubmissionQueueData) unmarshaller.unmarshal(in);
+                return (SubmissionQueueData) unmarshaller.unmarshal(in.toFile());
             } catch (JAXBException e) {
                 log.error(e);
                 throw new RuntimeException(e.getMessage(), e);
@@ -94,7 +96,7 @@ public class JaxBSubmissionQueueDao implements SubmissionQueue {
         try {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(queue, new File(targetFileName));
+            marshaller.marshal(queue, Paths.get(targetFileName).toFile());
         } catch (JAXBException e) {
             log.error(e);
             throw new RuntimeException(e.getMessage(), e);

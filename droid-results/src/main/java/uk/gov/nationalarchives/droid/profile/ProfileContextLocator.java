@@ -31,8 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -47,6 +48,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 
 /**
@@ -149,23 +151,22 @@ public class ProfileContextLocator {
      * @return a profile instance manager for a pre-existing profile context
      */
     //CHECKSTYLE:OFF
-    public ProfileInstanceManager openProfileInstanceManager(ProfileInstance profile) {
-        
-        File profileHome = new File(globalConfig.getProfilesDir(), profile.getUuid());
-        File databasePath = new File(profileHome, "/db");
-        File signatureFile = new File(profileHome, profile.getSignatureFileName());
-        File containerSignatureFile = new File(profileHome, profile.getContainerSignatureFileName());
-        File submissionQueueFile = new File(profileHome, "submissionQueue.xml");
+    public ProfileInstanceManager openProfileInstanceManager(final ProfileInstance profile) {
+        final Path profileHome = globalConfig.getProfilesDir().resolve(profile.getUuid());
+        final Path databasePath = profileHome.resolve("/db");
+        final Path signatureFile = profileHome.resolve(profile.getSignatureFileName());
+        final Path containerSignatureFile = profileHome.resolve(profile.getContainerSignatureFileName());
+        final Path submissionQueueFile = profileHome.resolve("submissionQueue.xml");
 
         // Some global properties are needed to initialise the profile context.
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty("defaultThrottle", String.valueOf(profile.getThrottle()));
-        props.setProperty("signatureFilePath", signatureFile.getPath());
-        props.setProperty("submissionQueueFile", submissionQueueFile.getPath());
-        props.setProperty("tempDirLocation", globalConfig.getTempDir().getPath());
-        props.setProperty("profileHome", profileHome.getPath());
+        props.setProperty("signatureFilePath", signatureFile.toAbsolutePath().toString());
+        props.setProperty("submissionQueueFile", submissionQueueFile.toAbsolutePath().toString());
+        props.setProperty("tempDirLocation", globalConfig.getTempDir().toAbsolutePath().toString());
+        props.setProperty("profileHome", profileHome.toAbsolutePath().toString());
         
-        props.setProperty("containerSigPath", containerSignatureFile.getPath()); 
+        props.setProperty("containerSigPath", containerSignatureFile.toAbsolutePath().toString());
         props.setProperty("processArchives", String.valueOf(profile.getProcessArchiveFiles()));
         props.setProperty("processWebArchives", String.valueOf(profile.getProcessWebArchiveFiles()));
         props.setProperty("generateHash", String.valueOf(profile.getGenerateHash()));
@@ -178,13 +179,13 @@ public class ProfileContextLocator {
             createUrl = "{none}";
         }
         props.setProperty(CREATE_URL, createUrl);
-        props.setProperty(DATABASE_URL, String.format("jdbc:derby:%s", databasePath.getPath()));
+        props.setProperty(DATABASE_URL, String.format("jdbc:derby:%s", databasePath.toAbsolutePath().toString()));
         TemplateStatus status = null;
-        final boolean newDatabase = !databasePath.exists();        
+        final boolean newDatabase = !Files.exists(databasePath);
         if (newDatabase) {
-            File profileTemplate = getProfileTemplateFile(profile);
+            final Path profileTemplate = getProfileTemplateFile(profile);
             status = getTemplateStatus(profileTemplate);
-            status = setupDatabaseTemplate(status, profileTemplate, databasePath, props);
+            status = setupDatabaseTemplate(status, profileTemplate, databasePath);
         }
         /*
         else {
@@ -226,10 +227,9 @@ public class ProfileContextLocator {
         }
     }
     
-    private TemplateStatus setupDatabaseTemplate(TemplateStatus status, 
-            File profileTemplate,
-            File databasePath,
-            Properties props) {
+    private TemplateStatus setupDatabaseTemplate(final TemplateStatus status,
+            final Path profileTemplate,
+            final Path databasePath) {
         TemplateStatus result = status;
         
         // if no profile template exists, generate a fresh profile database:
@@ -257,8 +257,8 @@ public class ProfileContextLocator {
    
     private void generateNewDatabaseAndTemplates(final ProfileInstance profile, 
             final ProfileInstanceManager profileManager, 
-            final File databasePath,
-            final File signatureFile,
+            final Path databasePath,
+            final Path signatureFile,
             final TemplateStatus status) {
         
         // If we were starting with no template at all, we now have a blank profile we can use as a blank template:
@@ -272,11 +272,11 @@ public class ProfileContextLocator {
         // populate the database with signature file metadata.
         if (status != TemplateStatus.SIGNATURE_TEMPLATE) {
             try {
-                profileManager.initProfile(signatureFile.toURI());
+                profileManager.initProfile(signatureFile.toUri());
                 // store this database as a profile template for this 
                 // signature file version:
                 final String name = getTemplateNameForSignatureVersion(profile.getSignatureFileVersion());
-                File templateFile = getTemplateFile(name);
+                Path templateFile = getTemplateFile(name);
                 freezeDatabase(profile.getUuid());
                 packProfileTemplate(databasePath, templateFile);
                 thawDatabase(profile.getUuid());
@@ -288,12 +288,12 @@ public class ProfileContextLocator {
         } 
     }
     
-    private TemplateStatus getTemplateStatus(File profileTemplateFile) {
+    private TemplateStatus getTemplateStatus(final Path profileTemplateFile) {
         TemplateStatus status = TemplateStatus.NO_TEMPLATE;
         if (profileTemplateFile != null) {
-            if (BLANK_PROFILE.equals(profileTemplateFile.getName())) {
+            if (BLANK_PROFILE.equals(FileUtil.fileName(profileTemplateFile))) {
                 status = TemplateStatus.BLANK_TEMPLATE;
-            } else if (profileTemplateFile.getName().matches(SIG_PROFILE)) {
+            } else if (FileUtil.fileName(profileTemplateFile).matches(SIG_PROFILE)) {
                 status = TemplateStatus.SIGNATURE_TEMPLATE;
             }
         }
@@ -301,12 +301,12 @@ public class ProfileContextLocator {
     }
 
     
-    private File getProfileTemplateFile(ProfileInstance profile) {
+    private Path getProfileTemplateFile(ProfileInstance profile) {
         final String sigTemplateName = getTemplateNameForSignatureVersion(profile.getSignatureFileVersion());
-        File profileTemplate = getTemplateFile(sigTemplateName);
-        if (!profileTemplate.exists()) {
+        Path profileTemplate = getTemplateFile(sigTemplateName);
+        if (!Files.exists(profileTemplate)) {
             profileTemplate = getTemplateFile(BLANK_PROFILE);
-            if (!profileTemplate.exists()) {
+            if (!Files.exists(profileTemplate)) {
                 profileTemplate = null;
             }
         }
@@ -318,16 +318,16 @@ public class ProfileContextLocator {
         return String.format("profile.%d.template", signatureVersion);
     }
     
-    private File getTemplateFile(String templateFileName) {
-        File templateDir = globalConfig.getProfileTemplateDir();
-        return new File(templateDir, templateFileName);
+    private Path getTemplateFile(String templateFileName) {
+        final Path templateDir = globalConfig.getProfileTemplateDir();
+        return templateDir.resolve(templateFileName);
     }
     
     
-    private void unpackProfileTemplate(File profileTemplate, File copyToDirectory) throws IOException {
-        copyToDirectory.mkdir();
-        ProfileDiskAction unpacker = new ProfileDiskAction();
-        ProgressObserver observe = new ProgressObserver() {
+    private void unpackProfileTemplate(final Path profileTemplate, final Path copyToDirectory) throws IOException {
+        Files.createDirectories(copyToDirectory);
+        final ProfileDiskAction unpacker = new ProfileDiskAction();
+        final ProgressObserver observe = new ProgressObserver() {
             @Override
             public void onProgress(Integer progress) {
             }
@@ -336,7 +336,7 @@ public class ProfileContextLocator {
     }
     
     
-    private void packProfileTemplate(File databaseDir, File profileTemplate)  {
+    private void packProfileTemplate(final Path databaseDir, final Path profileTemplate)  {
         ProfileDiskAction packer = new ProfileDiskAction();
         ProgressObserver observe = new ProgressObserver() {
             @Override
@@ -344,7 +344,7 @@ public class ProfileContextLocator {
             }
         };
         try {
-            packer.saveProfile(databaseDir.getPath(), profileTemplate, observe);
+            packer.saveProfile(databaseDir, profileTemplate, observe);
         } catch (IOException e) {
             log.error(e);
         }

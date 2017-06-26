@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -98,8 +98,8 @@ public class ProfileRunCommandTest {
         Future future = mock(Future.class);
         when(profileManager.start("abcde")).thenReturn(future);
         
-        FileProfileResource resource1 = new FileProfileResource(new File("test1.txt"));
-        FileProfileResource resource2 = new FileProfileResource(new File("test2.txt"));
+        FileProfileResource resource1 = new FileProfileResource(Paths.get("test1.txt"));
+        FileProfileResource resource2 = new FileProfileResource(Paths.get("test2.txt"));
         
         when(locationResolver.getResource("test1.txt", false)).thenReturn(resource1);
         when(locationResolver.getResource("test2.txt", false)).thenReturn(resource2);
@@ -111,7 +111,7 @@ public class ProfileRunCommandTest {
         verify(profileManager).createProfile(sigs);
         verify(profileManager).start("abcde");
         verify(future).get();
-        verify(profileManager).save(eq("abcde"), eq(new File("test")), any(ProgressObserver.class));
+        verify(profileManager).save(eq("abcde"), eq(Paths.get("test")), any(ProgressObserver.class));
         verify(profileManager).closeProfile("abcde");
     }
     

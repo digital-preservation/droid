@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 //BNO-BS2 - replace this import with AbstractReader or WindowReader
 //in package net.byteseek.io.reader
@@ -60,7 +60,7 @@ public class GZipIdentificationRequest implements IdentificationRequest<InputStr
     private final String extension;
     private final String fileName;
     private long size;
-    private File tempDir;
+    private Path tempDir;
     private RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
     private WindowReader reader;
@@ -73,8 +73,8 @@ public class GZipIdentificationRequest implements IdentificationRequest<InputStr
      * @param identifier request identification object
      * @param tempDir the location to write temp files.
      */
-    public GZipIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
-                                     File tempDir) {
+    public GZipIdentificationRequest(final RequestMetaData metaData, final RequestIdentifier identifier,
+                                     final Path tempDir) {
         this.identifier = identifier;
         
         String path = identifier.getUri().getSchemeSpecificPart();

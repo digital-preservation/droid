@@ -31,7 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -48,7 +49,6 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-//import uk.gov.nationalarchives.droid.command.filter.AntlrDqlParser;
 import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
@@ -71,7 +71,7 @@ public class ExportCommandTest {
     @Test
     public void testExportThreeProfiles() throws Exception {
         
-        final String destination = File.createTempFile("droid", "exportCommandTest").getAbsolutePath();
+        final String destination = Files.createTempFile("droid", "exportCommandTest").toAbsolutePath().toString();
         
         ExportManager exportManager = mock(ExportManager.class);
         ProfileManager profileManager = mock(ProfileManager.class);
@@ -85,9 +85,9 @@ public class ExportCommandTest {
         ProfileInstance profile3 = mock(ProfileInstance.class);
         when(profile3.getUuid()).thenReturn("profile3");
 
-        when(profileManager.open(eq(new File("foo1")), any(ProgressObserver.class))).thenReturn(profile1);
-        when(profileManager.open(eq(new File("foo2")), any(ProgressObserver.class))).thenReturn(profile2);
-        when(profileManager.open(eq(new File("foo3")), any(ProgressObserver.class))).thenReturn(profile3);
+        when(profileManager.open(eq(Paths.get("foo1")), any(ProgressObserver.class))).thenReturn(profile1);
+        when(profileManager.open(eq(Paths.get("foo2")), any(ProgressObserver.class))).thenReturn(profile2);
+        when(profileManager.open(eq(Paths.get("foo3")), any(ProgressObserver.class))).thenReturn(profile3);
         
         Future future = mock(Future.class);
         when(exportManager.exportProfiles(any(List.class), eq(destination), (Filter) isNull(), eq(ExportOptions.ONE_ROW_PER_FORMAT), eq("UTF-8"), eq(false))).thenReturn(future);
@@ -120,7 +120,7 @@ public class ExportCommandTest {
         ProfileInstance profile1 = mock(ProfileInstance.class);
         when(profile1.getUuid()).thenReturn("profile1");
         
-        when(profileManager.open(eq(new File("foo1")), any(ProgressObserver.class))).thenReturn(profile1);
+        when(profileManager.open(eq(Paths.get("foo1")), any(ProgressObserver.class))).thenReturn(profile1);
         
         Future future = mock(Future.class);
         when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false))).thenReturn(future);

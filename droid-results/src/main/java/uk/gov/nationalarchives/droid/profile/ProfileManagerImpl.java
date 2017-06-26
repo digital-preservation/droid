@@ -31,15 +31,15 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +53,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import uk.gov.nationalarchives.droid.profile.referencedata.ReferenceData;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 
 /**
@@ -95,29 +96,12 @@ public class ProfileManagerImpl implements ProfileManager {
         log.info("Creating profile: " + profileId);
         ProfileInstance profile = profileContextLocator.getProfileInstance(profileId);
         
-        File profileHomeDir = new File(config.getProfilesDir(), profile.getUuid()); 
-        profileHomeDir.mkdir();
+        final Path profileHomeDir = config.getProfilesDir().resolve(profile.getUuid());
+        FileUtil.mkdirsQuietly(profileHomeDir);
 
-        SignatureFileInfo binarySigFile = signatures.get(SignatureType.BINARY);
-        if (binarySigFile != null) {
-            profile.setSignatureFileVersion(binarySigFile.getVersion());
-            profile.setSignatureFileName(binarySigFile.getFile().getName());
-            copySignatureFile(binarySigFile.getFile(), profileHomeDir);
-        }
-        
-        SignatureFileInfo containerSigFile = signatures.get(SignatureType.CONTAINER);
-        if (containerSigFile != null) {
-            profile.setContainerSignatureFileName(containerSigFile.getFile().getName());
-            profile.setContainerSignatureFileVersion(containerSigFile.getVersion());
-            copySignatureFile(containerSigFile.getFile(), profileHomeDir);
-        }
-        
-        SignatureFileInfo textSigFile = signatures.get(SignatureType.TEXT);
-        if (textSigFile != null) {
-            profile.setTextSignatureFileName(textSigFile.getFile().getName());
-            profile.setTextSignatureFileVersion(textSigFile.getVersion());
-            copySignatureFile(textSigFile.getFile(), profileHomeDir);
-        }
+        createProfileBinarySigFile(signatures.get(SignatureType.BINARY), profile, profileHomeDir);
+        createProfileContainerSigFile(signatures.get(SignatureType.CONTAINER), profile, profileHomeDir);
+        createProfileTextSigFile(signatures.get(SignatureType.TEXT), profile, profileHomeDir);
 
         profile.setUuid(profileId);
         profile.setProfileSpec(new ProfileSpec());
@@ -135,11 +119,35 @@ public class ProfileManagerImpl implements ProfileManager {
         profileContextLocator.addProfileContext(profile);
         return profile;
     }
+
+    private void createProfileBinarySigFile(final SignatureFileInfo binarySigFile, final ProfileInstance profile, final Path profileHomeDir) {
+        if (binarySigFile != null) {
+            profile.setSignatureFileVersion(binarySigFile.getVersion());
+            profile.setSignatureFileName(FileUtil.fileName(binarySigFile.getFile()));
+            copySignatureFile(binarySigFile.getFile(), profileHomeDir);
+        }
+    }
+
+    private void createProfileContainerSigFile(final SignatureFileInfo containerSigFile, final ProfileInstance profile, final Path profileHomeDir) {
+        if (containerSigFile != null) {
+            profile.setContainerSignatureFileName(FileUtil.fileName(containerSigFile.getFile()));
+            profile.setContainerSignatureFileVersion(containerSigFile.getVersion());
+            copySignatureFile(containerSigFile.getFile(), profileHomeDir);
+        }
+    }
+
+    private void createProfileTextSigFile(final SignatureFileInfo textSigFile, final ProfileInstance profile, final Path profileHomeDir) {
+        if (textSigFile != null) {
+            profile.setTextSignatureFileName(FileUtil.fileName(textSigFile.getFile()));
+            profile.setTextSignatureFileVersion(textSigFile.getVersion());
+            copySignatureFile(textSigFile.getFile(), profileHomeDir);
+        }
+    }
     
-    private static void copySignatureFile(File file, File destDir) {
+    private static void copySignatureFile(final Path file, final Path destDir) {
         try {
-            FileUtils.copyFileToDirectory(file, destDir);
-        } catch (IOException e) {
+            Files.copy(file, destDir);
+        } catch (final IOException e) {
             throw new ProfileException(e.getMessage(), e);
         }    
     }
@@ -152,8 +160,8 @@ public class ProfileManagerImpl implements ProfileManager {
         log.info("Closing profile: " + profileName);
         profileContextLocator.removeProfileContext(profileName);
         if (!config.getProperties().getBoolean(DroidGlobalProperty.DEV_MODE.getName())) {
-            File profileHome = new File(config.getProfilesDir(), profileName);
-            FileUtils.deleteQuietly(profileHome);
+            final Path profileHome = config.getProfilesDir().resolve(profileName);
+            FileUtil.deleteQuietly(profileHome);
         }
     }
 
@@ -305,10 +313,10 @@ public class ProfileManagerImpl implements ProfileManager {
      *             if the file IO failed
      */
     @Override
-    public ProfileInstance save(String profileId, File destination,
-            ProgressObserver callback) throws IOException {
+    public ProfileInstance save(final String profileId, final Path destination,
+            final ProgressObserver callback) throws IOException {
 
-        log.info("Saving profile: " + profileId + " to " + destination.getPath());
+        log.info("Saving profile: " + profileId + " to " + destination.toAbsolutePath().toString());
         // freeze the database so that we can safely zip it up.
         profileContextLocator.freezeDatabase(profileId);
         ProfileInstance profile = profileContextLocator.getProfileInstance(profileId);
@@ -316,13 +324,13 @@ public class ProfileManagerImpl implements ProfileManager {
         profile.changeState(ProfileState.SAVING);
 
         try {
-            File output = destination != null ? destination : profile.getLoadedFrom();
+            final Path output = destination != null ? destination : profile.getLoadedFrom();
 
             profileSpecDao.saveProfile(profile, getProfileHomeDir(profile));
 
-            profileSaver.saveProfile(getProfileHomeDir(profile).getPath(), output, callback);
+            profileSaver.saveProfile(getProfileHomeDir(profile), output, callback);
             profile.setLoadedFrom(output);
-            profile.setName(FilenameUtils.getBaseName(output.getName()));
+            profile.setName(FilenameUtils.getBaseName(FileUtil.fileName(output)));
             profile.onSave();
         } finally {
             profileContextLocator.thawDatabase(profileId);
@@ -351,36 +359,29 @@ public class ProfileManagerImpl implements ProfileManager {
      *             - if the file could not be opened, was corrupt, or invalid.
      */
     @Override
-    public ProfileInstance open(File source, ProgressObserver observer)
-        throws IOException {
-        log.info("Loading profile from: " + source.getPath());
-        ZipFile sourceZip = new ZipFile(source);
-        InputStream in = ProfileFileHelper.getProfileXmlInputStream(sourceZip);
-        ProfileInstance profile;
-        try {
-            profile = profileSpecDao.loadProfile(in);
-        } finally {
-            if (in != null) {
-                in.close();
+    public ProfileInstance open(final Path source, final ProgressObserver observer)
+            throws IOException {
+        log.info("Loading profile from: " + source.toAbsolutePath().toString());
+        try (final ZipFile sourceZip = new ZipFile(source.toFile());
+                final InputStream in = ProfileFileHelper.getProfileXmlInputStream(sourceZip)) {
+            final ProfileInstance profile = profileSpecDao.loadProfile(in);
+
+            profile.setLoadedFrom(source);
+            profile.setName(FilenameUtils.getBaseName(FileUtil.fileName(source)));
+            profile.setUuid(String.valueOf(System.currentTimeMillis()));
+            profile.onLoad();
+
+            String profileId = profile.getUuid();
+
+            if (!profileContextLocator.hasProfileContext(profileId)) {
+                profileContextLocator.addProfileContext(profile);
+                final Path destination = getProfileHomeDir(profile);
+                profileSaver.load(source, destination, observer);
+                profileSpecDao.saveProfile(profile, getProfileHomeDir(profile));
+                profileContextLocator.openProfileInstanceManager(profile);
             }
-            sourceZip.close();
+            return profile;
         }
-
-        profile.setLoadedFrom(source);
-        profile.setName(FilenameUtils.getBaseName(source.getName()));
-        profile.setUuid(String.valueOf(System.currentTimeMillis()));
-        profile.onLoad();
-
-        String profileId = profile.getUuid();
-
-        if (!profileContextLocator.hasProfileContext(profileId)) {
-            profileContextLocator.addProfileContext(profile);
-            File destination = getProfileHomeDir(profile);
-            profileSaver.load(source, destination, observer);
-            profileSpecDao.saveProfile(profile, getProfileHomeDir(profile));
-            profileContextLocator.openProfileInstanceManager(profile);
-        }
-        return profile;
 
     }
 
@@ -424,8 +425,8 @@ public class ProfileManagerImpl implements ProfileManager {
         this.config = config;
     }
     
-    private File getProfileHomeDir(ProfileInstance profile) {
-        return new File(config.getProfilesDir(), profile.getUuid());
+    private Path getProfileHomeDir(ProfileInstance profile) {
+        return config.getProfilesDir().resolve(profile.getUuid());
     }
     
 }

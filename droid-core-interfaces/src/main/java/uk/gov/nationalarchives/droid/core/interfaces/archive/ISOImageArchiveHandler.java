@@ -76,7 +76,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
 
             FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
 
-            Iso9660FileSystem fileSystem = new Iso9660FileSystem(req.getFile(), true);
+            Iso9660FileSystem fileSystem = new Iso9660FileSystem(req.getFile().toFile(), true);
 
             ISOImageArchiveWalker walker = new ISOImageArchiveWalker(droid, factory, resultHandler,
                     fileSystem, request.getIdentifier());

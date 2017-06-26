@@ -31,8 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.container;
 
-import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +69,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     private String containerType;
     private ArchiveFormatResolver containerFormatResolver;
     private DroidCore droidCore;
-    private String signatureFilePath;
+    private Path signatureFilePath;
     
     private ContainerIdentifierInit init;
 
@@ -170,8 +173,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
      * @throws SignatureFileException if the Signature file could not be initialised
      */
     public void init() throws SignatureFileException {
-        try {
-            FileInputStream sigFile = new FileInputStream(signatureFilePath);
+        try (final InputStream sigFile = new BufferedInputStream(Files.newInputStream(signatureFilePath))) {
             ContainerSignatureDefinitions defs = signatureFileParser.parse(sigFile);
             
             init = new ContainerIdentifierInit();
@@ -252,7 +254,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     /**
      * @param signatureFilePath the signatureFilePath to set
      */
-    public void setSignatureFilePath(String signatureFilePath) {
+    public void setSignatureFilePath(Path signatureFilePath) {
         this.signatureFilePath = signatureFilePath;
     }
 

@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile.datasource;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -74,7 +74,7 @@ public class DerbyPooledDataSource extends HikariDataSource {
     public void init() throws SQLException {
         String droidLogDir = System.getProperty(RuntimeConfig.LOG_DIR);
         System.setProperty("derby.stream.error.file", 
-                new File(droidLogDir, "derby.log").getPath());
+                Paths.get(droidLogDir, "derby.log").toAbsolutePath().toString());
         //setPoolPreparedStatements(true);
         //setInitialSize(20); // initial size of connection pool.
         log.debug(String.format("Booting database [%s]", config.getJdbcUrl()));

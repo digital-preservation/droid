@@ -31,7 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.export;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import javax.annotation.Resource;
@@ -39,10 +41,8 @@ import javax.annotation.Resource;
 import org.apache.commons.io.FileUtils;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
@@ -75,22 +75,20 @@ public class ExportJobIntegrationTest {
     
     @Test
     public void testEndToEndExportOfOneProfile() throws Exception {
-        
-        
         // create a new profile and run it
-        ProfileInstance testProfile = profileContextLocator.getProfileInstance("test");
+        final ProfileInstance testProfile = profileContextLocator.getProfileInstance("test");
         testProfile.setProfileSpec(new ProfileSpec());
         
-        File profileHomeDir = new File(config.getProfilesDir(), "test");
+        final Path profileHomeDir = config.getProfilesDir().resolve("test");
         // Delete any renmants...
-        FileUtils.deleteDirectory(profileHomeDir);
+        FileUtils.deleteDirectory(profileHomeDir.toFile());
         
-        final File sigFile = new File("sig_files/DROID_SignatureFile_V26.xml");
-        FileUtils.copyFileToDirectory(sigFile, profileHomeDir);
+        final Path sigFile = Paths.get("sig_files/DROID_SignatureFile_V26.xml");
+        Files.copy(sigFile, profileHomeDir);
         testProfile.setSignatureFileName("DROID_SignatureFile_V26.xml");
-        String path = "C:/Documents and Settings/rflitcroft/My Documents/matts_disk";
+        final String path = "C:/Documents and Settings/rflitcroft/My Documents/matts_disk";
         //String path = "src/test/resources";
-        testProfile.addResource(new DirectoryProfileResource(new File(path), true));
+        testProfile.addResource(new DirectoryProfileResource(Paths.get(path), true));
         
         ProfileInstanceManager profileInstance = profileContextLocator.openProfileInstanceManager(testProfile);
         //profileInstance.initProfile(sigFile.toURI());

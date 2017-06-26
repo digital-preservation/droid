@@ -31,17 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.transform.TransformerException;
 
@@ -113,7 +113,7 @@ public class ReportCommand implements DroidCommand {
         for (String profileLocation : profiles) {
             ProfileInstance profile;
             try {
-                profile = profileManager.open(new File(profileLocation),
+                profile = profileManager.open(Paths.get(profileLocation),
                         new ProgressObserver() {
                             @Override
                             public void onProgress(Integer progress) {
@@ -146,79 +146,65 @@ public class ReportCommand implements DroidCommand {
     }
 
     //CHECKSTYLE:OFF - Too many executable statements.
-    private void writeReport(ReportRequest request, Filter optionalFilter) throws CommandExecutionException {
+    private void writeReport(final ReportRequest request, final Filter optionalFilter) throws CommandExecutionException {
     //CHECKSTYLE:ON
         try {
             // Build the report
-            Report report = reportManager.generateReport(request, optionalFilter, null);
+            final Report report = reportManager.generateReport(request, optionalFilter, null);
             //FIXME: the report transformer is defined as a singleton bean in the export report 
             // action configured through spring.  Here we are instantiating a new specific 
             // transformer - there was a bug in that this one did not have the droid config
             // object configured.  For the time being, just set up this transformer correctly.
-            ReportTransformerImpl transformer = new ReportTransformerImpl();
+            final ReportTransformerImpl transformer = new ReportTransformerImpl();
             transformer.setConfig(config);
-            String message = String.format("Exporting report as [%s] to: [%s]", reportOutputType, destination); 
+
+            final String message = String.format("Exporting report as [%s] to: [%s]", reportOutputType, destination);
             log.info(message);
 
             // BNO, Nov 2016: Now we use a specific encoder and  OutputStreamWriter to force UTF-8 encoding
             // (previously we used a FileWriter uses OS default encoding - this could lead to XML that was non UTF8
             // despite the declaration saying it was, and a SAXParseException when processing the report)
-            CharsetEncoder encoder = Charset.forName(UTF8).newEncoder();
-            CharsetDecoder decoder = Charset.forName(UTF8).newDecoder();
-            OutputStreamWriter tempReport = null;
+            //CharsetEncoder encoder = Charset.forName(UTF8)
+            //CharsetDecoder decoder = Charset.forName(UTF8);
 
+
+            final Path destinationPath = Paths.get(destination);
             if (DROID_REPORT_XML.equalsIgnoreCase(reportOutputType)) {
-                tempReport = new OutputStreamWriter(new FileOutputStream(destination), encoder);
-                reportXmlWriter.writeReport(report, tempReport);
-                tempReport.close();
+                try (final Writer tempReport = Files.newBufferedWriter(destinationPath, UTF_8)) {
+                    reportXmlWriter.writeReport(report, tempReport);
+                }
             } else {
                 // Write the report xml to a temporary file:
-                File tempFile = File.createTempFile("report~", ".xml", config.getTempDir());
-                tempReport = new OutputStreamWriter(new FileOutputStream(tempFile), encoder);
-                reportXmlWriter.writeReport(report, tempReport);
-                tempReport.close();
-                //FileReader reader = new FileReader(tempFile);
-                encoder.reset();
-                InputStreamReader reader = new InputStreamReader(new FileInputStream(tempFile), decoder);
-                try {
-                    if (PDF_FORMAT.equalsIgnoreCase(reportOutputType)) {
-                        FileOutputStream out = new FileOutputStream(destination);
+                final Path tempFile = Files.createTempFile(config.getTempDir(), "report~", ".xml");
+                try (final Writer tempReport = Files.newBufferedWriter(tempFile, UTF_8)) {
+                    reportXmlWriter.writeReport(report, tempReport);
+                }
+
+                if (PDF_FORMAT.equalsIgnoreCase(reportOutputType)) {
+                    try (final Reader reader = Files.newBufferedReader(tempFile, UTF_8);
+                            final OutputStream out = Files.newOutputStream(destinationPath)) {
                         transformer.transformToPdf(reader, XHTML_TRANSFORM_LOCATION, out);
-                        out.close();
-                    } else {
-                        ReportSpec spec = request.getReportSpec();
-                        File xslFile = getXSLFile(spec.getXslTransforms());
-                        if (xslFile != null) {
-                            //FileWriter out = new FileWriter(destination);
-                            FileOutputStream fso = new FileOutputStream(destination);
-                            OutputStreamWriter out = new OutputStreamWriter(fso, encoder);
+                    }
+                } else {
+                    final ReportSpec spec = request.getReportSpec();
+                    final Path xslFile = getXSLFile(spec.getXslTransforms());
+                    if (xslFile != null) {
+                        //FileWriter out = new FileWriter(destination);
+                        try (final Reader reader = Files.newBufferedReader(tempFile, UTF_8);
+                                final Writer out = Files.newBufferedWriter(destinationPath, UTF_8)) {
                             transformer.transformUsingXsl(reader, xslFile, out);
-                            out.close();
                         }
-                    }
-                } finally {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                    if (tempReport != null) {
-                        tempReport.close();
                     }
                 }
             }
-        } catch (ReportCancelledException e) {
-            throw new CommandExecutionException(e.getMessage(), e);
-        } catch (IOException e) {
-            throw new CommandExecutionException(e.getMessage(), e);
-        } catch (ReportTransformException e) {
-            throw new CommandExecutionException(e.getMessage(), e);
-        } catch (TransformerException e) {
+        } catch (final ReportCancelledException | ReportTransformException | IOException | TransformerException e) {
             throw new CommandExecutionException(e.getMessage(), e);
         }
     }
     
-    private File getXSLFile(List<File> xslTransforms) {
-        for (File file : xslTransforms) {
-            final String transformName = StringUtils.substringBefore(file.getName(), ".");
+    private Path getXSLFile(final List<Path> xslTransforms) {
+        for (final Path file : xslTransforms) {
+            final String transformName = StringUtils.substringBefore(file.getFileName().toString(), ".");
             if (transformName.equalsIgnoreCase(reportOutputType)) {
                 return file;
             }

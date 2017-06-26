@@ -32,7 +32,8 @@
 package uk.gov.nationalarchives.droid.gui.config;
 
 import java.awt.Window;
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.JOptionPane;
 
@@ -58,12 +59,12 @@ public class InstallSignatureFileAction {
      * @param parent the parent window
      */
     public void execute(Window parent) {
-        File f = new File(fileName);
+        final Path f = Paths.get(fileName);
         try {
-            SignatureFileInfo info = signatureManager.install(type, f, useAsDefault);
-            String message = String.format("Signature file %s has been installed", info.getFile().getName());
+            final SignatureFileInfo info = signatureManager.install(type, f, useAsDefault);
+            final String message = String.format("Signature file %s has been installed", info.getFile().getFileName().toString());
             JOptionPane.showMessageDialog(parent, message, "Signature file installed", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SignatureFileException e) {
+        } catch (final SignatureFileException e) {
             JOptionPane.showMessageDialog(parent, e.getMessage(), 
                     "Error installing signature file", JOptionPane.ERROR_MESSAGE);
         }            

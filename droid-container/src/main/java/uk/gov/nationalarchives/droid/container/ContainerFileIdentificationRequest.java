@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.container;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,7 +55,7 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
     private static final  int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
 
     private long size;
-    private File tempDir;
+    private Path tempDir;
     private Log log = LogFactory.getLog(this.getClass());
     private WindowReader reader;
 
@@ -63,7 +63,7 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
      * Constructs a new container file resource.
      * @param tempDir the location to write temp files.
      */
-    public ContainerFileIdentificationRequest(final File tempDir) {
+    public ContainerFileIdentificationRequest(final Path tempDir) {
         this.tempDir = tempDir;
     }
     

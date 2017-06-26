@@ -33,8 +33,8 @@ package uk.gov.nationalarchives.droid.gui.action;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JProgressBar;
@@ -59,7 +59,7 @@ public class SaveProfileWorker extends SwingWorker<ProfileInstance, Void> {
     private final Log log = LogFactory.getLog(getClass());
 
     private ProfileManager profileManager;
-    private File destination;
+    private Path destination;
     private ProfileForm profileForm;
     private ProgressObserver callback;
     private FileChooserProxy dialog;
@@ -102,7 +102,7 @@ public class SaveProfileWorker extends SwingWorker<ProfileInstance, Void> {
         
         if (destination == null || saveAs) {
             if (dialog.getResponse() == FileChooserProxy.APPROVE) {
-                destination = dialog.getSelectedFile();
+                destination = dialog.getSelectedFile().toPath();
                 save();
             } else {
                 cancelled = true;

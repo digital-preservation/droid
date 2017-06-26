@@ -38,8 +38,9 @@ import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
@@ -51,17 +52,17 @@ import static org.mockito.Mockito.*;
 public class ExportTaskTest {
 
     static ItemWriter itemWriter;
-    static File tempFile;
+    static Path tempFile;
 
     @Before
     public void setup() throws IOException {
         itemWriter = mock(ItemWriter.class);
-        tempFile = File.createTempFile("droid", "export-task-test");
+        tempFile = Files.createTempFile("droid", "export-task-test");
     }
 
     @Test
     public void testEncodingDefault() throws IOException {
-        final String destination = tempFile.getAbsolutePath();
+        final String destination = tempFile.toAbsolutePath().toString();
         final String encoding = null; //i.e. platform dependent
 
         final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, false, itemWriter, null));
@@ -72,7 +73,7 @@ public class ExportTaskTest {
 
     @Test
     public void testEncodingSpecific() throws IOException {
-        final String destination = tempFile.getAbsolutePath();
+        final String destination = tempFile.toAbsolutePath().toString();
         final String encoding = "UTF-8";
 
         final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, false, itemWriter, null));

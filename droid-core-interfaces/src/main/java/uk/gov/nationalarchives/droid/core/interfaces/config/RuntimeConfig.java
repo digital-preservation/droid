@@ -31,13 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.config;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.apache.commons.io.IOUtils;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 /**
@@ -108,25 +106,32 @@ public final class RuntimeConfig {
      * 
      */
     public static void configureRuntimeEnvironment() {
-        
-        // Configure the droid user area
-        File defaultDroidWorkingFolder = new File(System.getProperty("user.home"), DEFAULT_DROIDFOLDER_NAME);
-        File droidWorkDir = createFolderAndSystemProperty(DROID_USER, defaultDroidWorkingFolder);
 
-        // Configure the droid temporary file and profile area:
-        File droidTempDir = createFolderAndSystemProperty(DROID_TEMP_DIR, defaultDroidWorkingFolder);
-        
-        // Configure the droid log folder:
-        File defaultDroidLogFolder = new File(droidWorkDir, DEFAULT_LOGFOLDER_NAME);
-        File logDir = createFolderAndSystemProperty(LOG_DIR, defaultDroidLogFolder);
+        final Path defaultDroidWorkingFolder = Paths.get(System.getProperty("user.home"), DEFAULT_DROIDFOLDER_NAME);
+        final Path droidWorkDir;
+        final Path droidTempDir;
+        final Path logDir;
+        try {
+            // Configure the droid user area
+            droidWorkDir = createFolderAndSystemProperty(DROID_USER, defaultDroidWorkingFolder);
+
+            // Configure the droid temporary file and profile area:
+            droidTempDir = createFolderAndSystemProperty(DROID_TEMP_DIR, defaultDroidWorkingFolder);
+
+            // Configure the droid log folder:
+            final Path defaultDroidLogFolder = droidWorkDir.resolve(DEFAULT_LOGFOLDER_NAME);
+            logDir = createFolderAndSystemProperty(LOG_DIR, defaultDroidLogFolder);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
         
         // Specify the default droid log file.
-        File logFile = new File(logDir, "droid.log");
-        System.setProperty("logFile", logFile.getPath());
+        final Path logFile = logDir.resolve("droid.log");
+        System.setProperty("logFile", logFile.toAbsolutePath().toString());
         
         // Configure default logging configuration.
         // If the user does not specify the log4j.configuration property
-        String logConfig = getSystemOrEnvironmentProperty(LOG4J_CONFIGURATION);
+        final String logConfig = getSystemOrEnvironmentProperty(LOG4J_CONFIGURATION);
         if (logConfig == null) {
             // No log4j configuration specified by system property or command line. 
             // Create a default log4j file here if it doesn't already exist under
@@ -135,74 +140,59 @@ public final class RuntimeConfig {
             // log4j.properties file.  Or it would work in the Eclipse environment, but
             // not in the final build produced by the build server.
             try {
-                File logConfigFile = createResourceFile(droidWorkDir, LOG4J_PROPERTIES, LOG4J_PROPERTIES);
-                String logFileURI = logConfigFile.toURI().toString();
+                final Path logConfigFile = createResourceFile(droidWorkDir, LOG4J_PROPERTIES, LOG4J_PROPERTIES);
+                String logFileURI = logConfigFile.toUri().toString();
                 System.setProperty(LOG4J_CONFIGURATION, logFileURI);
             //CHECKSTYLE:OFF
             } catch (Exception e) {
             //CHECKSTYLE:ON
-                String message = String.format(ERROR_CREATING_LOG4J_FILE, LOG4J_PROPERTIES, 
-                        droidWorkDir.getAbsolutePath());
+                final String message = String.format(ERROR_CREATING_LOG4J_FILE, LOG4J_PROPERTIES,
+                        droidWorkDir.toAbsolutePath().toString());
                 throw new RuntimeException(message, e);
             }
         } else {
-            File logConfigFile = new File(logConfig);
-            String logFileURI = logConfigFile.toURI().toString();
+            final Path logConfigFile = Paths.get(logConfig);
+            final String logFileURI = logConfigFile.toUri().toString();
             System.setProperty(LOG4J_CONFIGURATION, logFileURI);
         }
         
         // Set a default console logging level of INFO:
-        String consoleLogThreshold = getSystemOrEnvironmentProperty(CONSOLE_LOG_THRESHOLD);
+        final String consoleLogThreshold = getSystemOrEnvironmentProperty(CONSOLE_LOG_THRESHOLD);
         if (consoleLogThreshold == null || consoleLogThreshold.isEmpty()) {
             System.setProperty(CONSOLE_LOG_THRESHOLD, "INFO");
         }
         
     }
-    
-    
-    private static File createFolderAndSystemProperty(String property, File defaultFolder) {
-        File folder;
-        String folderPath = getSystemOrEnvironmentProperty(property);
+
+    private static Path createFolderAndSystemProperty(final String property, final Path defaultFolder) throws IOException {
+        final String folderPath = getSystemOrEnvironmentProperty(property);
+        final Path folder;
         if (folderPath == null || folderPath.isEmpty()) {
             folder = defaultFolder;
         } else {
-            folder = new File(folderPath);
+            folder = Paths.get(folderPath);
         }
-        folder.mkdirs();
-        System.setProperty(property, folder.getPath());
+        Files.createDirectories(folder);
+        System.setProperty(property, folder.toAbsolutePath().toString());
         return folder;
     }
     
-    
-    private static String getSystemOrEnvironmentProperty(String property) {
+    private static String getSystemOrEnvironmentProperty(final String property) {
         String value = System.getProperty(property);
         if (value == null) {
             value = System.getenv(property);
         }
         return value;
     }
-    
-    
-    private static File createResourceFile(File resourceDir, String fileName, String resourceName) throws IOException {
-        File resourceFile = null;
-        InputStream in = RuntimeConfig.class.getClassLoader().getResourceAsStream(resourceName);
-        if (in != null) {
-            resourceFile = new File(resourceDir, fileName);
-            if (resourceFile.createNewFile()) {
-                OutputStream out = new FileOutputStream(resourceFile);
-                try {
-                    IOUtils.copy(in, out);
-                } finally {
-                    if (out != null) {
-                        out.close();
-                    }
-                    if (in != null) {
-                        in.close();
-                    }
-                }
+
+    private static Path createResourceFile(final Path resourceDir, final String fileName, final String resourceName) throws IOException {
+        try (final InputStream in = RuntimeConfig.class.getClassLoader().getResourceAsStream(resourceName)) {
+            final Path resourceFile = resourceDir.resolve(fileName);
+            if (!Files.exists(resourceFile)) {
+                Files.copy(in, resourceFile);
             }
+            return resourceFile;
         }
-        return resourceFile;
     }    
     
 }

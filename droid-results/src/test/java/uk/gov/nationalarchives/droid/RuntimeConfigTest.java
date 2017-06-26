@@ -31,16 +31,20 @@
  */
 package uk.gov.nationalarchives.droid;
 
-import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
+import uk.gov.nationalarchives.droid.util.FileUtil;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author rflitcroft
@@ -57,7 +61,15 @@ public class RuntimeConfigTest {
     public void setup() {
         System.clearProperty(RuntimeConfig.DROID_USER);
     }
-    
+
+    @After
+    public void cleanup() {
+        FileUtil.deleteQuietly(Paths.get("/tmp/droid"));
+
+        final Path userHome = Paths.get(System.getProperty("user.home"));
+        FileUtil.deleteQuietly(userHome.resolve(".droid6"));
+    }
+
     @Test
     public void testConfigureRuntimeEnvironmentUsingSystemProperty() {
         System.clearProperty(RuntimeConfig.DROID_USER);
@@ -66,8 +78,8 @@ public class RuntimeConfigTest {
         System.setProperty(RuntimeConfig.DROID_USER, "/tmp/droid");
         RuntimeConfig.configureRuntimeEnvironment();
         
-        assertEquals(new File("/tmp/droid").getPath(), System.getProperty(RuntimeConfig.DROID_USER));
-        assertEquals(new File("/tmp/droid/logs/droid.log").getPath(), System.getProperty("logFile"));
+        assertEquals(Paths.get("/tmp/droid").toAbsolutePath().toString(), System.getProperty(RuntimeConfig.DROID_USER));
+        assertEquals(Paths.get("/tmp/droid/logs/droid.log").toAbsolutePath().toString(), System.getProperty("logFile"));
 
     }
 
@@ -78,9 +90,9 @@ public class RuntimeConfigTest {
         assertNull(System.getProperty(RuntimeConfig.DROID_USER));
         RuntimeConfig.configureRuntimeEnvironment();
         
-        File userHome = new File(System.getProperty("user.home"));
+        final Path userHome = Paths.get(System.getProperty("user.home"));
         
-        assertEquals(new File(userHome, ".droid6").getPath(), System.getProperty(RuntimeConfig.DROID_USER));
-        assertEquals(new File(userHome, ".droid6/logs/droid.log").getPath(), System.getProperty("logFile"));
+        assertEquals(userHome.resolve(".droid6").toAbsolutePath().toString(), System.getProperty(RuntimeConfig.DROID_USER));
+        assertEquals(userHome.resolve(".droid6/logs/droid.log").toAbsolutePath().toString(), System.getProperty("logFile"));
     }
 }

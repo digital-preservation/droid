@@ -85,7 +85,7 @@ public final class RarArchiveHandler implements ArchiveHandler {
 
             FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
 
-            FileVolumeManager fileVolumeManager = new FileVolumeManager(req.getFile());
+            FileVolumeManager fileVolumeManager = new FileVolumeManager(req.getFile().toFile());
             try {
                 try (Archive archive = new Archive(fileVolumeManager)) {
                     if (archive.isEncrypted()) {

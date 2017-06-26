@@ -90,7 +90,7 @@ public class SevenZipArchiveContainerIdentifier extends ArchiveContentIdentifier
 
             try {
                 SevenZStreamFactory sevenZStreamFactory = new SevenZStreamFactory();
-                try (ArchiveInputStream archiveStream = sevenZStreamFactory.getArchiveInputStream(req.getFile(), null)) {
+                try (ArchiveInputStream archiveStream = sevenZStreamFactory.getArchiveInputStream(req.getFile().toFile(), null)) {
                     SevenZArchiveEntry entry;
                     while ((entry = (SevenZArchiveEntry) archiveStream.getNextEntry()) != null) {
                         processEntry(entry, archiveStream, uri, newPath);

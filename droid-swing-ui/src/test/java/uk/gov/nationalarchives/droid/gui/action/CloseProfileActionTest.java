@@ -31,7 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.gui.action;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -100,9 +101,9 @@ public class CloseProfileActionTest {
     @Test
     public void testExecuteWhenUserSelectsSaveAndProfileHasFileLocationAndIsDirty() throws Exception {
         when(dialog.getResponse()).thenReturn(JOptionPaneProxy.YES);
-        when(profileManager.save(eq("myProfileId"), any(File.class), any(ProgressObserver.class))).thenReturn(profile);
+        when(profileManager.save(eq("myProfileId"), any(Path.class), any(ProgressObserver.class))).thenReturn(profile);
         
-        when(profile.getLoadedFrom()).thenReturn(new File("profile.droid"));
+        when(profile.getLoadedFrom()).thenReturn(Paths.get("profile.droid"));
         when(profile.isDirty()).thenReturn(true);
         
         action.setUserOptionDialog(dialog);

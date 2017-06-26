@@ -31,10 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -51,7 +53,7 @@ import static org.junit.Assert.*;
 
 public class ZipEntryIdentificationRequestTest {
 
-    private static File tmpDir;
+    private static Path tmpDir;
 
     private ZipEntryIdentificationRequest zipResource;
     private String droidZipFileName;
@@ -63,14 +65,14 @@ public class ZipEntryIdentificationRequestTest {
     
     
     @BeforeClass
-    public static void createTmpFileDirectory() {
-        tmpDir = new File("tmp");
-        tmpDir.mkdir();
+    public static void createTmpFileDirectory() throws IOException {
+        tmpDir = Paths.get("tmp");
+        Files.createDirectories(tmpDir);
     }
     
     @AfterClass
     public static void removeTmpDir() {
-        FileUtils.deleteQuietly(tmpDir);
+        FileUtils.deleteQuietly(tmpDir.toFile());
     }
     
     @Before
@@ -83,7 +85,7 @@ public class ZipEntryIdentificationRequestTest {
         
         metaData = new RequestMetaData(entry.getSize(), null, "profile.xml");
         //metaData = mock(RequestMetaData.class);
-        URI parentUri = new File(droidZipFileName).toURI();
+        URI parentUri = Paths.get(droidZipFileName).toUri();
         URI entryUri = new URI("zip:" + parentUri + "!/profile.xml");
         
         identifier = new RequestIdentifier(entryUri);
@@ -200,7 +202,7 @@ public class ZipEntryIdentificationRequestTest {
 
         assertEquals("xml", zipResource.getExtension());
         assertEquals("profile.xml", zipResource.getFileName());
-        assertEquals("zip:" + new File(droidZipFileName).toURI() + "!/profile.xml",
+        assertEquals("zip:" + Paths.get(droidZipFileName).toUri() + "!/profile.xml",
                 zipResource.getIdentifier().getUri().toString());
         assertEquals(metaData, zipResource.getRequestMetaData());
         

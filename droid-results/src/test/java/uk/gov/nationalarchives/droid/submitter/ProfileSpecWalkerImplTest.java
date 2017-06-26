@@ -31,8 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,16 +47,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.hamcrest.TypeSafeMatcher;
 
 import org.mockito.ArgumentMatcher;
-import org.mockito.internal.hamcrest.HamcrestArgumentMatcher;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
@@ -62,6 +59,7 @@ import uk.gov.nationalarchives.droid.profile.FileProfileResource;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
 import uk.gov.nationalarchives.droid.profile.ProfileSpec;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -69,7 +67,7 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
  */
 public class ProfileSpecWalkerImplTest {
 
-    private static final File TEST_ROOT = new File("ProfileSpecWalkerImplTest");
+    private static final Path TEST_ROOT = Paths.get("ProfileSpecWalkerImplTest");
     private static String[] files;
 
     @BeforeClass
@@ -112,18 +110,18 @@ public class ProfileSpecWalkerImplTest {
             "dir2/subdir2/file224.ext",
             "dir2/subdir2/file225.ext", };
 
-        TEST_ROOT.mkdir();
+        Files.createDirectories(TEST_ROOT);
 
-        for (String filename : files) {
-            File f = new File(TEST_ROOT, filename);
-            f.getParentFile().mkdirs();
-            f.createNewFile();
+        for (final String filename : files) {
+            Path f = TEST_ROOT.resolve(filename);
+            Files.createDirectories(f.getParent());
+            Files.createFile(f);
         }
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
-        FileUtils.forceDelete(TEST_ROOT);
+        FileUtil.deleteQuietly(TEST_ROOT);
     }
 
     @Test
@@ -165,7 +163,7 @@ public class ProfileSpecWalkerImplTest {
     @Test
     public void testIterateDirectoryResources() throws Exception {
 
-        File[] locations = new File[] {
+        final Path[] locations = {
             canonicalFile(TEST_ROOT, "dir1"),
             canonicalFile(TEST_ROOT, "dir2"),
         };
@@ -222,13 +220,13 @@ public class ProfileSpecWalkerImplTest {
         verify(fileEventHandler).onEvent(
                 canonicalFile(TEST_ROOT, "dir2/file21.ext"), new ResourceId(2L, ""), null);
 
-        verify(fileEventHandler, times(10)).onEvent(any(File.class), (ResourceId) any(),
+        verify(fileEventHandler, times(10)).onEvent(any(Path.class), (ResourceId) any(),
                 (ResourceId) isNull());
 
         verify(fileEventHandler, never()).onEvent(
-                argThat(new ArgumentMatcher<File>() {
+                argThat(new ArgumentMatcher<Path>() {
                     @Override
-                    public boolean matches(File argument) {
+                    public boolean matches(Path argument) {
                         return argument.toString().contains("sub");
                     }
                     @Override
@@ -243,7 +241,7 @@ public class ProfileSpecWalkerImplTest {
         List<AbstractProfileResource> resources = new ArrayList<AbstractProfileResource>();
 
         for (String location : locations) {
-            FileProfileResource resource = new FileProfileResource(new File(
+            FileProfileResource resource = new FileProfileResource(Paths.get(
                     location));
             resources.add(resource);
         }
@@ -252,10 +250,10 @@ public class ProfileSpecWalkerImplTest {
     }
 
     private List<AbstractProfileResource> buildDirectoryResources(
-            File[] locations) {
+            Path[] locations) {
         List<AbstractProfileResource> resources = new ArrayList<AbstractProfileResource>();
 
-        for (File location : locations) {
+        for (Path location : locations) {
             DirectoryProfileResource resource = new DirectoryProfileResource(
                     location, false);
             resources.add(resource);
@@ -265,10 +263,10 @@ public class ProfileSpecWalkerImplTest {
     }
 
     private List<AbstractProfileResource> buildRecursiveDirectoryResources(
-            File[] locations) {
+            Path[] locations) {
         List<AbstractProfileResource> resources = new ArrayList<AbstractProfileResource>();
 
-        for (File location : locations) {
+        for (Path location : locations) {
             DirectoryProfileResource resource = new DirectoryProfileResource(
                     location, true);
             resources.add(resource);
@@ -311,7 +309,7 @@ public class ProfileSpecWalkerImplTest {
 
     @Test
     public void testIterateRecursiveDirectoryResources() throws Exception {
-        File[] locations = new File[] {
+        Path[] locations =  {
             canonicalFile(TEST_ROOT, "dir1"),
             canonicalFile(TEST_ROOT, "dir2"),
         };
@@ -402,30 +400,26 @@ public class ProfileSpecWalkerImplTest {
         verify(fileEventHandler).onEvent(canonicalFile(TEST_ROOT, "dir2/subdir2/file225.ext"), 
                 new ResourceId(22L, ""), null);
 
-        verify(fileEventHandler, times(30)).onEvent(any(File.class), (ResourceId) any(),
+        verify(fileEventHandler, times(30)).onEvent(any(Path.class), (ResourceId) any(),
                 (ResourceId) isNull());
     }
 
-    private static ArgumentMatcher<File> newFileUriMatcher(final String fileName) {
-        return new ArgumentMatcher<File>() {
+    private static ArgumentMatcher<Path> newFileUriMatcher(final String fileName) {
+        return new ArgumentMatcher<Path>() {
             @Override
-            public boolean matches(File argument) {
-                try {
-                    return argument.equals(new File(fileName).getCanonicalFile());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            public boolean matches(Path argument) {
+                return argument.equals(Paths.get(fileName).toAbsolutePath());
             }
 
             @Override
             public String toString() {
-                return "Matches" + ((new File(fileName)).toString());
+                return "Matches" + ((Paths.get(fileName)).toString());
             }
         };
     }
     
-    private static File canonicalFile(File parent, String child) throws IOException {
-        return new File(parent, child).getCanonicalFile();
+    private static Path canonicalFile(final Path parent, String child) throws IOException {
+        return parent.resolve(child).toAbsolutePath();
     }
 
 

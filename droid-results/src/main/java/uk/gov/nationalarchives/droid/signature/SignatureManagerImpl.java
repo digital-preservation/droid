@@ -31,9 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.signature;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -46,7 +47,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -66,6 +66,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManagerE
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureUpdateService;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -75,8 +76,7 @@ public class SignatureManagerImpl implements SignatureManager {
 
     private static final String INVALID_SIGNATURE_FILE = "Invalid signature file [%s]";
     
-    private static Map<SignatureType, DroidGlobalProperty> defaultVersionProperties = 
-        new HashMap<SignatureType, DroidGlobalProperty>();
+    private static Map<SignatureType, DroidGlobalProperty> defaultVersionProperties = new HashMap<>();
     static {
         defaultVersionProperties.put(SignatureType.BINARY, DroidGlobalProperty.DEFAULT_BINARY_SIG_FILE_VERSION);
         defaultVersionProperties.put(SignatureType.CONTAINER, DroidGlobalProperty.DEFAULT_CONTAINER_SIG_FILE_VERSION);
@@ -119,27 +119,27 @@ public class SignatureManagerImpl implements SignatureManager {
     @Override
     public Map<SignatureType, SortedMap<String, SignatureFileInfo>> getAvailableSignatureFiles() {
         
-        File binSigFileDir = config.getSignatureFileDir();
-        File containerSigFileDir = config.getContainerSignatureDir();
+        final Path binSigFileDir = config.getSignatureFileDir();
+        final Path containerSigFileDir = config.getContainerSignatureDir();
         //File textSigFileDir = config.getTextSignatureFileDir();
         
-        FileFilter xmlExtensionFilter = new FileFilter() {
+        final DirectoryStream.Filter<Path> xmlExtensionFilter = new DirectoryStream.Filter<Path>() {
             @Override
-            public boolean accept(File pathname) {
-                return pathname.isFile() && "xml".equals(FilenameUtils.getExtension(pathname.getName()));
+            public boolean accept(final Path path) {
+                return (!Files.isDirectory(path)) && FileUtil.fileName(path).endsWith(".xml");
             }
         };
         
-        Map<SignatureType, SortedMap<String, SignatureFileInfo>> availableSigFiles = 
-            new HashMap<SignatureType, SortedMap<String, SignatureFileInfo>>();
+        final Map<SignatureType, SortedMap<String, SignatureFileInfo>> availableSigFiles =
+            new HashMap<>();
         
         SignatureInfoParser parser = new SignatureInfoParser();
         
         final String errorMessagePattern = "Unreadable signature file [%s]";
         
-        SortedMap<String, SignatureFileInfo> binSigFiles = new TreeMap<String, SignatureFileInfo>();
-        for (File file : binSigFileDir.listFiles(xmlExtensionFilter)) {
-            String fileName = FilenameUtils.getBaseName(file.getName());
+        final SortedMap<String, SignatureFileInfo> binSigFiles = new TreeMap<>();
+        for (final Path file : FileUtil.listFilesQuietly(binSigFileDir, false, xmlExtensionFilter)) {
+            String fileName = FilenameUtils.getBaseName(FileUtil.fileName(file));
             try {
                 binSigFiles.put(fileName, forBinarySigFile(file, parser));
             } catch (SignatureFileException e) {
@@ -147,9 +147,9 @@ public class SignatureManagerImpl implements SignatureManager {
             }
         }
         
-        SortedMap<String, SignatureFileInfo> containerSigFiles = new TreeMap<String, SignatureFileInfo>();
-        for (File file : containerSigFileDir.listFiles(xmlExtensionFilter)) {
-            String fileName = FilenameUtils.getBaseName(file.getName());
+        final SortedMap<String, SignatureFileInfo> containerSigFiles = new TreeMap<>();
+        for (final Path file : FileUtil.listFilesQuietly(containerSigFileDir, false, xmlExtensionFilter)) {
+            String fileName = FilenameUtils.getBaseName(FileUtil.fileName(file));
             try {
                 containerSigFiles.put(fileName, forSimpleVersionedFile(file, SignatureType.CONTAINER));
             } catch (SignatureFileException e) {
@@ -176,24 +176,24 @@ public class SignatureManagerImpl implements SignatureManager {
         return availableSigFiles;
     }
     
-    private static SignatureFileInfo forBinarySigFile(File file, SignatureInfoParser parser) 
-        throws SignatureFileException {
+    private static SignatureFileInfo forBinarySigFile(final Path file, final SignatureInfoParser parser)
+            throws SignatureFileException {
         final SignatureFileInfo signatureFileInfo = parser.parse(file);
         signatureFileInfo.setFile(file);
         return signatureFileInfo;
     }
 
-    private static SignatureFileInfo forSimpleVersionedFile(File file, SignatureType type) 
+    private static SignatureFileInfo forSimpleVersionedFile(final Path file, final SignatureType type)
         throws SignatureFileException {
         // parse the version from the filename
-        String filename = FilenameUtils.getBaseName(file.getName());
+        final String filename = FilenameUtils.getBaseName(FileUtil.fileName(file));
         try {
-            int version = Integer.valueOf(StringUtils.substringAfterLast(filename, "-"));
+            final int version = Integer.valueOf(StringUtils.substringAfterLast(filename, "-"));
             final SignatureFileInfo signatureFileInfo = new SignatureFileInfo(version, false, type);
             signatureFileInfo.setFile(file);
             return signatureFileInfo;
-        } catch (NumberFormatException e) {
-            String message = String.format("Invalid signature filename [%s]", file.getName());
+        } catch (final NumberFormatException e) {
+            final String message = String.format("Invalid signature filename [%s]", FileUtil.fileName(file));
             throw new SignatureFileException(message, e, ErrorCode.INVALID_SIGNATURE_FILE);
         }
     }
@@ -207,24 +207,22 @@ public class SignatureManagerImpl implements SignatureManager {
     
     private static final class SignatureInfoParser {
 
-        SignatureFileInfo parse(File sigFile) throws SignatureFileException {
+        SignatureFileInfo parse(final Path sigFile) throws SignatureFileException {
         
-            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             final SignatureFileVersionHandler handler = new SignatureFileVersionHandler();
             try {
-                SAXParser saxParser = saxParserFactory.newSAXParser();
-                saxParser.parse(sigFile, handler);
+                final SAXParser saxParser = saxParserFactory.newSAXParser();
+                saxParser.parse(sigFile.toFile(), handler);
                 throw new SignatureFileException(String.format(
                         INVALID_SIGNATURE_FILE, sigFile), ErrorCode.INVALID_SIGNATURE_FILE);
-            } catch (ValidSignatureFileException e) {
+            } catch (final ValidSignatureFileException e) {
                 return e.getInfo();
-            } catch (SAXException e) {
+            } catch (final SAXException e) {
                 throw new SignatureFileException(String.format(
                         INVALID_SIGNATURE_FILE, sigFile), e,
                         ErrorCode.INVALID_SIGNATURE_FILE);
-            } catch (ParserConfigurationException e) {
-                throw new RuntimeException(e.getMessage(), e);
-            } catch (IOException e) {
+            } catch (final ParserConfigurationException | IOException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }
@@ -335,9 +333,8 @@ public class SignatureManagerImpl implements SignatureManager {
      * {@inheritDoc}
      */
     @Override
-    public SignatureFileInfo downloadLatest(SignatureType type) throws SignatureManagerException {
-        
-        File sigFileDir;
+    public SignatureFileInfo downloadLatest(final SignatureType type) throws SignatureManagerException {
+        final Path sigFileDir;
         switch (type) {
             case BINARY:
                 sigFileDir = config.getSignatureFileDir();
@@ -359,7 +356,7 @@ public class SignatureManagerImpl implements SignatureManager {
             if (autoSetDefaultSigFile) {
                 PropertiesConfiguration props = config.getProperties();
                 props.setProperty(defaultVersionProperties.get(type).getName(), 
-                        FilenameUtils.getBaseName(info.getFile().getName()));
+                        FilenameUtils.getBaseName(FileUtil.fileName(info.getFile())));
                 try {
                     config.getProperties().save();
                 } catch (ConfigurationException e) {
@@ -413,25 +410,22 @@ public class SignatureManagerImpl implements SignatureManager {
      * {@inheritDoc}
      */
     @Override
-    public SignatureFileInfo install(SignatureType type, File signatureFile, boolean setDefault) 
-        throws SignatureFileException {
-        
-        SignatureInfoParser parser = new SignatureInfoParser();
-        SignatureFileInfo sigFileInfo = forBinarySigFile(signatureFile, parser);
+    public SignatureFileInfo install(final SignatureType type, final Path signatureFile, final boolean setDefault)
+            throws SignatureFileException {
+        final SignatureInfoParser parser = new SignatureInfoParser();
+        final SignatureFileInfo sigFileInfo = forBinarySigFile(signatureFile, parser);
 
         try {
-            FileUtils.copyFileToDirectory(signatureFile, config.getSignatureFileDir(), true);
-            File newSignatureFile = new File(config.getSignatureFileDir(), signatureFile.getName());
-            
+            final Path newSignatureFile = Files.copy(signatureFile, config.getSignatureFileDir());
             sigFileInfo.setFile(newSignatureFile);
             
             if (setDefault) {
                 config.getProperties().setProperty(defaultVersionProperties.get(type).getName(), 
-                        FilenameUtils.getBaseName(newSignatureFile.getName()));
+                        FilenameUtils.getBaseName(FileUtil.fileName(newSignatureFile)));
             }
 
             return sigFileInfo;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error(e);
             throw new SignatureFileException(e.getMessage(), e, ErrorCode.FILE_NOT_FOUND);
         }

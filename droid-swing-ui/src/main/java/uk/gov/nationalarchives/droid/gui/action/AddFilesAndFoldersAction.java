@@ -83,15 +83,15 @@ public class AddFilesAndFoldersAction {
         ProfileSpec profileSpec = profile.getProfileSpec();
         
         DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) treeModel.getRoot();
-        for (File selectedFile : selectedFiles) {
+        for (final File selectedFile : selectedFiles) {
             AbstractProfileResource newResource;
             
             // VERY basic shortcut detection:
             boolean isShortcut = !selectedFile.toURI().getPath().endsWith("/");
             if (selectedFile.isDirectory() && !isShortcut) {
-                newResource = new DirectoryProfileResource(selectedFile, recursive);
+                newResource = new DirectoryProfileResource(selectedFile.toPath(), recursive);
             } else {
-                newResource = new FileProfileResource(selectedFile);
+                newResource = new FileProfileResource(selectedFile.toPath());
             }
 
             if (profile.addResource(newResource)) {

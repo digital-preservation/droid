@@ -31,10 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -44,7 +44,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -56,7 +55,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -114,29 +112,33 @@ public class SubmissionGatewayTest {
             assertEquals("Can't parse signature file", x.getMessage());
         }
 
-        File file = new File("test_sig_files/persistence.zip");
-        assertTrue(file.exists());
+        final Path file = Paths.get("test_sig_files/persistence.zip");
+        assertTrue(Files.exists(file));
 
-        ZipFile zipFile = new ZipFile(file);
-        int entryCount = 0;
-        final Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-            if (!entries.nextElement().isDirectory()) {
-                entryCount++;
+        try(final ZipFile zipFile = new ZipFile(file.toFile())) {
+            int entryCount = 0;
+            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                if (!entries.nextElement().isDirectory()) {
+                    entryCount++;
+                }
             }
+            assertTrue(entryCount > 4);
         }
-        assertTrue(entryCount > 4);
 
-        URI resourceUri = file.toURI();
+        URI resourceUri = file.toUri();
 
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), "persistence.zip");
+        RequestMetaData metaData = new RequestMetaData(
+                Files.size(file),
+                Files.getLastModifiedTime(file).toMillis(),
+                "persistence.zip");
         
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
         identifier.setParentPrefix("X");
         identifier.setAncestorId(1L);
         
-        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
         request.open(file);
 
         Future<IdentificationResultCollection> future = submissionGateway.submit(request);
@@ -173,10 +175,10 @@ public class SubmissionGatewayTest {
             assertEquals("Can't parse signature file", e.getCause().getMessage());
         }
 
-        File file = new File("test_sig_files/sample.pdf");
-        assertTrue(file.exists());
+        final Path file = Paths.get("test_sig_files/sample.pdf");
+        assertTrue(Files.exists(file));
 
-        RequestIdentifier identifier = new RequestIdentifier(file.toURI());
+        RequestIdentifier identifier = new RequestIdentifier(file.toUri());
         
         IdentificationRequest request = mock(IdentificationRequest.class);
         when(request.getIdentifier()).thenReturn(identifier);

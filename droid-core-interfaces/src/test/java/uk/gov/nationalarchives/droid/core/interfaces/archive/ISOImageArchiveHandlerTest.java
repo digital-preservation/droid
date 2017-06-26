@@ -44,9 +44,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentifi
 import uk.gov.nationalarchives.droid.core.interfaces.resource.GZipIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -216,7 +216,7 @@ public class ISOImageArchiveHandlerTest {
         identifier.setNodeId(1L);
 
         FileSystemIdentificationRequest req = new FileSystemIdentificationRequest(requestMetaData, identifier);
-        req.open(new File("./src/test/resources/testiso.iso"));
+        req.open(Paths.get("./src/test/resources/testiso.iso"));
         isoImageArchiveHandler.handle(req);
 
         verify(droid, times(6)).submit(any(IdentificationRequest.class));
@@ -242,7 +242,7 @@ public class ISOImageArchiveHandlerTest {
         RequestIdentifier identifier = new RequestIdentifier(new URI("file://testiso.iso"));
         identifier.setNodeId(1L);
 
-        GZipIdentificationRequest request = new GZipIdentificationRequest(requestMetaData, identifier, new File(""));
+        GZipIdentificationRequest request = new GZipIdentificationRequest(requestMetaData, identifier, Paths.get(""));
 
         isoImageArchiveHandler.handle(request);
 

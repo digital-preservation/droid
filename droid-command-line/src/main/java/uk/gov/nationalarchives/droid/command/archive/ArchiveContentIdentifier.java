@@ -31,9 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
@@ -55,7 +56,7 @@ public abstract class ArchiveContentIdentifier {
     protected String slash1;
     protected BinarySignatureIdentifier binarySignatureIdentifier;
     protected ContainerSignatureDefinitions containerSignatureDefinitions;
-    protected File tmpDir;
+    protected Path tmpDir;
     protected String path;
     // CHECKSTYLE:ON
     private Boolean expandWebArchives;
@@ -82,7 +83,7 @@ public abstract class ArchiveContentIdentifier {
             setSlash1(slash1);
             setExpandWebArchives(expandWebArchives);
             if (getTmpDir() == null) {
-                setTmpDir(new File(System.getProperty("java.io.tmpdir")));
+                setTmpDir(Paths.get(System.getProperty("java.io.tmpdir")));
             }
         }
     }
@@ -138,13 +139,13 @@ public abstract class ArchiveContentIdentifier {
     /**
      * @return temporary file directory
      */
-    protected File getTmpDir() {
+    protected Path getTmpDir() {
         return tmpDir;
     }
     /**
      * @param tmpDir temporary file directory
      */
-    protected void setTmpDir(File tmpDir) {
+    protected void setTmpDir(Path tmpDir) {
         this.tmpDir = tmpDir;
     }
     /**

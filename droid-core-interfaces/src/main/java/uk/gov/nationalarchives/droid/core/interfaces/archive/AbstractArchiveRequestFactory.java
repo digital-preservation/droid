@@ -31,7 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.File;
+
+import java.nio.file.Path;
 
 /**
  * @author rflitcroft, mpalmer
@@ -40,19 +41,19 @@ import java.io.File;
  */
 public abstract class AbstractArchiveRequestFactory<T> implements IdentificationRequestFactory<T> {
  
-    private File tempDirLocation;
+    private Path tempDirLocation;
     
     /**
      * @param tempDirLocation the tempDirLocation to set
      */
-    public final void setTempDirLocation(File tempDirLocation) {
+    public final void setTempDirLocation(final Path tempDirLocation) {
         this.tempDirLocation = tempDirLocation;
     }
     
     /**
      * @return the tempDirLocation
      */
-    protected File getTempDirLocation() {
+    protected Path getTempDirLocation() {
         return tempDirLocation;
     }
     

@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.core;
 
-import java.io.File;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -82,8 +82,8 @@ public class BinarySignatureIdentifier implements DroidCore {
      * @param signatureFile the signature file to set
      */
     @Override
-    public void setSignatureFile(String signatureFile) {
-        this.signatureFile = new File(signatureFile).toURI();
+    public void setSignatureFile(final String signatureFile) {
+        this.signatureFile = Paths.get(signatureFile).toUri();
     }
 
 

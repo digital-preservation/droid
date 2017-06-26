@@ -31,13 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -54,7 +53,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationErrorType;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -65,6 +63,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -72,11 +71,11 @@ import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
  */
 public class FileEventHandlerTest {
 
-    private IdentificationRequestFactory<File> requestFactory;
-    private IdentificationRequest<File> request;
+    private IdentificationRequestFactory<Path> requestFactory;
+    private IdentificationRequest<Path> request;
     private FileEventHandler fileEventHandler;
     private AsynchDroid identificationEngine;
-    private File tmpDir;
+    private Path tmpDir;
     
     @Before
     public void setup() throws IOException {
@@ -87,15 +86,13 @@ public class FileEventHandlerTest {
         when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class))).thenReturn(request);
         fileEventHandler.setRequestFactory(requestFactory);
         
-        tmpDir = new File("tmp/");
-        tmpDir.mkdir();
+        tmpDir = Paths.get("tmp");
+        Files.createDirectories(tmpDir);
     }
     
     @After
     public void tearDown() {
-        
-        tmpDir.delete();
-    
+        FileUtil.deleteQuietly(tmpDir);
     }
     
     @Test
@@ -104,8 +101,8 @@ public class FileEventHandlerTest {
         SubmissionThrottle throttle = mock(SubmissionThrottle.class);
         fileEventHandler.setSubmissionThrottle(throttle);
         
-        File file = new File("test_sig_files/DROID 5  Architecture.doc");
-        URI uri = file.toURI();
+        final Path file = Paths.get("test_sig_files/DROID 5  Architecture.doc");
+        URI uri = file.toUri();
         AbstractProfileResource resource = mock(AbstractProfileResource.class);
         when(resource.getUri()).thenReturn(uri);
         
@@ -125,7 +122,7 @@ public class FileEventHandlerTest {
         SubmissionThrottle throttle = mock(SubmissionThrottle.class);
         fileEventHandler.setSubmissionThrottle(throttle);
         
-        File file = new File("test_sig_files/DROID 5  Architecture.doc");
+        final Path file = Paths.get("test_sig_files/DROID 5  Architecture.doc");
         fileEventHandler.onEvent(file, new ResourceId(1L, ""), null);
         
         verify(throttle).apply();
@@ -134,8 +131,8 @@ public class FileEventHandlerTest {
     @Test
     public void testNonexistentFileSubmitsErrorToResultHandler() throws IOException {
         
-        final File file = new File("non-existent");
-        assertFalse(file.exists());
+        final Path file = Paths.get("non-existent");
+        assertFalse(Files.exists(file));
         
         when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class)))
             .thenReturn(request);
@@ -167,15 +164,15 @@ public class FileEventHandlerTest {
     @Test
     public void testUnreadableFileSubmitsErrorToResultHandler() throws IOException {
         
-        final File file = new File("tmp/unreadable.file");
-        file.createNewFile();
-        assertTrue(file.exists());
+        final Path file = Paths.get("tmp/unreadable.file");
+        Files.createFile(file);
+        assertTrue(Files.exists(file));
         
         when(requestFactory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class)))
             .thenReturn(request);
         
         final IOException ioException = new IOException("Can't read me!");
-        doThrow(ioException).when(request).open(any(File.class));
+        doThrow(ioException).when(request).open(any(Path.class));
         
         fileEventHandler.setRequestFactory(requestFactory);
         
@@ -200,6 +197,6 @@ public class FileEventHandlerTest {
         assertEquals(IdentificationErrorType.ACCESS_DENIED, thrown.getErrorType());
         */
 
-        file.delete();
+        FileUtil.deleteQuietly(file);
     }
 }

@@ -31,13 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.core;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +43,9 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.*;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -87,33 +85,33 @@ public class SkeletonSuiteTest {
     private static final Pattern PuidPattern = Pattern.compile("^(x-)?fmt/\\d{1,3}");
 
     private HashMap<String, String> filesWithPuids;
-    private HashMap<String, String> currentMisidentifiedFiles = new HashMap<String, String>();
+    private HashMap<String, String> currentMisidentifiedFiles = new HashMap<>();
     private String[] currentKnownUnidentifiedFiles;
-    private File[] allPaths;
+    private final List<Path> allPaths = new ArrayList<>();
 
     @Before
-    public void setup() throws  FileNotFoundException, IOException{
+    public void setup() throws IOException{
 
         //Hashmap to store filenames and the PUID with which DROId is expected to identify the file.
-        this.filesWithPuids = new HashMap<String, String>();
+        this.filesWithPuids = new HashMap<>();
 
-        File fmtDirectory = new File(TEST_FILES_DIR + "fmt");
-        File xfmtDirectory = new File(TEST_FILES_DIR + "x-fmt");
-
-        File[] fmtPaths = fmtDirectory.listFiles();
-        File[] xfmtPaths =  xfmtDirectory.listFiles();
-        this.allPaths = new File[fmtPaths.length + xfmtPaths.length];
-        System.arraycopy(fmtPaths, 0, allPaths,0, fmtPaths.length);
-        System.arraycopy(xfmtPaths, 0, allPaths, fmtPaths.length, xfmtPaths.length);
+        final Path fmtDirectory = Paths.get(TEST_FILES_DIR + "fmt");
+        final Path xfmtDirectory = Paths.get(TEST_FILES_DIR + "x-fmt");
+        for(final File file : fmtDirectory.toFile().listFiles()) {
+            allPaths.add(file.toPath());
+        }
+        for(final File file : xfmtDirectory.toFile().listFiles()) {
+            allPaths.add(file.toPath());
+        }
 
         //Populate the hashmap using filenames as keys and PUIDs.  We need to do it this way round as some
         //PUIDs are expected by more than one file.
-        for(final File skeletonPath : allPaths) {
+        for(final Path skeletonPath : allPaths) {
 
             String filename = null;
-            if (skeletonPath != null && skeletonPath.isFile()) {
+            if (skeletonPath != null && Files.isRegularFile(skeletonPath)) {
                 try {
-                     filename = skeletonPath.getName();
+                     filename = skeletonPath.getFileName().toString();
                 } catch (NullPointerException e) {
                     System.out.println("Could not get file name for " + skeletonPath);
                 }
@@ -165,17 +163,17 @@ public class SkeletonSuiteTest {
 
         //Go through all the skeleton files.  Check if the PUID that DROId identifies for the file matches the beginning
         // of the file name. Or if not, that it is expected to return a different PUID, or none at all.
-        for(final File skeletonPath : this.allPaths) {
+        for(final Path skeletonPath : this.allPaths) {
 
-            URI resourceUri = skeletonPath.toURI();
-            String filename = skeletonPath.getName();
+            URI resourceUri = skeletonPath.toUri();
+            String filename = skeletonPath.getFileName().toString();
 
-            RequestMetaData metaData
-                    = new RequestMetaData(skeletonPath.length(), skeletonPath.lastModified(), filename);
+            RequestMetaData metaData = new RequestMetaData(
+                    Files.size(skeletonPath), Files.getLastModifiedTime(skeletonPath).toMillis(), filename);
             RequestIdentifier identifier = new RequestIdentifier(resourceUri);
             identifier.setParentId(1L);
 
-            IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+            IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
             request.open(skeletonPath);
 
             IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
@@ -247,42 +245,42 @@ public class SkeletonSuiteTest {
                 errorCount), 0, errorCount);
     }
 
-    private void populateNonAndDifferentlyIdentifiedFiles() throws FileNotFoundException, IOException {
+    private void populateNonAndDifferentlyIdentifiedFiles() throws IOException {
 
-        List<String> unidentifiedFiles = new ArrayList<String>();
+        final List<String> unidentifiedFiles = new ArrayList<>();
 
-        FileInputStream inputStream = new FileInputStream("test-skeletons/current-unidentified-files.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        try(final BufferedReader reader = Files.newBufferedReader(Paths.get("test-skeletons/current-unidentified-files.txt"), UTF_8)) {
 
-        String strLine;
-
-        while ((strLine = reader.readLine()) != null)   {
-            // Split the line by whitespace to allow for comments after filename.
-            // N.B. Assumes no spaces in the filename!
-            //Allow for comment lines and commented out entries...
-            if (!strLine.startsWith("//")) {
-                String filename = strLine.split("\\s+")[0];
-                unidentifiedFiles.add(filename);
+            String strLine;
+            while ((strLine = reader.readLine()) != null) {
+                // Split the line by whitespace to allow for comments after filename.
+                // N.B. Assumes no spaces in the filename!
+                //Allow for comment lines and commented out entries...
+                if (!strLine.startsWith("//")) {
+                    String filename = strLine.split("\\s+")[0];
+                    unidentifiedFiles.add(filename);
+                }
             }
-        }
 
-        reader.close();
+        }
 
         this.currentKnownUnidentifiedFiles = unidentifiedFiles.toArray(new String[0]);
 
         //Populate files whihc ar expected to be identified by DROId but the PUID identified is not currently
         //expected to match the beginning of the file name.
-        inputStream = new FileInputStream("test-skeletons/current-differently-identified-files.txt");
-        reader = new BufferedReader(new InputStreamReader(inputStream));
 
-        while ((strLine = reader.readLine()) != null)   {
-            // Split the line by whitespace to allow for comments after filename and PUID.
-            // N.B. Assumes no spaces in the filename!
-            //Allow for comment lines and commented out entries.
-            if (!strLine.startsWith("//")) {
-                String filename = strLine.split("\\s+")[0];
-                String puid = strLine.split("\\s+")[1];
-                this.currentMisidentifiedFiles.put(filename, puid);
+        try(final BufferedReader reader = Files.newBufferedReader(Paths.get("test-skeletons/current-differently-identified-files.txt"), UTF_8)) {
+
+            String strLine;
+            while ((strLine = reader.readLine()) != null) {
+                // Split the line by whitespace to allow for comments after filename and PUID.
+                // N.B. Assumes no spaces in the filename!
+                //Allow for comment lines and commented out entries.
+                if (!strLine.startsWith("//")) {
+                    String filename = strLine.split("\\s+")[0];
+                    String puid = strLine.split("\\s+")[1];
+                    this.currentMisidentifiedFiles.put(filename, puid);
+                }
             }
         }
     }

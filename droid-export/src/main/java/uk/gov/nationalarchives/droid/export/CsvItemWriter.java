@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.export;
 
-import java.io.File;
 import java.io.Writer;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -261,7 +261,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     
     private static String toFilePath(URI uri) {
         if (FILE_URI_SCHEME.equals(uri.getScheme())) {
-            return new File(uri).getAbsolutePath();
+            return Paths.get(uri).toAbsolutePath().toString();
         }
         
         return null;

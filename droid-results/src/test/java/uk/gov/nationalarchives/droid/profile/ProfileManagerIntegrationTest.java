@@ -31,9 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,22 +55,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -96,75 +97,72 @@ public class ProfileManagerIntegrationTest {
    @BeforeClass
    public static void setupFiles() throws IOException {
       RuntimeConfig.configureRuntimeEnvironment();
-      new File("integration-test-files").mkdir();
-      new File("integration-test-files/file1").createNewFile();
+      Files.createDirectories(Paths.get("integration-test-files"));
+      Files.createFile(Paths.get("integration-test-files/file1"));
    }
 
    @AfterClass
    public static void tearDown() throws IOException {
-      FileUtils.forceDelete(new File("integration-test-files"));
+      FileUtil.deleteQuietly(Paths.get("integration-test-files"));
    }
    
    @Before
    public void setup() {
       binarySignatureFileInfo = new SignatureFileInfo(26, false, SignatureType.BINARY);
-      binarySignatureFileInfo.setFile(new File("test_sig_files/DROID_SignatureFile_V26.xml"));
+      binarySignatureFileInfo.setFile(Paths.get("test_sig_files/DROID_SignatureFile_V26.xml"));
 
       containerSignatureFileInfo = new SignatureFileInfo(26, false, SignatureType.CONTAINER);
-      containerSignatureFileInfo.setFile(new File("test_sig_files/container-signature.xml"));
+      containerSignatureFileInfo.setFile(Paths.get("test_sig_files/container-signature.xml"));
    }
 
    @Test
    public void testStartProfileSpecPersistsAJobForEachFileResourceNode() throws Exception {
-      try {
-         FileUtils.forceDelete(new File("profiles/integration-test"));
-      } catch (IOException e) {
-      }
+      FileUtil.deleteQuietly(Paths.get("profiles/integration-test"));
 
-      File testFile = new File("test_sig_files/sample.pdf");
-      FileProfileResource fileResource = new FileProfileResource(testFile);
+      final Path testFile = Paths.get("test_sig_files/sample.pdf");
+      final FileProfileResource fileResource = new FileProfileResource(testFile);
       assertNotNull(profileManager);
-      ProfileSpec profileSpec = new ProfileSpec();
+      final ProfileSpec profileSpec = new ProfileSpec();
       profileSpec.addResource(fileResource);
 
-      ProfileResultObserver myObserver = mock(ProfileResultObserver.class);
+      final ProfileResultObserver myObserver = mock(ProfileResultObserver.class);
 
-      Map<SignatureType, SignatureFileInfo> signatureFiles = new HashMap<SignatureType, SignatureFileInfo>();
+      final Map<SignatureType, SignatureFileInfo> signatureFiles = new HashMap<>();
       signatureFiles.put(SignatureType.BINARY, binarySignatureFileInfo);
       signatureFiles.put(SignatureType.CONTAINER, containerSignatureFileInfo);
 
-      ProfileInstance profile = profileManager.createProfile(signatureFiles);
+      final ProfileInstance profile = profileManager.createProfile(signatureFiles);
       profileManager.updateProfileSpec(profile.getUuid(), profileSpec);
       profileManager.setResultsObserver(profile.getUuid(), myObserver);
 
-      Collection<ProfileResourceNode> rootNodes = profileManager.findRootNodes(profile.getUuid());
+      final Collection<ProfileResourceNode> rootNodes = profileManager.findRootNodes(profile.getUuid());
       assertEquals(1, rootNodes.size());
-      assertEquals(testFile.toURI(), rootNodes.iterator().next().getUri());
+      assertEquals(testFile.toUri(), rootNodes.iterator().next().getUri());
 
-      ProgressObserver progressObserver = mock(ProgressObserver.class);
+      final ProgressObserver progressObserver = mock(ProgressObserver.class);
       profileManager.setProgressObserver(profile.getUuid(), progressObserver);
       profile.changeState(ProfileState.VIRGIN);
 
-      Future<?> submission = profileManager.start(profile.getUuid());
+      final Future<?> submission = profileManager.start(profile.getUuid());
       submission.get();
 
       // Assert we got our result
-      ArgumentCaptor<ProfileResourceNode> nodeCaptor = ArgumentCaptor.forClass(ProfileResourceNode.class);
+      final ArgumentCaptor<ProfileResourceNode> nodeCaptor = ArgumentCaptor.forClass(ProfileResourceNode.class);
       verify(myObserver).onResult(nodeCaptor.capture());
-      URI capturedUri = nodeCaptor.getValue().getUri();
+      final URI capturedUri = nodeCaptor.getValue().getUri();
 
-      assertEquals(testFile.toURI(), capturedUri);
+      assertEquals(testFile.toUri(), capturedUri);
 
       // Now assert that file/1 is in the database
-      List<ProfileResourceNode> nodes = profileManager.findProfileResourceNodeAndImmediateChildren(
+      final List<ProfileResourceNode> nodes = profileManager.findProfileResourceNodeAndImmediateChildren(
               profile.getUuid(), null);
 
       assertEquals(1, nodes.size());
-      ProfileResourceNode node = nodes.get(0);
-      assertEquals(testFile.toURI(), node.getUri());
+      final ProfileResourceNode node = nodes.get(0);
+      assertEquals(testFile.toUri(), node.getUri());
 //        assertEquals(JobStatus.COMPLETE, node.getJob().getStatus());
-      assertEquals(testFile.length(), node.getMetaData().getSize().longValue());
-      assertEquals(new Date(testFile.lastModified()), node.getMetaData().getLastModifiedDate());
+      assertEquals(FileUtil.sizeQuietly(testFile), node.getMetaData().getSize().longValue());
+      assertEquals(new Date(FileUtil.lastModifiedQuietly(testFile).toMillis()), node.getMetaData().getLastModifiedDate());
 
       // check the progress listener was invoked properly.
       verify(progressObserver, times(1)).onProgress(0);
@@ -174,14 +172,10 @@ public class ProfileManagerIntegrationTest {
 
    @Test
    public void testStartProfileSpecPersistsJobsForEachFileInANonRecursiveDirResourceNode() throws Exception {
-      try {
-         FileUtils.forceDelete(new File("profiles/integration-test2"));
-      } catch (IOException e) {
-      }
+      FileUtil.deleteQuietly(Paths.get("profiles/integration-test2"));
 
-      File testFile = new File("test_sig_files");
-      
-      int folderSize = testFile.listFiles().length;
+      final Path testFile = Paths.get("test_sig_files");
+      int folderSize = FileUtil.listFiles(testFile, false, (DirectoryStream.Filter)null).size();
 
       // Test affected because hard coded folder may be in version control
       // If in older versions of subversion .svn will exist. This is the most
@@ -193,13 +187,13 @@ public class ProfileManagerIntegrationTest {
       final int CHECK_VALUE = 8;
       final int PROGRESS_CHECK = 100;
       
-      FileProfileResource fileResource = new DirectoryProfileResource(testFile, false);
+      final FileProfileResource fileResource = new DirectoryProfileResource(testFile, false);
       assertNotNull(profileManager);
-      ProfileSpec profileSpec = new ProfileSpec();
+      final ProfileSpec profileSpec = new ProfileSpec();
       profileSpec.addResource(fileResource);
 
-      ProfileResultObserver myObserver = mock(ProfileResultObserver.class);
-      Map<SignatureType, SignatureFileInfo> signatureFiles = new HashMap<SignatureType, SignatureFileInfo>();
+      final ProfileResultObserver myObserver = mock(ProfileResultObserver.class);
+      final Map<SignatureType, SignatureFileInfo> signatureFiles = new HashMap<SignatureType, SignatureFileInfo>();
       signatureFiles.put(SignatureType.BINARY, binarySignatureFileInfo);
       signatureFiles.put(SignatureType.CONTAINER, containerSignatureFileInfo);
       ProfileInstance profile = profileManager.createProfile(signatureFiles);
@@ -207,24 +201,24 @@ public class ProfileManagerIntegrationTest {
       profile.changeState(ProfileState.VIRGIN);
       profile.setProcessArchiveFiles(false);
       profile.setProcessWebArchiveFiles(false);
-      
-      String profileId = profile.getUuid();
+
+      final String profileId = profile.getUuid();
       profileManager.updateProfileSpec(profileId, profileSpec);
       profileManager.setResultsObserver(profileId, myObserver);
 
-      ProgressObserver progressObserver = mock(ProgressObserver.class);
+      final ProgressObserver progressObserver = mock(ProgressObserver.class);
       profileManager.setProgressObserver(profileId, progressObserver);
 
-      Future<?> submission = profileManager.start(profileId);
+      final Future<?> submission = profileManager.start(profileId);
       submission.get();
 
       // Assert we got our result notifications
-      ArgumentCaptor<ProfileResourceNode> nodeCaptor = ArgumentCaptor.forClass(ProfileResourceNode.class);
-      List<ProfileResourceNode> capturedUris = nodeCaptor.getAllValues();
+      final ArgumentCaptor<ProfileResourceNode> nodeCaptor = ArgumentCaptor.forClass(ProfileResourceNode.class);
+      final List<ProfileResourceNode> capturedUris = nodeCaptor.getAllValues();
 
       verify(myObserver, atLeast(CHECK_VALUE)).onResult(nodeCaptor.capture());
 
-      ProfileResourceNode testFileNode = capturedUris.get(0);
+      final ProfileResourceNode testFileNode = capturedUris.get(0);
 
       Collections.sort(capturedUris, new Comparator<ProfileResourceNode>() {
 
@@ -235,24 +229,24 @@ public class ProfileManagerIntegrationTest {
       });
 
       // Now assert that file/1 is in the database
-      List<ProfileResourceNode> nodes = profileManager.findProfileResourceNodeAndImmediateChildren(
+      final List<ProfileResourceNode> nodes = profileManager.findProfileResourceNodeAndImmediateChildren(
               profile.getUuid(), testFileNode.getId());
 
       // There are n expectedResources in node list
       assertEquals(EXPECTED_RESOURCES, nodes.size());
 
       ProfileResourceNode samplePdf = null;
-      File samplePdfFile = new File("test_sig_files/sample.pdf");
-      for (ProfileResourceNode childNode : nodes) {
-         if (childNode.getUri().equals(samplePdfFile.toURI())) {
+      final Path samplePdfFile = Paths.get("test_sig_files/sample.pdf");
+      for (final ProfileResourceNode childNode : nodes) {
+         if (childNode.getUri().equals(samplePdfFile.toUri())) {
             samplePdf = childNode;
             break;
          }
       }
 
-      assertEquals(samplePdfFile.toURI(), samplePdf.getUri());
-      assertEquals(samplePdfFile.length(), samplePdf.getMetaData().getSize().longValue());
-      assertEquals(new Date(samplePdfFile.lastModified()), samplePdf.getMetaData().getLastModifiedDate());
+      assertEquals(samplePdfFile.toUri(), samplePdf.getUri());
+      assertEquals(FileUtil.sizeQuietly(samplePdfFile), samplePdf.getMetaData().getSize().longValue());
+      assertEquals(new Date(FileUtil.lastModifiedQuietly(samplePdfFile).toMillis()), samplePdf.getMetaData().getLastModifiedDate());
 
       // check the progress listener was invoked properly.
       verify(progressObserver, atLeast(CHECK_VALUE)).onProgress(anyInt());

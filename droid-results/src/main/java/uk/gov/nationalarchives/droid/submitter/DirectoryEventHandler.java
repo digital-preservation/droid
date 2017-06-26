@@ -31,7 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.util.Date;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -39,6 +41,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -59,16 +62,17 @@ public class DirectoryEventHandler {
      * @param restricted true if access to the directory was restricted, false otherwise
      * @return the id of the directory
      */
-    public ResourceId onEvent(File dir, ResourceId parentId, int depth, boolean restricted) {
+    public ResourceId onEvent(final Path dir, ResourceId parentId, int depth, boolean restricted) {
         IdentificationResultImpl result = new IdentificationResultImpl();
         result.setMethod(IdentificationMethod.NULL);
-        
+
+        final FileTime lastModified = FileUtil.lastModifiedQuietly(dir);
         RequestMetaData metaData = new RequestMetaData(
-                dir.length(),
-                dir.lastModified(),
-                depth == 0 ? dir.getAbsolutePath() : dir.getName());
+                FileUtil.sizeQuietly(dir),
+                lastModified == null ? new Date(0).getTime() : new Date(lastModified.toMillis()).getTime(),
+                depth == 0 ? dir.toAbsolutePath().toString() : FileUtil.fileName(dir));
         
-        RequestIdentifier identifier = new RequestIdentifier(SubmitterUtils.toURI(dir, uriStringBuilder));
+        RequestIdentifier identifier = new RequestIdentifier(SubmitterUtils.toURI(dir.toFile(), uriStringBuilder));
         identifier.setParentResourceId(parentId);
         result.setRequestMetaData(metaData);
         result.setIdentifier(identifier);

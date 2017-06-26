@@ -31,10 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.core;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -63,19 +65,15 @@ public class SignatureFileParser {
      * @return sig file
      * @throws SignatureParseException if there is a problem parsing the signature file.
      */
-    FFSignatureFile parseSigFile(String theFileName) throws SignatureParseException {
+    FFSignatureFile parseSigFile(final String theFileName) throws SignatureParseException {
 
-        SAXModelBuilder mb = new SAXModelBuilder();
-        XMLReader parser = getXMLReader(mb);
+        final SAXModelBuilder mb = new SAXModelBuilder();
+        final XMLReader parser = getXMLReader(mb);
 
         //read in the XML file
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(theFileName), "UTF-8"));
+        try (final Reader in = Files.newBufferedReader(Paths.get(theFileName), UTF_8)) {
             parser.parse(new InputSource(in));
-            in.close();
-        } catch (IOException e) {
-            throw new SignatureParseException(e.getMessage(), e);
-        } catch (SAXException e) {
+        } catch (final IOException | SAXException e) {
             throw new SignatureParseException(e.getMessage(), e);
         }
         return (FFSignatureFile) mb.getModel();

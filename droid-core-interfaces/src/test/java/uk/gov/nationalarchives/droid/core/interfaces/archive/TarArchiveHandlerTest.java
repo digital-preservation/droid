@@ -31,11 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +54,8 @@ import static org.mockito.Mockito.when;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 
-import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
@@ -74,61 +73,61 @@ public class TarArchiveHandlerTest {
     @Test
     public void testHandleTarFile() throws Exception {
 
-        File file = new File(getClass().getResource("/saved.tar").getFile());
+        final Path file = Paths.get(getClass().getResource("/saved.tar").getFile());
 
         IdentificationRequestFactory factory = mock(IdentificationRequestFactory.class);
 
         // count the tar entries
-        List<IdentificationRequest> mockRequests = new ArrayList<IdentificationRequest>();
-        InputStream in = new FileInputStream(file);
-        TarArchiveInputStream tarIn = new TarArchiveInputStream(in);
-        ArchiveEntry entry;
-        ResourceId expectedParentId = new ResourceId(99L, "");
-        int count = 0;
-        while ((entry = tarIn.getNextEntry()) != null) {
-            URI expectedUri = ArchiveFileUtils.toTarUri(file.toURI(), entry.getName());
-            IdentificationRequest mockRequest = mock(IdentificationRequest.class);
-            
-            RequestIdentifier expectedIdentifier = new RequestIdentifier(expectedUri);
-            expectedIdentifier.setParentResourceId(expectedParentId);
-            expectedIdentifier.setAncestorId(10L);
+        List<IdentificationRequest> mockRequests = new ArrayList<>();
+        try(final InputStream in = Files.newInputStream(file);
+            final TarArchiveInputStream tarIn = new TarArchiveInputStream(in)) {
+            ArchiveEntry entry;
+            ResourceId expectedParentId = new ResourceId(99L, "");
+            int count = 0;
+            while ((entry = tarIn.getNextEntry()) != null) {
+                URI expectedUri = ArchiveFileUtils.toTarUri(file.toUri(), entry.getName());
+                IdentificationRequest mockRequest = mock(IdentificationRequest.class);
 
-            when(mockRequest.getIdentifier()).thenReturn(expectedIdentifier);
-            mockRequests.add(mockRequest);
-            when(factory.newRequest(any(RequestMetaData.class), eq(expectedIdentifier)))
-                .thenReturn(mockRequests.get(count));
-            count++;
+                RequestIdentifier expectedIdentifier = new RequestIdentifier(expectedUri);
+                expectedIdentifier.setParentResourceId(expectedParentId);
+                expectedIdentifier.setAncestorId(10L);
+
+                when(mockRequest.getIdentifier()).thenReturn(expectedIdentifier);
+                mockRequests.add(mockRequest);
+                when(factory.newRequest(any(RequestMetaData.class), eq(expectedIdentifier)))
+                        .thenReturn(mockRequests.get(count));
+                count++;
+            }
+
+            AsynchDroid droidCore = mock(AsynchDroid.class);
+
+            TarArchiveHandler handler = new TarArchiveHandler();
+            handler.setFactory(factory);
+            handler.setDroidCore(droidCore);
+
+            ResultHandler resultHandler = mock(ResultHandler.class);
+            when(resultHandler.handleDirectory(any(IdentificationResult.class),
+                    any(ResourceId.class), anyBoolean())).thenReturn(expectedParentId);
+            handler.setResultHandler(resultHandler);
+
+            IdentificationRequest originalRequest = mock(IdentificationRequest.class);
+            RequestIdentifier originalIdentifier = new RequestIdentifier(file.toUri());
+            originalIdentifier.setAncestorId(10L);
+            originalIdentifier.setParentId(20L);
+            originalIdentifier.setNodeId(30L);
+
+            when(originalRequest.getIdentifier()).thenReturn(originalIdentifier);
+            when(originalRequest.getSourceInputStream()).thenReturn(Files.newInputStream(file));
+            handler.handle(originalRequest);
+
+            //TODO:MP: mocking this fails... fix these tests.
+            //BNO: These tests now working (didn't do anything specific to fix them!)
+            verify(droidCore).submit(mockRequests.get(2));
+            verify(droidCore).submit(mockRequests.get(3));
+            verify(droidCore).submit(mockRequests.get(4));
+            verify(droidCore).submit(mockRequests.get(5));
+            verify(droidCore).submit(mockRequests.get(6));
         }
-        
-        AsynchDroid droidCore = mock(AsynchDroid.class);
-
-        TarArchiveHandler handler = new TarArchiveHandler();
-        handler.setFactory(factory);
-        handler.setDroidCore(droidCore);
-        
-        ResultHandler resultHandler = mock(ResultHandler.class);
-        when(resultHandler.handleDirectory(any(IdentificationResult.class), 
-                any(ResourceId.class), anyBoolean())).thenReturn(expectedParentId);
-        handler.setResultHandler(resultHandler);
-        
-        IdentificationRequest originalRequest = mock(IdentificationRequest.class);
-        RequestIdentifier originalIdentifier = new RequestIdentifier(file.toURI());
-        originalIdentifier.setAncestorId(10L);
-        originalIdentifier.setParentId(20L);
-        originalIdentifier.setNodeId(30L);
-        
-        when(originalRequest.getIdentifier()).thenReturn(originalIdentifier);
-        when(originalRequest.getSourceInputStream()).thenReturn(new FileInputStream(file));
-        handler.handle(originalRequest);
-
-        //TODO:MP: mocking this fails... fix these tests.
-        //BNO: These tests now working (didn't do anything specific to fix them!)
-        verify(droidCore).submit(mockRequests.get(2));
-        verify(droidCore).submit(mockRequests.get(3));
-        verify(droidCore).submit(mockRequests.get(4));
-        verify(droidCore).submit(mockRequests.get(5));
-        verify(droidCore).submit(mockRequests.get(6));
-
     }
     
     @Test
@@ -136,8 +135,8 @@ public class TarArchiveHandlerTest {
         
         String jarFileName = getClass().getResource("/persistence.tar").getFile();
         
-        File jarFile = new File(jarFileName);
-        assertTrue(jarFile.exists());
+        Path jarFile = Paths.get(jarFileName);
+        assertTrue(Files.exists(jarFile));
         
         TarArchiveHandler handler = new TarArchiveHandler();
         handler.setFactory(new TarEntryRequestFactory());
@@ -146,13 +145,13 @@ public class TarArchiveHandlerTest {
         handler.setDroidCore(droidCore);
         
         IdentificationRequest originalRequest = mock(IdentificationRequest.class);
-        RequestIdentifier identifier = new RequestIdentifier(jarFile.toURI());
+        RequestIdentifier identifier = new RequestIdentifier(jarFile.toUri());
         identifier.setAncestorId(10L);
         //identifier.setParentId(20L);
         identifier.setNodeId(20L);
         
         when(originalRequest.getIdentifier()).thenReturn(identifier);
-        when(originalRequest.getSourceInputStream()).thenReturn(new FileInputStream(jarFile));
+        when(originalRequest.getSourceInputStream()).thenReturn(Files.newInputStream(jarFile));
         handler.handle(originalRequest);
         
         ArgumentCaptor<IdentificationRequest> captor = ArgumentCaptor.forClass(IdentificationRequest.class);

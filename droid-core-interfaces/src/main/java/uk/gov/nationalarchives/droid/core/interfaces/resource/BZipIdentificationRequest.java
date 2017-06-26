@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 //BNO-BS2 - replace this import with AbstractReader or WindowReader
 //in package net.byteseek.io.reader
@@ -60,7 +60,7 @@ public class BZipIdentificationRequest implements IdentificationRequest<InputStr
     private final String extension;
     private final String fileName;
     private long size;
-    private File tempDir;
+    private Path tempDir;
     private RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
     private WindowReader reader;
@@ -73,8 +73,8 @@ public class BZipIdentificationRequest implements IdentificationRequest<InputStr
      * @param identifier request identification object
      * @param tempDir the location to write temp files.
      */
-    public BZipIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
-                                     File tempDir) {
+    public BZipIdentificationRequest(final RequestMetaData metaData, final RequestIdentifier identifier,
+                                     final Path tempDir) {
         this.identifier = identifier;
 
         String path = identifier.getUri().getSchemeSpecificPart();
@@ -88,7 +88,7 @@ public class BZipIdentificationRequest implements IdentificationRequest<InputStr
      * {@inheritDoc}
      */
     @Override
-    public final void open(InputStream in) throws IOException {
+    public final void open(final InputStream in) throws IOException {
         reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY);
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         size = reader.length(); // getting the size of a reader backed by a stream forces a stream read.

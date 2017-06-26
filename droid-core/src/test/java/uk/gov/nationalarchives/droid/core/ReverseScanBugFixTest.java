@@ -31,10 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import org.junit.*;
@@ -66,22 +66,23 @@ public class ReverseScanBugFixTest {
     @Test
     public void testReverseScan() throws Exception {
     
-         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
         droid.setSignatureFile(TESTAREA + SIGFILE);
         try {
             droid.init();
         } catch (SignatureParseException x) {
             assertEquals("Can't parse signature file", x.getMessage());
         }
-        File file = new File(TESTAREA + SCANFILE);
-        assertTrue(file.exists());
-        URI resourceUri = file.toURI();
+        final Path file = Paths.get(TESTAREA + SCANFILE);
+        assertTrue(Files.exists(file));
+        URI resourceUri = file.toUri();
   
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), SCANFILE);
+        RequestMetaData metaData = new RequestMetaData(
+                Files.size(file), Files.getLastModifiedTime(file).toMillis(), SCANFILE);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
         
-        IdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
+        IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
         request.open(file);
 
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);

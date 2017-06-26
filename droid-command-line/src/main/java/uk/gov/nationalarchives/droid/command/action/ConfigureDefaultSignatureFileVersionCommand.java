@@ -107,7 +107,7 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
             properties.save();
             SignatureFileInfo sigFileInfo = signatureManager.getDefaultSignatures().get(type);
             printWriter.println(I18N.getResource(I18N.CONFIGURE_SIGNATURE_FILE_VERSION_SUCCESS,
-                    sigFileInfo.getVersion(), sigFileInfo.getFile().getName()));
+                    sigFileInfo.getVersion(), sigFileInfo.getFile().getFileName().toString()));
                     
         } catch (ConfigurationException e) {
             throw new CommandExecutionException(e);

@@ -31,18 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.report;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
@@ -97,13 +96,11 @@ public final class ReportUtils {
      * @param resources the resources to transform
      * @return List of resource Paths
      */
-    static List<String> toResourcePaths(List<AbstractProfileResource> resources) {
-        List<String> profileResourcePaths = new ArrayList<String>();
-
-        for (AbstractProfileResource resource : resources) {
-            profileResourcePaths.add(new File(resource.getUri()).getPath());
+    static List<String> toResourcePaths(final List<AbstractProfileResource> resources) {
+        final List<String> profileResourcePaths = new ArrayList<>();
+        for (final AbstractProfileResource resource : resources) {
+            profileResourcePaths.add(Paths.get(resource.getUri()).toAbsolutePath().toString());
         }
-
         return profileResourcePaths;
     }
     
@@ -167,47 +164,39 @@ public final class ReportUtils {
      * @param classLoader the classloader used to locate resources
      * @throws IOException if a resource could not be copied
      */
-    static void populateReportDefinitionsDirectory(File destinationDir, ClassLoader classLoader) 
+    static void populateReportDefinitionsDirectory(final Path destinationDir, final ClassLoader classLoader)
         throws IOException {
         
-        for (String reportDefFilename : REPORT_DEFS.keySet()) {
-            List<String> transformList = REPORT_DEFS.get(reportDefFilename);
+        for (final String reportDefFilename : REPORT_DEFS.keySet()) {
+            final List<String> transformList = REPORT_DEFS.get(reportDefFilename);
             // Root - no reports, just transforms:
             if (ROOT_FOLDER.equals(reportDefFilename)) {
                 copyTransforms(destinationDir, transformList, classLoader);
             } else {
-                String reportDirName = FilenameUtils.getBaseName(reportDefFilename);
-                File reportDir = new File(destinationDir, reportDirName);
-                reportDir.mkdir();
+                final String reportDirName = FilenameUtils.getBaseName(reportDefFilename);
+                final Path reportDir = destinationDir.resolve(reportDirName);
+                Files.createDirectories(reportDir);
                 copyResourceToFile(reportDefFilename, reportDir, classLoader);
                 copyTransforms(reportDir, transformList, classLoader);
             }
         }
     }
 
-    private static void copyTransforms(File destinationDir, 
-            List<String> transformNames, ClassLoader classLoader) throws IOException {
-        for (String transformName : transformNames) {
+    private static void copyTransforms(final Path destinationDir,
+            final List<String> transformNames, final ClassLoader classLoader) throws IOException {
+        for (final String transformName : transformNames) {
             copyResourceToFile(transformName, destinationDir, classLoader);
         }
     }
     
     // Copies a resource if the file doesn't already exist.
-    private static void copyResourceToFile(String resourceName,
-            File destinationDir, ClassLoader classLoader) throws IOException {
-        File reportDefFile = new File(destinationDir, resourceName);
-        if (!reportDefFile.exists()) {
-            reportDefFile.createNewFile();
-            OutputStream out = new FileOutputStream(reportDefFile);
-            InputStream in = classLoader.getResourceAsStream(resourceName);
-            IOUtils.copy(in, out);
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
+    private static void copyResourceToFile(final String resourceName,
+            final Path destinationDir, final ClassLoader classLoader) throws IOException {
+        final Path reportDefFile = destinationDir.resolve(resourceName);
+        if (!Files.exists(reportDefFile)) {
+            try (final InputStream in = classLoader.getResourceAsStream(resourceName)) {
+                Files.copy(in, reportDefFile);
             }
         }
     }
-   
 }

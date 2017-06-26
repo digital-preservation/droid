@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,16 +75,16 @@ public class ListAllSignatureFilesCommandTest {
     @Test
     public void testExecuteWithSignatureFilesPresent() {
         SignatureFileInfo info1 = new SignatureFileInfo(33, false, SignatureType.BINARY);
-        info1.setFile(new File("foo/bar/version_33.xml"));
+        info1.setFile(Paths.get("foo/bar/version_33.xml"));
         SignatureFileInfo info2 = new SignatureFileInfo(45, false, SignatureType.BINARY);
-        info2.setFile(new File("foo/bar/version_45.xml"));
+        info2.setFile(Paths.get("foo/bar/version_45.xml"));
         SignatureFileInfo info3 = new SignatureFileInfo(78, true, SignatureType.BINARY);
-        info3.setFile(new File("foo/bar/version_78.xml"));
+        info3.setFile(Paths.get("foo/bar/version_78.xml"));
         
         SignatureFileInfo info4 = new SignatureFileInfo(133, false, SignatureType.CONTAINER);
-        info4.setFile(new File("foo/bar/version_133.xml"));
+        info4.setFile(Paths.get("foo/bar/version_133.xml"));
         SignatureFileInfo info5 = new SignatureFileInfo(145, false, SignatureType.CONTAINER);
-        info5.setFile(new File("foo/bar/version_145.xml"));
+        info5.setFile(Paths.get("foo/bar/version_145.xml"));
 
         SortedMap<String, SignatureFileInfo> binSigFiles = new TreeMap<String, SignatureFileInfo>();
         binSigFiles.put("33", info1);

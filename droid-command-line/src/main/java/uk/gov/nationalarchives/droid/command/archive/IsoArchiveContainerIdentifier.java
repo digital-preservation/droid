@@ -90,7 +90,7 @@ public class IsoArchiveContainerIdentifier extends ArchiveContentIdentifier {
             FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
 
             try {
-                try (Iso9660FileSystem fileSystem = new Iso9660FileSystem(req.getFile(), true)) {
+                try (Iso9660FileSystem fileSystem = new Iso9660FileSystem(req.getFile().toFile(), true)) {
                     for (Iso9660FileEntry entry : fileSystem) {
                         processEntry(entry, uri, fileSystem, newPath);
                     }

@@ -91,7 +91,7 @@ public class RarArchiveContainerIdentifier extends ArchiveContentIdentifier {
 
             FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
 
-            FileVolumeManager fileVolumeManager = new FileVolumeManager(req.getFile());
+            FileVolumeManager fileVolumeManager = new FileVolumeManager(req.getFile().toFile());
 
             try {
                 try (Archive archive = new Archive(fileVolumeManager)) {

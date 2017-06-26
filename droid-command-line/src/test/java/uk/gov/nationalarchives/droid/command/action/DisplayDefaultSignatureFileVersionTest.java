@@ -31,8 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -70,8 +71,8 @@ public class DisplayDefaultSignatureFileVersionTest {
     
     @Test
     public void testDisplayDefaultSignatureFileVersion() throws Exception {
-        File sigFile1 = new File("foo/bar/myBinSigFile.xml");
-        File sigFile2 = new File("foo/bar/myContainerSigFile.xml");
+        final Path sigFile1 = Paths.get("foo/bar/myBinSigFile.xml");
+        final Path sigFile2 = Paths.get("foo/bar/myContainerSigFile.xml");
 
         SignatureFileInfo sigFileInfo1 = new SignatureFileInfo(69, false, SignatureType.BINARY);
         SignatureFileInfo sigFileInfo2 = new SignatureFileInfo(71, false, SignatureType.CONTAINER);

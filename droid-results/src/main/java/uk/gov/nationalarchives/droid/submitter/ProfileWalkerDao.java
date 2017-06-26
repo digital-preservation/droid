@@ -31,7 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -41,6 +42,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 
 /**
@@ -54,7 +57,7 @@ public class ProfileWalkerDao {
 
     private final Log log = LogFactory.getLog(getClass());
     private final JAXBContext context;
-    private String profileHomeDir;
+    private Path profileHomeDir;
     
     /**
      * @throws JAXBException if the JAXBContext could not be instantiated.
@@ -72,11 +75,11 @@ public class ProfileWalkerDao {
      */
     public ProfileWalkState load() {
         
-        File xml = new File(profileHomeDir, FILE_WALKER_XML);
-        if (xml.exists()) {
+        final Path xml = profileHomeDir.resolve(FILE_WALKER_XML);
+        if (Files.exists(xml)) {
             try {
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                ProfileWalkState walkState = (ProfileWalkState) unmarshaller.unmarshal(xml);
+                ProfileWalkState walkState = (ProfileWalkState) unmarshaller.unmarshal(xml.toFile());
                 return walkState;
             } catch (JAXBException e) {
                 log.error(e);
@@ -93,12 +96,12 @@ public class ProfileWalkerDao {
      */
     public void save(ProfileWalkState walkState) {
         
-        File xml = new File(profileHomeDir, FILE_WALKER_XML);
+        final Path xml = profileHomeDir.resolve(FILE_WALKER_XML);
         
         try {
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            m.marshal(walkState, xml);
+            m.marshal(walkState, xml.toFile());
         } catch (PropertyException e) {
             log.error(e);
             throw new RuntimeException(e);
@@ -112,19 +115,19 @@ public class ProfileWalkerDao {
      * 
      */
     public void delete() {
-        File xml = new File(profileHomeDir, FILE_WALKER_XML);
-        if (!xml.delete() && xml.exists()) {
+        final Path xml = profileHomeDir.resolve(FILE_WALKER_XML);
+        if (!FileUtil.deleteQuietly(xml)) {
             String message = String.format("Could not delete file walker xml file: %s. "
-                    + "Will try to delete on exit.", xml.getAbsolutePath());
+                    + "Will try to delete on exit.", xml.toAbsolutePath().toString());
             log.warn(message);
-            xml.deleteOnExit();
+            xml.toFile().deleteOnExit();
         }
     }
     
     /**
      * @param profileHomeDir the profileHomeDir to set
      */
-    public void setProfileHomeDir(String profileHomeDir) {
+    public void setProfileHomeDir(Path profileHomeDir) {
         this.profileHomeDir = profileHomeDir;
     }
 

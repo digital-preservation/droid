@@ -31,8 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -44,13 +46,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -62,6 +62,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 
 /**
@@ -109,16 +110,16 @@ public class ProfileManagerImplTest {
     @Ignore("This should really be integration tests")
     public void testCreateProfileFromProfileSpecAndOpenProfile() throws Exception {
         
-        File derbyDatabase = new File("profiles/myLocation");
-        if (derbyDatabase.exists()) {
-            FileUtils.deleteDirectory(derbyDatabase);
+        final Path derbyDatabase = Paths.get("profiles/myLocation");
+        if (Files.exists(derbyDatabase)) {
+            FileUtil.deleteQuietly(derbyDatabase);
         }
         
         profileSpecDao = new JaxbProfileSpecDao();
         profileManager.setProfileSpecDao(profileSpecDao);
         
         SignatureFileInfo signatureFileInfo = new SignatureFileInfo(26, false, SignatureType.BINARY);
-        signatureFileInfo.setFile(new File("test_sig_files/DROID_SignatureFile_V26.xml"));
+        signatureFileInfo.setFile(Paths.get("test_sig_files/DROID_SignatureFile_V26.xml"));
         
         Map<SignatureType, SignatureFileInfo> signatureFiles = new HashMap<SignatureType, SignatureFileInfo>();
         signatureFiles.put(SignatureType.BINARY, signatureFileInfo);
@@ -132,7 +133,7 @@ public class ProfileManagerImplTest {
         assertEquals(instance.getUuid(), instance2.getUuid());
 
         // check we have a database.
-        String databaseLocation = new File("profiles/" + profileId + "/db").getPath();
+        Path databaseLocation = Paths.get("profiles", profileId, "db");
         Class.forName(DERBY_DRIVER_CLASSNAME);
         Connection conn = DriverManager.getConnection("jdbc:derby:" + databaseLocation);
         
@@ -142,7 +143,7 @@ public class ProfileManagerImplTest {
         assertEquals(0, resultSet.getInt(1));
         conn.close();
         
-        assertTrue(new File("profiles/" + profileId + "/profile.xml").exists());
+        assertTrue(Files.exists(Paths.get("profiles", profileId, "profile.xml")));
         
         
     }
@@ -165,17 +166,17 @@ public class ProfileManagerImplTest {
         profileManager.setProfileDiskAction(profileDiskAction);
         
         DroidGlobalConfig config = mock(DroidGlobalConfig.class);
-        when(config.getProfilesDir()).thenReturn(new File("profiles"));
+        when(config.getProfilesDir()).thenReturn(Paths.get("profiles"));
         
         profileManager.setConfig(config);
 
-        File destination = new File("tmp/myProfile.drd");
+        Path destination = Paths.get("tmp/myProfile.drd");
         
         profileManager.save("profileName", destination, callback);
         
-        verify(profileSpecDao).saveProfile(profileInstance, new File("profiles/profileName"));
+        verify(profileSpecDao).saveProfile(profileInstance, Paths.get("profiles/profileName"));
         verify(profileDiskAction).saveProfile(
-                new File("profiles/profileName").getPath(), destination, callback);
+                Paths.get("profiles/profileName"), destination, callback);
         
     }
     
@@ -193,7 +194,7 @@ public class ProfileManagerImplTest {
         
         when(profileContextLocator.getProfileInstance("profileName")).thenReturn(profileInstance);
 
-        File destination = new File("tmp/myProfile.drd");
+        Path destination = Paths.get("tmp/myProfile.drd");
         
         try {
             profileManager.save("profileName", destination, callback);
@@ -202,8 +203,8 @@ public class ProfileManagerImplTest {
             assertEquals("Illegal attempt to transition state from [RUNNING] to [SAVING]", e.getMessage());
         }
         
-        verify(profileSpecDao, never()).saveProfile(any(ProfileInstance.class), any(File.class));
-        verify(profileDiskAction, never()).saveProfile(anyString(), any(File.class), any(ProgressObserver.class));
+        verify(profileSpecDao, never()).saveProfile(any(ProfileInstance.class), any(Path.class));
+        verify(profileDiskAction, never()).saveProfile(any(Path.class), any(Path.class), any(ProgressObserver.class));
         
     }
     

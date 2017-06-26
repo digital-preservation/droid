@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -81,7 +81,7 @@ public class ProfileInstance {
     private Integer textSignatureFileVersion;
 
     @XmlTransient
-    private File loadedFrom;
+    private Path loadedFrom;
 
     @XmlTransient
     private boolean dirty = true;
@@ -346,7 +346,7 @@ public class ProfileInstance {
     /**
      * @return the loadedFrom
      */
-    public File getLoadedFrom() {
+    public Path getLoadedFrom() {
         return loadedFrom;
     }
 
@@ -354,7 +354,7 @@ public class ProfileInstance {
      * @param loadedFrom
      *            the loadedFrom to set
      */
-    public void setLoadedFrom(File loadedFrom) {
+    public void setLoadedFrom(Path loadedFrom) {
         this.loadedFrom = loadedFrom;
     }
 

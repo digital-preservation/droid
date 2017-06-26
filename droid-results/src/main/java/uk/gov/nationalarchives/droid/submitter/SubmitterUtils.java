@@ -31,9 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @author rflitcroft
@@ -53,12 +54,11 @@ public final class SubmitterUtils {
      * @param topLevelAbsolutePath  the top-level resource URI for the file.
      * @return true if the file system is available, false otherwise.
      */
-    static boolean isFileSystemAvailable(final File file, final String topLevelAbsolutePath) {
-        
+    static boolean isFileSystemAvailable(final Path file, final String topLevelAbsolutePath) {
         if (isEqualPath(file, topLevelAbsolutePath)) {
-            return file.exists();
-        } 
-        
+            return Files.exists(file);
+        }
+
         return isFileSystemAvailable2(file, topLevelAbsolutePath);
     }
 
@@ -74,18 +74,18 @@ public final class SubmitterUtils {
      * @return A URI for the file.
      */
     //CHECKSTYLE:OFF  Too complex
-    public static URI toURI(final File file, final StringBuilder builder)  {
+    public static URI toURI(final java.io.File file, final StringBuilder builder)  {
 
-        File absoluteFile = file.getAbsoluteFile();
+        java.io.File absoluteFile = file.getAbsoluteFile();
 
-        //Allow for Mockito tests where the previous assignment returns anull reference
+        //Allow for Mockito tests where the previous assignment returns a null reference
         if (absoluteFile == null) {
-            absoluteFile = new File(file.getAbsolutePath());
+            absoluteFile = new java.io.File(file.getAbsolutePath());
         }
 
         final String path       = absoluteFile.getPath();
         final int    length     = path.length();
-        final char   separator  = File.separatorChar;
+        final char   separator  = java.io.File.separatorChar;
 
         // check how many start slashes we need.
         int numStartSlashes = 0;
@@ -133,28 +133,24 @@ public final class SubmitterUtils {
         return uri;
     }
 
+    private static boolean isFileSystemAvailable2(final Path file, final String topLevelAbsolutePath) {
 
-    private static boolean isFileSystemAvailable2(final File file, final String topLevelAbsolutePath) {
-        
         boolean available;
-        
-        if (file.exists()) {
+
+        if (Files.exists(file)) {
             available = true;
         } else {
             if (isEqualPath(file, topLevelAbsolutePath)) {
                 available = false;
             } else {
-                available = isFileSystemAvailable2(file.getParentFile(), topLevelAbsolutePath);
+                available = isFileSystemAvailable2(file.getParent(), topLevelAbsolutePath);
             }
         }
-        
+
         return available;
     }
-    
-    private static boolean isEqualPath(final File file1, final String topLevelAbsolutePath) {
-        return topLevelAbsolutePath.equals(file1.getAbsolutePath());
+
+    private static boolean isEqualPath(final Path file1, final String topLevelAbsolutePath) {
+        return topLevelAbsolutePath.equals(file1.toAbsolutePath().toString());
     }
-
-
-    
 }

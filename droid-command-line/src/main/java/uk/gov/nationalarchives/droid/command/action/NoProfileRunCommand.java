@@ -31,12 +31,15 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,7 +47,6 @@ import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,6 +60,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollect
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rbrennan
@@ -93,11 +96,9 @@ public class NoProfileRunCommand implements DroidCommand {
     */
     @Override
     public void execute() throws CommandExecutionException {
-    	
-    	Collection<File> matchedFiles = null;
         
         //BNO This is why only the first file or folder specified is processed, and any additional ones are ignored..
-        File targetDirectoryOrFile = new File(resources[0]);
+        final Path targetDirectoryOrFile = Paths.get(resources[0]);
     	
         if (!this.quietFlag) {
             this.outputRuntimeInformation(targetDirectoryOrFile);
@@ -105,20 +106,42 @@ public class NoProfileRunCommand implements DroidCommand {
       
 
        //BNO - allow processing of a single file as well as directory
-        if (targetDirectoryOrFile.isDirectory()) {
-            matchedFiles =
-                    FileUtils.listFiles(targetDirectoryOrFile, this.extensions, this.recursive);
-        } else  if (targetDirectoryOrFile.isFile()) {
-        	File singleFileToProcess = FileUtils.getFile(targetDirectoryOrFile);
-        	matchedFiles =  new  ArrayList<File>();
-        	matchedFiles.add(singleFileToProcess);
+        final Collection<Path> matchedFiles;
+        if (Files.isDirectory(targetDirectoryOrFile)) {
+            final DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+                    @Override
+                    public boolean accept(final Path entry) throws IOException {
+                        if (!Files.isDirectory(entry)) {
+                            if (extensions == null || extensions.length == 0) {
+                                return true;
+                            } else {
+                                for (final String extension : extensions) {
+                                    if (entry.getFileName().toString().endsWith("." + extension)) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        return false;
+                    }
+                };
+
+            try {
+                matchedFiles = FileUtil.listFiles(targetDirectoryOrFile, this.recursive, filter);
+            } catch (final IOException e) {
+                throw new CommandExecutionException("Can't find input files");
+            }
+
+        } else  if (Files.isRegularFile(targetDirectoryOrFile)) {
+        	matchedFiles = new ArrayList<>();
+        	matchedFiles.add(targetDirectoryOrFile);
         } else {
             throw new CommandExecutionException(String.format("The specified input %s was not found", targetDirectoryOrFile));       	
         }
 
         BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
-        File fileSignaturesFile = new File(fileSignaturesFileName);
-        if (!fileSignaturesFile.exists()) {
+        final Path fileSignaturesFile = Paths.get(fileSignaturesFileName);
+        if (!Files.exists(fileSignaturesFile)) {
             throw new CommandExecutionException("Signature file not found");
         }
 
@@ -129,36 +152,23 @@ public class NoProfileRunCommand implements DroidCommand {
             throw new CommandExecutionException("Can't parse signature file");
         }
         binarySignatureIdentifier.setMaxBytesToScan(maxBytesToScan);
-        String path = fileSignaturesFile.getAbsolutePath();
+        String path = fileSignaturesFile.toAbsolutePath().toString();
         String slash = path.contains(FORWARD_SLASH) ? FORWARD_SLASH : BACKWARD_SLASH;
         String slash1 = slash;
       
         ContainerSignatureDefinitions containerSignatureDefinitions = null;
         if (containerSignaturesFileName != null) {
-            File containerSignaturesFile = new File(containerSignaturesFileName);
-            InputStream in = null;
-            if (!containerSignaturesFile.exists()) {
+            final Path containerSignaturesFile = Paths.get(containerSignaturesFileName);
+            if (!Files.exists(containerSignaturesFile)) {
                 throw new CommandExecutionException("Container signature file not found");
             }
-            try {
-                in = new FileInputStream(containerSignaturesFileName);
+            try(final InputStream in = new BufferedInputStream(Files.newInputStream(containerSignaturesFile))) {
                 final ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
                 containerSignatureDefinitions = parser.parse(in);
-            } catch (SignatureParseException e) {
+            } catch (final SignatureParseException e) {
                 throw new CommandExecutionException("Can't parse container signature file");
-            } catch (IOException ioe) {
+            } catch (final IOException | JAXBException ioe) {
                 throw new CommandExecutionException(ioe);
-            } catch (JAXBException jaxbe) {
-                throw new CommandExecutionException(jaxbe);
-            }finally{
-            	if(in!=null){
-            		try {
-						in.close();
-					} catch (IOException e) {
-						throw new CommandExecutionException("Error closing InputStream on signature file");
-					}
-            		
-            	}
             }
         }
         
@@ -167,21 +177,15 @@ public class NoProfileRunCommand implements DroidCommand {
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
                 path, slash, slash1, archives, webArchives);
 
-        String fileName = null;
-        for (File file : matchedFiles) {
-            try {
-                fileName = file.getCanonicalPath();
-            } catch (IOException e) {
-                throw new CommandExecutionException(e);
-            }
-            URI uri = file.toURI();
-            RequestMetaData metaData =
-                new RequestMetaData(file.length(), file.lastModified(), fileName);
+        for (final Path file : matchedFiles) {
+            final String fileName = file.toAbsolutePath().toString();
+            final URI uri = file.toUri();
+            RequestMetaData metaData = new RequestMetaData(
+                    FileUtil.sizeQuietly(file), FileUtil.lastModifiedQuietly(file).toMillis(), fileName);
             RequestIdentifier identifier = new RequestIdentifier(uri);
             identifier.setParentId(1L);
-            
-            IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
-            try {
+
+            try(final IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier)) {
                 request.open(file);
                 IdentificationResultCollection results =
                     binarySignatureIdentifier.matchBinarySignatures(request);
@@ -192,20 +196,11 @@ public class NoProfileRunCommand implements DroidCommand {
             	throw new CommandExecutionException(fnfe);
             } catch (IOException e) {
                 throw new CommandExecutionException(e);
-            } finally {
-                if (request != null) {
-                    try {
-                    	request.close();
-                    	file=null;
-                    } catch (IOException e) {
-                        throw new CommandExecutionException(e);
-                    }
-                }
             }
         }
     }
 
-    private void outputRuntimeInformation(File targetDirectoryOrFile) {
+    private void outputRuntimeInformation(final Path targetDirectoryOrFile) {
     	
     	// BNO: updated the parameter sanitisation and output messages to account for the fact that the input
     	// can now be either a folder or a single file.
@@ -225,7 +220,7 @@ public class NoProfileRunCommand implements DroidCommand {
             + (this.containerSignaturesFileName == null ? " None" : this.containerSignaturesFileName));
         
         
-        if (targetDirectoryOrFile.isDirectory()) {
+        if (Files.isDirectory(targetDirectoryOrFile)) {
             System.out.println("Recurse folders: " + (this.recursive ? PRINTABLE_TRUE : PRINTABLE_FALSE));
             if (this.extensions == null) {
                 System.out.println("Extension filter: No filter set");
@@ -235,7 +230,7 @@ public class NoProfileRunCommand implements DroidCommand {
             }
         }
         
-        if (targetDirectoryOrFile.isFile()) {
+        if (!Files.isDirectory(targetDirectoryOrFile)) {
             if (this.recursive) {
                 System.out.println(RECURSE_NOT_APPLICABLE);
             }

@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -59,7 +59,7 @@ public class DirectoryProfileResource extends FileProfileResource {
      * @param recursive
      *            whether the resource should recurse into subdirectorie
      */
-    public DirectoryProfileResource(File file, boolean recursive) {
+    public DirectoryProfileResource(final Path file, boolean recursive) {
         super(file);
         this.recursive = recursive;
     }

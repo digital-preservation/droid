@@ -31,10 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.signature;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
@@ -80,34 +82,25 @@ public class PronomSignatureService implements SignatureUpdateService {
      * {@inheritDoc}
      */
     @Override
-    public SignatureFileInfo importSignatureFile(File targetDir) throws SignatureServiceException {
-        Element sigFile = pronomService.getSignatureFileV1().getElement();
+    public SignatureFileInfo importSignatureFile(final Path targetDir) throws SignatureServiceException {
+        final Element sigFile = pronomService.getSignatureFileV1().getElement();
 
         // get the version number, which needs to be part of the filename...
-        int version = Integer.valueOf(sigFile.getAttribute("Version"));
-        boolean deprecated = Boolean
+        final int version = Integer.valueOf(sigFile.getAttribute("Version"));
+        final boolean deprecated = Boolean
                 .valueOf(sigFile.getAttribute("Deprecated"));
 
-        SignatureFileInfo sigInfo = new SignatureFileInfo(version, deprecated, SignatureType.BINARY);
-        String fileName = String.format(filenamePattern, version);
+        final SignatureFileInfo sigInfo = new SignatureFileInfo(version, deprecated, SignatureType.BINARY);
+        final String fileName = String.format(filenamePattern, version);
 
-        BufferedWriter writer = null;
-        try {
-            File outputFile = new File(targetDir, fileName);
-            outputFile.createNewFile();
-            writer = new BufferedWriter(new FileWriter(outputFile));
-            XMLSerializer serializer = new XMLSerializer(writer,
+        final Path outputFile = targetDir.resolve(fileName);
+        try (final Writer writer = Files.newBufferedWriter(outputFile, UTF_8)) {
+            final XMLSerializer serializer = new XMLSerializer(writer,
                     new OutputFormat(Method.XML, "UTF-8", true));
             serializer.serialize(sigFile);
             sigInfo.setFile(outputFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SignatureServiceException(e);
-        } finally {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                log.error("Error closing file writer", e);
-            }
         }
 
         return sigInfo;

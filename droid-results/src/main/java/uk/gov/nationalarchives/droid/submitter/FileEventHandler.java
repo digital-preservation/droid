@@ -31,9 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +51,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -61,7 +65,7 @@ public class FileEventHandler {
 
     private AsynchDroid droidCore;
     private ResultHandler resultHandler;
-    private IdentificationRequestFactory<File> requestFactory;
+    private IdentificationRequestFactory<Path> requestFactory;
 
     private SubmissionThrottle submissionThrottle;
 
@@ -92,27 +96,30 @@ public class FileEventHandler {
      * @param nodeId
      *            an optional node ID for the request.
      */
-    public void onEvent(File file, ResourceId parentId, ResourceId nodeId) {
+    public void onEvent(final Path file, ResourceId parentId, ResourceId nodeId) {
 
-        URI uri = SubmitterUtils.toURI(file, uriStringBuilder);
-        RequestMetaData metaData = new RequestMetaData(file.length(), file
-                .lastModified(), file.getName());
+        URI uri = SubmitterUtils.toURI(file.toFile(), uriStringBuilder);
+        final FileTime lastModified = FileUtil.lastModifiedQuietly(file);
+        RequestMetaData metaData = new RequestMetaData(
+                FileUtil.sizeQuietly(file),
+                lastModified == null ? new Date(0).getTime() : new Date(lastModified.toMillis()).getTime(),
+                FileUtil.fileName(file));
 
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
-        IdentificationRequest<File> request = requestFactory.newRequest(metaData, identifier);
+        IdentificationRequest<Path> request = requestFactory.newRequest(metaData, identifier);
         try {
             request.open(file);
             droidCore.submit(request);
             submissionThrottle.apply();
         } catch (IOException e) {
-            IdentificationErrorType error = file.exists() ? IdentificationErrorType.ACCESS_DENIED
+            IdentificationErrorType error = Files.exists(file) ? IdentificationErrorType.ACCESS_DENIED
                     : IdentificationErrorType.FILE_NOT_FOUND;
             if (error.equals(IdentificationErrorType.ACCESS_DENIED)) {
-                log.warn(String.format("Access was denied to the file: [%s]", file.getAbsolutePath()));
+                log.warn(String.format("Access was denied to the file: [%s]", file.toAbsolutePath().toString()));
             } else {
-                log.warn(String.format("File not found: [%s]", file.getAbsolutePath()));
+                log.warn(String.format("File not found: [%s]", file.toAbsolutePath().toString()));
             }
             resultHandler.handleError(new IdentificationException(request, error, e));
         } catch (InterruptedException e) {

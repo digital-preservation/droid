@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.submitter.FileWalker.ProgressEntry;
@@ -51,5 +51,5 @@ public interface FileWalkerHandler {
      * @return the ID assigned to the handled file or directory
      * @throws IOException if the file IO failed.
      */
-    ResourceId handle(File file, int depth, ProgressEntry parent) throws IOException;
+    ResourceId handle(final Path file, int depth, ProgressEntry parent) throws IOException;
 }

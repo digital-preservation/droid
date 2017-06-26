@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
@@ -48,7 +48,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
  * @author rflitcroft, mpalmer
  *
  */
-public class FileSystemIdentificationRequest implements IdentificationRequest<File> {
+public class FileSystemIdentificationRequest implements IdentificationRequest<Path> {
 
     private static final int TOP_TAIL_BUFFER_CAPACITY = 8 * 1024 * 1024; // buffer 8Mb on the top and tail of files.
 
@@ -58,7 +58,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
     private WindowReader fileReader;
     private final RequestIdentifier identifier;
     private RequestMetaData requestMetaData;
-    private File file;
+    private Path file;
 
     /**
      * Constructs a new identification request.
@@ -77,11 +77,11 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
      * {@inheritDoc}
      */
     @Override
-    public final void open(final File theFile) throws IOException {
+    public final void open(final Path theFile) throws IOException {
         // Use a caching strategy that uses soft references, to allow the GC to reclaim
         // cached file bytes in low memory conditions.
-        final WindowCache cache = new TopAndTailFixedLengthCache(theFile.length(), TOP_TAIL_BUFFER_CAPACITY);
-        fileReader = new FileReader(theFile, cache);
+        final WindowCache cache = new TopAndTailFixedLengthCache(theFile.toFile().length(), TOP_TAIL_BUFFER_CAPACITY);
+        fileReader = new FileReader(theFile.toFile(), cache);
         ((FileReader) fileReader).useSoftWindows(true);
         this.file = theFile;
         fileReader.getWindow(0); // force read of first block to generate any IO exceptions.
@@ -165,7 +165,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Fi
      * Return file associate with identification reques.
      * @return File
      */
-    public File getFile() {
+    public Path getFile() {
         return file;
     }
 }

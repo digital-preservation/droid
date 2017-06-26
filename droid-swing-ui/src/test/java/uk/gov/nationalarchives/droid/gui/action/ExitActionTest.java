@@ -32,6 +32,8 @@
 package uk.gov.nationalarchives.droid.gui.action;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -123,7 +125,7 @@ public class ExitActionTest {
             
         }
         
-        verify(profileManager, never()).save(anyString(), any(File.class), any(ProgressObserver.class));
+        verify(profileManager, never()).save(anyString(), any(Path.class), any(ProgressObserver.class));
         verify(profileManager, never()).closeProfile(anyString());
         verify(context, never()).remove(anyString());
     }
@@ -144,16 +146,16 @@ public class ExitActionTest {
         when(dialog.getSelectedProfiles()).thenReturn(dirty);
         when(dialog.getResponse()).thenReturn(JOptionPaneProxy.YES);
         
-        when(profileManager.save(eq("dirty1"), eq(new File("foo.droid")), 
+        when(profileManager.save(eq("dirty1"), eq(Paths.get("foo.droid")),
                 any(ProgressObserver.class))).thenReturn(dirtyProfile1);
-        when(profileManager.save(eq("dirty2"), eq(new File("foo.droid")), 
+        when(profileManager.save(eq("dirty2"), eq(Paths.get("foo.droid")),
                 any(ProgressObserver.class))).thenReturn(dirtyProfile2);
 
         action.start();
         action.get();
         
-        verify(profileManager).save(eq("dirty1"), eq(new File("foo.droid")), any(ProgressObserver.class));
-        verify(profileManager).save(eq("dirty2"), eq(new File("foo.droid")), any(ProgressObserver.class));
+        verify(profileManager).save(eq("dirty1"), eq(Paths.get("foo.droid")), any(ProgressObserver.class));
+        verify(profileManager).save(eq("dirty2"), eq(Paths.get("foo.droid")), any(ProgressObserver.class));
 
         verify(profileManager).closeProfile("dirty1");
         verify(profileManager).closeProfile("dirty2");
@@ -193,9 +195,9 @@ public class ExitActionTest {
         List<ProfileForm> selected = new ArrayList<ProfileForm>();
         selected.add(dirtyProfileForm2);
         
-        when(profileManager.save(eq("dirty1"), eq(new File("foo.droid")), 
+        when(profileManager.save(eq("dirty1"), eq(Paths.get("foo.droid")),
                 any(ProgressObserver.class))).thenReturn(dirtyProfile1);
-        when(profileManager.save(eq("dirty2"), eq(new File("foo.droid")), 
+        when(profileManager.save(eq("dirty2"), eq(Paths.get("foo.droid")),
                 any(ProgressObserver.class))).thenReturn(dirtyProfile2);
 
         when(context.allDirtyProfiles()).thenReturn(dirty);
@@ -204,8 +206,8 @@ public class ExitActionTest {
         action.start();
         action.get();
         
-        verify(profileManager, never()).save(eq("dirty1"), any(File.class), any(ProgressObserver.class));
-        verify(profileManager).save(eq("dirty2"), eq(new File("foo.droid")), any(ProgressObserver.class));
+        verify(profileManager, never()).save(eq("dirty1"), any(Path.class), any(ProgressObserver.class));
+        verify(profileManager).save(eq("dirty2"), eq(Paths.get("foo.droid")), any(ProgressObserver.class));
 
         verify(profileManager).closeProfile("dirty1");
         verify(profileManager).closeProfile("dirty2");
