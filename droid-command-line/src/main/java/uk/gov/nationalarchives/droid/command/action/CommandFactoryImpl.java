@@ -116,8 +116,10 @@ public class CommandFactoryImpl implements CommandFactory {
 
         final String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
         final ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT);
+        final boolean bom = cli.hasOption(CommandLineParam.BOM.toString());
         cmd.setDestination(destination);
         cmd.setProfiles(profiles);
+        cmd.setBom(bom);
 
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
             cmd.setFilter(new CommandLineFilter(cli.getOptionValues(
