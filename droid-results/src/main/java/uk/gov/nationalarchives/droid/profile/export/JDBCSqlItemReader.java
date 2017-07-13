@@ -155,7 +155,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
                 ProfileResourceNode profileResourceNode;
                 if (filter != null && filter.isEnabled()) {
-                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_FILTER.mapRow(cursor, 0);
+                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(cursor, 0); //We don't filter for export with filter column like in GUI.
                 }else {
                     profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER.mapRow(cursor, 0);
                 }
