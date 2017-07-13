@@ -35,8 +35,10 @@ import java.io.PrintWriter;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -96,8 +98,43 @@ public class CommandFactoryTest {
         
         assertNotNull(e1);
         assertArrayEquals(e1.getProfiles(), expectedProfiles);
+        assertFalse(e1.isBom());
         assertEquals("out.csv", exportCommand.getDestination());
     }
+
+    @Test
+    public void testExportCommandWithBom() throws Exception {
+
+        ExportCommand exportCommand = new ExportCommand();
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(exportCommand);
+
+        String[] args = new String[] {
+                "-B",
+                "-E",
+                "out.csv",
+                "-p",
+                "tmp/profile 1.droid",
+                "tmp/profile-2.droid",
+                "tmp/profile-3.droid",
+        };
+
+        String[] expectedProfiles = {
+                "tmp/profile 1.droid",
+                "tmp/profile-2.droid",
+                "tmp/profile-3.droid",
+        };
+
+        CommandLineParser parser = new GnuParser();
+        CommandLine cli = parser.parse(CommandLineParam.options(), args);
+
+        ExportCommand e1 = (ExportCommand) factory.getExportFormatCommand(cli);
+
+        assertNotNull(e1);
+        assertArrayEquals(e1.getProfiles(), expectedProfiles);
+        assertTrue(e1.isBom());
+        assertEquals("out.csv", exportCommand.getDestination());
+    }
+
     
     @Test
     public void testExportCommandWithNoExportArgument() throws Exception {
