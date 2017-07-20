@@ -68,6 +68,7 @@
       <excludes>
         <exclude>droid.sh</exclude>
         <exclude>droid.bat</exclude>
+        <exclude>Running DROID.txt</exclude>
       </excludes>
     </fileSet>
     <fileSet>
@@ -86,6 +87,11 @@
     </file>
     <file>
       <source>bin/droid.bat</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>bin/Running DROID.txt</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
     </file>
