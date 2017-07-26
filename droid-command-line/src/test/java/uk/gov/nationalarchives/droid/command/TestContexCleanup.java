@@ -52,7 +52,7 @@ public class TestContexCleanup {
                 "-Nr",
                 "src/test/resources/testfiles",
                 "-Ns",
-                "src/test/resources/signatures/DROID_SignatureFile_V88.xml"
+                "src/test/resources/signatures/DROID_SignatureFile_V91.xml"
         };
 
         DroidCommandLine.main(args);
