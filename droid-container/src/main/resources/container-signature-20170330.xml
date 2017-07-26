@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?> 
 
-<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="17"> 
+<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="20"> 
     <ContainerSignatures>
 
         <ContainerSignature Id="1000" ContainerType="OLE2">
@@ -374,7 +374,7 @@
                         <InternalSignatureCollection>
 	                        <InternalSignature ID="317">
 	                            <ByteSequence Reference="BOFoffset">
-	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="32768">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="40000">
 	                                    <Sequence>'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"'</Sequence>
 	                                </SubSequence>
 	                            </ByteSequence>
@@ -2927,6 +2927,73 @@
             </Files>
         </ContainerSignature>
         
+        <ContainerSignature Id="27020" ContainerType="OLE2">
+            <Description>ESRI ArcScene Document</Description>
+            <Files>
+                <File>
+                    <Path>DataGraphsT</Path>
+                </File>
+                <File>
+                    <Path>Scene</Path>
+                </File>
+                <File>
+                    <Path>StyleGallery</Path>
+                </File>
+                <File>
+                    <Path>TableProperties</Path>
+                </File>
+                <File>
+                    <Path>View</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="27020">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="8" SubSeqMaxOffset="8">
+	                                    <Sequence>5300630065006E006500200076006900650077</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="27040" ContainerType="OLE2">
+            <Description>ESRI ArcGlobe Document</Description>
+            <Files>
+                <File>
+                    <Path>DataGraphsT</Path>
+                </File>
+                <File>
+                    <Path>Scene</Path>
+                </File>
+                <File>
+                    <Path>StyleGallery</Path>
+                </File>
+                <File>
+                    <Path>TableProperties</Path>
+                </File>
+                <File>
+                    <Path>3D Analyst</Path>
+                </File>
+                <File>
+                    <Path>View</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="27040">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="8" SubSeqMaxOffset="8">
+	                                    <Sequence>47006C006F0062006500200076006900650077</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
 <ContainerSignature Id="28000" ContainerType="ZIP">
             <Description>adobe.air.1.0</Description>
             <Files>
@@ -3041,6 +3108,136 @@
             </Files>
         </ContainerSignature>
 
+                <ContainerSignature Id="30000" ContainerType="ZIP">
+            <Description>AutoCAD Design Web Format(DWFx)</Description>
+            <Files>
+                <File>
+                    <Path>DWFDocumentSequence.dwfseq</Path>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+                <ContainerSignature Id="30020" ContainerType="OLE2">
+            <Description>3DS Max</Description>
+            <Files>
+                <File>
+                    <Path>DocumentSummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="30020">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>33 64 73 20 4D 61 78 20 56 65 72 73 69 6F 6E</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+                <ContainerSignature Id="30030" ContainerType="OLE2">
+            <Description>3DS Max (nullbytes)</Description>
+            <Files>
+                <File>
+                    <Path>DocumentSummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="30030">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>33 00 64 00 73 00 20 00 4D 00 61 00 78 00 20 00 56 00 65 00 72 00 73 00 69 00 6F 00 6E</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+                <ContainerSignature Id="30040" ContainerType="OLE2">
+            <Description>3DS Max 2</Description>
+            <Files>
+                <File>
+                    <Path>DocumentSummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="30040">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>33 64 73 20 6D 61 78 20 56 65 72 73 69 6F 6E</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+       
+    <ContainerSignature ContainerType="ZIP" Id="31000">
+      <Description>SIARD 2.0 Metadata Namespace</Description>
+      <Files>
+        <File>
+          <Path>header/metadata.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="31020">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMaxOffset="256" SubSeqMinOffset="50">
+                    <Sequence>'xmlns="http://www.bar.admin.ch/xmlns/siard/2.0/metadata.xsd"'</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+      </Files>
+    </ContainerSignature>
+
+         <ContainerSignature Id="32000" ContainerType="ZIP">
+             <Description>Open Raster Image Format</Description>
+             <Files>
+                  <File>
+                     <Path>mimetype</Path>
+                     <BinarySignatures>
+                         <InternalSignatureCollection>
+ 	                        <InternalSignature ID="32000">
+ 	                            <ByteSequence Reference="BOFoffset">
+ 	                                <SubSequence Position="0" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+ 	                                    <Sequence>'image/openraster'</Sequence>
+ 	                                </SubSequence>
+ 	                            </ByteSequence>
+ 	                        </InternalSignature>
+                         </InternalSignatureCollection>
+                     </BinarySignatures>
+                 </File>
+             </Files>
+         </ContainerSignature> 
+
+         <ContainerSignature Id="32010" ContainerType="ZIP">
+             <Description>Krita Document Format</Description>
+             <Files>
+                  <File>
+                     <Path>mimetype</Path>
+                     <BinarySignatures>
+                         <InternalSignatureCollection>
+ 	                        <InternalSignature ID="32010">
+ 	                            <ByteSequence Reference="BOFoffset">
+ 	                                <SubSequence Position="0" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+ 	                                    <Sequence>'application/x-krita'</Sequence>
+ 	                                </SubSequence>
+ 	                            </ByteSequence>
+ 	                        </InternalSignature>
+                         </InternalSignatureCollection>
+                     </BinarySignatures>
+                 </File>
+             </Files>
+         </ContainerSignature> 
+
+       
     </ContainerSignatures>
     <FileFormatMappings>
     
@@ -3344,6 +3541,10 @@
 
 	<!--  ESRI ArcMap Document (OLE2)-->
 	<FileFormatMapping signatureId="27000" Puid="fmt/916" />
+	<!--  ESRI ArcScene Document (OLE2)-->
+	<FileFormatMapping signatureId="27020" Puid="fmt/988" />
+	<!--  ESRI ArcGlobe Document (OLE2)-->
+	<FileFormatMapping signatureId="27040" Puid="fmt/989" />
  
 	<!--  Adobe Air 1.0 (ZIP)--> 
 	<FileFormatMapping signatureId="28000" Puid="fmt/937"/>
@@ -3354,7 +3555,25 @@
 
 	<!--  Microsoft Windows Movie Maker File (OLE2)--> 
 	<FileFormatMapping signatureId="29000" Puid="fmt/971"/>
-    </FileFormatMappings>
+
+	<!--  AutoCAD Design Web Format(DWFx) (ZIP)--> 
+	<FileFormatMapping signatureId="30000" Puid="fmt/977"/>
+	<!--  3DS Max (OLE2)--> 
+	<FileFormatMapping signatureId="30020" Puid="fmt/978"/>
+	<!--  3DS Max (nullbytes) (OLE2)--> 
+	<FileFormatMapping signatureId="30030" Puid="fmt/978"/> 
+	<!--  3DS Max 2(OLE2)--> 
+	<FileFormatMapping signatureId="30040" Puid="fmt/978"/> 
+
+	<!--  SIARD - Software-Independent Archiving of Relational Databases v2(ZIP)-->
+	<FileFormatMapping signatureId="31000" Puid="fmt/995"/>
+    
+	<!--  Open Raster Image Format(ZIP)-->
+	<FileFormatMapping signatureId="32000" Puid="fmt/998"/>
+	<!--  Krita Document Format(ZIP)-->
+	<FileFormatMapping signatureId="32010" Puid="fmt/999"/>
+
+   </FileFormatMappings>
   
     <TriggerPuids>
         <TriggerPuid ContainerType="OLE2" Puid="fmt/111"/> 

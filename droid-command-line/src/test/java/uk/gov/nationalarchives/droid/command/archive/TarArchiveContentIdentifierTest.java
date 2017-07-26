@@ -59,9 +59,9 @@ public class TarArchiveContentIdentifierTest {
     private TarArchiveContentIdentifier tarArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V88.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V91.xml";
     private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20160927.xml";
+            "src/test/resources/signatures/container-signature-20170330.xml";
     private String tarFile =
             "src/test/resources/testfiles/test.tar";
     
