@@ -4,11 +4,11 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Droid : DROID (Digital Record and Object Identification)">
+    <meta name="description" content="DROID : DROID (Digital Record and Object Identification)">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>Droid</title>
+    <title>DROID</title>
   </head>
 
   <body>
@@ -18,7 +18,7 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/digital-preservation/droid">View on GitHub</a>
 
-          <h1 id="project_title">Droid</h1>
+          <h1 id="project_title">DROID</h1>
           <h2 id="project_tagline">DROID (Digital Record and Object Identification)</h2>
 
             <section id="downloads">
@@ -47,7 +47,7 @@
 <h3>
 <a name="user-requirements" class="anchor" href="#user-requirements"><span class="octicon octicon-link"></span></a>User requirements</h3>
 
-<p>DROID requires a minimum of Java 6 Standard Edition (SE). DROID was built and tested on Java 1.6 update 30. DROID version 6.1.3 will fully operate with Java 7, but is not yet compatible with Java 8.</p>
+<p>DROID requires a minimum of Java 8 Standard Edition (SE). DROID was built and tested on Java 1.8. DROID version 6.4 will likely operate with Java 7, but this is not guaranteed.</p>
 
 <p>Signature Files and their release notes can be found at the following links: </p>
 
@@ -114,34 +114,27 @@ mvn install:install-file -Dfile=swing-outline-1.4.1.jar -DgroupId=org.openide -D
 project folder to build the project. This is the pom.xml that sits under
 the main DROID folder containing all the sub projects. </p>
 
-<p>Simply run, "mvn install" from the command line when in this directory and DROID
+<p>Simply run "mvn install" from the command line when in this directory and DROID
 will build. Follow the Maven output to see where Maven has placed the binaries.</p>
 
 <h3>
 <a name="release-notes" class="anchor" href="#release-notes"><span class="octicon octicon-link"></span></a>Release Notes</h3>
 
 <h4>
-<a name="droid-61" class="anchor" href="#droid-61"><span class="octicon octicon-link"></span></a>DROID 6.1</h4>
+<a name="droid-64" class="anchor" href="#droid-64"><span class="octicon octicon-link"></span></a>DROID 6.4</h4>
 
-<p>The largest change to DROID in this release is the addition of a 'No-profile' mode which can also be read into as a 'No Database' mode for quicker identification of resources provided to DROID for identification. The focus of the output of this mode is to provide a no-frills CSV output to form part of workflow stages in preservation systems or elsewhere. </p>
+<p>The largest change to DROID in this release is the ability to scan more 'archival containers' - 7Zip, RAR, ISO, and BZip2. </p>
 
-<pre><code>CLI:           - No-profile mode added to command line
-               - No-profile mode standard file signature matching
-               - No-profile mode container file signature matching
-               - No-profile mode extension matching to pre-filter contents of folders for identification
-               - CLI options reordered for usability
-
-Unit Tests:    - Fixed to enable build on Windows/Linux
-
-Byteseek:      - Library forked to remove external dependency in DROID
-               - 'Any' bit mask bug fixed in byteseek code
-
-Bug fixes:     - BOF/EOF bug where DROID wasn't respecting anchors as part of it's matching 
-                 attempts has been fixed
-
-Maven:         - Builds using Maven 3.0
-
-Derby:         - Updated from version 10.7.1.1 to 10.8.2.2
+<pre><code>-	DROID can now scan contents of RAR, ISO, 7Zip and BZip2 files
+-	Will highlight empty folders in GUI display and CSV export
+-	CSV export will sort on the URI column for persistent ordering
+-	Added custom URI encoder to correctly encode reserved characters
+-	Additional option for export CSV with UTF8 BOM
+-	Bug fix for errors when using filters
+-	ZIP library has been upgraded to allow profiling of zip64 files
+-	Increase in memory for DROID when scanning larger files
+-	Improved error messages for when DROID is trying to download signatures from the wrong URL
+-	Bug fix for issues saving reports as text in Mac OS.
 
 </code></pre>
       </section>
