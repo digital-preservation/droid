@@ -4,6 +4,9 @@ The latest binary file can be downloaded from [The National Archives website](ht
 
 [![Build Status](https://secure.travis-ci.org/digital-preservation/droid.png)](http://travis-ci.org/digital-preservation/droid)
 
+
+This is addred paragraph. Just to shot how works git..
+
 More information can be found on the DROID github pages here: http://digital-preservation.github.com/droid/
 
 DROID is a software tool developed by [The National Archives](http://www.nationalarchives.gov.uk/ "The National Archives Website") to perform automated batch identification of file formats. Developed by its Digital Preservation Department as part of its broader digital preservation activities, DROID is designed to meet the fundamental requirement of any digital repository to be able to identify the precise format of all stored digital objects, and to link that identification to a central registry of technical information about that format and its dependencies.
