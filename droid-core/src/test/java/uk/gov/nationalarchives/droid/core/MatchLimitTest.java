@@ -104,7 +104,6 @@ public class MatchLimitTest {
     Simple performance test that get matches for all known sample files with and without limit
     Disabled per default as it is slow.
      */
-    @Test
     public void testLimitSpeed() throws IOException {
         final int RUNS = 50; // Raise this to raise measurement precision
         BinarySignatureIdentifier droid = createIdentifier();
