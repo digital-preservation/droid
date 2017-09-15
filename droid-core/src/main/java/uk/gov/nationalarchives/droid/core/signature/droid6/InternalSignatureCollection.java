@@ -93,6 +93,21 @@ public class InternalSignatureCollection extends SimpleElement {
      * @return A list of the internal signatures which matched. 
      */
     public List<InternalSignature> getMatchingSignatures(ByteReader targetFile, long maxBytesToScan) {
+        return getMatchingSignatures(targetFile, maxBytesToScan, -1);
+    }
+
+    /**
+     * Runs all the signatures against the target file,
+     * adding a hit for each of them, if any of them match.
+     *
+     * @param targetFile The file to match the signatures against.
+     * @param maxBytesToScan The maximum bytes to scan.
+     * @param maxMatches The maximum number of matching signatures to return.
+     *                   Setting this low (i.e. to 1) can speed up processing speed by use of early termination.
+     *                   -1 means unlimited matches.
+     * @return A list of the internal signatures which matched.
+     */
+    public List<InternalSignature> getMatchingSignatures(ByteReader targetFile, long maxBytesToScan, int maxMatches) {
         //BNO: intSigs here represents all the available binary signatures..
         List<InternalSignature> matchingSigs = new ArrayList<InternalSignature>();
         if (targetFile.getNumBytes() > 0) {
@@ -101,13 +116,15 @@ public class InternalSignatureCollection extends SimpleElement {
                 final InternalSignature internalSig = intSigs.get(sigIndex);
                 if (internalSig.matches(targetFile, maxBytesToScan)) {
                     matchingSigs.add(internalSig);
+                    if (maxMatches != -1 && matchingSigs.size() >= maxMatches) {
+                        break; // Skip the rest of the signatures as the limit has been reached
+                    }
                 }
             }
         }
         return matchingSigs;
     }
-    
-   
+
     /**
      * Prepares the internal signatures in the collection for use.
      */

@@ -92,11 +92,27 @@ public class BinarySignatureIdentifier implements DroidCore {
      */
     @Override
     public IdentificationResultCollection matchBinarySignatures(IdentificationRequest request) {
+        return matchBinarySignatures(request, -1);
+    }
+
+    /**
+     * Submits an identification request to identify files using
+     * binary signatures.
+     *
+     * @param request the identification request.
+     * @param maxMatches The maximum number of matching signatures to collect formats for.
+     *                   Setting this low (i.e. to 1) can speed up processing speed by use of early termination.
+     *                   -1 means unlimited matches.
+     *                   Note that the number of collected formats can exceed maxMatches, as each signature can
+     *                   deliver multiple file formats.
+     * @return the identification result.
+     */
+    public IdentificationResultCollection matchBinarySignatures(IdentificationRequest request, int maxMatches) {
         //BNO: Called once for each identification request
         IdentificationResultCollection results = new IdentificationResultCollection(request);
         results.setRequestMetaData(request.getRequestMetaData());
         ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
-        sigFile.runFileIdentification(byteReader);
+        sigFile.runFileIdentification(byteReader, maxMatches);
         final int numHits = byteReader.getNumHits();
         for (int i = 0; i < numHits; i++) {
             FileFormatHit hit = byteReader.getHit(i);

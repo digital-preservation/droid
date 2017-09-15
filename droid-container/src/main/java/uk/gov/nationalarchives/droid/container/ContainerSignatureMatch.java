@@ -165,7 +165,7 @@ public class ContainerSignatureMatch {
             Map<String, ContainerFile> sigFiles = signature.getFiles();
             InternalSignatureCollection binSigs = sigFiles.get(entryName).getCompiledBinarySignatures();
             if (binSigs != null) {
-                matched = binSigs.getMatchingSignatures(content, maxBytesToScan).size() > 0;
+                matched = binSigs.getMatchingSignatures(content, maxBytesToScan, 1).size() > 0;
             }
             if (matched) {
                 unmatchedFiles.remove(entryName);

@@ -494,7 +494,22 @@ public class FFSignatureFile extends SimpleElement {
      * @param targetFile The binary file to be identified
      */
     public final void runFileIdentification(final ByteReader targetFile) {
-        final List<InternalSignature> matchingSigs = intSigs.getMatchingSignatures(targetFile, maxBytesToScan);
+        runFileIdentification(targetFile, -1);
+    }
+    
+    /**
+     * Identify the target file using the signatures defined in this signature file.
+     *
+     * @param targetFile The binary file to be identified
+     * @param maxMatches The maximum number of matching signatures to collect.
+     *                   Setting this low (i.e. to 1) can speed up processing speed by use of early termination.
+     *                   -1 means unlimited matches.
+     *                   Note that the number of collected formats can exceed maxMatches, as each signature can
+     *                   deliver multiple file formats.
+     */
+    public final void runFileIdentification(final ByteReader targetFile, int maxMatches) {
+        final List<InternalSignature> matchingSigs =
+                intSigs.getMatchingSignatures(targetFile, maxBytesToScan, maxMatches);
         final int numSigs = matchingSigs.size(); // reduce garbage: use an indexed loop rather than an iterator.
         for (int i = 0; i < numSigs; i++) {
             final InternalSignature internalSig = matchingSigs.get(i);
