@@ -72,7 +72,7 @@
 								<ignoredUnusedDeclaredDependency>javax.transaction:jta:jar:${jta.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.aspectj:aspectjweaver:jar:${aspectj.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>cglib:cglib-nodep:jar:${cglib.version}</ignoredUnusedDeclaredDependency>
-								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-bindings-http:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-frontend-jaxws:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-bindings-soap:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.slf4j:slf4j-log4j12:jar:${slf4j.version}</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
@@ -194,7 +194,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-bindings-http</artifactId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
 			<version>${cxf.version}</version>
 			<scope>runtime</scope>
 		</dependency>
@@ -205,7 +205,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-api</artifactId>
+			<artifactId>cxf-core</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
