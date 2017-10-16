@@ -237,6 +237,7 @@
 
   <module name="NewlineAtEndOfFile">
     <property name="fileExtensions" value="java, xml"/>
+    <property name="lineSeparator" value="lf"/>  <!-- we always expect Unix like EOF -->
   </module>
 
   <module name="SuppressionCommentFilter">
