@@ -34,7 +34,6 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
-import com.github.stephenc.javaisotools.vfs.provider.iso.IsoFileSystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -43,18 +42,15 @@ import uk.gov.nationalarchives.droid.core.interfaces.*;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ISOImageArchiveHandler.ISOImageArchiveWalker;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.GZipIdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.ISOImageIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 /**
@@ -82,7 +78,6 @@ public class ISOImageArchiveHandlerTest {
 
 
         Iso9660FileEntry rootEntry = mock(Iso9660FileEntry.class);
-        when(rootEntry.getName()).thenReturn(".");
         when(rootEntry.getPath()).thenReturn("");
         when(rootEntry.isDirectory()).thenReturn(true);
 
@@ -127,12 +122,10 @@ public class ISOImageArchiveHandlerTest {
 
 
         Iso9660FileEntry rootEntry = mock(Iso9660FileEntry.class);
-        when(rootEntry.getName()).thenReturn(".");
         when(rootEntry.getPath()).thenReturn("");
         when(rootEntry.isDirectory()).thenReturn(true);
 
         Iso9660FileEntry contentDir = mock(Iso9660FileEntry.class);
-        when(contentDir.getName()).thenReturn("content");
         when(contentDir.getPath()).thenReturn("content/");
         when(contentDir.isDirectory()).thenReturn(true);
 
@@ -173,12 +166,10 @@ public class ISOImageArchiveHandlerTest {
 
 
         Iso9660FileEntry rootEntry = mock(Iso9660FileEntry.class);
-        when(rootEntry.getName()).thenReturn(".");
         when(rootEntry.getPath()).thenReturn("");
         when(rootEntry.isDirectory()).thenReturn(true);
 
         Iso9660FileEntry contentDir = mock(Iso9660FileEntry.class);
-        when(contentDir.getName()).thenReturn("content");
         when(contentDir.getPath()).thenReturn("content/");
         when(contentDir.isDirectory()).thenReturn(true);
 
@@ -225,7 +216,7 @@ public class ISOImageArchiveHandlerTest {
         identifier.setNodeId(1L);
 
         FileSystemIdentificationRequest req = new FileSystemIdentificationRequest(requestMetaData, identifier);
-        req.open(new File("./src/test/resources/testiso.iso"));
+        req.open(Paths.get("./src/test/resources/testiso.iso"));
         isoImageArchiveHandler.handle(req);
 
         verify(droid, times(6)).submit(any(IdentificationRequest.class));
@@ -251,7 +242,7 @@ public class ISOImageArchiveHandlerTest {
         RequestIdentifier identifier = new RequestIdentifier(new URI("file://testiso.iso"));
         identifier.setNodeId(1L);
 
-        GZipIdentificationRequest request = new GZipIdentificationRequest(requestMetaData, identifier, new File(""));
+        GZipIdentificationRequest request = new GZipIdentificationRequest(requestMetaData, identifier, Paths.get(""));
 
         isoImageArchiveHandler.handle(request);
 

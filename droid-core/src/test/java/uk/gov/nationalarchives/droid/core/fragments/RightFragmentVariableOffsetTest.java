@@ -36,8 +36,10 @@ package uk.gov.nationalarchives.droid.core.fragments;
  *
  */
 
-import java.io.File;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import org.junit.*;
@@ -80,15 +82,15 @@ public class RightFragmentVariableOffsetTest {
         } catch (SignatureParseException x) {
             assertEquals("Can't parse signature file", x.getMessage());
         }
-        File file = new File(TESTAREA + fileToScan);
-        assertTrue(file.exists());
-        URI resourceUri = file.toURI();
+        Path file = Paths.get(TESTAREA + fileToScan);
+        assertTrue(Files.exists(file));
+        URI resourceUri = file.toUri();
 
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), fileToScan);
+        RequestMetaData metaData = new RequestMetaData(Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileToScan);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
 
-        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
         request.open(file);
 
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
@@ -121,15 +123,15 @@ public class RightFragmentVariableOffsetTest {
         } catch (SignatureParseException x) {
             assertEquals("Can't parse signature file", x.getMessage());
         }
-        File file = new File(TESTAREA + fileToScan);
-        assertTrue(file.exists());
-        URI resourceUri = file.toURI();
+        Path file = Paths.get(TESTAREA + fileToScan);
+        assertTrue(Files.exists(file));
+        URI resourceUri = file.toUri();
 
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), fileToScan);
+        RequestMetaData metaData = new RequestMetaData(Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileToScan);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
 
-        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
         request.open(file);
 
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
@@ -166,15 +168,15 @@ public class RightFragmentVariableOffsetTest {
         } catch (SignatureParseException x) {
             assertEquals("Can't parse signature file", x.getMessage());
         }
-        File file = new File(TESTAREA + fileToScan);
-        assertTrue(file.exists());
-        URI resourceUri = file.toURI();
+        Path file = Paths.get(TESTAREA + fileToScan);
+        assertTrue(Files.exists(file));
+        URI resourceUri = file.toUri();
 
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), fileToScan);
+        RequestMetaData metaData = new RequestMetaData(Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileToScan);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
 
-        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
         request.open(file);
 
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
@@ -209,15 +211,15 @@ public class RightFragmentVariableOffsetTest {
         } catch (SignatureParseException x) {
             assertEquals("Can't parse signature file", x.getMessage());
         }
-        File file = new File(TESTAREA + fileToScan);
-        assertTrue(file.exists());
-        URI resourceUri = file.toURI();
+        Path file = Paths.get(TESTAREA + fileToScan);
+        assertTrue(Files.exists(file));
+        URI resourceUri = file.toUri();
 
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), fileToScan);
+        RequestMetaData metaData = new RequestMetaData(Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileToScan);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
 
-        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
         request.open(file);
 
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
@@ -269,15 +271,15 @@ public class RightFragmentVariableOffsetTest {
         } catch (SignatureParseException x) {
             assertEquals("Can't parse signature file", x.getMessage());
         }
-        File file = new File(TESTAREA + fileToScan);
-        assertTrue(file.exists());
-        URI resourceUri = file.toURI();
+        Path file = Paths.get(TESTAREA + fileToScan);
+        assertTrue(Files.exists(file));
+        URI resourceUri = file.toUri();
 
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), fileToScan);
+        RequestMetaData metaData = new RequestMetaData(Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileToScan);
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
 
-        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
         request.open(file);
 
         IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);

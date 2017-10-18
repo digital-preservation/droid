@@ -31,15 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.channels.ByteChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -231,9 +233,9 @@ public final class ArchiveFileUtils {
      * @return <code>File</code> object for the temporary file.
      * @throws java.io.IOException if there is a problem writing to the file
      */
-    public static File writeEntryToTemp(File tempDir, ByteBuffer buffer, 
-            ReadableByteChannel channel) throws IOException {
-        final File tempFile = File.createTempFile(TEMP_FILENAME_PREFIX, null, tempDir);
+    public static Path writeEntryToTemp(final Path tempDir, final ByteBuffer buffer,
+            final ReadableByteChannel channel) throws IOException {
+        final Path tempFile = Files.createTempFile(tempDir, TEMP_FILENAME_PREFIX, null);
         // NEVER use deleteOnExit() for long running processes.
         // It can cause the JVM to track the files to delete, which 
         // is a memory leak for long running processes.  Leaving the code and comments in 
@@ -241,9 +243,7 @@ public final class ArchiveFileUtils {
         // Temporary files created must be deleted by the code requesting the file
         // once they are no longer needed.
         // DO NOT USE!!!: tempFile.deleteOnExit();
-        final FileChannel out = (new FileOutputStream(tempFile)).getChannel();
-        
-        try {
+        try (final ByteChannel out = Files.newByteChannel(tempFile)) {
             out.write(buffer);
     
             final ByteBuffer buf = ByteBuffer.allocate(WRITE_BUFFER_CAPACITY);
@@ -257,19 +257,14 @@ public final class ArchiveFileUtils {
             //CHECKSTYLE:OFF
         } catch (RuntimeException ex) {
             //CHECKSTYLE:ON
-            // don't leave temp files lying around if something went wrong.
-            if (out != null) {
-                out.close();
-            }
             if (channel != null) {
                 channel.close();
             }
+            // don't leave temp files lying around if something went wrong.
             if (tempFile != null) {
-                tempFile.delete();
+                Files.deleteIfExists(tempFile);
             }
             throw ex;
-        } finally {
-            out.close();
         }
     }
 
@@ -285,9 +280,9 @@ public final class ArchiveFileUtils {
      * @return <code>File</code> object for the temporary file.
      * @throws java.io.IOException if there is a problem writing to the file
      */
-    public static File writeEntryToTemp(File tempDir, byte[] buffer, 
-            InputStream in) throws IOException {
-        final File tempFile = File.createTempFile(TEMP_FILENAME_PREFIX, null, tempDir);
+    public static Path writeEntryToTemp(final Path tempDir, final byte[] buffer,
+            final InputStream in) throws IOException {
+        final Path tempFile = Files.createTempFile(tempDir, TEMP_FILENAME_PREFIX, null);
         // NEVER use deleteOnExit() for long running processes.
         // It can cause the JVM to track the files to delete, which 
         // is a memory leak for long running processes.  Leaving the code and comments in 
@@ -295,36 +290,26 @@ public final class ArchiveFileUtils {
         // Temporary files created must be deleted by the code requesting the file
         // once they are no longer needed.
         // DO NOT USE!!!: tempFile.deleteOnExit();
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(tempFile);
+        try (final OutputStream out = new BufferedOutputStream(Files.newOutputStream(tempFile))) {
             final byte[] buf = new byte[WRITE_BUFFER_CAPACITY];
-            try {
-                // write the first buffer out:
-                out.write(buffer);
-                int bytesRead = in.read(buf);
-                while (bytesRead > 0) {
-                    out.write(buf, 0, bytesRead);
-                    bytesRead = in.read(buf);
-                }
-                return tempFile;
-            } finally {
-                if (out != null) {
-                    out.close();
-                }
+            // write the first buffer out:
+            out.write(buffer);
+            int bytesRead = in.read(buf);
+            while (bytesRead > 0) {
+                out.write(buf, 0, bytesRead);
+                bytesRead = in.read(buf);
             }
+            out.flush();
+            return tempFile;
           //CHECKSTYLE:OFF
         } catch (RuntimeException ex) {
           //CHECKSTYLE:ON
-            // don't leave temp files lying around if something went wrong.
-            if (out != null) {
-                out.close();
-            }
             if (in != null) {
                 in.close();
             }
+            // don't leave temp files lying around if something went wrong.
             if (tempFile != null) {
-                tempFile.delete();
+                Files.deleteIfExists(tempFile);
             }
             throw ex;
         }

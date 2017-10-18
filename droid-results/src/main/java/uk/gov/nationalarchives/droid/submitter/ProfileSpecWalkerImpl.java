@@ -31,9 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -106,7 +107,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 fileWalker.setFileHandler(new FileWalkerHandler() {
 
                     @Override
-                    public ResourceId handle(File file, int depth, ProgressEntry parent) { 
+                    public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
                         if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
                                 || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
                             progressMonitor.startJob(toURI(file));
@@ -119,7 +120,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 
                 fileWalker.setDirectoryHandler(new FileWalkerHandler() {
                     @Override
-                    public ResourceId handle(File file, int depth, ProgressEntry parent) {
+                    public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
                         if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
                                 || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
                             progressMonitor.startJob(toURI(file));
@@ -131,7 +132,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 
                 fileWalker.setRestrictedDirectoryHandler(new FileWalkerHandler() {
                     @Override
-                    public ResourceId handle(File file, int depth, ProgressEntry parent) {
+                    public ResourceId handle(final Path file, final  int depth, final ProgressEntry parent) {
                         if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
                                 || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
                             progressMonitor.startJob(toURI(file));
@@ -145,7 +146,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 fileWalker.walk();
             } else {
                 progressMonitor.startJob(resource.getUri());
-                fileEventHandler.onEvent(new File(resource.getUri()), null, null);
+                fileEventHandler.onEvent(Paths.get(resource.getUri()), null, null);
             }
             
             fastForward = false;
@@ -203,8 +204,8 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
     }
 
 
-    private URI toURI(File file) {
-        return SubmitterUtils.toURI(file, uriBuilder);
+    private URI toURI(final Path file) {
+        return SubmitterUtils.toURI(file.toFile(), uriBuilder);
     }
 
 }

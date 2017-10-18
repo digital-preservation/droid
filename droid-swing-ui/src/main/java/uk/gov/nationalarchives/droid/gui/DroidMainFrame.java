@@ -39,6 +39,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -243,10 +244,10 @@ public class DroidMainFrame extends JFrame {
     }
 
     /**
-     * @param newSignaureUpdateAction
+     * @param signatureFileInfos
      */
     private List<SignatureFileInfo> promptForUpdate(final Collection<SignatureFileInfo> signatureFileInfos) {
-        List<SignatureFileInfo> filesToUpdate = new ArrayList<SignatureFileInfo>();
+        List<SignatureFileInfo> filesToUpdate = new ArrayList<>();
         
         for (SignatureFileInfo sigFileInfo : signatureFileInfos) {
             if (sigFileInfo.hasError()) {
@@ -320,7 +321,7 @@ public class DroidMainFrame extends JFrame {
         configDialog = new ConfigDialog(this, globalContext);
         droidContext = new DroidUIContext(jProfilesTabbedPane, profileManager);
         exportFileChooser = new ExportFileChooser();
-        filterFileChooser = new FilterFileChooser(globalContext.getGlobalConfig().getFilterDir());
+        filterFileChooser = new FilterFileChooser(globalContext.getGlobalConfig().getFilterDir().toFile());
         signatureInstallDialog = new SignatureInstallDialog(this);
         resourceFileChooser = new ResourceSelectorDialog(this);
         resourceFileChooser.setModal(true);
@@ -1445,7 +1446,7 @@ public class DroidMainFrame extends JFrame {
 
         int result = profileFileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-            final File selectedFile = profileFileChooser.getSelectedFile();
+            final Path selectedFile = profileFileChooser.getSelectedFile().toPath();
 
             if (!droidContext.selectProfileWithSource(selectedFile)) {
                 // Give the tab with this profile the focus...
@@ -1557,7 +1558,7 @@ public class DroidMainFrame extends JFrame {
                         
                         setVisible(false);
                         log.info("Closing DROID.");
-                        File tempDir = globalContext.getGlobalConfig().getTempDir();
+                        final Path tempDir = globalContext.getGlobalConfig().getTempDir();
                         ResourceUtils.attemptToDeleteTempFiles(tempDir);
                         // CHECKSTYLE:OFF
                         System.exit(0);

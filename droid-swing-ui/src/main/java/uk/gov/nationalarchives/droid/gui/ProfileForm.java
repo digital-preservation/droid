@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -610,14 +611,14 @@ public class ProfileForm extends JPanel {
      * @param saveAs
      *            whether to show a file chooser dialog
      */
-    public void saveProfile(boolean saveAs) {
+    public void saveProfile(final boolean saveAs) {
         final JFileChooser fileChooser = context.getProfileFileChooser();
         fileChooser.setDialogTitle(String.format("Save profile '%s'", getName()));
         FileChooserProxy dialog = new FileChooserProxyImpl(this, fileChooser);
-        File loadedFrom = getProfile().getLoadedFrom();
-        fileChooser.setSelectedFile(loadedFrom != null ? loadedFrom : new File(getName()));
+        final Path loadedFrom = getProfile().getLoadedFrom();
+        fileChooser.setSelectedFile(loadedFrom != null ? loadedFrom.toFile() : new File(getName()));
 
-        SaveProfileWorker worker = new SaveProfileWorker(droidMainUi.getProfileManager(), this, dialog);
+        final SaveProfileWorker worker = new SaveProfileWorker(droidMainUi.getProfileManager(), this, dialog);
         worker.start(saveAs);
     }
 

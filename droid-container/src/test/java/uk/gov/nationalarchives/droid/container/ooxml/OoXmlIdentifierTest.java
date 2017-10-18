@@ -34,6 +34,8 @@ package uk.gov.nationalarchives.droid.container.ooxml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -120,7 +122,7 @@ public class OoXmlIdentifierTest {
     public void testInitialiseSignaturesAndFormatsFromXml() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature.xml");
-        String path = containerSignatureUrl.getPath();
+        final Path path = Paths.get(containerSignatureUrl.getPath());
         
         DroidCore droidCore = mock(DroidCore.class);
         ooXmlIdentifier.setDroidCore(droidCore);
@@ -152,7 +154,7 @@ public class OoXmlIdentifierTest {
     public void testInitialiseRegistersOle2ContainerIdentifierWithContainerIdentifierResolver() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature.xml");
-        String path = containerSignatureUrl.getPath();
+        final Path path = Paths.get(containerSignatureUrl.getPath());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
@@ -177,7 +179,7 @@ public class OoXmlIdentifierTest {
     public void testInitialiseRegistersOle2ContainerFormatsAgainstOoxmlPuid() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature.xml");
-        String path = containerSignatureUrl.getPath();
+        final Path path = Paths.get(containerSignatureUrl.getPath());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);

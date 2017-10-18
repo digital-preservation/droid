@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -43,13 +43,13 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * @author rflitcroft
  *
  */
-public class FileIdentificationRequestFactory implements IdentificationRequestFactory<File> {
+public class FileIdentificationRequestFactory implements IdentificationRequestFactory<Path> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest<File> newRequest(RequestMetaData metaData,
+    public final IdentificationRequest<Path> newRequest(RequestMetaData metaData,
                                                         RequestIdentifier identifier) {
         return new FileSystemIdentificationRequest(metaData, identifier);
     }

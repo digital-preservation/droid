@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,7 +57,7 @@ public class ISOImageIdentificationRequest implements IdentificationRequest<Inpu
     private final String fileName;
     private final RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
-    private final File tempDir;
+    private final Path tempDir;
     private final long size;
 
     private WindowReader reader;
@@ -69,7 +69,7 @@ public class ISOImageIdentificationRequest implements IdentificationRequest<Inpu
      * @param identifier a
      * @param tempDir a
      */
-    public ISOImageIdentificationRequest(RequestMetaData requestMetaData, RequestIdentifier identifier, File tempDir) {
+    public ISOImageIdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, final Path tempDir) {
         this.fileName = requestMetaData.getName();
         this.extension = ResourceUtils.getExtension(fileName);
         this.requestMetaData = requestMetaData;

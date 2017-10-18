@@ -18,7 +18,13 @@
 		<developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
 		<url>scm:git:https://github.com/digital-preservation/droid.git</url>
 	  <tag>HEAD</tag>
-  </scm>
+	</scm>
+
+	<properties>
+		<jta.version>1.1</jta.version>
+		<cglib.version>3.2.5</cglib.version>
+		<slf4j.version>1.7.25</slf4j.version>
+	</properties>
 
 	<build>
 		<plugins>
@@ -49,6 +55,30 @@
 						<version>6.5-SNAPSHOT</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>analyze</id>
+						<goals>
+							<goal>analyze-only</goal>
+						</goals>
+						<configuration>
+							<failOnWarning>true</failOnWarning>
+							<ignoredUnusedDeclaredDependencies>
+								<ignoredUnusedDeclaredDependency>uk.gov.nationalarchives:droid-container:jar:${project.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>javax.transaction:jta:jar:${jta.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.aspectj:aspectjweaver:jar:${aspectj.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>cglib:cglib-nodep:jar:${cglib.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-bindings-http:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-bindings-soap:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.slf4j:slf4j-log4j12:jar:${slf4j.version}</ignoredUnusedDeclaredDependency>
+							</ignoredUnusedDeclaredDependencies>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
@@ -102,35 +132,33 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>5.1.0.Final</version>
+			<artifactId>spring-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>4.0.3.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.transaction</groupId>
-			<artifactId>jta</artifactId>
-			<version>1.1</version>
-			<scope>runtime</scope>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>4.0.3.RELEASE</version>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>jta</artifactId>
+			<version>${jta.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
@@ -153,21 +181,10 @@
 			<artifactId>joda-time</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.dbunit</groupId>
-			<artifactId>dbunit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>2.2.2</version>
+			<version>${cglib.version}</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty</artifactId>
-			<version>6.1.26</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -197,32 +214,18 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<version>1.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>de.schlichtherle.truezip</groupId>
 			<artifactId>truezip-driver-zip</artifactId>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-jaxws_2.1_spec</artifactId>
-			<version>1.0</version>
+			<artifactId>geronimo-jaxws_2.2_spec</artifactId>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-			<version>1.1.2</version> <!-- TODO upgrade? -->
+			<version>1.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
@@ -247,9 +250,9 @@
 			<artifactId>commons-collections</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP-java7</artifactId>
+			<version>2.4.13</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -258,8 +261,38 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.4.2</version>
+			<version>${slf4j.version}</version>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

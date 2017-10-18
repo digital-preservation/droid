@@ -31,7 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.container.httpservice;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -96,15 +99,15 @@ public class ContainerSignatureHttpServiceTest {
     }
 
     @Test
-    public void testImportSignatureFile() {
+    public void testImportSignatureFile() throws IOException {
         when(proxySettings.isEnabled()).thenReturn(false);
         httpService.onProxyChange(proxySettings);
 
-        File tmpDir = new File("tmp");
-        FileUtils.deleteQuietly(tmpDir);
+        final Path tmpDir = Paths.get("tmp");
+        FileUtils.deleteQuietly(tmpDir.toFile());
 
-        tmpDir.mkdir();
-        assertEquals(0, tmpDir.list().length);
+        Files.createDirectories(tmpDir);
+        assertEquals(0, tmpDir.toFile().list().length);
         SignatureFileInfo sigFileInfo;
         try {
             sigFileInfo = httpService.importSignatureFile(tmpDir);
@@ -116,23 +119,23 @@ public class ContainerSignatureHttpServiceTest {
             e.printStackTrace();
         }
         
-        assertEquals(1, tmpDir.list().length);
+        assertEquals(1, tmpDir.toFile().list().length);
     }
     
     //TODO this only works inside of TNA! We need to mock out the proxy call!
     @Ignore
     @Test
-    public void testImportSignatureFileViaProxy() {
+    public void testImportSignatureFileViaProxy() throws IOException {
         when(proxySettings.isEnabled()).thenReturn(true);
         when(proxySettings.getProxyHost()).thenReturn("wb-cacheclst1.web.local");
         when(proxySettings.getProxyPort()).thenReturn(8080);
         httpService.onProxyChange(proxySettings);
 
-        File tmpDir = new File("tmp");
-        FileUtils.deleteQuietly(tmpDir);
+        final Path tmpDir = Paths.get("tmp");
+        FileUtils.deleteQuietly(tmpDir.toFile());
 
-        tmpDir.mkdir();
-        assertEquals(0, tmpDir.list().length);
+        Files.createDirectories(tmpDir);
+        assertEquals(0, tmpDir.toFile().list().length);
         SignatureFileInfo sigFileInfo;
         try {
             sigFileInfo = httpService.importSignatureFile(tmpDir);
@@ -144,6 +147,6 @@ public class ContainerSignatureHttpServiceTest {
             e.printStackTrace();
         }
 
-        assertEquals(1, tmpDir.list().length);
+        assertEquals(1, tmpDir.toFile().list().length);
     }
 }

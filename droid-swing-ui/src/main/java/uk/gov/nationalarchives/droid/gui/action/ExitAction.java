@@ -86,26 +86,26 @@ public class ExitAction extends SwingWorker<Void, Void> {
      * 
      */
     public void start() {
-        Collection<ProfileForm> allProfiles = new ArrayList<ProfileForm>(context.allProfiles());
+        final Collection<ProfileForm> allProfiles = new ArrayList<>(context.allProfiles());
         latch = new CountDownLatch(allProfiles.size());
         
-        List<ProfileForm> dirtyProfiles = context.allDirtyProfiles();
+        final List<ProfileForm> dirtyProfiles = context.allDirtyProfiles();
         if (!dirtyProfiles.isEmpty()) {
             
             dialog.open();
-            int response = dialog.getResponse();
+            final int response = dialog.getResponse();
             if (response == ProfileSelectionDialog.YES) {
-                List<ProfileForm> profilesToSave = dialog.getSelectedProfiles();
+                final List<ProfileForm> profilesToSave = dialog.getSelectedProfiles();
             
                 for (final ProfileForm profile : profilesToSave) {
                     allProfiles.remove(profile);
                     final JFileChooser fileChooser = context.getProfileFileChooser();
                     fileChooser.setDialogTitle(String.format("Save profile '%s'", profile.getName()));
-                    FileChooserProxy fileChooserDialog = new FileChooserProxyImpl(profile, fileChooser);
-                    File loadedFrom = profile.getProfile().getLoadedFrom();
-                    fileChooser.setSelectedFile(loadedFrom != null ? loadedFrom : new File(profile.getName()));
+                    final FileChooserProxy fileChooserDialog = new FileChooserProxyImpl(profile, fileChooser);
+                    final java.nio.file.Path loadedFrom = profile.getProfile().getLoadedFrom();
+                    fileChooser.setSelectedFile(loadedFrom != null ? loadedFrom.toFile() : new File(profile.getName()));
                     
-                    SaveProfileWorker saveJob = new SaveProfileWorker(profileManager, profile, fileChooserDialog);
+                    final SaveProfileWorker saveJob = new SaveProfileWorker(profileManager, profile, fileChooserDialog);
                     saveJob.addPropertyChangeListener(new SaveJobCompletionListener());
                     saveJob.start(false);
                 }
@@ -116,7 +116,7 @@ public class ExitAction extends SwingWorker<Void, Void> {
         
         if (!isCancelled()) {
             execute();
-            for (ProfileForm profile : allProfiles) {
+            for (final ProfileForm profile : allProfiles) {
                 try {
                     profileManager.closeProfile(profile.getProfile().getUuid());
                     context.remove(profile.getProfile().getUuid());
@@ -158,5 +158,8 @@ public class ExitAction extends SwingWorker<Void, Void> {
             
         }
         
+    }
+
+    private class Path {
     }
 }

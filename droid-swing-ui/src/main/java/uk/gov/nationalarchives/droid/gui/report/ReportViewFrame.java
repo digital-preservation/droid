@@ -38,18 +38,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -86,8 +84,8 @@ public class ReportViewFrame extends JFrame {
     private ReportTransformer reportTransformer;
     private ExportReportAction exportAction;
     
-    private File reportFile;
-    private List<File> xslTransforms;
+    private Path reportFile;
+    private List<Path> xslTransforms;
     
     private Log log = LogFactory.getLog(this.getClass());
     
@@ -106,20 +104,22 @@ public class ReportViewFrame extends JFrame {
 
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosed(WindowEvent e) {
+            public void windowClosed(final WindowEvent e) {
                 if (reportFile != null) {
-                    if (!reportFile.delete() && reportFile.exists()) {
-                        String message = String.format("Could not delete report file: %s. "
-                                + "Will try to delete on exit.", 
-                                reportFile.getAbsolutePath());
-                        log.warn(message);
-                        reportFile.deleteOnExit();
+                    if (Files.exists(reportFile)) {
+                        try {
+                            Files.deleteIfExists(reportFile);
+                        } catch (final IOException ex) {
+                            String message = String.format("Could not delete report file: %s. "
+                                            + "Will try to delete on exit.",
+                                    reportFile.toAbsolutePath().toString());
+                            log.warn(message);
+                            reportFile.toFile().deleteOnExit();
+                        }
                     }
                 }
             }
         });
-        
-        
     }
     
     /**
@@ -128,7 +128,7 @@ public class ReportViewFrame extends JFrame {
      * @param reportXml the report to render
      * @param transforms a list of xsl files that can transform the report xml.
      */
-    public void renderReport(File reportXml, List<File> transforms) {
+    public void renderReport(final Path reportXml, final List<Path> transforms) {
         
         this.reportFile = reportXml;
         this.xslTransforms = transforms;
@@ -136,38 +136,21 @@ public class ReportViewFrame extends JFrame {
         // BNO, Nov 2016: Now we use a specific decoder and  InputStreamReader to force UTF-8 encoding
         // (previously we used a FileWriter uses OS default encoding - this could lead to XML that was non UTF8
         // despite the declaration saying it was, and a SAXParseException when processing the report)
-        CharsetDecoder decoder = Charset.forName(UTF8).newDecoder();
-        FileInputStream inputStream = null;
-        StringWriter out;
-        try {
+        try (final Reader reader = Files.newBufferedReader(reportXml, UTF_8);
+                final StringWriter out = new StringWriter()) {
             //Reader sourceReader = new FileReader(reportXml);
-            inputStream = new FileInputStream(reportXml);
-            Reader sourceReader = new InputStreamReader(inputStream, decoder);
-            out = new StringWriter();
-            reportTransformer.transformUsingXsl(sourceReader, "Web page.html.xsl", out);
-        } catch (FileNotFoundException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        } catch (TransformerException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            reportTransformer.transformUsingXsl(reader, "Web page.html.xsl", out);
+
+            //CHECKSTYLE:OFF - need to catch Exception
+            try (final InputStream in = new ByteArrayInputStream(out.getBuffer().toString().getBytes(UTF8))) {
+                xHTMLPanel1.setDocument(in, "");
+            } catch (final Exception e) {
+                    log.error(e);
+                    throw new RuntimeException(e);
             }
-        }
+            //CHECKSTYLE:ON
 
-        try {
-            InputStream in = new ByteArrayInputStream(out.getBuffer().toString().getBytes(UTF8));
-
-            xHTMLPanel1.setDocument(in, "");
-            // CHECKSTYLE:OFF - XHTMLPanel API declares Exception - FFS..
-        } catch (Exception e) {
-            // CHECKSTYLE:ON
+        } catch (final IOException | TransformerException e) {
             log.error(e);
             throw new RuntimeException(e);
         }

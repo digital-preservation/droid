@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
@@ -64,7 +64,7 @@ public class SevenZipEntryIdentificationRequest implements IdentificationRequest
     private RequestMetaData requestMetaData;
     private final String extension;
     private final String fileName;
-    private final File tempDir;
+    private final Path tempDir;
 
 
     /**
@@ -73,7 +73,7 @@ public class SevenZipEntryIdentificationRequest implements IdentificationRequest
      * @param identifier i
      * @param tempDirLocation t
      */
-    public SevenZipEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier, File tempDirLocation) {
+    public SevenZipEntryIdentificationRequest(final RequestMetaData metaData, final RequestIdentifier identifier, final Path tempDirLocation) {
         this.identifier = identifier;
         this.requestMetaData = metaData;
         this.size = requestMetaData.getSize();

@@ -31,12 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.nio.file.Path;
 
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.ReaderInputStream;
@@ -61,18 +58,16 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
     private final RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
 
-    private File tempDir;
+    private Path tempDir;
     private Long size;
     private WindowReader reader;
-
-    private Log log = LogFactory.getLog(this.getClass());
     
     /**
      * @param metaData the request meta data
      * @param identifier the request identifier
      * @param tempDir the location to write temp files.
      */
-    public WebArchiveEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier, File tempDir) {
+    public WebArchiveEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier, Path tempDir) {
         this.identifier = identifier;
         this.size = metaData.getSize();
         this.fileName = metaData.getName();
@@ -85,7 +80,7 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
      * {@inheritDoc}
      */
     @Override
-    public final void open(InputStream in) throws IOException {
+    public final void open(final InputStream in) throws IOException {
         reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY);
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         size = reader.length(); // getting the size of a reader backed by a stream forces a stream read.

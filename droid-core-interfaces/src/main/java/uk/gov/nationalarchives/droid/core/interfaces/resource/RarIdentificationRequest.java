@@ -31,10 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,7 +57,7 @@ public class RarIdentificationRequest implements IdentificationRequest<InputStre
     private final String fileName;
     private final RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
-    private final File tempDir;
+    private final Path tempDir;
     private final long size;
 
     private WindowReader reader;
@@ -69,7 +68,7 @@ public class RarIdentificationRequest implements IdentificationRequest<InputStre
      * @param identifier a
      * @param tempDir a
      */
-    public RarIdentificationRequest(RequestMetaData requestMetaData, RequestIdentifier identifier, File tempDir) {
+    public RarIdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, final Path tempDir) {
         this.fileName = requestMetaData.getName();
         this.extension = ResourceUtils.getExtension(fileName);
         this.requestMetaData = requestMetaData;
@@ -81,7 +80,7 @@ public class RarIdentificationRequest implements IdentificationRequest<InputStre
     }
 
     @Override
-    public void open(InputStream in) throws IOException {
+    public void open(final InputStream in) throws IOException {
         reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY, true);
         // Force read of entire input stream to build reader and remove dependence on source input stream.
         final long readSize = reader.length(); // getting the size of a reader backed by a stream forces a stream read.
@@ -93,7 +92,7 @@ public class RarIdentificationRequest implements IdentificationRequest<InputStre
     }
 
     @Override
-    public byte getByte(long position) throws IOException {
+    public byte getByte(final long position) throws IOException {
         final int result = reader.readByte(position);
         if (result < 0) {
             throw new IOException("No byte at position " + position);

@@ -1,9 +1,9 @@
-dist: precise
+sudo: false
 language: java
 jdk:
- - oraclejdk7
-before_install:
- - "sudo apt-get update"
+ - openjdk7
+ - openjdk8
+ - oraclejdk8
 before_script:
  - "export DISPLAY=:99.0"
  - "sh -e /etc/init.d/xvfb start"

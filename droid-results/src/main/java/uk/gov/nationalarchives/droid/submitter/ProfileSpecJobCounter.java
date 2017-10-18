@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
@@ -100,13 +99,13 @@ public class ProfileSpecJobCounter implements Callable<Long> {
      */
     private final class LukeFileWalker extends DirectoryWalker {
         
-        private File root;
+        private java.io.File root;
         private boolean recursive;
 
-        public LukeFileWalker(URI root, boolean recursive) {
+        public LukeFileWalker(final URI root, final boolean recursive) {
             super(null, recursive ? PROGRESS_DEPTH_LIMIT : 1);
             this.recursive = recursive;
-            this.root = new File(root);
+            this.root = new java.io.File(root);
         }
         
         public void walk() throws IOException {
@@ -118,14 +117,13 @@ public class ProfileSpecJobCounter implements Callable<Long> {
          */
         @SuppressWarnings("unchecked")
         @Override
-        protected void handleFile(File file, int depth, Collection results) {
+        protected void handleFile(final java.io.File file, final int depth, final Collection results) {
             count++;
         }
         
         @SuppressWarnings("unchecked")
         @Override
-        protected boolean handleDirectory(File directory, int depth,
-                Collection results) {
+        protected boolean handleDirectory(final java.io.File directory, final int depth, final Collection results) {
             count++;
             return recursive || depth == 0;
         }
@@ -135,7 +133,7 @@ public class ProfileSpecJobCounter implements Callable<Long> {
          */
         @SuppressWarnings("unchecked")
         @Override
-        protected boolean handleIsCancelled(File file, int depth, Collection results) {
+        protected boolean handleIsCancelled(final java.io.File file, final int depth, final Collection results) {
             return cancelled;
         }
     }

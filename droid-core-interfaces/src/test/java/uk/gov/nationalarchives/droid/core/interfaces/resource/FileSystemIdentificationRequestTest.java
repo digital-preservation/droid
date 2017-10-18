@@ -31,14 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
@@ -52,7 +51,7 @@ public class FileSystemIdentificationRequestTest {
     private String fileData;
 
     private FileSystemIdentificationRequest fileRequest;
-    private File file;
+    private Path file;
 
     private RequestMetaData metaData;
     private RequestIdentifier identifier;
@@ -60,21 +59,14 @@ public class FileSystemIdentificationRequestTest {
     @Before
     public void setup() throws IOException {
     
-        file = new File(getClass().getResource("/testXmlFile.xml").getFile());
-        metaData = new RequestMetaData(file.length(), file.lastModified(), "testXmlFile.xml");
-        identifier = new RequestIdentifier(file.toURI());
+        file = Paths.get(getClass().getResource("/testXmlFile.xml").getFile());
+        metaData = new RequestMetaData(Files.size(file), Files.getLastModifiedTime(file).toMillis(), "testXmlFile.xml");
+        identifier = new RequestIdentifier(file.toUri());
         fileRequest = new FileSystemIdentificationRequest(
                 metaData, identifier);
         fileRequest.open(file);
 
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        char[] buffer = new char[8192];
-        int length;
-        StringBuilder sb = new StringBuilder();
-        while ((length = reader.read(buffer)) != -1) {
-            sb.append(buffer, 0, length);
-        }
-        fileData = sb.toString();
+        fileData = new String(Files.readAllBytes(file), UTF_8);
     }
     
     @After
@@ -98,8 +90,8 @@ public class FileSystemIdentificationRequestTest {
     */
 
     @Test
-    public void testGetSize() {
-        assertEquals(file.length(), fileRequest.size());
+    public void testGetSize() throws IOException {
+        assertEquals(Files.size(file), fileRequest.size());
     }
     
     @Test
@@ -145,9 +137,9 @@ public class FileSystemIdentificationRequestTest {
     @Test
     public void testGetLastByteFollowedByOneByteTooMany() throws IOException {
         
-        assertEquals(fileData.getBytes()[(int) file.length() - 1], fileRequest.getByte(file.length() - 1));
+        assertEquals(fileData.getBytes()[(int) Files.size(file) - 1], fileRequest.getByte(Files.size(file) - 1));
         try {
-            fileRequest.getByte(file.length());
+            fileRequest.getByte(Files.size(file));
             fail("Expected IOException.");
         } catch (IOException  e) {
         }
@@ -167,13 +159,13 @@ public class FileSystemIdentificationRequestTest {
     }
     
     @Test
-    public void testGetMetaData() {
+    public void testGetMetaData() throws IOException {
         assertEquals(identifier, fileRequest.getIdentifier());
 
         assertEquals("xml", fileRequest.getExtension());
-        assertEquals(file.getName(), fileRequest.getFileName());
+        assertEquals(file.getFileName().toString(), fileRequest.getFileName());
         assertEquals(metaData, fileRequest.getRequestMetaData());
-        assertEquals(file.length(), fileRequest.size());
+        assertEquals(Files.size(file), fileRequest.size());
         
     }
     

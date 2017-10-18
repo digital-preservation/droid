@@ -31,11 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.After;
 import static org.junit.Assert.fail;
 import org.junit.Before;
@@ -60,8 +62,8 @@ public class GZipArchiveContentIdentifierTest {
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
             "src/test/resources/signatures/DROID_SignatureFile_V91.xml";
-    private String containerSignatures =
-            "src/test/resources/signatures/container-signature-20170330.xml";
+    private Path containerSignatures =
+            Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String gZipFile =
             "src/test/resources/testfiles/test.gz";
     
@@ -74,8 +76,7 @@ public class GZipArchiveContentIdentifierTest {
         } catch (SignatureParseException e) {
             throw new CommandExecutionException("Can't parse signature file");
         }
-        try {
-            InputStream in = new FileInputStream(containerSignatures);
+        try (final InputStream in = Files.newInputStream(containerSignatures)) {
             ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
             containerSignatureDefinitions = parser.parse(in);
         } catch (SignatureParseException e) {
@@ -99,17 +100,17 @@ public class GZipArchiveContentIdentifierTest {
     public void identifyGZipArchiveTest() throws CommandExecutionException {
 
         String fileName;
-        File file = new File(gZipFile);
-        if (!file.exists()) {
+        final Path file = Paths.get(gZipFile);
+        if (!Files.exists(file)) {
             fail("GZIP test file not found");
         }
-        URI uri = file.toURI();
+        URI uri = file.toUri();
         RequestIdentifier identifier = new RequestIdentifier(uri);
         identifier.setParentId(1L);
         try {
-            fileName = file.getCanonicalPath();
-            RequestMetaData metaData =
-                new RequestMetaData(file.length(), file.lastModified(), fileName);
+            fileName = file.toAbsolutePath().toString();
+            RequestMetaData metaData = new RequestMetaData(
+                    Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileName);
             FileSystemIdentificationRequest request =
                 new FileSystemIdentificationRequest(metaData, identifier);
 

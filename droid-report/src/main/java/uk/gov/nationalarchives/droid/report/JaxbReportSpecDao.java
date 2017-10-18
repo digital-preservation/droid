@@ -31,9 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.report;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -67,15 +70,14 @@ public class JaxbReportSpecDao implements ReportSpecDao {
      * {@inheritDoc}
      */
     @Override
-    public ReportSpec readReportSpec(String filePath) {
-        try {
-            Reader reader = new FileReader(filePath);
+    public ReportSpec readReportSpec(final Path file) {
+        try (final Reader reader = Files.newBufferedReader(file, UTF_8)) {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return (ReportSpec) unmarshaller.unmarshal(reader);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             log.error(e);
             return null;
-        } catch (FileNotFoundException e) {
+        } catch (final IOException e) {
             log.error(e);
             throw new RuntimeException(e);
         }

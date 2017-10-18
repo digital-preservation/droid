@@ -34,6 +34,8 @@ package uk.gov.nationalarchives.droid.container.ole2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -222,7 +224,7 @@ public class Ole2RootFileTest {
     public void testInitialiseRegistersOle2ContainerIdentifierWithContainerIdentifierResolver() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature.xml");
-        String path = containerSignatureUrl.getPath();
+        final Path path = Paths.get(containerSignatureUrl.getPath());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
@@ -253,7 +255,7 @@ public class Ole2RootFileTest {
     public void testInitialiseRegistersOle2ContainerFormatsAgainstOoxmlPuid() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature.xml");
-        String path = containerSignatureUrl.getPath();
+        final Path path = Paths.get(containerSignatureUrl.getPath());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
@@ -278,7 +280,7 @@ public class Ole2RootFileTest {
     public void testInitialiseDeregistersOle2BinarySignaturesFromDroid4() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature.xml");
-        String path = containerSignatureUrl.getPath();
+        final Path path = Paths.get(containerSignatureUrl.getPath());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);

@@ -32,11 +32,15 @@
 package uk.gov.nationalarchives.droid.profile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.xml.bind.JAXBException;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -57,6 +61,7 @@ import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -68,8 +73,8 @@ public class ProfileSpecToXmlPersistenceTest {
     public static final String TEST_DATE = "2009-01-01 12:00:00 GMT";
     private static final TimeZone TEST_TIME_ZONE = TimeZone.getTimeZone("Europe/London");
 
-    File tmpDir;
-	File profileFile;
+    Path tmpDir;
+	Path profileFile;
 
     private JaxbProfileSpecDao profileSpecJaxbDao;
 
@@ -88,22 +93,22 @@ public class ProfileSpecToXmlPersistenceTest {
     }
 
     @Before
-    public void setup() throws JAXBException {
+    public void setup() throws JAXBException, IOException {
         profileSpecJaxbDao = new JaxbProfileSpecDao();
-        new File("profiles/untitled-1").mkdirs();
-        tmpDir = new File("tmp");
-        tmpDir.mkdir();
-        profileFile = new File(tmpDir, "profile.xml");
+        Files.createDirectories(Paths.get("profiles/untitled-1"));
+        tmpDir = Paths.get("tmp");
+        Files.createDirectories(tmpDir);
+        profileFile = tmpDir.resolve("profile.xml");
     }
 
     @After
     public void tearDown() throws IOException {
-       FileUtils.deleteDirectory(new File("profiles/"));
-       if(profileFile.exists()) {
-    	   profileFile.deleteOnExit();
+       FileUtil.deleteQuietly(Paths.get("profiles"));
+       if(Files.exists(profileFile)) {
+    	   profileFile.toFile().deleteOnExit();
        }
-       if(tmpDir.exists()) {
-    	   tmpDir.deleteOnExit();
+       if(Files.exists(tmpDir)) {
+    	   tmpDir.toFile().deleteOnExit();
        }
     }
     
@@ -122,7 +127,7 @@ public class ProfileSpecToXmlPersistenceTest {
         profile.setDateCreated(DATE_FORMAT.parse(TEST_DATE));
         profile.setSignatureFileVersion(26);
 
-        profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
+        profileSpecJaxbDao.saveProfile(profile, Paths.get("profiles/untitled-1"));
 
         String control = "<Profile Id=\"untitled-1\">"
                 + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>"
@@ -142,192 +147,175 @@ public class ProfileSpecToXmlPersistenceTest {
     @Test
     public void testSaveProfileSpecWithSomeResources() throws Exception {
 
-        File file = new File("profiles/untitled-1/profile.xml");
-        FileUtils.deleteQuietly(file);
+        final Path file = Paths.get("profiles/untitled-1/profile.xml");
+        FileUtil.deleteQuietly(file);
 
-        File resource1 = new File("file/1");
-        File resource2 = new File("file/2");
-        File resource3 = new File("dir/1");
-        File resource4 = new File("dir/2");
+        final Path resource1 = Paths.get("file/1");
+        final Path resource2 = Paths.get("file/2");
+        final Path resource3 = Paths.get("dir/1");
+        final Path resource4 = Paths.get("dir/2");
 
-        ProfileSpec profileSpec = new ProfileSpec();
+        final ProfileSpec profileSpec = new ProfileSpec();
         profileSpec.addResource(new FileProfileResource(resource1));
         profileSpec.addResource(new FileProfileResource(resource2));
         profileSpec.addResource(new DirectoryProfileResource(resource3, false));
         profileSpec.addResource(new DirectoryProfileResource(resource4, true));
 
-        ProfileInstance profile = new ProfileInstance(ProfileState.INITIALISING);
+        final ProfileInstance profile = new ProfileInstance(ProfileState.INITIALISING);
         profile.changeState(ProfileState.STOPPED);
         profile.setSignatureFileVersion(26);
         profile.setUuid("untitled-1");
         profile.setProfileSpec(profileSpec);
         profile.setDateCreated(DATE_FORMAT.parse(TEST_DATE));
 
-        profileSpecJaxbDao.saveProfile(profile, new File("profiles/untitled-1"));
+        profileSpecJaxbDao.saveProfile(profile, Paths.get("profiles/untitled-1"));
 
         DateTime testDateTime = new DateTime(0L);
         DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.forTimeZone(TEST_TIME_ZONE));
-        String control = "<Profile Id=\"untitled-1\">"
-                + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>"
-                + "  <ProfileSpec>"
-                + "    <Resources>"
-                + "     <File>"
-                + "      <Size>0</Size>"
-                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
-                + "      <Extension></Extension>"
-                + "      <Name>1</Name>"
-                + "      <Uri>"
-                + resource1.toURI()
-                + "</Uri>"
-                + "      <Path>"
-                + getPath(resource1)
-                + "     </Path>"
-                + "     </File>"
-                + "     <File>"
-                + "      <Size>0</Size>"
-                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
-                + "      <Extension></Extension>"
-                + "      <Name>2</Name>"
-                + "      <Uri>"
-                + resource2.toURI()
-                + "</Uri>"
-                + "      <Path>"
-                + getPath(resource2)
-                + "     </Path>"
-                + "     </File>"
-                + "     <Dir Recursive=\"false\">"
-                + "      <Size>0</Size>"
-                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
-                + "      <Extension></Extension>"
-                + "      <Name>1</Name>"
-                + "      <Uri>"
-                + resource3.toURI()
-                + "</Uri>"
-                + "      <Path>"
-                + getPath(resource3)
-                + "     </Path>"
-                + "     </Dir>"
-                + "     <Dir Recursive=\"true\">"
-                + "      <Size>0</Size>"
-                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>"
-                + "      <Extension></Extension>"
-                + "      <Name>2</Name>"
-                + "      <Uri>"
-                + resource4.toURI()
-                + "</Uri>"
-                + "      <Path>"
-                + getPath(resource4)
-                + "     </Path>"
-                + "     </Dir>"
-                + "    </Resources>"
-                + "  </ProfileSpec>"
-                + "  <State>STOPPED</State>"
-                + "  <SignatureFileVersion>26</SignatureFileVersion>"
-                + "  <Throttle>0</Throttle>"
-                + "</Profile>";
+        String control = "<Profile Id=\"untitled-1\">\n"
+                + "  <CreatedDate>2009-01-01T00:00:00Z</CreatedDate>\n"
+                + "  <ProfileSpec>\n"
+                + "    <Resources>\n"
+                + "     <File>\n"
+                + "      <Size>-1</Size>\n"
+                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>\n"
+                + "      <Extension></Extension>\n"
+                + "      <Name>1</Name>\n"
+                + "      <Uri>" + resource1.toUri() + "</Uri>\n"
+                + "      <Path>" + getPath(resource1) + "</Path>\n"
+                + "     </File>\n"
+                + "     <File>\n"
+                + "      <Size>-1</Size>\n"
+                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>\n"
+                + "      <Extension></Extension>\n"
+                + "      <Name>2</Name>\n"
+                + "      <Uri>" + resource2.toUri() + "</Uri>\n"
+                + "      <Path>" + getPath(resource2) + "</Path>\n"
+                + "     </File>\n"
+                + "     <Dir Recursive=\"false\">\n"
+                + "      <Size>-1</Size>\n"
+                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>\n"
+                + "      <Extension></Extension>\n"
+                + "      <Name>1</Name>\n"
+                + "      <Uri>" + resource3.toUri() + "</Uri>\n"
+                + "      <Path>" + getPath(resource3) + "</Path>\n"
+                + "     </Dir>\n"
+                + "     <Dir Recursive=\"true\">\n"
+                + "      <Size>-1</Size>\n"
+                + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>\n"
+                + "      <Extension></Extension>\n"
+                + "      <Name>2</Name>\n"
+                + "      <Uri>" + resource4.toUri() + "</Uri>\n"
+                + "      <Path>" + getPath(resource4) + "</Path>\n"
+                + "     </Dir>\n"
+                + "    </Resources>\n"
+                + "  </ProfileSpec>\n"
+                + "  <State>STOPPED</State>\n"
+                + "  <SignatureFileVersion>26</SignatureFileVersion>\n"
+                + "  <Throttle>0</Throttle>\n"
+                + "</Profile>\n";
 
-        Reader test = new FileReader(file);
-        Diff diff = new Diff(new StringReader(control), test);
-        assertTrue(diff.similar());
+        try(final Reader test = Files.newBufferedReader(file, UTF_8)) {
+            final Diff diff = new Diff(new StringReader(control), test);
+            assertTrue(diff.similar());
+        }
     }
 
-    public String getPath(File file) {
-        String location = file.toURI().toString();
-        String decodedLocation = java.net.URLDecoder.decode(location);
-        int uriPrefix = decodedLocation.indexOf(":/");
+    public String getPath(final Path file) {
+        final String location = file.toUri().toString();
+        final String decodedLocation = java.net.URLDecoder.decode(location);
+        final int uriPrefix = decodedLocation.indexOf(":/");
         return decodedLocation.substring(uriPrefix + 2);
     }
     
     @Test
     public void testXmlToProfileSpec() throws Exception {
+        final Path resource1 = Paths.get("file/1");
+        final Path resource2 = Paths.get("file/2");
+        final Path resource3 = Paths.get("dir/1");
+        final Path resource4 = Paths.get("dir/2");
 
-        File resource1 = new File("file/1");
-        File resource2 = new File("file/2");
-        File resource3 = new File("dir/1");
-        File resource4 = new File("dir/2");
-
-        BufferedWriter writer = new BufferedWriter(new FileWriter(
-                "profiles/untitled-1/profile.xml"));
-        writer.append("<Profile>");
-        writer.newLine();
-        writer.append("  <CreatedDate>2009-07-01T00:00:00Z</CreatedDate>");
-        writer.newLine();
-        writer.append("  <Location>untitled-1</Location>");
-        writer.newLine();
-        writer.append("  <State>STOPPED</State>");
-        writer.newLine();
-        writer.append("  <Throttle>120</Throttle>");
-        writer.newLine();
-        writer.append("  <SignatureFileVersion>26</SignatureFileVersion>");
-        writer.newLine();
-        writer.append("  <ProfileSpec>");
-        writer.newLine();
-        writer.append("    <Name>untitled-1</Name>");
-        writer.newLine();
-        writer.append("    <Resources>");
-        writer.newLine();
-        writer.append("     <File>");
-        writer.newLine();
-        writer.append("      <Uri>" + resource1.toURI() + "</Uri>");
-        writer.newLine();
-        writer.append("      <Size></Size>");
-        writer.newLine();
-        writer.append("      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>");
-        writer.newLine();
-        writer.append("      <Extension></Extension>");
-        writer.newLine();
-        writer.append("      <Name></Name>");
-        writer.newLine();
-        writer.append("     </File>");
-        writer.newLine();
-        writer.append("     <File>");
-        writer.newLine();
-        writer.append("      <Uri>" + resource2.toURI() + "</Uri>");
-        writer.newLine();
-        writer.append("      <Size></Size>");
-        writer.newLine();
-        writer.append("      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>");
-        writer.newLine();
-        writer.append("      <Extension></Extension>");
-        writer.newLine();
-        writer.append("      <Name></Name>");
-        writer.newLine();
-        writer.append("     </File>");
-        writer.newLine();
-        writer.append("     <Dir Recursive=\"false\">");
-        writer.newLine();
-        writer.append("      <Uri>" + resource3.toURI() + "</Uri>");
-        writer.newLine();
-        writer.append("      <Size></Size>");
-        writer.newLine();
-        writer.append("      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>");
-        writer.newLine();
-        writer.append("      <Extension></Extension>");
-        writer.newLine();
-        writer.append("      <Name></Name>");
-        writer.newLine();
-        writer.append("     </Dir>");
-        writer.newLine();
-        writer.append("     <Dir Recursive=\"true\">");
-        writer.newLine();
-        writer.append("      <Uri>" + resource4.toURI() + "</Uri>");
-        writer.newLine();
-        writer.append("      <Size></Size>");
-        writer.newLine();
-        writer.append("      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>");
-        writer.newLine();
-        writer.append("      <Extension></Extension>");
-        writer.newLine();
-        writer.append("      <Name></Name>");
-        writer.newLine();
-        writer.append("     </Dir>");
-        writer.newLine();
-        writer.append("    </Resources>");
-        writer.newLine();
-        writer.append("  </ProfileSpec>");
-        writer.append("</Profile>");
-        writer.newLine();
-        writer.close();
+        try(final BufferedWriter writer = Files.newBufferedWriter(Paths.get("profiles/untitled-1/profile.xml"), UTF_8)) {
+            writer.append("<Profile>");
+            writer.newLine();
+            writer.append("  <CreatedDate>2009-07-01T00:00:00Z</CreatedDate>");
+            writer.newLine();
+            writer.append("  <Location>untitled-1</Location>");
+            writer.newLine();
+            writer.append("  <State>STOPPED</State>");
+            writer.newLine();
+            writer.append("  <Throttle>120</Throttle>");
+            writer.newLine();
+            writer.append("  <SignatureFileVersion>26</SignatureFileVersion>");
+            writer.newLine();
+            writer.append("  <ProfileSpec>");
+            writer.newLine();
+            writer.append("    <Name>untitled-1</Name>");
+            writer.newLine();
+            writer.append("    <Resources>");
+            writer.newLine();
+            writer.append("     <File>");
+            writer.newLine();
+            writer.append("      <Uri>" + resource1.toUri() + "</Uri>");
+            writer.newLine();
+            writer.append("      <Size></Size>");
+            writer.newLine();
+            writer.append("      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>");
+            writer.newLine();
+            writer.append("      <Extension></Extension>");
+            writer.newLine();
+            writer.append("      <Name></Name>");
+            writer.newLine();
+            writer.append("     </File>");
+            writer.newLine();
+            writer.append("     <File>");
+            writer.newLine();
+            writer.append("      <Uri>" + resource2.toUri() + "</Uri>");
+            writer.newLine();
+            writer.append("      <Size></Size>");
+            writer.newLine();
+            writer.append("      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>");
+            writer.newLine();
+            writer.append("      <Extension></Extension>");
+            writer.newLine();
+            writer.append("      <Name></Name>");
+            writer.newLine();
+            writer.append("     </File>");
+            writer.newLine();
+            writer.append("     <Dir Recursive=\"false\">");
+            writer.newLine();
+            writer.append("      <Uri>" + resource3.toUri() + "</Uri>");
+            writer.newLine();
+            writer.append("      <Size></Size>");
+            writer.newLine();
+            writer.append("      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>");
+            writer.newLine();
+            writer.append("      <Extension></Extension>");
+            writer.newLine();
+            writer.append("      <Name></Name>");
+            writer.newLine();
+            writer.append("     </Dir>");
+            writer.newLine();
+            writer.append("     <Dir Recursive=\"true\">");
+            writer.newLine();
+            writer.append("      <Uri>" + resource4.toUri() + "</Uri>");
+            writer.newLine();
+            writer.append("      <Size></Size>");
+            writer.newLine();
+            writer.append("      <LastModifiedDate>1979-01-01-T01:00:00:00+01:00</LastModifiedDate>");
+            writer.newLine();
+            writer.append("      <Extension></Extension>");
+            writer.newLine();
+            writer.append("      <Name></Name>");
+            writer.newLine();
+            writer.append("     </Dir>");
+            writer.newLine();
+            writer.append("    </Resources>");
+            writer.newLine();
+            writer.append("  </ProfileSpec>");
+            writer.append("</Profile>");
+            writer.newLine();
+        }
 
         ProfileInstance profile = profileSpecJaxbDao
                 .loadProfile(new FileInputStream(
@@ -353,6 +341,7 @@ public class ProfileSpecToXmlPersistenceTest {
                 resourceIterator.next());
         assertEquals(new DirectoryProfileResource(resource4, true),
                 resourceIterator.next());
+
 
     }
     

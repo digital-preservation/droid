@@ -31,12 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
@@ -57,12 +58,12 @@ import static org.junit.Assert.*;
  *
  */
 public class GZipIdentificationRequestTest {
-    private static File tmpDir;
+    private static Path tmpDir;
 
     private static String fileData;
 
     private GZipIdentificationRequest gzRequest;
-    private File file;
+    private Path file;
 
     private RequestMetaData metaData;
     private RequestIdentifier identifier;
@@ -70,38 +71,39 @@ public class GZipIdentificationRequestTest {
     
     @AfterClass
     public static void removeTmpDir() {
-        FileUtils.deleteQuietly(tmpDir);
+        FileUtils.deleteQuietly(tmpDir.toFile());
     }
     
     @BeforeClass
     public static void setupTestData() throws IOException {
-        tmpDir = new File("tmp");
-        tmpDir.mkdir();
+        tmpDir = Paths.get("tmp");
+        Files.createDirectories(tmpDir);
 
-        File file = new File(GZipIdentificationRequestTest.class.getResource("/testXmlFile.xml.gz").getFile());
-        GzipCompressorInputStream in = new GzipCompressorInputStream(new FileInputStream(file));
-        
-        Reader reader = new InputStreamReader(in);
-        char[] buffer = new char[8192];
-        int length;
-        StringBuilder sb = new StringBuilder();
-        while ((length = reader.read(buffer)) != -1) {
-            sb.append(buffer, 0, length);
+        final Path file = Paths.get(GZipIdentificationRequestTest.class.getResource("/testXmlFile.xml.gz").getFile());
+
+        try(final GzipCompressorInputStream in = new GzipCompressorInputStream(Files.newInputStream(file));
+                final Reader reader = new InputStreamReader(in)) {
+            char[] buffer = new char[8192];
+            int length;
+            StringBuilder sb = new StringBuilder();
+            while ((length = reader.read(buffer)) != -1) {
+                sb.append(buffer, 0, length);
+            }
+            fileData = sb.toString();
         }
-        fileData = sb.toString();
     }    
     
     @Before
     public void setup() throws Exception {
     
-        file = new File(getClass().getResource("/testXmlFile.xml.gz").getFile());
+        file = Paths.get(getClass().getResource("/testXmlFile.xml.gz").getFile());
         
         metaData = new RequestMetaData(null, null, "foo");
-        identifier = new RequestIdentifier(URI.create(GzipUtils.getUncompressedFilename(file.toURI().toString())));
+        identifier = new RequestIdentifier(URI.create(GzipUtils.getUncompressedFilename(file.toUri().toString())));
         gzRequest = new GZipIdentificationRequest(
                 metaData, identifier,
-                new File("tmp"));
-        GzipCompressorInputStream in = new GzipCompressorInputStream(new FileInputStream(file));
+                Paths.get("tmp"));
+        GzipCompressorInputStream in = new GzipCompressorInputStream(Files.newInputStream(file));
         gzRequest.open(in);
     }
     
@@ -173,7 +175,7 @@ public class GZipIdentificationRequestTest {
     @Test
     public void testGetLastByteFollowedByOneByteTooMany() throws IOException {
         
-        assertEquals(fileData.getBytes()[(int) file.length() - 1], gzRequest.getByte(file.length() - 1));
+        assertEquals(fileData.getBytes()[(int) Files.size(file) - 1], gzRequest.getByte(Files.size(file) - 1));
         try {
             gzRequest.getByte(fileData.length());
             fail("Expected IOException");
@@ -197,11 +199,11 @@ public class GZipIdentificationRequestTest {
     @Test
     public void testGetMetaData() {
         
-        identifier = new RequestIdentifier(URI.create(GzipUtils.getUncompressedFilename(file.toURI().toString())));
+        identifier = new RequestIdentifier(URI.create(GzipUtils.getUncompressedFilename(file.toUri().toString())));
         assertEquals(identifier, gzRequest.getIdentifier());
         
         assertEquals("xml", gzRequest.getExtension());
-        assertEquals(StringUtils.substringBeforeLast(file.getName(), ".gz"), gzRequest.getFileName());
+        assertEquals(StringUtils.substringBeforeLast(file.getFileName().toString(), ".gz"), gzRequest.getFileName());
         assertEquals(metaData, gzRequest.getRequestMetaData());
         assertEquals(fileData.length(), gzRequest.size());
         

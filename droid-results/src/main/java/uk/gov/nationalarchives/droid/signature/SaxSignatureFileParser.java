@@ -31,9 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.signature;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -58,7 +60,7 @@ public class SaxSignatureFileParser implements SignatureParser {
     private static final String INVALID_SIGNATURE_FILE = "Invalid signature file [%s]";
     private Log log = LogFactory.getLog(this.getClass());
     
-    private File file;
+    private Path file;
 
     /**
      * @param filePath
@@ -66,7 +68,7 @@ public class SaxSignatureFileParser implements SignatureParser {
      * @throws SignatureFileException
      *             if the Signature file could not be parsed
      */
-    public SaxSignatureFileParser(URI filePath) throws SignatureFileException {
+    public SaxSignatureFileParser(final URI filePath) throws SignatureFileException {
         file = openFile(filePath);
     }
 
@@ -74,22 +76,17 @@ public class SaxSignatureFileParser implements SignatureParser {
      * {@inheritDoc}
      */
     @Override
-    public void formats(FormatCallback callback) throws SignatureFileException {
-
-        FileFormatHandler handler = new FileFormatHandler(callback);
-
-        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+    public void formats(final FormatCallback callback) throws SignatureFileException {
+        final FileFormatHandler handler = new FileFormatHandler(callback);
+        final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         try {
-            SAXParser saxParser = saxParserFactory.newSAXParser();
-            saxParser.parse(file, handler);
+            final SAXParser saxParser = saxParserFactory.newSAXParser();
+            saxParser.parse(file.toFile(), handler);
         } catch (SAXException e) {
             throw new SignatureFileException(String.format(
-                    INVALID_SIGNATURE_FILE, file.toURI()), e,
+                    INVALID_SIGNATURE_FILE, file.toUri()), e,
                     ErrorCode.INVALID_SIGNATURE_FILE);
-        } catch (ParserConfigurationException e) {
-            log.error(e);
-            throw new RuntimeException(e.getMessage(), e);
-        } catch (IOException e) {
+        } catch (final ParserConfigurationException | IOException e) {
             log.error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -104,15 +101,15 @@ public class SaxSignatureFileParser implements SignatureParser {
      * @throws SignatureFileException
      *             if the path specified was not a valid signature file.
      */
-    private File openFile(URI filePath) throws SignatureFileException {
-        File f = new File(filePath);
-        if (!f.exists()) {
+    private Path openFile(final URI filePath) throws SignatureFileException {
+        final Path f = Paths.get(filePath);
+        if (!Files.exists(f)) {
             throw new SignatureFileException(String.format(
                     "Signature file does not exist [%s]", filePath),
                     ErrorCode.FILE_NOT_FOUND);
         }
 
-        if (!f.isFile()) {
+        if (!Files.isRegularFile(f)) {
             throw new SignatureFileException(String.format(
                     INVALID_SIGNATURE_FILE, filePath),
                     ErrorCode.INVALID_SIGNATURE_FILE);
@@ -126,19 +123,18 @@ public class SaxSignatureFileParser implements SignatureParser {
      * 
      */
     private static final class FileFormatHandler extends DefaultHandler {
+        private final FormatCallback callback;
 
-        private FormatCallback callback;
-
-        public FileFormatHandler(FormatCallback callback) {
+        public FileFormatHandler(final FormatCallback callback) {
             this.callback = callback;
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName,
-                Attributes attributes) {
+        public void startElement(final String uri, final String localName, final String qName,
+                                 final Attributes attributes) {
 
             if ("FileFormat".equals(qName)) {
-                Format format = new Format();
+                final Format format = new Format();
                 format.setPuid(notNull(attributes.getValue("PUID")));
                 format.setName(notNull(attributes.getValue("Name")));
                 format.setMimeType(notNull(attributes.getValue("MIMEType")));

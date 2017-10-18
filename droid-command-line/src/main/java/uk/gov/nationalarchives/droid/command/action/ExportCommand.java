@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -82,7 +82,7 @@ public class ExportCommand implements DroidCommand {
         for (String profileLocation : profiles) {
             ProfileInstance profile;
             try {
-                profile = profileManager.open(new File(profileLocation), new ProgressObserver() {
+                profile = profileManager.open(Paths.get(profileLocation), new ProgressObserver() {
                     @Override
                     public void onProgress(Integer progress) {
                     }

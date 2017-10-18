@@ -31,8 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.signature;
 
-import java.io.File;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -59,15 +60,14 @@ public class SignatureFileParserTest {
 
     @Test
     public void testParseNonExistentSigFileGivesSignatureFileException() {
+        assertFalse(Files.exists(Paths.get("i_do_not_exist")));
 
-        assertFalse(new File("i_do_not_exist").exists());
-
-        URI uri = new File("i_do_not_exist").toURI();
+        final URI uri = Paths.get("i_do_not_exist").toUri();
         try {
-            SignatureParser parser = new SaxSignatureFileParser(uri);
+            final SignatureParser parser = new SaxSignatureFileParser(uri);
             parser.formats(null);
             fail("Expected SignatureFileException.");
-        } catch (SignatureFileException e) {
+        } catch (final SignatureFileException e) {
             assertEquals("Signature file does not exist [" + uri + "]", e
                     .getMessage());
             assertEquals(ErrorCode.FILE_NOT_FOUND, e.getErrorCode());
@@ -76,14 +76,14 @@ public class SignatureFileParserTest {
 
     @Test
     public void testParseDirectoryAsSigFileGivesSignatureFileException() {
-        assertTrue(new File("test_sig_files").isDirectory());
+        assertTrue(Files.isDirectory(Paths.get("test_sig_files")));
 
-        URI uri = new File("test_sig_files").toURI();
+        final URI uri = Paths.get("test_sig_files").toUri();
         try {
-            SignatureParser parser = new SaxSignatureFileParser(uri);
+            final SignatureParser parser = new SaxSignatureFileParser(uri);
             parser.formats(null);
             fail("Expected SignatureFileException.");
-        } catch (SignatureFileException e) {
+        } catch (final SignatureFileException e) {
             assertEquals("Invalid signature file [" + uri + "]", e.getMessage());
             assertEquals(ErrorCode.INVALID_SIGNATURE_FILE, e.getErrorCode());
         }
@@ -92,12 +92,12 @@ public class SignatureFileParserTest {
     @Test
     @Ignore("Hard to validate doc when no grammar specified!")
     public void testParseInvalidSigFileGivesSignatureFileException() {
-        URI uri = new File("test_sig_files/not_valid_sig_file.xml").toURI();
+        final URI uri = Paths.get("test_sig_files/not_valid_sig_file.xml").toUri();
         try {
-            SignatureParser parser = new SaxSignatureFileParser(uri);
+            final SignatureParser parser = new SaxSignatureFileParser(uri);
             parser.formats(null);
             fail("Expected SignatureFileException.");
-        } catch (SignatureFileException e) {
+        } catch (final SignatureFileException e) {
             assertEquals("Invalid signature file [" + uri + "]", e.getMessage());
             assertEquals(ErrorCode.INVALID_SIGNATURE_FILE, e.getErrorCode());
         }
@@ -105,8 +105,8 @@ public class SignatureFileParserTest {
 
     @Test
     public void testParseMalformedSigFileGivesSignatureFileException() {
-        assertTrue(new File("test_sig_files").exists());
-        URI uri = new File("test_sig_files/malformed.xml").toURI();
+        assertTrue(Files.exists(Paths.get("test_sig_files")));
+        URI uri = Paths.get("test_sig_files/malformed.xml").toUri();
         try {
             SignatureParser parser = new SaxSignatureFileParser(uri);
             parser.formats(null);
@@ -120,8 +120,8 @@ public class SignatureFileParserTest {
     @Test
     public void testParseAllFileFormatsGivesCollectionOfAllFileFormats()
         throws SignatureFileException {
-        URI uri = new File("test_sig_files/DROID_SignatureFile_V26.xml")
-                .toURI();
+        URI uri = Paths.get("test_sig_files/DROID_SignatureFile_V26.xml")
+                .toUri();
         SaxSignatureFileParser parser = new SaxSignatureFileParser(uri);
 
         FormatCallback callback = mock(FormatCallback.class);

@@ -31,9 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,7 +58,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
     private final RequestMetaData requestMetaData;
     private final RequestIdentifier identifier;
 
-    private File tempDir;
+    private Path tempDir;
     private Long size;
     private WindowReader reader;
 
@@ -73,8 +73,8 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
      * @param identifier request identifier
      * @param tempDir the location to write temp files.
      */
-    public ZipEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
-                                  File tempDir) {
+    public ZipEntryIdentificationRequest(final RequestMetaData metaData, final RequestIdentifier identifier,
+            final Path tempDir) {
         this.identifier = identifier;
         this.size = metaData.getSize();
         this.fileName = metaData.getName();
@@ -90,8 +90,8 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
      * @param tempDir the location to write temp files.
      * @param closeStream Whether to close the underlying input stream when the reader created in [open] is closed.
      */
-    public ZipEntryIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier,
-                                         File tempDir, boolean closeStream) {
+    public ZipEntryIdentificationRequest(final RequestMetaData metaData, final RequestIdentifier identifier,
+            final Path tempDir, final boolean closeStream) {
         this(metaData, identifier, tempDir);
         this.closeStream = closeStream;
 

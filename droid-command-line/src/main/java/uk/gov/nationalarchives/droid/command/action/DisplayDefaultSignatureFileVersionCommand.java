@@ -58,7 +58,7 @@ public class DisplayDefaultSignatureFileVersionCommand implements DroidCommand {
             Map<SignatureType, SignatureFileInfo> sigFileInfos = signatureManager.getDefaultSignatures();
             for (SignatureFileInfo info : sigFileInfos.values()) {
                 printWriter.println(I18N.getResource(I18N.DEFAULT_SIGNATURE_VERSION,
-                        info.getType(), info.getVersion(), info.getFile().getName()));
+                        info.getType(), info.getVersion(), info.getFile().getFileName().toString()));
             }
         } catch (SignatureFileException e) {
             throw new CommandExecutionException(e);

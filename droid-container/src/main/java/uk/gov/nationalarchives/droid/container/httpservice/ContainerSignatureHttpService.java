@@ -31,10 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.container.httpservice;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,7 +47,6 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -141,13 +140,11 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
      * @throws SignatureServiceException 
      */
     @Override
-    public SignatureFileInfo importSignatureFile(File targetDir) throws SignatureServiceException {
-        GetMethod get = new GetMethod(endpointUrl);
-
-        FileWriter writer = null;
+    public SignatureFileInfo importSignatureFile(final Path targetDir) throws SignatureServiceException {
+        final GetMethod get = new GetMethod(endpointUrl);
         
         try {
-            int statusCode = client.executeMethod(get);
+            final int statusCode = client.executeMethod(get);
             if (statusCode == HttpStatus.SC_NOT_FOUND) {
                 throw new SignatureServiceException(
                         String.format(FILE_NOT_FOUND_404, endpointUrl));
@@ -156,36 +153,25 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
                         String.format(ERROR_MESSAGE_PATTERN, endpointUrl, statusCode));
             }
             
-            int version = getVersion(get);
+            final int version = getVersion(get);
             
-            SignatureFileInfo signatureFileInfo = new SignatureFileInfo(version, false, SignatureType.CONTAINER);
-            String fileName = String.format(FILENAME_PATTERN, version);
+            final SignatureFileInfo signatureFileInfo = new SignatureFileInfo(version, false, SignatureType.CONTAINER);
+            final String fileName = String.format(FILENAME_PATTERN, version);
 
-            final File targetFile = new File(targetDir, fileName);
-            writer = new FileWriter(targetFile);
-            IOUtils.copy(get.getResponseBodyAsStream(), writer);
+            final Path targetFile = targetDir.resolve(fileName);
+            Files.copy(get.getResponseBodyAsStream(), targetFile);
             
             signatureFileInfo.setFile(targetFile);
             return signatureFileInfo;
             
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new SignatureServiceException(
                     String.format(COULD_NOT_FIND_SERVER, endpointUrl));
-        } catch (IOException e) {
-            throw new SignatureServiceException(e);
-        } catch (DateParseException e) {
+        } catch (final IOException | DateParseException e) {
             throw new SignatureServiceException(e);
         } finally {
             get.releaseConnection();
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-                log.error("Error closing file writer", e);
-            }
         }
-        
     }
     
     /**

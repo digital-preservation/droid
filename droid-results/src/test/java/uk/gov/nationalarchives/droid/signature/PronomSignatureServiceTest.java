@@ -31,7 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.signature;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -49,6 +54,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -70,17 +76,17 @@ public class PronomSignatureServiceTest {
     @Autowired
     private PronomSignatureService importer;
     
-    private File sigFileDir;
+    private Path sigFileDir;
     
 
     
     @Before
     public void setup() throws Exception {
 
-        sigFileDir = new File("tmp_sig_files");
-        FileUtils.deleteQuietly(sigFileDir);
-        sigFileDir.mkdir();
-        new File("tmp_sig_files/DROID_SignatureFile_V26.xml").delete();
+        sigFileDir = Paths.get("tmp_sig_files");
+        FileUtil.deleteQuietly(sigFileDir);
+        FileUtil.mkdirsQuietly(sigFileDir);
+        Files.deleteIfExists(Paths.get("tmp_sig_files/DROID_SignatureFile_V26.xml"));
         importer.setEndpointUrl(ENDPOINT_URL);
         ProxySettings proxySettings = new ProxySettings();
         proxySettings.setEnabled(false);
@@ -90,7 +96,7 @@ public class PronomSignatureServiceTest {
     //TODO this only works inside of TNA! We need to mock out the proxy call!
     @Ignore
     @Test
-    public void testGetSigFileFromRemoteWebServiceSavesFileLocallyViaProxy() throws SignatureServiceException {
+    public void testGetSigFileFromRemoteWebServiceSavesFileLocallyViaProxy() throws SignatureServiceException, IOException {
         
         ProxySettings proxySettings = new ProxySettings();
         
@@ -100,13 +106,13 @@ public class PronomSignatureServiceTest {
         
         importer.onProxyChange(proxySettings);
         
-        File[] sigFiles = sigFileDir.listFiles();
-        assertEquals(0, sigFiles.length);
+        List<Path> sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter)null);
+        assertEquals(0, sigFiles.size());
         
         SignatureFileInfo info = importer.importSignatureFile(sigFileDir);
         
-        sigFiles = sigFileDir.listFiles();
-        assertEquals(1, sigFiles.length);
+        sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter)null);
+        assertEquals(1, sigFiles.size());
         
 //        File file = new File("tmp_sig_files/DROID_SignatureFile_V" + CURRENT_VER + ".xml");
 //        assertTrue(file.exists());
@@ -149,14 +155,14 @@ public class PronomSignatureServiceTest {
     }
 
     @Test
-    public void testGetSigFileFromRemoteWebServiceSavesFileLocally() throws SignatureServiceException {
-        
-        File[] sigFiles = sigFileDir.listFiles();
-        assertEquals(0, sigFiles.length);
+    public void testGetSigFileFromRemoteWebServiceSavesFileLocally() throws SignatureServiceException, IOException {
+
+        List<Path> sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter)null);
+        assertEquals(0, sigFiles.size());
         
         SignatureFileInfo info = importer.importSignatureFile(sigFileDir);
-        sigFiles = sigFileDir.listFiles();
-        assertEquals(1, sigFiles.length);
+        sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter)null);
+        assertEquals(1, sigFiles.size());
         
 //        File file = new File("tmp_sig_files/DROID_SignatureFile_V" + CURRENT_VER + ".xml");
 //        assertTrue(file.exists());

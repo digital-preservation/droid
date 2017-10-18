@@ -33,8 +33,8 @@ package uk.gov.nationalarchives.droid.gui.action;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JLabel;
@@ -72,7 +72,7 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
     private DroidUIContext context;
     private JTabbedPane tabbedPane;
     private ProgressObserver observer;
-    private File profileFile;
+    private Path profileFile;
     private ProfileForm profilePanel;
 
     /**
@@ -96,7 +96,7 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
         
         this.profilePanel = parent;
         
-        profilePanel.setName(FilenameUtils.getBaseName(profileFile.getName()));
+        profilePanel.setName(FilenameUtils.getBaseName(profileFile.getFileName().toString()));
 
         final JProgressBar statusProgressBar = profilePanel.getStatusProgressBar();
         final JLabel statusLabel = profilePanel.getStatusLabel();
@@ -190,7 +190,7 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
      * Sets the file that was the source of this profile.
      * @param profileFile the source of the profile
      */
-    public void setProfileFile(File profileFile) {
+    public void setProfileFile(Path profileFile) {
         this.profileFile = profileFile;
     }
 

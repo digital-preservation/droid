@@ -31,10 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.report;
 
-import java.io.File;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Path;
 
 import javax.xml.transform.TransformerException;
 
@@ -63,7 +63,7 @@ public interface ReportTransformer {
      * @param out the destination of the export
      * @throws TransformerException if the transform failed
      */
-    void transformUsingXsl(Reader sourceReader, File xslFile, Writer out) 
+    void transformUsingXsl(Reader sourceReader, Path xslFile, Writer out)
         throws TransformerException;
 
     /**

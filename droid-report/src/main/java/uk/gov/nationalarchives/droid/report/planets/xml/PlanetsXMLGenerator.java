@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.report.planets.xml;
 
-import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -144,7 +144,7 @@ public class PlanetsXMLGenerator {
                 observer.onProgress(HUNDRED);
             }
 
-            m.marshal(fileProfile, new File(filePath));
+            m.marshal(fileProfile, Paths.get(filePath).toFile());
 
         } catch (JAXBException ex) {
             throw new RuntimeException("Error  while writing to an xml file.");

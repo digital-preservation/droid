@@ -31,13 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.report;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringWriter;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -78,12 +75,11 @@ public class ReportExportTest {
     @Test
     public void testXhtmlTransform() throws Exception {
         
-        InputStream in = getClass().getClassLoader().getResourceAsStream("test-report.xml");
-        Reader reader = new InputStreamReader(in);
-        
-        StringWriter writer = new StringWriter();
+        try(final InputStream in = getClass().getClassLoader().getResourceAsStream("test-report.xml");
+            final Reader reader = new BufferedReader(new InputStreamReader(in));
+            final StringWriter writer = new StringWriter()) {
 
-        reportTransformer.transformUsingXsl(reader, "Web page.html.xsl", writer);
+            reportTransformer.transformUsingXsl(reader, "Web page.html.xsl", writer);
         
         /* this is a nasty test - every change to the report or xsl creates a lot of
          work keeping all this up to date.
@@ -142,42 +138,39 @@ public class ReportExportTest {
             + "</html>"
             
         */
-        
-        System.out.println(writer.getBuffer().toString());
-        
-        //XMLAssert.assertXMLEqual(control, writer.getBuffer().toString());
-        //assertTrue(pdf.exists());
+
+            System.out.println(writer.getBuffer().toString());
+
+            //XMLAssert.assertXMLEqual(control, writer.getBuffer().toString());
+            //assertTrue(pdf.exists());
+        }
     }
 
     @Test
     public void testPdfTransform() throws Exception {
-        
-        File pdf = new File("myPdf.pdf");
-        pdf.delete();
-        
+
+        Path pdf = Paths.get("myPdf.pdf");
+        Files.deleteIfExists(pdf);
+
         // Create a tmp dir
-        File tmp = new File("tmp");
-        tmp.mkdir();
-        
+        Path tmp = Files.createTempDirectory("tmp");
+
         DroidGlobalConfig globalConfig = mock(DroidGlobalConfig.class);
         when(globalConfig.getTempDir()).thenReturn(tmp);
         reportTransformer.setConfig(globalConfig);
-        
-        assertFalse(pdf.exists());
-        
-        InputStream in = getClass().getClassLoader().getResourceAsStream("test-report.xml");
-        Reader reader = new InputStreamReader(in);
-        
-        OutputStream pdfOut = new FileOutputStream(pdf);
-        try {
+
+        assertFalse(Files.exists(pdf));
+
+        try (final InputStream in = getClass().getClassLoader().getResourceAsStream("test-report.xml");
+             final Reader reader = new BufferedReader(new InputStreamReader(in));
+             final OutputStream pdfOut = Files.newOutputStream(pdf)) {
+
             reportTransformer.transformToPdf(reader, "Web page.html.xsl", pdfOut);
-        } finally {
-            pdfOut.close();
         }
 
-        assertTrue(pdf.exists());
-        assertTrue(pdf.length() > 1000);
-        assertTrue(pdf.length() < 5000);
+        assertTrue(Files.exists(pdf));
+        assertTrue(Files.size(pdf) > 1000);
+        assertTrue(Files.size(pdf) < 5000);
         
     }
 }

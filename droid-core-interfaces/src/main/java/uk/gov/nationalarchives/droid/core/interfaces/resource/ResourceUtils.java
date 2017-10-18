@@ -31,13 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import java.io.File;
 import java.io.FileFilter;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -111,17 +110,17 @@ public final class ResourceUtils {
      * @param topTailCapacity The amount of memory to cache on the top and tail of each stream.
      * @return The input stream reader.
      */
-    public static InputStreamReader getStreamReader(final InputStream in, File tempDir, int topTailCapacity) {
+    public static InputStreamReader getStreamReader(final InputStream in, final Path tempDir, final int topTailCapacity) {
         final WindowCache cache;
         final InputStreamReader reader;
         if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_THRESHOLD) {
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
-                    new TempFileCache(tempDir));
+                    new TempFileCache(tempDir == null ? null : tempDir.toFile()));
             reader = new InputStreamReader(in, cache);
         } else {
             final WindowCache memoryCache = new LeastRecentlyUsedCache(1024);
-            final TempFileCache persistentCache = new TempFileCache(tempDir);
+            final TempFileCache persistentCache = new TempFileCache(tempDir == null ? null : tempDir.toFile());
             cache = DoubleCache.create(memoryCache, persistentCache);
             reader = new InputStreamReader(in, cache);
             reader.setSoftWindowRecovery(persistentCache);
@@ -143,18 +142,18 @@ public final class ResourceUtils {
      * @param closeStream Whether to close the underlying input stream when this reader is closed.
      * @return The input stream reader.
      */
-    public static InputStreamReader getStreamReader(final InputStream in, File tempDir,
-                                                    int topTailCapacity, boolean closeStream) {
+    public static InputStreamReader getStreamReader(final InputStream in, final Path tempDir,
+                                                    final int topTailCapacity, final boolean closeStream) {
         final WindowCache cache;
         final InputStreamReader reader;
         if (Runtime.getRuntime().freeMemory() > FREE_MEMORY_THRESHOLD) {
             cache = TwoLevelCache.create(
                     new TopAndTailStreamCache(topTailCapacity),
-                    new TempFileCache(tempDir));
+                    new TempFileCache(tempDir == null ? null : tempDir.toFile()));
             reader = new InputStreamReader(in, cache, closeStream);
         } else {
             final WindowCache memoryCache = new LeastRecentlyUsedCache(1024);
-            final TempFileCache persistentCache = new TempFileCache(tempDir);
+            final TempFileCache persistentCache = new TempFileCache(tempDir == null ? null : tempDir.toFile());
             cache = DoubleCache.create(memoryCache, persistentCache);
             reader = new InputStreamReader(in, cache, closeStream);
             reader.setSoftWindowRecovery(persistentCache);
@@ -169,8 +168,8 @@ public final class ResourceUtils {
      * @return A file containing the input stream.
      * @throws IOException if the temp dir does not exist or something else goes wrong.
      */
-    public static File createTemporaryFileFromStream(File tempDir, InputStream stream) throws IOException {
-        final File tempFile = File.createTempFile("droid-temp~", null, tempDir);
+    public static Path createTemporaryFileFromStream(final Path tempDir, final InputStream stream) throws IOException {
+        final Path tempFile = Files.createTempFile(tempDir, "droid-temp~", null);
         // NEVER use deleteOnExit() for long running processes.
         // It can cause the JVM to track the files to delete, which 
         // is a memory leak for long running processes.  Leaving the code and comments in 
@@ -179,22 +178,11 @@ public final class ResourceUtils {
         // once they are no longer needed.
         // DO NOT USE!!!: tempFile.deleteOnExit();
         try {
-            final OutputStream out = new FileOutputStream(tempFile);
-            try {
-                byte[] buf = new byte[BUFFER_SIZE];
-                int len;
-                while ((len = stream.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                return tempFile;
-            } finally {
-                out.close();
-            }
+            Files.copy(stream, tempFile);
+            return tempFile;
         } catch (IOException ex) {
             // Don't leave temp files lying around.
-            if (tempFile != null) {
-                tempFile.delete();
-            }
+            Files.deleteIfExists(tempFile);
             throw ex;
         }
     }
@@ -207,7 +195,7 @@ public final class ResourceUtils {
      * @return The number of bytes read.
      * @throws IOException if something bad happens
      */
-    public static int readBuffer(InputStream in, byte[] buffer) throws IOException {
+    public static int readBuffer(final InputStream in, final byte[] buffer) throws IOException {
         int totalBytesRead = 0;
         int bytesToRead = buffer.length;
         while (totalBytesRead < bytesToRead) {
@@ -225,7 +213,7 @@ public final class ResourceUtils {
      * @return The number of bytes read.
      * @throws IOException if something bad happens
      */
-    public static int readBuffer(RandomAccessFile file, byte[] buffer) throws IOException {
+    public static int readBuffer(final RandomAccessFile file, final byte[] buffer) throws IOException {
         int totalBytesRead = 0;
         int bytesToRead = buffer.length;
         while (totalBytesRead < bytesToRead) {
@@ -237,7 +225,7 @@ public final class ResourceUtils {
     }    
     
     
-    private static long printableValue(long value) {
+    private static long printableValue(final long value) {
         return (value < NINENTYFOUR) ? value + THIRTYTHREE : value + NINENTYEIGHT;
     }
     
@@ -247,7 +235,7 @@ public final class ResourceUtils {
      * @return Base 128Integer.
      */
 
-    public static String getBase128Integer(long value) {
+    public static String getBase128Integer(final long value) {
         // Use printable characters in this range:
         // ASCII & UTF-8: 33 - 126 (no space) = 94 values.
         // ISO Latin 1 & UTF-8: 192 - 226 = 34 values.
@@ -268,7 +256,7 @@ public final class ResourceUtils {
      * @param value Value to convert to base 128 integer.
      * @param values char array to populate.
      */
-    public static void getBase128IntegerCharArray(long value, char[] values) {
+    public static void getBase128IntegerCharArray(final long value, final char[] values) {
         // Use printable characters in this range:
         // ASCII & UTF-8: 33 - 126 (no space) = 94 values.
         // ISO Latin 1 & UTF-8: 192 - 226 = 34 values.
@@ -289,16 +277,16 @@ public final class ResourceUtils {
      * 
      * @param tempDir The temporary directory to delete files in.
      */
-    public static void attemptToDeleteTempFiles(File tempDir) {
-        FileFilter tmpFileFilter = new FileFilter() {
+    public static void attemptToDeleteTempFiles(final Path tempDir) {
+        final FileFilter tmpFileFilter = new FileFilter() {
             @Override
-            public boolean accept(File f) {
+            public boolean accept(final java.io.File f) {
                 return f.isFile() && FilenameUtils.isExtension(f.getName(), "tmp"); 
             }
         };
         if (tempDir != null) {
-            File[] files = tempDir.listFiles(tmpFileFilter);
-            for (File file : files) {
+            final java.io.File[] files = tempDir.toFile().listFiles(tmpFileFilter);
+            for (final java.io.File file : files) {
                 if (!file.delete()) {
                     file.deleteOnExit();
                 }

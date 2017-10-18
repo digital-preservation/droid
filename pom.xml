@@ -26,7 +26,6 @@
         <module>droid-core-interfaces</module>
         <module>droid-build-tools</module>
         <module>droid-command-line</module>
-        
         <module>droid-container</module>
         <module>droid-export</module>
         <module>droid-export-interfaces</module>
@@ -35,20 +34,22 @@
         <module>droid-report-interfaces</module>
         <module>droid-results</module>
         <module>droid-swing-ui</module>
-	<module>droid-binary</module>
+	    <module>droid-binary</module>
     </modules>
     
     <build>
         <plugins>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
                 <inherited>false</inherited>
                 <configuration>
                     <header>droid-parent/header.txt</header>
                     <aggregate>false</aggregate>
                     <excludes>
                         <exclude>.idea/**</exclude>
+                        <exclude>pom.xml</exclude>
+                        <exclude>LICENSE</exclude>
                     </excludes>
                 </configuration>
             </plugin>

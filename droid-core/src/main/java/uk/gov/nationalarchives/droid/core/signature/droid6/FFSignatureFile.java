@@ -91,17 +91,18 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.FileFormat;
@@ -334,19 +335,15 @@ public class FFSignatureFile extends SimpleElement {
 
 
     private void debugWriteOutInternalSignatures() {
-        OutputStream out = null;
-        Writer writer = null;
         try {
             // debug: write out signatures
-            File outputFile = new File(System.getProperty("user.home") 
-                + File.separator + "DROID4 Signature Sequences.csv");
-            if (outputFile.exists()) {
-                outputFile.delete();
+            final Path outputFile = Paths.get(System.getProperty("user.home"), "DROID4 Signature Sequences.csv");
+            if (Files.exists(outputFile)) {
+                Files.delete(outputFile);
             }
-            try {
-                outputFile.createNewFile();
-                out = new FileOutputStream(outputFile);
-                writer = new OutputStreamWriter(out);
+            Files.createFile(outputFile);
+
+            try (final Writer writer = Files.newBufferedWriter(outputFile, UTF_8)) {
                 final int stop = this.getNumInternalSignatures();
                 for (int signatureIndex = 0; signatureIndex < stop; signatureIndex++) {
                     final InternalSignature sig = getInternalSignature(signatureIndex);
@@ -356,13 +353,8 @@ public class FFSignatureFile extends SimpleElement {
                 getLog().error(ex.getMessage());
             }
 
-        } finally {
-            try {
-                if (writer != null) { writer.close(); }
-                if (out != null) { out.close(); }
-            } catch (IOException ex) {
-                getLog().error(ex.getMessage());
-            }
+        } catch (IOException ex) {
+            getLog().error(ex.getMessage());
         }
     }
 

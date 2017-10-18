@@ -45,11 +45,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -68,7 +68,7 @@ public class RarArchiveHandlerTest {
     @Test
     public void simpleTest() throws IOException, RarException {
 
-        FileVolumeManager manager = new FileVolumeManager(new File("./src/test/resources/sample.rar"));
+        FileVolumeManager manager = new FileVolumeManager(Paths.get("./src/test/resources/sample.rar").toFile());
         Archive archive = new Archive(manager);
         List<FileHeader> headers = archive.getFileHeaders();
         assertEquals(9, headers.size());
@@ -97,7 +97,7 @@ public class RarArchiveHandlerTest {
 
 
         FileSystemIdentificationRequest req = new FileSystemIdentificationRequest(requestMetaData, identifier);
-        req.open(new File("./src/test/resources/sample.rar"));
+        req.open(Paths.get("./src/test/resources/sample.rar"));
         rarHandler.handle(req);
 
         verify(droid, times(6)).submit(any(IdentificationRequest.class));

@@ -45,14 +45,19 @@ To permit separation of profile runs and sets of profile results,
 each open profile will have its own Spring context.
 -->
 
-  <bean id="dataSource" class="uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSource" destroy-method="shutdown" init-method="init">
+  <bean id="dataSourceConfig" class="com.zaxxer.hikari.HikariConfig">
     <property name="driverClassName" value="${datasource.driverClassName}"/>
-    <property name="url" value="${datasource.url}"/>
+    <property name="jdbcUrl" value="${datasource.url}"/>
     <property name="username" value="${datasource.username}"/>
     <property name="password" value="${datasource.password}"/>
-    <property name="minIdle" value="${datasource.minIdle}"/>
-    <property name="maxActive" value="${datasource.maxActive}"/>
-    <property name="initialSize" value="${datasource.initialSize}"/>
+    <property name="maximumPoolSize" value="${datasource.maxActive}"/>
+    <property name="autoCommit" value="${datasource.autoCommit}"/>
+    <property name="transactionIsolation" value="${datasource.transactionIsolation}"/>
+  </bean>
+
+  <bean id="dataSource" class="uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSource" destroy-method="shutdown" init-method="init">
+    <constructor-arg name="config" ref="dataSourceConfig"/>
     <property name="createUrl" value="${datasource.createUrl}"/>
   </bean>
+
 </beans>

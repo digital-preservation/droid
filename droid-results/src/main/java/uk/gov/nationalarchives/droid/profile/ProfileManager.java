@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -167,7 +167,7 @@ public interface ProfileManager {
      * @throws IOException
      *             - if the file IO failed.
      */
-    ProfileInstance save(String profileId, File destination,
+    ProfileInstance save(String profileId, Path destination,
             ProgressObserver progressCallback) throws IOException;
 
     /**
@@ -181,7 +181,7 @@ public interface ProfileManager {
      * @throws IOException
      *             if the File could not be read.
      */
-    ProfileInstance open(File source, ProgressObserver progressCallback)
+    ProfileInstance open(Path source, ProgressObserver progressCallback)
         throws IOException;
 
     /**

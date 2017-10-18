@@ -31,7 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -61,6 +64,7 @@ import org.mockito.stubbing.Answer;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.submitter.FileWalker.ProgressEntry;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -68,15 +72,12 @@ import uk.gov.nationalarchives.droid.submitter.FileWalker.ProgressEntry;
  */
 public class FileWalkerTest {
 
-   private static File[] files = new File[30];
-   private static final File TEST_ROOT = new File("tmpFileWalker");
-   Set fileSet = new HashSet();
+   private static List<Path> files = new ArrayList<>();
+   private static final Path TEST_ROOT = Paths.get("tmpFileWalker");
 
    @Before
    public void setup() throws Exception {
-
-
-      String[] fileNames = new String[]{
+      final String[] fileNames = {
             "dir1/file11.ext",
             "dir1/file12.ext",
             "dir1/file13.ext", 
@@ -113,19 +114,19 @@ public class FileWalkerTest {
             "dir2/subdir2/file224.ext",
             "dir2/subdir2/file225.ext",};
 
-      TEST_ROOT.mkdir();
+      Files.createDirectories(TEST_ROOT);
 
-      for (int i = 0; i < fileNames.length; i++) {
-         files[i] = new File(TEST_ROOT, fileNames[i]).getAbsoluteFile();
-         files[i].getParentFile().mkdirs();
-         files[i].createNewFile();
-         fileSet.add(files[i]);
+      for (final String fileName : fileNames) {
+         final Path path = TEST_ROOT.resolve(fileName).toAbsolutePath();
+         Files.createDirectories(path.getParent());
+         Files.createFile(path);
+         files.add(path);
       }
    }
 
    @After
    public void tearDown() throws Exception {
-      FileUtils.forceDelete(TEST_ROOT);
+      FileUtil.deleteQuietly(TEST_ROOT);
    }
 
    /**
@@ -140,9 +141,10 @@ public class FileWalkerTest {
    public void testFastForwardFromUnprocessedFile() throws Exception {
 
       final int FILES_TO_WALK = 23;
+      final Set<Path> fileSet = new HashSet<>(files);
 
       final AtomicLong nextId = new AtomicLong(0);
-      FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
+      FileWalker fileWalker = new FileWalker(TEST_ROOT.toUri(), true);
 
       FileWalkerHandler directoryHandler = mock(FileWalkerHandler.class);
       FileWalkerHandler fileHandler = mock(FileWalkerHandler.class);
@@ -150,15 +152,15 @@ public class FileWalkerTest {
       fileWalker.setDirectoryHandler(directoryHandler);
       fileWalker.setFileHandler(fileHandler);
 
-      when(fileHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(fileHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[FILES_TO_WALK];
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path breakFile = files.get(FILES_TO_WALK);
+            final Path thisFile = (Path) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
-               throw new DirectoryWalker.CancelException(thisFile, depth);
+               throw new DirectoryWalker.CancelException(thisFile.toFile(), depth);
             }
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
@@ -168,7 +170,7 @@ public class FileWalkerTest {
          }
       });
 
-      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(Path.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -180,16 +182,16 @@ public class FileWalkerTest {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[FILES_TO_WALK], e.getFile());
+         assertEquals(files.get(FILES_TO_WALK), e.getFile().toPath());
       }
 
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
       
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(resumeHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
          
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path thisFile = (Path) invocation.getArguments()[0];
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
             else
@@ -216,9 +218,11 @@ public class FileWalkerTest {
 
       final int FILES_TO_WALK = 23;
       final int NEXT_FILE_AFTER_MISSING = 24;
+
+      final Set<Path> fileSet = new HashSet<>(files);
       
       final AtomicLong nextId = new AtomicLong(0);
-      FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
+      FileWalker fileWalker = new FileWalker(TEST_ROOT.toUri(), true);
 
       FileWalkerHandler directoryHandler = mock(FileWalkerHandler.class);
       FileWalkerHandler fileHandler = mock(FileWalkerHandler.class);
@@ -226,15 +230,15 @@ public class FileWalkerTest {
       fileWalker.setDirectoryHandler(directoryHandler);
       fileWalker.setFileHandler(fileHandler);
 
-      when(fileHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(fileHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[FILES_TO_WALK];
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path breakFile = files.get(FILES_TO_WALK);
+            final Path thisFile = (Path) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
-               throw new DirectoryWalker.CancelException(thisFile, depth);
+               throw new DirectoryWalker.CancelException(thisFile.toFile(), depth);
             }
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
@@ -243,7 +247,7 @@ public class FileWalkerTest {
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
-      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(Path.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -255,24 +259,24 @@ public class FileWalkerTest {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[FILES_TO_WALK], e.getFile());
+         assertEquals(files.get(FILES_TO_WALK), e.getFile().toPath());
       }
       
-      if(files[FILES_TO_WALK].delete()) {
-         if(fileSet.contains(files[FILES_TO_WALK]))
-            fileSet.remove(files[FILES_TO_WALK]);
+      if(FileUtil.deleteQuietly(files.get(FILES_TO_WALK))) {
+         if(fileSet.contains(files.get(FILES_TO_WALK)))
+            fileSet.remove(files.get(FILES_TO_WALK));
          else
             fail("File not found within set.");
       }
       else
-         fail("Error deleting test file: " + files[FILES_TO_WALK].toURI());
+         fail("Error deleting test file: " + files.get(FILES_TO_WALK).toUri());
       
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(resumeHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
          
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path thisFile = (Path) invocation.getArguments()[0];
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
             else
@@ -299,9 +303,11 @@ public class FileWalkerTest {
    public void testFastForwardFromMissingButPartiallyProcessedDirectory() throws Exception {
 
       final int FILES_TO_WALK = 23;
+
+      final Set<Path> fileSet = new HashSet<>(files);
       
       final AtomicLong nextId = new AtomicLong(0);
-      FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
+      FileWalker fileWalker = new FileWalker(TEST_ROOT.toUri(), true);
 
       FileWalkerHandler directoryHandler = mock(FileWalkerHandler.class);
       FileWalkerHandler fileHandler = mock(FileWalkerHandler.class);
@@ -309,15 +315,15 @@ public class FileWalkerTest {
       fileWalker.setDirectoryHandler(directoryHandler);
       fileWalker.setFileHandler(fileHandler);
 
-      when(fileHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(fileHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[FILES_TO_WALK];
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path breakFile = files.get(FILES_TO_WALK);
+            final Path thisFile = (Path) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
-               throw new DirectoryWalker.CancelException(thisFile, depth);
+               throw new DirectoryWalker.CancelException(thisFile.toFile(), depth);
             }
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
@@ -327,7 +333,7 @@ public class FileWalkerTest {
          }
       });
       
-      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(Path.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -339,33 +345,33 @@ public class FileWalkerTest {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[FILES_TO_WALK], e.getFile());
+         assertEquals(files.get(FILES_TO_WALK), e.getFile().toPath());
       }
 
-      File parentDir = files[FILES_TO_WALK].getParentFile();
+      final Path parentDir = files.get(FILES_TO_WALK).getParent();
             
       // List files in directory that still exist to remove from the set
       // Simulating deletion of the files via the next deleteDirectory() call
-      List<File> dirList = new ArrayList(FileUtils.listFiles(parentDir, null, true));
+      final List<Path> dirList = new ArrayList(FileUtil.listFiles(parentDir, true, (DirectoryStream.Filter)null));
             
       Iterator dirListIterator = dirList.iterator();
 
       while(dirListIterator.hasNext())
       {
          // remove any files we haven't scanned yet from hashset
-         File tmpFile = (File) dirListIterator.next();
+         Path tmpFile = (Path) dirListIterator.next();
          if(fileSet.contains(tmpFile))
             fileSet.remove(tmpFile);
       }
       
-      FileUtils.deleteDirectory(parentDir);
+      FileUtil.deleteQuietly(parentDir);
       
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(resumeHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
          
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path thisFile = (Path) invocation.getArguments()[0];
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
             else
@@ -390,10 +396,12 @@ public class FileWalkerTest {
    @Test
    public void testFastForwardFromEmptyButPartiallyProcessedDirectory() throws Exception {
 
-      final int FILES_TO_WALK = 23; 
+      final int FILES_TO_WALK = 23;
+
+      final Set<Path> fileSet = new HashSet<>(files);
       
       final AtomicLong nextId = new AtomicLong(0);
-      FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
+      FileWalker fileWalker = new FileWalker(TEST_ROOT.toUri(), true);
 
       FileWalkerHandler directoryHandler = mock(FileWalkerHandler.class);
       FileWalkerHandler fileHandler = mock(FileWalkerHandler.class);
@@ -401,15 +409,15 @@ public class FileWalkerTest {
       fileWalker.setDirectoryHandler(directoryHandler);
       fileWalker.setFileHandler(fileHandler);
 
-      when(fileHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(fileHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[FILES_TO_WALK];
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path breakFile = files.get(FILES_TO_WALK);
+            final Path thisFile = (Path) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
-               throw new DirectoryWalker.CancelException(thisFile, depth);
+               throw new DirectoryWalker.CancelException(thisFile.toFile(), depth);
             }
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
@@ -418,7 +426,7 @@ public class FileWalkerTest {
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
-      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(Path.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -430,24 +438,25 @@ public class FileWalkerTest {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[FILES_TO_WALK], e.getFile());
+         assertEquals(files.get(FILES_TO_WALK), e.getFile().toPath());
       }
 
-      final File directoryToEmpty = files[FILES_TO_WALK].getParentFile();
+      final Path directoryToEmpty = files.get(FILES_TO_WALK).getParent();
 
-      for (File f : directoryToEmpty.listFiles()) {
-         if (fileSet.contains(f))
+      for (final Path f : FileUtil.listFiles(directoryToEmpty, false, (DirectoryStream.Filter<Path>) null)) {
+         if (fileSet.contains(f)) {
             fileSet.remove(f);
-         f.delete();
+         }
+         FileUtil.deleteQuietly(f);
       }
-      assertEquals(0, directoryToEmpty.listFiles().length);
+      assertEquals(0, FileUtil.listFiles(directoryToEmpty, true, (DirectoryStream.Filter<Path>) null).size());
 
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(resumeHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
          
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path thisFile = (Path) invocation.getArguments()[0];
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
             else
@@ -486,9 +495,11 @@ public class FileWalkerTest {
 
       final int FILES_TO_WALK = 23;
       final int POSITION_FOR_NEW_FILE = 24;
+
+      final Set<Path> fileSet = new HashSet<>(files);
       
       final AtomicLong nextId = new AtomicLong(0);
-      FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
+      FileWalker fileWalker = new FileWalker(TEST_ROOT.toUri(), true);
 
       FileWalkerHandler directoryHandler = mock(FileWalkerHandler.class);
       FileWalkerHandler fileHandler = mock(FileWalkerHandler.class);
@@ -496,15 +507,15 @@ public class FileWalkerTest {
       fileWalker.setDirectoryHandler(directoryHandler);
       fileWalker.setFileHandler(fileHandler);
 
-      when(fileHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(fileHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[FILES_TO_WALK];
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path breakFile = files.get(FILES_TO_WALK);
+            final Path thisFile = (Path) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
-               throw new DirectoryWalker.CancelException(thisFile, depth);
+               throw new DirectoryWalker.CancelException(thisFile.toFile(), depth);
             }
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
@@ -513,7 +524,7 @@ public class FileWalkerTest {
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
-      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(Path.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -525,19 +536,20 @@ public class FileWalkerTest {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[FILES_TO_WALK], e.getFile());
+         assertEquals(files.get(FILES_TO_WALK), e.getFile());
       }
 
-      final File newFile = new File(files[POSITION_FOR_NEW_FILE].getPath() + "a");
-      assertTrue(newFile.createNewFile());
+      final Path file = files.get(POSITION_FOR_NEW_FILE);
+      final Path newFile = file.resolveSibling(file.getFileName().toString() + "a");
+      assertTrue(Files.exists(Files.createFile(newFile)));
       fileSet.add(newFile);   // represent the new file in the HashSet
 
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(resumeHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
          
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path thisFile = (Path) invocation.getArguments()[0];
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
             else
@@ -565,9 +577,11 @@ public class FileWalkerTest {
 
       final int FILES_TO_WALK = 23;
       final int POSITION_FOR_NEW_FILE = 24;
+
+      final Set<Path> fileSet = new HashSet<>(files);
       
       final AtomicLong nextId = new AtomicLong(0);
-      FileWalker fileWalker = new FileWalker(TEST_ROOT.toURI(), true);
+      FileWalker fileWalker = new FileWalker(TEST_ROOT.toUri(), true);
 
       FileWalkerHandler directoryHandler = mock(FileWalkerHandler.class);
       FileWalkerHandler fileHandler = mock(FileWalkerHandler.class);
@@ -575,15 +589,15 @@ public class FileWalkerTest {
       fileWalker.setDirectoryHandler(directoryHandler);
       fileWalker.setFileHandler(fileHandler);
 
-      when(fileHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(fileHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File breakFile = files[FILES_TO_WALK];
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path breakFile = files.get(FILES_TO_WALK);
+            final Path thisFile = (Path) invocation.getArguments()[0];
             int depth = (Integer) invocation.getArguments()[1];
             if (thisFile.equals(breakFile)) {
-               throw new DirectoryWalker.CancelException(thisFile, depth);
+               throw new DirectoryWalker.CancelException(thisFile.toFile(), depth);
             }
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
@@ -592,7 +606,7 @@ public class FileWalkerTest {
             return new ResourceId(nextId.incrementAndGet(), "");
          }
       });
-      when(directoryHandler.handle(any(File.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(directoryHandler.handle(any(Path.class), anyInt(), nullable(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
 
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
@@ -605,22 +619,23 @@ public class FileWalkerTest {
          fileWalker.walk();
          fail("Expected file walker to throw exception");
       } catch (DirectoryWalker.CancelException e) {
-         assertEquals(files[FILES_TO_WALK], e.getFile());
+         assertEquals(files.get(FILES_TO_WALK), e.getFile().toPath());
       }
 
       /* Note: simply adds a new directory with nothing in it. We don't need
        * to add to the fileSet, DROID should simply look in the directory and
        * do nothing. It will then continue to scan the other files as normal.
        */
-      final File newFile = new File(files[POSITION_FOR_NEW_FILE].getPath() + "a");
-      assertTrue(newFile.mkdir());
+      final Path file = files.get(POSITION_FOR_NEW_FILE);
+      final Path newFile = file.resolveSibling(file.getFileName().toString() + "a");
+      assertTrue(FileUtil.mkdirsQuietly(newFile));
 
       FileWalkerHandler resumeHandler = mock(FileWalkerHandler.class);
-      when(resumeHandler.handle(any(File.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
+      when(resumeHandler.handle(any(Path.class), anyInt(), any(ProgressEntry.class))).thenAnswer(new Answer<ResourceId>() {
          
          @Override
          public ResourceId answer(InvocationOnMock invocation) throws Throwable {
-            File thisFile = (File) invocation.getArguments()[0];
+            final Path thisFile = (Path) invocation.getArguments()[0];
             if(fileSet.contains(thisFile))
                fileSet.remove(thisFile);
             else

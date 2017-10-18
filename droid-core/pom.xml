@@ -54,29 +54,36 @@
     </build>
   
     <dependencies>
-  	<dependency>
+        <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-core-interfaces</artifactId>
             <version>${project.version}</version>
-  	</dependency>
+        </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
         </dependency>
-  	<dependency>
+        <dependency>
+            <groupId>net.byteseek</groupId>
+            <artifactId>byteseek</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-  	</dependency>
-        <!--
-  	<dependency>
-            <groupId>com.google.code.byteseek</groupId>
-            <artifactId>byteseek</artifactId>
-  	</dependency>
-  	-->
+        </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+  	    </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
-  	</dependency>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
   </dependencies>
 </project>

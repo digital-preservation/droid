@@ -31,8 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.container;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -45,7 +46,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  */
 public class ContainerFileIdentificationRequestFactory implements IdentificationRequestFactory<InputStream> {
 
-    private File tempDirLocation;
+    private Path tempDirLocation;
     
     /**
      * {@inheritDoc}
@@ -59,7 +60,7 @@ public class ContainerFileIdentificationRequestFactory implements Identification
     /**
      * @param tempDir the tempDir to set
      */
-    public void setTempDirLocation(File tempDir) {
+    public void setTempDirLocation(final Path tempDir) {
         this.tempDirLocation = tempDir;
     }
 
@@ -68,10 +69,10 @@ public class ContainerFileIdentificationRequestFactory implements Identification
      * 
      * @return The location of the temporary folder
      */
-    public File getTempDirLocation() {
+    public Path getTempDirLocation() {
         synchronized (this) {
             if (tempDirLocation == null) {
-                tempDirLocation = new File(System.getProperty("java.io.tmpdir"));
+                tempDirLocation = Paths.get(System.getProperty("java.io.tmpdir"));
             }
         }
         return tempDirLocation;

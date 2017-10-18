@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,10 +80,10 @@ public class ListReportsCommand implements DroidCommand {
     }
     
     private List<String> getReportOutputFormats(ReportSpec report) {
-        List<String> outputFormats = new ArrayList<String>();
-        List<File> xslFiles = report.getXslTransforms();
-        for (File xslFile : xslFiles) {
-            final String baseName = FilenameUtils.getBaseName(xslFile.getName());
+        final List<String> outputFormats = new ArrayList<>();
+        final List<Path> xslFiles = report.getXslTransforms();
+        for (final Path xslFile : xslFiles) {
+            final String baseName = FilenameUtils.getBaseName(xslFile.getFileName().toString());
             final int stop = baseName.indexOf('.');
             if (stop > -1) {
                 final String description = baseName.substring(0, stop);

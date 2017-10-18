@@ -31,14 +31,16 @@
  */
 package uk.gov.nationalarchives.droid.export;
 
-import java.io.Writer;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.FileOutputStream;
-import java.io.File;
+import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -150,9 +152,9 @@ public class ExportTask implements Runnable {
 
         //set encoding of output file
         if (outputEncoding != null) {
-            writer = newOutputFileWriterEncoded(outputEncoding, new File(destination));
+            writer = newOutputFileWriterEncoded(outputEncoding, Paths.get(destination));
         } else {
-            writer = newOutputFileWriterEncoded(Charset.defaultCharset().name(), new File(destination));
+            writer = newOutputFileWriterEncoded(Charset.defaultCharset().name(), Paths.get(destination));
         }
 
         return writer;
@@ -169,17 +171,15 @@ public class ExportTask implements Runnable {
      * @throws IOException if an IO error occurs during establishing
      *  a writer for the file
      */
-    protected Writer newOutputFileWriterEncoded(final String encoding, final File f) throws IOException {
-
-        OutputStream outputStream = new FileOutputStream(f);
+    protected Writer newOutputFileWriterEncoded(final String encoding, final Path f) throws IOException {
+        final OutputStream outputStream = Files.newOutputStream(f);
         if (bom) {
             outputStream.write(BOM_1);
             outputStream.write(BOM_2);
             outputStream.write(BOM_3);
             outputStream.flush();
         }
-
-        return new OutputStreamWriter(outputStream, encoding);
+        return new BufferedWriter(new OutputStreamWriter(outputStream, encoding));
     }
 
 
@@ -231,11 +231,16 @@ public class ExportTask implements Runnable {
             log.info(String.format("Closing export file: %s", destinationDescription));
             itemWriter.close();
             if (cancelled && destination != null) {
-                File toDelete = new File(destination);
-                if (!toDelete.delete()  && toDelete.exists()) {
-                    log.warn(String.format("Could not delete export file: %s. "
-                            + "Will try to delete on exit.", destination));
-                    toDelete.deleteOnExit();
+                final Path toDelete = Paths.get(destination);
+
+                if (Files.exists(toDelete)) {
+                    try {
+                        Files.deleteIfExists(toDelete);
+                    } catch (final IOException ioe) {
+                        log.warn(String.format("Could not delete export file: %s. "
+                                + "Will try to delete on exit.", destination));
+                        toDelete.toFile().deleteOnExit();
+                    }
                 }
             }
         }

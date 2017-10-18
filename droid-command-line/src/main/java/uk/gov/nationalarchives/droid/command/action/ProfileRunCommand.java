@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -87,7 +87,7 @@ public class ProfileRunCommand implements DroidCommand {
             };
 
             Thread.sleep(SLEEP_TIME);
-            profileManager.save(profile.getUuid(), new File(destination), progressCallback);
+            profileManager.save(profile.getUuid(), Paths.get(destination), progressCallback);
             profileManager.closeProfile(profile.getUuid());
 
         } catch (ProfileManagerException e) {

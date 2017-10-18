@@ -34,6 +34,8 @@ package uk.gov.nationalarchives.droid.container.odf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -136,7 +138,7 @@ public class OdfIdentifierTest {
     public void testInitialiseRegistersZipContainerIdentifierWithContainerIdentifierResolver() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATUE_FILE);
-        String path = containerSignatureUrl.getPath();
+        final Path path = Paths.get(containerSignatureUrl.getPath());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
@@ -161,7 +163,7 @@ public class OdfIdentifierTest {
     public void testInitialiseRegistersZipContainerFormatsAgainstOdfPuid() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATUE_FILE);
-        String path = containerSignatureUrl.getPath();
+        final Path path = Paths.get(containerSignatureUrl.getPath());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);

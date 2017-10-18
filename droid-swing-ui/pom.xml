@@ -52,18 +52,28 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                        <configuration>
+                            <failOnWarning>true</failOnWarning>
+                            <ignoredUnusedDeclaredDependencies>
+                                <ignoredUnusedDeclaredDependency>uk.gov.nationalarchives:droid-export:jar:${project.version}</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>uk.gov.nationalarchives:droid-help:jar:${project.version}</ignoredUnusedDeclaredDependency>
+                            </ignoredUnusedDeclaredDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifestEntries>
-                            <Class-Path>conf/</Class-Path>
-                            <SplashScreen-Image>uk/gov/nationalarchives/droid/icons/splash_image.gif</SplashScreen-Image>
-                            <Source-Revision>${buildNumber}</Source-Revision>
-                            <Build-Timestamp>${timestamp}</Build-Timestamp>
-                            <Source-Repository>${project.scm.connection}</Source-Repository>
-                            <Description>${project.description}</Description>
-                            <Website>${project.url}</Website>
-                        </manifestEntries>
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
@@ -71,6 +81,18 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Class-Path>conf/</Class-Path>
+                            <SplashScreen-Image>uk/gov/nationalarchives/droid/icons/splash_image.gif</SplashScreen-Image>
+                            <Build-Tag>${build-tag}</Build-Tag>
+                            <Git-Commit>${build-commit}</Git-Commit>
+                            <Git-Commit-Abbrev>${build-commit-abbrev}</Git-Commit-Abbrev>
+                            <Build-Version>${build-version}</Build-Version>
+                            <Build-Timestamp>${build-tstamp}</Build-Timestamp>
+                            <Source-Repository>${project.scm.connection}</Source-Repository>
+                            <Description>${project.description}</Description>
+                            <Implementation-URL>${project.url}</Implementation-URL>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
@@ -167,13 +189,18 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.huxhorn.lilith</groupId>
-            <artifactId>de.huxhorn.lilith.3rdparty.flyingsaucer.core-renderer</artifactId>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-core</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.help</groupId>
             <artifactId>javahelp</artifactId>
             <version>2.0.05</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.gui;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -125,8 +125,8 @@ public class DroidUIContext {
      * @param selectedFile a profile file.
      * @return true if a profile has been loaded from the file given; false otherwise
      */
-    public boolean selectProfileWithSource(File selectedFile) {
-        for (ProfileForm profileForm : profiles.values()) {
+    public boolean selectProfileWithSource(final Path selectedFile) {
+        for (final ProfileForm profileForm : profiles.values()) {
             if (selectedFile.equals(profileForm.getProfile().getLoadedFrom())) {
                 tabbedPane.setSelectedComponent(profileForm);
                 return true;

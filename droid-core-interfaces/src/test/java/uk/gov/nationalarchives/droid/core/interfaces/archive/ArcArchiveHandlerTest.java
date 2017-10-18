@@ -31,43 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.apache.commons.compress.archivers.ArchiveEntry;
-//import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.jwat.arc.ArcReader;
 import org.jwat.arc.ArcReaderFactory;
-import org.jwat.arc.ArcRecordBase;
 import org.jwat.common.ByteCountingPushBackInputStream;
 
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
-import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
-import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 /**
  * @author gseaman
@@ -77,11 +51,10 @@ public class ArcArchiveHandlerTest {
 
     @Test
     public void testHandleArcFile() throws Exception {
-
-        File file = new File(getClass().getResource("/expanded.arc").getFile());
-        InputStream in = new FileInputStream(file);
-        ByteCountingPushBackInputStream bpin = new ByteCountingPushBackInputStream(in, 512);
-        assertEquals(true, ArcReaderFactory.isArcFile(bpin));
+        final Path file = Paths.get(getClass().getResource("/expanded.arc").getFile());
+        try(final InputStream in = Files.newInputStream(file)) {
+            final ByteCountingPushBackInputStream bpin = new ByteCountingPushBackInputStream(in, 512);
+            assertEquals(true, ArcReaderFactory.isArcFile(bpin));
+        }
     }
-
 }

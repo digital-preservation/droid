@@ -31,12 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.config;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -89,19 +88,19 @@ public class DroidGlobalConfig {
     
     private final Log log = LogFactory.getLog(getClass());
     
-    private File droidWorkDir;
-    private File signatureFilesDir;
-    private File profileTemplateDir;
-    private File containerSignatureDir;
-    private File textSignatureFileDir;
-    private File reportDefinitionDir;
-    private File filterDir;
+    private Path droidWorkDir;
+    private Path signatureFilesDir;
+    private Path profileTemplateDir;
+    private Path containerSignatureDir;
+    private Path textSignatureFileDir;
+    private Path reportDefinitionDir;
+    private Path filterDir;
     
     private PropertiesConfiguration props;
     private PropertiesConfiguration defaultProps;
 
-    private File profilesDir;
-    private File tempDir;
+    private Path profilesDir;
+    private Path tempDir;
 
     /**
      * Default Constructor. Initialises the droid home directory.
@@ -109,16 +108,16 @@ public class DroidGlobalConfig {
      */
     public DroidGlobalConfig() throws IOException {
         String droidHomePath = System.getProperty(DROID_USER);
-        droidWorkDir = new File(droidHomePath);
-        droidWorkDir.mkdirs();
+        droidWorkDir = Paths.get(droidHomePath);
+        Files.createDirectories(droidWorkDir);
         
         // always recreate the signature files if they don't exist:
-        signatureFilesDir = new File(droidWorkDir, "signature_files");
-        signatureFilesDir.mkdir();
+        signatureFilesDir = droidWorkDir.resolve("signature_files");
+        Files.createDirectories(signatureFilesDir);
         createResourceFile(signatureFilesDir, DROID_SIGNATURE_FILE, DROID_SIGNATURE_FILE);
 
-        containerSignatureDir = new File(droidWorkDir, "container_sigs");
-        containerSignatureDir.mkdir();
+        containerSignatureDir = droidWorkDir.resolve("container_sigs");
+        Files.createDirectories(containerSignatureDir);
         createResourceFile(containerSignatureDir, CONTAINER_SIGNATURE_FILE, CONTAINER_SIGNATURE_FILE);
         
         /*
@@ -139,28 +138,28 @@ public class DroidGlobalConfig {
         //}
         */
 
-        reportDefinitionDir = new File(droidWorkDir, "report_definitions");
-        reportDefinitionDir.mkdir();
+        reportDefinitionDir = droidWorkDir.resolve("report_definitions");
+        Files.createDirectories(reportDefinitionDir);
 
-        filterDir = new File(droidWorkDir, "filter_definitions");
-        filterDir.mkdir();
+        filterDir = droidWorkDir.resolve("filter_definitions");
+        Files.createDirectories(filterDir);
         
         // Ensure base directory is created.
-        profileTemplateDir = new File(droidWorkDir, "profile_templates");
-        profileTemplateDir.mkdir();
+        profileTemplateDir = droidWorkDir.resolve("profile_templates");
+        Files.createDirectories(profileTemplateDir);
         
         // Now create the schema version sub-directory:
-        profileTemplateDir = new File(profileTemplateDir, TEMPLATE_SCHEMA_VERSION);
-        profileTemplateDir.mkdir();
+        profileTemplateDir = profileTemplateDir.resolve(TEMPLATE_SCHEMA_VERSION);
+        Files.createDirectories(profileTemplateDir);
         
         // Get the default temporary area:
-        String droidTempPath = System.getProperty(DROID_TEMP_DIR);
+        final String droidTempPath = System.getProperty(DROID_TEMP_DIR);
         
-        profilesDir = new File(droidTempPath, "profiles");
-        profilesDir.mkdirs();
+        profilesDir = Paths.get(droidTempPath, "profiles");
+        Files.createDirectories(profilesDir);
         
-        tempDir = new File(droidTempPath, "tmp");
-        tempDir.mkdirs();
+        tempDir = Paths.get(droidTempPath, "tmp");
+        Files.createDirectories(tempDir);
     }
 
     /**
@@ -171,9 +170,9 @@ public class DroidGlobalConfig {
      */
     public void init() throws ConfigurationException {
 
-        File droidProperties = new File(droidWorkDir, DROID_PROPERTIES);
+        final Path droidProperties = droidWorkDir.resolve(DROID_PROPERTIES);
         // Read the properties form the configuration file
-        props = new PropertiesConfiguration(droidProperties);
+        props = new PropertiesConfiguration(droidProperties.toFile());
 
         URL defaultPropsUrl = getClass().getClassLoader().getResource(
                 DEFAULT_DROID_PROPERTIES);
@@ -219,7 +218,7 @@ public class DroidGlobalConfig {
     /**
      * @return the droidHomeDir
      */
-    public File getDroidWorkDir() {
+    public Path getDroidWorkDir() {
         return droidWorkDir;
     }
 
@@ -302,7 +301,7 @@ public class DroidGlobalConfig {
      * 
      * @return the directory where droid signature files reside.
      */
-    public File getSignatureFileDir() {
+    public Path getSignatureFileDir() {
         return signatureFilesDir;
     }
     
@@ -310,21 +309,21 @@ public class DroidGlobalConfig {
      * 
      * @return the directory where droid profile templates reside.
      */
-    public File getProfileTemplateDir() {
+    public Path getProfileTemplateDir() {
         return profileTemplateDir;
     }
     
     /**
      * @return the containerSignatureDir
      */
-    public File getContainerSignatureDir() {
+    public Path getContainerSignatureDir() {
         return containerSignatureDir;
     }
     
     /**
      * @return the textSignatureFileDir
      */
-    public File getTextSignatureFileDir() {
+    public Path getTextSignatureFileDir() {
         return textSignatureFileDir;
     }
     
@@ -332,14 +331,14 @@ public class DroidGlobalConfig {
      * 
      * @return the reportDefinitionDir
      */
-    public File getReportDefinitionDir() {
+    public Path getReportDefinitionDir() {
         return reportDefinitionDir;
     }
     
     /**
      * @return the profilesDir
      */
-    public File getProfilesDir() {
+    public Path getProfilesDir() {
         return profilesDir;
     }
 
@@ -347,34 +346,25 @@ public class DroidGlobalConfig {
      * 
      * @return the filterDir.
      */
-    public File getFilterDir() {
+    public Path getFilterDir() {
         return filterDir;
     }
     
     /**
      * @return the directory for droid temporary files
      */
-    public File getTempDir() {
+    public Path getTempDir() {
         return tempDir;
     }
     
-    private void createResourceFile(File resourceDir, String fileName, String resourceName) throws IOException {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(resourceName);
-        if (in == null) {
-            log.warn("Resource not found: " + resourceName);
-        } else {
-            File resourcefile = new File(resourceDir, fileName);
-            if (resourcefile.createNewFile()) {
-                OutputStream out = new FileOutputStream(resourcefile);
-                try {
-                    IOUtils.copy(in, out);
-                } finally {
-                    if (out != null) {
-                        out.close();
-                    }
-                    if (in != null) {
-                        in.close();
-                    }
+    private void createResourceFile(final Path resourceDir, final String fileName, final String resourceName) throws IOException {
+        final Path resourcefile = resourceDir.resolve(fileName);
+        if (!Files.exists(resourcefile)) {
+            try (final InputStream in = getClass().getClassLoader().getResourceAsStream(resourceName)) {
+                if (in == null) {
+                    log.warn("Resource not found: " + resourceName);
+                } else {
+                    Files.copy(in, resourcefile);
                 }
             }
         }

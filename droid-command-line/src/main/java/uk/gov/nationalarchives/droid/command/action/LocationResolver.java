@@ -31,7 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
@@ -51,10 +53,10 @@ public class LocationResolver {
      */
     public AbstractProfileResource getResource(String location, boolean recursive) {
         
-        File f = new File(location);
-        if (f.isFile()) {
+        final Path f = Paths.get(location);
+        if (Files.isRegularFile(f)) {
             return new FileProfileResource(f);
-        } else if (f.isDirectory()) {
+        } else if (Files.isDirectory(f)) {
             return new DirectoryProfileResource(f, recursive);
         } else {
             throw new IllegalArgumentException(

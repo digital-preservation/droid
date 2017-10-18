@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -85,7 +85,7 @@ public class ConfigureDefaultSignatureFileVersionCommandTest {
         
         SignatureFileInfo info1 = new SignatureFileInfo(33, false, SignatureType.BINARY);
         SignatureFileInfo info2 = new SignatureFileInfo(45, false, SignatureType.BINARY);
-        info2.setFile(new File("foo/bar/version_45.xml"));
+        info2.setFile(Paths.get("foo/bar/version_45.xml"));
 
         SortedMap<String, SignatureFileInfo> binSigFileInfos = new TreeMap<String, SignatureFileInfo>();
         binSigFileInfos.put("v33", info1);

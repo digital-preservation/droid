@@ -31,14 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import uk.gov.nationalarchives.droid.util.FileUtil;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author rbrennan
@@ -74,12 +77,11 @@ public class NoProfileRunCommandTest {
     }
     
     @Test
-    public void testNoProfileRunWithNoSignatureFile() {
-        
-        File resource = new File("resource");
-        resource.mkdir();
+    public void testNoProfileRunWithNoSignatureFile() throws IOException {
+        final Path resource = Paths.get("resource");
+        Files.createDirectories(resource);
         command.setResources(new String[] {
-            resource.getAbsolutePath()
+            resource.toAbsolutePath().toString()
         });
         command.setSignatureFile("test");
         try {
@@ -92,15 +94,14 @@ public class NoProfileRunCommandTest {
     
     @Test
     public void testNoProfileRunWithInvalidSignatureFile() throws Exception {
-        
-        File sigFile = new File("sigFile");
-        sigFile.createNewFile();
-        command.setSignatureFile(sigFile.getAbsolutePath());
-        
-        File resource = new File("resource");
-        resource.mkdir();
+        final Path sigFile = Paths.get("sigFile");
+        Files.createFile(sigFile);
+        command.setSignatureFile(sigFile.toAbsolutePath().toString());
+
+        final Path resource = Paths.get("resource");
+        Files.createDirectories(resource);
         command.setResources(new String[] {
-            resource.getAbsolutePath()
+            resource.toAbsolutePath().toString()
         });
         try {
             command.execute();
@@ -108,8 +109,8 @@ public class NoProfileRunCommandTest {
         } catch (CommandExecutionException x) {
             assertEquals("Can't parse signature file", x.getMessage());
         } finally {
-            sigFile.delete();
-            resource.delete();
+            FileUtil.deleteQuietly(sigFile);
+            FileUtil.deleteQuietly(resource);
         }
     }
     

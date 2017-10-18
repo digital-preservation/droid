@@ -34,14 +34,14 @@ package uk.gov.nationalarchives.droid.gui.report;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.swing.SwingWorker;
 
@@ -74,7 +74,7 @@ public class ReportAction extends SwingWorker<Void, Integer> {
     private DroidGlobalConfig config;
     private ExportReportAction exportReportAction;
     
-    private File targetFile;
+    private Path targetFile;
 
     private CancellableProgressObserver backgroundProgressObserver;
 
@@ -142,33 +142,22 @@ public class ReportAction extends SwingWorker<Void, Integer> {
     @Override
     protected Void doInBackground() {
         
-        ReportRequest request = new ReportRequest();
+        final ReportRequest request = new ReportRequest();
         request.setReportSpec(reportSpec);
         request.setProfileIds(profileIds);
 
-        //FileWriter fileWriter = null;
-        OutputStreamWriter fileWriter = null;
         try {
-            CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
-            targetFile = File.createTempFile("report~", ".xml", config.getTempDir());
-            Report report = reportManager.generateReport(request, null, backgroundProgressObserver);
-            //fileWriter = new FileWriter(targetFile);
-            fileWriter = new OutputStreamWriter(new FileOutputStream(targetFile), encoder);
-            reportXmlWriter.writeReport(report, fileWriter);
-        } catch (IOException e) {
+            targetFile = Files.createTempFile(config.getTempDir(), "report~", ".xml");
+            final Report report = reportManager.generateReport(request, null, backgroundProgressObserver);
+            try (final Writer writer = Files.newBufferedWriter(targetFile, UTF_8)) {
+                reportXmlWriter.writeReport(report, writer);
+            }
+        } catch (final IOException e) {
             log.error(e);
             throw new RuntimeException(e);
         } catch (ReportCancelledException e) {
             cancel(false);
             log.info("Report cancelled by user.");
-        } finally {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e) {
-                    log.error("Error closing report writer", e);
-                }
-            }
         }
         return null;
     }

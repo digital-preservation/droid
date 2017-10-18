@@ -31,20 +31,18 @@
  */
 package uk.gov.nationalarchives.droid.report;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -58,9 +56,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 
 /**
@@ -84,16 +83,12 @@ public class ReportTransformerImpl implements ReportTransformer {
      * 
      */
     @Override
-    public void transformUsingXsl(Reader sourceReader, String xslScriptLocation, Writer out) 
+    public void transformUsingXsl(final Reader sourceReader, final String xslScriptLocation, final Writer out)
         throws TransformerException {
-        InputStream transform = getClass().getClassLoader().getResourceAsStream(xslScriptLocation);
-        transform(sourceReader, transform, out);
-        if (transform != null) {
-            try {
-                transform.close();
-            } catch (IOException e) {
-                throw new TransformerException(e);
-            }
+        try (final InputStream transform = new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(xslScriptLocation))) {
+            transform(sourceReader, transform, out);
+        } catch (final IOException e) {
+            throw new TransformerException(e);
         }
     }
     
@@ -107,23 +102,19 @@ public class ReportTransformerImpl implements ReportTransformer {
      * 
      */
     @Override
-    public void transformUsingXsl(Reader sourceReader, File xslFile, Writer out) 
+    public void transformUsingXsl(final Reader sourceReader, final Path xslFile, final Writer out)
         throws TransformerException {
-        InputStream transform;
-        try {
-            transform = new FileInputStream(xslFile);
-        } catch (FileNotFoundException e) {
+        try (final InputStream transform = new BufferedInputStream(Files.newInputStream(xslFile))) {
+            transform(sourceReader, transform, out);
+        } catch (final IOException e) {
             throw new TransformerException(e);
         }
-        transform(sourceReader, transform, out);
     }
     
     
     private void transform(Reader sourceReader, InputStream xsl, Writer out) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        //Source transformSource = new StreamSource(xsl);
-        CharsetDecoder decoder = Charset.forName(UTF8).newDecoder();
-        Source transformSource = new StreamSource(new InputStreamReader(xsl, decoder));
+        Source transformSource = new StreamSource(new BufferedReader(new InputStreamReader(xsl, UTF_8)));
         Transformer transformer = transformerFactory.newTransformer(transformSource);
         Source source = new StreamSource(sourceReader);
         Result result = new StreamResult(out);
@@ -134,8 +125,8 @@ public class ReportTransformerImpl implements ReportTransformer {
     private String getReportDir() {
         String dir = "";
         if (globalConfig != null) {
-            File reportDir = globalConfig.getReportDefinitionDir();
-            dir = reportDir == null ? "" : reportDir.getAbsolutePath();
+            final Path reportDir = globalConfig.getReportDefinitionDir();
+            dir = reportDir == null ? "" : reportDir.toAbsolutePath().toString();
         }
         return dir;
     }
@@ -149,38 +140,26 @@ public class ReportTransformerImpl implements ReportTransformer {
      * @throws ReportTransformException if the transform failed 
      */
     @Override
-    public void transformToPdf(Reader in, String transformLocation, OutputStream out) 
+    public void transformToPdf(final Reader in, final String transformLocation, final OutputStream out)
         throws ReportTransformException {
-        
+
         try {
-            File tmpXhtml = File.createTempFile("xhtml~", null, globalConfig.getTempDir());
-            tmpXhtml.deleteOnExit();
-        
-            try {
-                CharsetEncoder encoder = Charset.forName(UTF8).newEncoder();
-                //FileWriter buffer = new FileWriter(tmpXhtml);
-                OutputStreamWriter buffer = new OutputStreamWriter(new FileOutputStream(tmpXhtml), encoder);
+            final Path tmpXhtml = Files.createTempFile(globalConfig.getTempDir(), "xhtml~", null);
+            tmpXhtml.toFile().deleteOnExit();
+
+            try (final Writer buffer = Files.newBufferedWriter(tmpXhtml, UTF_8))  {
                 transformUsingXsl(in, transformLocation, buffer);
-                buffer.close();
                 
-                ITextRenderer renderer = new ITextRenderer();
-                renderer.setDocument(tmpXhtml);
+                final ITextRenderer renderer = new ITextRenderer();
+                renderer.setDocument(tmpXhtml.toFile());
                 renderer.layout();
                 renderer.createPDF(out);
-            } catch (TransformerException e) {
-                throw new ReportTransformException(e);
-            } catch (DocumentException e) {
+            } catch (TransformerException | DocumentException e) {
                 throw new ReportTransformException(e);
             } finally {
-                if (!tmpXhtml.delete() && tmpXhtml.exists()) {
-                    String message = String.format("Could not delete temporary XHTML report file:%s. "
-                            + "Will try to delete on exit.", 
-                            tmpXhtml.getAbsolutePath());
-                    log.warn(message);
-                    tmpXhtml.deleteOnExit();
-                }
+                FileUtil.deleteQuietly(tmpXhtml);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ReportTransformException(e);
         }
     }

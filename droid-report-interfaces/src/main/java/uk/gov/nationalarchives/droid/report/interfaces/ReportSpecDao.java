@@ -32,6 +32,8 @@
 package uk.gov.nationalarchives.droid.report.interfaces;
 
 
+import java.nio.file.Path;
+
 /**
  * @author rflitcroft
  *
@@ -40,8 +42,8 @@ public interface ReportSpecDao {
 
     /**
      * Reads a report spec using the supplied file and returns a report spec.
-     * @param filePath the file to read
+     * @param file the file to read
      * @return a report spec
      */
-    ReportSpec readReportSpec(String filePath);
+    ReportSpec readReportSpec(Path file);
 }

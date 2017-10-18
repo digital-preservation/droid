@@ -31,15 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.command;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
@@ -50,10 +48,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 
-import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -93,13 +89,13 @@ public class ReportCommandTest {
     public void testReportCommandWithNonExistentCustomReportName() throws Exception {
         final String profileLocation = "profiles/12345.droid";
         final String destination = "tmp/destination.xml";
-        new File("tmp").mkdirs();
+        Files.createDirectories(Paths.get("tmp"));
         final String profileId = "12345";
         
         final ProfileInstance profile = mock(ProfileInstance.class);
         when(profile.getUuid()).thenReturn(profileId);
         
-        when(profileManager.open(eq(new File(profileLocation)), any(ProgressObserver.class)))
+        when(profileManager.open(eq(Paths.get(profileLocation)), any(ProgressObserver.class)))
             .thenReturn(profile);
         
         reportCommand.setReportType("MyCustomReport");
@@ -120,14 +116,14 @@ public class ReportCommandTest {
     public void testReportCommandWithCustomReportName() throws Exception {
         final String profileLocation = "profiles/12345.droid";
         final String destination = "tmp/destination.xml";
-        new File("tmp").mkdirs();
+        Files.createDirectories(Paths.get("tmp"));
         final String profileId = "12345";
         
         
         final ProfileInstance profile = mock(ProfileInstance.class);
         when(profile.getUuid()).thenReturn(profileId);
         
-        when(profileManager.open(eq(new File(profileLocation)), any(ProgressObserver.class)))
+        when(profileManager.open(eq(Paths.get(profileLocation)), any(ProgressObserver.class)))
             .thenReturn(profile);
         
         reportCommand.setReportType("MyCustomReport");
@@ -155,6 +151,6 @@ public class ReportCommandTest {
         assertEquals(1, reportRequest.getProfileIds().size());
         assertEquals("12345", reportRequest.getProfileIds().get(0));
         
-        verify(reportXmlWriter).writeReport(eq(report), any(OutputStreamWriter.class));
+        verify(reportXmlWriter).writeReport(eq(report), any(Writer.class));
     }
 }

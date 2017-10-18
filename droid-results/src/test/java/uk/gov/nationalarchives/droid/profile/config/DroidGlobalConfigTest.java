@@ -31,8 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.profile.config;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -49,6 +51,7 @@ import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -56,7 +59,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
  */
 public class DroidGlobalConfigTest {
 
-    private File droidProperties;
+    private Path droidProperties;
 
     @BeforeClass
     public static void clearSystemProperties() {
@@ -64,27 +67,31 @@ public class DroidGlobalConfigTest {
     }
     
     @Before
-    public void setup() {
+    public void setup() throws IOException {
         
         assertNull(System.getenv().get(RuntimeConfig.DROID_USER));
         assertNull(System.getProperty(RuntimeConfig.DROID_USER));
         RuntimeConfig.configureRuntimeEnvironment();
         
         String userHome = System.getProperty("user.home");
-        File droidHome = new File(userHome, ".droid6");
-        droidProperties = new File(droidHome, DroidGlobalConfig.DROID_PROPERTIES);
-        droidProperties.delete();
+        Path droidHome = Paths.get(userHome, ".droid6");
+        droidProperties = droidHome.resolve(DroidGlobalConfig.DROID_PROPERTIES);
+        Files.deleteIfExists(droidProperties);
     }
     
     @After
     public void tearDown() {
         System.clearProperty(RuntimeConfig.DROID_USER);
+
+        String userHome = System.getProperty("user.home");
+        Path droidHome = Paths.get(userHome, ".droid6");
+        FileUtil.deleteQuietly(droidHome);
     }
     
     @Test
     public void testDefaultHome() throws IOException {
-        DroidGlobalConfig config = new DroidGlobalConfig();
-        File expectedHome = new File(System.getProperty("user.home"), ".droid6");
+        final DroidGlobalConfig config = new DroidGlobalConfig();
+        final Path expectedHome = Paths.get(System.getProperty("user.home"), ".droid6");
         assertEquals(expectedHome, config.getDroidWorkDir());
     }
     
@@ -92,8 +99,8 @@ public class DroidGlobalConfigTest {
     public void testSystemPropertyHome() throws IOException {
         System.setProperty(RuntimeConfig.DROID_USER, "custom_home");
         try {
-            DroidGlobalConfig config = new DroidGlobalConfig();
-            File expectedHome = new File("custom_home");
+            final DroidGlobalConfig config = new DroidGlobalConfig();
+            final Path expectedHome = Paths.get("custom_home");
             assertEquals(expectedHome, config.getDroidWorkDir());
         } finally {
             System.clearProperty(RuntimeConfig.DROID_USER);
@@ -102,11 +109,10 @@ public class DroidGlobalConfigTest {
 
     @Test
     public void testInitialisationWritesDefaultConfigInDefaultLocation() throws Exception {
-        
         DroidGlobalConfig config = new DroidGlobalConfig();
         config.init();
         
-        PropertiesConfiguration props = new PropertiesConfiguration(droidProperties);
+        PropertiesConfiguration props = new PropertiesConfiguration(droidProperties.toFile());
         assertEquals(0, props.getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName()));
     }
 
@@ -132,7 +138,7 @@ public class DroidGlobalConfigTest {
         
         assertEquals(123, config.getProperties().getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName()));
         
-        PropertiesConfiguration props = new PropertiesConfiguration(droidProperties);
+        PropertiesConfiguration props = new PropertiesConfiguration(droidProperties.toFile());
         assertEquals(123, props.getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName()));
     }
 }

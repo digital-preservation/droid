@@ -31,10 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,9 +44,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
@@ -77,15 +75,16 @@ public class Droid4LegacyDroidTest {
 //        droid.setArchiveFormatResolver(archiveFormatResolver);
 //        droid.setArchiveHandlerFactory(archiveHandlerFactory);
         
-        File file = new File("test_sig_files/sample.pdf");
-        assertTrue(file.exists());
-        URI resourceUri = file.toURI();
+        final Path file = Paths.get("test_sig_files/sample.pdf");
+        assertTrue(Files.exists(file));
+        URI resourceUri = file.toUri();
   
-        RequestMetaData metaData = new RequestMetaData(file.length(), file.lastModified(), "sample.pdf");
+        RequestMetaData metaData = new RequestMetaData(
+                Files.size(file), Files.getLastModifiedTime(file).toMillis(), "sample.pdf");
         RequestIdentifier identifier = new RequestIdentifier(resourceUri);
         identifier.setParentId(1L);
         
-        IdentificationRequest<File> request = new FileSystemIdentificationRequest(metaData, identifier);
+        IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
         request.open(file);
 //        IdentificationRequest request = ResourceWrapperFactoryImpl.newResourceWrapper(resourceUri, 1L);
         

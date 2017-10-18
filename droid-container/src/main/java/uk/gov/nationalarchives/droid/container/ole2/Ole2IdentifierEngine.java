@@ -70,7 +70,7 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
             try {
                 if (FileSystemIdentificationRequest.class.isAssignableFrom(request.getClass())) {
                     FileSystemIdentificationRequest req = FileSystemIdentificationRequest.class.cast(request);
-                    reader = new POIFSFileSystem(req.getFile());
+                    reader = new POIFSFileSystem(req.getFile().toFile());
                 } else {
                     reader = new POIFSFileSystem(in);
                 }

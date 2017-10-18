@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 /**
  * @author rflitcroft
@@ -45,7 +45,7 @@ public interface ProfileSpecDao {
      * @param profileSpec the profile spec to persist
      * @param profileHomeDir the home directory of the profile
      */
-    void saveProfile(ProfileInstance profileSpec, File profileHomeDir);
+    void saveProfile(ProfileInstance profileSpec, Path profileHomeDir);
 
     /**
      * Loads a profile instabnce form the given input stream.

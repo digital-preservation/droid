@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.report.interfaces;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,11 +55,11 @@ public class ReportSpec {
     
     @XmlElementWrapper(name = "Items")
     @XmlElement(name = "Item")
-    private List<ReportSpecItem> items = new ArrayList<ReportSpecItem>();
+    private List<ReportSpecItem> items = new ArrayList<>();
     
     
     @XmlTransient
-    private List<File> xslTransforms;
+    private List<Path> xslTransforms;
     /**
      * @return the items
      */
@@ -84,7 +84,7 @@ public class ReportSpec {
     /**
      * @param xslTransforms a list of xsl files which can transform the output of this report spec.
      */
-    public void setXslTransforms(List<File> xslTransforms) {
+    public void setXslTransforms(final List<Path> xslTransforms) {
         this.xslTransforms = xslTransforms;
     }
     
@@ -92,7 +92,7 @@ public class ReportSpec {
      * 
      * @return a list of xsl files which can transform the output of this report spec.
      */
-    public List<File> getXslTransforms() {
+    public List<Path> getXslTransforms() {
         return xslTransforms;
     }
     

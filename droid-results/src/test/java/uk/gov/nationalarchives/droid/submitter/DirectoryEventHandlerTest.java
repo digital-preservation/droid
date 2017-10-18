@@ -31,14 +31,16 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +49,7 @@ import org.mockito.ArgumentCaptor;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
@@ -67,8 +70,8 @@ public class DirectoryEventHandlerTest {
     @Test
     public void testDirectoryEventHandlerSavesANewNodeButDoesNotSubmitToDroid() {
         
-        File file = new File("my/directory");
-        URI uri = file.toURI();
+        final Path file = Paths.get("my/directory");
+        URI uri = file.toUri();
         
         ResourceId id = new ResourceId(1L, "");
         
@@ -84,8 +87,8 @@ public class DirectoryEventHandlerTest {
     
     @Test
     public void testResultHandlerHandlesErrorWhenDirectoryAccessIsRestricted() {
-        final File file = new File("tmp/fictional");
-        URI uri = file.toURI();
+        final Path file = Paths.get("tmp/fictional");
+        URI uri = file.toUri();
         
         directoryEventHandler.setResultHandler(resultHandler);
         
@@ -103,18 +106,9 @@ public class DirectoryEventHandlerTest {
     }
     
     @Test
-    public void testDirectoryResultMetaDataWhenDepthOne() {
-        
-        final long length = 120000;
-        
-        File dir = mock(File.class);
-        when(dir.lastModified()).thenReturn(123456789L);
-        final URI uri = URI.create("file:/c:/my-dir");
-        when(dir.toURI()).thenReturn(uri);
-        when(dir.length()).thenReturn(length);
-        when(dir.getName()).thenReturn("my-dir");
-        when(dir.getAbsolutePath()).thenReturn("c:/my-dir");
-        
+    public void testDirectoryResultMetaDataWhenDepthOne() throws IOException {
+        final Path dir = Paths.get(".");
+
         ResourceId id = new ResourceId(1L, "");
         
         directoryEventHandler.setResultHandler(resultHandler);
@@ -124,28 +118,16 @@ public class DirectoryEventHandlerTest {
         verify(resultHandler).handleDirectory(resultCaptor.capture(), eq(id), eq(false));
         
         IdentificationResult result = resultCaptor.getValue();
-        assertEquals("my-dir", result.getMetaData().getName());
-        assertEquals(length, result.getMetaData().getSize().longValue());
-        assertEquals(123456789L, result.getMetaData().getTime().longValue());
-        assertEquals(uri, result.getIdentifier().getUri());
+        assertEquals(dir.getFileName().toString(), result.getMetaData().getName());
+        assertEquals(FileUtil.sizeQuietly(dir), result.getMetaData().getSize().longValue());
+        assertEquals(Files.getLastModifiedTime(dir).toMillis(), result.getMetaData().getTime().longValue());
+        assertEquals(dir.toUri(), result.getIdentifier().getUri());
         assertEquals(1L, result.getIdentifier().getParentId().longValue());
-        
-        
     }
 
     @Test
-    public void testDirectoryResultMetaDataWhenDepthZero() {
-        
-        final long length = 120000;
-        
-        File dir = mock(File.class);
-        when(dir.lastModified()).thenReturn(123456789L);
-        final URI uri = URI.create("file:/c:/my-dir");
-        when(dir.toURI()).thenReturn(uri);
-        when(dir.length()).thenReturn(length);
-        when(dir.getName()).thenReturn("my-dir");
-        when(dir.getAbsolutePath()).thenReturn("c:/my-dir");
-        
+    public void testDirectoryResultMetaDataWhenDepthZero() throws IOException {
+        final Path dir = Paths.get(".");
         ResourceId id = new ResourceId(1L, "");
         
         directoryEventHandler.setResultHandler(resultHandler);
@@ -155,10 +137,10 @@ public class DirectoryEventHandlerTest {
         verify(resultHandler).handleDirectory(resultCaptor.capture(), eq(id), eq(false));
         
         IdentificationResult result = resultCaptor.getValue();
-        assertEquals("c:/my-dir", result.getMetaData().getName());
-        assertEquals(length, result.getMetaData().getSize().longValue());
-        assertEquals(123456789L, result.getMetaData().getTime().longValue());
-        assertEquals(uri, result.getIdentifier().getUri());
+        assertEquals(dir.toAbsolutePath().toString(), result.getMetaData().getName());
+        assertEquals(FileUtil.sizeQuietly(dir), result.getMetaData().getSize().longValue());
+        assertEquals(Files.getLastModifiedTime(dir).toMillis(), result.getMetaData().getTime().longValue());
+        assertEquals(dir.toUri(), result.getIdentifier().getUri());
         assertEquals(1L, result.getIdentifier().getParentId().longValue());
 
         

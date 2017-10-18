@@ -62,7 +62,7 @@ public class ListAllSignatureFilesCommand implements DroidCommand {
             for (SortedMap<String, SignatureFileInfo> sigFilesForType : sigFiles.values()) {
                 for (SignatureFileInfo info : sigFilesForType.values()) {
                     printWriter.println(I18N.getResource(I18N.DEFAULT_SIGNATURE_VERSION,
-                            info.getType(), info.getVersion(), info.getFile().getName()));
+                            info.getType(), info.getVersion(), info.getFile().getFileName().toString()));
                 }
             }
         }

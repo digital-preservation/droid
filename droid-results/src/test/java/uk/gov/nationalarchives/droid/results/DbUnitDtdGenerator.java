@@ -31,9 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.results;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -42,7 +44,6 @@ import javax.sql.DataSource;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -54,7 +55,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 public final class DbUnitDtdGenerator {
 
     /** DTD filename. */
-    public static final String DTD_FILENAME = "src/test/resources/droidDbUnit.dtd";
+    public static final Path DTD = Paths.get("src/test/resources/droidDbUnit.dtd");
 
     private DbUnitDtdGenerator() { } 
     
@@ -72,26 +73,20 @@ public final class DbUnitDtdGenerator {
         });
         
         DataSource dataSource = (DataSource) ctx.getBean("dataSource");
-        Connection conn = DataSourceUtils.getConnection(dataSource);
-        // CHECKSTYLE:OFF
-        System.out.println("Writing DTD...");
-        // CHECKSTYLE:ON
-        try {
-            IDatabaseConnection connection = new DatabaseConnection(conn);
-            FlatDtdDataSet.write(connection.createDataSet(), new FileOutputStream(DTD_FILENAME));
-        } catch (DataSetException e) {
-            throw new RuntimeException(e);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (DatabaseUnitException e) {
-            throw new RuntimeException(e);
-        } finally {
+        try (final Connection conn = DataSourceUtils.getConnection(dataSource)) {
             // CHECKSTYLE:OFF
-            System.out.println("Written DTD.");
+            System.out.println("Writing DTD...");
             // CHECKSTYLE:ON
-            conn.close();
+            try (final OutputStream os = Files.newOutputStream(DTD)) {
+                final IDatabaseConnection connection = new DatabaseConnection(conn);
+                FlatDtdDataSet.write(connection.createDataSet(), os);
+            } catch (final IOException | DatabaseUnitException e) {
+                throw new RuntimeException(e);
+            } finally {
+                // CHECKSTYLE:OFF
+                System.out.println("Written DTD.");
+                // CHECKSTYLE:ON
+            }
         }
     }
 }

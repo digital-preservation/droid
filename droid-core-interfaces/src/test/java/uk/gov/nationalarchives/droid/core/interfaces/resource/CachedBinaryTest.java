@@ -40,7 +40,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
@@ -94,30 +96,30 @@ public class CachedBinaryTest {
         byte[] rawBytes = new byte[800];
         new Random().nextBytes(rawBytes);
 
-        ByteArrayInputStream in = new ByteArrayInputStream(rawBytes);
+        try (final ByteArrayInputStream in = new ByteArrayInputStream(rawBytes);
+                final InputStreamReader reader = new InputStreamReader(in, rawBytes.length, new AllWindowsCache())) {
 
-        InputStreamReader reader = new InputStreamReader(in, rawBytes.length, new AllWindowsCache());
+            // We need to do this first otherwise the next statement always returns -1 due to the reader,
+            // retrieving a null window, not clear why...
+            reader.readByte(4096);
+            //The cast is required to allow for negative numbers (since readByte returns an int)
+            int someByte = (byte) reader.readByte(799);
 
-        // We need to do this first otherwise the next statement always returns -1 due to the reader,
-        // retrieving a null window, not clear why...
-        reader.readByte(4096);
-        //The cast is required to allow for negative numbers (since readByte returns an int)
-        int someByte = (byte)reader.readByte(799);
+            assertEquals(rawBytes[799], someByte);
 
-        assertEquals(rawBytes[799], someByte);
+            Window window = reader.getWindow(0);
 
-        Window window = reader.getWindow(0);
+            int byteIn;
+            //int count = 0;
 
-        int byteIn;
-        //int count = 0;
+            for (int count = 0; count < rawBytes.length; count++) {
+                byteIn = window.getByte(count);
+                assertEquals("Incorrect byte: " + count, rawBytes[count], (byte) byteIn);
+            }
 
-        for(int count =0;count<rawBytes.length; count++) {
-            byteIn = window.getByte(count);
-            assertEquals("Incorrect byte: " + count, rawBytes[count], (byte) byteIn);
+            //This should throw the IndexOutOfBoundsException
+            byteIn = window.getByte(rawBytes.length);
         }
-
-        //This should throw the IndexOutOfBoundsException
-        byteIn = window.getByte(rawBytes.length);
     }
     /*
     @Test 
@@ -157,32 +159,32 @@ public class CachedBinaryTest {
         byte[] rawBytes = new byte[8500];
         new Random().nextBytes(rawBytes);
 
-        ByteArrayInputStream in = new ByteArrayInputStream(rawBytes);
+        final Path tempDir = Paths.get("tmp");
+        Files.createDirectories(tempDir);
 
-        final File tempDir = new File("tmp");
-        tempDir.mkdir();
+        try(final ByteArrayInputStream in = new ByteArrayInputStream(rawBytes);
+                final InputStreamReader reader = new InputStreamReader(in, rawBytes.length, new TempFileCache(tempDir.toFile()))) {
 
-        InputStreamReader reader = new InputStreamReader(in, rawBytes.length, new TempFileCache(tempDir));
+            // We need to do this first otherwise the next statement always returns -1 due to the reader,
+            // retrieving a null window, not clear why...
+            reader.readByte(12228);
+            //The cast is required to allow for negative numbers (since readByte returns an int)
+            int someByte = (byte) reader.readByte(8499);
 
-        // We need to do this first otherwise the next statement always returns -1 due to the reader,
-        // retrieving a null window, not clear why...
-        reader.readByte(12228);
-        //The cast is required to allow for negative numbers (since readByte returns an int)
-        int someByte = (byte)reader.readByte(8499);
+            assertEquals(rawBytes[8499], someByte);
 
-        assertEquals(rawBytes[8499], someByte);
+            Window window = reader.getWindow(0);
 
-        Window window = reader.getWindow(0);
+            int byteIn;
+            //int count = 0;
 
-        int byteIn;
-        //int count = 0;
+            for (int count = 0; count < rawBytes.length; count++) {
+                byteIn = window.getByte(count);
+                assertEquals("Incorrect byte: " + count, rawBytes[count], (byte) byteIn);
+            }
 
-        for(int count =0;count<rawBytes.length; count++) {
-            byteIn = window.getByte(count);
-            assertEquals("Incorrect byte: " + count, rawBytes[count], (byte) byteIn);
+            //This should throw the IndexOutOfBoundsException
+            byteIn = window.getByte(rawBytes.length);
         }
-
-        //This should throw the IndexOutOfBoundsException
-        byteIn = window.getByte(rawBytes.length);
     }
 }

@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -44,7 +45,7 @@ import net.byteseek.io.reader.WindowReader;
  *
  * @param <T> The type of byte source to open from.
  */
-public interface IdentificationRequest<T> {
+public interface IdentificationRequest<T> extends Closeable {
 
 
     /**
@@ -78,12 +79,6 @@ public interface IdentificationRequest<T> {
      * @return The file extension.
      */
     String getExtension();
-    
-    /**
-     * Releases resources for this resource.
-     * @throws IOException if the resource could not be closed
-     */
-    void close() throws IOException;
 
     /**
      * Gets the binary source of this request. THis is useful when we want 

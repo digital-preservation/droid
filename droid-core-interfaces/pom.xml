@@ -52,36 +52,23 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>com.github.stephenc.java-iso-tools</groupId>
-            <artifactId>iso9660-vfs-impl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <scope>test</scope>
+            <artifactId>loop-fs-iso-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jwat</groupId>
             <artifactId>jwat-arc</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.jwat</groupId>
             <artifactId>jwat-warc</artifactId>
-            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jwat</groupId>
+            <artifactId>jwat-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -109,6 +96,10 @@
             <artifactId>truezip-driver-zip</artifactId>
         </dependency>
         <dependency>
+            <groupId>de.schlichtherle.truezip</groupId>
+            <artifactId>truezip-kernel</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
         </dependency>
@@ -121,29 +112,41 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.tukaani</groupId>
-            <artifactId>xz</artifactId>
-            <version>1.6</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant-compress</artifactId>
-            <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>com.github.beothorn</groupId>
+            <groupId>com.github.junrar</groupId>
             <artifactId>junrar</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.google.code.byteseek</groupId>
-            <artifactId>byteseek</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>net.byteseek</groupId>
             <artifactId>byteseek</artifactId>
-            <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
         </dependency>
   </dependencies>
 </project>

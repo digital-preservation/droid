@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.signature;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.commons.configuration.event.ConfigurationListener;
 
@@ -49,7 +49,7 @@ public interface SignatureUpdateService extends ConfigurationListener, ProxySubs
      * @return the signature file's meta-data.
      * @throws SignatureServiceException if the service call failed
      */
-    SignatureFileInfo importSignatureFile(File targetDir) throws SignatureServiceException;
+    SignatureFileInfo importSignatureFile(Path targetDir) throws SignatureServiceException;
     
     /**
      * Gets the latest version info from the signature registry via a proxy.
