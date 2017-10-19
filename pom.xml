@@ -50,6 +50,7 @@
                         <exclude>.idea/**</exclude>
                         <exclude>pom.xml</exclude>
                         <exclude>LICENSE</exclude>
+                        <exclude>appveyor.yml</exclude>
                     </excludes>
                 </configuration>
             </plugin>
