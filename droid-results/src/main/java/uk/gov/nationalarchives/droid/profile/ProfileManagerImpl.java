@@ -33,13 +33,16 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.zip.ZipFile;
 
+import com.sun.nio.file.ExtendedCopyOption;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -146,7 +149,9 @@ public class ProfileManagerImpl implements ProfileManager {
     
     private static void copySignatureFile(final Path file, final Path destDir) {
         try {
-            Files.copy(file, destDir);
+            Files.createDirectories(destDir);
+            Path destFile = destDir.resolve(file.getFileName());
+            Files.copy(file, destFile);
         } catch (final IOException e) {
             throw new ProfileException(e.getMessage(), e);
         }    

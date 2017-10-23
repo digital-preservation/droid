@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,9 +58,9 @@ public class FileSystemIdentificationRequestTest {
     private RequestIdentifier identifier;
     
     @Before
-    public void setup() throws IOException {
+    public void setup() throws IOException, URISyntaxException {
     
-        file = Paths.get(getClass().getResource("/testXmlFile.xml").getFile());
+        file = Paths.get(getClass().getResource("/testXmlFile.xml").toURI());
         metaData = new RequestMetaData(Files.size(file), Files.getLastModifiedTime(file).toMillis(), "testXmlFile.xml");
         identifier = new RequestIdentifier(file.toUri());
         fileRequest = new FileSystemIdentificationRequest(

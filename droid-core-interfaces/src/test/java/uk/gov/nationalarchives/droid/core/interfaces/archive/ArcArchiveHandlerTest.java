@@ -51,7 +51,7 @@ public class ArcArchiveHandlerTest {
 
     @Test
     public void testHandleArcFile() throws Exception {
-        final Path file = Paths.get(getClass().getResource("/expanded.arc").getFile());
+        final Path file = Paths.get(getClass().getResource("/expanded.arc").toURI());
         try(final InputStream in = Files.newInputStream(file)) {
             final ByteCountingPushBackInputStream bpin = new ByteCountingPushBackInputStream(in, 512);
             assertEquals(true, ArcReaderFactory.isArcFile(bpin));

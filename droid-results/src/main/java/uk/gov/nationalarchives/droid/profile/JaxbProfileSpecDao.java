@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -91,7 +92,7 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
     @Override
     public void saveProfile(final ProfileInstance profile, final Path profileHomeDir) {
         final Path profileXml = profileHomeDir.resolve(PROFILE_XML);
-        try (final Writer out = Files.newBufferedWriter(profileXml, UTF_8)) {
+        try (final Writer out = Files.newBufferedWriter(profileXml, UTF_8, StandardOpenOption.CREATE)) {
             final Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.marshal(profile, out);

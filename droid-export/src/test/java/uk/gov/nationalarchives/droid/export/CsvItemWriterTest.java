@@ -75,6 +75,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 public class CsvItemWriterTest {
 
 	private static DateTime testDateTime = new DateTime(12345678L);
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
     private CsvItemWriter itemWriter;
     private File destination;
     private DroidGlobalConfig config;
@@ -120,7 +121,7 @@ public class CsvItemWriterTest {
     }
 
     private static String toCsvLine(final String[] values) {
-        return toCsvRow(values) + '\n';
+        return toCsvRow(values) + LINE_SEPARATOR;
     }
 
     @Test
@@ -170,8 +171,7 @@ public class CsvItemWriterTest {
                     "1.0",
             });
 
-            final String[] lines = writer.toString().split("\n");
-
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
             assertEquals(2, lines.length);
             assertEquals(expectedEntry, lines[1]);
         }
@@ -213,7 +213,7 @@ public class CsvItemWriterTest {
                     "",
             });
 
-            final String[] lines = writer.toString().split("\n");
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
 
             assertEquals(2, lines.length);
             assertEquals(expectedEntry, lines[1]);
@@ -255,7 +255,7 @@ public class CsvItemWriterTest {
                     "1.0",
             });
 
-            final String[] lines = writer.toString().split("\n");
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
 
             assertEquals(2, lines.length);
             assertEquals(expectedEntry, lines[1]);
@@ -305,7 +305,7 @@ public class CsvItemWriterTest {
                     "1.0",
             });
 
-            final String[] lines = writer.toString().split("\n");
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
 
             assertEquals(2, lines.length);
             assertEquals(expectedEntry1, lines[1]);
@@ -371,7 +371,7 @@ public class CsvItemWriterTest {
                     "1.0",
             });
 
-            final String[] lines = writer.toString().split("\n");
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
 
             assertEquals(3, lines.length);
             assertEquals(expectedEntry1, lines[1]);

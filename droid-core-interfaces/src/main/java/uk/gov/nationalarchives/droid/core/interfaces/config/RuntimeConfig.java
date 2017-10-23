@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -151,7 +152,7 @@ public final class RuntimeConfig {
                 throw new RuntimeException(message, e);
             }
         } else {
-            final Path logConfigFile = Paths.get(logConfig);
+            final Path logConfigFile = Paths.get(URI.create(logConfig));
             final String logFileURI = logConfigFile.toUri().toString();
             System.setProperty(LOG4J_CONFIGURATION, logFileURI);
         }
