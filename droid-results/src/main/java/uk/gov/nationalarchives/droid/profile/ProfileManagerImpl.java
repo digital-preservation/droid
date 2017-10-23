@@ -33,16 +33,13 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.zip.ZipFile;
 
-import com.sun.nio.file.ExtendedCopyOption;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -153,7 +153,7 @@ public class ProfileContextLocator {
     //CHECKSTYLE:OFF
     public ProfileInstanceManager openProfileInstanceManager(final ProfileInstance profile) {
         final Path profileHome = globalConfig.getProfilesDir().resolve(profile.getUuid());
-        final Path databasePath = profileHome.resolve("/db");
+        final Path databasePath = profileHome.resolve("db");
         final Path signatureFile = profileHome.resolve(profile.getSignatureFileName());
         final Path containerSignatureFile = profileHome.resolve(profile.getContainerSignatureFileName());
         final Path submissionQueueFile = profileHome.resolve("submissionQueue.xml");
