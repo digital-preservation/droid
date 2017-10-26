@@ -34,7 +34,7 @@ package uk.gov.nationalarchives.droid.core;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -65,13 +65,13 @@ public class SignatureFileParser {
      * @return sig file
      * @throws SignatureParseException if there is a problem parsing the signature file.
      */
-    FFSignatureFile parseSigFile(final String theFileName) throws SignatureParseException {
+    FFSignatureFile parseSigFile(final Path theFileName) throws SignatureParseException {
 
         final SAXModelBuilder mb = new SAXModelBuilder();
         final XMLReader parser = getXMLReader(mb);
 
         //read in the XML file
-        try (final Reader in = Files.newBufferedReader(Paths.get(theFileName), UTF_8)) {
+        try (final Reader in = Files.newBufferedReader(theFileName, UTF_8)) {
             parser.parse(new InputSource(in));
         } catch (final IOException | SAXException e) {
             throw new SignatureParseException(e.getMessage(), e);

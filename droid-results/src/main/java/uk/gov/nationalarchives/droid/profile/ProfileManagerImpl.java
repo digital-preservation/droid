@@ -146,7 +146,9 @@ public class ProfileManagerImpl implements ProfileManager {
     
     private static void copySignatureFile(final Path file, final Path destDir) {
         try {
-            Files.copy(file, destDir);
+            Files.createDirectories(destDir);
+            Path destFile = destDir.resolve(file.getFileName());
+            Files.copy(file, destFile);
         } catch (final IOException e) {
             throw new ProfileException(e.getMessage(), e);
         }    

@@ -58,7 +58,7 @@ public class GZipArchiveHandlerTest {
     @Test
     public void testHandleGZipFile() throws Exception {
 
-        final Path file = Paths.get(getClass().getResource("/testXmlFile.xml.gz").getFile());
+        final Path file = Paths.get(getClass().getResource("/testXmlFile.xml.gz").toURI());
 
         IdentificationRequest request = mock(IdentificationRequest.class);
         

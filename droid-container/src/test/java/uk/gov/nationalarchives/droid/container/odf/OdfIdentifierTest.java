@@ -138,7 +138,7 @@ public class OdfIdentifierTest {
     public void testInitialiseRegistersZipContainerIdentifierWithContainerIdentifierResolver() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATUE_FILE);
-        final Path path = Paths.get(containerSignatureUrl.getPath());
+        final Path path = Paths.get(containerSignatureUrl.toURI());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
@@ -163,7 +163,7 @@ public class OdfIdentifierTest {
     public void testInitialiseRegistersZipContainerFormatsAgainstOdfPuid() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATUE_FILE);
-        final Path path = Paths.get(containerSignatureUrl.getPath());
+        final Path path = Paths.get(containerSignatureUrl.toURI());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);

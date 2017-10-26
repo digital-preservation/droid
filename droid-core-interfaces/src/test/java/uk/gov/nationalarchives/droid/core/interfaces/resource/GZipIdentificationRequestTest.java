@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,11 +76,11 @@ public class GZipIdentificationRequestTest {
     }
     
     @BeforeClass
-    public static void setupTestData() throws IOException {
+    public static void setupTestData() throws IOException, URISyntaxException {
         tmpDir = Paths.get("tmp");
         Files.createDirectories(tmpDir);
 
-        final Path file = Paths.get(GZipIdentificationRequestTest.class.getResource("/testXmlFile.xml.gz").getFile());
+        final Path file = Paths.get(GZipIdentificationRequestTest.class.getResource("/testXmlFile.xml.gz").toURI());
 
         try(final GzipCompressorInputStream in = new GzipCompressorInputStream(Files.newInputStream(file));
                 final Reader reader = new InputStreamReader(in)) {
@@ -96,7 +97,7 @@ public class GZipIdentificationRequestTest {
     @Before
     public void setup() throws Exception {
     
-        file = Paths.get(getClass().getResource("/testXmlFile.xml.gz").getFile());
+        file = Paths.get(getClass().getResource("/testXmlFile.xml.gz").toURI());
         
         metaData = new RequestMetaData(null, null, "foo");
         identifier = new RequestIdentifier(URI.create(GzipUtils.getUncompressedFilename(file.toUri().toString())));

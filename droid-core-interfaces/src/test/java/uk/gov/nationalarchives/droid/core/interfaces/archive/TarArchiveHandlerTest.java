@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,7 +74,7 @@ public class TarArchiveHandlerTest {
     @Test
     public void testHandleTarFile() throws Exception {
 
-        final Path file = Paths.get(getClass().getResource("/saved.tar").getFile());
+        final Path file = Paths.get(getClass().getResource("/saved.tar").toURI());
 
         IdentificationRequestFactory factory = mock(IdentificationRequestFactory.class);
 
@@ -131,9 +132,9 @@ public class TarArchiveHandlerTest {
     }
     
     @Test
-    public void testZipEntryRequestHandlerGeneratesCorrectRequestMetaData() throws IOException {
+    public void testZipEntryRequestHandlerGeneratesCorrectRequestMetaData() throws IOException, URISyntaxException {
         
-        String jarFileName = getClass().getResource("/persistence.tar").getFile();
+        URI jarFileName = getClass().getResource("/persistence.tar").toURI();
         
         Path jarFile = Paths.get(jarFileName);
         assertTrue(Files.exists(jarFile));

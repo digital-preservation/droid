@@ -55,9 +55,11 @@ each open profile will have its own Spring context.
     <property name="transactionIsolation" value="${datasource.transactionIsolation}"/>
   </bean>
 
-  <bean id="dataSource" class="uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSource" destroy-method="shutdown" init-method="init">
-    <constructor-arg name="config" ref="dataSourceConfig"/>
+  <!-- Due to complicated initialization we using "factory bean" pattern to create instance of datasource -->
+  <bean id="dataSource" class="uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSourceFactory">
+    <property name="config" ref="dataSourceConfig" />
     <property name="createUrl" value="${datasource.createUrl}"/>
   </bean>
+
 
 </beans>

@@ -56,7 +56,7 @@ public class ZipEntryIdentificationRequestTest {
     private static Path tmpDir;
 
     private ZipEntryIdentificationRequest zipResource;
-    private String droidZipFileName;
+    private URI droidZipFileName;
     private InputStream in;
     private ZipEntry entry;
 
@@ -78,8 +78,8 @@ public class ZipEntryIdentificationRequestTest {
     @Before
     public void setup() throws Exception {
         
-        droidZipFileName = getClass().getResource("/saved.zip").getFile();
-        ZipFile zip = new ZipFile(droidZipFileName);
+        droidZipFileName = getClass().getResource("/saved.zip").toURI();
+        ZipFile zip = new ZipFile(Paths.get(droidZipFileName).toFile());
         entry = zip.getEntry("profile.xml");
         in = zip.getInputStream(entry);
         

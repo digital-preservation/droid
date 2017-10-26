@@ -58,7 +58,7 @@ public class BZipArchiveHandlerTest  {
     @Test
     public void testHandleBZipFile() throws Exception {
 
-        final Path file = Paths.get(getClass().getResource("/testXmlFile.xml.bz2").getFile());
+        final Path file = Paths.get(getClass().getResource("/testXmlFile.xml.bz2").toURI());
 
         IdentificationRequest request = mock(IdentificationRequest.class);
 

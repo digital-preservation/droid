@@ -51,7 +51,7 @@ public class WarcArchiveHandlerTest {
 
     @Test
     public void testHandleWarcFile() throws Exception {
-        final Path file = Paths.get(getClass().getResource("/expanded.warc").getFile());
+        final Path file = Paths.get(getClass().getResource("/expanded.warc").toURI());
         try (final InputStream in = Files.newInputStream(file)) {
             ByteCountingPushBackInputStream bpin = new ByteCountingPushBackInputStream(in, 512);
             assertEquals(true, WarcReaderFactory.isWarcFile(bpin));

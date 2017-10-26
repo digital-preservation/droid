@@ -62,7 +62,7 @@ public class SevenZArchiveHandlerTest {
     @Test
     public void testHandleSevenZFile() throws Exception {
 
-        final Path file = Paths.get(getClass().getResource("/saved.7z").getFile());
+        final Path file = Paths.get(getClass().getResource("/saved.7z").toURI());
 
         IdentificationRequestFactory factory = mock(IdentificationRequestFactory.class);
 

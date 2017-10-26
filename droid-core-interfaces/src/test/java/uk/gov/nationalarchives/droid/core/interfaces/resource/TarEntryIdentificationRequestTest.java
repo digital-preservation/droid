@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,7 +57,7 @@ public class TarEntryIdentificationRequestTest {
 
     private static Path tmpDir;
     private TarEntryIdentificationRequest tarResource;
-    private String fileName;
+    private URI fileName;
     private TarArchiveInputStream in;
     private String entryName;
     private long size;
@@ -78,7 +79,7 @@ public class TarEntryIdentificationRequestTest {
     @Before
     public void setup() throws Exception {
         
-        fileName = getClass().getResource("/saved.tar").getFile();
+        fileName = getClass().getResource("/saved.tar").toURI();
         
         in = new TarArchiveInputStream(Files.newInputStream(Paths.get(fileName)));
         TarArchiveEntry entry;
