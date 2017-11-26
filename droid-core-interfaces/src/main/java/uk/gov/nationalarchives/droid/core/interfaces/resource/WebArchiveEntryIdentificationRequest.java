@@ -95,24 +95,6 @@ public class WebArchiveEntryIdentificationRequest implements IdentificationReque
     public final void close() throws IOException {
         reader.close();
     }
-    
-    /**
-     * Really ensure that temporary files are deleted, if the close method is not called.  
-     * Do not rely on this - this is just a double-double safety measure to avoid leaving 
-     * temporary files hanging around.
-     * {@inheritDoc}
-     */
-    @Override
-    //CHECKSTYLE:OFF
-    public void finalize() throws Throwable {
-    //CHECKSTYLE:ON
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
-    }   
-
 
     /**
      * {@inheritDoc}
