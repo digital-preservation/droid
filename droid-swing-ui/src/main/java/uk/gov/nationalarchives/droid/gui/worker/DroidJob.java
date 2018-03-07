@@ -42,6 +42,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -89,9 +90,9 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
             if (parent != null) {
                 parent.setAllowsChildren(true);
                 boolean updated = false;
-                for (Enumeration<DefaultMutableTreeNode> e = parent.children(); 
-                    e.hasMoreElements() && !updated;) {
-                    DefaultMutableTreeNode childNode = e.nextElement();
+                for (Enumeration<TreeNode> e = parent.children();
+                     e.hasMoreElements() && !updated;) {
+                    DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) e.nextElement();
                     if (childNode.getUserObject().equals(node)) {
                         childNode.setUserObject(node);
                         childNode.setAllowsChildren(node.allowsChildren());

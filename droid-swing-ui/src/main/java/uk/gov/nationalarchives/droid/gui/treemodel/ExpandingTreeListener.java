@@ -38,6 +38,7 @@ import java.util.List;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
@@ -105,8 +106,8 @@ public class ExpandingTreeListener implements TreeWillExpandListener {
         ProfileResourceNode prn = (ProfileResourceNode) collapsingNode.getUserObject();
         profileForm.getInMemoryNodes().remove(prn.getId());
         
-        for (Enumeration<DefaultMutableTreeNode> e = collapsingNode.children(); e.hasMoreElements();) {
-            DefaultMutableTreeNode nodeToRemove = e.nextElement();
+        for (Enumeration<TreeNode> e = collapsingNode.children(); e.hasMoreElements();) {
+            DefaultMutableTreeNode nodeToRemove = (DefaultMutableTreeNode) e.nextElement();
             final ProfileResourceNode node = (ProfileResourceNode) nodeToRemove.getUserObject();
             profileForm.getInMemoryNodes().remove(node.getId());
         }

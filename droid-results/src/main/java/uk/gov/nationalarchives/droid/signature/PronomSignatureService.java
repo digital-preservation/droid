@@ -47,7 +47,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transports.http.configuration.ClientCacheControlType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
@@ -171,7 +170,7 @@ public class PronomSignatureService implements SignatureUpdateService {
         HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
         httpClientPolicy.setConnection(ConnectionType.CLOSE);
         httpClientPolicy.setAllowChunking(true);
-        httpClientPolicy.setCacheControl(ClientCacheControlType.NO_CACHE);
+        httpClientPolicy.setCacheControl("no-cache");
         
         if (proxySettings.isEnabled()) {
             httpClientPolicy.setProxyServer(proxySettings.getProxyHost());
@@ -179,7 +178,7 @@ public class PronomSignatureService implements SignatureUpdateService {
             httpClientPolicy.setProxyServerType(ProxyServerType.HTTP);
         } else {
             httpClientPolicy.setProxyServer(null);
-            httpClientPolicy.unsetProxyServerPort();
+            httpClientPolicy.setProxyServerPort(null);
             httpClientPolicy.setProxyServerType(null);
         }
         
