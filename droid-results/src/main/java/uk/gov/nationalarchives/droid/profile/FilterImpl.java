@@ -32,11 +32,12 @@
 package uk.gov.nationalarchives.droid.profile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -52,6 +53,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FilterImpl implements Cloneable, Filter {
+
+
+    private List<FilterCriterionImpl> unmashalingCriteriaList;
+
+    private boolean unmarshalingInprogress;
 
     @XmlElement(name = "Enabled", required = true)
     private boolean enabled;
@@ -79,19 +85,45 @@ public class FilterImpl implements Cloneable, Filter {
      */
     @XmlElement(name = "Criteria", required = true)
     List<FilterCriterionImpl> getFilterCriteria() {
-        return new ArrayList<FilterCriterionImpl>(filterCriteriaMap.values());
+        if (unmarshalingInprogress) {
+            return unmashalingCriteriaList;
+        } else {
+            return Collections.unmodifiableList(new ArrayList<FilterCriterionImpl>(filterCriteriaMap.values()));
+        }
+    }
+
+
+    /**
+     * When JAXB unmarshalling List, it mutate existing list.
+     * we create new list, setup flag that unmarshalling is in progress
+     * and during unmarshalling we return this list which mutate.
+     * When it's finished, we copy everything to Map.
+     * Code is NOT thread safe!!!
+     * @param u Unmarshaller.
+     * @param parent Parent object.
+     *
+     */
+    void beforeUnmarshal(Unmarshaller u, Object parent) {
+        unmarshalingInprogress = true;
+        unmashalingCriteriaList = new ArrayList<>();
     }
 
     /**
-     * Setter for XML filter criteria.
-     * 
-     * @param criteria
-     *            the criteria to set
+     * Called after unmarshaling.
+     * @param u Unmarshaller.
+     * @param parent Parent object.
      */
-    void setFilterCriteria(List<FilterCriterionImpl> criteria) {
-        int index = 0;
-        for (FilterCriterionImpl criterion : criteria) {
-            filterCriteriaMap.put(index++, criterion);
+    void afterUnmarshal(Unmarshaller u, Object parent) {
+        if (!unmarshalingInprogress || unmashalingCriteriaList == null) {
+            throw new RuntimeException("unmarshalling is not in progress.");
+        } else {
+            filterCriteriaMap = new TreeMap<Integer, FilterCriterionImpl>();
+            int index = 0;
+            for (FilterCriterionImpl criterion : unmashalingCriteriaList) {
+                filterCriteriaMap.put(index++, criterion);
+            }
+            unmashalingCriteriaList = null;
+            unmarshalingInprogress = false;
         }
     }
 
@@ -169,7 +201,7 @@ public class FilterImpl implements Cloneable, Filter {
      */
     @Override
     public Filter clone() {
-        Map<Integer, FilterCriterionImpl> clonedFilterCriteriaMap = new HashMap<Integer, FilterCriterionImpl>();
+        Map<Integer, FilterCriterionImpl> clonedFilterCriteriaMap = new TreeMap<Integer, FilterCriterionImpl>();
         try {
             super.clone();
             FilterImpl clone = new FilterImpl();
