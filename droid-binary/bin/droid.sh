@@ -146,7 +146,7 @@ fi
 
 # Run the command-line or user interface version with the options:
 if [ $# -gt 0 ]; then
-    java $OPTIONS -jar "$DROID_HOME/droid-command-line-${project.version}.jar" "$@"
+    java -XX:+IgnoreUnrecognizedVMOptions --add-modules=java.xml.bind,java.xml.ws,java.xml.ws.annotation $OPTIONS -jar "$DROID_HOME/droid-command-line-${project.version}.jar" "$@"
 else
-    java $OPTIONS -jar "$DROID_HOME/droid-ui-${project.version}.jar"
+    java -XX:+IgnoreUnrecognizedVMOptions --add-modules=java.xml.bind,java.xml.ws,java.xml.ws.annotation $OPTIONS -jar "$DROID_HOME/droid-ui-${project.version}.jar"
 fi

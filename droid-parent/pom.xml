@@ -74,16 +74,16 @@
     </mailingLists>
   
     <properties>
-        <project.build.source>1.7</project.build.source>
-        <project.build.target>1.7</project.build.target>
+        <project.build.source>1.8</project.build.source>
+        <project.build.target>1.8</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
 
-        <spring.version>4.3.11.RELEASE</spring.version>
+        <spring.version>5.0.0.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
-        <derby.version>10.12.1.1</derby.version> <!-- TODO derby >10.13 requires Java 8 -->
-        <cxf.version>2.3.1</cxf.version>
+        <derby.version>10.13.1.1</derby.version>
+        <cxf.version>3.2.0</cxf.version>
         <aspectj.version>1.8.11</aspectj.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <flying-saucer.version>9.1.7</flying-saucer.version>
@@ -139,6 +139,10 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.20</version>
+                    <configuration>
+                        <!-- enable modules on Java 9, ignore on previous VMs -->
+                        <argLine>-XX:+IgnoreUnrecognizedVMOptions --add-modules=java.xml.bind,java.xml.ws,java.xml.ws.annotation</argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
