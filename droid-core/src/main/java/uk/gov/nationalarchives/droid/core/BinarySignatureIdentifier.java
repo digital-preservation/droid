@@ -158,9 +158,9 @@ public class BinarySignatureIdentifier implements DroidCore {
     }
     
     /**
-     * @return the sigFile
+     * @return the sigFile, null if not initialized.
      */
-    FFSignatureFile getSigFile() {
+    public FFSignatureFile getSigFile() {
         return sigFile;
     }
 
