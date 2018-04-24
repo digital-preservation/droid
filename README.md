@@ -19,4 +19,4 @@ DROID allows files and folders to be selected from a file system for identificat
 
 DROID is made available under the New BSD License: https://raw.github.com/digital-preservation/droid/master/license.md
 
-DROID can be built simply from source using Maven. Executing "mvn clean install" inside the droid folder should be enough. The end result is available inside the droid-binary/target folder.
+DROID can be built simply from source using Maven. Executing `mvn clean install` inside the `droid` folder should be enough. The end result is available inside the `droid-binary/target` folder.
