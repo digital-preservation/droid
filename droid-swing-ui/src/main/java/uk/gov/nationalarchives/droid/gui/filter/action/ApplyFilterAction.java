@@ -40,9 +40,9 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
 import uk.gov.nationalarchives.droid.gui.action.ApplyFilterToTreeTableAction;
@@ -59,7 +59,7 @@ import uk.gov.nationalarchives.droid.profile.FilterCriterionImpl;
  */
 public class ApplyFilterAction {
 
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     /**
      * Applies filter after Apply filter button is pressed.
