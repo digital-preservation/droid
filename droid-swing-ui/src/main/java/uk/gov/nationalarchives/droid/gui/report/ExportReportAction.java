@@ -51,9 +51,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.SaveAsFileChooser;
 import uk.gov.nationalarchives.droid.report.ReportTransformException;
 import uk.gov.nationalarchives.droid.report.ReportTransformer;
@@ -72,7 +72,7 @@ public class ExportReportAction {
     private Path droidReportXml;
     private List<ExportType> exportTypes;
     private Path lastSelectedDir;
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     /**
      * Executes the export of a report.
@@ -228,7 +228,7 @@ public class ExportReportAction {
                     final OutputStream out = new BufferedOutputStream(Files.newOutputStream(target))) {
                 action.reportTransformer.transformToPdf(reader, XHTML_TRANSFORM_LOCATION, out);
             } catch (final IOException | ReportTransformException e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }
         }        
@@ -246,7 +246,7 @@ public class ExportReportAction {
             try {
                 Files.copy(action.droidReportXml, target);
             } catch (IOException e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }
         }        
@@ -266,7 +266,7 @@ public class ExportReportAction {
                 final Writer out = Files.newBufferedWriter(target, UTF_8)) {
                 action.reportTransformer.transformUsingXsl(reader, xslFile, out);
             } catch (final TransformerException | IOException e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }
         }        
