@@ -39,13 +39,13 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.IllegalFieldValueException;
 import org.joda.time.format.ISODateTimeFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.gui.filter.domain.FilterValidationException;
 
 /**
@@ -62,7 +62,7 @@ public class DatePicker extends javax.swing.JPanel {
 
     private static final String DATE_DELIMITER = "/";
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     /** 
      * Creates new DatePicker component.
