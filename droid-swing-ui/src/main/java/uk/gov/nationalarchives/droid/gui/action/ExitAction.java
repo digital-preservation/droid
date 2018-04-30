@@ -44,9 +44,9 @@ import java.util.concurrent.Future;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.gui.DroidUIContext;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxy;
@@ -62,7 +62,7 @@ import uk.gov.nationalarchives.droid.profile.ProfileManager;
  */
 public class ExitAction extends SwingWorker<Void, Void> {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private DroidUIContext context;
     private ProfileSelectionDialog dialog;
@@ -145,7 +145,7 @@ public class ExitAction extends SwingWorker<Void, Void> {
                     profileManager.closeProfile(profile.getUuid());
                     context.remove(profile.getUuid());
                 } catch (InterruptedException e) {
-                    log.debug(e);
+                    log.debug(e.getMessage(), e);
                     throw new RuntimeException(e.getMessage(), e);
                 } catch (ExecutionException e) {
                     cancel(true);
