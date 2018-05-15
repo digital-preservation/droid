@@ -53,7 +53,7 @@ public class DerbyPooledDataSourceFactory implements FactoryBean<DerbyPooledData
 
     private String createUrl = NO_CREATE_URL;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
 
     private HikariConfig config;
 

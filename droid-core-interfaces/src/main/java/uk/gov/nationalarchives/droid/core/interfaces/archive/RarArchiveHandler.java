@@ -71,7 +71,7 @@ public final class RarArchiveHandler implements ArchiveHandler {
     private static final String WINDOWS_PATH_SPLITTER = "\\";
 
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Log log = LoggerFactory.getLogger(this.getClass());
 
     private ResultHandler resultHandler;
     private AsynchDroid droid;
@@ -130,7 +130,7 @@ public final class RarArchiveHandler implements ArchiveHandler {
     private final class RarWalker extends ArchiveFileWalker<FileHeader> {
 
         private final Map<String, ResourceId> directories = new HashMap<String, ResourceId>();
-        private final Log log = LogFactory.getLog(this.getClass());
+        private final Log log = LoggerFactory.getLogger(this.getClass());
         private final Archive archive;
         private final ResourceId rootParentId;
 

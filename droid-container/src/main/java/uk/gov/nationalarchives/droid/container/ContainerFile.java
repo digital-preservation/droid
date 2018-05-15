@@ -54,7 +54,7 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureComp
 public class ContainerFile {
 
     @XmlTransient
-    private Log log = LogFactory.getLog(this.getClass());
+    private Log log = LoggerFactory.getLogger(this.getClass());
     
     @XmlTransient
     private boolean compileError;

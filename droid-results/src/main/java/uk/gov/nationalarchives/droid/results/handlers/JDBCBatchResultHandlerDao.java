@@ -167,7 +167,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private static final int MOST_RECENTLY_ADDED_NODE_CACHE_SIZE = 512;
     private static final int PUID_FORMAT_MAP_SIZE = 2500;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
 
     private DataSource datasource;
     private AtomicLong nodeIds;
@@ -782,7 +782,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         private static final int INSERT_NODE_MISMATCH_INDEX = 2;
         private static final int INSERT_NODE_ID_INDEX = 1;
 
-        private final Log log = LogFactory.getLog(getClass());
+        private final Log log = LoggerFactory.getLogger(getClass());
         private BlockingQueue<NodeInfo> blockingQueue;
         private DataSource datasource;
         private Connection connection;

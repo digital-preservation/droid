@@ -92,7 +92,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     private JDBCBatchResultHandlerDao resultHandlerDao;
     private IdentificationReader identificationReader;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
 
     private final Class<T> typeParameterClass;
 

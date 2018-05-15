@@ -76,7 +76,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
     private static final String FILE_NOT_FOUND_404 = "The signature file was not found on the signature web"
         + "server at\n[%s]"; 
     
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
 
     private String endpointUrl;
     private HttpClient client = new HttpClient();

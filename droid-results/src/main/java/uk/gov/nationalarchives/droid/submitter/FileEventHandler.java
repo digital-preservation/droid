@@ -61,7 +61,7 @@ public class FileEventHandler {
 
     private static final int URI_STRING_BUILDER_CAPACITY = 1024;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
 
     private AsynchDroid droidCore;
     private ResultHandler resultHandler;

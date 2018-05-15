@@ -63,7 +63,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
  */
 public class JDBCResultHandler implements ResultHandler {
 
-    private Log log = LogFactory.getLog(getClass());
+    private Log log = LoggerFactory.getLogger(getClass());
 
     private ResultHandlerDao resultHandlerDao;
     private ProgressMonitor progressMonitor;

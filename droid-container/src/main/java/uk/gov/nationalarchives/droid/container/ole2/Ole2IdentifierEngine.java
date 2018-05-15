@@ -58,7 +58,7 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
     private static final String NO_READER_ERROR =
             "No reader was obtained for %s. This may be due to low memory conditions. "
                     + "Try running with a larger heap size!";
-    private static final Log LOG = LogFactory.getLog(Ole2IdentifierEngine.class);
+    private static final Log LOG = LoggerFactory.getLogger(Ole2IdentifierEngine.class);
 
     //CHECKSTYLE:OFF - cyclomatic complexity too high.
     @Override

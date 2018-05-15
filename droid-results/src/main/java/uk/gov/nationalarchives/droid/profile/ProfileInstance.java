@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProfileInstance {
 
-    private static final Log LOG = LogFactory.getLog(ProfileInstance.class);
+    private static final Log LOG = LoggerFactory.getLogger(ProfileInstance.class);
 
     @XmlAttribute(name = "Id")
     private String uuid;

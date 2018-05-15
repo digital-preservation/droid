@@ -73,7 +73,7 @@ public class ExportTask implements Runnable {
     private static final int BOM_2 = 0xBB;
     private static final int BOM_3 = 0xBF;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
 
     private final String destination;
     private final List<String> profileIds;

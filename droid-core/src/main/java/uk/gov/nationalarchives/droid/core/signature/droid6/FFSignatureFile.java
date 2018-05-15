@@ -129,7 +129,7 @@ public class FFSignatureFile extends SimpleElement {
     private static final int DEFAULT_TENTATIVE_EXTENSION_SIZE = 100;
     private static final int DEFAULT_ALL_EXTENSION_SIZE = 300;
     
-    //private Log log = LogFactory.getLog(this.getClass());
+    //private Log log = LoggerFactory.getLogger(this.getClass());
     
     private String version = "";
     private String dateCreated = "";

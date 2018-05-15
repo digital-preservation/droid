@@ -66,7 +66,7 @@ public class SevenZipIteratorAdapter implements Iterable<SevenZArchiveEntry> {
 
     private class SevenZipIterator implements Iterator<SevenZArchiveEntry> {
 
-        private final Log log = LogFactory.getLog(this.getClass());
+        private final Log log = LoggerFactory.getLogger(this.getClass());
 
         private SevenZArchiveEntry entry;
 

@@ -51,7 +51,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
  */
 public class JaxBSubmissionQueueDao implements SubmissionQueue {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
 
     private String targetFileName;
     private final JAXBContext context;

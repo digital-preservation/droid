@@ -59,7 +59,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     private static final int URI_BUILDER_SIZE = 1204;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
 
     private FileEventHandler fileEventHandler;
     private DirectoryEventHandler directoryEventHandler;

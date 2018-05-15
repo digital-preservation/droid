@@ -57,7 +57,7 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
 
     private static final String PROFILE_XML = "profile.xml";
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LoggerFactory.getLogger(getClass());
     private final JAXBContext context;
     
     /**

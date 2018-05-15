@@ -57,7 +57,7 @@ public class SevenZipEntryIdentificationRequest implements IdentificationRequest
     private static final int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
 
     private long size;
-    private Log log = LogFactory.getLog(this.getClass());
+    private Log log = LoggerFactory.getLogger(this.getClass());
 
     private WindowReader reader;
     private final RequestIdentifier identifier;
