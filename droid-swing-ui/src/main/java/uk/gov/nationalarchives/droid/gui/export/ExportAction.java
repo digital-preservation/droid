@@ -39,9 +39,9 @@ import java.util.concurrent.Future;
 
 import javax.swing.SwingWorker;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.gui.action.ActionDoneCallback;

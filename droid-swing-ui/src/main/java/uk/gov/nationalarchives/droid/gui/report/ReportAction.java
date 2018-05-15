@@ -45,9 +45,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.swing.SwingWorker;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.report.interfaces.CancellableProgressObserver;
 import uk.gov.nationalarchives.droid.report.interfaces.Report;

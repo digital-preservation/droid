@@ -42,9 +42,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpecDao;
 

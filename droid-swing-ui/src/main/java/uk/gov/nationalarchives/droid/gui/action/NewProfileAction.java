@@ -40,9 +40,9 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.gui.DroidUIContext;

@@ -44,9 +44,9 @@ import java.util.concurrent.Future;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.gui.DroidUIContext;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxy;

@@ -34,13 +34,11 @@ package uk.gov.nationalarchives.droid.command.archive;
 import java.net.URI;
 import java.io.IOException;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
