@@ -81,7 +81,7 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
             final ProfileInstance profile = (ProfileInstance) unmarshaller.unmarshal(in);
             return profile;
         } catch (final JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
@@ -97,7 +97,7 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.marshal(profile, out);
         } catch (final IOException | JAXBException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
