@@ -178,11 +178,11 @@ public class SubmissionGateway implements AsynchDroid {
                 }
             } catch (ExecutionException e) {
                 final Throwable cause = e.getCause();
-                log.error(cause.getStackTrace(), cause);
+                log.error(cause.getStackTrace().toString(), cause);
                 resultHandler.handleError(new IdentificationException(
                         request, IdentificationErrorType.OTHER, cause));
             } catch (InterruptedException e) {
-                log.debug(e);
+                log.debug(e.getMessage(), e);
             } catch (IOException e) {
                 resultHandler.handleError(new IdentificationException(
                         request, IdentificationErrorType.OTHER, e));
@@ -218,7 +218,7 @@ public class SubmissionGateway implements AsynchDroid {
                 }
             //CHECKSTYLE:OFF - generating a hash can't prejudice any other results
             } catch (Exception e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
             }
             //CHECKSTYLE:ON
         }
@@ -246,7 +246,7 @@ public class SubmissionGateway implements AsynchDroid {
         //CHECKSTYLE:OFF - do not allow any errors in other code to
         //    prevent results so far from being recorded.
         } catch (Exception e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
         //CHECKSTYLE:ON
         return extensionResults;
