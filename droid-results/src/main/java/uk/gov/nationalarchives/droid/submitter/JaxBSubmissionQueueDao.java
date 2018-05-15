@@ -80,7 +80,7 @@ public class JaxBSubmissionQueueDao implements SubmissionQueue {
                 Unmarshaller unmarshaller = context.createUnmarshaller();
                 return (SubmissionQueueData) unmarshaller.unmarshal(in.toFile());
             } catch (JAXBException e) {
-                log.error(e);
+                log.error(e.getErrorCode(), e);
                 throw new RuntimeException(e.getMessage(), e);
             }
         }
@@ -98,7 +98,7 @@ public class JaxBSubmissionQueueDao implements SubmissionQueue {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(queue, Paths.get(targetFileName).toFile());
         } catch (JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
