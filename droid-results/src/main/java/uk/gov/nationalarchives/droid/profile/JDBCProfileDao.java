@@ -250,8 +250,9 @@ public class JDBCProfileDao implements ProfileDao {
                 }
             });
         } catch (DataAccessException ex) {
-            //CHECKSTYLE:OFF
-            log.error("A database exception occurred inserting a format " + format == null ? "NULL" : format , ex);
+            //CHECKSTYLE:OFF, ex
+            String exceptionFormatString ="A database exception occurred inserting a format " + (format == null ? "NULL" : format.toString());
+            log.error(exceptionFormatString, ex);
             //CHECKSTYLE:ON
         }
     }
@@ -329,7 +330,8 @@ public class JDBCProfileDao implements ProfileDao {
 
             return filteredNodes;
         } catch (DataAccessException ex) {
-            log.error("A database exception occurred finding filtered nodes with parent id " + parentId == null ? "NULL" : parentId, ex);
+            String exceptionParentString = "A database exception occurred finding filtered nodes with parent id " + (parentId == null ? "NULL" : parentId);
+            log.error(exceptionParentString, ex);
         }
         return Collections.emptyList();
     }
