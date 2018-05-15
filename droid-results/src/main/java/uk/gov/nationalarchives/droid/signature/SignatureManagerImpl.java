@@ -360,7 +360,7 @@ public class SignatureManagerImpl implements SignatureManager {
                 try {
                     config.getProperties().save();
                 } catch (ConfigurationException e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                     throw new SignatureManagerException(e);
                 }
             }
@@ -426,7 +426,7 @@ public class SignatureManagerImpl implements SignatureManager {
 
             return sigFileInfo;
         } catch (final IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new SignatureFileException(e.getMessage(), e, ErrorCode.FILE_NOT_FOUND);
         }
     }
