@@ -40,9 +40,9 @@ import java.util.Properties;
 
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
@@ -64,7 +64,7 @@ public class ProfileContextLocator {
     private static final String BLANK_PROFILE = "profile.template";
     private static final String SIG_PROFILE = "profile\\.\\d+\\.template";
     
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private DroidGlobalConfig globalConfig;
     
     private enum TemplateStatus { NO_TEMPLATE, BLANK_TEMPLATE, SIGNATURE_TEMPLATE };
@@ -244,7 +244,7 @@ public class ProfileContextLocator {
             try {
                 unpackProfileTemplate(profileTemplate, databasePath);
             } catch (IOException e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
                 // could not load profile template - fall back on creating one from scratch.
                 //BNO. No Longer required?
                 //setCreateSchemaProperties(true, props);
@@ -346,7 +346,7 @@ public class ProfileContextLocator {
         try {
             packer.saveProfile(databaseDir, profileTemplate, observe);
         } catch (IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
     }
     
