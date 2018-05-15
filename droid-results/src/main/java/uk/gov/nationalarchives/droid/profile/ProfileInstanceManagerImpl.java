@@ -45,6 +45,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.Semaphore;
 
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
@@ -81,7 +82,7 @@ import uk.gov.nationalarchives.droid.submitter.ProfileWalkerDao;
  */
 public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ProfileDao profileDao;
     private ReportDao reportDao;
@@ -179,7 +180,7 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             profileInstance.setProgress(progressState);
             profileWalkerDao.save(walkState);
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
         } finally {
             submitterPermits.release();
         }
@@ -231,9 +232,9 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
                         try {
                             specWalker.getProgressMonitor().setTargetCount(get());
                         } catch (InterruptedException e) {
-                            log.debug(e);
+                            log.debug(e.getMessage(), e);
                         } catch (ExecutionException e) {
-                            log.error(e);
+                            log.error(e.getMessage(), e);
                         }
                     }
                 }
@@ -268,10 +269,10 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
                 preWalk();
                 specWalker.walk(profileInstance.getProfileSpec(), walkState);
             } catch (InterruptedException e) {
-                log.debug(e);
+                log.debug(e.getMessage(), e);
             } catch (IOException e) {
                 inError = true;
-                log.error(e);
+                log.error(e.getMessage(), e);
                 throw new ProfileException(e);
             } finally {
                 postWalk();
@@ -300,7 +301,7 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             try {
                 submissionGateway.awaitFinished();
             } catch (InterruptedException e) {
-                log.debug(e);
+                log.debug(e.getMessage(), e);
             }
         }
     }
