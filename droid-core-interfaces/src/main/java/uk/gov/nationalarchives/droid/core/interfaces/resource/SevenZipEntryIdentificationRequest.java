@@ -39,8 +39,8 @@ import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 
 //CHECKSTYLE:OFF - getting wrong import order - no idea why.
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //CHECKSTYLE:ON
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;

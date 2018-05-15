@@ -37,8 +37,8 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Iterator adapter to allow pass <i>ArchiveInputStream</i> to the <i>SevenZArchiveWalker</i>.
