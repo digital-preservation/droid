@@ -48,7 +48,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
  */
 public class ProxySettings implements ConfigurationListener {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private String proxyHost;
     private int proxyPort;
@@ -63,7 +63,7 @@ public class ProxySettings implements ConfigurationListener {
         return proxyHost;
     }
     /**
-     * @return a nnew instance
+     * @return a new instance
      */
     public static ProxySettings newInstance() {
         return new ProxySettings();
