@@ -104,7 +104,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                 WarcReader warcReader = WarcReaderFactory.getReader(in);
                 this.iterator = warcReader.iterator();
             } catch (IOException e) {
-                LOGGER.error(e);
+                LOGGER.error(e.getMessage(), e);
                 System.err.println(e);
             }
         }
