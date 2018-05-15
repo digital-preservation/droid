@@ -42,9 +42,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpecDao;
 
@@ -54,7 +54,7 @@ import uk.gov.nationalarchives.droid.report.interfaces.ReportSpecDao;
  */
 public class JaxbReportSpecDao implements ReportSpecDao {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private JAXBContext context;
     
@@ -75,10 +75,10 @@ public class JaxbReportSpecDao implements ReportSpecDao {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return (ReportSpec) unmarshaller.unmarshal(reader);
         } catch (final JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             return null;
         } catch (final IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
