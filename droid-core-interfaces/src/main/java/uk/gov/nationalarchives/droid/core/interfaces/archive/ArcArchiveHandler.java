@@ -104,7 +104,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
                 ArcReader arcReader = ArcReaderFactory.getReader(in);
                 this.iterator = arcReader.iterator();
             } catch (IOException e) {
-                LOGGER.error(e);
+                LOGGER.error(e.getMessage(), e);
                 System.err.println(e);
             }
         }
