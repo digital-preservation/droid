@@ -46,13 +46,13 @@ import java.util.Enumeration;
 
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import de.schlichtherle.truezip.zip.ZipFile;
 import de.schlichtherle.truezip.zip.ZipEntry;
 import de.schlichtherle.truezip.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
@@ -68,7 +68,7 @@ public class ProfileDiskAction {
     private static final char BACKWARD_SLASH = '\\';
 
     
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     /**
      * Saves the profile to disk by zipping it up.
