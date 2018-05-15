@@ -86,10 +86,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import net.byteseek.io.reader.WindowReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.byteseek.io.reader.WindowReader;
+
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
