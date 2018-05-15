@@ -82,7 +82,7 @@ public class ProfileWalkerDao {
                 ProfileWalkState walkState = (ProfileWalkState) unmarshaller.unmarshal(xml.toFile());
                 return walkState;
             } catch (JAXBException e) {
-                log.error(e);
+                log.error(e.getErrorCode(), e);
                 throw new RuntimeException(e.getMessage(), e);
             }
         }
@@ -103,10 +103,10 @@ public class ProfileWalkerDao {
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.marshal(walkState, xml.toFile());
         } catch (PropertyException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } catch (JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e);
         }
     }
