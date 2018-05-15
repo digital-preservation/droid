@@ -86,10 +86,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import net.byteseek.io.reader.WindowReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -171,7 +171,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     /**
     *Use static log for optimmal performance..
      */
-    private  static final Log LOGGER = LogFactory.getLog(ByteSequence.class);
+    private  static final Logger LOGGER = LoggerFactory.getLogger(ByteSequence.class);
     
     private List<SubSequence> subSequences = new ArrayList<SubSequence>();
     private SubSequence[] sequences = new SubSequence[0];
