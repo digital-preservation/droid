@@ -160,7 +160,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             csvWriter.flush();
             
         } catch (final TextWritingException e) {
-            log.error(e);
+            log.error(e.getRecordCharacters(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
@@ -198,7 +198,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             csvWriter.flush();
             
         } catch (final TextWritingException e) {
-            log.error(e);
+            log.error(e.getRecordCharacters(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
