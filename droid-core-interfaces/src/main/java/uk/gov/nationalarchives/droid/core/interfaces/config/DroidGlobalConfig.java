@@ -86,7 +86,7 @@ public class DroidGlobalConfig {
     // droid.properties file when settings are saved.  // See comments under update() method
     private static final List<String> NON_CONFIGURABLE_PROPERTIES = Arrays.asList(AVAILABLE_HASH_ALGORITHMS);
     
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private Path droidWorkDir;
     private Path signatureFilesDir;

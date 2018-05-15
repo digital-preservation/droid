@@ -63,7 +63,7 @@ public class TarEntryIdentificationRequest implements IdentificationRequest<Inpu
     private Long size;
     private WindowReader reader;
 
-    private Log log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
 
     /**

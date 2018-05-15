@@ -65,7 +65,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
     private boolean closeStream = true;
 
 
-    private Log log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     /**
      * Constructs a new Zip file resource.

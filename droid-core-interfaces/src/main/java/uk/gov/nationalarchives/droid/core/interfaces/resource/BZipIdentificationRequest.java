@@ -65,7 +65,7 @@ public class BZipIdentificationRequest implements IdentificationRequest<InputStr
     private final RequestIdentifier identifier;
     private WindowReader reader;
 
-    private Log log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Constructs a new BZip file resource.

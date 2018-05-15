@@ -196,7 +196,7 @@ public class JDBCProfileDao implements ProfileDao {
     private static final int FORMAT_NAME_INDEX = 3;
     private static final int FORMAT_VERSION_INDEX = 4;
 
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private DataSource datasource;
     private ResultHandlerDao resultHandlerDao;

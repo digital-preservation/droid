@@ -56,7 +56,7 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
 
     private long size;
     private Path tempDir;
-    private Log log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     private WindowReader reader;
 
     /**

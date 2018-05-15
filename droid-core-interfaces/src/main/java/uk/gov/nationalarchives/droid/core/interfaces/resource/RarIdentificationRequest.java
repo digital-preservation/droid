@@ -51,7 +51,7 @@ public class RarIdentificationRequest implements IdentificationRequest<InputStre
 
     private  static final int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
 
-    private final Log log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final String extension;
     private final String fileName;

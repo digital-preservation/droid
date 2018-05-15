@@ -49,7 +49,7 @@ public class DerbyPooledDataSource extends HikariDataSource {
 
     private static final long serialVersionUID = -8613139738021279720L;
 
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final HikariConfig config;
 
     /**

@@ -85,7 +85,7 @@ public class SubmissionGateway implements AsynchDroid {
     private static final String ARCHIVE_ERROR = "Could not process the archival format(%s): %s\t%s\t%s";
 
     //CHECKSTYLE:ON    
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private DroidCore droidCore;
     private ResultHandler resultHandler;

@@ -67,7 +67,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
     private AsynchDroid droid;
     private IdentificationRequestFactory<InputStream> factory;
     private ResultHandler resultHandler;
-    private final Log log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
@@ -102,7 +102,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
         private final long originatorNodeId;
 
         private final Map<String, ResourceId> directories = new HashMap<String, ResourceId>();
-        private final Log log = LoggerFactory.getLogger(this.getClass());
+        private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 
         /**

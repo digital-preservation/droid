@@ -83,7 +83,7 @@ public class SignatureManagerImpl implements SignatureManager {
         defaultVersionProperties.put(SignatureType.TEXT, DroidGlobalProperty.DEFAULT_TEXT_SIG_FILE_VERSION);
     }
 
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private DroidGlobalConfig config;
     private Map<SignatureType, SignatureUpdateService> signatureUpdateServices;

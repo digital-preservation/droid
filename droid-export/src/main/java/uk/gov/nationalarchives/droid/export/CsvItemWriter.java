@@ -91,7 +91,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     private static final int HASH_ARRAY_INDEX = 12;
     
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private CsvWriter csvWriter;
     private DroidGlobalConfig config;

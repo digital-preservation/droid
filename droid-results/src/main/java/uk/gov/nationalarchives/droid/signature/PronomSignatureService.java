@@ -71,7 +71,7 @@ import uk.gov.nationalarchives.pronom.Version;
  */
 public class PronomSignatureService implements SignatureUpdateService {
 
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private PronomService pronomService;
     private String filenamePattern;

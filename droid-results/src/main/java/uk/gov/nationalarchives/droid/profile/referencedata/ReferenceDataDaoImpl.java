@@ -53,7 +53,7 @@ import uk.gov.nationalarchives.droid.profile.SqlUtils;
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
     private static final String SELECT_FORMATS = "SELECT * FROM FORMAT";
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private DataSource datasource;
 
     /**

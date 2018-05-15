@@ -62,7 +62,7 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
  */
 public class ProfileManagerImpl implements ProfileManager {
 
-    private final Log log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ProfileContextLocator profileContextLocator;
     private ProfileSpecDao profileSpecDao;

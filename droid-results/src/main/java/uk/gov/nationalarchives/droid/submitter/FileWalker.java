@@ -65,7 +65,7 @@ public class FileWalker {
 
     private static final String FILE_SYSTEM_UNAVAILABLE = "File system appears to be unavailable for file: [%s]";
 
-    private Log log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
 
     private URI root;
