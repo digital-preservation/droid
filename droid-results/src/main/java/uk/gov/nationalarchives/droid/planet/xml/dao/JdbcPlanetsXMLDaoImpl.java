@@ -44,9 +44,9 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -90,7 +90,7 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
     private boolean formatCriteriaExist;
     private QueryBuilder queryBuilder;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private DataSource datasource;
     private Connection connection;
@@ -260,7 +260,7 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
                 if (resultset != null) { resultset.close(); }
                 if (statement != null) { statement.close(); }
             } catch (SQLException e) {
-                log.error(e);
+                log.error(e.getSQLState(), e);
             }
         }
 
