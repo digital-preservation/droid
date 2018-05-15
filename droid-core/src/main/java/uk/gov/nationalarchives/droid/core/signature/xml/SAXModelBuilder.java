@@ -79,8 +79,8 @@ package uk.gov.nationalarchives.droid.core.signature.xml;
 import java.lang.reflect.Method;
 import java.util.Stack;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -98,7 +98,7 @@ public class SAXModelBuilder extends DefaultHandler {
     private static final String ADD = "add";
     private static final String SET = "set";
 
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     private Stack<Object> stack = new Stack<Object>();
     private SimpleElement element;
