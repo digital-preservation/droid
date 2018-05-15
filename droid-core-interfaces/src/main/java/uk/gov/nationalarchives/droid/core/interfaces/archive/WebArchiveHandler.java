@@ -63,7 +63,7 @@ public abstract class WebArchiveHandler {
     /**
      * Get the log to be shared by all instances of this class.
      */
-    protected static final Log LOGGER = LoggerFactory.getLogger(WebArchiveHandler.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(WebArchiveHandler.class);
 
     private AsynchDroid droidCore;
     private IdentificationRequestFactory factory;
