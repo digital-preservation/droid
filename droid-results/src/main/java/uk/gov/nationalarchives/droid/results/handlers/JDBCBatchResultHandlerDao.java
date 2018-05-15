@@ -288,7 +288,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                     throw new SQLException("Invalid number of columns in profile_resource_node table!");
             }
         } catch (SQLException e) {
-            log.error(e);
+            log.error(e.getSQLState(), e);
         } finally {
             try {
                 //Check for null references to avoid the exception overhead
@@ -304,7 +304,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 }
 
             } catch (SQLException e) {
-                log.error(e);
+                log.error(e.getSQLState(), e);
             }
         }
     }
@@ -400,7 +400,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                             a.close();
 
                         } catch (Exception e) {
-                            log.error(e);
+                            log.error(e.getMessage(), e);
                         }
                     }
                 }
@@ -408,7 +408,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 try {
                     conn.close();
                 } catch (Exception e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 }
                 //CHECKSTYLE:ON
             }
