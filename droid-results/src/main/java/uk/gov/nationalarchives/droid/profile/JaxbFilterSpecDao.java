@@ -76,7 +76,7 @@ public class JaxbFilterSpecDao implements FilterSpecDao {
             FilterSpec spec = (FilterSpec) unmarshaller.unmarshal(in);
             return spec.getFilter();
         } catch (JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
@@ -94,10 +94,10 @@ public class JaxbFilterSpecDao implements FilterSpecDao {
             FilterSpec spec = new FilterSpec(filter);
             m.marshal(spec, out);
         } catch (PropertyException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } catch (JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e);
         } finally {
             closeOutputStream(out);
