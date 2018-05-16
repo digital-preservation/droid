@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 //import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Element;
 
@@ -54,7 +54,7 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureComp
 public class ContainerFile {
 
     @XmlTransient
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     @XmlTransient
     private boolean compileError;

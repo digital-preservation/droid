@@ -34,8 +34,8 @@ package uk.gov.nationalarchives.droid.command.archive;
 import java.io.IOException;
 import java.net.URI;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
@@ -59,7 +59,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  */
 public class RarArchiveContainerIdentifier extends ArchiveContentIdentifier {
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Initialization of instance values must be explicitly called by all children.

@@ -71,8 +71,8 @@ public final class DroidCommandLine implements AutoCloseable {
     //CHECKSTYLE:ON
 
     /**Logger Log4j.*/
-    //private Log log = LogFactory.getLog(this.getClass());
-    //private static Logger log = Logger.getLogger(DroidCommandLine.class);
+    //private Logger log = LoggerFactory.getLogger(this.getClass());
+    //private Logger log = Logger.getLogger(DroidCommandLine.class);
     
 
 

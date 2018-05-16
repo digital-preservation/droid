@@ -41,8 +41,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
@@ -56,7 +56,7 @@ import uk.gov.nationalarchives.droid.gui.DialogUtils;
  */
 public class UpdateSignatureAction extends SwingWorker<Map<SignatureType, SignatureFileInfo>, Void> {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private SignatureManager signatureManager;
     private SignatureFileInfo signatureFileInfo;
@@ -114,9 +114,9 @@ public class UpdateSignatureAction extends SwingWorker<Map<SignatureType, Signat
             progressDialog.setVisible(false);
             DialogUtils.showUpdateSuccessfulDialog(parent, updatedFiles);
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
         } catch (ExecutionException e) {
-            log.error(e.getCause(), e);
+            log.error(e.getCause().toString(), e);
             progressDialog.setVisible(false);
             DialogUtils.showSignatureUpdateErrorDialog(parent, e.getCause());
         } catch (CancellationException e) {

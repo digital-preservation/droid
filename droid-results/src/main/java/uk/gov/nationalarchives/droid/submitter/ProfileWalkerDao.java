@@ -40,8 +40,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
@@ -55,7 +55,7 @@ public class ProfileWalkerDao {
     
     private static final String FILE_WALKER_XML = "profile_progress.xml";
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final JAXBContext context;
     private Path profileHomeDir;
     
@@ -82,7 +82,7 @@ public class ProfileWalkerDao {
                 ProfileWalkState walkState = (ProfileWalkState) unmarshaller.unmarshal(xml.toFile());
                 return walkState;
             } catch (JAXBException e) {
-                log.error(e);
+                log.error(e.getErrorCode(), e);
                 throw new RuntimeException(e.getMessage(), e);
             }
         }
@@ -103,10 +103,10 @@ public class ProfileWalkerDao {
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.marshal(walkState, xml.toFile());
         } catch (PropertyException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } catch (JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e);
         }
     }

@@ -65,10 +65,12 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.joda.time.DateTime;
 import org.openide.util.NbBundle;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
@@ -126,7 +128,7 @@ public class DroidMainFrame extends JFrame {
 
     private static final long serialVersionUID = 8170787911864425667L;
 
-    private Log log = LogFactory.getLog(getClass());
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     private ProfileManager profileManager;
     private DroidUIContext droidContext;
@@ -313,7 +315,7 @@ public class DroidMainFrame extends JFrame {
             // 3. handle events
             helpMenuItem.addActionListener(new CSH.DisplayHelpFromSource(hb));
         } catch (HelpSetException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
 
         globalContext = new SpringGuiContext();

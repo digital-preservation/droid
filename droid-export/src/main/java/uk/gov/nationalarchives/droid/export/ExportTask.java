@@ -48,8 +48,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
@@ -73,7 +73,7 @@ public class ExportTask implements Runnable {
     private static final int BOM_2 = 0xBB;
     private static final int BOM_3 = 0xBF;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final String destination;
     private final List<String> profileIds;

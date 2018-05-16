@@ -39,8 +39,8 @@ import java.util.concurrent.Future;
 
 import javax.swing.SwingWorker;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
@@ -52,7 +52,7 @@ import uk.gov.nationalarchives.droid.gui.action.ActionDoneCallback;
  */
 public class ExportAction extends SwingWorker<Void, Integer> {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private ExportManager exportManager;
     private File destination;
@@ -102,10 +102,10 @@ public class ExportAction extends SwingWorker<Void, Integer> {
         try {
             exportTask.get();
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
             throw new RuntimeException(e);
         } catch (ExecutionException e) {
-            log.error(e.getCause(), e);
+            log.error(e.getCause().toString(), e);
             throw new RuntimeException(e.getCause());
         } catch (CancellationException e) {
             cancel(false);

@@ -36,8 +36,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
@@ -60,6 +61,8 @@ public class SpringProfileInstanceFactory implements ProfileInstanceLocator {
     private static final String DATA_SOURCE_BEAN_NAME = "dataSource";
 
     private static final String PROFILE_MANAGER = "profileManager";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private Map<String, GenericApplicationContext> profileInstanceManagers =
          new HashMap<String, GenericApplicationContext>();
@@ -132,7 +135,7 @@ public class SpringProfileInstanceFactory implements ProfileInstanceLocator {
             //CHECKSTYLE:OFF no choice here - the datasource throws Exception
         } catch (Exception ex) {
             // CHECKSTYLE:ON
-            Logger.getLogger(SpringProfileInstanceFactory.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
     }
     

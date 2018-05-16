@@ -40,8 +40,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.profile.SqlUtils;
 
@@ -53,7 +53,7 @@ import uk.gov.nationalarchives.droid.profile.SqlUtils;
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
     private static final String SELECT_FORMATS = "SELECT * FROM FORMAT";
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private DataSource datasource;
 
     /**

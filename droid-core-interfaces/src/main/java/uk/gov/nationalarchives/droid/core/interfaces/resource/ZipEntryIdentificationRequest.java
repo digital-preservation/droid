@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
@@ -65,7 +65,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
     private boolean closeStream = true;
 
 
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     /**
      * Constructs a new Zip file resource.

@@ -46,8 +46,8 @@ import java.util.HashMap;
 import javax.sql.DataSource;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -196,7 +196,7 @@ public class JDBCProfileDao implements ProfileDao {
     private static final int FORMAT_NAME_INDEX = 3;
     private static final int FORMAT_VERSION_INDEX = 4;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private DataSource datasource;
     private ResultHandlerDao resultHandlerDao;
@@ -250,8 +250,9 @@ public class JDBCProfileDao implements ProfileDao {
                 }
             });
         } catch (DataAccessException ex) {
-            //CHECKSTYLE:OFF
-            log.error("A database exception occurred inserting a format " + format == null ? "NULL" : format , ex);
+            //CHECKSTYLE:OFF, ex
+            String exceptionFormatString ="A database exception occurred inserting a format " + (format == null ? "NULL" : format.toString());
+            log.error(exceptionFormatString, ex);
             //CHECKSTYLE:ON
         }
     }
@@ -329,7 +330,8 @@ public class JDBCProfileDao implements ProfileDao {
 
             return filteredNodes;
         } catch (DataAccessException ex) {
-            log.error("A database exception occurred finding filtered nodes with parent id " + parentId == null ? "NULL" : parentId, ex);
+            String exceptionParentString = "A database exception occurred finding filtered nodes with parent id " + (parentId == null ? "NULL" : parentId);
+            log.error(exceptionParentString, ex);
         }
         return Collections.emptyList();
     }
