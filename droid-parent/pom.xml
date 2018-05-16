@@ -233,6 +233,7 @@
                             <ignoreNonCompile>false</ignoreNonCompile>
                             <ignoredUnusedDeclaredDependencies>
                                 <ignoredUsedUndeclaredDependency>org.slf4j:jcl-over-slf4j</ignoredUsedUndeclaredDependency>
+                                <ignoredUsedUndeclaredDependency>org.slf4j:slf4j-log4j12</ignoredUsedUndeclaredDependency>
                             </ignoredUnusedDeclaredDependencies>
                         </configuration>
                     </execution>
@@ -519,6 +520,11 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>

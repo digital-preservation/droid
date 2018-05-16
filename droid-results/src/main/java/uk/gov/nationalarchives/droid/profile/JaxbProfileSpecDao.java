@@ -64,10 +64,7 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
      * @throws JAXBException if the JAXBContext could not be instantiated.
      */
     public JaxbProfileSpecDao() throws JAXBException {
-        
-        context = JAXBContext.newInstance(new Class[] {
-            ProfileInstance.class,
-        });
+        context = JAXBContext.newInstance(ProfileInstance.class);
     }
     
     /**

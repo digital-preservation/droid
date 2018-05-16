@@ -45,6 +45,9 @@ import org.jwat.arc.ArcReaderFactory;
 import org.jwat.arc.ArcRecord;
 import org.jwat.arc.ArcRecordBase;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -62,6 +65,8 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
      * Used to generate URIs within Arc file
      */
     protected static final String WEB_ARCHIVE_TYPE = "arc";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * {@inheritDoc}
@@ -93,7 +98,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
      * @author gseaman, boreilly
      *
      */
-    private static final class ArcArchiveEntryIterator
+    private final class ArcArchiveEntryIterator
             extends ArchiveInputStreamIterator<ArcRecordBase, InputStream> {
 
         private Iterator<ArcRecordBase> iterator;
@@ -104,7 +109,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
                 ArcReader arcReader = ArcReaderFactory.getReader(in);
                 this.iterator = arcReader.iterator();
             } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
                 System.err.println(e);
             }
         }

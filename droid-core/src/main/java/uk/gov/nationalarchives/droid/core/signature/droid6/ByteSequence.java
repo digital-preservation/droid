@@ -172,7 +172,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     /**
     *Use static log for optimmal performance..
      */
-    private  static final Logger LOGGER = LoggerFactory.getLogger(ByteSequence.class);
+    private final Logger log = LoggerFactory.getLogger(ByteSequence.class);
     
     private List<SubSequence> subSequences = new ArrayList<SubSequence>();
     private SubSequence[] sequences = new SubSequence[0];
@@ -461,7 +461,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                     fixedSubsequence = false;
                 }
             } catch (IOException io) {
-                LOGGER.error(String.format("Error processing file: %s. for byte sequence match",
+                log.error(String.format("Error processing file: %s. for byte sequence match",
                         targetFile.getFileName()), io);
                 return false;
             }

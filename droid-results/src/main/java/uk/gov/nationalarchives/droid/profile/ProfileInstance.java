@@ -54,7 +54,8 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProfileInstance {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProfileInstance.class);
+    @XmlTransient
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @XmlAttribute(name = "Id")
     private String uuid;
@@ -259,7 +260,7 @@ public class ProfileInstance {
     /**
      * @param uri
      *            the URI of the resource to remove
-     * @return trus if the resource was remioved, false otherwise.
+     * @return true if the resource was removed, false otherwise.
      */
     public boolean removeResource(URI uri) {
         boolean success = profileSpec.removeResource(uri);
@@ -301,7 +302,7 @@ public class ProfileInstance {
      */
     public void changeState(ProfileState newState) {
 
-        LOG.info(String.format("Attempting state change [%s] to [%s]",
+        log.info(String.format("Attempting state change [%s] to [%s]",
                 getState(), newState));
 
         if (!getState().allowedNextStates().contains(newState)) {

@@ -45,6 +45,9 @@ import org.jwat.warc.WarcReader;
 import org.jwat.warc.WarcReaderFactory;
 import org.jwat.warc.WarcRecord;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -61,6 +64,8 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
      * Used to generate URIs within Warc file
      */
     protected static final String WEB_ARCHIVE_TYPE = "warc";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * {@inheritDoc}
@@ -93,7 +98,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
      * @author gseaman, boreilly
      *
      */
-    private static final class WarcArchiveEntryIterator
+    private final class WarcArchiveEntryIterator
             extends ArchiveInputStreamIterator<WarcRecord, InputStream> {
 
         private Iterator<WarcRecord> iterator;
@@ -104,7 +109,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                 WarcReader warcReader = WarcReaderFactory.getReader(in);
                 this.iterator = warcReader.iterator();
             } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
                 System.err.println(e);
             }
         }

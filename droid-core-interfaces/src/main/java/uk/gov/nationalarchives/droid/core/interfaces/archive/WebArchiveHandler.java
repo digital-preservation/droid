@@ -39,9 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -60,10 +57,6 @@ public abstract class WebArchiveHandler {
      * Save importing all the http codes
      */
     protected static final int HTTP_ACCEPTED = 200;
-    /**
-     * Get the log to be shared by all instances of this class.
-     */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(WebArchiveHandler.class);
 
     private AsynchDroid droidCore;
     private IdentificationRequestFactory factory;
