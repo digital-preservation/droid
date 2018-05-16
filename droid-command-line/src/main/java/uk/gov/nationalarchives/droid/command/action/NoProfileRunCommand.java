@@ -47,8 +47,8 @@ import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -88,7 +88,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private boolean recursive;
     private boolean archives;
     private boolean webArchives;
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     //CHECKSTYLE:OFF
     /**
@@ -154,7 +154,6 @@ public class NoProfileRunCommand implements DroidCommand {
         binarySignatureIdentifier.setMaxBytesToScan(maxBytesToScan);
         String path = fileSignaturesFile.toAbsolutePath().toString();
         String slash = path.contains(FORWARD_SLASH) ? FORWARD_SLASH : BACKWARD_SLASH;
-        String slash1 = slash;
       
         ContainerSignatureDefinitions containerSignatureDefinitions = null;
         if (containerSignaturesFileName != null) {
@@ -175,7 +174,7 @@ public class NoProfileRunCommand implements DroidCommand {
         path = "";
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
-                path, slash, slash1, archives, webArchives);
+                path, slash, slash, archives, webArchives);
 
         for (final Path file : matchedFiles) {
             final String fileName = file.toAbsolutePath().toString();

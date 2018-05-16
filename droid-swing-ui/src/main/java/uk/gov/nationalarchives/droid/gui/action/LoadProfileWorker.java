@@ -46,8 +46,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.gui.DroidUIContext;
@@ -66,7 +67,7 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
 
     private static final int UNITY_PERCENT = 100;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ProfileManager profileManager;
     private DroidUIContext context;
@@ -89,7 +90,7 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
     }
     
     /**
-     * Initialises the worler with a profile.
+     * Initialises the worker with a profile.
      * @param parent the parent profile for this worker
      */
     public void init(ProfileForm parent) {
@@ -125,7 +126,7 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
             }
         });
 
-        // pre-initailse the tabbed pane
+        // pre-initialise the tabbed pane
         tabbedPane.add(profilePanel);
         tabbedPane.setSelectedComponent(profilePanel);
         tabbedPane.setTabComponentAt(tabbedPane.indexOfComponent(profilePanel), profilePanel.getProfileTab());
@@ -170,10 +171,10 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
             treeModel.reload();
             profilePanel.afterLoad();
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         } catch (ExecutionException e) {
-            log.error(e.getCause(), e);
+            log.error(e.getCause().toString(), e);
             JOptionPane.showMessageDialog(profilePanel, String.format("Error opening profile %s", profileFile),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);

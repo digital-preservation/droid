@@ -56,7 +56,7 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
  */
 public class BinarySignatureXMLParser<T extends SimpleElement> {
 
-    //private final Log log = LogFactory.getLog(getClass());
+    //private final Logger log = LoggerFactory.getLogger(getClass());
     
     private SAXParserFactory factory = SAXParserFactory.newInstance();
     

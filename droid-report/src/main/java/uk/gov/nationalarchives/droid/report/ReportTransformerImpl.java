@@ -52,8 +52,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.itextpdf.text.DocumentException;
@@ -71,7 +71,7 @@ public class ReportTransformerImpl implements ReportTransformer {
     private static final String UTF8 = "UTF-8";
 
     private DroidGlobalConfig globalConfig;
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     /**
      * Transforms a report using xsl either for display or for use in a subsequent transformation.

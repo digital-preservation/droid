@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -58,7 +58,7 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
     private static final String NO_READER_ERROR =
             "No reader was obtained for %s. This may be due to low memory conditions. "
                     + "Try running with a larger heap size!";
-    private static final Log LOG = LogFactory.getLog(Ole2IdentifierEngine.class);
+    private final Logger log = LoggerFactory.getLogger(Ole2IdentifierEngine.class);
 
     //CHECKSTYLE:OFF - cyclomatic complexity too high.
     @Override
@@ -121,7 +121,7 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
             }
         } catch (IOException e) {
             //System.out.println(e.getMessage());
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
         } finally {
             if (reader != null) {
                 reader.close();

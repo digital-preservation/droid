@@ -41,8 +41,8 @@ import java.util.concurrent.Future;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
@@ -62,7 +62,7 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
  */
 public class ProfileManagerImpl implements ProfileManager {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ProfileContextLocator profileContextLocator;
     private ProfileSpecDao profileSpecDao;

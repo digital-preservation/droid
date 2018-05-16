@@ -78,7 +78,7 @@ public class PlanetsXMLGenerator {
 
     private PlanetsXMLData planetsData;
 
-    //private final Log log = LogFactory.getLog(getClass());
+    //private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Constructor.
