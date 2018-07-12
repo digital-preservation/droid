@@ -40,8 +40,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
@@ -67,7 +67,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
     private AsynchDroid droid;
     private IdentificationRequestFactory<InputStream> factory;
     private ResultHandler resultHandler;
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
@@ -102,7 +102,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
         private final long originatorNodeId;
 
         private final Map<String, ResourceId> directories = new HashMap<String, ResourceId>();
-        private final Log log = LogFactory.getLog(this.getClass());
+        private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 
         /**

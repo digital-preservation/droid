@@ -41,8 +41,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -58,7 +58,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 public class SaxSignatureFileParser implements SignatureParser {
 
     private static final String INVALID_SIGNATURE_FILE = "Invalid signature file [%s]";
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     private Path file;
 
@@ -87,7 +87,7 @@ public class SaxSignatureFileParser implements SignatureParser {
                     INVALID_SIGNATURE_FILE, file.toUri()), e,
                     ErrorCode.INVALID_SIGNATURE_FILE);
         } catch (final ParserConfigurationException | IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

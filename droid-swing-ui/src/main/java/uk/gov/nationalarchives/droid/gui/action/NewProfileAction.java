@@ -40,8 +40,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
@@ -63,7 +63,7 @@ public class NewProfileAction extends SwingWorker<Void, Void> implements ExitLis
     /** Counter of the new profiles created. */
     private static int count = 1;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private DroidUIContext droidContext;
     private ProfileManager profileManager;
@@ -131,7 +131,7 @@ public class NewProfileAction extends SwingWorker<Void, Void> implements ExitLis
                 get();
             }
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         } catch (ExecutionException e) {
             log.error(e.getMessage(), e);

@@ -45,8 +45,8 @@ import java.util.Collections;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -92,7 +92,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     private JDBCBatchResultHandlerDao resultHandlerDao;
     private IdentificationReader identificationReader;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Class<T> typeParameterClass;
 

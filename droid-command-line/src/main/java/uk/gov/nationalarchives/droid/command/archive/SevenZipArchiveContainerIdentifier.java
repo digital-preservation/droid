@@ -38,8 +38,9 @@ import org.apache.ant.compress.util.SevenZStreamFactory;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.io.input.BoundedInputStream;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -56,7 +57,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.SevenZipEntryIdent
  */
 public class SevenZipArchiveContainerIdentifier extends ArchiveContentIdentifier {
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Initialization of instance values must be explicitly called by all children.

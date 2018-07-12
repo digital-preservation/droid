@@ -42,8 +42,8 @@ import net.byteseek.io.reader.WindowReader;
 
 //CHECKSTYLE:OFF - getting wrong import order - no idea why.
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //CHECKSTYLE:ON
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -65,7 +65,7 @@ public class BZipIdentificationRequest implements IdentificationRequest<InputStr
     private final RequestIdentifier identifier;
     private WindowReader reader;
 
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Constructs a new BZip file resource.

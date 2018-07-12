@@ -34,8 +34,8 @@ package uk.gov.nationalarchives.droid.profile.datasource;
 import java.nio.file.Paths;
 import java.sql.DriverManager;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -53,7 +53,7 @@ public class DerbyPooledDataSourceFactory implements FactoryBean<DerbyPooledData
 
     private String createUrl = NO_CREATE_URL;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private HikariConfig config;
 

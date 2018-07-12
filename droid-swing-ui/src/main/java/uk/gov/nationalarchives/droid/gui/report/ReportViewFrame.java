@@ -59,9 +59,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openide.util.NbBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.XHTMLPanel;
 
@@ -87,7 +87,7 @@ public class ReportViewFrame extends JFrame {
     private Path reportFile;
     private List<Path> xslTransforms;
     
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     /** 
      * Creates new form ReportViewDialog.
@@ -145,13 +145,13 @@ public class ReportViewFrame extends JFrame {
             try (final InputStream in = new ByteArrayInputStream(out.getBuffer().toString().getBytes(UTF8))) {
                 xHTMLPanel1.setDocument(in, "");
             } catch (final Exception e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                     throw new RuntimeException(e);
             }
             //CHECKSTYLE:ON
 
         } catch (final IOException | TransformerException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
         

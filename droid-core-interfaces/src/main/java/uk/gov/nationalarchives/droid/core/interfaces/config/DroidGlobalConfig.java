@@ -51,8 +51,8 @@ import java.util.ArrayList;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig.DROID_USER;
 import static uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig.DROID_TEMP_DIR;
@@ -86,7 +86,7 @@ public class DroidGlobalConfig {
     // droid.properties file when settings are saved.  // See comments under update() method
     private static final List<String> NON_CONFIGURABLE_PROPERTIES = Arrays.asList(AVAILABLE_HASH_ALGORITHMS);
     
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private Path droidWorkDir;
     private Path signatureFilesDir;

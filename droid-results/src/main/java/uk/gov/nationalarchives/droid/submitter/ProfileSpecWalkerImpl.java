@@ -37,8 +37,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
@@ -59,7 +59,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     private static final int URI_BUILDER_SIZE = 1204;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private FileEventHandler fileEventHandler;
     private DirectoryEventHandler directoryEventHandler;

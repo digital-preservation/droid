@@ -49,6 +49,9 @@
         <developer>
             <name>Alok Dash</name>
         </developer>
+        <developer>
+            <name>Annabel Baynes</name>
+        </developer>
     </developers>
   
     <licenses>
@@ -90,6 +93,7 @@
         <truezip.version>7.7.10</truezip.version>
         <jwat.version>1.1.0</jwat.version>
         <hamcrest.version>1.3</hamcrest.version>
+        <slf4j.version>1.7.25</slf4j.version>
     </properties>
   
     <build>
@@ -227,6 +231,10 @@
                         <configuration>
                             <failOnWarning>true</failOnWarning>
                             <ignoreNonCompile>false</ignoreNonCompile>
+                            <ignoredUnusedDeclaredDependencies>
+                                <ignoredUsedUndeclaredDependency>org.slf4j:jcl-over-slf4j</ignoredUsedUndeclaredDependency>
+                                <ignoredUsedUndeclaredDependency>org.slf4j:slf4j-log4j12</ignoredUsedUndeclaredDependency>
+                            </ignoredUnusedDeclaredDependencies>
                         </configuration>
                     </execution>
                 </executions>
@@ -504,11 +512,21 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <artifactId>xercesImpl</artifactId>
                 <version>2.11.0</version>
             </dependency>
-            <!--dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging-api</artifactId>
-                <version>1.2</version>
-            </dependency -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
