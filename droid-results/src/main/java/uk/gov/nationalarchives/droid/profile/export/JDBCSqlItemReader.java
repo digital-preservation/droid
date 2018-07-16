@@ -384,18 +384,10 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                 + "WHERE T1.NODE_ID BETWEEN ? AND ?";
         //CHECKSTYLE:ON
         private static final String SELECT_FORMATS               = "SELECT * FROM FORMAT";
-        private static final String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
-
         private Map<String, Format> formats;
-        private Connection connection;
 
         IdentificationReader()  {
-            try {
-                this.connection  = JDBCSqlItemReader.this.datasource.getConnection();
-                this.formats = loadAllFormats();
-            } catch (SQLException ex) {
-                log.error("Error retrieving SQL connection for format identifications", ex);
-            }
+            this.formats = loadAllFormats();
         }
 
         private Map<String, Format> loadAllFormats() {
@@ -425,8 +417,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
         }
 
         public Format getFormatForPuid(String puid) {
-            Format format = this.formats.get(puid);
-            return format;
+            return this.formats.get(puid);
         }
     }
 
