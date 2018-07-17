@@ -37,16 +37,17 @@ import java.sql.ResultSet;
 import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -266,8 +267,6 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
             if (this.profileStatement != null) {
                 this.profileStatement.close();
             }
-
-            this.identificationReader.closeResources();
         } catch (SQLException e) {
             log.error("Error cleaning up JDBSCSqlItemReader", e);
         }
@@ -379,119 +378,46 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
     private class IdentificationReader {
 
-        //CHECKSTYLE:OFF  1 char over line limit.  Let's have some common sense, please...
-        private static final String FORMAT_QUERY = "SELECT T1.NODE_ID, T1.PUID, T2.MIME_TYPE, T2.NAME, T2.VERSION "
-                + "FROM IDENTIFICATION AS T1 INNER JOIN FORMAT AS T2 ON T1.PUID = T2.PUID "
-                + "WHERE T1.NODE_ID = ?";
 
         private static final String FORMAT_QUERY_RANGE = "SELECT T1.NODE_ID, T1.PUID, T2.MIME_TYPE, T2.NAME, T2.VERSION "
                 + "FROM IDENTIFICATION AS T1 INNER JOIN FORMAT AS T2 ON T1.PUID = T2.PUID "
                 + "WHERE T1.NODE_ID BETWEEN ? AND ?";
         //CHECKSTYLE:ON
         private static final String SELECT_FORMATS               = "SELECT * FROM FORMAT";
-        private static final String SELECT_FORMAT_COUNT          = "SELECT COUNT('x') AS total FROM FORMAT";
-
         private Map<String, Format> formats;
-        private Connection connection;
-        private PreparedStatement formatsStatement;
 
         IdentificationReader()  {
-            try {
-                this.connection  = JDBCSqlItemReader.this.datasource.getConnection();
-                this.formatsStatement = this.connection.prepareStatement(FORMAT_QUERY);
-                this.formats = loadAllFormats();
-            } catch (SQLException ex) {
-                log.error("Error retrieving SQL connection for format identifications", ex);
-            }
-        }
-
-        List<Format> getFormatsForResourceNode(long nodeId) {
-        /*
-        BNO.  Another possible implementation is to retrieve all rows ordered by node id
-        into the ResultSet.  We would then iterate the ResultSet to retrieve identifications for
-        nodeId.  Since the nodes are also retrieved in ascending order, we should always be at the
-        correct point - if the current node id is < nodeId, we would iterate until the current node id
-        was > nodeId (ideally we would fetch beyond here but see below re.fetch size.
-        However, given the lack of Derby support for forward only cursors and that it
-        only appears to support a fetch size of 1, it's unclear if this would be more performant than
-        the current approach.
-         */
-            try {
-                this.formatsStatement.setLong(1, nodeId);
-                ResultSet rs = formatsStatement.executeQuery();
-                List formatsList = new ArrayList<Format>();
-
-                while (rs.next()) {
-                    Format format = new Format();
-                    format.setPuid(rs.getString(PUID));
-                    format.setMimeType(rs.getString("MIME_TYPE"));
-                    format.setName(rs.getString(NAME));
-                    format.setVersion(rs.getString("VERSION"));
-                    formatsList.add(format);
-                }
-                rs.close();
-                return formatsList;
-
-            } catch (SQLException ex) {
-                log.error("Error retrieving format identifications", ex);
-            }
-            return Collections.EMPTY_LIST;
+            this.formats = loadAllFormats();
         }
 
         private Map<String, Format> loadAllFormats() {
-            //CHECKSTYLE:OFF Too many nested tries - ToDO review
-            Map<String, Format> formatsToLoad = null;
-            try {
-                final Connection conn = datasource.getConnection();
-                try {
-                    //BNO - Get the actual number of formats so we can initialise the list based on the current count.
-                    //final PreparedStatement getFormatCount = conn.prepareStatement(SELECT_FORMAT_COUNT);
-                    //final ResultSet rsFormatCount = getFormatCount.executeQuery();
-                    //rsFormatCount.next();
-                    //final int formatCount = rsFormatCount.getInt("total");
-                    formatsToLoad = new HashMap<String, Format>();
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(datasource);
+            List<Format> formatsFromDatabase = jdbcTemplate.query(
+                    SELECT_FORMATS,
+                    (rs, rowNum) -> {
+                        Format format = new Format();
+                        String puid = rs.getString(PUID);
+                        format.setPuid(puid);
+                        format.setMimeType(rs.getString("MIME_TYPE"));
+                        format.setName(NAME);
+                        format.setVersion("VERSION");
+                        return format;
+                    });
 
-                    final PreparedStatement loadFormat = conn.prepareStatement(SELECT_FORMATS);
-                    try {
-                        final ResultSet results = loadFormat.executeQuery();
-                        try {
-                            while (results.next()) {
-                                String puid = results.getString(PUID);
-                                formatsToLoad.put(puid, SqlUtils.buildFormat(results));
-                            }
-                        } finally {
-                            results.close();
-                        }
-                    } finally {
-                        loadFormat.close();
-                    }
-                } finally {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                log.error("A database exception occurred getting all formats.", e);
-            }
-            return formatsToLoad;
-            //CHECKSTYLE:ON
+
+            Map<String, Format> theformats =  formatsFromDatabase.stream().filter(format -> format.getPuid() != null).collect(
+                    Collectors.toMap(Format::getPuid, x -> x));
+
+            // special handling for null format key
+            theformats.putAll(formatsFromDatabase.stream().filter(format -> format.getPuid() == null).collect(
+                    Collectors.toMap(x -> "", x -> x)));
+
+
+            return theformats;
         }
 
         public Format getFormatForPuid(String puid) {
-            Format format = this.formats.get(puid);
-            return format;
-        }
-
-
-        private void closeResources() {
-            try {
-                if (this.formatsStatement != null) {
-                    this.formatsStatement.close();
-                }
-/*
-            BNO: Note that we do not close the connection - since it was not opened in this class
-*/
-            } catch (SQLException e) {
-                log.error("Error cleaning up resources for IdentificationReader", e);
-            }
+            return this.formats.get(puid);
         }
     }
 
