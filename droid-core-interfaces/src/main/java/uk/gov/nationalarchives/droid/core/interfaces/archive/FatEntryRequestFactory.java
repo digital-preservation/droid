@@ -29,44 +29,24 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.command.archive;
+package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
 
-import org.junit.Test;
-import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
-
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FatFileIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 
+
 /**
- * Created by rhubner on 5/18/17.
+ * FatEntryRequestFactory.
  */
-public class IsoArchiveContainerIdentifierTest {
+public class FatEntryRequestFactory extends AbstractArchiveRequestFactory<InputStream> {
+    @Override
+    public IdentificationRequest<InputStream> newRequest(RequestMetaData metaData, RequestIdentifier identifier) {
 
-    private ArchiveContainerTestHelper testHelper = new ArchiveContainerTestHelper();
-    private Path filePath = Paths.get("src/test/resources/testfiles/testiso.iso");
-
-    @Test
-    public void identifyIsoFile()throws CommandExecutionException, IOException {
-        RequestIdentifier identifier = new RequestIdentifier(filePath.toUri());
-        identifier.setParentId(1L);
-
-        RequestMetaData metaData = new RequestMetaData(Files.size(filePath),
-                Files.getLastModifiedTime(filePath).toMillis(), filePath.toAbsolutePath().toString());
-        FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
-        request.open(filePath);
-
-
-        IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
-                new IsoArchiveContainerIdentifier(testHelper.getBinarySignatureIdentifier(),
-                        testHelper.getContainerSignatureDefinitions(), "", "/", "/");
-
-        isoArchiveContainerIdentifier.identify(filePath.toUri(), request);
+        return new FatFileIdentificationRequest(metaData, identifier, getTempDirLocation());
     }
 }

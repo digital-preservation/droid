@@ -39,15 +39,20 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+
+import de.waldheinz.fs.FsDirectoryEntry;
 
 /**
  * Utilities.
@@ -56,16 +61,15 @@ import org.apache.commons.lang.StringUtils;
  */
 public final class ArchiveFileUtils {
 
-    /**
-     * 
-     */
     private static final String TEMP_FILENAME_PREFIX = "droid-archive~";
     private static final String SSP_DELIMITER = ":/";
     private static final String ARCHIVE_DELIMITER = "!/";
     private static final String COLON = ":";
     private static final int WRITE_BUFFER_CAPACITY = 8192;
+    private static final int FS_READ_BYTE_BUFFER_SIZE = 1000000;
 
-    private ArchiveFileUtils() { }
+    private ArchiveFileUtils() {
+    }
 
     /**
      * Builds a URI for a zip file entry.
@@ -74,23 +78,7 @@ public final class ArchiveFileUtils {
      * @return the URI
      */
     public static URI toZipUri(URI parent, String zipEntry) {
-        
-        final String parentScheme = parent.getScheme();
-        final String parentSsp = parent.getSchemeSpecificPart();
-
-        final StringBuilder builder = new StringBuilder(parentSsp.length()
-                + ARCHIVE_DELIMITER.length() + zipEntry.length());
-        builder.append("zip:").append(parentScheme);
-        String newScheme = builder.toString();
-        builder.setLength(0);
-        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(zipEntry));
-        String newSSP = builder.toString();
-
-        try {
-            return new URI(newScheme, newSSP, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return toUri(parent, zipEntry, ImageType.ZIP);
     }
 
     /**
@@ -100,23 +88,7 @@ public final class ArchiveFileUtils {
      * @return URI.
      */
     public static URI toIsoImageUri(URI parent, String imageEntry) {
-        final String parentScheme = parent.getScheme();
-        final String parentSsp = parent.getSchemeSpecificPart();
-
-        final StringBuilder builder = new StringBuilder(parentSsp.length()
-                + ARCHIVE_DELIMITER.length() + imageEntry.length());
-        builder.append("iso:").append(parentScheme);
-        String newScheme = builder.toString();
-        builder.setLength(0);
-        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(imageEntry));
-        String newSSP = builder.toString();
-
-        try {
-            return new URI(newScheme, newSSP, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-
+        return toUri(parent, imageEntry, ImageType.ISO);
     }
 
     /**
@@ -126,25 +98,9 @@ public final class ArchiveFileUtils {
      * @return URI.
      */
     public static URI toRarUri(URI parent, String rarEntry) {
-        final String parentScheme = parent.getScheme();
-        final String parentSsp = parent.getSchemeSpecificPart();
-
-        final StringBuilder builder = new StringBuilder(parentSsp.length()
-                + ARCHIVE_DELIMITER.length() + rarEntry.length());
-        builder.append("rar:").append(parentScheme);
-        String newScheme = builder.toString();
-        builder.setLength(0);
-        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(rarEntry));
-        String newSSP = builder.toString();
-
-        try {
-            return new URI(newScheme, newSSP, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return toUri(parent, rarEntry, ImageType.RAR);
     }
 
-    
     /**
      * Builds a URI for a tar file entry.
      * @param parent the parent tar file.
@@ -152,22 +108,7 @@ public final class ArchiveFileUtils {
      * @return the URI
      */
     public static URI toTarUri(URI parent, String tarEntry) {
-        String parentScheme = parent.getScheme();
-        String parentSsp = parent.getSchemeSpecificPart();
-
-        final StringBuilder builder = new StringBuilder(parentSsp.length()
-                + ARCHIVE_DELIMITER.length() + tarEntry.length());
-        builder.append("tar:").append(parentScheme);
-        String newScheme = builder.toString();
-        builder.setLength(0);
-        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(tarEntry));
-        String newSSP = builder.toString();
-
-        try {
-            return new URI(newScheme, newSSP, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return toUri(parent, tarEntry, ImageType.TAR);
     }
 
     /**
@@ -177,22 +118,17 @@ public final class ArchiveFileUtils {
      * @return the URI
      */
     public static URI toSevenZUri(URI parent, String sevenZipEntry) {
-        String parentScheme = parent.getScheme();
-        String parentSsp = parent.getSchemeSpecificPart();
+        return toUri(parent, sevenZipEntry, ImageType.SEVENZ);
+    }
 
-        final StringBuilder builder = new StringBuilder(parentSsp.length()
-                + ARCHIVE_DELIMITER.length() + sevenZipEntry.length());
-        builder.append("sevenz:").append(parentScheme);
-        String newScheme = builder.toString();
-        builder.setLength(0);
-        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(sevenZipEntry));
-        String newSSP = builder.toString();
-
-        try {
-            return new URI(newScheme, newSSP, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    /**
+     * Builds a URI for a Fat file entry.
+     * @param parent the parent Fat file.
+     * @param fatEntry the Fat entry
+     * @return the URI
+     */
+    public static URI toFatImageUri(URI parent, String fatEntry) {
+        return toUri(parent, fatEntry, ImageType.FAT);
     }
 
     /**
@@ -224,7 +160,7 @@ public final class ArchiveFileUtils {
     /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.
-     * 
+     *
      * <p>The bytes are read from <code>buffer</code> from the current position to its limit.</p>
      *
      * @param buffer  contains the contents of the channel read so far
@@ -234,7 +170,7 @@ public final class ArchiveFileUtils {
      * @throws java.io.IOException if there is a problem writing to the file
      */
     public static Path writeEntryToTemp(final Path tempDir, final ByteBuffer buffer,
-            final ReadableByteChannel channel) throws IOException {
+                                        final ReadableByteChannel channel) throws IOException {
         final Path tempFile = Files.createTempFile(tempDir, TEMP_FILENAME_PREFIX, null);
         // NEVER use deleteOnExit() for long running processes.
         // It can cause the JVM to track the files to delete, which 
@@ -245,7 +181,7 @@ public final class ArchiveFileUtils {
         // DO NOT USE!!!: tempFile.deleteOnExit();
         try (final ByteChannel out = Files.newByteChannel(tempFile)) {
             out.write(buffer);
-    
+
             final ByteBuffer buf = ByteBuffer.allocate(WRITE_BUFFER_CAPACITY);
             buf.clear();
             while (channel.read(buf) >= 0 || buf.position() != 0) {
@@ -268,10 +204,56 @@ public final class ArchiveFileUtils {
         }
     }
 
+
+    /**
+     * Write FsFile data to tmp location.
+     * @param fsFile Fat File directory entry.
+     * @param tempDir Temporary file location for FSFile.
+     * @return Path path for temporary file.
+     * @throws IOException if unable to read temp file.
+     */
+    public static Path writeFsFileToTemp(final FsDirectoryEntry fsFile, final Path tempDir) throws IOException {
+
+        final Path tempFilePath = tempDir.resolve(fsFile.getName());
+        if (fsFile.isFile() && fsFile.getFile().getLength() > 0) {
+            int sourceFileOffset = 0;
+            final long fileLength = fsFile.getFile().getLength();
+            final int fileLengthMod = (int) fileLength % FS_READ_BYTE_BUFFER_SIZE;
+
+            int blockSize = fileLengthMod == 0 ? FS_READ_BYTE_BUFFER_SIZE : fileLengthMod;
+
+            final ByteBuffer bb = ByteBuffer.allocateDirect((int) blockSize);
+            fsFile.getFile().read(sourceFileOffset, bb);
+            bb.flip();
+            final FileChannel wChannel = FileChannel.open(tempFilePath,
+                    EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING));
+            wChannel.write(bb);
+            wChannel.close();
+
+            sourceFileOffset += blockSize;
+
+            if (sourceFileOffset < fileLength) {
+                ByteBuffer maxBuffer = ByteBuffer.allocateDirect((int) FS_READ_BYTE_BUFFER_SIZE);
+                final FileChannel aChannel = FileChannel.open(tempFilePath, EnumSet.of(StandardOpenOption.APPEND));
+                while (sourceFileOffset < fileLength) {
+                    fsFile.getFile().read(sourceFileOffset, maxBuffer);
+                    maxBuffer.flip();
+                    aChannel.write(maxBuffer);
+                    sourceFileOffset += FS_READ_BYTE_BUFFER_SIZE;
+                    maxBuffer.clear();
+                }
+                aChannel.close();
+            }
+        }
+
+        return tempFilePath;
+    }
+
+
     /**
      * Write contents of <code>buffer</code> to a temporary file, followed by the remaining bytes
      * in <code>channel</code>.
-     * 
+     *
      * <p>The bytes are read from <code>buffer</code> from the current position to its limit.</p>
      *
      * @param tempDir the directory in which to create the temp file
@@ -281,7 +263,7 @@ public final class ArchiveFileUtils {
      * @throws java.io.IOException if there is a problem writing to the file
      */
     public static Path writeEntryToTemp(final Path tempDir, final byte[] buffer,
-            final InputStream in) throws IOException {
+                                        final InputStream in) throws IOException {
         final Path tempFile = Files.createTempFile(tempDir, TEMP_FILENAME_PREFIX, null);
         // NEVER use deleteOnExit() for long running processes.
         // It can cause the JVM to track the files to delete, which 
@@ -301,9 +283,9 @@ public final class ArchiveFileUtils {
             }
             out.flush();
             return tempFile;
-          //CHECKSTYLE:OFF
+            //CHECKSTYLE:OFF
         } catch (RuntimeException ex) {
-          //CHECKSTYLE:ON
+            //CHECKSTYLE:ON
             if (in != null) {
                 in.close();
             }
@@ -314,15 +296,14 @@ public final class ArchiveFileUtils {
             throw ex;
         }
     }
-    
-    
-    
+
+
     /**
      * @param parent the container file
      * @return a GZIP URI
      */
     public static URI toGZipUri(URI parent) {
-        
+
         String parentScheme = parent.getScheme();
         String parentSsp = parent.getSchemeSpecificPart();
 
@@ -341,8 +322,6 @@ public final class ArchiveFileUtils {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-
-
 
 
     /**
@@ -380,12 +359,12 @@ public final class ArchiveFileUtils {
         if (originSsp != null) {
             return URI.create(StringUtils.substringAfterLast(scheme, COLON) + SSP_DELIMITER + originSsp);
         }
-        
+
         return requestUri;
     }
-    
+
     /**
-     * 
+     *
      * @param path The path of a directory
      * @return String[] a string array containing the parent folders, each of
      *         which is a path in its own right (not just the names of each individual folder)
@@ -402,7 +381,54 @@ public final class ArchiveFileUtils {
                 lastSeparator = FilenameUtils.indexOfLastSeparator(processPath);
             }
         }
-        return paths; 
+        return paths;
     }
 
+
+    /**
+     * Create URI for files inside an image.
+     * @param parent URI of parent file. eg: file://home/user/isofile.iso
+     * @param entry Full path of entry inside image eg: /dir/another dir/file.txt
+     * @param type image type
+     * @return URI.
+     */
+    private static URI toUri(URI parent, String entry, ImageType type) {
+
+        final String parentScheme = parent.getScheme();
+        final String parentSsp = parent.getSchemeSpecificPart();
+
+        final StringBuilder builder = new StringBuilder(parentSsp.length()
+                + ARCHIVE_DELIMITER.length() + entry.length());
+        builder.append(type).append(':').append(parentScheme);
+        String newScheme = builder.toString();
+        builder.setLength(0);
+        builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(FilenameUtils.separatorsToUnix(entry));
+        String newSSP = builder.toString();
+
+        try {
+            return new URI(newScheme, newSSP, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    private enum ImageType {
+         ISO("iso"),
+         RAR("rar"),
+         TAR("tar"),
+         ZIP("zip"),
+         SEVENZ("sevenz"),
+         FAT("fat");
+
+         private String extension;
+
+        ImageType(String extension) {
+            this.extension = extension;
+        }
+
+        @Override
+        public String toString() {
+            return extension;
+        }
+    }
 }

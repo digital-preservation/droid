@@ -245,5 +245,10 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>de.waldheinz</groupId>
+            <artifactId>fat32-lib</artifactId>
+            <version>0.6.5</version>
+        </dependency>
     </dependencies>
 </project>

@@ -138,6 +138,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>de.waldheinz</groupId>
+            <artifactId>fat32-lib</artifactId>
+            <version>0.6.5</version>
+        </dependency>
+        <dependency>
             <groupId>net.byteseek</groupId>
             <artifactId>byteseek</artifactId>
         </dependency>
