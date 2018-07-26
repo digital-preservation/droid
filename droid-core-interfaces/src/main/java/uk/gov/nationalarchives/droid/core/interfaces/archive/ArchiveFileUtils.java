@@ -54,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 
 import de.waldheinz.fs.FsDirectoryEntry;
 
+
 /**
  * Utilities.
  * @author rflitcroft
@@ -66,7 +67,7 @@ public final class ArchiveFileUtils {
     private static final String ARCHIVE_DELIMITER = "!/";
     private static final String COLON = ":";
     private static final int WRITE_BUFFER_CAPACITY = 8192;
-    private static final int FS_READ_BYTE_BUFFER_SIZE = 1000000;
+    private static final int FS_READ_BYTE_BUFFER_SIZE = 1048576;
 
     private ArchiveFileUtils() {
     }
@@ -222,27 +223,25 @@ public final class ArchiveFileUtils {
 
             int blockSize = fileLengthMod == 0 ? FS_READ_BYTE_BUFFER_SIZE : fileLengthMod;
 
-            final ByteBuffer bb = ByteBuffer.allocateDirect((int) blockSize);
+            final ByteBuffer bb = ByteBuffer.allocateDirect(blockSize);
             fsFile.getFile().read(sourceFileOffset, bb);
             bb.flip();
-            final FileChannel wChannel = FileChannel.open(tempFilePath,
-                    EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING));
-            wChannel.write(bb);
-            wChannel.close();
+            try (final FileChannel wChannel = FileChannel.open(tempFilePath,
+                    EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING))) {
+                wChannel.write(bb);
+                sourceFileOffset += blockSize;
 
-            sourceFileOffset += blockSize;
+                if (sourceFileOffset < fileLength) {
+                    ByteBuffer maxBuffer = ByteBuffer.allocateDirect((int) FS_READ_BYTE_BUFFER_SIZE);
 
-            if (sourceFileOffset < fileLength) {
-                ByteBuffer maxBuffer = ByteBuffer.allocateDirect((int) FS_READ_BYTE_BUFFER_SIZE);
-                final FileChannel aChannel = FileChannel.open(tempFilePath, EnumSet.of(StandardOpenOption.APPEND));
-                while (sourceFileOffset < fileLength) {
-                    fsFile.getFile().read(sourceFileOffset, maxBuffer);
-                    maxBuffer.flip();
-                    aChannel.write(maxBuffer);
-                    sourceFileOffset += FS_READ_BYTE_BUFFER_SIZE;
-                    maxBuffer.clear();
+                    while (sourceFileOffset < fileLength) {
+                        fsFile.getFile().read(sourceFileOffset, maxBuffer);
+                        maxBuffer.flip();
+                        wChannel.write(maxBuffer);
+                        sourceFileOffset += FS_READ_BYTE_BUFFER_SIZE;
+                        maxBuffer.clear();
+                    }
                 }
-                aChannel.close();
             }
         }
 
