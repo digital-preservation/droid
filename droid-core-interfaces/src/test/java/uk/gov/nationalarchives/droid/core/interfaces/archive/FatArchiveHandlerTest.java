@@ -32,12 +32,15 @@
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -55,11 +58,16 @@ import static org.mockito.Mockito.verify;
 
 public class FatArchiveHandlerTest {
 
+    private Path tmpDir;
+
+    @Before
+    public void setup() throws IOException {
+        tmpDir = Files.createTempDirectory("fat-test");
+    }
+
 
     @Test
     public void testWithFatFile() throws Exception {
-
-        Path tmpDir = Files.createTempDirectory("fat-test");
 
         FatEntryRequestFactory factory = mock(FatEntryRequestFactory.class);
 
@@ -73,9 +81,8 @@ public class FatArchiveHandlerTest {
         fatArchiveHandler.setFactory(factory);
         when(factory.newRequest(any(RequestMetaData.class),any(RequestIdentifier.class))).thenAnswer(new Answer<FatFileIdentificationRequest>() {
             @Override
-            public FatFileIdentificationRequest answer(InvocationOnMock invocationOnMock) throws Throwable {
+            public FatFileIdentificationRequest answer(InvocationOnMock invocationOnMock)  {
                 Object[] args = invocationOnMock.getArguments();
-                Object mock = invocationOnMock.getMock();
                 return new FatFileIdentificationRequest((RequestMetaData)args[0],(RequestIdentifier)args[1],tmpDir);
             }
         });
@@ -99,8 +106,11 @@ public class FatArchiveHandlerTest {
 
         verify(resultHandler, times(1)).handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean());
 
-        FileUtils.deleteDirectory(tmpDir.toFile());
+    }
 
+    @After
+    public void tearDown(){
+        FileUtils.deleteQuietly(tmpDir.toFile());
     }
 
 }
