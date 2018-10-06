@@ -113,6 +113,9 @@
 								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-frontend-jaxws:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-bindings-soap:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.slf4j:slf4j-log4j12:jar:${slf4j.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.glassfish.jaxb:jaxb-runtime</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>javax.annotation:javax.annotation-api</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>com.sun.activation:javax.activation</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
 						</configuration>
 					</execution>
@@ -168,6 +171,32 @@
 			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency> <!--JAXB-API-->
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.jws</groupId>
+			<artifactId>jsr181-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.ws</groupId>
+			<artifactId>jaxws-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.activation</groupId>
+			<artifactId>javax.activation</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -202,10 +231,6 @@
 			<artifactId>jta</artifactId>
 			<version>${jta.version}</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -260,16 +285,6 @@
 		<dependency>
 			<groupId>de.schlichtherle.truezip</groupId>
 			<artifactId>truezip-driver-zip</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-jaxws_2.2_spec</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-			<version>1.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
