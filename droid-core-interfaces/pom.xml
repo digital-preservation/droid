@@ -68,6 +68,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+
+        <dependency> <!--JAXB-API-->
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>org.jwat</groupId>
             <artifactId>jwat-arc</artifactId>
