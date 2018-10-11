@@ -1,10 +1,18 @@
 sudo: false
 language: java
-jdk:
- - oraclejdk8
- - oraclejdk11
- - openjdk8
- - openjdk11
+matrix:
+  include:
+  - jdk: openjdk8
+  - jdk: oraclejdk8
+  - jdk: openjdk9
+  - jdk: oraclejdk9
+  - jdk: openjdk10
+  - jdk: oraclejdk10
+  - jdk: openjdk11
+  - os: osx
+    osx_image: xcode10
+    before_script:
+
 before_script:
  - "export DISPLAY=:99.0"
  - "sh -e /etc/init.d/xvfb start"
