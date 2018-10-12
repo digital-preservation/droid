@@ -31,12 +31,25 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import de.waldheinz.fs.FileSystem;
+import de.waldheinz.fs.FileSystemFactory;
+import de.waldheinz.fs.FsDirectory;
+import de.waldheinz.fs.FsDirectoryEntry;
+import de.waldheinz.fs.util.FileDisk;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
 
 /**
  * @author rflitcroft
@@ -119,4 +132,35 @@ public class ArchiveFileUtilsTest {
         assertEquals("file:/C:/anyhost/dir/my%20zip.gz", ArchiveFileUtils.toReplayUri(uri).toString());
     }
 
+    @Test
+    public void testFatImageUri() throws URISyntaxException {
+        URI parent = new URI("file://fatImage.img");
+        String entryName = "sample.txt";
+
+        assertEquals("fat:file://fatImage.img!/sample.txt", ArchiveFileUtils.toFatImageUri(parent, entryName).toString());
+    }
+
+
+    @Test
+    public void writeFsFileToTemp() throws IOException {
+        Path p = Paths.get("./src/test/resources/fat12.img");
+        FileDisk fileDisk = new FileDisk(p.toFile(), true);
+
+        FileSystem fatSystem = FileSystemFactory.create(fileDisk, true);
+        Map<FsDirectoryEntry, Path> tempFilePathMap = new HashMap<>();
+        FsDirectory root = fatSystem.getRoot();
+        for (FsDirectoryEntry de : root) {
+            if (de.isFile()) {
+                tempFilePathMap.put(de, ArchiveFileUtils.writeFsFileToTemp(de,
+                        new File(System.getProperty("java.io.tmpdir")).toPath()));
+            }
+        }
+
+        for (Map.Entry<FsDirectoryEntry, Path> savedFile : tempFilePathMap.entrySet()) {
+            assertThat("Saved file same as length:" + savedFile.getKey().getName(), savedFile.getKey().getFile().getLength(),
+                    equalTo(savedFile.getValue().toFile().length()));
+            assertThat(savedFile.getKey().getName()+": deleted", savedFile.getValue().toFile().delete(), equalTo(true));
+        }
+        assertThat("All files from FsDirectory written to temp file", tempFilePathMap.size(), equalTo(5));
+    }
 }

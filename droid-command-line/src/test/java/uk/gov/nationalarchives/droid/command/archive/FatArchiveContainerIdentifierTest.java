@@ -31,29 +31,28 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
+import org.junit.Test;
+import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
-import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
-
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-
 
 /**
- * Created by rhubner on 5/18/17.
+ *
  */
-public class IsoArchiveContainerIdentifierTest {
+public class FatArchiveContainerIdentifierTest {
 
     private ArchiveContainerTestHelper testHelper = new ArchiveContainerTestHelper();
-    private Path filePath = Paths.get("src/test/resources/testfiles/testiso.iso");
+    private Path filePath = Paths.get("src/test/resources/testfiles/fat12.img");
 
     @Test
-    public void identifyIsoFile()throws CommandExecutionException, IOException {
+    public void identifyFatFile() throws CommandExecutionException, IOException {
         RequestIdentifier identifier = new RequestIdentifier(filePath.toUri());
         identifier.setParentId(1L);
 
@@ -63,10 +62,10 @@ public class IsoArchiveContainerIdentifierTest {
         request.open(filePath);
 
 
-        IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
-                new IsoArchiveContainerIdentifier(testHelper.getBinarySignatureIdentifier(),
+        FatArchiveContainerIdentifier fatArchiveContainerIdentifier =
+                new FatArchiveContainerIdentifier(testHelper.getBinarySignatureIdentifier(),
                         testHelper.getContainerSignatureDefinitions(), "", "/", "/");
 
-        isoArchiveContainerIdentifier.identify(filePath.toUri(), request);
+        fatArchiveContainerIdentifier.identify(filePath.toUri(), request);
     }
 }
