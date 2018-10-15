@@ -42,8 +42,8 @@ import java.util.Map;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.FastDateFormat;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
@@ -91,7 +91,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     private static final int HASH_ARRAY_INDEX = 12;
     
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private CsvWriter csvWriter;
     private DroidGlobalConfig config;
@@ -160,7 +160,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             csvWriter.flush();
             
         } catch (final TextWritingException e) {
-            log.error(e);
+            log.error(e.getRecordCharacters(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
@@ -198,7 +198,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             csvWriter.flush();
             
         } catch (final TextWritingException e) {
-            log.error(e);
+            log.error(e.getRecordCharacters(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

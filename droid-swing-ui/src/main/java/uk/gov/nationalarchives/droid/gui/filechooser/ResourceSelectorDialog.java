@@ -79,6 +79,7 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -292,10 +293,10 @@ public class ResourceSelectorDialog extends JDialog {
         File f = (File) table.getValueAt(rowIndex, 0);
         if (f.isDirectory()) {
             final TreePath selectionPath = tree.getSelectionPath();
-            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) 
+            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)
                 selectionPath.getLastPathComponent();
-            for (Enumeration<DefaultMutableTreeNode> e = treeNode.children(); e.hasMoreElements();) {
-                DefaultMutableTreeNode n = e.nextElement();
+            for (Enumeration<TreeNode> e = treeNode.children(); e.hasMoreElements();) {
+                DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
                 if (n.getUserObject().equals(f)) {
                     final TreePath path = new TreePath(n.getPath());
                     tree.expandPath(path);

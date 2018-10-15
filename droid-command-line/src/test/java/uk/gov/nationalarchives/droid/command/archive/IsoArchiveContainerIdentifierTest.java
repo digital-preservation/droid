@@ -31,88 +31,42 @@
  */
 package uk.gov.nationalarchives.droid.command.archive;
 
-import org.junit.Before;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
-import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
-import uk.gov.nationalarchives.droid.core.SignatureParseException;
+
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Created by rhubner on 5/18/17.
  */
 public class IsoArchiveContainerIdentifierTest {
 
-
-    private BinarySignatureIdentifier binarySignatureIdentifier;
-    private IsoArchiveContainerIdentifier isoArchiveContainerIdentifier;
-    private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V91.xml";
-    private Path containerSignatures =
-            Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
-    private String isoFile =
-            "src/test/resources/testfiles/testiso.iso";
-
-    @Before
-    public void setUp() throws CommandExecutionException {
-        binarySignatureIdentifier = new BinarySignatureIdentifier();
-        binarySignatureIdentifier.setSignatureFile(standardSignatures);
-        try {
-            binarySignatureIdentifier.init();
-        } catch (SignatureParseException e) {
-            throw new CommandExecutionException("Can't parse signature file");
-        }
-        try (final InputStream in = Files.newInputStream(containerSignatures)) {
-            ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
-            containerSignatureDefinitions = parser.parse(in);
-        } catch (SignatureParseException e) {
-            throw new CommandExecutionException ("Can't parse container signature file");
-        } catch (Exception e) {
-            throw new CommandExecutionException(e);
-        }
-        isoArchiveContainerIdentifier =
-                new IsoArchiveContainerIdentifier(binarySignatureIdentifier,
-                        containerSignatureDefinitions, "", "/", "/");
-    }
-
-
-
+    private ArchiveContainerTestHelper testHelper = new ArchiveContainerTestHelper();
+    private Path filePath = Paths.get("src/test/resources/testfiles/testiso.iso");
 
     @Test
-    public void identifyIsoFile() throws CommandExecutionException {
-
-        String fileName;
-        final Path file = Paths.get(isoFile);
-        URI uri = file.toUri();
-        RequestIdentifier identifier = new RequestIdentifier(uri);
+    public void identifyIsoFile()throws CommandExecutionException, IOException {
+        RequestIdentifier identifier = new RequestIdentifier(filePath.toUri());
         identifier.setParentId(1L);
-        try {
-            fileName = file.toAbsolutePath().toString();
-            RequestMetaData metaData = new RequestMetaData(
-                    Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileName);
-            FileSystemIdentificationRequest request =
-                    new FileSystemIdentificationRequest(metaData, identifier);
-            request.open(file);
 
-            // we run test, bu how we get result????
-            isoArchiveContainerIdentifier.identify(uri, request);
+        RequestMetaData metaData = new RequestMetaData(Files.size(filePath),
+                Files.getLastModifiedTime(filePath).toMillis(), filePath.toAbsolutePath().toString());
+        FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, identifier);
+        request.open(filePath);
 
 
-        } catch (IOException e) {
-            throw new CommandExecutionException(e);
-        }
+        IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
+                new IsoArchiveContainerIdentifier(testHelper.getBinarySignatureIdentifier(),
+                        testHelper.getContainerSignatureDefinitions(), "", "/", "/");
+
+        isoArchiveContainerIdentifier.identify(filePath.toUri(), request);
     }
-
 }

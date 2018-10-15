@@ -47,8 +47,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
@@ -167,7 +167,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private static final int MOST_RECENTLY_ADDED_NODE_CACHE_SIZE = 512;
     private static final int PUID_FORMAT_MAP_SIZE = 2500;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private DataSource datasource;
     private AtomicLong nodeIds;
@@ -288,7 +288,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                     throw new SQLException("Invalid number of columns in profile_resource_node table!");
             }
         } catch (SQLException e) {
-            log.error(e);
+            log.error(e.getSQLState(), e);
         } finally {
             try {
                 //Check for null references to avoid the exception overhead
@@ -304,7 +304,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 }
 
             } catch (SQLException e) {
-                log.error(e);
+                log.error(e.getSQLState(), e);
             }
         }
     }
@@ -400,7 +400,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                             a.close();
 
                         } catch (Exception e) {
-                            log.error(e);
+                            log.error(e.getMessage(), e);
                         }
                     }
                 }
@@ -408,7 +408,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
                 try {
                     conn.close();
                 } catch (Exception e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 }
                 //CHECKSTYLE:ON
             }
@@ -782,7 +782,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         private static final int INSERT_NODE_MISMATCH_INDEX = 2;
         private static final int INSERT_NODE_ID_INDEX = 1;
 
-        private final Log log = LogFactory.getLog(getClass());
+        private final Logger log = LoggerFactory.getLogger(getClass());
         private BlockingQueue<NodeInfo> blockingQueue;
         private DataSource datasource;
         private Connection connection;

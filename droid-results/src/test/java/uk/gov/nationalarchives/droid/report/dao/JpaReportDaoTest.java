@@ -55,9 +55,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -74,7 +74,7 @@ import javax.sql.DataSource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:META-INF/spring-jpa.xml", "classpath*:META-INF/spring-results.xml",
         "classpath*:META-INF/spring-test.xml" })
-@TransactionConfiguration(defaultRollback = true)
+@Commit
 public class JpaReportDaoTest {
 
     private static IDataSet testData;
@@ -337,7 +337,7 @@ public class JpaReportDaoTest {
                 try {
 
                     Properties prop = new Properties();
-                    in = JpaReportDaoTest.class.getResourceAsStream("../../../../../../src/test/resources/jpa-test.properties");
+                    in = JpaReportDaoTest.class.getResourceAsStream("/jpa-test.properties");
 
                     prop.load(in);
                     config.setDriverClassName(prop.getProperty("datasource.driverClassName"));
@@ -345,13 +345,6 @@ public class JpaReportDaoTest {
                     config.setUsername(prop.getProperty("datasource.username"));
                     config.setPassword(prop.getProperty("datasource.password"));
                     config.setMaximumPoolSize(Integer.parseInt(prop.getProperty("datasource.maxActive")));
-                //Properties may not be accessible when running the  test from e.g. a Maven bukld via cmmand line
-                } catch (NullPointerException e) {
-                    config.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-                    config.setJdbcUrl("jdbc:derby:droid-test-db;create=true");
-                    config.setUsername("droid_user");
-                    config.setPassword("droid_user");
-                    config.setMaximumPoolSize(20);
                 } catch(IOException e) {
                     e.printStackTrace();
                 } finally {

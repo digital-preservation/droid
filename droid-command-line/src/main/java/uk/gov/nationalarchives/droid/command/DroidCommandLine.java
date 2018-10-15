@@ -40,6 +40,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
 import uk.gov.nationalarchives.droid.command.action.CommandFactoryImpl;
@@ -70,11 +73,8 @@ public final class DroidCommandLine implements AutoCloseable {
     public static boolean systemExit = true;
     //CHECKSTYLE:ON
 
-    /**Logger Log4j.*/
-    //private Log log = LogFactory.getLog(this.getClass());
-    //private static Logger log = Logger.getLogger(DroidCommandLine.class);
-    
-
+    /**Logger slf4j.*/
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final String[] args;
     private GlobalContext context = SpringUiContext.getInstance();
@@ -118,7 +118,7 @@ public final class DroidCommandLine implements AutoCloseable {
      *             if the command line failed for any reason
      */
     public void run() throws CommandLineException {
-        // log.info("Starting DROID.");
+        log.info("Starting DROID.");
         CommandLineParser parser = new GnuParser();
 
         try {

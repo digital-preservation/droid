@@ -40,8 +40,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
@@ -51,7 +51,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
  */
 public class JaxBSubmissionQueueDao implements SubmissionQueue {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private String targetFileName;
     private final JAXBContext context;
@@ -80,7 +80,7 @@ public class JaxBSubmissionQueueDao implements SubmissionQueue {
                 Unmarshaller unmarshaller = context.createUnmarshaller();
                 return (SubmissionQueueData) unmarshaller.unmarshal(in.toFile());
             } catch (JAXBException e) {
-                log.error(e);
+                log.error(e.getErrorCode(), e);
                 throw new RuntimeException(e.getMessage(), e);
             }
         }
@@ -98,7 +98,7 @@ public class JaxBSubmissionQueueDao implements SubmissionQueue {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(queue, Paths.get(targetFileName).toFile());
         } catch (JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

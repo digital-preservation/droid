@@ -43,8 +43,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
@@ -85,7 +85,7 @@ public class SubmissionGateway implements AsynchDroid {
     private static final String ARCHIVE_ERROR = "Could not process the archival format(%s): %s\t%s\t%s";
 
     //CHECKSTYLE:ON    
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private DroidCore droidCore;
     private ResultHandler resultHandler;
@@ -178,11 +178,11 @@ public class SubmissionGateway implements AsynchDroid {
                 }
             } catch (ExecutionException e) {
                 final Throwable cause = e.getCause();
-                log.error(cause.getStackTrace(), cause);
+                log.error(cause.getStackTrace().toString(), cause);
                 resultHandler.handleError(new IdentificationException(
                         request, IdentificationErrorType.OTHER, cause));
             } catch (InterruptedException e) {
-                log.debug(e);
+                log.debug(e.getMessage(), e);
             } catch (IOException e) {
                 resultHandler.handleError(new IdentificationException(
                         request, IdentificationErrorType.OTHER, e));
@@ -218,7 +218,7 @@ public class SubmissionGateway implements AsynchDroid {
                 }
             //CHECKSTYLE:OFF - generating a hash can't prejudice any other results
             } catch (Exception e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
             }
             //CHECKSTYLE:ON
         }
@@ -246,7 +246,7 @@ public class SubmissionGateway implements AsynchDroid {
         //CHECKSTYLE:OFF - do not allow any errors in other code to
         //    prevent results so far from being recorded.
         } catch (Exception e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
         //CHECKSTYLE:ON
         return extensionResults;

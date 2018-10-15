@@ -36,8 +36,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationErrorType;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationException;
@@ -63,7 +63,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
  */
 public class JDBCResultHandler implements ResultHandler {
 
-    private Log log = LogFactory.getLog(getClass());
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     private ResultHandlerDao resultHandlerDao;
     private ProgressMonitor progressMonitor;

@@ -40,8 +40,8 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxy;
@@ -56,7 +56,7 @@ import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
  */
 public class SaveProfileWorker extends SwingWorker<ProfileInstance, Void> {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ProfileManager profileManager;
     private Path destination;
@@ -142,7 +142,7 @@ public class SaveProfileWorker extends SwingWorker<ProfileInstance, Void> {
             ProfileInstance profile = get();
             profileForm.setName(profile.getName());
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         } catch (ExecutionException e) {
             log.error(e.getMessage(), e);

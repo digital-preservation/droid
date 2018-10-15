@@ -49,8 +49,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -83,7 +83,7 @@ public class SignatureManagerImpl implements SignatureManager {
         defaultVersionProperties.put(SignatureType.TEXT, DroidGlobalProperty.DEFAULT_TEXT_SIG_FILE_VERSION);
     }
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private DroidGlobalConfig config;
     private Map<SignatureType, SignatureUpdateService> signatureUpdateServices;
@@ -360,7 +360,7 @@ public class SignatureManagerImpl implements SignatureManager {
                 try {
                     config.getProperties().save();
                 } catch (ConfigurationException e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                     throw new SignatureManagerException(e);
                 }
             }
@@ -426,7 +426,7 @@ public class SignatureManagerImpl implements SignatureManager {
 
             return sigFileInfo;
         } catch (final IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new SignatureFileException(e.getMessage(), e, ErrorCode.FILE_NOT_FOUND);
         }
     }

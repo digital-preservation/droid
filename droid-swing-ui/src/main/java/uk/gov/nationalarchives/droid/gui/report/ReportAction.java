@@ -45,8 +45,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.swing.SwingWorker;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.report.interfaces.CancellableProgressObserver;
@@ -63,7 +63,7 @@ import uk.gov.nationalarchives.droid.report.interfaces.ReportXmlWriter;
  */
 public class ReportAction extends SwingWorker<Void, Integer> {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private List<String> profileIds;
     private ReportManager reportManager;
@@ -112,9 +112,9 @@ public class ReportAction extends SwingWorker<Void, Integer> {
         try {
             get();
         } catch (ExecutionException e) {
-            log.error(e.getCause(), e);
+            log.error(e.getCause().toString(), e);
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
         }
     }
 
@@ -153,7 +153,7 @@ public class ReportAction extends SwingWorker<Void, Integer> {
                 reportXmlWriter.writeReport(report, writer);
             }
         } catch (final IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } catch (ReportCancelledException e) {
             cancel(false);

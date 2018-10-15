@@ -45,8 +45,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -57,17 +57,14 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
 
     private static final String PROFILE_XML = "profile.xml";
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final JAXBContext context;
     
     /**
      * @throws JAXBException if the JAXBContext could not be instantiated.
      */
     public JaxbProfileSpecDao() throws JAXBException {
-        
-        context = JAXBContext.newInstance(new Class[] {
-            ProfileInstance.class,
-        });
+        context = JAXBContext.newInstance(ProfileInstance.class);
     }
     
     /**
@@ -81,7 +78,7 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
             final ProfileInstance profile = (ProfileInstance) unmarshaller.unmarshal(in);
             return profile;
         } catch (final JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
@@ -97,7 +94,7 @@ public class JaxbProfileSpecDao implements ProfileSpecDao {
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.marshal(profile, out);
         } catch (final IOException | JAXBException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

@@ -48,8 +48,9 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.xml;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * holds the basic details of an element read from an XML file.
@@ -59,7 +60,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SimpleElement {
 
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private String myText = "";
 
@@ -133,7 +134,7 @@ public class SimpleElement {
      * 
      * @return the log object owned by SimpleElement.
      */
-    protected Log getLog() {
+    protected Logger getLog() {
         return log;
     }
 }

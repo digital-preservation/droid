@@ -86,10 +86,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.byteseek.io.reader.WindowReader;
+
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -171,7 +172,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     /**
     *Use static log for optimmal performance..
      */
-    private  static final Log LOGGER = LogFactory.getLog(ByteSequence.class);
+    private final Logger log = LoggerFactory.getLogger(ByteSequence.class);
     
     private List<SubSequence> subSequences = new ArrayList<SubSequence>();
     private SubSequence[] sequences = new SubSequence[0];
@@ -460,7 +461,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                     fixedSubsequence = false;
                 }
             } catch (IOException io) {
-                LOGGER.error(String.format("Error processing file: %s. for byte sequence match",
+                log.error(String.format("Error processing file: %s. for byte sequence match",
                         targetFile.getFileName()), io);
                 return false;
             }

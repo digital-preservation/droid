@@ -46,8 +46,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
@@ -91,7 +92,7 @@ public class ReportCommand implements DroidCommand {
     private DqlFilterParser dqlFilterParser;    
     private CommandLineFilter cliFilter;    
     
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     /**
      * {@inheritDoc}

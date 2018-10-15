@@ -83,10 +83,10 @@ public class PronomSignatureServiceTest {
     @Before
     public void setup() throws Exception {
 
-        sigFileDir = Paths.get("tmp_sig_files");
+        sigFileDir = Paths.get("target/tmp_sig_files");
         FileUtil.deleteQuietly(sigFileDir);
         FileUtil.mkdirsQuietly(sigFileDir);
-        Files.deleteIfExists(Paths.get("tmp_sig_files/DROID_SignatureFile_V26.xml"));
+        Files.deleteIfExists(Paths.get("target/tmp_sig_files/DROID_SignatureFile_V26.xml"));
         importer.setEndpointUrl(ENDPOINT_URL);
         ProxySettings proxySettings = new ProxySettings();
         proxySettings.setEnabled(false);

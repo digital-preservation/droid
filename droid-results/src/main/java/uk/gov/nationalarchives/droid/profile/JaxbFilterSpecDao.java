@@ -42,8 +42,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author a-mpalmer
@@ -52,7 +52,7 @@ import org.apache.commons.logging.LogFactory;
 public class JaxbFilterSpecDao implements FilterSpecDao {
 
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final JAXBContext context;
     
     /**
@@ -76,7 +76,7 @@ public class JaxbFilterSpecDao implements FilterSpecDao {
             FilterSpec spec = (FilterSpec) unmarshaller.unmarshal(in);
             return spec.getFilter();
         } catch (JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
@@ -94,10 +94,10 @@ public class JaxbFilterSpecDao implements FilterSpecDao {
             FilterSpec spec = new FilterSpec(filter);
             m.marshal(spec, out);
         } catch (PropertyException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } catch (JAXBException e) {
-            log.error(e);
+            log.error(e.getErrorCode(), e);
             throw new RuntimeException(e);
         } finally {
             closeOutputStream(out);

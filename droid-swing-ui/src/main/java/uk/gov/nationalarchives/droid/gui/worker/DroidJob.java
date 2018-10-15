@@ -42,9 +42,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
@@ -63,7 +64,7 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
     private static final int RESULT_MAX_LENGTH = 60;
     private static final int RESULT_LEFT_MIN = 20;
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private ProfileForm profileForm;
     private ProfileManager profileManager;
@@ -89,9 +90,9 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
             if (parent != null) {
                 parent.setAllowsChildren(true);
                 boolean updated = false;
-                for (Enumeration<DefaultMutableTreeNode> e = parent.children(); 
-                    e.hasMoreElements() && !updated;) {
-                    DefaultMutableTreeNode childNode = e.nextElement();
+                for (Enumeration<TreeNode> e = parent.children();
+                     e.hasMoreElements() && !updated;) {
+                    DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) e.nextElement();
                     if (childNode.getUserObject().equals(node)) {
                         childNode.setUserObject(node);
                         childNode.setAllowsChildren(node.allowsChildren());
@@ -152,10 +153,10 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
         try {
             profileManager.start(profileUuid).get();
         } catch (ExecutionException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e.getCause().getMessage(), e.getCause());
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
         
@@ -177,7 +178,7 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
                 "An error occurred during profiling. Your profile has been paused.", "Error", 
                 JOptionPane.ERROR_MESSAGE);
         } catch (InterruptedException e) {
-            log.debug(e);
+            log.debug(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

@@ -42,7 +42,7 @@ import java.io.PrintWriter;
 import junit.framework.Assert;
 
 import org.apache.commons.cli.AlreadySelectedException;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
