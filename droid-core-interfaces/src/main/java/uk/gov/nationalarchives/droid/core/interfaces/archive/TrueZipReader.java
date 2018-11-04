@@ -35,7 +35,6 @@ import java.io.IOException;
 
 import de.schlichtherle.truezip.rof.AbstractReadOnlyFile;
 import net.byteseek.io.reader.WindowReader;
-import net.byteseek.io.reader.windows.Window;
 
 /**
  * This class adapts a byteseek 2 WindowReader to behave as a ReadOnlyFile interface defined in TrueZip.
@@ -46,7 +45,7 @@ import net.byteseek.io.reader.windows.Window;
  *
  * Created by matt on 30/05/15.
  */
-public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
+public final class TrueZipReader extends AbstractReadOnlyFile {
 
     private final WindowReader reader;
     private long filePointer;
@@ -56,16 +55,16 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
     /**
      * Constructs a ReaderReadOnlyFiule backed by a WindowReader.
      * <p>
-     * The underlying WindowReader will not be closed when this ReaderReadOnlyFile is closed.
+     * The underlying WindowReader will not be closed when this TrueZipReader is closed.
      *
      * @param reader The WindowReader to back this ReadOnlyFile.
      */
-    public ReaderReadOnlyFile(final WindowReader reader) {
+    public TrueZipReader(final WindowReader reader) {
         this(reader, false);
     }
 
     /**
-     * Constructs a ReaderReadOnlyFile backed by a WindowReader.
+     * Constructs a TrueZipReader backed by a WindowReader.
      * <p>
      * When the instance is closed, the backing window reader will be closed if
      * closeReaderIfClosed is true.
@@ -73,7 +72,7 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
      * @param reader The WindowReader backing this ReadOnlyFile.
      * @param closeReaderIfClosed If true, then the backing WindowReader will be closed when this is closed.
      */
-    public ReaderReadOnlyFile(final WindowReader reader, final boolean closeReaderIfClosed) {
+    public TrueZipReader(final WindowReader reader, final boolean closeReaderIfClosed) {
         super();
         this.reader = reader;
         this.closeReaderIfClosed = closeReaderIfClosed;
@@ -106,7 +105,7 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
         if (position < 0) {
             throw new IOException("Cannot seek to a negative position: " + position);
         }
-        if (position > reader.length()) {
+        if (position >= reader.length()) {
             throw new IOException("Cannot seek past the end of data with length "
                     + reader.length() + ".  Seek position was " + position);
         }
@@ -119,29 +118,12 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
         if ((offset | length) < 0) {
             throw new IndexOutOfBoundsException("Offset or length cannot be negative: {" + offset + "," + length + "}");
         }
-        if (offset + length > bytes.length) {
-            throw new IndexOutOfBoundsException("The offset "
-                    + offset + " plus length " + length
-                    + " cannot be greater than the length of the bytes " + bytes.length);
-        }
         if (filePointer >= length() || length == 0) {
             return -1;
         }
-
-        final int bytesToRead = length - offset;
-        int totalRead = 0;
-        Window window = reader.getWindow(filePointer);
-        while (window != null && totalRead < bytesToRead) {
-            final int windowOffset = reader.getWindowOffset(filePointer);
-            final int availableBytes = window.length() - windowOffset;
-            final int remainingBytes = length - totalRead;
-            final int copyBytes    = remainingBytes < availableBytes ? remainingBytes : availableBytes;
-            System.arraycopy(window.getArray(), windowOffset, bytes, offset + totalRead, copyBytes);
-            totalRead += copyBytes;
-            filePointer += copyBytes;
-            window = reader.getWindow(filePointer);
-        }
-        return totalRead;
+        final int bytesCopied = ArchiveFileUtils.copyToBuffer(reader, filePointer, bytes, offset, length);
+        filePointer += bytesCopied;
+        return bytesCopied;
     }
 
     @Override
@@ -154,7 +136,7 @@ public final class ReaderReadOnlyFile extends AbstractReadOnlyFile {
 
     private void ensureOpen() throws IOException {
         if (closed) {
-            throw new IOException("The ReaderReadOnlyFile is closed.");
+            throw new IOException("The " + this + " is closed.");
         }
     }
 }
