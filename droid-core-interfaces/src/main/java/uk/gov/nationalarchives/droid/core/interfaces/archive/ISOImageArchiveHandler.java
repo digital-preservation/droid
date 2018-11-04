@@ -72,6 +72,13 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
     @Override
     public void handle(IdentificationRequest request) throws IOException {
 
+        // TODO: upgrade to 2.0.2 version of java-iso-tools once released and adapt WindowReader to SeekableInput.
+        // ISO images can only be instantiated from files right now, as the 2.0.1 code only supports File as
+        // an input source.  The 2.0.2-SNAPSHOT code in GitHub supports a "SeekableInput" interface,
+        // which we could easily adapt a WindowReader to once the 2.0.2 code is released.
+        // This would allow us to process ISO files no matter where they came from (e.g. in a zip file).
+        // TODO: alternatively - DROID could fork the ISO code if the project has stopped making new releases.
+        // The last release was back in 2015, so it may be that the project is now basically inactive.
         if (request.getClass().isAssignableFrom(FileSystemIdentificationRequest.class)) {
 
             FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
