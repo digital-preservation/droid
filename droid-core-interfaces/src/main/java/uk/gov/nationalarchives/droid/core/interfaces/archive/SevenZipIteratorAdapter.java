@@ -32,85 +32,99 @@
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Iterator adapter to allow pass <i>ArchiveInputStream</i> to the <i>SevenZArchiveWalker</i>.
- * Walker expect Iterable and with this class we can fake it. This class don't fully implement Iterable and
- * iterator functionality, it just wrap iterator calls and pass them to ArchiveInputStream.
- *
- * <b>!!!!This class is not thread safe!!!!</b>
+ * An iterable class that gives and iterator across SevenZipEntryInfo objects.
+ * It has internal classes for the iterator and a stream for seven zip archive files.
  */
-public class SevenZipIteratorAdapter implements Iterable<SevenZArchiveEntry> {
+public class SevenZipIteratorAdapter implements Iterable<SevenZipArchiveHandler.SevenZEntryInfo> {
 
-    private final ArchiveInputStream archiveStream;
+    private static final int BYTE_TO_INT = 0xFF;
+
+    private final SevenZFile zipFile;
 
     /**
-     * Create new instance.
-     * @param archiveStream the original archive input stream.
+     * Construct a SevenZipIteratorAdapter.
+     *
+     * @param zipFile The SevenZFile to wrap.
      */
-    public SevenZipIteratorAdapter(ArchiveInputStream archiveStream) {
-        this.archiveStream = archiveStream;
+    public SevenZipIteratorAdapter(SevenZFile zipFile) {
+        this.zipFile = zipFile;
     }
 
     @Override
-    public Iterator<SevenZArchiveEntry> iterator() {
+    public Iterator<SevenZipArchiveHandler.SevenZEntryInfo> iterator() {
         return new SevenZipIterator();
     }
 
-    private class SevenZipIterator implements Iterator<SevenZArchiveEntry> {
 
-        private final Logger log = LoggerFactory.getLogger(this.getClass());
+    /**
+     * An Iterator over SevenZEntryInfo classes, which wrap a SevenZArchiveEntry and an InputStream
+     * to give access to the files in the archive.
+     */
+    private class SevenZipIterator implements Iterator<SevenZipArchiveHandler.SevenZEntryInfo> {
 
+        private final Logger log = LoggerFactory.getLogger(getClass());
+        private final InputStream stream = new SevenZipEntryStream();
         private SevenZArchiveEntry entry;
-
 
         @Override
         public boolean hasNext() {
-            boolean retStatus = false;
-            try {
-                if (entry == null) {
-                    entry = (SevenZArchiveEntry) archiveStream.getNextEntry();
-                    retStatus =  entry != null;
-                } else {
-                    retStatus =  true;
-                }
-            } catch (IOException e) {
-                log.error("exception thrown when walking 7zip archive", e);
-                retStatus = false;
-            }
-            return retStatus;
-        }
-
-        @Override
-        public SevenZArchiveEntry next() {
             if (entry == null) {
-                boolean hasMore = hasNext();
-                if (hasMore) {
-                    return returnAndNullEntry();
-                } else {
-                    throw new NoSuchElementException("no mode elements");
+                try {
+                    entry = zipFile.getNextEntry();
+                } catch (IOException e) {
+                    log.error("Exception thrown when walking 7zip archive: " + zipFile, e);
                 }
-            } else {
-                return returnAndNullEntry();
             }
-        }
-
-        private SevenZArchiveEntry returnAndNullEntry() {
-            SevenZArchiveEntry entryToReturn = entry;
-            entry = null;
-            return entryToReturn;
+            return entry != null;
         }
 
         @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not implemented");
+        public SevenZipArchiveHandler.SevenZEntryInfo next() {
+            if (hasNext()) {
+                SevenZipArchiveHandler.SevenZEntryInfo info = new SevenZipArchiveHandler.SevenZEntryInfo(entry, stream);
+                entry = null;
+                return info;
+            }
+            log.error("No more entries in the seven zip archive: " + zipFile);
+            throw new NoSuchElementException();
         }
+    }
+
+    /**
+     * A simple input stream that takes its data from the SevenZipFile held in the outer class.
+     * The SevenZipFile provides stream read methods.  A call to the ZipFile read method reads from
+     * the stream associated with its current seven zip entry.
+     */
+    private class SevenZipEntryStream extends InputStream {
+
+        private final byte[] oneByte = new byte[1];
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            return zipFile.read(b, off, len);
+        }
+
+        @Override
+        public int read() throws IOException {
+            final byte[] aByte = oneByte;
+            final int bytesRead = read(aByte, 0, 1);
+            return bytesRead < 1 ? -1 : aByte[0] & BYTE_TO_INT;
+        }
+
+        @Override
+        public void close() throws IOException {
+            // Don't close the zipFile when each entry stream ends.
+        }
+
     }
 }
