@@ -42,15 +42,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
+import de.waldheinz.fs.BlockDevice;
+import de.waldheinz.fs.FileSystem;
+import de.waldheinz.fs.FsDirectory;
 import de.waldheinz.fs.FsDirectoryEntry;
 import de.waldheinz.fs.FsFile;
-import de.waldheinz.fs.FileSystem;
-import de.waldheinz.fs.FileSystemFactory;
-import de.waldheinz.fs.FsDirectory;
-import de.waldheinz.fs.util.FileDisk;
+import de.waldheinz.fs.fat.FatFileSystem;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
@@ -59,15 +59,15 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FatFileIdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 
 /**
  * FatArchiveHandler.
  */
-public class FatArchiveHandler implements ArchiveHandler {
+public final class FatArchiveHandler implements ArchiveHandler {
 
+    private static final boolean OPEN_READ_ONLY = true;
 
     private AsynchDroid droid;
 
@@ -79,26 +79,12 @@ public class FatArchiveHandler implements ArchiveHandler {
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        if (request.getClass().isAssignableFrom(FileSystemIdentificationRequest.class)) {
-
-            FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
-
-
-            FileDisk fileDisk = new FileDisk(req.getFile().toFile(), true);
-
-            FileSystem fatSystem = FileSystemFactory.create(fileDisk, true);
-
-            FsDirectory root = fatSystem.getRoot();
-
-            FatArchiveWalker walker = new FatArchiveWalker(droid, resultHandler, request.getIdentifier());
-            walker.walk(root);
-
-        } else {
-            log.info("Identification request for ISO image ignored due to limited support.");
-        }
+        BlockDevice device    = new FatReader(request.getWindowReader());
+        FileSystem fatSystem = FatFileSystem.read(device, OPEN_READ_ONLY);
+        FsDirectory root      = fatSystem.getRoot();
+        FatArchiveWalker walker    = new FatArchiveWalker(droid, resultHandler, request.getIdentifier());
+        walker.walk(root);
     }
-
-
 
 
     private final class FatArchiveWalker extends ArchiveFileWalker<FsDirectoryEntry> {

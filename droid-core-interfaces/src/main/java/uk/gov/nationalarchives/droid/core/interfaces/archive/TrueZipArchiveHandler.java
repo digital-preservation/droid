@@ -67,7 +67,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      */
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        final ZipFile zipFile = new ZipFile(new ReaderReadOnlyFile(request.getWindowReader()));
+        final ZipFile zipFile = new ZipFile(new TrueZipReader(request.getWindowReader()));
         try {
             Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
                 @Override

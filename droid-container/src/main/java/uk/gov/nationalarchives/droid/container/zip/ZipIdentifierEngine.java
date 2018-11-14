@@ -42,7 +42,7 @@ import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ReaderReadOnlyFile;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipReader;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -77,7 +77,7 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
     @Override
     public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
         //rof, DEFAULT_CHARSET, true, false
-        ZipFile zipFile = new ZipFile(new ReaderReadOnlyFile(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
+        ZipFile zipFile = new ZipFile(new TrueZipReader(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
         try {
             // For each entry:
             for (String entryName : matches.getAllFileEntries()) {

@@ -45,9 +45,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.junrar.VolumeManager;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
-import com.github.junrar.impl.FileVolumeManager;
 import com.github.junrar.rarfile.FileHeader;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
@@ -56,7 +56,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 
@@ -80,26 +79,17 @@ public final class RarArchiveHandler implements ArchiveHandler {
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-
-        if (request.getClass().isAssignableFrom(FileSystemIdentificationRequest.class)) {
-
-            FileSystemIdentificationRequest req = (FileSystemIdentificationRequest) request;
-
-            FileVolumeManager fileVolumeManager = new FileVolumeManager(req.getFile().toFile());
-            try {
-                try (Archive archive = new Archive(fileVolumeManager)) {
-                    if (archive.isEncrypted()) {
-                        throw new RuntimeException("Encrypted archive");
-                    }
-                    RarWalker walker = new RarWalker(archive, req.getIdentifier());
-
-                    walker.walk(archive.getFileHeaders());
+        VolumeManager readerVolume = new RarReader(request.getWindowReader());
+        try {
+            try (Archive archive = new Archive(readerVolume)) {
+                if (archive.isEncrypted()) {
+                    throw new RuntimeException("Encrypted archive");
                 }
-            } catch (RarException ex) {
-                throw new RuntimeException("Rar procesing failed :", ex);
+                RarWalker walker = new RarWalker(archive, request.getIdentifier());
+                walker.walk(archive.getFileHeaders());
             }
-        } else {
-            log.info("Identification request for RAR archive ignored due to limited support.");
+        } catch (RarException ex) {
+            throw new RuntimeException("Rar processing failed :", ex);
         }
     }
 

@@ -34,20 +34,16 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Path;
+import java.nio.channels.SeekableByteChannel;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ant.compress.util.SevenZStreamFactory;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.io.FilenameUtils;
-
-import org.apache.commons.io.input.BoundedInputStream;
-import org.apache.commons.io.input.CloseShieldInputStream;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -56,10 +52,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-
-import net.byteseek.io.reader.FileReader;
-import net.byteseek.io.reader.WindowReader;
-
 
 /**
  *
@@ -72,34 +64,53 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        WindowReader windowReader = request.getWindowReader();
-        if (windowReader instanceof FileReader) {
-            FileReader fileReader = (FileReader) windowReader;
-            final Path file = fileReader.getFile().toPath();
-
-            SevenZFile sevenZFile = new SevenZFile(file.toFile());
-
-            SevenZStreamFactory sevenZStreamFactory = new SevenZStreamFactory();
-            try (ArchiveInputStream archiveStream = sevenZStreamFactory.getArchiveInputStream(file.toFile(), null)) {
-                //Prevent to close input stream. We want to read all files in archive.
-                CloseShieldInputStream  closeShieldInputStream = new CloseShieldInputStream(archiveStream);
-
-                SevenZArchiveWalker walker = new SevenZArchiveWalker(droid, factory, closeShieldInputStream,
-                        request.getIdentifier(), resultHandler);
-                walker.walk(new SevenZipIteratorAdapter(archiveStream));
-            }
-        }
+        SeekableByteChannel     sevenZipReader = new SevenZipReader(request.getWindowReader());
+        SevenZFile              sevenZFile     = new SevenZFile(sevenZipReader);
+        SevenZipIteratorAdapter sevenZIterator = new SevenZipIteratorAdapter(sevenZFile);
+        SevenZArchiveWalker     walker         = new SevenZArchiveWalker(droid, factory, request.getIdentifier(), resultHandler);
+        walker.walk(sevenZIterator);
     }
 
 
     /**
-     *
+     * A SevenZEntryInfo class which wraps entry information and a stream for that entry.
      */
-    public static class SevenZArchiveWalker extends ArchiveFileWalker<SevenZArchiveEntry> {
+    public static class SevenZEntryInfo {
+        private final SevenZArchiveEntry entry;
+        private final InputStream stream;
+
+        /**
+         * Constructs a SevenZEntryInfo class.
+         * @param entry The entry metadata
+         * @param stream The stream of bytes for this entry.
+         */
+        public SevenZEntryInfo(SevenZArchiveEntry entry, InputStream stream) {
+            this.entry = entry;
+            this.stream = stream;
+        }
+
+        /**
+         * Returns the entry metadata.
+         *
+         * @return the entry metadata.
+         */
+        public SevenZArchiveEntry getEntry() { return entry; }
+
+        /**
+         * Returns the entry stream.
+         *
+         * @return the entry stream.
+         */
+        public InputStream getEntryStream() { return stream; }
+    }
+
+    /**
+     *Construct a SevenZArchiveWalker which walks a SevenZip archive.
+     */
+    public static class SevenZArchiveWalker extends ArchiveFileWalker<SevenZEntryInfo> {
 
         private final AsynchDroid droid;
         private IdentificationRequestFactory<InputStream> factory;
-        private InputStream in;
         private final ResourceId parentId;
         private final URI parentName;
         private final long originatorNodeId;
@@ -111,16 +122,13 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
          *
          * @param droid d
          * @param factory f
-         * @param in in
          * @param parent p
          * @param resultHandler r
          */
         public SevenZArchiveWalker(AsynchDroid droid,
                                    IdentificationRequestFactory<InputStream> factory,
-                                   InputStream in,
                                    RequestIdentifier parent,
                                    ResultHandler resultHandler) {
-            this.in = in;
             this.droid = droid;
             this.factory = factory;
             this.parentId = parent.getResourceId();
@@ -130,8 +138,8 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
         }
 
         @Override
-        protected void handleEntry(SevenZArchiveEntry entry) throws IOException {
-            String entryName = entry.getName();
+        protected void handleEntry(SevenZEntryInfo info) throws IOException {
+            String entryName = info.entry.getName();
             final String prefixPath = FilenameUtils.getPath(entryName);
             ResourceId correlationId = parentId; // by default, files are correlated to the parent.
 
@@ -145,23 +153,25 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
             }
 
             // If there is a file, submit the file:
-            entryName = FilenameUtils.getName(entryName);
-            if (!entryName.isEmpty()) {
-                submit(entry, entryName,  correlationId);
+            if (!info.entry.isDirectory()) {
+                entryName = FilenameUtils.getName(entryName);
+                if (!entryName.isEmpty()) {
+                    submit(info, entryName, correlationId);
+                }
             }
         }
 
 
         /**
          * Submits a request to droid.
-         * @param entry the tar entry to submit
+         * @param info the sevenzip entry and stream to submit
          * @param entryName the name of the entry
          * @param correlationId the correlation iod for the request
          * @throws IOException if the input stream could not be read
          */
-        final void submit(SevenZArchiveEntry entry, String entryName,
+        final void submit(SevenZEntryInfo info, String entryName,
                           ResourceId correlationId) throws IOException {
-            long size = entry.getSize();
+            long size = info.entry.getSize();
             Date time = new Date();
 
             RequestMetaData metaData = new RequestMetaData(
@@ -170,19 +180,15 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
                     entryName);
 
             RequestIdentifier identifier =
-                    new RequestIdentifier(ArchiveFileUtils.toSevenZUri(parentName, entry.getName()));
+                    new RequestIdentifier(ArchiveFileUtils.toSevenZUri(parentName, info.entry.getName()));
             identifier.setAncestorId(originatorNodeId);
             identifier.setParentResourceId(correlationId);
             if (identifier.getParentPrefix() != null && identifier.getParentPrefix().isEmpty()) {
                 identifier.setParentPrefix(null);
             }
             IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
-            BoundedInputStream entryInputStream = new BoundedInputStream(in, entry.getSize());
-            entryInputStream.setPropagateClose(false);
-            request.open(entryInputStream);
-            if (!entry.isDirectory()) {
-                droid.submit(request);
-            }
+            request.open(info.stream);
+            droid.submit(request);
         }
 
         private ResourceId processAncestorFolders(String path) {

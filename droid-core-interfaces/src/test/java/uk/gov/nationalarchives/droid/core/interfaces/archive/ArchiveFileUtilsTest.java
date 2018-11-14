@@ -36,12 +36,16 @@ import de.waldheinz.fs.FileSystemFactory;
 import de.waldheinz.fs.FsDirectory;
 import de.waldheinz.fs.FsDirectoryEntry;
 import de.waldheinz.fs.util.FileDisk;
+import net.byteseek.io.reader.FileReader;
+import net.byteseek.io.reader.WindowReader;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -49,13 +53,89 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.util.AssertionErrors.fail;
 
 /**
  * @author rflitcroft
  *
  */
 public class ArchiveFileUtilsTest {
+
+    @Test
+    public void copyToBufferByteArray() throws Exception {
+        testBufferCopy(0, 0, 1024, 1024);
+        testBufferCopy(123, 0, 1024, 1024);
+        testBufferCopy(1023, 0, 1024, 1024);
+        testBufferCopy(2, 9, 32, 1024);
+        testBufferCopy(7, 968, 1024, 2048);
+        testBufferCopy(190000, 0, 1024, 1024);
+        testBufferCopy(126, 98, 2048, 1024);
+    }
+
+    @Test
+    public void copyToBufferByteBuffer() throws Exception {
+        testByteBufferCopy(0, 1024);
+        testByteBufferCopy(123, 1024);
+        testByteBufferCopy(1023, 1024);
+        testByteBufferCopy(2, 32);
+        testByteBufferCopy(7, 968);
+        testByteBufferCopy(190000, 1024);
+        testByteBufferCopy(126, 2048);
+    }
+
+    private void testBufferCopy(long position, int offset, int length, int bufferSize) throws Exception {
+        String resource = "saved.zip";
+
+        // Copy from a file reader
+        byte[] buffer = new byte[bufferSize];
+        try (WindowReader reader = getFileReader(resource)) {
+            ArchiveFileUtils.copyToBuffer(reader, position, buffer, offset, length);
+        }
+
+        // Copy from a random access file:
+        byte[] expected = new byte[bufferSize];
+        try (RandomAccessFile raf = getRAF(resource)) {
+            if (position < raf.length()) {
+                raf.seek(position);
+                final int maxBytesToRead = Math.min(expected.length - offset, length);
+                raf.read(expected, offset, maxBytesToRead);
+            }
+        }
+        assertArrayEquals(buffer, expected);
+    }
+
+    private void testByteBufferCopy(long position, int bufferSize) throws Exception {
+        String resource = "saved.zip";
+
+        // Copy from a file reader
+        byte[] buffer = new byte[bufferSize];
+        try (WindowReader reader = getFileReader(resource)) {
+            ByteBuffer byteBuf = ByteBuffer.wrap(buffer);
+            ArchiveFileUtils.copyToBuffer(reader, position, byteBuf);
+        }
+
+        // Copy from a random access file:
+        byte[] expected = new byte[bufferSize];
+        try (RandomAccessFile raf = getRAF(resource)) {
+            if (position < raf.length()) {
+                raf.seek(position);
+                raf.read(expected, 0, bufferSize);
+            }
+        }
+        assertArrayEquals(buffer, expected);
+    }
+
+    private WindowReader getFileReader(String resourceName) throws IOException {
+        Path p = Paths.get("./src/test/resources/" + resourceName);
+        return new FileReader(p.toFile(), 127); // use a small odd window size so we cross window boundaries.
+    }
+
+    private RandomAccessFile getRAF(String resourceName) throws IOException {
+        Path p = Paths.get("./src/test/resources/" + resourceName);
+        return new RandomAccessFile(p.toFile(), "r");
+    }
 
     @Test
     public void testIsoImageUri() throws URISyntaxException {

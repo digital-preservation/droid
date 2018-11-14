@@ -54,6 +54,9 @@ import org.apache.commons.lang.StringUtils;
 
 import de.waldheinz.fs.FsDirectoryEntry;
 
+import net.byteseek.io.reader.WindowReader;
+import net.byteseek.io.reader.windows.Window;
+
 
 /**
  * Utilities.
@@ -382,6 +385,68 @@ public final class ArchiveFileUtils {
         }
         return paths;
     }
+
+    /**
+     * Copies bytes from a WindowReader into a byte array buffer.
+     * Up to length bytes will be copied, to the available space in the byte array, from the offset specified.
+     *
+     * @param reader   The WindowReader to read from.
+     * @param position The position in the WindowReader to read from.
+     * @param buffer   The byte array to copy into.
+     * @param offset   The position in the byte array to begin copying from.
+     * @param length   The maximum number of bytes to copy (assuming available bytes in the reader and sufficient
+     *                 space in the byte array).
+     * @return         The number of bytes copied.
+     * @throws IOException If there was a problem reading bytes from the WindowReader.
+     */
+    public static int copyToBuffer(final WindowReader reader, final long position,
+                                   final byte[] buffer, final int offset, final int length) throws IOException {
+        long pos = position;
+        int bytesCopied = 0;
+        final int bytesToRead = Math.min(length, buffer.length - offset);
+        Window window = reader.getWindow(pos);
+        while (bytesCopied < bytesToRead && window != null) {
+            final int positionInWindow = reader.getWindowOffset(pos);
+            final int availableBytes = window.length() - positionInWindow;
+            final int remainingBytes = bytesToRead - bytesCopied;
+            final int bytesToCopy    = remainingBytes < availableBytes ? remainingBytes : availableBytes;
+            System.arraycopy(window.getArray(), positionInWindow, buffer, offset + bytesCopied, bytesToCopy);
+            pos         += bytesToCopy;
+            bytesCopied += bytesToCopy;
+            window = reader.getWindow(pos);
+        }
+        return bytesCopied;
+    }
+
+    /**
+     * Copies bytes from a WindowReader into a ByteBuffer.
+     * It will attempt to fill the ByteBuffer, as long as there are bytes to copy in the WindowReader.
+     *
+     * @param reader   The WindowReader to read from.
+     * @param position The position in the WindowReader to read from.
+     * @param buffer   The ByteBuffer to copy bytes into.
+     * @return         The number of bytes copied.
+     * @throws IOException If there was a problem reading bytes from the WindowReader.
+     */
+    public static int copyToBuffer(final WindowReader reader, final long position,
+                                   final ByteBuffer buffer) throws IOException {
+        long pos = position;
+        int bytesCopied = 0;
+        int bufferRemaining = buffer.remaining();
+        Window window = reader.getWindow(pos);
+        while (bufferRemaining > 0 && window != null) {
+            final int positionInWindow = reader.getWindowOffset(pos);
+            final int availableBytes = window.length() - positionInWindow;
+            final int bytesToCopy = availableBytes <= bufferRemaining ? availableBytes : bufferRemaining;
+            buffer.put(window.getArray(), positionInWindow, bytesToCopy);
+            pos         += bytesToCopy;
+            bytesCopied += bytesToCopy;
+            bufferRemaining = buffer.remaining();
+            window = reader.getWindow(pos);
+        }
+        return bytesCopied;
+    }
+
 
 
     /**
