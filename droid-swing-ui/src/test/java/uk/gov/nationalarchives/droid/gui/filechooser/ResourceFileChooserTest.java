@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.gui.filechooser;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -54,9 +54,10 @@ public class ResourceFileChooserTest {
     
     @Test
     public void testFileChooserSetup() {
-        
+
         assertTrue(fc.isAcceptAllFileFilterUsed());
-        assertEquals("All Files", fc.getFileFilter().getDescription());
+        JFileChooser defaultFileChooser=new JFileChooser("");
+        assertEquals(defaultFileChooser.getUI().getAcceptAllFileFilter(defaultFileChooser).getDescription(), fc.getFileFilter().getDescription());
         assertTrue(fc.isMultiSelectionEnabled());
     }
     
