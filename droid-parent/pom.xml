@@ -86,12 +86,13 @@
         <spring.version>5.0.9.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
-        <cxf.version>3.3.0</cxf.version>
+        <cxf.version>3.3.3</cxf.version>
         <aspectj.version>1.9.1</aspectj.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.18</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
+        <bouncycastle.version>1.62</bouncycastle.version>
         <jwat.version>1.1.0</jwat.version>
         <hamcrest.version>1.3</hamcrest.version>
         <slf4j.version>1.7.25</slf4j.version>
@@ -234,6 +235,9 @@
                                 <ignoredUnusedDeclaredDependency>org.glassfish.jaxb:jaxb-runtime</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>org.bouncycastle:bcprov-jdk15on</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>uk.gov.nationalarchives:droid-export:jar:${project.version}</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>com.sun.activation:javax.activation</ignoredUnusedDeclaredDependency>
                             </ignoredUnusedDeclaredDependencies>
                             <ignoredUsedUndeclaredDependencies>
                                 <ignoredUsedUndeclaredDependency>jakarta.xml.bind:jakarta.xml.bind-api</ignoredUsedUndeclaredDependency>
@@ -248,6 +252,7 @@
                 <version>5.2.1</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
+                    <skipSystemScope>true</skipSystemScope>
                 </configuration>
                 <executions>
                     <execution>
@@ -661,6 +666,19 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <groupId>de.schlichtherle.truezip</groupId>
                 <artifactId>truezip-driver-zip</artifactId>
                 <version>${truezip.version}</version>
+                <exclusions>
+                    <!--  bouncycastle is obsolete in the 7.7.10 version -->
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!--  add the right bouncycastle -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.schlichtherle.truezip</groupId>
