@@ -96,28 +96,14 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.*;
  */
 public class SAXModelBuilder extends DefaultHandler {
 
-    private static final String ADD = "add";
-    private static final String SET = "set";
-
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
     private Stack<Object> stack = new Stack<Object>();
     private SimpleElement element;
 
-    private String mySignaturePackage = FFSignatureFile.class.getPackage().getName();
-    private String myFormatPackage = FileFormat.class.getPackage().getName();
-    
     private String namespace = "";
     private boolean useNamespace;
     private boolean allowGlobalNamespace = true;
-
-    /**
-     * 
-     * @param theSignaturePackage The signature package to use.
-     */
-    public void setSignaturePackage(String theSignaturePackage) {
-        mySignaturePackage = theSignaturePackage;
-    }
 
     /**
      * Set up XML namespace handling.
@@ -135,11 +121,9 @@ public class SAXModelBuilder extends DefaultHandler {
         if (nspace == null) {
             throw new IllegalArgumentException("Namespace cannot be null");
         }
-
         this.namespace = nspace;
         this.useNamespace = true;
         this.allowGlobalNamespace = globalNamespace;
-
     }
 
     /**
@@ -310,17 +294,5 @@ public class SAXModelBuilder extends DefaultHandler {
     public SimpleElement getModel() {
         return element;
     }
-    
-    /**
-     * Displays a special warning for unknown XML elements when reading
-     * XML files.
-     *
-     * @param unknownElement   The name of the element which was not recognised
-     * @param containerElement The name of the element which contains the unrecognised element
-     */
-    public void unknownElementWarning(String unknownElement, String containerElement) {
-        String warning = "WARNING: Unknown XML element " + unknownElement + " found under " + containerElement + " ";
-        log.trace(warning);
-    }    
 
 }
