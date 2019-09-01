@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-19, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,7 +76,7 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.xml;
 
-import java.util.*;
+import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,14 +87,38 @@ import org.xml.sax.helpers.DefaultHandler;
 import uk.gov.nationalarchives.droid.core.signature.FileFormat;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatCollection;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
-import uk.gov.nationalarchives.droid.core.signature.droid6.*;
+import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
+import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
+import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignature;
+import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection;
+import uk.gov.nationalarchives.droid.core.signature.droid6.LeftFragment;
+import uk.gov.nationalarchives.droid.core.signature.droid6.RightFragment;
+import uk.gov.nationalarchives.droid.core.signature.droid6.Shift;
+import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 
 /**
- * reads and parses data from an XML file.
+ * Reads and parses data from a DROID XML signature file.
  *
  * @version 4.0.0
  */
 public class SAXModelBuilder extends DefaultHandler {
+
+    private static final String SUB_SEQUENCE = "SubSequence";
+    private static final String BYTE_SEQUENCE = "ByteSequence";
+    private static final String INTERNAL_SIGNATURE = "InternalSignature";
+    private static final String FFSIGNATURE_FILE = "FFSignatureFile";
+    private static final String INTERNAL_SIGNATURE_COLLECTION = "InternalSignatureCollection";
+    private static final String FILE_FORMAT = "FileFormat";
+    private static final String FILE_FORMAT_COLLECTION = "FileFormatCollection";
+    private static final String EXTENSION = "Extension";
+    private static final String INTERNAL_SIGNATURE_ID = "InternalSignatureID";
+    private static final String HAS_PRIORITY_OVER_FILE_FORMAT_ID = "HasPriorityOverFileFormatID";
+    private static final String LEFT_FRAGMENT = "LeftFragment";
+    private static final String RIGHT_FRAGMENT = "RightFragment";
+    private static final String SEQUENCE = "Sequence";
+    private static final String SHIFT = "Shift";
+    private static final String DEFAULT_SHIFT = "DefaultShift";
+    private static final String FILE_FORMAT_HIT = "FileFormatHit";
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
@@ -161,22 +185,7 @@ public class SAXModelBuilder extends DefaultHandler {
         if (elementName == null) {
             return;
         }
-        final SimpleElement elem;
-        switch (elementName) {
-            case "FileFormat": elem = new FileFormat(); break;
-            case "FileFormatHit": elem = new FileFormatHit(); break;
-            case "FileFormatCollection": elem = new FileFormatCollection(); break;
-            case "ByteSequence": elem = new ByteSequence(); break;
-            case "FFSignatureFile": elem = new FFSignatureFile(); break;
-            case "InternalSignature": elem = new InternalSignature(); break;
-            case "InternalSignatureCollection": elem = new InternalSignatureCollection(); break;
-            case "LeftFragment": elem = new LeftFragment(); break;
-            case "RightFragment": elem = new RightFragment(); break;
-            case "Shift": elem = new Shift(); break;
-            case "SubSequence": elem = new SubSequence(); break;
-            default: elem = new SimpleElement();
-        }
-
+        final SimpleElement elem = getElement(elementName);
         for (int i = 0; i < atts.getLength(); i++) {
             String attributeName = handleNameNS(atts.getURI(i), atts.getLocalName(i), atts.getQName(i));
             if (attributeName == null) {
@@ -185,6 +194,25 @@ public class SAXModelBuilder extends DefaultHandler {
             elem.setAttributeValue(attributeName, atts.getValue(i));
         }
         stack.push(elem);
+    }
+
+    //CHECKSTYLE:OFF - too many returns - but this is the simplest way to structure this method.
+    private SimpleElement getElement(String elementName) {
+
+        switch (elementName) {
+            case FILE_FORMAT:                   return new FileFormat();
+            case FILE_FORMAT_HIT:               return new FileFormatHit();
+            case FILE_FORMAT_COLLECTION:        return new FileFormatCollection();
+            case BYTE_SEQUENCE:                 return new ByteSequence();
+            case FFSIGNATURE_FILE:              return new FFSignatureFile();
+            case INTERNAL_SIGNATURE:            return new InternalSignature();
+            case INTERNAL_SIGNATURE_COLLECTION: return new InternalSignatureCollection();
+            case LEFT_FRAGMENT:                 return new LeftFragment();
+            case RIGHT_FRAGMENT:                return new RightFragment();
+            case SHIFT:                         return new Shift();
+            case SUB_SEQUENCE:                  return new SubSequence();
+            default:                            return new SimpleElement();
+        }
     }
 
     /**
@@ -216,69 +244,69 @@ public class SAXModelBuilder extends DefaultHandler {
 
     private void setProperty(String name, Object target, Object value)  {
         switch (target.getClass().getSimpleName()) {
-            case "SubSequence": setSubSequenceProperty((SubSequence) target, name, value); break;
-            case "ByteSequence": setByteSequenceProperty((ByteSequence) target, name, value); break;
-            case "InternalSignature": setInternalSignatureProperty((InternalSignature) target, name, value); break;
-            case "FFSignatureFile": setFFSignatureFileProperty((FFSignatureFile) target, name, value); break;
-            case "InternalSignatureCollection": setInternalSignatureCollectionProperty((InternalSignatureCollection) target, name, value); break;
-            case "FileFormat": setFileFormatProperty((FileFormat) target, name, value); break;
-            case "FileFormatCollection": setFileFormatCollection((FileFormatCollection) target, name, value); break;
+            case SUB_SEQUENCE: setSubSequenceProperty((SubSequence) target, name, value); break;
+            case BYTE_SEQUENCE: setByteSequenceProperty((ByteSequence) target, name, value); break;
+            case INTERNAL_SIGNATURE: setInternalSignatureProperty((InternalSignature) target, name, value); break;
+            case FFSIGNATURE_FILE: setFFSignatureFileProperty((FFSignatureFile) target, name, value); break;
+            case INTERNAL_SIGNATURE_COLLECTION: setInternalSignatureCollectionProperty((InternalSignatureCollection) target, name, value); break;
+            case FILE_FORMAT: setFileFormatProperty((FileFormat) target, name, value); break;
+            case FILE_FORMAT_COLLECTION: setFileFormatCollection((FileFormatCollection) target, name, value); break;
             default: log.warn("Unknown target object: " + target.toString());
         }
     }
 
     private void setFileFormatCollection(FileFormatCollection target, String name, Object value) {
         switch (name) {
-            case "FileFormat": target.addFileFormat((FileFormat) value); break;
+            case FILE_FORMAT: target.addFileFormat((FileFormat) value); break;
             default: logUnknownProperty(name, target);
         }
     }
 
     private void setFileFormatProperty(FileFormat target, String name, Object value) {
-        String valueText = (value instanceof SimpleElement)? ((SimpleElement) value).getText().trim() : "";
+        String valueText = (value instanceof SimpleElement) ? ((SimpleElement) value).getText().trim() : "";
         switch (name) {
-            case "Extension": target.setExtension(valueText); break;
-            case "InternalSignatureID": target.setInternalSignatureID(valueText); break;
-            case "HasPriorityOverFileFormatID": target.setHasPriorityOverFileFormatID(valueText); break;
+            case EXTENSION: target.setExtension(valueText); break;
+            case INTERNAL_SIGNATURE_ID: target.setInternalSignatureID(valueText); break;
+            case HAS_PRIORITY_OVER_FILE_FORMAT_ID: target.setHasPriorityOverFileFormatID(valueText); break;
             default: logUnknownProperty(name, target);
         }
     }
 
     private void setInternalSignatureCollectionProperty(InternalSignatureCollection target, String name, Object value) {
         switch (name) {
-            case "InternalSignature": target.addInternalSignature((InternalSignature) value); break;
+            case INTERNAL_SIGNATURE: target.addInternalSignature((InternalSignature) value); break;
             default: logUnknownProperty(name, target);
         }
     }
 
     private void setFFSignatureFileProperty(FFSignatureFile target, String name, Object value) {
         switch (name) {
-            case "InternalSignatureCollection": target.setInternalSignatureCollection((InternalSignatureCollection) value); break;
-            case "FileFormatCollection": target.setFileFormatCollection((FileFormatCollection) value); break;
+            case INTERNAL_SIGNATURE_COLLECTION: target.setInternalSignatureCollection((InternalSignatureCollection) value); break;
+            case FILE_FORMAT_COLLECTION: target.setFileFormatCollection((FileFormatCollection) value); break;
             default: logUnknownProperty(name, target);
         }
     }
 
     private void setInternalSignatureProperty(InternalSignature target, String name, Object value) {
         switch (name) {
-            case "ByteSequence": target.addByteSequence((ByteSequence) value); break;
+            case BYTE_SEQUENCE: target.addByteSequence((ByteSequence) value); break;
             default: logUnknownProperty(name, target);
         }
     }
 
     private void setByteSequenceProperty(ByteSequence target, String name, Object value) {
         switch(name) {
-            case "SubSequence": target.addSubSequence(((SubSequence) value)); break;
+            case SUB_SEQUENCE: target.addSubSequence((SubSequence) value); break;
             default: logUnknownProperty(name, target);
         }
     }
 
     private void setSubSequenceProperty(SubSequence target, String name, Object value) {
         switch(name) {
-            case "LeftFragment": target.addLeftFragment((LeftFragment) value); break;
-            case "RightFragment": target.addRightFragment((RightFragment) value); break;
-            case "Sequence": target.setSequence(((SimpleElement) value).getText().trim()); break;
-            case "Shift": case "DefaultShift": break; // Ignore Shift and DefaultShift - they are deprecated.
+            case LEFT_FRAGMENT: target.addLeftFragment((LeftFragment) value); break;
+            case RIGHT_FRAGMENT: target.addRightFragment((RightFragment) value); break;
+            case SEQUENCE: target.setSequence(((SimpleElement) value).getText().trim()); break;
+            case SHIFT: case DEFAULT_SHIFT: break; // Ignore Shift and DefaultShift - they are deprecated.
             default: logUnknownProperty(name, target);
         }
     }
@@ -294,5 +322,4 @@ public class SAXModelBuilder extends DefaultHandler {
     public SimpleElement getModel() {
         return element;
     }
-
 }
