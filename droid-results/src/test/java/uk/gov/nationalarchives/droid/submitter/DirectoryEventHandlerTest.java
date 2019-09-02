@@ -119,8 +119,8 @@ public class DirectoryEventHandlerTest {
         
         IdentificationResult result = resultCaptor.getValue();
         assertEquals(dir.getFileName().toString(), result.getMetaData().getName());
-        assertEquals(FileUtil.sizeQuietly(dir), result.getMetaData().getSize().longValue());
-        assertEquals(Files.getLastModifiedTime(dir).toMillis(), result.getMetaData().getTime().longValue());
+        assertEquals("Directory Size is invalid", FileUtil.sizeQuietly(dir), result.getMetaData().getSize().longValue());
+        assertEquals("Last Modified Time is invalid", Files.getLastModifiedTime(dir).toMillis(), result.getMetaData().getTime().longValue());
         assertEquals(dir.toUri(), result.getIdentifier().getUri());
         assertEquals(1L, result.getIdentifier().getParentId().longValue());
     }
@@ -138,8 +138,8 @@ public class DirectoryEventHandlerTest {
         
         IdentificationResult result = resultCaptor.getValue();
         assertEquals(dir.toAbsolutePath().toString(), result.getMetaData().getName());
-        assertEquals(FileUtil.sizeQuietly(dir), result.getMetaData().getSize().longValue());
-        assertEquals(Files.getLastModifiedTime(dir).toMillis(), result.getMetaData().getTime().longValue());
+        assertEquals("Directory Size is invalid", FileUtil.sizeQuietly(dir), result.getMetaData().getSize().longValue());
+        assertEquals("Last Modified Time is invalid", Files.getLastModifiedTime(dir).toMillis(), result.getMetaData().getTime().longValue());
         assertEquals(dir.toUri(), result.getIdentifier().getUri());
         assertEquals(1L, result.getIdentifier().getParentId().longValue());
 
