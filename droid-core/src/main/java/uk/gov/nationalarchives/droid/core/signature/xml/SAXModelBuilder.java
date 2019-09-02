@@ -198,7 +198,7 @@ public class SAXModelBuilder extends DefaultHandler {
 
     //CHECKSTYLE:OFF - too many returns - but this is the simplest way to structure this method.
     private SimpleElement getElement(String elementName) {
-
+    //CHECKSTYLE:ON
         switch (elementName) {
             case FILE_FORMAT:                   return new FileFormat();
             case FILE_FORMAT_HIT:               return new FileFormatHit();
