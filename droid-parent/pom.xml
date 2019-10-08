@@ -93,7 +93,7 @@
         <flying-saucer.version>9.1.18</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
         <jwat.version>1.1.1</jwat.version>
-        <hamcrest.version>1.3</hamcrest.version>
+        <hamcrest.version>2.1</hamcrest.version>
         <slf4j.version>1.7.28</slf4j.version>
     </properties>
   
@@ -675,7 +675,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
@@ -710,7 +710,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
+                <artifactId>hamcrest</artifactId>
                 <version>${hamcrest.version}</version>
             </dependency>
             <dependency>
