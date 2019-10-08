@@ -66,7 +66,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
-import org.apache.commons.collections.list.SetUniqueList;
+import org.apache.commons.collections4.list.SetUniqueList;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -108,13 +108,13 @@ public class ConfigDialog extends JDialog {
     private ObservableMap<String, Object> globalConfig = ObservableCollections.observableMap(props);
     
     private ObservableList<String> allHashAlgorithms = 
-        ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
+        ObservableCollections.observableList(SetUniqueList.setUniqueList(new ArrayList()));
     
     private ObservableList<String> allBinarySigFiles = 
-        ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
+        ObservableCollections.observableList(SetUniqueList.setUniqueList(new ArrayList()));
     
     private ObservableList<String> allContainerSigFiles = 
-        ObservableCollections.observableList(SetUniqueList.decorate(new ArrayList()));
+        ObservableCollections.observableList(SetUniqueList.setUniqueList(new ArrayList()));
 
     /*
     private ObservableList<String> allTextSigFiles = 

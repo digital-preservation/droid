@@ -31,7 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import org.apache.commons.collections.Predicate;
+
+import org.apache.commons.collections4.Predicate;
 
 /**
  * @author Alok Kumar Dash.
