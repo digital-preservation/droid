@@ -117,6 +117,9 @@
 								<ignoredUnusedDeclaredDependency>javax.annotation:javax.annotation-api</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>com.sun.activation:javax.activation</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
+							<ignoredUsedUndeclaredDependencies>
+								<ignoredUsedUndeclaredDependency>stax:stax-api</ignoredUsedUndeclaredDependency>
+							</ignoredUsedUndeclaredDependencies>
 						</configuration>
 					</execution>
 				</executions>
