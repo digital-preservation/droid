@@ -9,6 +9,7 @@ matrix:
     - os: osx
       osx_image: xcode10.1
       env: JAVA_HOME=$(/usr/libexec/java_home)
+    - dist: bionic
 
 services:
   - xvfb
