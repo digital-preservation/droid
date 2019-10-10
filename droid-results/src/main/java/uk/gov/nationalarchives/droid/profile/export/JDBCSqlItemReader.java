@@ -338,6 +338,9 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                         case Integer:
                             this.profileStatement.setInt(++i, (Integer) value2);
                             break;
+                        case Boolean:
+                            this.profileStatement.setBoolean(++i, (Boolean) value2);
+                            break;
                         default:
                             log.error("Invalid filter parameter type in JDBCSQLItemReader");
                             break;
