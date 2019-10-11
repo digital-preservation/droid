@@ -38,8 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.collections4.Transformer;
+import org.apache.commons.collections4.map.LazyMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ public class ProfileContextLocator {
 
     @SuppressWarnings("unchecked")
     private Map<String, ProfileInstance> profileInstances = 
-        LazyMap.decorate(new HashMap<String, ProfileInstance>(), new ProfileTransformer());
+        LazyMap.lazyMap(new HashMap<String, ProfileInstance>(), new ProfileTransformer());
     
     private ProfileInstanceLocator profileInstanceLocator;
     

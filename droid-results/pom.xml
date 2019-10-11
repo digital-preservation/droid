@@ -22,7 +22,7 @@
 
 	<properties>
 		<jta.version>1.1</jta.version>
-		<cglib.version>3.2.5</cglib.version>
+		<cglib.version>3.3.0</cglib.version>
 		<slf4j.version>1.7.25</slf4j.version>
 	</properties>
 
@@ -117,6 +117,9 @@
 								<ignoredUnusedDeclaredDependency>javax.annotation:javax.annotation-api</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>com.sun.activation:javax.activation</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
+							<ignoredUsedUndeclaredDependencies>
+								<ignoredUsedUndeclaredDependency>stax:stax-api</ignoredUsedUndeclaredDependency>
+							</ignoredUsedUndeclaredDependencies>
 						</configuration>
 					</execution>
 				</executions>
@@ -306,8 +309,8 @@
 			<artifactId>commons-configuration</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.zaxxer</groupId>
@@ -335,7 +338,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
+			<artifactId>hamcrest</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

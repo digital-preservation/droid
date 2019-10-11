@@ -158,14 +158,14 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>uk.gov.nationalarchives.thirdparty.netbeans</groupId>
+            <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>7.2</version>
+            <version>RELEASE111</version>
         </dependency>
         <dependency>
-            <groupId>uk.gov.nationalarchives.thirdparty.netbeans</groupId>
+            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-swing-outline</artifactId>
-            <version>7.2</version>
+            <version>RELEASE111</version>
         </dependency>
         <dependency>
             <groupId>org.jdesktop</groupId>
@@ -181,8 +181,8 @@
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
