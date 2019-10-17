@@ -34,7 +34,7 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>bin</id>
+  <id>bin-win64</id>
   <formats>
     <format>zip</format>
   </formats>
@@ -66,11 +66,8 @@
       <directory>${project.build.outputDirectory}</directory>
     </fileSet>
     <fileSet>
-      <directory>target/jre</directory>
+      <directory>target/jre-windows</directory>
       <outputDirectory>jre</outputDirectory>
-      <excludes>
-        <exclude>bin/java</exclude>
-      </excludes>
     </fileSet>
     <fileSet>
       <directory>bin</directory>
@@ -93,12 +90,6 @@
 
   <files>
     <file>
-      <source>bin/droid.sh</source>
-      <outputDirectory>/</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>755</fileMode>
-    </file>
-    <file>
       <source>bin/droid.bat</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
@@ -109,11 +100,6 @@
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>644</fileMode>
-    </file>
-    <file>
-      <source>target/jre/bin/java</source>
-      <outputDirectory>jre/bin/</outputDirectory>
-      <fileMode>0775</fileMode>
     </file>
   </files>
 

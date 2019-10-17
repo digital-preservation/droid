@@ -141,12 +141,12 @@ IF "%1"=="" GOTO NOPARAM
 
 :PARAM
 REM Has command-line parameters -- run command-line version:
-java %DROID_OPTIONS% -jar "%DROID_HOME%droid-command-line-${project.version}.jar" %*
+%DROID_HOME%/jre/bin/java %DROID_OPTIONS% -jar "%DROID_HOME%droid-command-line-${project.version}.jar" %*
 
 GOTO end
 
 :NOPARAM
 REM No command-line parameters passed -- run GUI version:
-start javaw %DROID_OPTIONS% -jar "%DROID_HOME%droid-ui-${project.version}.jar"
+start %DROID_HOME%/jre/bin/javaw %DROID_OPTIONS% -jar "%DROID_HOME%droid-ui-${project.version}.jar"
 
 :END
