@@ -60,9 +60,17 @@
       <fileMode>644</fileMode>
     </dependencySet>
   </dependencySets>
+
   <fileSets>
     <fileSet>
       <directory>${project.build.outputDirectory}</directory>
+    </fileSet>
+    <fileSet>
+      <directory>target/jre</directory>
+      <outputDirectory>jre</outputDirectory>
+      <excludes>
+        <exclude>bin/java</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
       <directory>bin</directory>
@@ -101,6 +109,11 @@
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>644</fileMode>
+    </file>
+    <file>
+      <source>target/jre/bin/java</source>
+      <outputDirectory>jre/bin/</outputDirectory>
+      <fileMode>0775</fileMode>
     </file>
   </files>
 
