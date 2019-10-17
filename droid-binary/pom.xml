@@ -24,6 +24,41 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>download-files</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <get src="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jre_x64_linux_hotspot_8u222b10.tar.gz"
+                                     dest="${project.build.directory}/jdk8.tar.gz"
+                                     verbose="true"
+                                     usetimestamp="true"/>
+                                <untar src="${project.build.directory}/jdk8.tar.gz" compression="gzip" dest="${project.build.directory}/jre_tmp/"/>
+
+                                <move todir="${project.build.directory}/jre/">
+                                    <fileset dir="${project.build.directory}/jre_tmp/jdk8u222-b10-jre/">
+                                        <include name="**/*"/>
+                                    </fileset>
+                                </move>
+
+                                <delete includeemptydirs="true">
+                                    <fileset dir="${project.build.directory}/jre_tmp/">
+                                    </fileset>
+                                </delete>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptors>
