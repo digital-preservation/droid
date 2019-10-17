@@ -27,34 +27,6 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>download-files-linux</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <get src="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jre_x64_linux_hotspot_8u222b10.tar.gz"
-                                     dest="${project.build.directory}/jdk-linux.tar.gz"
-                                     verbose="true"
-                                     usetimestamp="true"/>
-                                <untar src="${project.build.directory}/jdk-linux.tar.gz" compression="gzip" dest="${project.build.directory}/jre_tmp/"/>
-
-                                <move todir="${project.build.directory}/jre-linux/">
-                                    <fileset dir="${project.build.directory}/jre_tmp/jdk8u222-b10-jre/">
-                                        <include name="**/*"/>
-                                    </fileset>
-                                </move>
-
-                                <delete includeemptydirs="true">
-                                    <fileset dir="${project.build.directory}/jre_tmp/">
-                                    </fileset>
-                                </delete>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>download-files-windows</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -91,14 +63,14 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>make-assembly-linux</id> <!-- this is used for inheritance merges -->
+                        <id>make-assembly-unix</id> <!-- this is used for inheritance merges -->
                         <phase>package</phase> <!-- append to the packaging phase. -->
                         <goals>
                             <goal>single</goal> <!-- goals == mojos -->
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>assembly-linux.xml</descriptor>
+                                <descriptor>assembly-unix.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -110,7 +82,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>assembly-windows.xml</descriptor>
+                                <descriptor>assembly-windows-with-jre.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
