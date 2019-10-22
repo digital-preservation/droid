@@ -23,11 +23,32 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.4.2</version>
+                <executions>
+                    <execution>
+                        <id>download-files-windows</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jre_x64_windows_hotspot_8u222b10.zip</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <md5>df65b5642f33676313ebe4d5b69a3fff</md5>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>download-files-windows</id>
+                        <id>prepare-files-windows</id>
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>run</goal>
@@ -35,11 +56,7 @@
                         <configuration>
                             <tasks>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <get src="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jre_x64_windows_hotspot_8u222b10.zip"
-                                     dest="${project.build.directory}/jdk-windows.zip"
-                                     verbose="true"
-                                     usetimestamp="true"/>
-                                <unzip src="${project.build.directory}/jdk-windows.zip" dest="${project.build.directory}/jre_tmp/"/>
+                                <unzip src="${project.build.directory}/OpenJDK8U-jre_x64_windows_hotspot_8u222b10.zip" dest="${project.build.directory}/jre_tmp/"/>
 
                                 <move todir="${project.build.directory}/jre-windows/">
                                     <fileset dir="${project.build.directory}/jre_tmp/jdk8u222-b10-jre/">
