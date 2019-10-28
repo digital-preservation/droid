@@ -86,7 +86,7 @@
         <spring.version>5.2.0.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
-        <cxf.version>3.3.3</cxf.version>
+        <cxf.version>3.3.4</cxf.version>
         <aspectj.version>1.9.4</aspectj.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
