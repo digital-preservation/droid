@@ -94,7 +94,8 @@ public enum DroidGlobalProperty {
     
     /** Development mode. */
     DEV_MODE("development_mode", PropertyType.BOOLEAN, false),
-    
+
+    //TODO JC have boolean here for each container type
     /** Whether to process files in archives. */
     PROCESS_ARCHIVES("profile.processArchives", PropertyType.BOOLEAN, true),
 

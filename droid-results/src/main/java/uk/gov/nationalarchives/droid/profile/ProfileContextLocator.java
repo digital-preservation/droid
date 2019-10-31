@@ -91,6 +91,8 @@ public class ProfileContextLocator {
                     .getString(DroidGlobalProperty.HASH_ALGORITHM.getName()));
             profileInstance.setGenerateHash(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.GENERATE_HASH.getName()));
+            //TODO JC manage all property booleans here
+            // could have a single pojo on profile instance
             profileInstance.setProcessArchiveFiles(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.PROCESS_ARCHIVES.getName()));
             profileInstance.setProcessWebArchiveFiles(globalConfig.getProperties()

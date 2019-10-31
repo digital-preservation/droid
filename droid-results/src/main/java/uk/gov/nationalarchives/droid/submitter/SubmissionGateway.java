@@ -164,6 +164,7 @@ public class SubmissionGateway implements AsynchDroid {
                     
                     // Are we processing archive formats?
                     if ((processArchives || processWebArchives) && archiveFormatResolver != null) {
+                        //TODO JC include list of included archive types in handleArchive
                         jobCountDecremented = handleArchive(request, results);
                     } else { // just process the results so far:
                         results.setArchive(getArchiveFormat(results) != null);
@@ -263,6 +264,7 @@ public class SubmissionGateway implements AsynchDroid {
         boolean jobCountDecremented = false;
         
         String archiveFormat = getArchiveFormat(results);
+        //TODO JC check for all formats here (archiveFormat="ZIP" if zip)
         if (archiveFormat != null) {
             results.setArchive(true);
             ResourceId id = resultHandler.handle(results); 
@@ -448,7 +450,7 @@ public class SubmissionGateway implements AsynchDroid {
      * @param processArchives set whether to process Archives
      */
     public void setProcessArchives(boolean processArchives) {
-
+        //TODO JC I would replace boolean with a pojo and booleans for each managed container
         this.processArchives = processArchives;
     }
 
@@ -456,6 +458,7 @@ public class SubmissionGateway implements AsynchDroid {
      * @param processWebArchives set whether to process Web Archives
      */
     public void setProcessWebArchives(boolean processWebArchives) {
+        //TODO JC I would replace boolean with a pojo and booleans for each managed container
         this.processWebArchives = processWebArchives;
     }
 

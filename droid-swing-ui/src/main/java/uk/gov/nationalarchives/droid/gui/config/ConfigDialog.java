@@ -270,7 +270,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         processArchivesCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processArchivesCheckBox.text")); // NOI18N
-
+        //TODO JC need boolean for each container type like the one right below
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processArchives\"]}"), processArchivesCheckBox, BeanProperty.create("selected"), "archiveBinding");
         bindingGroup.addBinding(binding);
 
@@ -847,6 +847,7 @@ public class ConfigDialog extends JDialog {
     private JTextField jTextField1;
     private JTextField jTextField2;
     private JButton okButton;
+    //TODO JC need a checkbox for each container type
     private JCheckBox processArchivesCheckBox;
     private JCheckBox processWebArchivesCheckBox;
     private JButton pronomUrlResetButton;
