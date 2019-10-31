@@ -148,7 +148,7 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
                 correlationId = directories.get(prefixPath);
                 // If we haven't seen the path before, add the ancestor folders not yet seen:
                 if (correlationId == null) {
-                    correlationId = processAncestorFolders(prefixPath);
+                    correlationId = processAncestorFolders(prefixPath, info.getEntry().getLastModifiedDate());
                 }
             }
 
@@ -171,12 +171,13 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
          */
         final void submit(SevenZEntryInfo info, String entryName,
                           ResourceId correlationId) throws IOException {
-            long size = info.entry.getSize();
-            Date time = new Date();
+            Long size = info.entry != null ? info.entry.getSize() : null;
+            Long lastModfied = info.entry != null && info.entry.getHasLastModifiedDate()
+                    ? info.entry.getLastModifiedDate().getTime() : new Date().getTime();
 
             RequestMetaData metaData = new RequestMetaData(
-                    size == -1 ? null : size,
-                    time == null ? null : time.getTime(),
+                    size,
+                    lastModfied,
                     entryName);
 
             RequestIdentifier identifier =
@@ -191,7 +192,7 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
             droid.submit(request);
         }
 
-        private ResourceId processAncestorFolders(String path) {
+        private ResourceId processAncestorFolders(String path, Date lastModified) {
             List<String> paths = ArchiveFileUtils.getAncestorPaths(path);
             ResourceId longestParentId = parentId;
             // Find the longest path we *have* seen before (if any):
@@ -211,7 +212,7 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
             for (int pathIndex = longestSeenBefore - 1; pathIndex >= 0; pathIndex--) {
                 final String pathName = paths.get(pathIndex);
                 SevenZArchiveEntry entry = new SevenZArchiveEntry();
-                entry.setLastModifiedDate(new Date());
+                entry.setLastModifiedDate(lastModified);
                 entry.setName(pathName);
                 String dirName = FilenameUtils.getName(pathName.substring(0, pathName.length() - 1));
                 longestParentId = submitDirectory(parentName, entry, dirName, longestParentId, resultHandler);
