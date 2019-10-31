@@ -56,8 +56,8 @@ import java.util.List;
 public class ByteSequenceParser {
 
     /*
-         * Static syntactic character elements
-         */
+     * Constants
+     */
     private static final char SPACE = ' ';
     private static final char NEWLINE = '\n';
     private static final char CARRIAGE_RETURN = '\r';
@@ -76,6 +76,8 @@ public class ByteSequenceParser {
     private static final char ASTERISK = '*';
     private static final char HYPHEN = '-';
 
+    private static final ParseTree REPEAT_ANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
+
     /**
      * Convenient static parser (there is no state, so we can just have a static parser).
      */
@@ -88,20 +90,16 @@ public class ByteSequenceParser {
      * @return A list of abstract syntax trees representing subsequences in the bytesequence.
      * @throws ParseException if there was any problem parsing the expression.
      */
-    public List<ParseTree> parseSubSequences(final String droidExpression) throws ParseException {
+    public ParseTree parseByteSequence(final String droidExpression) throws ParseException {
         final StringParseReader reader = new StringParseReader(droidExpression);
-        final List<ParseTree> subSequenceNodes = new ArrayList<>();
         final List<ParseTree> byteSequenceNodes = new ArrayList<>();
         int currentChar;
         while ((currentChar = reader.read()) >= 0) {
             switch (currentChar) {
 
-                // * Wildcard - terminates the subsequence - add subsequences to bytesequence list.
+                // * Wildcard -
                 case ASTERISK: {
-                    final ParseTree subSequenceTree =
-                            new ChildrenNode(ParseTreeType.SEQUENCE, subSequenceNodes);
-                    byteSequenceNodes.add(subSequenceTree);
-                    subSequenceNodes.clear();
+                    byteSequenceNodes.add(REPEAT_ANY);
                     break;
                 }
 
@@ -114,68 +112,37 @@ public class ByteSequenceParser {
                 case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
                 case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
                 case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': {
-                    subSequenceNodes.add(ByteNode.valueOf(reader.readHexByte(currentChar)));
+                    byteSequenceNodes.add(ByteNode.valueOf(reader.readHexByte(currentChar)));
                     break;
                 }
 
                 // Any byte ??
                 case QUESTION_MARK: {
-                    subSequenceNodes.add(parseAnyNode(reader));
+                    byteSequenceNodes.add(parseAnyNode(reader));
                     break;
                 }
 
                 // Inverted or ranged bytes:
                 case OPEN_SQUARE_BRACKET: {
-                    subSequenceNodes.add(parseByteSet(reader));
+                    byteSequenceNodes.add(parseByteSet(reader));
                     break;
                 }
 
                 // Wildcard Gaps {n}, {n-m} and {n-*} - this is complicated by the potential * wildcard we have to process.
                 case OPEN_CURLY_BRACKET: {
-                    final int firstGapNumber = reader.readInt();
-                    int nextChar = reader.read();
-                    switch (nextChar) {
-                        case CLOSE_CURLY_BRACKET: {
-                            subSequenceNodes.add(createFixedGapNode(firstGapNumber));
-                            break;
-                        }
-                        case HYPHEN: {
-                            if (reader.peekAhead() == ASTERISK) { // end of subsequence.
-                                reader.read(); // consume the *
-                                if (reader.read() == CLOSE_CURLY_BRACKET) { // And is closed by a }
-
-                                    // Add a fixed gap for the first number, then end the subsequence:
-                                    subSequenceNodes.add(createFixedGapNode(firstGapNumber));
-                                    final ParseTree subSequenceTree =
-                                            new ChildrenNode(ParseTreeType.SEQUENCE, subSequenceNodes);
-                                    byteSequenceNodes.add(subSequenceTree);
-                                    subSequenceNodes.clear();
-                                    break;
-                                }
-                                throw createParseException("{n,*} - asterisk not closed by }", reader);
-                            } else { // The value must be a second number:
-                                final int secondGapNumber = reader.readInt();
-                                if (reader.read() == CLOSE_CURLY_BRACKET) { // number is closed with }
-                                    subSequenceNodes.add(createRangeGapNode(firstGapNumber, secondGapNumber));
-                                    break;
-                                }
-                                throw createParseException("{n,m} - not closed by }", reader);
-                            }
-                        }
-                        default: throw createParseException("Invalid {n,m} syntax in", reader);
-                    }
+                    byteSequenceNodes.add(parseGaps(reader));
                     break;
                 }
 
                 // Alternative sequences (a|b)
                 case OPEN_ROUND_BRACKET: {
-                    subSequenceNodes.add(parseAlternatives(reader));
+                    byteSequenceNodes.add(parseAlternatives(reader));
                     break;
                 }
 
                 // Open string (used in container syntax, so support here):
                 case SINGLE_QUOTE: {
-                    subSequenceNodes.add(parseString(reader));
+                    byteSequenceNodes.add(parseString(reader));
                     break;
                 }
 
@@ -183,23 +150,33 @@ public class ByteSequenceParser {
             }
         }
 
-        // Add remaining subsequence nodes after last asterisk (or no asterisks were there)
-        if (!subSequenceNodes.isEmpty()) {
-            final ParseTree subSequenceTree =
-                    new ChildrenNode(ParseTreeType.SEQUENCE, subSequenceNodes);
-            byteSequenceNodes.add(subSequenceTree);
+        return new ChildrenNode(ParseTreeType.SEQUENCE, byteSequenceNodes);
+    }
+
+    private ParseTree parseGaps(final StringParseReader reader) throws ParseException {
+        final int firstGapNumber = reader.readInt();
+        int nextChar = reader.read();
+        switch (nextChar) {
+            case CLOSE_CURLY_BRACKET: { // of form {m}
+                return new ChildrenNode(ParseTreeType.REPEAT, new IntNode(firstGapNumber), BaseNode.ANY_NODE);
+            }
+            case HYPHEN: {  // Either {m,n} or {m,*}
+                if (reader.peekAhead() == ASTERISK) { // Of form {m,*}
+                    reader.read(); // consume the *
+                    if (reader.read() == CLOSE_CURLY_BRACKET) { // And is closed by a }
+                        return new ChildrenNode(ParseTreeType.REPEAT_MIN_TO_MANY, new IntNode(firstGapNumber));
+                    }
+                } else { // Of form {m,n}
+                    final int secondGapNumber = reader.readInt();
+                    if (reader.read() == CLOSE_CURLY_BRACKET) {
+                        return new ChildrenNode(ParseTreeType.REPEAT_MIN_TO_MAX,
+                                                new IntNode(firstGapNumber), new IntNode(secondGapNumber),
+                                                BaseNode.ANY_NODE);
+                    }
+                }
+            }
         }
-
-        return byteSequenceNodes;
-    }
-
-    private ParseTree createFixedGapNode(int firstGapNumber) {
-        return new ChildrenNode(ParseTreeType.REPEAT, new IntNode(firstGapNumber), BaseNode.ANY_NODE);
-    }
-
-    private ParseTree createRangeGapNode(int minGap, int maxGap) {
-        return new ChildrenNode(ParseTreeType.REPEAT_MIN_TO_MAX,
-                new IntNode(minGap), new IntNode(maxGap), BaseNode.ANY_NODE);
+        throw createParseException("Invalid {n,m} syntax in", reader);
     }
 
     private ParseTree parseAlternatives(final StringParseReader reader) throws ParseException {
@@ -242,6 +219,11 @@ public class ByteSequenceParser {
                     sequence.add(ByteNode.valueOf(reader.readHexByte(currentChar)));
                 }
             }
+        }
+
+        // Add any last unprocessed alternative:
+        if (sequence.size() > 0) {
+            alternatives.add(new ChildrenNode(ParseTreeType.SEQUENCE, sequence));
         }
 
         // If we've closed the alternatives properly and we have some, return them:
