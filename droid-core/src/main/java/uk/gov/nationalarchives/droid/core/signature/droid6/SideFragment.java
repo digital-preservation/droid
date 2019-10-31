@@ -130,7 +130,26 @@ public class SideFragment extends SimpleElement implements Cloneable {
     private SequenceMatcher matcher;
     private Searcher searcher;
     private boolean isInvalidFragment;
-  
+
+    public SideFragment() {
+    }
+
+    public SideFragment(SequenceMatcher matcher, int minOffset, int maxOffset, int position) {
+        this.matcher = matcher;
+        this.myMinOffset = minOffset;
+        this.myMaxOffset = maxOffset;
+        this.myPosition  = position;
+        buildSearcher();
+    }
+
+    public SideFragment(final SideFragment toCopy) {
+        this.matcher = toCopy.matcher;
+        this.myMinOffset = toCopy.myMinOffset;
+        this.myMaxOffset = toCopy.myMaxOffset;
+        this.myPosition = toCopy.myPosition;
+        buildSearcher();
+    }
+
     /* setters */
     /**
      * @param thePosition the positionInFile of the fragment in the
@@ -183,15 +202,19 @@ public class SideFragment extends SimpleElement implements Cloneable {
         try {
             final String transformed = FragmentRewriter.rewriteFragment(expression);
             matcher = EXPRESSION_COMPILER.compile(transformed);
-            if (matcher.length() == 1) {
-                searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0));
-            } else {
-                searcher = new HorspoolFinalFlagSearcher(matcher);
-            }
+            buildSearcher();
         } catch (CompileException ex) {
             final String warning = String.format(FRAGMENT_PARSE_ERROR, expression, ex.getMessage());
             isInvalidFragment = true;
             getLog().warn(warning);            
+        }
+    }
+
+    private void buildSearcher() {
+        if (matcher.length() == 1) {
+            searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0));
+        } else {
+            searcher = new HorspoolFinalFlagSearcher(matcher);
         }
     }
     

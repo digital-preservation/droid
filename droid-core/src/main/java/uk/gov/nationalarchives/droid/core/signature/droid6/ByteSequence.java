@@ -239,6 +239,14 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     }
 
     /**
+     * Return a defensive copy of any subsequences in this ByteSequence.
+     * @return a defensive copy of any subsequences in this ByteSequence.
+     */
+    public List<SubSequence> getSubSequences() {
+        return new ArrayList<SubSequence>(subSequences);
+    }
+
+    /**
      * If a reference attribute doesn't exist, this method may never be called.
      * Be careful with any general setup done in this method.  Defaults should already
      * exist which are true if the reference is not set.
