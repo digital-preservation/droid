@@ -188,6 +188,20 @@ public class SubSequence extends SimpleElement {
     private boolean useLeftFragmentBackTrack;
     private boolean useRightFragmentBackTrack;
 
+    public SubSequence() {
+    }
+
+    public SubSequence(final SequenceMatcher anchor,
+                       final List<List<SideFragment>> leftFragments,
+                       final List<List<SideFragment>> rightFragments,
+                       final int minSeqOffset, final int maxSeqOffset) {
+        this.matcher = anchor;
+        this.orderedLeftFragments.addAll(leftFragments);
+        this.orderedRightFragments.addAll(rightFragments);
+        this.minSeqOffset = minSeqOffset;
+        this.maxSeqOffset = maxSeqOffset;
+        //TODO: what else needs to be set?
+    }
 
     /**
      *
@@ -386,6 +400,29 @@ public class SubSequence extends SimpleElement {
         hasRightFragments = !orderedRightFragments.isEmpty();
     }
 
+    public SequenceMatcher getAnchorMatcher() {
+        return matcher; // matchers are immutable, no harm in just returning it.
+    }
+
+    public List<List<SideFragment>> getLeftFragments() {
+        return defensiveCopy(orderedLeftFragments);
+    }
+
+    public List<List<SideFragment>> getRightFragments() {
+        return defensiveCopy(orderedRightFragments);
+    }
+
+    private List<List<SideFragment>> defensiveCopy(List<List<SideFragment>> toCopy) {
+        final List<List<SideFragment>> defensiveCopy = new ArrayList<>();
+        for (List<SideFragment> fragmentsAtPosition : toCopy) {
+            final List<SideFragment> newFragmentList = new ArrayList<>();
+            for (SideFragment fragment : fragmentsAtPosition) {
+                newFragmentList.add(new SideFragment(fragment));
+            }
+            defensiveCopy.add(newFragmentList);
+        }
+        return defensiveCopy;
+    }
 
     /*
      * Re-orders the left and right sequence fragments in increasing positionInFile order.
