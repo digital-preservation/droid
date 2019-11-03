@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.core.signature.compiler;
 
 import net.byteseek.parser.ParseException;
+import net.byteseek.parser.Parser;
 import net.byteseek.parser.StringParseReader;
 import net.byteseek.parser.tree.ParseTree;
 import net.byteseek.parser.tree.ParseTreeType;
@@ -50,10 +51,15 @@ import java.util.List;
  * delimited by single quotes, and you can use whitespace (space, tab, newline and carriage return) to
  * separate syntactic elements.
  * <p>
+ * The resulting AST accurately represents the input string; it does not attempt to validate whether the AST
+ * can be further compiled by DROID (e.g. you could just have some wildcards with no byte values).  Whether the AST
+ * is compilable is a problem for a compiler (and different compilers may have different attitudes to the same AST).
+ * However, it will reject syntactically invalid constructs (e.g. empty alternatives, or unclosed strings).
+ * <p>
  * Note that container syntax isn't directly supported by PRONOM, so you would need to remove whitespace
  * and convert strings to hex bytes if you intend to submit a signature as a binary signature to PRONOM.
  */
-public class ByteSequenceParser {
+public final class ByteSequenceParser implements Parser<ParseTree> {
 
     /*
      * Constants
@@ -90,7 +96,8 @@ public class ByteSequenceParser {
      * @return A list of abstract syntax trees representing subsequences in the bytesequence.
      * @throws ParseException if there was any problem parsing the expression.
      */
-    public ParseTree parseByteSequence(final String droidExpression) throws ParseException {
+    @Override
+    public ParseTree parse(final String droidExpression) throws ParseException {
         final StringParseReader reader = new StringParseReader(droidExpression);
         final List<ParseTree> byteSequenceNodes = new ArrayList<>();
         int currentChar;
@@ -146,7 +153,7 @@ public class ByteSequenceParser {
                     break;
                 }
 
-                default: createParseException("Invalid character in droid expression", reader);
+                default: throw createParseException("Invalid character in droid expression", reader);
             }
         }
 
@@ -176,7 +183,7 @@ public class ByteSequenceParser {
                 }
             }
         }
-        throw createParseException("Invalid {n,m} syntax in", reader);
+        throw createParseException("Invalid {n-m} syntax in", reader);
     }
 
     private ParseTree parseAlternatives(final StringParseReader reader) throws ParseException {
@@ -195,6 +202,10 @@ public class ByteSequenceParser {
 
                 // Closes alternatives - stop processing.
                 case CLOSE_ROUND_BRACKET: {
+                    if (sequence.size() == 0) { // no sequence defined before closing:
+                        throw createParseException("No sequence defined before closing bracket )", reader);
+                    }
+                    alternatives.add(createAlternativeNode(sequence));
                     break ALTERNATIVES;
                 }
 
@@ -203,7 +214,7 @@ public class ByteSequenceParser {
                     if (sequence.size() == 0) { // no sequence defined before alternative:
                         throw createParseException("No sequence defined before alternative |", reader);
                     }
-                    alternatives.add(new ChildrenNode(ParseTreeType.SEQUENCE, sequence));
+                    alternatives.add(createAlternativeNode(sequence));
                     sequence = new ArrayList<ParseTree>(); // start a new sequence list.
                     break;
                 }
@@ -214,6 +225,12 @@ public class ByteSequenceParser {
                     break;
                 }
 
+                // Byte set type.
+                case OPEN_SQUARE_BRACKET: {
+                    sequence.add(parseByteSet(reader));
+                    break;
+                }
+
                 // Must be a hex byte - add it to the alternative sequence.  Will throw an error if not.
                 default: {
                     sequence.add(ByteNode.valueOf(reader.readHexByte(currentChar)));
@@ -221,16 +238,22 @@ public class ByteSequenceParser {
             }
         }
 
-        // Add any last unprocessed alternative:
-        if (sequence.size() > 0) {
-            alternatives.add(new ChildrenNode(ParseTreeType.SEQUENCE, sequence));
-        }
-
         // If we've closed the alternatives properly and we have some, return them:
-        if (currentChar == ')' && alternatives.size() > 0) {
-            return new ChildrenNode(ParseTreeType.ALTERNATIVES, alternatives);
+        if (currentChar == ')') {
+            if (alternatives.size() == 1) {
+                return alternatives.get(0); // no need for alternatives if there is only one alternative.
+            } else if (alternatives.size() > 1) {
+                return new ChildrenNode(ParseTreeType.ALTERNATIVES, alternatives);
+            }
         }
         throw createParseException("Alternatives (a|b) syntax incorrect", reader);
+    }
+
+    private ParseTree createAlternativeNode(final List<ParseTree> values) {
+        if (values.size() == 1) {
+            return values.get(0);
+        }
+        return new ChildrenNode(ParseTreeType.SEQUENCE, values);
     }
 
     private ParseTree parseByteSet(final StringParseReader reader) throws ParseException {
@@ -250,7 +273,7 @@ public class ByteSequenceParser {
 
         // If we're closing the set now, it's a byte or inverted byte:
         if (nextChar == CLOSE_SQUARE_BRACKET) {
-            return new ByteNode(firstByte, inverted);
+            return ByteNode.valueOf(firstByte, inverted);
         }
 
         // If we're not closing the set now, it must be a range of bytes:
