@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
@@ -64,23 +64,23 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
     /*
      * Constants
      */
-    private static final char SPACE = ' ';
-    private static final char NEWLINE = '\n';
-    private static final char CARRIAGE_RETURN = '\r';
-    private static final char TAB = '\t';
-    private static final char QUESTION_MARK = '?';
-    private static final char OPEN_SQUARE_BRACKET = '[';
-    private static final char OPEN_CURLY_BRACKET = '{';
-    private static final char OPEN_ROUND_BRACKET = '(';
-    private static final char SINGLE_QUOTE = '\'';
-    private static final char CLOSE_ROUND_BRACKET = ')';
-    private static final char VERTICAL_BAR = '|';
-    private static final char EXCLAMATION_MARK = '!';
-    private static final char COLON = ':';
+    private static final char SPACE                = ' ';
+    private static final char NEWLINE              = '\n';
+    private static final char CARRIAGE_RETURN      = '\r';
+    private static final char TAB                  = '\t';
+    private static final char QUESTION_MARK        = '?';
+    private static final char OPEN_SQUARE_BRACKET  = '[';
+    private static final char OPEN_CURLY_BRACKET   = '{';
+    private static final char OPEN_ROUND_BRACKET   = '(';
+    private static final char SINGLE_QUOTE         = '\'';
+    private static final char CLOSE_ROUND_BRACKET  = ')';
+    private static final char VERTICAL_BAR         = '|';
+    private static final char EXCLAMATION_MARK     = '!';
+    private static final char COLON                = ':';
     private static final char CLOSE_SQUARE_BRACKET = ']';
-    private static final char CLOSE_CURLY_BRACKET = '}';
-    private static final char ASTERISK = '*';
-    private static final char HYPHEN = '-';
+    private static final char CLOSE_CURLY_BRACKET  = '}';
+    private static final char ASTERISK             = '*';
+    private static final char HYPHEN               = '-';
 
     private static final ParseTree REPEAT_ANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
 
@@ -256,6 +256,8 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
         return new ChildrenNode(ParseTreeType.SEQUENCE, values);
     }
 
+    //TODO: this needs to change to support '0'-'9' constructs, and possibly strings in sets in general.
+    //TODO: and arbitrary sets?
     private ParseTree parseByteSet(final StringParseReader reader) throws ParseException {
 
         // Check whether values are inverted using ! after the open [
@@ -271,26 +273,28 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
         // Get the next character:
         int nextChar = reader.read();
 
-        // If we're closing the set now, it's a byte or inverted byte:
+        // If we're closing the set now, it's a single byte or inverted byte:
         if (nextChar == CLOSE_SQUARE_BRACKET) {
             return ByteNode.valueOf(firstByte, inverted);
         }
 
-        // If we're not closing the set now, it must be a range of bytes:
-        if (nextChar == COLON) {
+        // If we're not closing the set now, it must be a range of bytes
+        // We accept either the colon or the hyphen as a range separator.
+        // The colon is the PRONOM standard syntax, but the hyphen is used in some existing container signatures.
+        if (nextChar == COLON || nextChar == HYPHEN) {
             byte secondByte = reader.readHexByte();
 
             // The next character must close the range after the second byte value:
             if (reader.read() == ']') {
                 return new ChildrenNode(ParseTreeType.RANGE, inverted, ByteNode.valueOf(firstByte), ByteNode.valueOf(secondByte));
             }
+            throw createParseException("Range of bytes not closed by a square bracket.", reader);
         }
-
-        throw createParseException("[] syntax incorrect", reader);
+        throw createParseException("Expected a range separator of either a colon or hyphen.", reader);
     }
 
     private ParseTree parseString(final StringParseReader reader) throws ParseException {
-        return new StringNode(reader.readString('\''));
+        return new StringNode(reader.readString(SINGLE_QUOTE));
     }
 
     private ParseTree parseAnyNode(final StringParseReader reader) throws ParseException {
