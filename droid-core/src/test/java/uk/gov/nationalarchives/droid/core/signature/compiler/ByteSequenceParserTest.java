@@ -569,10 +569,19 @@ public class ByteSequenceParserTest {
 
     @Test
     public void testParsesAllPRONOMSignaturesWithoutError() throws IOException {
-        File file = getFile("/allPRONOMByteSequenceValues.txt");
+        testParseSignaturesWithoutError("/allPRONOMByteSequenceValues.txt");
+    }
+
+    @Test
+    public void testParsesAllContainerSignaturesWithoutError() throws IOException {
+        testParseSignaturesWithoutError("/allContainerSequenceValues.txt");
+    }
+
+    private void testParseSignaturesWithoutError(String filename) throws IOException {
+        File file = getFile(filename);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String sequence = "";
-        String failureMessages = "FAILURE: the following PRONOM signatures could not be parsed:\n";
+        String failureMessages = "FAILURE: the following signatures could not be parsed from file: " + filename + "\n";
         boolean failed = false;
         while ((sequence = reader.readLine()) != null) {
             try {
@@ -584,6 +593,8 @@ public class ByteSequenceParserTest {
         }
         assertFalse(failureMessages, failed);
     }
+
+
 
     private File getFile(String resourceName) {
         return new File(getClass().getResource(resourceName).getPath());
