@@ -76,7 +76,6 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.xml;
 
-import java.lang.reflect.Method;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -86,38 +85,49 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import uk.gov.nationalarchives.droid.core.signature.FileFormat;
+import uk.gov.nationalarchives.droid.core.signature.FileFormatCollection;
+import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
+import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
 import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
+import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignature;
+import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection;
+import uk.gov.nationalarchives.droid.core.signature.droid6.LeftFragment;
+import uk.gov.nationalarchives.droid.core.signature.droid6.RightFragment;
+import uk.gov.nationalarchives.droid.core.signature.droid6.Shift;
+import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 
 /**
- * reads and parses data from an XML file.
+ * Reads and parses data from a DROID XML signature file.
  *
  * @version 4.0.0
  */
 public class SAXModelBuilder extends DefaultHandler {
 
-    private static final String ADD = "add";
-    private static final String SET = "set";
+    private static final String SUB_SEQUENCE = "SubSequence";
+    private static final String BYTE_SEQUENCE = "ByteSequence";
+    private static final String INTERNAL_SIGNATURE = "InternalSignature";
+    private static final String FFSIGNATURE_FILE = "FFSignatureFile";
+    private static final String INTERNAL_SIGNATURE_COLLECTION = "InternalSignatureCollection";
+    private static final String FILE_FORMAT = "FileFormat";
+    private static final String FILE_FORMAT_COLLECTION = "FileFormatCollection";
+    private static final String EXTENSION = "Extension";
+    private static final String INTERNAL_SIGNATURE_ID = "InternalSignatureID";
+    private static final String HAS_PRIORITY_OVER_FILE_FORMAT_ID = "HasPriorityOverFileFormatID";
+    private static final String LEFT_FRAGMENT = "LeftFragment";
+    private static final String RIGHT_FRAGMENT = "RightFragment";
+    private static final String SEQUENCE = "Sequence";
+    private static final String SHIFT = "Shift";
+    private static final String DEFAULT_SHIFT = "DefaultShift";
+    private static final String FILE_FORMAT_HIT = "FileFormatHit";
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
     private Stack<Object> stack = new Stack<Object>();
     private SimpleElement element;
 
-    private String mySignaturePackage = FFSignatureFile.class.getPackage().getName();
-    private String myFormatPackage = FileFormat.class.getPackage().getName();
-    
     private String namespace = "";
     private boolean useNamespace;
     private boolean allowGlobalNamespace = true;
-
-
-    /**
-     * 
-     * @param theSignaturePackage The signature package to use.
-     */
-    public void setSignaturePackage(String theSignaturePackage) {
-        mySignaturePackage = theSignaturePackage;
-    }
 
     /**
      * Set up XML namespace handling.
@@ -135,11 +145,9 @@ public class SAXModelBuilder extends DefaultHandler {
         if (nspace == null) {
             throw new IllegalArgumentException("Namespace cannot be null");
         }
-
         this.namespace = nspace;
         this.useNamespace = true;
         this.allowGlobalNamespace = globalNamespace;
-
     }
 
     /**
@@ -177,27 +185,7 @@ public class SAXModelBuilder extends DefaultHandler {
         if (elementName == null) {
             return;
         }
-        SimpleElement elem = null;
-        String packName;
-        if ("FileFormat".equals(elementName) 
-                || "FileFormatHit".equals(elementName)
-                || "FileFormatCollection".equals(elementName)) {
-            packName = myFormatPackage;
-        } else {
-            packName = mySignaturePackage;
-        }
-        String fullName = packName + "." + elementName; 
-        try {
-            elem = (SimpleElement) Class.forName(fullName).newInstance();
-        //CHECKSTYLE:OFF
-        } catch (Exception e) {
-        	log.trace("No class exists for element name:" + elementName);
-        }
-        //CHECKSTYLE:ON
-        if (elem == null) {
-            elem = new SimpleElement();
-        }
-
+        final SimpleElement elem = getElement(elementName);
         for (int i = 0; i < atts.getLength(); i++) {
             String attributeName = handleNameNS(atts.getURI(i), atts.getLocalName(i), atts.getQName(i));
             if (attributeName == null) {
@@ -208,6 +196,25 @@ public class SAXModelBuilder extends DefaultHandler {
         stack.push(elem);
     }
 
+    //CHECKSTYLE:OFF - too many returns - but this is the simplest way to structure this method.
+    private SimpleElement getElement(String elementName) {
+    //CHECKSTYLE:ON
+        switch (elementName) {
+            case FILE_FORMAT:                   return new FileFormat();
+            case FILE_FORMAT_HIT:               return new FileFormatHit();
+            case FILE_FORMAT_COLLECTION:        return new FileFormatCollection();
+            case BYTE_SEQUENCE:                 return new ByteSequence();
+            case FFSIGNATURE_FILE:              return new FFSignatureFile();
+            case INTERNAL_SIGNATURE:            return new InternalSignature();
+            case INTERNAL_SIGNATURE_COLLECTION: return new InternalSignatureCollection();
+            case LEFT_FRAGMENT:                 return new LeftFragment();
+            case RIGHT_FRAGMENT:                return new RightFragment();
+            case SHIFT:                         return new Shift();
+            case SUB_SEQUENCE:                  return new SubSequence();
+            default:                            return new SimpleElement();
+        }
+    }
+
     /**
      * @param nspace the namespace uri
      * @param localname the local part of the name
@@ -215,8 +222,7 @@ public class SAXModelBuilder extends DefaultHandler {
      * @throws SAXException if a problem occurs.
      */
     @Override
-    public void endElement(String nspace, String localname, String qname)
-        throws SAXException {
+    public void endElement(String nspace, String localname, String qname) throws SAXException {
         String elementName = handleNameNS(nspace, localname, qname);
         if (elementName == null) {
             return;
@@ -224,11 +230,7 @@ public class SAXModelBuilder extends DefaultHandler {
         element = (SimpleElement) stack.pop();
         element.completeElementContent();
         if (!stack.empty()) {
-            try {
-                setProperty(elementName, stack.peek(), element);
-            } catch (SAXException e) {
-                throw new SAXException(e); // do not understand this logic!
-            }
+            setProperty(elementName, stack.peek(), element);
         }
     }
 
@@ -240,55 +242,77 @@ public class SAXModelBuilder extends DefaultHandler {
         }
     }
 
-    /**
-     * 
-     * @param name The name of the method.
-     * @param target The target class.
-     * @param value The value to set.
-     * @throws SAXException exception if a problem occurs
-     */
-    void setProperty(String name, Object target, Object value) throws SAXException {
-        Method method = null;
-        Object val = value;
-        try {
-            method = target.getClass().getMethod(
-                    ADD + name, new Class[]{val.getClass()});
-        //CHECKSTYLE:OFF
-        } catch (NoSuchMethodException e) {
+    private void setProperty(String name, Object target, Object value)  {
+        switch (target.getClass().getSimpleName()) {
+            case SUB_SEQUENCE: setSubSequenceProperty((SubSequence) target, name, value); break;
+            case BYTE_SEQUENCE: setByteSequenceProperty((ByteSequence) target, name, value); break;
+            case INTERNAL_SIGNATURE: setInternalSignatureProperty((InternalSignature) target, name, value); break;
+            case FFSIGNATURE_FILE: setFFSignatureFileProperty((FFSignatureFile) target, name, value); break;
+            case INTERNAL_SIGNATURE_COLLECTION: setInternalSignatureCollectionProperty((InternalSignatureCollection) target, name, value); break;
+            case FILE_FORMAT: setFileFormatProperty((FileFormat) target, name, value); break;
+            case FILE_FORMAT_COLLECTION: setFileFormatCollection((FileFormatCollection) target, name, value); break;
+            default: log.warn("Unknown target object: " + target.toString());
         }
-        //CHECKSTYLE:ON
-        if (method == null) {
-            try {
-                method = target.getClass().getMethod(
-                        SET + name, new Class[]{val.getClass()});
-              //CHECKSTYLE:OFF
-            } catch (NoSuchMethodException e) {
-            }
-            //CHECKSTYLE:ON
+    }
+
+    private void setFileFormatCollection(FileFormatCollection target, String name, Object value) {
+        switch (name) {
+            case FILE_FORMAT: target.addFileFormat((FileFormat) value); break;
+            default: logUnknownProperty(name, target);
         }
-        if (method == null) {
-            try {
-                val = ((SimpleElement) val).getText().trim();
-                method = target.getClass().getMethod(
-                        ADD + name, new Class[]{String.class});
-              //CHECKSTYLE:OFF
-            } catch (NoSuchMethodException e) {
-            }
-            //CHECKSTYLE:ON
+    }
+
+    private void setFileFormatProperty(FileFormat target, String name, Object value) {
+        String valueText = (value instanceof SimpleElement) ? ((SimpleElement) value).getText().trim() : "";
+        switch (name) {
+            case EXTENSION: target.setExtension(valueText); break;
+            case INTERNAL_SIGNATURE_ID: target.setInternalSignatureID(valueText); break;
+            case HAS_PRIORITY_OVER_FILE_FORMAT_ID: target.setHasPriorityOverFileFormatID(valueText); break;
+            default: logUnknownProperty(name, target);
         }
-        try {
-            if (method == null) {
-                method = target.getClass().getMethod(
-                        SET + name, new Class[]{String.class});
-            }
-            method.invoke(target, val);
-        } catch (NoSuchMethodException e) {
-            unknownElementWarning(name, ((SimpleElement) target).getElementName());
-          //CHECKSTYLE:OFF
-        } catch (Exception e) {
-            throw new SAXException(e);
+    }
+
+    private void setInternalSignatureCollectionProperty(InternalSignatureCollection target, String name, Object value) {
+        switch (name) {
+            case INTERNAL_SIGNATURE: target.addInternalSignature((InternalSignature) value); break;
+            default: logUnknownProperty(name, target);
         }
-        //CHECKSTYLE:ON
+    }
+
+    private void setFFSignatureFileProperty(FFSignatureFile target, String name, Object value) {
+        switch (name) {
+            case INTERNAL_SIGNATURE_COLLECTION: target.setInternalSignatureCollection((InternalSignatureCollection) value); break;
+            case FILE_FORMAT_COLLECTION: target.setFileFormatCollection((FileFormatCollection) value); break;
+            default: logUnknownProperty(name, target);
+        }
+    }
+
+    private void setInternalSignatureProperty(InternalSignature target, String name, Object value) {
+        switch (name) {
+            case BYTE_SEQUENCE: target.addByteSequence((ByteSequence) value); break;
+            default: logUnknownProperty(name, target);
+        }
+    }
+
+    private void setByteSequenceProperty(ByteSequence target, String name, Object value) {
+        switch(name) {
+            case SUB_SEQUENCE: target.addSubSequence((SubSequence) value); break;
+            default: logUnknownProperty(name, target);
+        }
+    }
+
+    private void setSubSequenceProperty(SubSequence target, String name, Object value) {
+        switch(name) {
+            case LEFT_FRAGMENT: target.addLeftFragment((LeftFragment) value); break;
+            case RIGHT_FRAGMENT: target.addRightFragment((RightFragment) value); break;
+            case SEQUENCE: target.setSequence(((SimpleElement) value).getText().trim()); break;
+            case SHIFT: case DEFAULT_SHIFT: break; // Ignore Shift and DefaultShift - they are deprecated.
+            default: logUnknownProperty(name, target);
+        }
+    }
+
+    private void logUnknownProperty(String propertyName, Object target) {
+        log.warn("Unknown property " + propertyName + " requested for " + target.getClass().getSimpleName());
     }
 
     /**
@@ -298,17 +322,4 @@ public class SAXModelBuilder extends DefaultHandler {
     public SimpleElement getModel() {
         return element;
     }
-    
-    /**
-     * Displays a special warning for unknown XML elements when reading
-     * XML files.
-     *
-     * @param unknownElement   The name of the element which was not recognised
-     * @param containerElement The name of the element which contains the unrecognised element
-     */
-    public void unknownElementWarning(String unknownElement, String containerElement) {
-        String warning = "WARNING: Unknown XML element " + unknownElement + " found under " + containerElement + " ";
-        log.trace(warning);
-    }    
-
 }
