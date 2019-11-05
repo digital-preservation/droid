@@ -37,7 +37,6 @@
                             <url>https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jre_x64_windows_hotspot_8u222b10.zip</url>
                             <unpack>false</unpack>
                             <outputDirectory>${project.build.directory}</outputDirectory>
-                            <md5>df65b5642f33676313ebe4d5b69a3fff</md5>
                         </configuration>
                     </execution>
                 </executions>
