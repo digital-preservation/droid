@@ -356,8 +356,10 @@ public class ProfileForm extends JPanel {
 
         throttlePanel.setVisible(false);
 
+        throttleSlider.setForeground(new java.awt.Color(245, 246, 247));
         throttleSlider.setMaximum(1000);
         throttleSlider.setMinorTickSpacing(100);
+        throttleSlider.setPaintLabels(true);
         throttleSlider.setPaintTicks(true);
         throttleSlider.setToolTipText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.throttleSlider.toolTipText")); // NOI18N
         throttleSlider.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -381,12 +383,12 @@ public class ProfileForm extends JPanel {
         throttlePanelLayout.setVerticalGroup(
             throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(throttlePanelLayout.createSequentialGroup()
-                .addGroup(throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(throttleSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(throttleSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(throttlePanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(throttleLabel)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         profileProgressBar.setToolTipText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.profileProgressBar.toolTipText")); // NOI18N
@@ -434,7 +436,7 @@ public class ProfileForm extends JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 826, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 868, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

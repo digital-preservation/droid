@@ -227,10 +227,10 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="throttleSlider" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="throttleSlider" alignment="0" pref="0" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="throttleLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -243,8 +243,12 @@
           <SubComponents>
             <Component class="javax.swing.JSlider" name="throttleSlider">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="f7" green="f6" red="f5" type="rgb"/>
+                </Property>
                 <Property name="maximum" type="int" value="1000"/>
                 <Property name="minorTickSpacing" type="int" value="100"/>
+                <Property name="paintLabels" type="boolean" value="true"/>
                 <Property name="paintTicks" type="boolean" value="true"/>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/Bundle.properties" key="ProfileForm.throttleSlider.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
