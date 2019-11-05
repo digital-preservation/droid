@@ -272,6 +272,11 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
         SETVALUES: while ((nextChar = reader.read()) >= 0) {
             switch(nextChar) {
 
+                // Whitespace (ignore)
+                case SPACE: case NEWLINE: case CARRIAGE_RETURN: case TAB: {
+                    break;
+                }
+
                 // Hex byte:
                 case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
                 case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
