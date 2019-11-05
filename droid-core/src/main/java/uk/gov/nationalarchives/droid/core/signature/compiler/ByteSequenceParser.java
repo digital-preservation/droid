@@ -81,6 +81,7 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
     private static final char CLOSE_CURLY_BRACKET  = '}';
     private static final char ASTERISK             = '*';
     private static final char HYPHEN               = '-';
+    private static final char BITWISE_AND          = '&';
 
     private static final ParseTree REPEAT_ANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
 
@@ -256,8 +257,6 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
         return new ChildrenNode(ParseTreeType.SEQUENCE, values);
     }
 
-    //TODO: this needs to change to support '0'-'9' constructs, and possibly strings in sets in general.
-    //TODO: and arbitrary sets?
     private ParseTree parseByteSet(final StringParseReader reader) throws ParseException {
 
         // Check whether values are inverted using ! after the open [
@@ -267,30 +266,113 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
             reader.read(); // consume the ! character.
         }
 
-        // Must be a hex byte following the open [ or [!
-        byte firstByte = reader.readHexByte();
+        final List<ParseTree> setNodes = new ArrayList<>();
 
-        // Get the next character:
-        int nextChar = reader.read();
+        int nextChar;
+        SETVALUES: while ((nextChar = reader.read()) >= 0) {
+            switch(nextChar) {
 
-        // If we're closing the set now, it's a single byte or inverted byte:
-        if (nextChar == CLOSE_SQUARE_BRACKET) {
-            return ByteNode.valueOf(firstByte, inverted);
-        }
+                // Hex byte:
+                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+                case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': {
+                    setNodes.add(ByteNode.valueOf(reader.readHexByte(nextChar)));
+                    break;
+                }
 
-        // If we're not closing the set now, it must be a range of bytes
-        // We accept either the colon or the hyphen as a range separator.
-        // The colon is the PRONOM standard syntax, but the hyphen is used in some existing container signatures.
-        if (nextChar == COLON || nextChar == HYPHEN) {
-            byte secondByte = reader.readHexByte();
+                // Bitwise &
+                case BITWISE_AND: {
+                    setNodes.add(new ByteNode(ParseTreeType.ALL_BITMASK, reader.readHexByte()));
+                    break;
+                }
 
-            // The next character must close the range after the second byte value:
-            if (reader.read() == ']') {
-                return new ChildrenNode(ParseTreeType.RANGE, inverted, ByteNode.valueOf(firstByte), ByteNode.valueOf(secondByte));
+                // String
+                case SINGLE_QUOTE: {
+                    setNodes.add(new StringNode(reader.readString(SINGLE_QUOTE)));
+                    break;
+                }
+
+                // Range of values:
+                case COLON: case HYPHEN: {
+                    final byte firstRangeValue  = popLastByteValue(setNodes, reader);
+                    final byte secondRangeValue = readNextByteValue(reader);
+                    setNodes.add(new ChildrenNode(ParseTreeType.RANGE,
+                            ByteNode.valueOf(firstRangeValue),
+                            ByteNode.valueOf(secondRangeValue)));
+                    break;
+                }
+
+                // End of set:
+                case CLOSE_SQUARE_BRACKET: {
+                    break SETVALUES;
+                }
+
+                default: throw createParseException("Unexpected character processing a set: " + (char) nextChar, reader);
             }
-            throw createParseException("Range of bytes not closed by a square bracket.", reader);
         }
-        throw createParseException("Expected a range separator of either a colon or hyphen.", reader);
+
+        if (nextChar != CLOSE_SQUARE_BRACKET) {
+            throw createParseException("The set was not closed by a square bracket.", reader);
+        }
+
+        if (setNodes.isEmpty()) {
+            throw createParseException("There were no values defined in the [ ] set.", reader);
+        }
+
+        return new ChildrenNode(ParseTreeType.SET, setNodes, inverted);
+    }
+
+    private byte popLastByteValue(final List<ParseTree> nodes, final StringParseReader reader) throws ParseException {
+        final int index = nodes.size() - 1;
+        if (index < 0) {
+            throw createParseException("Expected a byte value or single quoted char.", reader);
+        }
+        return getByteValue(nodes.remove(index), reader);
+    }
+
+    private byte readNextByteValue(StringParseReader reader) throws ParseException {
+        int nextChar = reader.read();
+        switch (nextChar) {
+            // Hex byte:
+            case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+            case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+            case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': {
+                return reader.readHexByte(nextChar);
+            }
+
+            // String
+            case SINGLE_QUOTE: {
+                return getTextByteValue(reader.readString(SINGLE_QUOTE), reader);
+            }
+        }
+        throw createParseException("Could not find an expected byte value or a single quoted char.", reader);
+    }
+
+    private byte getTextByteValue(final String text, final StringParseReader reader) throws ParseException {
+        if (text.length() != 1) {
+            throw createParseException("Can only get a byte value from a single character.  The string was: " + text, reader);
+        }
+        final char theChar = text.charAt(0);
+        if (theChar > 255) {
+            throw createParseException("Can only get a byte value from characters between 0 and 255.  The char value was: " + (int) theChar, reader);
+        }
+        return (byte) theChar;
+    }
+
+    private byte getByteValue(final ParseTree byteValue, final StringParseReader reader) throws ParseException {
+
+        if (byteValue.isValueInverted()) {
+            throw createParseException("Can't get a single byte value when it is inverted", reader);
+        }
+        switch (byteValue.getParseTreeType()) {
+            case STRING: {
+                return getTextByteValue(byteValue.getTextValue(), reader);
+            }
+            case BYTE: {
+                return byteValue.getByteValue();
+            }
+            default : throw createParseException("Can't get a byte value from the type: " + byteValue.getParseTreeType(), reader);
+        }
     }
 
     private ParseTree parseString(final StringParseReader reader) throws ParseException {
