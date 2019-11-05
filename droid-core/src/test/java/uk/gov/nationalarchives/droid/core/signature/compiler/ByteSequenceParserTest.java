@@ -589,6 +589,53 @@ public class ByteSequenceParserTest {
         assertEquals(numToRepeat, repeatNum.getIntValue());
     }
 
+    @Test(expected = ParseException.class)
+    public void testIncorrectCharInSet() throws ParseException {
+        PARSER.parse("[0102 03-04 % FF]");
+    }
+
+
+    @Test(expected = ParseException.class)
+    public void testEmptySet() throws ParseException {
+        PARSER.parse("[ ]");
+    }
+
+    @Test(expected = ParseException.class)
+    public void testNoFirstRangeValue() throws ParseException {
+        PARSER.parse("[:04]");
+    }
+
+    @Test(expected = ParseException.class)
+    public void testFirstStringRangeValueTooBig() throws ParseException {
+        PARSER.parse("['aa':'z'");
+    }
+
+
+    @Test(expected = ParseException.class)
+    public void testSecondStringRangeValueTooBig() throws ParseException {
+        PARSER.parse("['a':'zz'");
+    }
+
+    @Test(expected = ParseException.class)
+    public void testFirstCharRangeValueTooBig() throws ParseException {
+        PARSER.parse("['" + (char) 256 + "':'z'");
+    }
+
+    @Test(expected = ParseException.class)
+    public void testSecondCharRangeValueTooBig() throws ParseException {
+        PARSER.parse("['a':" + (char) 256 + ']');
+    }
+
+    @Test(expected = ParseException.class)
+    public void testFirstRangeValueNotByteOrString() throws ParseException {
+        PARSER.parse("[&01:FF]");
+    }
+
+    @Test(expected = ParseException.class)
+    public void testSecondRangeValueNotByteOrString() throws ParseException {
+        PARSER.parse("[01:&01]");
+    }
+
     @Test
     public void testParsesAllPRONOMSignaturesWithoutError() throws IOException {
         testParseSignaturesWithoutError("/allPRONOMByteSequenceValues.txt");
