@@ -358,10 +358,15 @@ public class ByteSequenceParserTest {
             ParseTree result = PARSER.parse(expression);
             assertEquals(ParseTreeType.SEQUENCE, result.getParseTreeType());
             assertEquals(1, result.getNumChildren());
-            ParseTree byteNode = result.getChild(0);
+            ParseTree setNode = result.getChild(0);
+
+            assertEquals(ParseTreeType.SET, setNode.getParseTreeType());
+            assertEquals(1, setNode.getNumChildren());
+            assertFalse(setNode.isValueInverted());
+            ParseTree byteNode = setNode.getChild(0);
+
             assertEquals(ParseTreeType.BYTE, byteNode.getParseTreeType());
             assertEquals(byteValue, byteNode.getByteValue() & 0xFF);
-            assertFalse(byteNode.isValueInverted());
         }
     }
 
@@ -372,10 +377,15 @@ public class ByteSequenceParserTest {
             ParseTree result = PARSER.parse(expression);
             assertEquals(ParseTreeType.SEQUENCE, result.getParseTreeType());
             assertEquals(1, result.getNumChildren());
-            ParseTree byteNode = result.getChild(0);
+            ParseTree setNode = result.getChild(0);
+
+            assertEquals(ParseTreeType.SET, setNode.getParseTreeType());
+            assertTrue(setNode.isValueInverted());
+            assertEquals(1, setNode.getNumChildren());
+            ParseTree byteNode = setNode.getChild(0);
+
             assertEquals(ParseTreeType.BYTE, byteNode.getParseTreeType());
             assertEquals(byteValue, byteNode.getByteValue() & 0xFF);
-            assertTrue(byteNode.isValueInverted());
         }
     }
 
@@ -385,9 +395,16 @@ public class ByteSequenceParserTest {
             for (int secondValue = 0; secondValue < 256; secondValue ++) {
                 String expression = "[" + String.format("%02x:%02x", byteValue, secondValue) + "]";
                 ParseTree result = PARSER.parse(expression);
+
                 assertEquals(ParseTreeType.SEQUENCE, result.getParseTreeType());
                 assertEquals(1, result.getNumChildren());
-                ParseTree rangeNode = result.getChild(0);
+                ParseTree setNode = result.getChild(0);
+
+                assertEquals(ParseTreeType.SET, setNode.getParseTreeType());
+                assertEquals(1, setNode.getNumChildren());
+
+                ParseTree rangeNode = setNode.getChild(0);
+
                 assertEquals(ParseTreeType.RANGE, rangeNode.getParseTreeType());
                 assertFalse(rangeNode.isValueInverted());
                 assertEquals(2, rangeNode.getNumChildren());
@@ -405,9 +422,14 @@ public class ByteSequenceParserTest {
                 ParseTree result = PARSER.parse(expression);
                 assertEquals(ParseTreeType.SEQUENCE, result.getParseTreeType());
                 assertEquals(1, result.getNumChildren());
-                ParseTree rangeNode = result.getChild(0);
+                ParseTree setNode = result.getChild(0);
+
+                assertEquals(ParseTreeType.SET, setNode.getParseTreeType());
+                assertEquals(1, setNode.getNumChildren());
+                assertTrue(setNode.isValueInverted());
+                ParseTree rangeNode = setNode.getChild(0);
+
                 assertEquals(ParseTreeType.RANGE, rangeNode.getParseTreeType());
-                assertTrue(rangeNode.isValueInverted());
                 assertEquals(2, rangeNode.getNumChildren());
                 assertEquals(byteValue, rangeNode.getChild(0).getByteValue() & 0xFF);
                 assertEquals(secondValue, rangeNode.getChild(1).getByteValue() & 0xFF);
