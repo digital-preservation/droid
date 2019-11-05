@@ -37,9 +37,11 @@ import net.byteseek.matcher.sequence.SequenceMatcher;
 import net.byteseek.parser.ParseException;
 import net.byteseek.parser.tree.ParseTree;
 import net.byteseek.parser.tree.ParseTreeType;
+import net.byteseek.parser.tree.ParseTreeUtils;
 import net.byteseek.parser.tree.node.BaseNode;
 import net.byteseek.parser.tree.node.ChildrenNode;
 
+import net.byteseek.utils.ByteUtils;
 import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
@@ -53,7 +55,7 @@ import java.util.List;
 //TODO: optimise single byte alternative expressions into a set.
 
 
-public class ByteSequenceCompiler {
+public final class ByteSequenceCompiler {
 
     /**
      * The maximum byte range which can be included in an anchoring sequence, rather than having to be a fragment.
@@ -68,9 +70,9 @@ public class ByteSequenceCompiler {
      * The biggest downside happens with large ranges, and the upside of allowing a range isn't huge,
      * so we bias towards low ranges.
      */
-    private static final int MAX_RANGE = 64;
+    private static final int MAX_BYTE_COUNT = 128; // 128 may not be optimal, but it excludes [&01] signature if less.
 
-    //TODO: produce objects optimised for DROID, or optimised for PRONOM XML output.
+    // The length of the anchoring sequences can be different - PRONOM only allows straight bytes in anchors.
     public enum CompileType {
         PRONOM, DROID;
     }
@@ -80,14 +82,21 @@ public class ByteSequenceCompiler {
     private static final SequenceMatcherCompiler MATCHER_COMPILER = new SequenceMatcherCompiler();
     private static final ParseTree ZERO_TO_MANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
 
+    public ByteSequence compile(final String droidExpression) throws CompileException {
+        return compile(droidExpression, ByteSequenceAnchor.BOFOffset, CompileType.DROID);
+    }
 
-    public ByteSequence compileByteSequence(final String droidExpression,
-                                            final ByteSequenceAnchor anchor,
-                                            final CompileType compileType) throws CompileException {
+    public ByteSequence compile(final String droidExpression,
+                                final ByteSequenceAnchor anchor,
+                                final CompileType compileType) throws CompileException {
         final ByteSequence newByteSequence = new ByteSequence();
         newByteSequence.setReference(anchor.getAnchorText());
-        compileByteSequence(newByteSequence, droidExpression, compileType);
+        compile(newByteSequence, droidExpression, compileType);
         return newByteSequence;
+    }
+
+    public void compile(final ByteSequence sequence, final String droidExpression) throws CompileException {
+        compile(sequence, droidExpression, ByteSequenceAnchor.BOFOffset, CompileType.DROID);
     }
 
     /**
@@ -100,12 +109,12 @@ public class ByteSequenceCompiler {
      * @param compileType how to build the objects from the expression.
      * @throws CompileException If there is a problem compiling the DROID regular expression.
      */
-    public void compileByteSequence(final ByteSequence sequence,
-                                    final String droidExpression,
-                                    final ByteSequenceAnchor anchor,
-                                    final CompileType compileType) throws CompileException {
+    public void compile(final ByteSequence sequence,
+                        final String droidExpression,
+                        final ByteSequenceAnchor anchor,
+                        final CompileType compileType) throws CompileException {
         sequence.setReference(anchor.getAnchorText());
-        compileByteSequence(sequence, droidExpression, compileType);
+        compile(sequence, droidExpression, compileType);
     }
 
     /**
@@ -119,15 +128,15 @@ public class ByteSequenceCompiler {
      * @param compileType how to build the objects from the expression.
      * @throws CompileException If there is a problem compiling the DROID regular expression.
      */
-    public void compileByteSequence(final ByteSequence sequence,
-                                    final String droidExpression,
-                                    final CompileType compileType) throws CompileException {
+    public void compile(final ByteSequence sequence,
+                        final String droidExpression,
+                        final CompileType compileType) throws CompileException {
         try {
             // Parse the expression into an abstract syntax tree (AST)
-            final ParseTree sequenceNodes = ByteSequenceParser.PARSER.parseByteSequence(droidExpression);
+            final ParseTree sequenceNodes = ByteSequenceParser.PARSER.parse(droidExpression);
 
             // Compile the ByteSequence from the AST:
-            compileByteSequence(sequence, sequenceNodes, compileType);
+            compile(sequence, sequenceNodes, compileType);
         } catch (ParseException ex) {
             throw new CompileException(ex.getMessage(), ex);
         }
@@ -144,9 +153,9 @@ public class ByteSequenceCompiler {
      * @param compileType how to build the objects from the expression.
      * @throws CompileException If there is a problem compiling the AST.
      */
-    private void compileByteSequence(final ByteSequence sequence,
-                                     final ParseTree sequenceNodes,
-                                     final CompileType compileType) throws CompileException {
+    private void compile(final ByteSequence sequence,
+                         final ParseTree sequenceNodes,
+                         final CompileType compileType) throws CompileException {
         final boolean anchoredToEnd = "EOFoffset".equals(sequence.getReference());
 
         // Pre-process the parse tree, re-ordering some wildcards on subsequence boundaries.
@@ -190,6 +199,8 @@ public class ByteSequenceCompiler {
                 case BYTE:
                 case RANGE:
                 case STRING:
+                case ALL_BITMASK:
+                case SET:
                 case ANY: {
                     lastValuePosition = sequenceList.size() - 1;
                     break;
@@ -207,7 +218,8 @@ public class ByteSequenceCompiler {
                     break;
                 }
                 case REPEAT_MIN_TO_MANY: { // subsequence boundary {n,*}
-                    sequenceList.set(sequenceList.size() - 1, new ChildrenNode(ParseTreeType.REPEAT, node.getChild(0), node.getChild(1)));
+                    sequenceList.set(sequenceList.size() - 1,
+                            new ChildrenNode(ParseTreeType.REPEAT, node.getChild(0), BaseNode.ANY_NODE));
                     sequenceList.add(lastValuePosition + 1, ZERO_TO_MANY);
                     break;
                 }
@@ -271,6 +283,8 @@ public class ByteSequenceCompiler {
                 case BYTE:
                 case ANY:
                 case RANGE:
+                case ALL_BITMASK:
+                case SET:
                 case STRING: { // nodes carrying a match for a byte or bytes:
                     // Track when we first encounter the stopValue of a fragment sequence (we hit this first as we go backwards for left fragments):
                     if (endValueIndex == Integer.MAX_VALUE) {
@@ -342,6 +356,8 @@ public class ByteSequenceCompiler {
                 case BYTE:
                 case ANY:
                 case RANGE:
+                case ALL_BITMASK:
+                case SET:
                 case STRING: { // nodes carrying a match for a byte or bytes:
                     // Track when we first encounter the start of a fragment sequence
                     if (startValueIndex == Integer.MAX_VALUE) {
@@ -467,10 +483,15 @@ public class ByteSequenceCompiler {
         int bestLength = 0;
         int bestStart  = 0;
         int bestEnd    = 0;
-        for (int childIndex = 0; childIndex < endIndex; childIndex++) {
+        for (int childIndex = startIndex; childIndex < endIndex; childIndex++) {
             ParseTree child = sequence.get(childIndex);
 
             switch (child.getParseTreeType()) {
+
+                /* -----------------------------------------------------------------------------------------------------
+                 * Types which only encode a single byte value at each position.
+                 * These can be part of any anchoring sequence in both DROID and PRONOM:
+                 */
 
                 // Children that match a single byte position:
                 case BYTE: {
@@ -482,6 +503,8 @@ public class ByteSequenceCompiler {
                 // Strings add the length of the string to the byte sequence:
                 case STRING: {
                     try {
+                        //TODO: the length of the string is only equal to the number of bytes when encoded using
+                        //      some a single byte encoding system.  Do we assume ISO-8859-1?
                         length += child.getTextValue().length(); // Add the string length.
                     } catch (ParseException ex) {
                         throw new CompileException(ex.getMessage(), ex);
@@ -489,24 +512,25 @@ public class ByteSequenceCompiler {
                     break;
                 }
 
-                case RANGE: {
-                    if (compileType == CompileType.DROID && getRange(child) <= MAX_RANGE) {
-                        length++; // treat the range as part of an anchor sequence, not something that has to be a fragment.
-                    } else { // something that needs a fragment.
-                        // If we found a longer sequence that we had so far, use that:
-                        if (length > bestLength) {
-                            bestLength = length;
-                            bestStart  = startPos;
-                            bestEnd    = childIndex - 1; //TODO: check this logic.
-                        }
+                /* -----------------------------------------------------------------------------------------------------
+                 * Types which match more than one byte in a single position.
+                 * These can be part of an anchoring sequence in DROID (if not too big), but not in PRONOM:
+                 */
 
-                        // Start looking for a longer suitable sequence:
-                        length = 0;
-                        startPos = childIndex + 1; // next subsequence to look for.
+                case RANGE: case SET: case ALL_BITMASK: {
+                    if (canBePartOfAnchor(child, compileType)) {
+                        length++; // treat the range as part of an anchor sequence, not something that has to be a fragment.
+                        break;
                     }
-                    break;
+                    // If not part of anchor, FALL THROUGH to final section for things which can't be part of an anchor.
+                    // Intentionally no break statement here - it goes to the ALTERNATIVES, ANY, REPEAT and REPEAT_MIN_TO_MAX section.
                 }
-                // Types which can't form part of an anchoring subsequence, and have to be fragments:
+
+                /* -----------------------------------------------------------------------------------------------------
+                 * Types which match multiple sequences, or are repeated wildcard gaps, (or match everything).
+                 * These can't form part of any anchoring sequence, and have to be fragments:
+                 */
+
                 case ALTERNATIVES: case ANY: case REPEAT: case REPEAT_MIN_TO_MAX: {
                     // If we found a longer sequence that we had so far, use that:
                     if (length > bestLength) {
@@ -527,7 +551,7 @@ public class ByteSequenceCompiler {
         if (length > bestLength) {
             bestLength = length;
             bestStart  = startPos;
-            bestEnd    = numNodes - 1;
+            bestEnd    = endIndex - 1;
         }
 
         // If we have no best length, then we have no anchoring subsequence - DROID can't process it.
@@ -538,9 +562,29 @@ public class ByteSequenceCompiler {
         return new IntPair(bestStart, bestEnd);
     }
 
+    private boolean canBePartOfAnchor(final ParseTree node, CompileType compileType) throws CompileException {
+        final ParseTreeType type = node.getParseTreeType();
+        try {
+        return compileType == CompileType.DROID && (
+                (type == ParseTreeType.RANGE       && countMatchingRange(node)   <= MAX_BYTE_COUNT) ||
+                (type == ParseTreeType.SET         && countMatchingSet(node)     <= MAX_BYTE_COUNT) ||
+                (type == ParseTreeType.ALL_BITMASK && countMatchingBitmask(node) <= MAX_BYTE_COUNT) );
+        } catch (ParseException e) {
+            throw new CompileException(e.getMessage(), e);
+        }
+    }
+
+    private int countMatchingBitmask(ParseTree node) throws ParseException {
+        return ByteUtils.countBytesMatchingAllBits(node.getByteValue());
+    }
+
+    private int countMatchingSet(ParseTree node) throws ParseException {
+        return ParseTreeUtils.calculateSetValues(node).size();
+    }
+
     // Only include ranges as potential anchor members if they are not too big.
     // Large ranges are poor members for a search anchor, as they can massively impede many search algorithms if they're present.
-    private int getRange(final ParseTree rangeNode) throws CompileException {
+    private int countMatchingRange(final ParseTree rangeNode) throws CompileException {
         if (rangeNode.getParseTreeType() == ParseTreeType.RANGE) {
             final int range1, range2;
             try {
