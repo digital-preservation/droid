@@ -554,7 +554,7 @@ public final class ByteSequenceCompiler {
                  * These can be part of an anchoring sequence in DROID (if not too big), but not in PRONOM:
                  */
 
-                case RANGE: case SET: case ALL_BITMASK: {
+                case RANGE: case SET: case ALL_BITMASK: case ANY: {
                     if (anchorStrategy.canBePartOfAnchor(child)) {
                         length++; // treat the range as part of an anchor sequence, not something that has to be a fragment.
                         break;
@@ -564,11 +564,11 @@ public final class ByteSequenceCompiler {
                 }
 
                 /* -----------------------------------------------------------------------------------------------------
-                 * Types which match multiple sequences, or are repeated wildcard gaps, (or match everything).
+                 * Types which match multiple sequences, or are repeated wildcard gaps,
                  * These can't form part of any anchoring sequence, and have to be fragments:
                  */
 
-                case ALTERNATIVES: case ANY: case REPEAT: case REPEAT_MIN_TO_MAX: {
+                case ALTERNATIVES: case REPEAT: case REPEAT_MIN_TO_MAX: {
                     // If we found a longer sequence than we had so far, use that:
                     if (length > bestLength) {
                         bestLength = length;
