@@ -72,6 +72,8 @@ public class DroidSubSequenceParser {
                     subSequenceNodes.add(parseString(reader));
                     break;
                 }
+                default:
+                    //TODO should we throw a ParseException exception here or just ignore?
 
             }
 

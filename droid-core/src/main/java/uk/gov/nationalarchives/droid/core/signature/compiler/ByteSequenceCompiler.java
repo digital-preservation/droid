@@ -251,13 +251,15 @@ public final class ByteSequenceCompiler {
         //      Min offset of ByteSequence itself?
     }
 
-    private List<ParseTree> preprocessSequence(final ParseTree sequenceNodes, final boolean anchoredToEnd, final CompileType compileType) {
+    //CHECKSTYLE:OFF - cyclomatic complexity too high.
+    private List<ParseTree> preprocessSequence(final ParseTree sequenceNodes, final boolean anchoredToEnd, final CompileType compileType) throws CompileException {
         final int numNodes = sequenceNodes.getNumChildren();
         final IntIterator index = anchoredToEnd ? new IntIterator(numNodes - 1, 0) : new IntIterator(0, numNodes - 1);
         final List<ParseTree> sequenceList = new ArrayList<>();
         int lastValuePosition = -1;
         while (index.hasNext()) {
-            final ParseTree node = sequenceNodes.getChild(index.next());
+            int currentIndex = index.next();
+            final ParseTree node = sequenceNodes.getChild(currentIndex);
             sequenceList.add(node);
             switch (node.getParseTreeType()) {
                 case BYTE:
@@ -287,6 +289,13 @@ public final class ByteSequenceCompiler {
                     sequenceList.add(lastValuePosition + 1, ZERO_TO_MANY);
                     break;
                 }
+                default:
+                //TODO should we throw a ParseException exception here or just ignore?
+                    // if throw exception, it fails on
+                    // ByteSequenceCompilerTest.compileOneSubSequence(ByteSequenceCompilerTest.java:48)
+                    // testCompileBOF("01 02 {4} 05", "0102", 0, 1);
+                    // testCompilesAllPRONOMSignaturesWithoutError
+                    // throw new CompileException("Unknown tree type: " + node.getParseTreeType() + " found at index: " + currentIndex);
             }
         }
         if (anchoredToEnd) {
@@ -634,6 +643,8 @@ public final class ByteSequenceCompiler {
                     startPos = childIndex + 1; // next subsequence to look for.
                     break;
                 }
+
+                default: throw new CompileException("Unknown tree type: " + child.getParseTreeType() + " found at index: " + childIndex);
             }
         }
 

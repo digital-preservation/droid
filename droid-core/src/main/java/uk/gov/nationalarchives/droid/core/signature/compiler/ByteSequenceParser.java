@@ -170,27 +170,34 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
     private ParseTree parseGaps(final StringParseReader reader) throws ParseException {
         final int firstGapNumber = reader.readInt();
         int nextChar = reader.read();
+        ChildrenNode node = null;
         switch (nextChar) {
             case CLOSE_CURLY_BRACKET: { // of form {m}
-                return new ChildrenNode(ParseTreeType.REPEAT, new IntNode(firstGapNumber), BaseNode.ANY_NODE);
+                node = new ChildrenNode(ParseTreeType.REPEAT, new IntNode(firstGapNumber), BaseNode.ANY_NODE);
+                break;
             }
             case HYPHEN: {  // Either {m,n} or {m,*}
                 if (reader.peekAhead() == ASTERISK) { // Of form {m,*}
                     reader.read(); // consume the *
                     if (reader.read() == CLOSE_CURLY_BRACKET) { // And is closed by a }
-                        return new ChildrenNode(ParseTreeType.REPEAT_MIN_TO_MANY, new IntNode(firstGapNumber));
+                        node = new ChildrenNode(ParseTreeType.REPEAT_MIN_TO_MANY, new IntNode(firstGapNumber));
                     }
                 } else { // Of form {m,n}
                     final int secondGapNumber = reader.readInt();
                     if (reader.read() == CLOSE_CURLY_BRACKET) {
-                        return new ChildrenNode(ParseTreeType.REPEAT_MIN_TO_MAX,
+                        node = new ChildrenNode(ParseTreeType.REPEAT_MIN_TO_MAX,
                                                 new IntNode(firstGapNumber), new IntNode(secondGapNumber),
                                                 BaseNode.ANY_NODE);
                     }
                 }
+                break;
             }
+            default: throw createParseException("unexpected gap char: " + nextChar, reader);
         }
-        throw createParseException("Invalid {n-m} syntax in", reader);
+        if (node == null) {
+            throw createParseException("Invalid {n-m} syntax in", reader);
+        }
+        return node;
     }
 
     private ParseTree parseAlternatives(final StringParseReader reader) throws ParseException {
@@ -355,8 +362,10 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
             case SINGLE_QUOTE: {
                 return getTextByteValue(reader.readString(SINGLE_QUOTE), reader);
             }
+            default: {
+                throw createParseException("Could not find an expected byte value or a single quoted char.", reader);
+            }
         }
-        throw createParseException("Could not find an expected byte value or a single quoted char.", reader);
     }
 
     private byte getTextByteValue(final String text, final StringParseReader reader) throws ParseException {
