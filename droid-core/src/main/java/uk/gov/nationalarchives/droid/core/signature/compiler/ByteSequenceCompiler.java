@@ -86,6 +86,10 @@ public final class ByteSequenceCompiler {
         return compile(droidExpression, ByteSequenceAnchor.BOFOffset, CompileType.DROID);
     }
 
+    public ByteSequence compile(final String droidExpression, final ByteSequenceAnchor anchor) throws CompileException {
+        return compile(droidExpression, anchor, CompileType.DROID);
+    }
+
     public ByteSequence compile(final String droidExpression,
                                 final ByteSequenceAnchor anchor,
                                 final CompileType compileType) throws CompileException {
@@ -97,6 +101,10 @@ public final class ByteSequenceCompiler {
 
     public void compile(final ByteSequence sequence, final String droidExpression) throws CompileException {
         compile(sequence, droidExpression, ByteSequenceAnchor.BOFOffset, CompileType.DROID);
+    }
+
+    public void compile(final ByteSequence sequence, final String droidExpression, ByteSequenceAnchor anchor) throws CompileException {
+        compile(sequence, droidExpression, anchor, CompileType.DROID);
     }
 
     /**
