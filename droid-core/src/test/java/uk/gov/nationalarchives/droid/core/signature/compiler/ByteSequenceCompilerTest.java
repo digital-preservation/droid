@@ -33,6 +33,8 @@ import static org.junit.Assert.*;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.BOFOffset;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.EOFOffset;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.VariableOffset;
+import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler.CompileType.DROID;
+import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler.CompileType.PRONOM;
 
 @RunWith(Parameterized.class)
 public class ByteSequenceCompilerTest {
@@ -80,13 +82,13 @@ public class ByteSequenceCompilerTest {
      */
     @Test
     public void testBOFReference() throws Exception {
-        ByteSequence seq = COMPILER.compile("00", BOFOffset, ByteSequenceCompiler.CompileType.DROID);
+        ByteSequence seq = COMPILER.compile("00", BOFOffset, DROID);
         assertEquals("BOFoffset", seq.getReference());
         assertTrue(seq.isAnchoredToBOF());
         assertFalse(seq.isAnchoredToEOF());
 
         ByteSequence newSeq = new ByteSequence();
-        COMPILER.compile(newSeq, "00", BOFOffset, ByteSequenceCompiler.CompileType.DROID);
+        COMPILER.compile(newSeq, "00", BOFOffset, DROID);
         assertEquals("BOFoffset", newSeq.getReference());
         assertTrue(newSeq.isAnchoredToBOF());
         assertFalse(newSeq.isAnchoredToEOF());
@@ -94,13 +96,13 @@ public class ByteSequenceCompilerTest {
 
     @Test
     public void testEOFReference() throws Exception {
-        ByteSequence seq = COMPILER.compile("00", EOFOffset, ByteSequenceCompiler.CompileType.DROID);
+        ByteSequence seq = COMPILER.compile("00", EOFOffset, DROID);
         assertEquals("EOFoffset", seq.getReference());
         assertFalse(seq.isAnchoredToBOF());
         assertTrue(seq.isAnchoredToEOF());
 
         ByteSequence newSeq = new ByteSequence();
-        COMPILER.compile(newSeq, "00", EOFOffset, ByteSequenceCompiler.CompileType.DROID);
+        COMPILER.compile(newSeq, "00", EOFOffset, DROID);
         assertEquals("EOFoffset", newSeq.getReference());
         assertFalse(newSeq.isAnchoredToBOF());
         assertTrue(newSeq.isAnchoredToEOF());
@@ -108,15 +110,15 @@ public class ByteSequenceCompilerTest {
 
     @Test
     public void testVariableReference() throws Exception {
-        ByteSequence seq = COMPILER.compile("00", ByteSequenceAnchor.VariableOffset, ByteSequenceCompiler.CompileType.DROID);
+        ByteSequence seq = COMPILER.compile("00", ByteSequenceAnchor.VariableOffset, DROID);
         assertEquals("Variable", seq.getReference());
-        assertTrue(seq.isAnchoredToBOF());
+        assertFalse(seq.isAnchoredToBOF());
         assertFalse(seq.isAnchoredToEOF());
 
         ByteSequence newSeq = new ByteSequence();
-        COMPILER.compile(newSeq, "00", ByteSequenceAnchor.VariableOffset, ByteSequenceCompiler.CompileType.DROID);
+        COMPILER.compile(newSeq, "00", ByteSequenceAnchor.VariableOffset, DROID);
         assertEquals("Variable", newSeq.getReference());
-        assertTrue(newSeq.isAnchoredToBOF());
+        assertFalse(newSeq.isAnchoredToBOF());
         assertFalse(newSeq.isAnchoredToEOF());
     }
 
@@ -429,19 +431,32 @@ public class ByteSequenceCompilerTest {
 
     }
 
-    @Test
-    public void testPRONOMAnchorStrategy() {
-        fail("TODO");
+    @Test(expected = CompileException.class)
+    public void testPRONOMNoAnchorException() throws CompileException {
+        testCompile(PRONOM, "??", "??", 0, 0);
     }
 
     @Test
-    public void testDROIDAnchorStrategy() {
-        fail("TODO");
+    public void testPRONOMAnchorStrategy() throws CompileException {
+        testCompile(PRONOM, "01 02 03 04 [00-16]", "01 02 03 04", 0, 1);
+        testCompile(PRONOM, "01 02 [&F0] 03 04 [00-16]", "01 02", 0, 1);
+        testCompile(PRONOM, "01 02 [&F0] 03 04 [00-16] (01|02) 03", "01 02", 0, 3);
+
     }
 
     @Test
-    public void testAllowAllAnchorStrategy() {
-        fail("TODO");
+    public void testDROIDAnchorStrategy() throws Exception {
+        testCompile(DROID, "01 02 03 04 [00-16]", "01 02 03 04 [00-16]", 0, 0);
+        testCompile(DROID, "01 02 [&F0] 03 04 [00-16]", "01 02 [&F0] 03 04 [00-16]", 0, 0);
+        testCompile(DROID, "01 02 [&F0] 03 04 [00-16] ?? 03", "01 02 &F0 03 04 [00-16]", 0, 1);
+    }
+
+    @Test
+    public void testAllowAllAnchorStrategy() throws Exception {
+        testCompile(DROID, "[&01]", "[&01]", 0, 0);
+        testCompile(DROID, "??", ".", 0, 0);
+        testCompile(DROID, "01 02 03 04 [&01]", "01 02 03 04", 0, 1);
+        testCompile(DROID, "?? 01 02 03 04", "01 02 03 04", 1, 0);
     }
 
     @Test
@@ -474,7 +489,11 @@ public class ByteSequenceCompilerTest {
     }
 
     private void testCompile(String expression, String anchorValue, int numLeft, int numRight) throws CompileException {
-        ByteSequence sequence = COMPILER.compile(expression, compileType);
+        testCompile(DROID, expression, anchorValue, numLeft, numRight);
+    }
+
+    private void testCompile(ByteSequenceCompiler.CompileType type, String expression, String anchorValue, int numLeft, int numRight) throws CompileException {
+        ByteSequence sequence = COMPILER.compile(expression, compileType, type);
         List<SubSequence> subs = sequence.getSubSequences();
 
         // Contains one subsequence
