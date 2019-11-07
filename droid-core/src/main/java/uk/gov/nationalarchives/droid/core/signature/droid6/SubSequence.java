@@ -188,9 +188,19 @@ public class SubSequence extends SimpleElement {
     private boolean useLeftFragmentBackTrack;
     private boolean useRightFragmentBackTrack;
 
+    /**
+     * Default constructor.
+     */
     public SubSequence() {
     }
 
+
+    /**
+     * @param leftFragments  fragments to add to the left of the subsequence.
+     * @param rightFragments fragments to add to the right of the subsequence.
+     * @param minSeqOffset The minimum offset to begin looking for this subsequence.
+     * @param maxSeqOffset The maximum offset to find this subsequence.
+     */
     public SubSequence(final SequenceMatcher anchor,
                        final List<List<SideFragment>> leftFragments,
                        final List<List<SideFragment>> rightFragments,
@@ -404,10 +414,16 @@ public class SubSequence extends SimpleElement {
         return matcher; // matchers are immutable, no harm in just returning it.
     }
 
+    /**
+     * @return fragments to add to the left of the subsequence
+     */
     public List<List<SideFragment>> getLeftFragments() {
         return defensiveCopy(orderedLeftFragments);
     }
 
+    /**
+     * @return fragments to add to the right of the subsequence
+     */
     public List<List<SideFragment>> getRightFragments() {
         return defensiveCopy(orderedRightFragments);
     }

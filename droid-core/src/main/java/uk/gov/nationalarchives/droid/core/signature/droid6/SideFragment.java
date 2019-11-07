@@ -131,9 +131,17 @@ public class SideFragment extends SimpleElement implements Cloneable {
     private Searcher searcher;
     private boolean isInvalidFragment;
 
+    /**
+     * default constructor.
+     */
     public SideFragment() {
     }
 
+    /**
+     * @param minOffset The minimum offset to begin looking for this fragment
+     * @param maxOffset The maximum offset to begin looking for this fragment
+     * @param position the position in file of this fragment
+     */
     public SideFragment(SequenceMatcher matcher, int minOffset, int maxOffset, int position) {
         this.matcher = matcher;
         this.myMinOffset = minOffset;
@@ -142,6 +150,9 @@ public class SideFragment extends SimpleElement implements Cloneable {
         buildSearcher();
     }
 
+    /**
+     * @param toCopy sideFragment to copy
+     */
     public SideFragment(final SideFragment toCopy) {
         this.matcher = toCopy.matcher;
         this.myMinOffset = toCopy.myMinOffset;

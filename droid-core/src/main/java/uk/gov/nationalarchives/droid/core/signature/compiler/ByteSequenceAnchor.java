@@ -31,26 +31,44 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.compiler;
 
+/**
+ * Enum which describes how a ByteSequence is to be anchored to a file.
+ */
 public enum ByteSequenceAnchor {
 
+    /**
+     * Beginning of file.
+     */
     BOFOffset {
+        @Override
         public String getAnchorText() {
             return "BOFoffset";
         }
     },
 
+    /**
+     * Variable search from beginning of file.
+     */
     VariableOffset {
+        @Override
         public String getAnchorText() {
             return "Variable";
         }
     },
 
+    /**
+     * End of file.
+     */
     EOFOffset {
+        @Override
         public String getAnchorText() {
             return "EOFoffset";
         }
     };
 
+    /**
+     * @return how the ByteSequence is to be anchored to a file
+     */
     public abstract String getAnchorText();
 
 }
