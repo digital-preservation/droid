@@ -50,10 +50,6 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.EOFOffset;
 
 //TODO: do we need to clear existing data in byte sequences, or just refuse to compile if they already have something?
@@ -61,7 +57,19 @@ import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequence
 //TODO: optimise single byte alternative expressions into a set.
 
 
+/**
+ * class to compile a ByteSequence from a DROID syntax regular expression created by {@link ByteSequenceParser}.
+ * <br/>
+ * See main method {@link #compile(ByteSequence, String, ByteSequenceAnchor, CompileType)}.
+ *
+ * @author Matt Palmer
+ */
 public final class ByteSequenceCompiler {
+
+    /**
+     * Convenient static parser (there is no state, so we can just have a static parser).
+     */
+    public static final ByteSequenceCompiler COMPILER = new ByteSequenceCompiler();
 
     /**
      * The maximum number of bytes which can match in a single position in an anchoring sequence.
@@ -73,16 +81,41 @@ public final class ByteSequenceCompiler {
      */
     private static final int MAX_MATCHING_BYTES = 64;
 
-    // The length of the anchoring sequences can be different - PRONOM only allows straight bytes in anchors.
+    /**
+     * Compilation type to build the objects from the expression.
+     *
+     * <br/>
+     * The length of the anchoring sequences can be different - PRONOM only allows straight bytes in anchors.
+     */
     public enum CompileType {
-        PRONOM, DROID;
+        /**
+         * Supports PRONOM syntax.
+         */
+        PRONOM,
+
+        /**
+         * Supports a super-set of the PRONOM syntax.
+         */
+        DROID;
     }
 
-    public static final ByteSequenceCompiler COMPILER = new ByteSequenceCompiler();
 
     private static final SequenceMatcherCompiler MATCHER_COMPILER = new SequenceMatcherCompiler();
     private static final ParseTree ZERO_TO_MANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
 
+    /**
+     * Compiles a ByteSequence from a DROID syntax regular expression, starting from a new byteSequence.
+     * <p>
+     * It is assumed that
+     * <ul>
+     *     <li>the compileType is DROID</li>
+     *     <li>it is anchored to the BOF</li>
+     * </ul>
+     *
+     * @param droidExpression The string containing a DROID syntax regular expression.
+     * @throws CompileException If there is a problem compiling the DROID regular expression.
+     * @return the compiled byteSequence
+     */
     public ByteSequence compile(final String droidExpression) throws CompileException {
         return compile(droidExpression, ByteSequenceAnchor.BOFOffset, CompileType.DROID);
     }
@@ -91,6 +124,15 @@ public final class ByteSequenceCompiler {
         return compile(droidExpression, anchor, CompileType.DROID);
     }
 
+    /**
+     * Compiles a {@link ByteSequence} from a DROID syntax regular expression, starting from a new byte sequence.
+     *
+     * @param droidExpression The string containing a DROID syntax regular expression.
+     * @param anchor How the ByteSequence is to be anchored to the BOF, EOF or a variable search from BOF.
+     * @param compileType how to build the objects from the expression.
+     * @throws CompileException If there is a problem compiling the DROID regular expression.
+     * @return the compiled byteSequence
+     */
     public ByteSequence compile(final String droidExpression,
                                 final ByteSequenceAnchor anchor,
                                 final CompileType compileType) throws CompileException {
@@ -100,6 +142,19 @@ public final class ByteSequenceCompiler {
         return newByteSequence;
     }
 
+    /**
+     * Compiles a ByteSequence from a DROID syntax regular expression.
+     * <p>
+     * It is assumed that
+     * <ul>
+     *     <li>the compileType is DROID</li>
+     *     <li>it is anchored to the BOF</li>
+     * </ul>
+     *
+     * @param sequence The ByteSequence which will be altered by compilation.
+     * @param droidExpression The string containing a DROID syntax regular expression.
+     * @throws CompileException If there is a problem compiling the DROID regular expression.
+     */
     public void compile(final ByteSequence sequence, final String droidExpression) throws CompileException {
         compile(sequence, droidExpression, ByteSequenceAnchor.BOFOffset, CompileType.DROID);
     }
@@ -293,7 +348,6 @@ public final class ByteSequenceCompiler {
         for (int fragmentIndex = fragmentStart; fragmentIndex >= fragmentEnd; fragmentIndex--) {
             final ParseTree node = sequenceList.get(fragmentIndex);
             switch (node.getParseTreeType()) {
-
                 case BYTE:
                 case ANY:
                 case RANGE:
@@ -458,8 +512,8 @@ public final class ByteSequenceCompiler {
     }
 
     private int getMinGap(final ParseTree node) throws CompileException {
-        if (node.getParseTreeType() == ParseTreeType.REPEAT ||
-            node.getParseTreeType() == ParseTreeType.REPEAT_MIN_TO_MAX) {
+        if (node.getParseTreeType() == ParseTreeType.REPEAT
+                || node.getParseTreeType() == ParseTreeType.REPEAT_MIN_TO_MAX) {
             try {
                 return node.getNumChildren() > 0 ? node.getChild(0).getIntValue() : 0;
             } catch (ParseException ex) {

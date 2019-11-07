@@ -65,6 +65,11 @@ import net.byteseek.parser.tree.node.StringNode;
  */
 public final class ByteSequenceParser implements Parser<ParseTree> {
 
+    /**
+     * Convenient static parser (there is no state, so we can just have a static parser).
+     */
+    public static final ByteSequenceParser PARSER = new ByteSequenceParser();
+
     /*
      * Constants
      */
@@ -87,12 +92,9 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
     private static final char HYPHEN               = '-';
     private static final char BITWISE_AND          = '&';
 
-    private static final ParseTree REPEAT_ANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
+    private static final int MAX_BYTE_VALUE = 255;
 
-    /**
-     * Convenient static parser (there is no state, so we can just have a static parser).
-     */
-    public static ByteSequenceParser PARSER = new ByteSequenceParser();
+    private static final ParseTree REPEAT_ANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
 
     /**
      * Parses a droid syntax expression into an abstract syntax tree.
@@ -362,7 +364,7 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
             throw createParseException("Can only get a byte value from a single character.  The string was: " + text, reader);
         }
         final char theChar = text.charAt(0);
-        if (theChar > 255) {
+        if (theChar > MAX_BYTE_VALUE) {
             throw createParseException("Can only get a byte value from characters between 0 and 255.  The char value was: " + (int) theChar, reader);
         }
         return (byte) theChar;
