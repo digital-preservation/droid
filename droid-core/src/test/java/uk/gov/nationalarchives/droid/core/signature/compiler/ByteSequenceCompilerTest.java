@@ -57,12 +57,17 @@ public class ByteSequenceCompilerTest {
     }
 
     /*******************************************************************************************************************
-     * Blank input tests
+     * Bad input tests
      */
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullSequence() throws Exception {
         COMPILER.compile(null);
+    }
+
+    @Test(expected = CompileException.class)
+    public void testBadSyntaxSequence() throws Exception {
+        COMPILER.compile("01 02 03 this doesn't make any sense");
     }
 
     @Test
@@ -324,6 +329,7 @@ public class ByteSequenceCompilerTest {
         }
     }
 
+    //TODO: make set tests more complex by randomising the elements in them.
     @Test
     public void testMultiByteAndRangeSet() throws Exception {
         Random rand = new Random();
@@ -376,20 +382,12 @@ public class ByteSequenceCompilerTest {
         }
     }
 
-    @Test
-    public void testComplexSet() {
-        fail("TODO");
-
-    }
+    /*******************************************************************************************************************
+     * Test expressions within a single subsequence
+     */
 
     @Test
-    public void testInvertedComplexSet() {
-        fail("TODO");
-
-    }
-
-    @Test
-    public void compileOneSubSequence() throws Exception {
+    public void testAnchorsAndFragments() throws Exception {
 
         // Simple sequences with only byte values.
         testCompile("01", "01", 0, 0);
@@ -413,27 +411,21 @@ public class ByteSequenceCompilerTest {
         // repeat
         testCompile("01 02 {4} 05", "0102", 0, 1);
 
+        // GAP at start
+        //TODO: need to test gaps.
         testCompile("{9} 01 02 03 04", "01020304", 0, 0);
 
         // repeat min to max
         testCompile("01 02 {4-12} 'a string'", "'a string'", 1, 0);
     }
 
-    @Test
-    public void compileTwoSubSequences() throws Exception {
-        fail("TODO");
-
-    }
-
-    @Test
-    public void compileMultipleSubSequences() {
-        fail("TODO");
-
-    }
+    /*******************************************************************************************************************
+     * Test how anchors change with different compilation strategies:
+     */
 
     @Test(expected = CompileException.class)
     public void testPRONOMNoAnchorException() throws CompileException {
-        testCompile(PRONOM, "??", "??", 0, 0);
+        testCompile(PRONOM, "??", ".", 0, 0);
     }
 
     @Test
@@ -455,9 +447,12 @@ public class ByteSequenceCompilerTest {
     public void testAllowAllAnchorStrategy() throws Exception {
         testCompile(DROID, "[&01]", "[&01]", 0, 0);
         testCompile(DROID, "??", ".", 0, 0);
-        testCompile(DROID, "01 02 03 04 [&01]", "01 02 03 04", 0, 1);
-        testCompile(DROID, "?? 01 02 03 04", "01 02 03 04", 1, 0);
+        testCompile(DROID, "?? [00:F9] ?? [&01]", ". [00-F9] . [&01]", 0, 0);
     }
+
+    /*******************************************************************************************************************
+     * Test that all known sequences can be compiled without an exception
+     */
 
     @Test
     public void testCompilesAllPRONOMSignaturesWithoutExceptions() throws IOException {
@@ -468,6 +463,10 @@ public class ByteSequenceCompilerTest {
     public void testCompilesAllContainerSignaturesWithoutExceptions() throws IOException {
         testCompilesSignaturesWithoutError("/allContainerSequenceValues.txt");
     }
+
+    /*******************************************************************************************************************
+     * Private test implementations used by the public tests
+     */
 
     private void testCompilesSignaturesWithoutError(String filename) throws IOException {
         File file = getFile(filename);
@@ -493,20 +492,30 @@ public class ByteSequenceCompilerTest {
     }
 
     private void testCompile(ByteSequenceCompiler.CompileType type, String expression, String anchorValue, int numLeft, int numRight) throws CompileException {
+        String initialExpression = expression;
+        for (int numSubsequences = 1; numSubsequences < 10; numSubsequences++) {
+            testCompile(type, expression, anchorValue, numLeft, numRight, numSubsequences);
+            expression = expression + '*' + initialExpression;
+        }
+    }
+
+    private void testCompile(ByteSequenceCompiler.CompileType type, String expression, String anchorValue, int numLeft, int numRight, int numSubSequences) throws CompileException {
         ByteSequence sequence = COMPILER.compile(expression, compileType, type);
         List<SubSequence> subs = sequence.getSubSequences();
 
-        // Contains one subsequence
-        assertEquals(1, subs.size());
-        SubSequence seq = subs.get(0);
-
-       // Check anchor is correct:
+        assertEquals(numSubSequences, subs.size());
         SequenceMatcher anchor = BYTESEEKCOMPILER.compile(anchorValue);
-        SequenceMatcher matcher = seq.getAnchorMatcher();
-        assertMatchersEqual(expression, anchor, matcher);
 
-        assertEquals(numLeft, seq.getLeftFragments().size());
-        assertEquals(numRight, seq.getRightFragments().size());
+        for (int i = 0; i < numSubSequences; i++) {
+            SubSequence seq = subs.get(i);
+
+            // Check anchor is correct:
+            SequenceMatcher matcher = seq.getAnchorMatcher();
+            assertMatchersEqual(expression, anchor, matcher);
+
+            assertEquals(numLeft, seq.getLeftFragments().size());
+            assertEquals(numRight, seq.getRightFragments().size());
+        }
     }
 
     private ByteMatcher assertSingleByteMatcher(String expression, Class classType) throws Exception {
@@ -552,6 +561,10 @@ public class ByteSequenceCompilerTest {
             }
         }
     }
+
+    /*******************************************************************************************************************
+     * Methods to generate test sets and expressions and parse them into data structures for testing.
+     */
 
     private Set<Byte> getRandomBytes() {
         Random rand = new Random();
@@ -633,6 +646,10 @@ public class ByteSequenceCompilerTest {
         }
         return bytes;
     }
+
+    /*******************************************************************************************************************
+     * Helper functions
+     */
 
     private File getFile(String resourceName) {
         return new File(getClass().getResource(resourceName).getPath());
