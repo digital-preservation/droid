@@ -50,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.EOFOffset;
+
 //TODO: do we need to clear existing data in byte sequences, or just refuse to compile if they already have something?
 //TODO: if we use ShiftOR searchers, then ANY bytes can be included in a search without penalty....
 //TODO: optimise single byte alternative expressions into a set.
@@ -58,19 +60,14 @@ import java.util.List;
 public final class ByteSequenceCompiler {
 
     /**
-     * The maximum byte range which can be included in an anchoring sequence, rather than having to be a fragment.
-     * A range of bytes can be specified instead of a single byte value.
-     * The biggest range is all the bytes, which is 256.
-     * This max only applies when compiling for DROID.  When compiling for PRONOM, only a sequence of single
-     * byte values are allowed to be part of the anchoring sequence, so the max range is 1!
+     * The maximum number of bytes which can match in a single position in an anchoring sequence.
      *
      * High values can cause performance problems for many search algorithms.
-     * Low values impact performance a bit by forcing us to process ranges as fragments.
-     * So we want an optimum value that allows some ranges in our search sequences, but not too big a range.
-     * The biggest downside happens with large ranges, and the upside of allowing a range isn't huge,
-     * so we bias towards low ranges.
+     * Low values impact performance a bit by forcing us to process simple matchers as fragments.
+     * We want to allow some matching constructs in anchors which match more than one byte.
+     * The biggest downside happens with large numbers of bytes, so we bias towards a lower number of bytes.
      */
-    private static final int MAX_BYTE_COUNT = 64;
+    private static final int MAX_MATCHING_BYTES = 64;
 
     // The length of the anchoring sequences can be different - PRONOM only allows straight bytes in anchors.
     public enum CompileType {
@@ -164,7 +161,7 @@ public final class ByteSequenceCompiler {
     private void compile(final ByteSequence sequence,
                          final ParseTree sequenceNodes,
                          final CompileType compileType) throws CompileException {
-        final boolean anchoredToEnd = "EOFoffset".equals(sequence.getReference());
+        final boolean anchoredToEnd = EOFOffset.getAnchorText().equals(sequence.getReference());
 
         // Pre-process the parse tree, re-ordering some wildcards on subsequence boundaries.
         // Some wildcards at the stopValue or beginning of subsequences belong in the next/prior subsequence object,
@@ -538,22 +535,10 @@ public final class ByteSequenceCompiler {
                  * These can be part of any anchoring sequence in both DROID and PRONOM:
                  */
 
-                // Children that match a single byte position:
-                case BYTE: {
+                // Children that match a single byte or a string:
+                case BYTE: case STRING: {
                     //TODO: if byte is inverted, then should we add it to stopValue/start of anchoring sequence?
                     length++; // add one to the max length found.
-                    break;
-                }
-
-                // Strings add the length of the string to the byte sequence:
-                case STRING: {
-                    try {
-                        //TODO: the length of the string is only equal to the number of bytes when encoded using
-                        //      some a single byte encoding system.  Do we assume ISO-8859-1?
-                        length += child.getTextValue().length(); // Add the string length.
-                    } catch (ParseException ex) {
-                        throw new CompileException(ex.getMessage(), ex);
-                    }
                     break;
                 }
 
@@ -578,10 +563,11 @@ public final class ByteSequenceCompiler {
 
                 case ALTERNATIVES: case REPEAT: case REPEAT_MIN_TO_MAX: {
                     // If we found a longer sequence than we had so far, use that:
-                    if (length > bestLength) {
-                        bestLength = length;
+                    int totalLength = calculateLength(sequence, startPos, childIndex - 1);
+                    if (totalLength > bestLength) {
+                        bestLength = totalLength;
                         bestStart  = startPos;
-                        bestEnd    = childIndex - 1; //TODO: check this logic.
+                        bestEnd    = childIndex - 1;
                     }
 
                     // Start looking for a longer suitable sequence:
@@ -593,8 +579,9 @@ public final class ByteSequenceCompiler {
         }
 
         // Do a final check to see if the last nodes processed are the longest:
-        if (length > bestLength) {
-            bestLength = length;
+        int totalLength = calculateLength(sequence, startPos, endIndex - 1);
+        if (totalLength > bestLength) {
+            bestLength = totalLength;
             bestStart  = startPos;
             bestEnd    = endIndex - 1;
         }
@@ -605,6 +592,40 @@ public final class ByteSequenceCompiler {
         }
 
         return new IntPair(bestStart, bestEnd);
+    }
+
+    private int calculateLength(List<ParseTree> sequence, int startPos, int endPos) throws CompileException {
+        int totalLength = 0;
+        try {
+            for (int index = startPos; index <= endPos; index++) {
+                ParseTree node = sequence.get(index);
+                switch (node.getParseTreeType()) {
+                    case BYTE:
+                    case RANGE:
+                    case ANY:
+                    case ALL_BITMASK:
+                    case SET: {
+                        totalLength++;
+                        break;
+                    }
+                    case STRING: {
+                        totalLength += node.getTextValue().length();
+                        break;
+                    }
+                    case REPEAT: { // a value repeated a number of times - length = num repeats.
+                        totalLength += node.getChild(0).getIntValue();
+                        break;
+                    }
+
+                    default:
+                        throw new CompileException("Could not calculate length of node " + node);
+                }
+            }
+        } catch (ParseException e) {
+            throw new CompileException(e.getMessage(), e);
+        }
+
+        return totalLength;
     }
 
     private static int countMatchingBitmask(ParseTree node) throws ParseException {
@@ -694,9 +715,9 @@ public final class ByteSequenceCompiler {
         public boolean canBePartOfAnchor(final ParseTree node) throws CompileException {
             final ParseTreeType type = node.getParseTreeType();
             try {
-                return (type == ParseTreeType.RANGE && countMatchingRange(node) <= MAX_BYTE_COUNT) ||
-                        (type == ParseTreeType.SET && countMatchingSet(node) <= MAX_BYTE_COUNT) ||
-                        (type == ParseTreeType.ALL_BITMASK && countMatchingBitmask(node) <= MAX_BYTE_COUNT);
+                return (type == ParseTreeType.RANGE && countMatchingRange(node) <= MAX_MATCHING_BYTES) ||
+                        (type == ParseTreeType.SET && countMatchingSet(node) <= MAX_MATCHING_BYTES) ||
+                        (type == ParseTreeType.ALL_BITMASK && countMatchingBitmask(node) <= MAX_MATCHING_BYTES);
             } catch (ParseException e) {
                 throw new CompileException(e.getMessage(), e);
             }
