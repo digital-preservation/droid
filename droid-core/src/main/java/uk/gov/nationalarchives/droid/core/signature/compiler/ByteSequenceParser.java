@@ -31,15 +31,19 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.compiler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.byteseek.parser.ParseException;
 import net.byteseek.parser.Parser;
 import net.byteseek.parser.StringParseReader;
 import net.byteseek.parser.tree.ParseTree;
 import net.byteseek.parser.tree.ParseTreeType;
-import net.byteseek.parser.tree.node.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.byteseek.parser.tree.node.BaseNode;
+import net.byteseek.parser.tree.node.ByteNode;
+import net.byteseek.parser.tree.node.ChildrenNode;
+import net.byteseek.parser.tree.node.IntNode;
+import net.byteseek.parser.tree.node.StringNode;
 
 /**
  * A class which parses PRONOM and container signature syntax into an abstract syntax tree.

@@ -1,13 +1,17 @@
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.byteseek.parser.ParseException;
 import net.byteseek.parser.StringParseReader;
 import net.byteseek.parser.tree.ParseTree;
 import net.byteseek.parser.tree.ParseTreeType;
-import net.byteseek.parser.tree.node.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.byteseek.parser.tree.node.StringNode;
+import net.byteseek.parser.tree.node.BaseNode;
+import net.byteseek.parser.tree.node.ByteNode;
+import net.byteseek.parser.tree.node.ChildrenNode;
+import net.byteseek.parser.tree.node.IntNode;
 
 public class DroidSubSequenceParser {
     

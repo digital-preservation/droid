@@ -31,6 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.compiler;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import net.byteseek.compiler.CompileException;
 import net.byteseek.compiler.matcher.SequenceMatcherCompiler;
 import net.byteseek.matcher.sequence.SequenceMatcher;
