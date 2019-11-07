@@ -191,7 +191,7 @@ public final class ByteSequenceCompiler {
         final int numNodes = sequenceNodes.getNumChildren();
         final IntIterator index = anchoredToEnd ? new IntIterator(numNodes - 1, 0) : new IntIterator(0, numNodes - 1);
         final List<ParseTree> sequenceList = new ArrayList<>();
-        int lastValuePosition = -1; // what about first pos?
+        int lastValuePosition = -1;
         while (index.hasNext()) {
             final ParseTree node = sequenceNodes.getChild(index.next());
             sequenceList.add(node);
@@ -640,9 +640,16 @@ public final class ByteSequenceCompiler {
         private int position;
 
         public IntIterator(final int start, final int end) {
-            this.position = start;
-            this.increment = start < end ? 1 : -1;
-            this.stopValue = end + increment;
+            // Won't iterate negative numbers - this is to iterate index positions in a sequence.
+            if (start < 0 || end < 0) {
+                this.position = 0;
+                this.increment = 0;
+                this.stopValue = 0;
+            } else {
+                this.position = start;
+                this.increment = start < end ? 1 : -1;
+                this.stopValue = end + increment;
+            }
         }
 
         public boolean hasNext() {
@@ -650,9 +657,12 @@ public final class ByteSequenceCompiler {
         }
 
         public int next() {
-            final int currentPosition = position;
-            position += increment;
-            return currentPosition;
+            if (hasNext()) {
+                final int currentPosition = position;
+                position += increment;
+                return currentPosition;
+            }
+            return -1; // this isn't a valid index position - should not call next if you haven't verified with hasNext()
         }
     }
 
