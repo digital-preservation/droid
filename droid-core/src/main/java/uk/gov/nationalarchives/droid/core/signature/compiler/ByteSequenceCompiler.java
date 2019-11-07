@@ -501,11 +501,11 @@ public final class ByteSequenceCompiler {
         }
 
         // DROID anchors can contain sets, bitmasks and ranges, as long as they aren't too big.
-        final IntPair result = locateSearchSequence(sequence, startIndex, endIndex, DROIDStrategy);
+        IntPair result = locateSearchSequence(sequence, startIndex, endIndex, DROIDStrategy);
         if (result == NO_RESULT) {
 
             // If we couldn't find an anchor with limited sets, bitmasks or ranges, try again allowing anything:
-            return locateSearchSequence(sequence, startIndex, endIndex, AllowAllStrategy);
+            result = locateSearchSequence(sequence, startIndex, endIndex, AllowAllStrategy);
         }
         return result;
     }
