@@ -49,6 +49,7 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.EOFOffset;
 
@@ -691,7 +692,7 @@ public final class ByteSequenceCompiler {
                 position += increment;
                 return currentPosition;
             }
-            return -1; // this isn't a valid index position - should not call next if you haven't verified with hasNext()
+            throw new NoSuchElementException();
         }
     }
 
