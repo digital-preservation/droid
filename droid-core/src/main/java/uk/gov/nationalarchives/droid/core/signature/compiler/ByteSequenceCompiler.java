@@ -70,7 +70,7 @@ public final class ByteSequenceCompiler {
      * The biggest downside happens with large ranges, and the upside of allowing a range isn't huge,
      * so we bias towards low ranges.
      */
-    private static final int MAX_BYTE_COUNT = 128; // 128 may not be optimal, but it excludes [&01] signature if less.
+    private static final int MAX_BYTE_COUNT = 64;
 
     // The length of the anchoring sequences can be different - PRONOM only allows straight bytes in anchors.
     public enum CompileType {
@@ -248,8 +248,12 @@ public final class ByteSequenceCompiler {
                                          final int subSequenceStart, final int subSequenceEnd,
                                          final boolean anchoredToEOF,
                                          final CompileType compileType) throws CompileException {
-        /// Find and compile the anchoring search sequence:
+        /// Find the anchoring search sequence:
         final IntPair anchorRange = locateSearchSequence(sequenceList, subSequenceStart, subSequenceEnd, compileType);
+        if (anchorRange == NO_RESULT) {
+            throw new CompileException("No anchoring sequence could be found in a subsequence.");
+        }
+
         final ParseTree anchorSequence  = createSubSequenceTree(sequenceList, anchorRange.firstInt, anchorRange.secondInt);
         final SequenceMatcher anchorMatcher = MATCHER_COMPILER.compile(anchorSequence);
 
@@ -467,17 +471,50 @@ public final class ByteSequenceCompiler {
     }
 
     /**
+     * Locates the longest possible "anchoring" sequence to use for searching.
+     * All other parts of the subsequence to the left and right of the anchor become fragments.
+     * In general, longer anchors can be searched for faster than short anchors.
      *
      * @param sequence
      * @param startIndex
      * @param endIndex   The end index (exclusive) of the last node to search for.
+     * @param compileType whether to compile for PRONOM (only bytes in anchor) or DROID (more complex matchers in anchor)
      * @return The start and end indexes of the search sequence as an IntPair.
-     * @throws CompileException
+     * @throws CompileException If a suitable anchoring sequence can't be found.
      */
     private IntPair locateSearchSequence(final List<ParseTree> sequence,
                                          final int startIndex, final int endIndex,
                                          final CompileType compileType) throws CompileException {
-        final int numNodes = sequence.size();
+        // PRONOM anchors can only contain bytes.
+        if (compileType == CompileType.PRONOM) {
+            return locateSearchSequence(sequence, startIndex, endIndex, PRONOMStrategy);
+        }
+
+        // DROID anchors can contain sets, bitmasks and ranges, as long as they aren't too big.
+        final IntPair result = locateSearchSequence(sequence, startIndex, endIndex, DROIDStrategy);
+        if (result == NO_RESULT) {
+
+            // If we couldn't find an anchor with limited sets, bitmasks or ranges, try again allowing anything:
+            return locateSearchSequence(sequence, startIndex, endIndex, AllowAllStrategy);
+        }
+        return result;
+    }
+
+    /**
+     * Locates the longest possible "anchoring" sequence to use for searching.
+     * All other parts of the subsequence to the left and right of the anchor become fragments.
+     * In general, longer anchors can be searched for faster than short anchors.
+     *
+     * @param sequence
+     * @param startIndex
+     * @param endIndex   The end index (exclusive) of the last node to search for.
+     * @param anchorStrategy  Which elements can appear in anchors (bytes: PRONOM, some sets: DROID, anything: emergency)
+     * @return The start and end indexes of the search sequence as an IntPair.
+     * @throws CompileException If a suitable anchoring sequence can't be found.
+     */
+    private IntPair locateSearchSequence(final List<ParseTree> sequence,
+                                         final int startIndex, final int endIndex,
+                                         final AnchorStrategy anchorStrategy) throws CompileException {
         int length = 0;
         int startPos = startIndex;
         int bestLength = 0;
@@ -518,7 +555,7 @@ public final class ByteSequenceCompiler {
                  */
 
                 case RANGE: case SET: case ALL_BITMASK: {
-                    if (canBePartOfAnchor(child, compileType)) {
+                    if (anchorStrategy.canBePartOfAnchor(child)) {
                         length++; // treat the range as part of an anchor sequence, not something that has to be a fragment.
                         break;
                     }
@@ -532,7 +569,7 @@ public final class ByteSequenceCompiler {
                  */
 
                 case ALTERNATIVES: case ANY: case REPEAT: case REPEAT_MIN_TO_MAX: {
-                    // If we found a longer sequence that we had so far, use that:
+                    // If we found a longer sequence than we had so far, use that:
                     if (length > bestLength) {
                         bestLength = length;
                         bestStart  = startPos;
@@ -556,35 +593,23 @@ public final class ByteSequenceCompiler {
 
         // If we have no best length, then we have no anchoring subsequence - DROID can't process it.
         if (bestLength == 0) {
-            throw new CompileException("No suitable anchoring sequence found."); //TODO: add context to error messages.
+            return NO_RESULT;
         }
 
         return new IntPair(bestStart, bestEnd);
     }
 
-    private boolean canBePartOfAnchor(final ParseTree node, CompileType compileType) throws CompileException {
-        final ParseTreeType type = node.getParseTreeType();
-        try {
-        return compileType == CompileType.DROID && (
-                (type == ParseTreeType.RANGE       && countMatchingRange(node)   <= MAX_BYTE_COUNT) ||
-                (type == ParseTreeType.SET         && countMatchingSet(node)     <= MAX_BYTE_COUNT) ||
-                (type == ParseTreeType.ALL_BITMASK && countMatchingBitmask(node) <= MAX_BYTE_COUNT) );
-        } catch (ParseException e) {
-            throw new CompileException(e.getMessage(), e);
-        }
-    }
-
-    private int countMatchingBitmask(ParseTree node) throws ParseException {
+    private static int countMatchingBitmask(ParseTree node) throws ParseException {
         return ByteUtils.countBytesMatchingAllBits(node.getByteValue());
     }
 
-    private int countMatchingSet(ParseTree node) throws ParseException {
+    private static int countMatchingSet(ParseTree node) throws ParseException {
         return ParseTreeUtils.calculateSetValues(node).size();
     }
 
     // Only include ranges as potential anchor members if they are not too big.
     // Large ranges are poor members for a search anchor, as they can massively impede many search algorithms if they're present.
-    private int countMatchingRange(final ParseTree rangeNode) throws CompileException {
+    private static int countMatchingRange(final ParseTree rangeNode) throws CompileException {
         if (rangeNode.getParseTreeType() == ParseTreeType.RANGE) {
             final int range1, range2;
             try {
@@ -597,6 +622,8 @@ public final class ByteSequenceCompiler {
         }
         throw new IllegalArgumentException("Parse tree node is not a RANGE type: " + rangeNode);
     }
+
+    private static IntPair NO_RESULT = new IntPair(-1, -1);
 
     private static class IntPair {
         public final int firstInt;
@@ -626,6 +653,42 @@ public final class ByteSequenceCompiler {
             final int currentPosition = position;
             position += increment;
             return currentPosition;
+        }
+    }
+
+    private static AnchorStrategy PRONOMStrategy   = new PRONOMAnchorStrategy();
+    private static AnchorStrategy DROIDStrategy    = new DROIDAnchorStrategy();
+    private static AnchorStrategy AllowAllStrategy = new AllowAllAnchorStrategy();
+
+    private interface AnchorStrategy {
+        boolean canBePartOfAnchor(ParseTree node) throws CompileException;
+    }
+
+    private static class PRONOMAnchorStrategy implements AnchorStrategy {
+        @Override
+        public boolean canBePartOfAnchor(final ParseTree node) throws CompileException {
+            return false;
+        }
+    }
+
+    private static class DROIDAnchorStrategy implements AnchorStrategy {
+        @Override
+        public boolean canBePartOfAnchor(final ParseTree node) throws CompileException {
+            final ParseTreeType type = node.getParseTreeType();
+            try {
+                return (type == ParseTreeType.RANGE && countMatchingRange(node) <= MAX_BYTE_COUNT) ||
+                        (type == ParseTreeType.SET && countMatchingSet(node) <= MAX_BYTE_COUNT) ||
+                        (type == ParseTreeType.ALL_BITMASK && countMatchingBitmask(node) <= MAX_BYTE_COUNT);
+            } catch (ParseException e) {
+                throw new CompileException(e.getMessage(), e);
+            }
+        }
+    }
+
+    private static class AllowAllAnchorStrategy implements AnchorStrategy {
+        @Override
+        public boolean canBePartOfAnchor(final ParseTree node) throws CompileException {
+            return true;
         }
     }
 
