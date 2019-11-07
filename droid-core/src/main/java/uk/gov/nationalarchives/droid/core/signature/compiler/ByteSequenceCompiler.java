@@ -282,6 +282,7 @@ public final class ByteSequenceCompiler {
         return new SubSequence(anchorMatcher, leftFragments, rightFragments, subSequenceOffsets.firstInt, subSequenceOffsets.secondInt);
     }
 
+    //CHECKSTYLE:OFF - cyclomatic complexity too high.
     private IntPair createLeftFragments(final List<ParseTree> sequenceList, final List<List<SideFragment>> leftFragments,
                                         final int fragmentStart, final int fragmentEnd) throws CompileException {
         int position = 1;
