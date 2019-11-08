@@ -668,8 +668,8 @@ public final class ByteSequenceCompiler {
      * All other parts of the subsequence to the left and right of the anchor become fragments.
      * In general, longer anchors can be searched for faster than short anchors.
      *
-     * @param sequence
-     * @param startIndex
+     * @param sequence A list of ParseTree nodes which are the sequence we're scanning.
+     * @param startIndex The index of the node to search from.
      * @param endIndex   The end index (exclusive) of the last node to search for.
      * @param compileType whether to compile for PRONOM (only bytes in anchor) or DROID (more complex matchers in anchor)
      * @return The start and end indexes of the search sequence as an IntPair.
@@ -698,8 +698,8 @@ public final class ByteSequenceCompiler {
      * All other parts of the subsequence to the left and right of the anchor become fragments.
      * In general, longer anchors can be searched for faster than short anchors.
      *
-     * @param sequence
-     * @param startIndex
+     * @param sequence The sequence of nodes to search in for an anchoring sequence.
+     * @param startIndex The index of the node to start searching from.
      * @param endIndex   The end index (exclusive) of the last node to search for.
      * @param anchorStrategy  Which elements can appear in anchors (bytes: PRONOM, some sets: DROID, anything: emergency)
      * @return The start and end indexes of the search sequence as an IntPair.
@@ -708,7 +708,7 @@ public final class ByteSequenceCompiler {
     private IntPair locateSearchSequence(final List<ParseTree> sequence,
                                          final int startIndex, final int endIndex,
                                          final AnchorStrategy anchorStrategy) throws CompileException {
-        int length = 0;
+        //int length = 0;
         int startPos = startIndex;
         int bestLength = 0;
         int bestStart  = 0;
@@ -719,25 +719,10 @@ public final class ByteSequenceCompiler {
             switch (child.getParseTreeType()) {
 
                 /* -----------------------------------------------------------------------------------------------------
-                 * Types which only encode a single byte value at each position.
-                 * These can be part of any anchoring sequence in both DROID and PRONOM:
+                 * Types which can sometimes be part of an anchoring sequence:
                  */
-
-                // Children that match a single byte or a string:
-                case BYTE: case STRING: {
-                    //TODO: if byte is inverted, then should we add it to stopValue/start of anchoring sequence?
-                    length++; // add one to the max length found.
-                    break;
-                }
-
-                /* -----------------------------------------------------------------------------------------------------
-                 * Types which match more than one byte in a single position.
-                 * These can be part of an anchoring sequence in DROID (if not too big), but not in PRONOM:
-                 */
-
                 case RANGE: case SET: case ALL_BITMASK: case ANY: {
                     if (anchorStrategy.canBePartOfAnchor(child)) {
-                        length++; // treat the range as part of an anchor sequence, not something that has to be a fragment.
                         break;
                     }
                     // If not part of anchor, FALL THROUGH to final section for things which can't be part of an anchor.
@@ -745,10 +730,8 @@ public final class ByteSequenceCompiler {
                 }
 
                 /* -----------------------------------------------------------------------------------------------------
-                 * Types which match multiple sequences, or are repeated wildcard gaps,
-                 * These can't form part of any anchoring sequence, and have to be fragments:
+                 * Types which can't ever be part of an anchoring sequence:
                  */
-
                 case ALTERNATIVES: case REPEAT: case REPEAT_MIN_TO_MAX: {
                     // If we found a longer sequence than we had so far, use that:
                     int totalLength = calculateLength(sequence, startPos, childIndex - 1);
@@ -759,12 +742,13 @@ public final class ByteSequenceCompiler {
                     }
 
                     // Start looking for a longer suitable sequence:
-                    length = 0;
                     startPos = childIndex + 1; // next subsequence to look for.
                     break;
                 }
 
-                default: throw new CompileException("Unknown tree type: " + child.getParseTreeType() + " found at index: " + childIndex);
+                default: {
+                    // do nothing - we're only looking for types which aren't part of an anchoring sequence.
+                }
             }
         }
 
@@ -845,8 +829,8 @@ public final class ByteSequenceCompiler {
     private static IntPair NO_RESULT = new IntPair(-1, -1);
 
     private static class IntPair {
-        public final int firstInt;
-        public final int secondInt;
+        final int firstInt;
+        final int secondInt;
         public IntPair(final int firstInt, final int secondInt) {
             this.firstInt = firstInt;
             this.secondInt = secondInt;
