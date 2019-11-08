@@ -31,15 +31,21 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.compiler;
 
+import net.byteseek.compiler.CompileException;
+import net.byteseek.compiler.matcher.SequenceMatcherCompiler;
+import net.byteseek.matcher.bytes.ByteMatcher;
+import net.byteseek.matcher.sequence.SequenceMatcher;
 import net.byteseek.parser.ParseException;
 import net.byteseek.parser.tree.ParseTree;
 import net.byteseek.parser.tree.ParseTreeType;
+import net.byteseek.parser.tree.ParseTreeUtils;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -247,6 +253,11 @@ public class ByteSequenceParserTest {
         }
     }
 
+    @Test(expected = ParseException.class)
+    public void testInvalidCharInAlternatives() throws Exception {
+        PARSER.parse("(01 02 03| 04 05 'string' [&01] | ^ 'not good char before')");
+    }
+
     @Test
     public void testSequenceAlternatives() throws Exception {
         // Basic alternative sequences:
@@ -256,30 +267,70 @@ public class ByteSequenceParserTest {
         // Mixed byte and byte sequences:
         testSequenceAlternatives("  (01|fd a1 c3 b4|02 03 04)", "01", "fdA1c3B4", "020304");
         testSequenceAlternatives("(01|0f|0c|bcbdbe)", "01", "0f", "0C", "bcBDbe");
+
+        // Strings in alternatives:
+        testSequenceAlternatives("('one'|'two'|'three')", "one", "two", "three" );
+
+        // Mixed strings, byte and byte sequences:
+        testSequenceAlternatives("(00| 01 02 03 04 05 | 'string')", "00", "0102030405", "string");
+
+        // Ranges in alternatives:
+        testSequenceAlternatives("([00-23]|[45-47]|[Ce-df])", "[00-23]", "[45-47]", "[ce-df]");
+
+        // ?? in alternatives:
+        testSequenceAlternatives("(??|'string'|01 02)", ".", "string", "0102");
+
+        // Bitmasks in alternatives:
+        testSequenceAlternatives("([&01]|[&10]|[&fd])", "&01", "&10", "&fd");
     }
 
-    private void testSequenceAlternatives(String expression, String... hexValues) throws ParseException {
+    private void testSequenceAlternatives(String expression, String... hexValues) throws ParseException, CompileException {
         ParseTree alts = testHeader(expression);
         assertEquals(hexValues.length, alts.getNumChildren());
         for (int i = 0; i < hexValues.length; i++) {
             String hexValue = hexValues[i];
-            int numHexValues = hexValue.length() / 2;
             ParseTree altValue = alts.getChild(i);
-            if (numHexValues == 1) { // not a sequence, just a byte:
-                assertEquals(ParseTreeType.BYTE, altValue.getParseTreeType());
-                int byteValue = Integer.valueOf(hexValue, 16);
-                assertEquals(byteValue, altValue.getByteValue() & 0xFF);
-            } else {
-                assertEquals(ParseTreeType.SEQUENCE, altValue.getParseTreeType());
-                assertEquals(numHexValues, altValue.getNumChildren());
-                for (int byteIndex = 0; byteIndex < numHexValues; byteIndex++) {
-                    ParseTree byteNode = altValue.getChild(byteIndex);
-                    assertEquals(ParseTreeType.BYTE, byteNode.getParseTreeType());
-                    int stringPosition = 2 * byteIndex;
-                    int byteValue = Integer.valueOf(hexValue.substring(stringPosition, stringPosition + 2), 16);
-                    assertEquals(byteValue, byteNode.getByteValue() & 0xFF);
+            switch (altValue.getParseTreeType()) {
+                case STRING: {
+                    assertEquals(hexValue, altValue.getTextValue());
+                    break;
                 }
+                case BYTE: {
+                    int numHexValues = hexValue.length() / 2;
+                    assertEquals(1, numHexValues);
+                    int byteValue = Integer.valueOf(hexValue, 16);
+                    assertEquals(byteValue, altValue.getByteValue() & 0xFF);
+                    break;
+                }
+                case SEQUENCE: { // ASSUMES a sequence of byte values only, not other types - need to extend?
+                    int numHexValues = hexValue.length() / 2;
+                    assertEquals(ParseTreeType.SEQUENCE, altValue.getParseTreeType());
+                    assertEquals(numHexValues, altValue.getNumChildren());
+                    for (int byteIndex = 0; byteIndex < numHexValues; byteIndex++) {
+                        ParseTree byteNode = altValue.getChild(byteIndex);
+                        assertEquals(ParseTreeType.BYTE, byteNode.getParseTreeType());
+                        int stringPosition = 2 * byteIndex;
+                        int byteValue = Integer.valueOf(hexValue.substring(stringPosition, stringPosition + 2), 16);
+                        assertEquals(byteValue, byteNode.getByteValue() & 0xFF);
+                    }
+                    break;
+                }
+                case SET: {
+                    SequenceMatcher reference = SequenceMatcherCompiler.compileFrom(hexValue);
+                    ByteMatcher matcher = reference.getMatcherForPosition(0);
+                    Set<Byte> values = ParseTreeUtils.calculateSetValues(altValue);
+                    assertEquals(matcher.getNumberOfMatchingBytes(), values.size());
+                    for (byte b : matcher.getMatchingBytes()) {
+                        assertTrue(values.contains(b));
+                    }
+                    break;
+                }
+                case ANY: {
+                    break; // nothing to test - it matches everything.
+                }
+                default :  fail("Unknown alternative sequence type: " + altValue);
             }
+
         }
     }
 
