@@ -33,7 +33,9 @@ package uk.gov.nationalarchives.droid.core.signature.compiler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.byteseek.compiler.CompileException;
 import net.byteseek.compiler.matcher.SequenceMatcherCompiler;
@@ -252,7 +254,27 @@ public final class ByteSequenceCompiler {
     }
 
     //CHECKSTYLE:OFF - cyclomatic complexity too high.
+    /**
+     * This method processes the child nodes of a SEQUENCE ParseTree type into a List<ParseTree>.
+     * We can't directly affect the children of SEQUENCE types, but we want to change some of the children and
+     * optimise them.  So we build a new list, performing whatever optimisations are needed along the way.
+     *
+     * Along the way, it optimises nodes it can usefully optimise,
+     * and re-orders wildcards around * wildcards to make subsequent SubSequence compilation easier.
+     *
+     * If there is nothing special to do for a particular type of node, it's just added to the list.
+     * The switch statement does not need to look for all types of node, only the ones that something needs to
+     * be done for (or which affect the processing of other nodes).
+     *
+     * @param sequenceNodes A ParseTree node with child nodes to process.
+     * @param anchoredToEnd If the search sequence is anchored to the end .
+     * @param compileType Whether we are compiling for PRONOM or DROID.
+     * @return A list of ParseTrees ready for further compilation.
+     * @throws CompileException If there was a problem processing the sequence.
+     */
     private List<ParseTree> preprocessSequence(final ParseTree sequenceNodes, final boolean anchoredToEnd, final CompileType compileType) throws CompileException {
+        // Iterate across the nodes in the SEQUENCE ParseTree type.
+        // If the sequence is anchored to the end, we process the nodes in reverse order.
         final int numNodes = sequenceNodes.getNumChildren();
         final IntIterator index = anchoredToEnd ? new IntIterator(numNodes - 1, 0) : new IntIterator(0, numNodes - 1);
         final List<ParseTree> sequenceList = new ArrayList<>();
@@ -262,15 +284,15 @@ public final class ByteSequenceCompiler {
             final ParseTree node = sequenceNodes.getChild(currentIndex);
             sequenceList.add(node);
             switch (node.getParseTreeType()) {
-                case BYTE:
-                case RANGE:
-                case STRING:
-                case ALL_BITMASK:
-                case SET:
-                case ANY: {
+
+                /*
+                 * Process types that match byte values, tracking the last time we saw something that matches bytes:
+                 */
+                case BYTE: case RANGE: case STRING: case ALL_BITMASK: case SET: case ANY: {
                     lastValuePosition = sequenceList.size() - 1;
                     break;
                 }
+
                 case ALTERNATIVES: {
                     lastValuePosition = sequenceList.size() - 1;
                     if (compileType == CompileType.DROID) {
@@ -278,26 +300,55 @@ public final class ByteSequenceCompiler {
                     }
                     break;
                 }
+
+                /*
+                 * Process * wildcard types that form a sub-sequence boundary.
+                 * At this point, we want to ensure that the * wildcard is right next to the last value type we saw.
+                 *
+                 * This is because it makes subsequent compilation into DROID objects easier if we ensure that any
+                 * gaps, e.g. {10}, exist at the start of a subsequence rather than the end of the previous one.
+                 *
+                 * For example, the sequence:
+                 *
+                 *    01 03 04 {10} * 05 06 07
+                 *
+                 * has a {10} gap at the end of the first subsequence.  But it's easier to compile if it instead reads:
+                 *
+                 *    01 03 04 * {10} 05 06 07
+                 *
+                 * This is because to model this in DROID objects, the {10} gap is a property of the following
+                 * subsequence, not the one it was actually defined in.  It's equivalent whether a fixed gap happens at
+                 * end of one sequence, or the beginning of the next - but the objects expect inter-subsequence gaps
+                 * to be recorded in the following subsequence.
+                 *
+                 */
                 case ZERO_TO_MANY: { // subsequence boundary.
-                    sequenceList.add(lastValuePosition + 1, node); // insert zero to many node after last value position.
-                    sequenceList.remove(sequenceList.size() - 1);  // remove existing zero to many node on stopValue.
+                    // If the last value is not immediately before the * wildcard, we have some wildcard gaps between
+                    // it and the next subsequence.  Move the wildcard after the last value position.
+                    if (lastValuePosition + 1 < sequenceList.size() - 1) {
+                        // insert zero to many node after last value position.
+                        sequenceList.add(lastValuePosition + 1, node);
+                        // remove the current zero to many node.
+                        sequenceList.remove(sequenceList.size() - 1);
+                    }
                     break;
                 }
-                case REPEAT_MIN_TO_MANY: { // subsequence boundary {n,*}
+                case REPEAT_MIN_TO_MANY: { // subsequence boundary {n,*} - Change the {n-*} into a * followed by an {n}.
+                    // Replace the current {n-*} node with a repeat {n} node.
                     sequenceList.set(sequenceList.size() - 1,
                             new ChildrenNode(ParseTreeType.REPEAT, node.getChild(0), BaseNode.ANY_NODE));
+                    // Insert the * wildcard just after the last value position.
                     sequenceList.add(lastValuePosition + 1, ZERO_TO_MANY);
                     break;
                 }
-                default:
-                //TODO should we throw a ParseException exception here or just ignore?
-                    // if throw exception, it fails on
-                    // ByteSequenceCompilerTest.compileOneSubSequence(ByteSequenceCompilerTest.java:48)
-                    // testCompileBOF("01 02 {4} 05", "0102", 0, 1);
-                    // testCompilesAllPRONOMSignaturesWithoutError
-                    // throw new CompileException("Unknown tree type: " + node.getParseTreeType() + " found at index: " + currentIndex);
+
+                default: {
+                    // Do nothing.  It is not an error to encounter a type we don't need to pre-process in some way.
+                }
             }
         }
+
+        // If we processed the nodes in reverse order, reverse the final list to get the nodes back in normal order.
         if (anchoredToEnd) {
             Collections.reverse(sequenceList);
         }
@@ -308,12 +359,67 @@ public final class ByteSequenceCompiler {
      * Looks for alternatives which match several different single bytes.
      * These can be more efficiently represented in DROID using a Set matcher from byteseek,
      * rather than a list of SideFragments in DROID itself.
+     *
+     * Instead of (01|02|03) we would like [01 02 03].
+     * Also, instead of (&01|[10:40]|03) we can have [&01 10:40 03]
+     * If we have alternatives with some sequences in them, we can still optimise the single byte alternatives, e.g.
+     * Instead of (01|02|03|'something else') we get ([01 02 03] | 'something else')
      * <p>
      * @param node The node to optimise
-     * @return An optimised list of alternatives, or a single SET matcher node if all the alternatives just match single bytes.
+     * @return An optimised alternative node, or the original node passed in if no optimisations can be done.
      */
-    private ParseTree optimiseSingleByteAlternatives(final ParseTree node) {
-        //TODO: write optimisation routines.
+    private ParseTree optimiseSingleByteAlternatives(final ParseTree node) throws CompileException {
+        if (node.getParseTreeType() == ParseTreeType.ALTERNATIVES) {
+
+            // Locate any single byte alternatives:
+            final Set<Integer> singleByteIndexes = new HashSet<>();
+            for (int i = 0; i < node.getNumChildren(); i++) {
+                ParseTree child = node.getChild(i);
+                switch (child.getParseTreeType()) {
+                    case BYTE: case RANGE: case ALL_BITMASK: case SET: {
+                        singleByteIndexes.add(i);
+                        break;
+                    }
+                    case STRING: { // A single char (<256) string can be modelled as an ISO-8859-1 byte.
+                        final String value;
+                        try {
+                            value = child.getTextValue();
+                        } catch (ParseException e) {
+                            throw new CompileException(e.getMessage(), e);
+                        }
+                        if (value.length() == 1 && value.charAt(0) < 256) {
+                            singleByteIndexes.add(i);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // If there is more than one single byte value, we can optimise them into just one SET:
+            if (singleByteIndexes.size() > 1) {
+                final List<ParseTree> newAlternativeChildren = new ArrayList<>();
+                final List<ParseTree> setChildren = new ArrayList<>();
+                for (int i = 0; i < node.getNumChildren(); i++) {
+                    final ParseTree child = node.getChild(i);
+                    if (singleByteIndexes.contains(i)) {
+                        setChildren.add(child);
+                    } else {
+                        newAlternativeChildren.add(child);
+                    }
+                }
+                final ParseTree setNode = new ChildrenNode(ParseTreeType.SET, setChildren);
+
+                // If there are no further alternatives as they were all single byte values, just return the set:
+                if (newAlternativeChildren.isEmpty()) {
+                    return setNode;
+                }
+
+                // Otherwise we have some single bytes optimised, but part of a bigger set of non single byte alternatives.
+                newAlternativeChildren.add(setNode);
+                return new ChildrenNode(ParseTreeType.ALTERNATIVES, newAlternativeChildren);
+            }
+        }
+        // No change to original node - just return it.
         return node;
     }
 
