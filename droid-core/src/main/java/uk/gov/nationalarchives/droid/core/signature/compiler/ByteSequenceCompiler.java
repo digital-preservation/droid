@@ -55,11 +55,6 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 
 import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.EOFOffset;
 
-//TODO: do we need to clear existing data in byte sequences, or just refuse to compile if they already have something?
-//TODO: if we use ShiftOR searchers, then ANY bytes can be included in a search without penalty....
-//TODO: optimise single byte alternative expressions into a set.
-
-
 /**
  * class to compile a ByteSequence from a DROID syntax regular expression created by {@link ByteSequenceParser}.
  * <br/>
