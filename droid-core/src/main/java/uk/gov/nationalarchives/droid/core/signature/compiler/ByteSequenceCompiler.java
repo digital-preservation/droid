@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import net.byteseek.compiler.CompileException;
@@ -100,7 +101,6 @@ public final class ByteSequenceCompiler {
          */
         DROID;
     }
-
 
     private static final SequenceMatcherCompiler MATCHER_COMPILER = new SequenceMatcherCompiler();
     private static final ParseTree ZERO_TO_MANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
@@ -248,9 +248,6 @@ public final class ByteSequenceCompiler {
         if (subSequenceStart < numNodes) {
             sequence.addSubSequence(buildSubSequence(sequenceList, subSequenceStart, numNodes, anchoredToEnd, compileType));
         }
-
-        //TODO: any other attributes we need to set here (min offsets or something?).
-        //      Min offset of ByteSequence itself?
     }
 
     //CHECKSTYLE:OFF - cyclomatic complexity too high.
@@ -889,7 +886,7 @@ public final class ByteSequenceCompiler {
                 position += increment;
                 return currentPosition;
             }
-            return -1; // this isn't a valid index position - should not call next if you haven't verified with hasNext()
+            throw new NoSuchElementException("Iterator has position: " + position + " stopValue: " + stopValue + " and increment " + increment);
         }
     }
 
