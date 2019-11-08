@@ -50,7 +50,7 @@ public class ByteSequenceCompilerTest {
 
     @Parameterized.Parameters
     public static Collection params() {
-        return Arrays.asList(new Object[] {BOFOffset, EOFOffset, VariableOffset});
+        return Arrays.asList(BOFOffset, EOFOffset, VariableOffset);
     }
 
     private ByteSequenceAnchor compileType;
@@ -305,7 +305,7 @@ public class ByteSequenceCompilerTest {
     public void testAny() throws Exception {
         ByteSequence seq = COMPILER.compile("??");
         SubSequence sub  = assertSingleSubSequenceNoFragments(seq);
-        ByteMatcher bm   = assertSingleByteMatcher(sub.getAnchorMatcher(), AnyByteMatcher.class);
+        assertSingleByteMatcher(sub.getAnchorMatcher(), AnyByteMatcher.class);
     }
 
     @Test
@@ -332,7 +332,7 @@ public class ByteSequenceCompilerTest {
         }
     }
 
-    //TODO: make set tests more complex by randomising the elements in them.
+    //TODO: make set tests more complex by randomising the elements in them, not just ranges and random bytes.
     @Test
     public void testMultiByteAndRangeSet() throws Exception {
         Random rand = new Random();
@@ -402,7 +402,7 @@ public class ByteSequenceCompilerTest {
     }
 
     /*******************************************************************************************************************
-     * Test expressions within a single subsequence
+     * Test expressions, and put them into three subsequences to ensure they each compile correctly.
      */
 
     @Test
@@ -434,7 +434,6 @@ public class ByteSequenceCompilerTest {
         testCompile("01 02 {4} 05", "0102", 0, 1);
 
         // GAP at start
-        //TODO: need to test gaps.
         testCompile("{9} 01 02 03 04", "01020304", 0, 0);
 
         // repeat min to max
@@ -473,7 +472,7 @@ public class ByteSequenceCompilerTest {
     }
 
     /*******************************************************************************************************************
-     * Test that all known sequences can be compiled without an exception
+     * Test that all known real-world sequences can be compiled without an exception
      */
 
     @Test
@@ -487,13 +486,126 @@ public class ByteSequenceCompilerTest {
     }
 
     /*******************************************************************************************************************
+     * Test gaps and offsets in fragments, subsequences and bytesequences are calculated correctly.
+     */
+    @Test
+    public void testFragmentGapCalculations() throws Exception {
+        //TODO: this models the ?? as the sequence ?? 05 instead of 05 with a min offset of 1.
+        //testFragmentGaps("01 02 03 ?? 05", 0, 1, 1, 1);
+
+        // Test fixed gaps on the right:
+        testFragmentGaps("01 02 03 {5} 05", 0, 1, 5, 5);
+        testFragmentGaps("01 02 03 {5} 05 ('one'|'two')", 0, 2, 5, 5, 0, 0);
+        testFragmentGaps("01 02 03 {5} 05 {7} ('one'|'two')", 0, 2, 5, 5, 7, 7);
+
+        // Test fixed gaps on the left:
+        testFragmentGaps("05 {5} 01 02 03", 1, 0, 5, 5);
+        testFragmentGaps("05 ('one'|'two') {5} 01 02 03", 2, 0, 5, 5, 0, 0);
+        testFragmentGaps("('one'|'two') {7} 05 {5} 01 02 03", 2, 0, 5, 5, 7, 7);
+
+        // Test double fixed gaps on the right:
+        testFragmentGaps("01 02 03 {5} {4} 05", 0, 1, 9, 9);
+        testFragmentGaps("01 02 03 {5} {3} 05 ('one'|'two')", 0, 2, 8, 8, 0, 0);
+        testFragmentGaps("01 02 03 {5} {2} 05 {7} {3} ('one'|'two')", 0, 2, 7, 7, 10, 10);
+
+        // Test double fixed gaps on the left:
+        testFragmentGaps("05 {5} {200} 01 02 03", 1, 0, 205, 205);
+        testFragmentGaps("05 ('one'|'two') {5} {1} 01 02 03", 2, 0, 6, 6, 0, 0);
+        testFragmentGaps("('one'|'two') {7} {13} 05 {5} {67} 01 02 03", 2, 0, 72, 72, 20, 20);
+
+        // Test gaps from min to max range on right:
+        testFragmentGaps("01 02 03 {5-10} 05", 0, 1, 5, 10);
+        testFragmentGaps("01 02 03 {5-9} 05 ('one'|'two')", 0, 2, 5, 9, 0, 0);
+        testFragmentGaps("01 02 03 {5-9} 05 {7-14} ('one'|'two')", 0, 2, 5, 9, 7, 14);
+
+        // Test double gaps from min to max range on right:
+        testFragmentGaps("01 02 03 {100} {5-10} 05", 0, 1, 105, 110);
+        testFragmentGaps("01 02 03 {5-9} {60} 05 ('one'|'two')", 0, 2, 65, 69, 0, 0);
+        testFragmentGaps("01 02 03 {5-9} {32} 05 {32} {7-14} ('one'|'two')", 0, 2, 37, 41, 39, 46);
+
+        // Test gaps from min to max range on left:
+        testFragmentGaps("05 {5-10} 01 02 03", 1, 0, 5, 10);
+        testFragmentGaps("05 ('one'|'two') {4-9} 01 02 03", 2, 0, 4, 9, 0, 0);
+        testFragmentGaps("('one'|'two') {7-15} 05 {5-6} 01 02 03", 2, 0, 5, 6, 7, 15);
+
+        // Test double gaps from min to max range on left:
+        testFragmentGaps("05 {5-10} {55} 01 02 03", 1, 0, 60, 65);
+        testFragmentGaps("05 ('one'|'two') {29} {4-9} {21} 01 02 03", 2, 0, 54, 59, 0, 0);
+        testFragmentGaps("('one'|'two') {7-15} {100} 05 {5-6} {62} {38} 01 02 03", 2, 0, 105, 106, 107, 115);
+    }
+
+    private void testFragmentGaps(String expression, int leftFragments, int rightFragments, int... minMaxGaps) throws Exception {
+        ByteSequence seq = COMPILER.compile(expression, compileType);
+        SubSequence sub = assertSingleSubSequenceWithFragments(seq, leftFragments, rightFragments);
+        List<List<SideFragment>> fragments = sub.getLeftFragments();
+        int fragPos = 0;
+        for (int minMaxPos = 0; minMaxPos < minMaxGaps.length; minMaxPos += 2) {
+            if (fragPos >= fragments.size()) {
+                fragments = sub.getRightFragments();
+                fragPos = 0;
+            }
+            int min = minMaxGaps[minMaxPos];
+            int max = minMaxGaps[minMaxPos + 1];
+            List<SideFragment> currentFragList = fragments.get(fragPos++);
+            SideFragment frag = currentFragList.get(0);
+            assertEquals(min, frag.getMinOffset());
+            assertEquals(max, frag.getMaxOffset());
+        }
+    }
+
+    @Test
+    public void testSubsequenceGapCalculations() throws Exception {
+        // No gaps between subsequences
+        testSubSequenceGaps("'no gaps' * 'between these'", 00, 00, 00, 00);
+
+        // Fixed gap between subsequences:
+        testSubSequenceGaps("01 02 03 {10} * 04 05 06", 0, 0, 10, 10);
+        testSubSequenceGaps("01 02 03 * {10} 04 05 06", 0, 0, 10, 10);
+        testSubSequenceGaps("01 02 03 {10} * 04 05 06 {100} * {256} 02 03 04 05", 0, 0, 10, 10, 356, 356);
+
+        // Min Max gaps between subsequences:
+        //testSubSequenceGaps("")
+    }
+
+    private void testSubSequenceGaps(String expression, int... minMaxGaps) throws Exception {
+        ByteSequence seq = COMPILER.compile(expression, compileType);
+
+        if (compileType == EOFOffset) {
+            int minMaxPos = 2;
+            for (SubSequence sub : seq.getSubSequences()) {
+                int min = minMaxGaps[minMaxPos++];
+                int max = minMaxGaps[minMaxPos++];
+                if (minMaxPos >= minMaxGaps.length) {
+                    minMaxPos = 0;
+                }
+                assertEquals(min, sub.getMinSeqOffset());
+                assertEquals(max, sub.getMaxSeqOffset());
+            }
+        } else {
+            int minMaxPos = 0;
+            for (SubSequence sub : seq.getSubSequences()) {
+                int min = minMaxGaps[minMaxPos++];
+                int max = minMaxGaps[minMaxPos++];
+                assertEquals(min, sub.getMinSeqOffset());
+                assertEquals(max, sub.getMaxSeqOffset());
+            }
+        }
+
+    }
+
+    @Test
+    public void testByteSequenceOffsetCalculations() {
+       // fail("TODO");
+    }
+
+    /*******************************************************************************************************************
      * Private test implementations used by the public tests
      */
 
     private void testCompilesSignaturesWithoutError(String filename) throws IOException {
         File file = getFile(filename);
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        String sequence = "";
+        String sequence;
         String failureMessages = "FAILURE: the following signatures could not be compiled from file: " + filename + "\n";
         boolean failed = false;
         while ((sequence = reader.readLine()) != null) {
@@ -540,24 +652,6 @@ public class ByteSequenceCompilerTest {
         }
     }
 
-    /*
-    private ByteMatcher assertSingleByteMatcherFragment(String expression, Class classType) throws Exception {
-        ByteSequence seq = COMPILER.compile(expression, compileType);
-        SubSequence  sub = assertSingleSubSequence(seq);
-        List<List<SideFragment>> fragList = sub.getLeftFragments();
-        if (fragList.size() == 0) fragList = sub.getRightFragments();
-        assertTrue( "Must have one fragment in the expression: " + expression, fragList.size() > 0);
-        List<SideFragment> frag = fragList.get(0);
-        assertEquals("Must have only one fragment in the fragment.", 1, frag.size());
-        SideFragment f = frag.get(0);
-        SequenceMatcher sm = f.getMatcher();
-        assertTrue(sm.length() > 0);
-        ByteMatcher bm = sm.getMatcherForPosition(0);
-        assertTrue(classType.isInstance(sm));
-        return bm;
-    }
-*/
-
     private ByteMatcher assertSingleByteMatcher(String expression, Class classType) throws Exception {
         ByteSequence seq = COMPILER.compile(expression, compileType);
         SubSequence sub  = assertSingleSubSequenceNoFragments(seq);
@@ -581,9 +675,12 @@ public class ByteSequenceCompilerTest {
         return subs.get(0);
     }
 
-    private SubSequence assertSingleSubSequence(ByteSequence seq) {
+    private SubSequence assertSingleSubSequenceWithFragments(ByteSequence seq, int leftFragments, int rightFragments) {
         assertEquals(1, seq.getNumberOfSubSequences());
         List<SubSequence> subs = seq.getSubSequences();
+        SubSequence sub = subs.get(0);
+        assertEquals(leftFragments, sub.getLeftFragments().size());
+        assertEquals(rightFragments, sub.getRightFragments().size());
         return subs.get(0);
     }
 
@@ -677,7 +774,10 @@ public class ByteSequenceCompilerTest {
             char randChar;
             // Get an ASCII char which isn't the closing string quote '
             // We can't use full ISO-8559-1 charset, as there is a bug in the byteseek compiler 2.0.3.
-            while ((randChar = (char) rand.nextInt(128)) == '\'') {}
+            randChar = (char) rand.nextInt(128); // limit to ASCII 128 value as highest char.
+            if (randChar == '\'') { // can't have a single quote inside a string, make it the next char.
+                randChar++;
+            }
             builder.append(randChar);
         }
         builder.append("'");
