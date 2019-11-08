@@ -355,6 +355,9 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                 prepareSequenceFragments();
             } else { // We have a sequence attribute set - compile the sequence into this ByteSequence object.
                 try {
+                    if (!subSequences.isEmpty()) {
+                        log.warn("ByteSequence is clearing existing SubSequences before compiling with sequence: " + sequence);
+                    }
                     subSequences.clear();
                     ByteSequenceCompiler.COMPILER.compile(this, sequence);
                     setSortOrder();
