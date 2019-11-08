@@ -202,7 +202,7 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
 
     private ParseTree parseAlternatives(final StringParseReader reader) throws ParseException {
         List<ParseTree> alternatives = new ArrayList<ParseTree>();
-        List<ParseTree> sequence = new ArrayList<ParseTree>();
+        List<ParseTree> sequence = new ArrayList<>();
 
         int currentChar;
         ALTERNATIVES: while ((currentChar = reader.read()) >= 0) {
@@ -229,7 +229,7 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
                         throw createParseException("No sequence defined before alternative |", reader);
                     }
                     alternatives.add(createAlternativeNode(sequence));
-                    sequence = new ArrayList<ParseTree>(); // start a new sequence list.
+                    sequence = new ArrayList<>(); // start a new sequence list.
                     break;
                 }
 
@@ -245,22 +245,36 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
                     break;
                 }
 
-                // Must be a hex byte - add it to the alternative sequence.  Will throw an error if not.
-                default: {
+                // Hex byte:
+                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+                case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': {
                     sequence.add(ByteNode.valueOf(reader.readHexByte(currentChar)));
+                    break;
+                }
+
+                // Any byte ??
+                case QUESTION_MARK: {
+                    sequence.add(parseAnyNode(reader));
+                    break;
+                }
+
+                // Not a known character - throw a ParseException.
+                default: {
+                    throw createParseException("Unknown character encountered in alternatives ( | ) sequence: " + (char) currentChar, reader);
                 }
             }
         }
 
         // If we've closed the alternatives properly and we have some, return them:
-        if (currentChar == ')') {
+        if (currentChar == CLOSE_ROUND_BRACKET) {
             if (alternatives.size() == 1) {
                 return alternatives.get(0); // no need for alternatives if there is only one alternative.
             } else if (alternatives.size() > 1) {
                 return new ChildrenNode(ParseTreeType.ALTERNATIVES, alternatives);
             }
         }
-        throw createParseException("Alternatives (a|b) syntax incorrect", reader);
+        throw createParseException("No closing ) for alternatives or empty alternatives ( | )", reader);
     }
 
     private ParseTree createAlternativeNode(final List<ParseTree> values) {
