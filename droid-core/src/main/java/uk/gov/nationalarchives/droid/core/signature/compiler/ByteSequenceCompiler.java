@@ -488,8 +488,13 @@ public final class ByteSequenceCompiler {
                         startValueIndex = Integer.MAX_VALUE;
                         endValueIndex   = Integer.MAX_VALUE;
                     }
-                    minGap += getMinGap(node);
-                    maxGap += getMaxGap(node);
+                    int nodeMin = getMinGap(node);
+                    int nodeMax = getMaxGap(node); // will be zero if no max set.
+                    if (nodeMax == 0) {
+                        nodeMax = nodeMin; // should be minimum of min.
+                    }
+                    minGap += nodeMin;
+                    maxGap += nodeMax;
                     break;
                 }
 
@@ -519,6 +524,11 @@ public final class ByteSequenceCompiler {
             leftFragments.add(buildFragment(sequenceList, startValueIndex, endValueIndex, minGap, maxGap, position));
             minGap = 0;
             maxGap = 0;
+        }
+
+        // If we never got a min-max range (just min ranges), the max may still be set to zero. Must be at least min.
+        if (maxGap < minGap) {
+            maxGap = minGap;
         }
 
         // Return any final min / max gap left over at the start of the left fragments:
@@ -561,8 +571,13 @@ public final class ByteSequenceCompiler {
                         startValueIndex = Integer.MAX_VALUE;
                         endValueIndex = Integer.MAX_VALUE;
                     }
-                    minGap += getMinGap(node);
-                    maxGap += getMaxGap(node);
+                    int nodeMin = getMinGap(node);
+                    int nodeMax = getMaxGap(node); // will be zero if no max set.
+                    if (nodeMax == 0) {
+                        nodeMax = nodeMin; // should be minimum of min.
+                    }
+                    minGap += nodeMin;
+                    maxGap += nodeMax;
                     break;
                 }
 
@@ -595,6 +610,11 @@ public final class ByteSequenceCompiler {
             maxGap = 0;
         }
 
+        // If we never got a min-max range (just min ranges), the max may still be set to zero. Must be at least min.
+        if (maxGap < minGap) {
+            maxGap = minGap;
+        }
+
         // Return any final min / max gap left over at the start of the left fragments:
         return new IntPair(minGap, maxGap);
     }
@@ -604,7 +624,8 @@ public final class ByteSequenceCompiler {
         final List<SideFragment> fragments = new ArrayList<>();
         final ParseTree fragmentTree = createSubSequenceTree(sequenceList, startValueIndex, endValueIndex);
         final SequenceMatcher matcher = MATCHER_COMPILER.compile(fragmentTree);
-        final SideFragment fragment = new SideFragment(matcher, minGap, maxGap, position);
+        final int minMax = maxGap < minGap ? minGap : maxGap;
+        final SideFragment fragment = new SideFragment(matcher, minGap, minMax, position);
         fragments.add(fragment);
         return fragments;
     }
@@ -620,7 +641,8 @@ public final class ByteSequenceCompiler {
         for (int childIndex = 0; childIndex < numChildren; childIndex++) {
             final ParseTree alternative = node.getChild(childIndex);
             final SequenceMatcher fragmentMatcher = MATCHER_COMPILER.compile(alternative);
-            final SideFragment fragment = new SideFragment(fragmentMatcher, minGap, maxGap, position);
+            final int minMax = maxGap < minGap ? minGap : maxGap;
+            final SideFragment fragment = new SideFragment(fragmentMatcher, minGap, minMax, position);
             alternatives.add(fragment);
         }
         return alternatives;
