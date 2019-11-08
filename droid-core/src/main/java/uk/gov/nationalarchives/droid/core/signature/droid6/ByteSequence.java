@@ -86,12 +86,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.byteseek.compiler.CompileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
+import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler;
 
 /**
  * A ByteSequence is a regular-expression like object
@@ -191,6 +193,15 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     private boolean isInvalidByteSequence;
 
     /**
+     * The signature sequence in PRONOM or container compatible syntax.
+     * It won't be set for most ByteSequences, but can be set from the signature XML
+     * using a Sequence attribute on a ByteSequence element.
+     */
+    private String sequence = "";
+
+    private boolean preparedForUse = false;
+
+    /**
      * 
      * @return Whether the byte sequence is anchored to the beginning of a file.
      */
@@ -263,6 +274,26 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
         this.reverseOrder = theRef.equalsIgnoreCase(EOF_OFFSET);
         //this.searchDirection = this.reverseOrder? -1 : 1;
         this.reference = theRef;
+        preparedForUse = false;
+    }
+
+    /**
+     * Sets a signature sequence value directly on a ByteSequence object.
+     * This is a full PRONOM or DROID container compatible signature.
+     *
+     * @param sequence A PRONOM or container signature sequence
+     */
+    public final void setSequence(final String sequence) {
+        this.sequence = sequence;
+        preparedForUse = false;
+    }
+
+    /**
+     * Returns a signature sequence set on this ByteSequence object.
+     * @return a signature sequence set on this ByteSequence object.
+     */
+    public String getSequence() {
+        return sequence;
     }
 
     /**
@@ -301,6 +332,8 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
             setIndirectOffsetLength(value);
         } else if ("IndirectOffsetLocation".equals(name)) {
             setIndirectOffsetLocation(value);
+        } else if ("Sequence".equals(name)){
+            setSequence(value);
         } else {
             unknownAttributeWarning(name, this.getElementName());
         }
@@ -315,7 +348,26 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * MUST be called before using the byte sequence to match.
      */
     public final void prepareForUse() {
-        // set the sort order of a byte sequence.
+        if (!preparedForUse) {
+            // If we don't have a sequence attribute set, just use whatever objects are already there (from XML parsing).
+            if (sequence.isEmpty()) {
+                setSortOrder();
+                prepareSequenceFragments();
+            } else { // We have a sequence attribute set - compile the sequence into this ByteSequence object.
+                try {
+                    subSequences.clear();
+                    ByteSequenceCompiler.COMPILER.compile(this, sequence);
+                    setSortOrder();
+                } catch (CompileException e) {
+                    log.error(e.getMessage(), e);
+                    isInvalidByteSequence = true;
+                }
+            }
+        }
+        preparedForUse = true;
+    }
+
+    private void setSortOrder() {
         final int noOfSubSequences = subSequences.size();
         if (anchoredToBOF) {
             if (noOfSubSequences == 1) {
@@ -332,7 +384,6 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
         } else {
             sortOrder = SORT5;
         }
-        prepareSequenceFragments();
     }
 
     /**
