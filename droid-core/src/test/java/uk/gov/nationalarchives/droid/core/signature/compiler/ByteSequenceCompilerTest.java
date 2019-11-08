@@ -399,6 +399,10 @@ public class ByteSequenceCompilerTest {
         sm = assertSingleSequenceMatcher("01 (22|27|00) 01", SequenceMatcher.class);
         bm = sm.getMatcherForPosition(1);
         assertTrue(SetBinarySearchMatcher.class.isInstance(bm));
+
+        //TODO: test strings in single byte alternative optimisation.
+
+        //TODO: test other constructs in single byte alternative optimisation.
     }
 
     /*******************************************************************************************************************
@@ -554,6 +558,27 @@ public class ByteSequenceCompilerTest {
     }
 
     @Test
+    public void testStartEndSubSequenceGapCalculations() throws Exception {
+        testSubSequenceGaps("{10} 01 02 03 04", 10, 10, 0, 0);
+        testSubSequenceGaps("01 02 03 04 {10}", 0, 0, 10, 10);
+
+        testSubSequenceGaps("{10-256} 01 02 03 04", 10, 256, 0, 0);
+        testSubSequenceGaps("01 02 03 04 {10-256}", 0, 0, 10, 256);
+
+        testSubSequenceGaps("{10} 01 02 04 05 * {30} A1 A2 A3 A4 * {40} D1 D2 D3", BOFOffset, 10, 10, 30, 30, 40, 40);
+        testSubSequenceGaps("{10} 01 02 04 05 * {30} A1 A2 A3 A4 * {40} D1 D2 D3", EOFOffset, 0, 0, 30, 30, 40, 40);
+
+        testSubSequenceGaps("{10-256} 01 02 04 05 * {30} A1 A2 A3 A4 * {40} D1 D2 D3", BOFOffset, 10, 256, 30, 30, 40, 40);
+        testSubSequenceGaps("{10-256} 01 02 04 05 * {30} A1 A2 A3 A4 * {40} D1 D2 D3", EOFOffset, 0, 0, 30, 30, 40, 40);
+
+        testSubSequenceGaps("01 02 04 05 * {30} A1 A2 A3 A4 * {40} D1 D2 D3 {10}", BOFOffset, 0, 0, 30, 30, 40, 40);
+        testSubSequenceGaps("01 02 04 05 * {30} A1 A2 A3 A4 * {40} D1 D2 D3 {10}", EOFOffset, 10, 10, 30, 30, 40, 40);
+
+        testSubSequenceGaps("01 02 04 05 * {30} A1 A2 A3 A4 * {40} D1 D2 D3 {10-256}", BOFOffset, 0, 0, 30, 30, 40, 40);
+        testSubSequenceGaps("01 02 04 05 * {30} A1 A2 A3 A4 * {40} D1 D2 D3 {10-256}", EOFOffset, 10, 256, 30, 30, 40, 40);
+    }
+
+    @Test
     public void testSubsequenceGapCalculations() throws Exception {
         // No gaps between subsequences
         testSubSequenceGaps("'no gaps' * 'between these'", 00, 00, 00, 00);
@@ -564,20 +589,34 @@ public class ByteSequenceCompilerTest {
         testSubSequenceGaps("01 02 03 {10} * 04 05 06 {100} * {256} 02 03 04 05", 0, 0, 10, 10, 356, 356);
 
         // Min Max gaps between subsequences:
-        //testSubSequenceGaps("")
+        testSubSequenceGaps("01 02 03 {9-14} * 04 05 06", 0, 0, 9, 14);
+        testSubSequenceGaps("01 02 03 * {9-14} 04 05 06", 0, 0, 9, 14);
+        testSubSequenceGaps("01 02 03 {32-64} * 04 05 06 {100-105} * {256-356} 02 03 04 05", 0, 0, 32, 64, 356, 461);
+
+        // Min Max and fixed gaps between subsequences:
+        testSubSequenceGaps("01 02 03 {9-14} * {32} 04 05 06", 0, 0, 41, 46);
+        testSubSequenceGaps("01 02 03 {32} * {9-14} 04 05 06", 0, 0, 41, 46);
+        testSubSequenceGaps("01 02 03 {32-64} {10} * {20} 04 05 06 {100} * {256-356} 02 03 04 05", 0, 0, 62, 94, 356, 456);
     }
 
-    private void testSubSequenceGaps(String expression, int... minMaxGaps) throws Exception {
-        ByteSequence seq = COMPILER.compile(expression, compileType);
 
-        if (compileType == EOFOffset) {
-            int minMaxPos = 2;
+    private void testSubSequenceGaps(String expression, int... minMaxGaps) throws Exception {
+        testSubSequenceGaps(expression, compileType, minMaxGaps);
+    }
+
+    private void testSubSequenceGaps(String expression, ByteSequenceAnchor anchor, int... minMaxGaps) throws Exception {
+        ByteSequence seq = COMPILER.compile(expression, anchor);
+        // sequences compiled from EOF calculate gaps differently - they work "backwards" from the last subsequence,
+        // rather than forwards from the first subsequence.  This means the gaps are shifted from one subsequence to
+        // the following subsequence.
+        if (anchor == EOFOffset) {
+            int minMaxPos = 2; // start at the second set of gaps (shifted one on) if EOFOffset.
             for (SubSequence sub : seq.getSubSequences()) {
-                int min = minMaxGaps[minMaxPos++];
-                int max = minMaxGaps[minMaxPos++];
                 if (minMaxPos >= minMaxGaps.length) {
                     minMaxPos = 0;
                 }
+                int min = minMaxGaps[minMaxPos++];
+                int max = minMaxGaps[minMaxPos++];
                 assertEquals(min, sub.getMinSeqOffset());
                 assertEquals(max, sub.getMaxSeqOffset());
             }
@@ -590,12 +629,6 @@ public class ByteSequenceCompilerTest {
                 assertEquals(max, sub.getMaxSeqOffset());
             }
         }
-
-    }
-
-    @Test
-    public void testByteSequenceOffsetCalculations() {
-       // fail("TODO");
     }
 
     /*******************************************************************************************************************
