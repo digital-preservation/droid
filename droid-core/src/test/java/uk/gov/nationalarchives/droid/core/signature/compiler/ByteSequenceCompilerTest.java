@@ -8,6 +8,8 @@ import net.byteseek.matcher.bytes.ByteMatcher;
 import net.byteseek.matcher.bytes.ByteRangeMatcher;
 import net.byteseek.matcher.bytes.InvertedByteMatcher;
 import net.byteseek.matcher.bytes.OneByteMatcher;
+import net.byteseek.matcher.bytes.SetBinarySearchMatcher;
+import net.byteseek.matcher.bytes.TwoByteMatcher;
 import net.byteseek.matcher.sequence.ByteSequenceMatcher;
 import net.byteseek.matcher.sequence.SequenceMatcher;
 import net.byteseek.utils.ByteUtils;
@@ -15,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
+import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 
 import java.io.BufferedReader;
@@ -383,6 +386,22 @@ public class ByteSequenceCompilerTest {
     }
 
     /*******************************************************************************************************************
+     * Test optimisation
+     */
+    @Test
+    public void testSingleByteAlternativesOptimisation() throws Exception {
+        // This would normally be a sequence of 01, with an alternative fragment (22|27), but it gets optimised
+        // into a set, so we end up with no fragments and a single sequence of [22 27] 01
+        SequenceMatcher sm = assertSingleSequenceMatcher("(22|27) 01", SequenceMatcher.class);
+        ByteMatcher bm = sm.getMatcherForPosition(0);
+        assertTrue(TwoByteMatcher.class.isInstance(bm));
+
+        sm = assertSingleSequenceMatcher("01 (22|27|00) 01", SequenceMatcher.class);
+        bm = sm.getMatcherForPosition(1);
+        assertTrue(SetBinarySearchMatcher.class.isInstance(bm));
+    }
+
+    /*******************************************************************************************************************
      * Test expressions within a single subsequence
      */
 
@@ -401,9 +420,12 @@ public class ByteSequenceCompilerTest {
         // Byte values and strings
         testCompile("01 'A stringy thing' 02", "01'A stringy thing'02", 0, 0);
 
-        // Byte values with alternatives
-        testCompile("01 02 (01|02) 03 04 05", "030405", 2, 0);
-        testCompile("01 02 03 (04|05) 04 05", "010203", 0, 2);
+        // Byte values with single byte alternatives
+        testCompile("01 02 (01|02) 03 04 05", "0102 [01 02] 030405", 0, 0);
+        testCompile("01 02 03 (04|05) 04 05", "010203 [0405] 04 05", 0, 0);
+
+        // Byte values with alternatives with some single bytes, but not all:
+        testCompile("01 02 (01|02|FF FE) 03 04 05", "030405", 2, 0);
 
         // ?? any byte matching
         testCompile("01 ?? 02", "01", 0, 1);
@@ -518,6 +540,24 @@ public class ByteSequenceCompilerTest {
         }
     }
 
+    /*
+    private ByteMatcher assertSingleByteMatcherFragment(String expression, Class classType) throws Exception {
+        ByteSequence seq = COMPILER.compile(expression, compileType);
+        SubSequence  sub = assertSingleSubSequence(seq);
+        List<List<SideFragment>> fragList = sub.getLeftFragments();
+        if (fragList.size() == 0) fragList = sub.getRightFragments();
+        assertTrue( "Must have one fragment in the expression: " + expression, fragList.size() > 0);
+        List<SideFragment> frag = fragList.get(0);
+        assertEquals("Must have only one fragment in the fragment.", 1, frag.size());
+        SideFragment f = frag.get(0);
+        SequenceMatcher sm = f.getMatcher();
+        assertTrue(sm.length() > 0);
+        ByteMatcher bm = sm.getMatcherForPosition(0);
+        assertTrue(classType.isInstance(sm));
+        return bm;
+    }
+*/
+
     private ByteMatcher assertSingleByteMatcher(String expression, Class classType) throws Exception {
         ByteSequence seq = COMPILER.compile(expression, compileType);
         SubSequence sub  = assertSingleSubSequenceNoFragments(seq);
@@ -538,6 +578,12 @@ public class ByteSequenceCompilerTest {
         SubSequence sub = subs.get(0);
         assertEquals(0, sub.getLeftFragments().size());
         assertEquals(0, sub.getRightFragments().size());
+        return subs.get(0);
+    }
+
+    private SubSequence assertSingleSubSequence(ByteSequence seq) {
+        assertEquals(1, seq.getNumberOfSubSequences());
+        List<SubSequence> subs = seq.getSubSequences();
         return subs.get(0);
     }
 
