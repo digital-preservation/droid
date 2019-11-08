@@ -228,6 +228,15 @@ public class SideFragment extends SimpleElement implements Cloneable {
             searcher = new HorspoolFinalFlagSearcher(matcher);
         }
     }
+
+    /**
+     * Returns the SequenceMatcher object which matches the fragment.
+     *
+     * @return the SequenceMatcher object which matches the fragment.
+     */
+    public final SequenceMatcher getMatcher() {
+        return matcher; // SequenceMatchers are immutable, so can just return it directly without fear.
+    }
     
     /**
      * 
