@@ -188,14 +188,17 @@ public class SubSequence extends SimpleElement {
     private boolean useLeftFragmentBackTrack;
     private boolean useRightFragmentBackTrack;
 
+    private boolean preparedForUse;
+
     /**
      * Default constructor.
      */
     public SubSequence() {
     }
 
-
     /**
+     * Constructs a SubSequence object directly from pre-built components.
+     *
      * @param leftFragments  fragments to add to the left of the subsequence.
      * @param rightFragments fragments to add to the right of the subsequence.
      * @param minSeqOffset The minimum offset to begin looking for this subsequence.
@@ -208,11 +211,10 @@ public class SubSequence extends SimpleElement {
         this.matcher = anchor;
         this.orderedLeftFragments.addAll(leftFragments);
         this.orderedRightFragments.addAll(rightFragments);
-        this.numLeftFragmentPositions = orderedLeftFragments.size();
-        this.numRightFragmentPositions = orderedRightFragments.size();
         this.minSeqOffset = minSeqOffset;
         this.maxSeqOffset = maxSeqOffset;
-        //TODO: what else needs to be set?
+        calculateFragmentProperties();
+        preparedForUse = true;
     }
 
     /**
@@ -405,11 +407,10 @@ public class SubSequence extends SimpleElement {
      * @param fullScan Whether this subsequence follows a wildcard .* sequence.
      */
     public final void prepareForUse(final boolean reverseOrder, final boolean fullScan) {
+        //TODO: how does this work when using a compiled ByteSequence?
         this.backwardsSearch = reverseOrder;
         this.fullFileScan = fullScan;
         processSequenceFragments();
-        hasLeftFragments  = !orderedLeftFragments.isEmpty();
-        hasRightFragments = !orderedRightFragments.isEmpty();
     }
 
     public SequenceMatcher getAnchorMatcher() {
@@ -447,38 +448,39 @@ public class SubSequence extends SimpleElement {
      * Also calculates the minimum and maximum lengths a fragment can have.
      */
     private void processSequenceFragments() {
-        buildOrderedLeftFragments();
-        buildOrderedRightFragments();
+        if (!preparedForUse) {
+            buildOrderedLeftFragments();
+            buildOrderedRightFragments();
+            optimiseSingleByteAlternatives(orderedLeftFragments);
+            optimiseSingleByteAlternatives(orderedRightFragments);
+            captureLeftFragments();
+            captureRightFragments();
+            buildMatcherAndSearcher();
+            calculateFragmentProperties();
+            this.leftFragments = null;
+            this.rightFragments = null;
+        }
+        preparedForUse = true;
+    }
 
-        optimiseSingleByteAlternatives(orderedLeftFragments);
-        optimiseSingleByteAlternatives(orderedRightFragments);
-
-        captureLeftFragments();
-        captureRightFragments();
-
-        calculateMinMaxLeftFragmentLength();
-        calculateMinMaxRightFragmentLength();
-
-        buildMatcherAndSearcher();
-
-        this.leftFragments = null;
-        this.rightFragments = null;
+    private void calculateFragmentProperties() {
+        hasLeftFragments  = !orderedLeftFragments.isEmpty();
+        hasRightFragments = !orderedRightFragments.isEmpty();
         this.numLeftFragmentPositions = orderedLeftFragments.size();
         this.numRightFragmentPositions = orderedRightFragments.size();
         isInvalidSubSequence = isInvalidSubSequence ? true : checkForInvalidFragments();
-
         if (this.numLeftFragmentPositions > 0) {
             this.orderedLeftFragsHaveVariableOffset =
                     determineFragmentPositionVariableOffsetStatus(this.orderedLeftFragments);
             this.useLeftFragmentBackTrack = ArrayUtils.contains(this.orderedLeftFragsHaveVariableOffset, true);
         }
-
         if (this.numRightFragmentPositions > 0) {
             this.orderedRightFragsHaveVariableOffset =
                     determineFragmentPositionVariableOffsetStatus(this.orderedRightFragments);
             this.useRightFragmentBackTrack = ArrayUtils.contains(this.orderedRightFragsHaveVariableOffset, true);
         }
-
+        calculateMinMaxLeftFragmentLength();
+        calculateMinMaxRightFragmentLength();
     }
 
     private void buildOrderedLeftFragments() {
