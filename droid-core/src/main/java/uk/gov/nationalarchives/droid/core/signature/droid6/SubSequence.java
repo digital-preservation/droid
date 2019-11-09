@@ -208,6 +208,8 @@ public class SubSequence extends SimpleElement {
         this.matcher = anchor;
         this.orderedLeftFragments.addAll(leftFragments);
         this.orderedRightFragments.addAll(rightFragments);
+        this.numLeftFragmentPositions = orderedLeftFragments.size();
+        this.numRightFragmentPositions = orderedRightFragments.size();
         this.minSeqOffset = minSeqOffset;
         this.maxSeqOffset = maxSeqOffset;
         //TODO: what else needs to be set?
