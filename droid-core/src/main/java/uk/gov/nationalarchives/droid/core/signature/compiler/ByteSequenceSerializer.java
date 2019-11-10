@@ -151,6 +151,15 @@ public class ByteSequenceSerializer {
         return toPRONOMExpression(ByteSequenceCompiler.COMPILER.compile(expression), sigType, spaceElements);
     }
 
+    /**
+     * Returns a PRONOM expression given a ByteSequence, and what kind of signature to produce.
+     *
+     * @param sequence The ByteSequence to get the PRONOM expression from.
+     * @param sigType Whether to return a binary PRONOM compatible expression, or container compatible.
+     * @param spaceElements Whether to add spaces between signature elements (for readability).
+     * @return a PRONOM expression given a ByteSequence, and what kind of signature to produce.
+     * @throws CompileException If anything goes wrong during the compilation.
+     */
     public String toPRONOMExpression(ByteSequence sequence, SignatureType sigType, boolean spaceElements) throws CompileException {
         try {
             String byteseekRegex = sequence.toRegularExpression(true);
