@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
@@ -94,7 +94,7 @@ public final class ByteSequenceCompiler {
         /**
          * Supports a super-set of the PRONOM syntax.
          */
-        DROID;
+        DROID
     }
 
     private static final SequenceMatcherCompiler MATCHER_COMPILER = new SequenceMatcherCompiler();
@@ -230,7 +230,7 @@ public final class ByteSequenceCompiler {
         final List<ParseTree> sequenceList = preprocessSequence(sequenceNodes, anchoredToEnd, compileType);
         final int numNodes = sequenceList.size();
 
-                // Scan through all the syntax tree nodes, building subsequences as we go (separated by * nodes):
+        // Scan through all the syntax tree nodes, building subsequences as we go (separated by * nodes):
         int subSequenceStart = 0;
         for (int nodeIndex = 0; nodeIndex < numNodes; nodeIndex++) {
             if (sequenceList.get(nodeIndex).getParseTreeType() == ParseTreeType.ZERO_TO_MANY) {
@@ -243,6 +243,11 @@ public final class ByteSequenceCompiler {
         if (subSequenceStart < numNodes) {
             sequence.addSubSequence(buildSubSequence(sequenceList, subSequenceStart, numNodes, anchoredToEnd, compileType));
         }
+
+        // ByteSequence is now compiled.  Note that to use it for searching,
+        // you still need to call prepareForUse() on it afterwards, just as when it's built from XML.
+        // Don't call prepareForUse() here as you can get an infinite loop.
+        // (prepareForUse() will invoke this compiler if a sequence attribute is set on a ByteSequence.)
     }
 
     //CHECKSTYLE:OFF - cyclomatic complexity too high.
