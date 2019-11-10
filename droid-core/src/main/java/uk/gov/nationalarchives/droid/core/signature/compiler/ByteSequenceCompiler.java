@@ -65,7 +65,7 @@ import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequence
 public final class ByteSequenceCompiler {
 
     /**
-     * Convenient static parser (there is no state, so we can just have a static parser).
+     * Convenient static parser (there is no state, so we can just have a static compiler).
      */
     public static final ByteSequenceCompiler COMPILER = new ByteSequenceCompiler();
 
@@ -97,7 +97,14 @@ public final class ByteSequenceCompiler {
         DROID
     }
 
+    /**
+     * A byteseek compiler used to compile the SequenceMatchers which are matched and searched for.
+     */
     private static final SequenceMatcherCompiler MATCHER_COMPILER = new SequenceMatcherCompiler();
+
+    /**
+     * A re-usable node for all * syntax.  Reduces garbage collection to re-use it each time.
+     */
     private static final ParseTree ZERO_TO_MANY = new ChildrenNode(ParseTreeType.ZERO_TO_MANY, BaseNode.ANY_NODE);
 
     /**
@@ -117,6 +124,14 @@ public final class ByteSequenceCompiler {
         return compile(droidExpression, ByteSequenceAnchor.BOFOffset, CompileType.DROID);
     }
 
+    /**
+     * Compiles a ByteSequence from a DROID syntax regular expression, compiling for DROID rather than PRONOM.
+     *
+     * @param droidExpression The string containing a DROID syntax regular expression.
+     * @param anchor How the ByteSequence is to be anchored to the BOF, EOF or a variable search from BOF.
+     * @return a ByteSequence from a DROID syntax regular expression, compiling for DROID rather than PRONOM.
+     * @throws CompileException
+     */
     public ByteSequence compile(final String droidExpression, final ByteSequenceAnchor anchor) throws CompileException {
         return compile(droidExpression, anchor, CompileType.DROID);
     }
@@ -140,7 +155,7 @@ public final class ByteSequenceCompiler {
     }
 
     /**
-     * Compiles a ByteSequence from a DROID syntax regular expression.
+     * Compiles a {@link ByteSequence} from a DROID syntax regular expression.
      * <p>
      * It is assumed that
      * <ul>
@@ -156,6 +171,15 @@ public final class ByteSequenceCompiler {
         compile(sequence, droidExpression, ByteSequenceAnchor.BOFOffset, CompileType.DROID);
     }
 
+    /**
+     * Compiles a ByteSequence from a DROID syntax regular expression, and how it is anchored to the BOF or EOF (or is a
+     * variable type of anchor).
+     *
+     * @param sequence The ByteSequence which will be altered by compilation.
+     * @param droidExpression The string containing a DROID syntax regular expression.
+     * @param anchor How the ByteSequence is to be anchored to the BOF, EOF or a variable search from BOF.
+     * @throws CompileException If there is a problem compiling the DROID regular expression.
+     */
     public void compile(final ByteSequence sequence, final String droidExpression, ByteSequenceAnchor anchor) throws CompileException {
         compile(sequence, droidExpression, anchor, CompileType.DROID);
     }
