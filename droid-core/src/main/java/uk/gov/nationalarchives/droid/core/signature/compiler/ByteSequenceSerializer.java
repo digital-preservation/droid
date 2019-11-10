@@ -55,8 +55,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.util.List;
 
-import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceSerializer.SignatureType.BINARY;
-import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceSerializer.SignatureType.CONTAINER;
+import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
+import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
 
 /**
  * A class which provides serialization methods for ByteSequences, toXML and to a PRONOM or byteseek expression.
@@ -75,22 +75,6 @@ public class ByteSequenceSerializer {
      * An underlying byteseek parser used to transform byteseek expressions into an Abstract Syntax Tree.
      */
     private final static RegexParser PARSER = new RegexParser();
-
-    /**
-     * The type of signature we are targeting for output.
-     */
-    public enum SignatureType {
-        /**
-         * The signature should be as close to a standard binary signature as possible.
-         * This means it will use the more standard PRONOM syntax (e.g. alternatives instead of sets) and have no strings.
-         */
-        BINARY,
-
-        /**
-         * The signature can use the full potential of container syntax.  This includes strings and multi-byte sets.
-         */
-        CONTAINER
-    }
 
     /**
      * Returns the XML for a PRONOM expression.
@@ -356,9 +340,11 @@ public class ByteSequenceSerializer {
             }
             default : throw new ParseException("Encountered an unknown node type: " + tree);
         }
+        //TODO: spacing isn't quite right - you get [10 02 ] instead of [10 02].
         if (spaceElements) builder.append(' ');
     }
 
+    //TODO: have "break strings into bytes" option so sets can process strings as byte elements, rather than strings.
     private void appendAlternatives(ParseTree alternatives, StringBuilder builder,
                                            SignatureType sigType, boolean spaceElements, boolean inBrackets)  throws ParseException {
         if (!inBrackets) {
