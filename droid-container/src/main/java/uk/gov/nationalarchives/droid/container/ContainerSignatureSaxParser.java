@@ -68,9 +68,18 @@ public class ContainerSignatureSaxParser {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             ContainerSignatureDefinitions definitions = (ContainerSignatureDefinitions) unmarshaller.unmarshal(in);
+            compileAllBinarySignatures(definitions);
             return definitions;
         } catch (JAXBException e) {
             throw new SignatureParseException(e.getMessage(), e);
+        }
+    }
+
+    private void compileAllBinarySignatures(ContainerSignatureDefinitions definitions) {
+        for (ContainerSignature signature : definitions.getContainerSignatures()) {
+            for (ContainerFile file : signature.getFiles().values()) {
+                file.getCompiledBinarySignatures();
+            }
         }
     }
 
