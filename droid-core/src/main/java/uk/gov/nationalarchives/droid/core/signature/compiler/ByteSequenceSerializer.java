@@ -299,6 +299,7 @@ public class ByteSequenceSerializer {
             }
             case SET: { // represent as multi-byte sets?  Or use (||) syntax?
                 if (sigType == BINARY && allChildrenAreSingleBytes(tree)) {
+                    //TODO: check what effect inBrackets has when processing sets as alternatives.
                     appendAlternatives(tree, builder, sigType, spaceElements, inBrackets);
                 } else {
                     if (!inBrackets) {
@@ -308,6 +309,7 @@ public class ByteSequenceSerializer {
                         }
                     }
                     for (int i = 0; i < tree.getNumChildren(); i++) {
+                        if (spaceElements && i > 0) builder.append(' ');
                         toPRONOMExpression(tree.getChild(i), builder, sigType, spaceElements, true);
                     }
                     if (!inBrackets) {
@@ -322,6 +324,7 @@ public class ByteSequenceSerializer {
             }
             case SEQUENCE: {
                 for (int i = 0; i < tree.getNumChildren(); i++) {
+                    if (spaceElements && i > 0) builder.append(' ');
                     toPRONOMExpression(tree.getChild(i), builder, sigType, spaceElements, inBrackets);
                 }
                 break;
@@ -332,8 +335,6 @@ public class ByteSequenceSerializer {
             }
             default : throw new ParseException("Encountered an unknown node type: " + tree);
         }
-        //TODO: spacing isn't quite right - you get [10 02 ] instead of [10 02].
-        if (spaceElements) builder.append(' ');
     }
 
     //TODO: have "break strings into bytes" option so sets can process strings as byte elements, rather than strings.
@@ -342,13 +343,13 @@ public class ByteSequenceSerializer {
         if (!inBrackets) {
             builder.append('(');
         }
-        boolean first = true;
         for (int i = 0; i < alternatives.getNumChildren(); i++) {
-            if (!first) {
+            if (i > 0) {
+                if (spaceElements) builder.append(' ');
                 builder.append('|');
+                if (spaceElements) builder.append(' ');
             }
-            toPRONOMExpression(alternatives.getChild(i), builder, sigType, spaceElements, true);
-            first = false;
+            toPRONOMExpression(alternatives.getChild(i), builder, sigType, spaceElements, false);
         }
         if (!inBrackets) {
             builder.append(')');
