@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
@@ -41,6 +41,7 @@ import org.w3c.dom.Element;
 import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
+import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -109,7 +110,11 @@ public class ByteSequenceSerializer {
                 throw new CompileException(e.getMessage(), e);
             }
         }
-        return toXmlString(doc);
+        try {
+            return XmlUtils.toXmlString(doc, false);
+        } catch (TransformerException e) {
+            throw new CompileException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -169,20 +174,7 @@ public class ByteSequenceSerializer {
         return dBuilder.newDocument();
     }
 
-    private static String toXmlString(Document document) throws CompileException {
-        try {
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            DOMSource source = new DOMSource(document);
-            StringWriter stringWriter = new StringWriter();
-            StreamResult result = new StreamResult(stringWriter);
-            transformer.transform(source, result);
-            return stringWriter.getBuffer().toString();
-        } catch (TransformerException e) {
-            throw new CompileException(e.getMessage(), e);
-        }
-    }
+
 
     private Element createByteSequenceElement(Document doc, ByteSequence sequence) {
         Element byteSequence = doc.createElement("ByteSequence");
