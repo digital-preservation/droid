@@ -36,6 +36,9 @@ import net.byteseek.matcher.sequence.SequenceMatcher;
 import net.byteseek.parser.ParseException;
 import net.byteseek.parser.regex.RegexParser;
 import net.byteseek.parser.tree.ParseTree;
+import net.byteseek.parser.tree.ParseTreeType;
+import net.byteseek.parser.tree.node.ByteNode;
+import net.byteseek.parser.tree.node.ChildrenNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
@@ -46,16 +49,14 @@ import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
+import static net.byteseek.parser.tree.ParseTreeType.BYTE;
+import static net.byteseek.parser.tree.ParseTreeType.STRING;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
 
@@ -231,21 +232,21 @@ public class ByteSequenceSerializer {
 
     private String toPRONOMExpression(final ParseTree tree, SignatureType sigType, boolean spaceElements) throws ParseException {
         final StringBuilder builder = new StringBuilder();
-        toPRONOMExpression(tree, builder, sigType, spaceElements, false);
+        toPRONOMExpression(tree, builder, sigType, spaceElements, false, false);
         return builder.toString();
     }
 
-    private void toPRONOMExpression(final ParseTree tree, final StringBuilder builder, SignatureType sigType, boolean spaceElements, final boolean inBrackets) throws ParseException {
+    private void toPRONOMExpression(final ParseTree tree, final StringBuilder builder, SignatureType sigType, boolean spaceElements, final boolean inSet, final boolean inAlternatives) throws ParseException {
         switch (tree.getParseTreeType()) {
             case BYTE: {
                 builder.append(String.format("%02x", tree.getByteValue() & 0xFF).toUpperCase());
                 break;
             }
-            case STRING: {
+            case STRING: { // If processing a string in a set ['abc'] as alternatives, have to process as ('a'|'b'|'c')
                 String value = tree.getTextValue();
-                if (sigType == CONTAINER) { // output strings as strings.
+                if (sigType == CONTAINER) { //CONTAINER SIG FORMAT: output strings as strings.
                     builder.append('\'').append(value).append('\'');
-                } else { // output strings as byte sequences.
+                } else {                    //BINARY SIG FORMAT: output strings as byte sequences.
                     for (int i = 0; i < value.length(); i++) {
                         int theChar = value.charAt(i);
                         builder.append(String.format("%02x", theChar).toUpperCase());
@@ -254,23 +255,23 @@ public class ByteSequenceSerializer {
                 break;
             }
             case ALL_BITMASK: {
-                if (!inBrackets) {
+                if (!inSet) {
                     builder.append('[');
                 }
                 builder.append('&').append(String.format("%02x", tree.getByteValue() & 0xFF));
-                if (!inBrackets) {
+                if (!inSet) {
                     builder.append(']');
                 }
                 break;
             }
             case RANGE: {
-                if (!inBrackets) {
+                if (!inSet) {
                     builder.append('[');
                 }
                 appendByteValue(tree.getChild(0).getIntValue(), sigType == CONTAINER, builder);
                 builder.append(':');
                 appendByteValue(tree.getChild(1).getIntValue(), sigType == CONTAINER, builder);
-                if (!inBrackets) {
+                if (!inSet) {
                     builder.append(']');
                 }
                 break;
@@ -297,12 +298,15 @@ public class ByteSequenceSerializer {
                         append('}');
                 break;
             }
-            case SET: { // represent as multi-byte sets?  Or use (||) syntax?
-                if (sigType == BINARY && allChildrenAreSingleBytes(tree)) {
+            case SET: { // represent as multi-byte sets [abc]?  Or use (a|b|c) syntax?
+                ParseTree alternativeSet = detectAlternativeSetRanges(tree);
+                if (alternativeSet != null) {
+                    toPRONOMExpression(alternativeSet, builder, sigType, spaceElements, false, inAlternatives);
+                } else if (sigType == BINARY && allChildrenAreSingleBytes(tree)) {
                     //TODO: check what effect inBrackets has when processing sets as alternatives.
-                    appendAlternatives(tree, builder, sigType, spaceElements, inBrackets);
+                    appendAlternatives(tree, builder, sigType, spaceElements, true, inAlternatives);
                 } else {
-                    if (!inBrackets) {
+                    if (!inSet) {
                         builder.append('[');
                         if (tree.isValueInverted()) {
                             builder.append('!');
@@ -310,22 +314,22 @@ public class ByteSequenceSerializer {
                     }
                     for (int i = 0; i < tree.getNumChildren(); i++) {
                         if (spaceElements && i > 0) builder.append(' ');
-                        toPRONOMExpression(tree.getChild(i), builder, sigType, spaceElements, true);
+                        toPRONOMExpression(tree.getChild(i), builder, sigType, spaceElements, true, inAlternatives);
                     }
-                    if (!inBrackets) {
+                    if (!inSet) {
                         builder.append(']');
                     }
                 }
                 break;
             }
             case ALTERNATIVES: {
-                appendAlternatives(tree, builder, sigType, spaceElements, inBrackets);
+                appendAlternatives(tree, builder, sigType, spaceElements, false, inAlternatives);
                 break;
             }
             case SEQUENCE: {
                 for (int i = 0; i < tree.getNumChildren(); i++) {
                     if (spaceElements && i > 0) builder.append(' ');
-                    toPRONOMExpression(tree.getChild(i), builder, sigType, spaceElements, inBrackets);
+                    toPRONOMExpression(tree.getChild(i), builder, sigType, spaceElements, inSet, inAlternatives);
                 }
                 break;
             }
@@ -337,39 +341,126 @@ public class ByteSequenceSerializer {
         }
     }
 
+    private ParseTree detectAlternativeSetRanges(ParseTree node) throws ParseException {
+        final int numChildren = node.getNumChildren();
+        // Only try this for sets large enough for two alternative ranges to matter syntactically
+        if (numChildren > 16) {
+            // Build up a bitset of all byte values in the set:
+            BitSet bitset = new BitSet(256);
+            int minPos = 256;
+            int maxPos = -1;
+            for (int i = 0; i < numChildren; i++) {
+                ParseTree child = node.getChild(i);
+                if (child.getParseTreeType() == BYTE) {
+                    final int byteValue = child.getIntValue();
+                    minPos = Math.min(byteValue, minPos);
+                    maxPos = Math.max(byteValue, maxPos);
+                    bitset.set(byteValue);
+                } else {
+                    return null; // If the set has more than just bytes in it, it's not going to be two or more ranges.
+                }
+            }
+
+            // Scan the bitset to find contiguous ranges of set bits:
+            List<Integer> startRangePos = new ArrayList<>();
+            List<Integer> endRangePos = new ArrayList<>();
+
+            boolean lastBitSet = false;
+            int startPos = -1;
+            for (int bitPos = minPos; bitPos < maxPos; bitPos++) {
+                if (bitset.get(bitPos)) {
+                    if (!lastBitSet) { // first bit set in a possible range:
+                        startPos = bitPos;
+                    }
+                    lastBitSet = true;
+                } else {
+                    if (lastBitSet) { // the last bit was set, this isn't, so is the end of a possible range.
+                        int length = bitPos - startPos;
+                        if (length < 4) {
+                            return null; // small ranges aren't going to be usefully represented with alternative range syntax.
+                        }
+                        if (startRangePos.size() > 4) {
+                            return null; // lots of ranges aren't going to be usefully represented with alternative range syntax.
+                        }
+                        startRangePos.add(startPos);
+                        endRangePos.add(bitPos - 1);
+                        startPos = -1;
+                    }
+                    lastBitSet = false;
+                }
+            }
+            if (lastBitSet) {
+                startRangePos.add(startPos);
+                endRangePos.add(maxPos);
+            }
+
+            // Build nodes representing the ranges detected:
+            List<ParseTree> rangeChildren = new ArrayList<>();
+            for (int i = 0; i < startRangePos.size(); i++) {
+                ParseTree rangeStart = new ByteNode((byte) startRangePos.get(i).intValue());
+                ParseTree rangeEnd   = new ByteNode((byte) endRangePos.get(i).intValue());
+                ParseTree rangeNode = new ChildrenNode(ParseTreeType.RANGE, rangeStart, rangeEnd);
+                rangeChildren.add(rangeNode);
+            }
+
+            // Return the set of ranges as list of alternative ranges:
+            return new ChildrenNode(ParseTreeType.ALTERNATIVES, rangeChildren);
+        }
+        return null;
+    }
+
     //TODO: have "break strings into bytes" option so sets can process strings as byte elements, rather than strings.
     private void appendAlternatives(ParseTree alternatives, StringBuilder builder,
-                                           SignatureType sigType, boolean spaceElements, boolean inBrackets)  throws ParseException {
-        if (!inBrackets) {
+                                    SignatureType sigType, boolean spaceElements, boolean inSet, boolean inAlternatives)  throws ParseException {
+        if (!inAlternatives) {
             builder.append('(');
         }
         for (int i = 0; i < alternatives.getNumChildren(); i++) {
             if (i > 0) {
-                if (spaceElements) builder.append(' ');
-                builder.append('|');
-                if (spaceElements) builder.append(' ');
+                appendAlternativePipe(builder, spaceElements);
             }
-            toPRONOMExpression(alternatives.getChild(i), builder, sigType, spaceElements, false);
+            ParseTree alternative = alternatives.getChild(i);
+
+            // If we're processing a set as a list of alternatives, we need to handle strings differently.
+            // Strings in sets need to be broken into distinct bytes separated by |.
+            if (inSet && alternative.getParseTreeType() == STRING) {
+                appendStringAsAlternativeBytes(builder, alternative.getTextValue(), spaceElements);
+            } else {
+                toPRONOMExpression(alternatives.getChild(i), builder, sigType, spaceElements, false, true);
+            }
         }
-        if (!inBrackets) {
+        if (!inAlternatives) {
             builder.append(')');
         }
+    }
+
+    private void appendStringAsAlternativeBytes(StringBuilder builder, String value, boolean spaceElements) throws ParseException {
+        for (int charIndex = 0; charIndex < value.length(); charIndex++) {
+            if (charIndex > 0) {
+                appendAlternativePipe(builder, spaceElements);
+            }
+            char theChar = value.charAt(charIndex);
+            if (theChar > 255) {
+                throw new ParseException("Could not process a char in a string with a value higher than 255: " + theChar);
+            }
+            builder.append(String.format("%02x", (int) theChar));
+        }
+    }
+
+    private void appendAlternativePipe(StringBuilder builder, boolean spaceElements) {
+        if (spaceElements) builder.append(' ');
+        builder.append('|');
+        if (spaceElements) builder.append(' ');
     }
 
     private boolean allChildrenAreSingleBytes(ParseTree node) throws ParseException {
         for (int i = 0; i < node.getNumChildren(); i++) {
             ParseTree child = node.getChild(i);
             switch (child.getParseTreeType()) {
-                case BYTE: {
+                case BYTE: case STRING: {
                     break; // fine.
                 }
-                case STRING: {
-                    String value = child.getTextValue();
-                    if (!(value.length() == 1 && value.charAt(0) < 256)) {
-                        return false;
-                    }
-                    break;
-                }
+                //TODO: are there other things we can put in alternative syntax like ranges?  e.g. ([&01] | 02 | 03).
                 default : return false;
             }
         }
