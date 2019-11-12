@@ -130,7 +130,7 @@ public final class ByteSequenceCompiler {
      * @param droidExpression The string containing a DROID syntax regular expression.
      * @param anchor How the ByteSequence is to be anchored to the BOF, EOF or a variable search from BOF.
      * @return a ByteSequence from a DROID syntax regular expression, compiling for DROID rather than PRONOM.
-     * @throws CompileException
+     * @throws CompileException If there is a problem compiling the DROID regular expression.
      */
     public ByteSequence compile(final String droidExpression, final ByteSequenceAnchor anchor) throws CompileException {
         return compile(droidExpression, anchor, CompileType.DROID);
