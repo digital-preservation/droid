@@ -93,6 +93,7 @@ import org.slf4j.LoggerFactory;
 import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
+import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler;
 
 /**
@@ -380,11 +381,17 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                 log.warn("A sequence is defined - ByteSequence is clearing any sub-objects (probably from XML parsing) before compiling: " + sequence);
                 subSequences.clear();
             }
-            ByteSequenceCompiler.COMPILER.compile(this, sequence);
+            ByteSequenceCompiler.COMPILER.compile(this, sequence, getAnchor());
         } catch (CompileException e) {
             log.warn("Compilation error in signature for sequence: " + sequence + "\n" + e.getMessage(), e);
             isInvalidByteSequence = true;
         }
+    }
+
+    private ByteSequenceAnchor getAnchor() {
+        if (reference.endsWith("BOFoffset")) return ByteSequenceAnchor.BOFOffset;
+        if (reference.endsWith("EOFoffset")) return ByteSequenceAnchor.EOFOffset;
+        return ByteSequenceAnchor.VariableOffset;
     }
 
     /**
