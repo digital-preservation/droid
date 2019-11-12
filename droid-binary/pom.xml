@@ -34,7 +34,8 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jre_x64_windows_hotspot_8u222b10.zip</url>
+                            <!-- To update, retrieve link for windows jdk on x86 architecture from https://adoptopenjdk.net/ -->
+                            <url>https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.5%2B10/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.5_10.zip</url>
                             <unpack>false</unpack>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
@@ -55,10 +56,10 @@
                         <configuration>
                             <tasks>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip src="${project.build.directory}/OpenJDK8U-jre_x64_windows_hotspot_8u222b10.zip" dest="${project.build.directory}/jre_tmp/"/>
+                                <unzip src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.5_10.zip" dest="${project.build.directory}/jre_tmp/"/>
 
                                 <move todir="${project.build.directory}/jre-windows/">
-                                    <fileset dir="${project.build.directory}/jre_tmp/jdk8u222-b10-jre/">
+                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.5+10-jre/">
                                         <include name="**/*"/>
                                     </fileset>
                                 </move>
