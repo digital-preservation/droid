@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.compiler;
 
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -38,6 +40,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import net.byteseek.parser.tree.ParseTreeType;
+import net.byteseek.parser.tree.node.ByteNode;
+import net.byteseek.parser.tree.node.ChildrenNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -51,6 +56,8 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
 
+import static net.byteseek.parser.tree.ParseTreeType.BYTE;
+import static net.byteseek.parser.tree.ParseTreeType.STRING;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
 
