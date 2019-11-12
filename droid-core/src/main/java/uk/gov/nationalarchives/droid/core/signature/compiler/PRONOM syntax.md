@@ -12,9 +12,9 @@ Bytes to match are written as two digit, case insensitive hex values.
 ff Fe A1 00
 ```
 
-### Strings:  'ISO-8859-1'
+### Strings:  'Latin1'
 **Container signature syntax**
-Strings of ISO-8859-1 characters can be written enclosed in single quotation marks.
+Strings of ISO-8859-1 characters (Latin1) can be written enclosed in single quotation marks.
 ```
 'version:4'
 ```
@@ -24,6 +24,7 @@ A single character enclosed in single quotes can also be used as in place of a b
 
 30 '0'   # These both encode the character zero, one is a hex byte, the other is the character directly.
 ```
+_Note:_ due to a bug in the byteseek library, only ASCII characters are currently supported by DROID.  Characters over 127 may cause incorrect compilation, as it attempts to render the characters in the system default character set, which is probably not ISO-8859-1.
 
 ### Byte ranges: \[n:m]
 To match a byte within a range of values, we can use a byte range. This is written as two byte values separated with a colon, all enclosed in square brackets.  Bytes are specified as 2 digit hex values.
