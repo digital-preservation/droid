@@ -86,10 +86,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.byteseek.compiler.CompileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.byteseek.compiler.CompileException;
 import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
@@ -341,7 +341,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
             setIndirectOffsetLength(value);
         } else if ("IndirectOffsetLocation".equals(name)) {
             setIndirectOffsetLocation(value);
-        } else if ("Sequence".equals(name)){
+        } else if ("Sequence".equals(name)) {
             setSequence(value);
         } else {
             unknownAttributeWarning(name, this.getElementName());
@@ -428,9 +428,9 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
         for (int subSequenceIndex = 0; subSequenceIndex < stop; subSequenceIndex++) {
             // Determine if the subsequence will scan the entire file, or be limited by a max offset:
             final boolean fullFileScan = !(subSequenceIndex == firstSequenceToMatch && isFixedStart);
-            SubSequence sequence = getSubSequence(subSequenceIndex);
-            sequence.prepareForUse(reverseOrder, fullFileScan);
-            if (sequence.isInvalidSubSequence()) {
+            SubSequence subSequence = getSubSequence(subSequenceIndex);
+            subSequence.prepareForUse(reverseOrder, fullFileScan);
+            if (subSequence.isInvalidSubSequence()) {
                 isInvalidByteSequence = true;
                 break;
             }

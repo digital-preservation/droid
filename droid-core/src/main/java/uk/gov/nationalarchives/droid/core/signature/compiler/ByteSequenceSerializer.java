@@ -31,32 +31,26 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.compiler;
 
-import net.byteseek.compiler.CompileException;
-import net.byteseek.matcher.sequence.SequenceMatcher;
-import net.byteseek.parser.ParseException;
-import net.byteseek.parser.regex.RegexParser;
-import net.byteseek.parser.tree.ParseTree;
-import net.byteseek.parser.tree.ParseTreeType;
-import net.byteseek.parser.tree.node.ByteNode;
-import net.byteseek.parser.tree.node.ChildrenNode;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
-import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
-import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
-import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import static net.byteseek.parser.tree.ParseTreeType.BYTE;
-import static net.byteseek.parser.tree.ParseTreeType.STRING;
+import net.byteseek.compiler.CompileException;
+import net.byteseek.matcher.sequence.SequenceMatcher;
+import net.byteseek.parser.ParseException;
+import net.byteseek.parser.regex.RegexParser;
+import net.byteseek.parser.tree.ParseTree;
+import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
+import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
+import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
+import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
+
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
 
@@ -69,14 +63,14 @@ import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureTyp
 public class ByteSequenceSerializer {
 
     /**
-     * Convenient static serializer instance (it's all stateless, so you don't need more than one)
+     * Convenient static serializer instance (it's all stateless, so you don't need more than one).
      */
-    public final static ByteSequenceSerializer SERIALIZER = new ByteSequenceSerializer();
+    public static final ByteSequenceSerializer SERIALIZER = new ByteSequenceSerializer();
 
     /**
      * An underlying byteseek parser used to transform byteseek expressions into an Abstract Syntax Tree.
      */
-    private final static RegexParser PARSER = new RegexParser();
+    private static final RegexParser PARSER = new RegexParser();
 
     /**
      * Returns the XML for a PRONOM expression.
@@ -202,8 +196,8 @@ public class ByteSequenceSerializer {
             for (SideFragment frag : fragsAtPos) {
                 Element fragment = doc.createElement(elementName);
                 fragment.setAttribute("Position", Integer.toString(fragPos));
-                fragment.setAttribute("MinOffset",Integer.toString(frag.getMinOffset()));
-                fragment.setAttribute("MaxOffset",Integer.toString(frag.getMaxOffset()));
+                fragment.setAttribute("MinOffset", Integer.toString(frag.getMinOffset()));
+                fragment.setAttribute("MaxOffset", Integer.toString(frag.getMaxOffset()));
                 fragment.setTextContent(getSequenceMatcherExpression(frag.getMatcher(), sigType));
                 subsequence.appendChild(fragment);
             }
@@ -236,6 +230,7 @@ public class ByteSequenceSerializer {
         return builder.toString();
     }
 
+    //CHECKSTYLE:OFF - cyclomatic complexity too high.
     private void toPRONOMExpression(final ParseTree tree, final StringBuilder builder, SignatureType sigType, boolean spaceElements, final boolean inSet, final boolean inAlternatives) throws ParseException {
         switch (tree.getParseTreeType()) {
             case BYTE: {

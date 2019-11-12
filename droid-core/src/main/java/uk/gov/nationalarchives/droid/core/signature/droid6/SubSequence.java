@@ -409,6 +409,10 @@ public class SubSequence extends SimpleElement {
         processSequenceFragments();
     }
 
+    /**
+     * Accessor method for internal objects to allow testing.
+     * @return matcher
+     */
     public SequenceMatcher getAnchorMatcher() {
         return matcher; // matchers are immutable, no harm in just returning it.
     }

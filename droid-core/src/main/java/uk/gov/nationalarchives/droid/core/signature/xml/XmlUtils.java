@@ -31,8 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.xml;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,14 +44,17 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * A static utility class with general Xml processing methods.
  */
 public final class XmlUtils {
+
+    private XmlUtils() {
+    }
 
     /**
      * Takes an Xml Document type and outputs it to a string, with or without an XMl header.
@@ -90,8 +94,7 @@ public final class XmlUtils {
             return doc;
         } catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage(), e);
-        }
-        catch (SAXException e) {
+        } catch (SAXException e) {
             throw new IOException(e.getMessage(), e);
         }
     }
