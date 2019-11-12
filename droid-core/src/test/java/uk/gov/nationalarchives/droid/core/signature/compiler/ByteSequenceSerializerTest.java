@@ -67,6 +67,19 @@ public class ByteSequenceSerializerTest {
     }
 
     @Test
+    public void testBinaryDroidCompileSetsToAlternatives() throws Exception {
+        testRenderExpressions("[01 'abc']");
+        testRenderExpressions("02{2}[01:1C][01:1F]{2}[00:03]([41:5A]|[61:7A]){10}(43|4c|4e)");
+    }
+
+    private void testRenderExpressions(String expression) throws Exception {
+        ByteSequence seq = ByteSequenceCompiler.COMPILER.compile(expression, ByteSequenceAnchor.BOFOffset, DROID);
+        String regex = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, BINARY, false);
+        String regex2 = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, CONTAINER, false);
+        System.out.println(expression + "\t" + regex + "\t"+ regex2);
+    }
+
+    @Test
     public void toPRONOMRegex() throws Exception {
     }
 
