@@ -1,0 +1,4 @@
+#!/bin/sh
+java -jar ./droid-tools-${project.version} "$@"
+
+

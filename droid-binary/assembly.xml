@@ -47,6 +47,7 @@
       <excludes>
         <exclude>uk.gov.nationalarchives:droid-ui</exclude>
         <exclude>uk.gov.nationalarchives:droid-command-line</exclude>
+        <exclude>uk.gov.nationalarchives:droid-tools</exclude>
       </excludes>
       <fileMode>644</fileMode>
     </dependencySet>
@@ -56,6 +57,7 @@
       <includes>
         <include>uk.gov.nationalarchives:droid-ui</include>
         <include>uk.gov.nationalarchives:droid-command-line</include>
+        <include>uk.gov.nationalarchives:droid-tools</include>
       </includes>
       <fileMode>644</fileMode>
     </dependencySet>
@@ -71,6 +73,8 @@
         <exclude>droid.sh</exclude>
         <exclude>droid.bat</exclude>
         <exclude>Running DROID.txt</exclude>
+        <exclude>sigTool</exclude>
+        <exclude>sigTool.bat</exclude>
       </excludes>
       <fileMode>644</fileMode>
     </fileSet>
@@ -92,6 +96,18 @@
     </file>
     <file>
       <source>bin/droid.bat</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>644</fileMode>
+    </file>
+    <file>
+      <source>bin/sigTool</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>755</fileMode>
+    </file>
+    <file>
+      <source>bin/sigTool.bat</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>644</fileMode>
