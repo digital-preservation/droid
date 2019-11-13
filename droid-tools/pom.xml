@@ -11,9 +11,7 @@
         <relativePath>../droid-parent</relativePath>
     </parent>
 
-    <groupId>groupId</groupId>
     <artifactId>droid-tools</artifactId>
-    <version>6.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>droid-tools</name>
