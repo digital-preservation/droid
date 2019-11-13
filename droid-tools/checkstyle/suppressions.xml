@@ -38,7 +38,10 @@
         "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-
+    <suppress checks="ClassFanOutComplexity"
+              files="SigTool.java" />
+    <suppress checks="ClassDataAbstractionCoupling"
+              files="SigTool.java" />
     <!--
       Turn off all checks for Generated and Test code. Fixes issues with using
       Eclipse plug-in.

@@ -31,7 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.tools;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +57,15 @@ import org.w3c.dom.NodeList;
 import uk.gov.nationalarchives.droid.container.ContainerFile;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
+import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.signature.ByteReader;
+import uk.gov.nationalarchives.droid.core.signature.FileFormat;
+import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceSerializer;
@@ -88,6 +100,7 @@ public final class SigTool {
     private static final String EXPRESSION_OPTION = EXPRESSION_OUTPUT;
     private static final String CONTAINER_OPTION = "c";
     private static final String DROID_OPTION = "d";
+    private static final String MATCH_OPTION = "m";
     private static final String IO_PROBLEM_READING_FILE = "IO problem reading file: ";
 
     private static final int FAILED_TO_PARSE_ARGUMENTS = 1;
@@ -170,7 +183,9 @@ public final class SigTool {
                     exitCode = processXMLSigFile(cli.getOptionValue(FILE_OPTION), sigType, spaceElements);
                 }
             } else { // using expressions on the command line as an input
-                if (cli.hasOption(EXPRESSION_OUTPUT)) {
+                if (cli.hasOption(MATCH_OPTION)) {
+                    exitCode = testSignatureMatch(cli.getArgList(), anchorType, cli.getOptionValue(MATCH_OPTION));
+                } else if (cli.hasOption(EXPRESSION_OUTPUT)) {
                     exitCode = processExpressionCommands(cli.getArgList(), sigType, spaceElements, noTabs);
                 } else {
                     exitCode = processXMLCommands(cli.getArgList(), compileType, sigType, anchorType, noTabs);
@@ -195,40 +210,6 @@ public final class SigTool {
         // General options
         Option help = new Option(HELP_OPTION, "help", false,
                 "Prints help on commands.");
-
-        // Input options
-        OptionGroup inputOptions = new OptionGroup();
-        Option fileInput = new Option(FILE_OPTION, "file", true,
-                "Filename of signature file to process.");
-        inputOptions.addOption(fileInput);
-
-        // Output options
-        OptionGroup outputOptions = new OptionGroup();
-        Option xmlOutput = new Option(XML_OPTION, "xml", false,
-                "Output is in XML format");
-        Option expressionOutput = new Option(EXPRESSION_OPTION, "expression", false,
-                "Output is a regular expression");
-        outputOptions.addOption(xmlOutput);
-        outputOptions.addOption(expressionOutput);
-
-        // Binary or Container signatures
-        OptionGroup sigTypeOptions = new OptionGroup();
-        Option binarySignatures = new Option(BINARY_OPTION, "binary", false,
-                "Signatures are in binary syntax.");
-        Option containerSignatures = new Option(CONTAINER_OPTION, "container", false,
-                "Signatures are in container syntax.");
-        sigTypeOptions.addOption(binarySignatures);
-        sigTypeOptions.addOption(containerSignatures);
-
-        // Compile type options
-        OptionGroup compileTypeOptions = new OptionGroup();
-        Option droidCompile = new Option(DROID_OPTION, "droid", false,
-                "Signatures are compiled for DROID.");
-        Option pronomCompile = new Option(PRONOM_OPTION, "pronom", false,
-                "Signatures are compiled for PRONOM.");
-        compileTypeOptions.addOption(droidCompile);
-        compileTypeOptions.addOption(pronomCompile);
-
         // Formatting options
         Option spaceElements = new Option(SPACE_OPTION, "spaces", false,
                 "Signature elements have spaces between them.");
@@ -239,17 +220,57 @@ public final class SigTool {
                         + "Defaults to BOFoffset if not set.");
 
         Options options = new Options();
-
-        // options which can be used at any time:
         options.addOption(help);
         options.addOption(spaceElements);
         options.addOption(noTabs);
         options.addOption(sigAnchor);
-
-        // options which have mutually exclusive options (in groups):
-        addOptionGroups(options, inputOptions, outputOptions, sigTypeOptions, compileTypeOptions);
-
+        addOptionGroups(options, buildFileOptions(), buildOutputOptions(), buildSignatureOptions(), buildCompileOptions());
         return options;
+    }
+
+    private static OptionGroup buildCompileOptions() {
+        OptionGroup compileTypeOptions = new OptionGroup();
+        Option droidCompile = new Option(DROID_OPTION, "droid", false,
+                "Signatures are compiled for DROID.");
+        Option pronomCompile = new Option(PRONOM_OPTION, "pronom", false,
+                "Signatures are compiled for PRONOM.");
+        compileTypeOptions.addOption(droidCompile);
+        compileTypeOptions.addOption(pronomCompile);
+        return compileTypeOptions;
+    }
+
+    private static OptionGroup buildSignatureOptions() {
+        // Binary or Container signatures
+        OptionGroup sigTypeOptions = new OptionGroup();
+        Option binarySignatures = new Option(BINARY_OPTION, "binary", false,
+                "Signatures are in binary syntax.");
+        Option containerSignatures = new Option(CONTAINER_OPTION, "container", false,
+                "Signatures are in container syntax.");
+        sigTypeOptions.addOption(binarySignatures);
+        sigTypeOptions.addOption(containerSignatures);
+        return sigTypeOptions;
+    }
+
+    private static OptionGroup buildOutputOptions() {
+        OptionGroup outputOptions = new OptionGroup();
+        Option xmlOutput = new Option(XML_OPTION, "xml", false,
+                "Output is in XML format");
+        Option expressionOutput = new Option(EXPRESSION_OPTION, "expression", false,
+                "Output is a regular expression");
+        outputOptions.addOption(xmlOutput);
+        outputOptions.addOption(expressionOutput);
+        return outputOptions;
+    }
+
+    private static OptionGroup buildFileOptions() {
+        OptionGroup fileOptions = new OptionGroup();
+        Option fileInput = new Option(FILE_OPTION, "file", true,
+                "Filename of signature file to process.");
+        Option matchFile = new Option(MATCH_OPTION, "match", true,
+                "Filename of a file to match the signature against.");
+        fileOptions.addOption(fileInput);
+        fileOptions.addOption(matchFile);
+        return fileOptions;
     }
 
     private static void addOptionGroups(Options options, OptionGroup... groups) {
@@ -304,7 +325,7 @@ public final class SigTool {
                 ContainerFile cFile = map.get(cfilename);
                 InternalSignatureCollection sigcol = cFile.getCompiledBinarySignatures();
                 if (sigcol != null) { // container files don't have to have binary signatures
-                    String header = sig.getDescription() + '\t' + sig.getId() + '\t' + cfilename;
+                    String header = sig.getDescription() + TAB_CHAR + sig.getId() + TAB_CHAR + cfilename;
                     exitCode = processInternalSignatures(header, sigcol.getInternalSignatures(), sigType, spaceElements, noTabs);
                 }
             }
@@ -335,7 +356,7 @@ public final class SigTool {
                     if (noTabs) {
                         System.out.println(sequence);
                     } else {
-                        System.out.println(header + '\t' + isig.getID() + '\t' + seq.getReference() + '\t' + sequence);
+                        System.out.println(header + TAB_CHAR + isig.getID() + TAB_CHAR + seq.getReference() + TAB_CHAR + sequence);
                     }
                 } catch (CompileException e) {
                     System.err.println("ERROR compiling sequence: " + seq);
@@ -421,6 +442,132 @@ public final class SigTool {
             }
         }
         return 0;
+    }
+
+    private static int testSignatureMatch(List<String> expressions, ByteSequenceAnchor anchor, String pathToScan) {
+        int exitCode = 0;
+        try {
+            InternalSignatureCollection sigs = compileExpressions(expressions, anchor);
+            String pathToUse;
+            if (pathToScan.endsWith(File.separator)) {
+                pathToUse = pathToScan.substring(0, pathToScan.length() - File.separator.length());
+            } else {
+                pathToUse = pathToScan;
+            }
+            File scanFile = new File(pathToUse);
+            String header = "File";
+            String header2 = "Expressions:";
+            for (int i = 0; i < expressions.size(); i++) {
+                header += "\tHits";
+                header2 += TAB_CHAR + expressions.get(i);
+            }
+            System.out.println(header2);
+            System.out.println(header);
+            if (scanFile.exists()) {
+                if (scanFile.isDirectory()) {
+                    String[] files = scanFile.list();
+                    for (String filename : files) {
+                        try {
+                            String childPath = pathToUse + File.separator + filename;
+                            File childFile = new File(childPath);
+                            if (childFile.isFile()) {
+                                scanFile(childPath, sigs);
+                            }
+                        } catch (IOException e) {
+                            System.err.println(filename + TAB_CHAR + IO_PROBLEM_READING_FILE + TAB_CHAR + e.getMessage());
+                        }
+                    }
+                } else {
+                    try {
+                        scanFile(pathToScan, sigs);
+                    } catch (IOException e) {
+                        System.err.println(pathToScan + TAB_CHAR + IO_PROBLEM_READING_FILE + TAB_CHAR + e.getMessage());
+                    }
+                }
+            }
+        } catch (CompileException e) {
+            System.err.println(ERROR_COMPILING_EXPRESSION_MESSAGE + TAB_CHAR + pathToScan + TAB_CHAR + e.getMessage());
+            exitCode = ERROR_COMPILING;
+        }
+        return exitCode;
+    }
+
+    private static void scanFile(String filename, InternalSignatureCollection sigs) throws IOException {
+        ByteReader reader =  null;
+        try {
+            Path file = Paths.get(filename);
+            reader = getByteReaderForFile(file);
+            //List<InternalSignature> hits = runFileIdentification(reader, sigs);
+            List<InternalSignature> hits = sigs.getMatchingSignatures(reader, -1);
+
+            int[] hitNums = new int[sigs.getInternalSignatures().size()];
+            for (InternalSignature hit : hits) {
+                hitNums[hit.getID()] = 1;
+            }
+            StringBuilder builder = new StringBuilder(filename);
+            for (int i = 0; i < hitNums.length; i++) {
+                builder.append(TAB_CHAR).append(hitNums[i]);
+            }
+            System.out.println(builder.toString());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+
+    private static ByteReader getByteReaderForFile(Path file) throws IOException {
+        long size = Files.size(file);
+        long lastmodified = Files.getLastModifiedTime(file).toMillis();
+        RequestMetaData metaData = new RequestMetaData(size, lastmodified, file.toString());
+        RequestIdentifier identifier = new RequestIdentifier(file.toUri());
+        IdentificationRequest fileRequest = new FileSystemIdentificationRequest(metaData, identifier);
+        fileRequest.open(file);
+        return new IdentificationRequestByteReaderAdapter(fileRequest);
+    }
+
+    private static List<InternalSignature> runFileIdentification(final ByteReader targetFile, InternalSignatureCollection sigs) {
+        //TODO: set max bytes to scan.
+        final List<InternalSignature> matchingSigs = sigs.getMatchingSignatures(targetFile, -1);
+        final int numSigs = matchingSigs.size(); // reduce garbage: use an indexed loop rather than an iterator.
+        for (int i = 0; i < numSigs; i++) {
+            final InternalSignature internalSig = matchingSigs.get(i);
+            targetFile.setPositiveIdent();
+            final int numFileFormats = internalSig.getNumFileFormats();
+            for (int fileFormatIndex = 0; fileFormatIndex < numFileFormats; fileFormatIndex++) {
+                final FileFormatHit fileHit =
+                        new FileFormatHit(internalSig.getFileFormat(fileFormatIndex),
+                                FileFormatHit.HIT_TYPE_POSITIVE_GENERIC_OR_SPECIFIC,
+                                internalSig.isSpecific(), "");
+
+                targetFile.addHit(fileHit);
+            }
+        }
+        return matchingSigs;
+    }
+
+    private static InternalSignatureCollection compileExpressions(List<String> expressions, ByteSequenceAnchor anchor) throws CompileException {
+        int sigID = 0;
+        InternalSignatureCollection sigs = new InternalSignatureCollection();
+        for (String expression : expressions) {
+            ByteSequence sequence = ByteSequenceCompiler.COMPILER.compile(expression, anchor);
+            InternalSignature sig = new InternalSignature();
+            String sigIDString = Integer.toString(sigID++);
+            sig.setID(sigIDString);
+            sig.addByteSequence(sequence);
+            sig.addFileFormat(getFakeFileFormat(sigIDString));
+            sig.prepareForUse();
+            sigs.addInternalSignature(sig);
+        }
+        return sigs;
+    }
+
+    private static FileFormat getFakeFileFormat(String sigID) {
+        FileFormat fakeFormat = new FileFormat();
+        fakeFormat.setAttributeValue("Name", "Test format: " + sigID);
+        fakeFormat.setAttributeValue("PUID", "tst/" + sigID);
+        fakeFormat.setInternalSignatureID(sigID);
+        return fakeFormat;
     }
 
     private static void printHelp(Options options) {
