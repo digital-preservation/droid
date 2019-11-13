@@ -147,16 +147,16 @@ sigtool --expression --file "container-signature-20170330.xml"
 ```
 Gives the following output (snippet):
 
-| Description                        | Sig ID | Container File       | Internal Sig ID |   Reference |   Sequence
-|------------------------------------|--------|----------------------|-----------------|-------------|----------------------------------------------------------------------------------------------------------
-|Microsoft Word 6.0/95 OLE2          |  1000  |  CompObj             | 306             | BOFoffset   | {40-1024}10000000'Word.Document.'['6':'7']00
-|Microsoft Word 97 OLE2              |  1020  |  CompObj             | 300             | BOFoffset   | {40-1024}10000000'Word.Document.8'00
-|Microsoft Word OOXML                |  1030  |  [Content_Types].xml | 302             | BOFoffset   | {0-32768}'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"'
-|Microsoft Word Macro enabled OOXML  |  1060  |  [Content_Types].xml | 1060            | Variable    | {0-4096}'ContentType="application/vnd.ms-word.document.macroEnabled.main+xml"'
-|Microsoft Word OOXML Template       |  1070  |  [Content_Types].xml | 1070            | Variable    | {0-4096}'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"'
-|Microsoft Word 97 OLE2 Template     |  1100  |  CompObj             | 1100            | BOFoffset   | {40-1024}10000000'Word.Document.8'00
-|Microsoft Word 97 OLE2 Template     |  1100  |  WordDocument        | 1100            | BOFoffset   | {10}[&01]
-|Microsoft Excel OOXML               |  2030  |  [Content_Types].xml | 317             | BOFoffset   | {0-40000}'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"'
+| Description                        | Sig ID | Container File        | Internal Sig ID |   Reference |   Sequence
+|------------------------------------|--------|-----------------------|-----------------|-------------|----------------------------------------------------------------------------------------------------------
+|Microsoft Word 6.0/95 OLE2          |  1000  |  CompObj              | 306             | BOFoffset   | {40-1024}10000000'Word.Document.'['6':'7']00
+|Microsoft Word 97 OLE2              |  1020  |  CompObj              | 300             | BOFoffset   | {40-1024}10000000'Word.Document.8'00
+|Microsoft Word OOXML                |  1030  |  \[Content_Types].xml | 302             | BOFoffset   | {0-32768}'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"'
+|Microsoft Word Macro enabled OOXML  |  1060  |  \[Content_Types].xml | 1060            | Variable    | {0-4096}'ContentType="application/vnd.ms-word.document.macroEnabled.main+xml"'
+|Microsoft Word OOXML Template       |  1070  |  \[Content_Types].xml | 1070            | Variable    | {0-4096}'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"'
+|Microsoft Word 97 OLE2 Template     |  1100  |  CompObj              | 1100            | BOFoffset   | {40-1024}10000000'Word.Document.8'00
+|Microsoft Word 97 OLE2 Template     |  1100  |  WordDocument         | 1100            | BOFoffset   | {10}\[&01]
+|Microsoft Excel OOXML               |  2030  |  \[Content_Types].xml | 317             | BOFoffset   | {0-40000}'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"'
 ...
 
 ## Test signatures
