@@ -75,6 +75,7 @@
         <exclude>Running DROID.txt</exclude>
         <exclude>sigTool</exclude>
         <exclude>sigTool.bat</exclude>
+        <exclude>sigTool.txt</exclude>
       </excludes>
       <fileMode>644</fileMode>
     </fileSet>
@@ -114,6 +115,12 @@
     </file>
     <file>
       <source>bin/Running DROID.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>644</fileMode>
+    </file>
+    <file>
+      <source>bin/sigTool.txt</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>644</fileMode>
