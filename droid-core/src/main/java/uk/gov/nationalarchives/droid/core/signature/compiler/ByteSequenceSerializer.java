@@ -40,9 +40,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import net.byteseek.parser.tree.ParseTreeType;
-import net.byteseek.parser.tree.node.ByteNode;
-import net.byteseek.parser.tree.node.ChildrenNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -51,12 +48,15 @@ import net.byteseek.matcher.sequence.SequenceMatcher;
 import net.byteseek.parser.ParseException;
 import net.byteseek.parser.regex.RegexParser;
 import net.byteseek.parser.tree.ParseTree;
+import net.byteseek.parser.tree.ParseTreeType;
+import net.byteseek.parser.tree.node.ByteNode;
+import net.byteseek.parser.tree.node.ChildrenNode;
+
 import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
 
-import static net.byteseek.parser.tree.ParseTreeType.*;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
 
@@ -74,9 +74,69 @@ public final class ByteSequenceSerializer {
     public static final ByteSequenceSerializer SERIALIZER = new ByteSequenceSerializer();
 
     /**
+     * The name of the Sequence attribute in XML.
+     */
+    private static final String SEQUENCE = "Sequence";
+
+    /**
      * An underlying byteseek parser used to transform byteseek expressions into an Abstract Syntax Tree.
      */
     private static final RegexParser PARSER = new RegexParser();
+
+    /**
+     * The name of the Reference attribute in XML.
+     */
+    private static final String REFERENCE = "Reference";
+
+    /**
+     * The name of the ByteSequence element in XML.
+     */
+    private static final String BYTE_SEQUENCE = "ByteSequence";
+
+    /**
+     * The name of the LeftFragment element in XML.
+     */
+    private static final String LEFT_FRAGMENT = "LeftFragment";
+
+    /**
+     * The name of the RightFragment element in XML.
+     */
+    private static final String RIGHT_FRAGMENT = "RightFragment";
+
+    /**
+     * The name of the Position attribute in XML.
+     */
+    private static final String POSITION = "Position";
+
+    /**
+     * The name of the MinOffset attribute in XML.
+     */
+    private static final String MIN_OFFSET = "MinOffset";
+
+    /**
+     * The name of the MaxOffset attribute in XML.
+     */
+    private static final String MAX_OFFSET = "MaxOffset";
+
+    /**
+     * The name of the SubSequence element in XML.
+     */
+    private static final String SUB_SEQUENCE = "SubSequence";
+
+    /**
+     * The name of the SubSeqMinOffset attribute in XML.
+     */
+    private static final String SUB_SEQ_MIN_OFFSET = "SubSeqMinOffset";
+
+    /**
+     * The name of the SubSeqMaxOffset attribute in XML.
+     */
+    private static final String SUB_SEQ_MAX_OFFSET = "SubSeqMaxOffset";
+
+    /**
+     * A format string to output two hex digits.
+     */
+    private static final String HEXDIGITS = "%02x";
 
     /**
      * Returns the XML for a PRONOM expression.
@@ -88,7 +148,8 @@ public final class ByteSequenceSerializer {
      * @return An XML string containing the output of compiling the PRONOM expression.
      * @throws CompileException If anything goes wrong during the compilation.
      */
-    public String toXML(String sequence, ByteSequenceAnchor anchor, ByteSequenceCompiler.CompileType compileType, SignatureType sigType) throws CompileException {
+    public String toXML(String sequence, ByteSequenceAnchor anchor, ByteSequenceCompiler.CompileType compileType,
+                        SignatureType sigType) throws CompileException {
         return toXML(ByteSequenceCompiler.COMPILER.compile(sequence, anchor, compileType), sigType);
     }
 
@@ -178,19 +239,20 @@ public final class ByteSequenceSerializer {
 
 
     private Element createByteSequenceElement(Document doc, ByteSequence sequence) {
-        Element byteSequence = doc.createElement("ByteSequence");
-        byteSequence.setAttribute("Reference", sequence.getReference());
+        Element byteSequence = doc.createElement(BYTE_SEQUENCE);
+        byteSequence.setAttribute(REFERENCE, sequence.getReference());
         if (!sequence.getSequence().isEmpty()) {
-            byteSequence.setAttribute("Sequence", sequence.getSequence());
+            byteSequence.setAttribute(SEQUENCE, sequence.getSequence());
         }
         doc.appendChild(byteSequence);
+
         return byteSequence;
     }
 
     private Element createSubSequenceElement(Document doc, SubSequence sub, SignatureType sigType, int position) throws ParseException {
         Element subSequence = createBasicSubSequenceElement(doc, sub, sigType, position);
-        appendFragments(doc, subSequence, sub.getLeftFragments(), "LeftFragment", sigType);
-        appendFragments(doc, subSequence, sub.getRightFragments(), "RightFragment", sigType);
+        appendFragments(doc, subSequence, sub.getLeftFragments(), LEFT_FRAGMENT, sigType);
+        appendFragments(doc, subSequence, sub.getRightFragments(), RIGHT_FRAGMENT, sigType);
         return subSequence;
     }
 
@@ -201,9 +263,9 @@ public final class ByteSequenceSerializer {
             fragPos++;
             for (SideFragment frag : fragsAtPos) {
                 Element fragment = doc.createElement(elementName);
-                fragment.setAttribute("Position", Integer.toString(fragPos));
-                fragment.setAttribute("MinOffset", Integer.toString(frag.getMinOffset()));
-                fragment.setAttribute("MaxOffset", Integer.toString(frag.getMaxOffset()));
+                fragment.setAttribute(POSITION, Integer.toString(fragPos));
+                fragment.setAttribute(MIN_OFFSET, Integer.toString(frag.getMinOffset()));
+                fragment.setAttribute(MAX_OFFSET, Integer.toString(frag.getMaxOffset()));
                 fragment.setTextContent(getSequenceMatcherExpression(frag.getMatcher(), sigType));
                 subsequence.appendChild(fragment);
             }
@@ -211,13 +273,13 @@ public final class ByteSequenceSerializer {
     }
 
     private Element createBasicSubSequenceElement(Document doc, SubSequence sub, SignatureType sigType, int position) throws ParseException {
-        Element subSequence = doc.createElement("SubSequence");
-        subSequence.setAttribute("Position", Integer.toString(position));
-        subSequence.setAttribute("SubSeqMinOffset", Integer.toString(sub.getMinSeqOffset()));
-        subSequence.setAttribute("SubSeqMaxOffset", Integer.toString(sub.getMaxSeqOffset()));
+        Element subSequence = doc.createElement(SUB_SEQUENCE);
+        subSequence.setAttribute(POSITION, Integer.toString(position));
+        subSequence.setAttribute(SUB_SEQ_MIN_OFFSET, Integer.toString(sub.getMinSeqOffset()));
+        subSequence.setAttribute(SUB_SEQ_MAX_OFFSET, Integer.toString(sub.getMaxSeqOffset()));
 
         // Add sequence element containing the signature to search for:
-        Element seq = doc.createElement("Sequence");
+        Element seq = doc.createElement(SEQUENCE);
         seq.setTextContent(getSequenceMatcherExpression(sub.getAnchorMatcher(), sigType));
         subSequence.appendChild(seq);
 
@@ -240,7 +302,7 @@ public final class ByteSequenceSerializer {
     private void toPRONOMExpression(final ParseTree tree, final StringBuilder builder, SignatureType sigType, boolean spaceElements, final boolean inSet, final boolean inAlternatives) throws ParseException {
         switch (tree.getParseTreeType()) {
             case BYTE: {
-                builder.append(String.format("%02x", tree.getByteValue() & 0xFF).toUpperCase());
+                builder.append(String.format(HEXDIGITS, tree.getByteValue() & 0xFF).toUpperCase());
                 break;
             }
             case STRING: { // If processing a string in a set ['abc'] as alternatives, have to process as ('a'|'b'|'c')
@@ -250,7 +312,7 @@ public final class ByteSequenceSerializer {
                 } else {                    //BINARY SIG FORMAT: output strings as byte sequences.
                     for (int i = 0; i < value.length(); i++) {
                         int theChar = value.charAt(i);
-                        builder.append(String.format("%02x", theChar).toUpperCase());
+                        builder.append(String.format(HEXDIGITS, theChar).toUpperCase());
                     }
                 }
                 break;
@@ -259,7 +321,7 @@ public final class ByteSequenceSerializer {
                 if (!inSet) {
                     builder.append('[');
                 }
-                builder.append('&').append(String.format("%02x", tree.getByteValue() & 0xFF));
+                builder.append('&').append(String.format(HEXDIGITS, tree.getByteValue() & 0xFF));
                 if (!inSet) {
                     builder.append(']');
                 }
@@ -351,7 +413,7 @@ public final class ByteSequenceSerializer {
             int maxPos = -1;
             for (int i = 0; i < numChildren; i++) {
                 ParseTree child = node.getChild(i);
-                if (child.getParseTreeType() == BYTE) {
+                if (child.getParseTreeType() == ParseTreeType.BYTE) {
                     final int byteValue = child.getIntValue();
                     minPos = Math.min(byteValue, minPos);
                     maxPos = Math.max(byteValue, maxPos);
@@ -404,7 +466,7 @@ public final class ByteSequenceSerializer {
             }
 
             // Return the set of ranges, using () syntax for binary, and [] syntax for container signatures:
-            final ParseTreeType nodeType = sigType == BINARY ? ALTERNATIVES : SET;
+            final ParseTreeType nodeType = sigType == BINARY ? ParseTreeType.ALTERNATIVES : ParseTreeType.SET;
             return new ChildrenNode(nodeType, rangeChildren);
         }
         return null;
@@ -423,7 +485,7 @@ public final class ByteSequenceSerializer {
 
             // If we're processing a set as a list of alternatives, we need to handle strings differently.
             // Strings in sets need to be broken into distinct bytes separated by |.
-            if (inSet && alternative.getParseTreeType() == STRING) {
+            if (inSet && alternative.getParseTreeType() == ParseTreeType.STRING) {
                 appendStringAsAlternativeBytes(builder, alternative.getTextValue(), spaceElements);
             } else {
                 toPRONOMExpression(alternatives.getChild(i), builder, sigType, spaceElements, false, true);
@@ -443,7 +505,7 @@ public final class ByteSequenceSerializer {
             if (theChar > 255) {
                 throw new ParseException("Could not process a char in a string with a value higher than 255: " + theChar);
             }
-            builder.append(String.format("%02x", (int) theChar));
+            builder.append(String.format(HEXDIGITS, (int) theChar));
         }
     }
 
@@ -471,7 +533,7 @@ public final class ByteSequenceSerializer {
         if (prettyPrint && value >= ' ' && value <= '~') {
             builder.append('\'').append((char) value).append('\'');
         } else {
-            builder.append(String.format("%02x", value).toUpperCase());
+            builder.append(String.format(HEXDIGITS, value).toUpperCase());
         }
     }
 
