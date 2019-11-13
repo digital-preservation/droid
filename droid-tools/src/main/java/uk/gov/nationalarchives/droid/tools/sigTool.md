@@ -66,7 +66,7 @@ This gives a more backwards compatible output, where strings are represented as 
 ## Convert between signature syntax
 Signatures can use different syntax depending on whether they're a traditional binary signature, or a container signature.  You can convert between these formats using the --expression option.  For example, running:
 ```
-sigtool --expression --binary "'Microsoft Word'" --notabs
+sigtool --expression --binary "'Microsoft Word'"
 ```
 Gives the tab delimited output of the original expression and its conversion to binary signature syntax:
 ```
