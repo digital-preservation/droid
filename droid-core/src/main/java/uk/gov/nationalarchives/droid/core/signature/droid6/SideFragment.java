@@ -138,6 +138,7 @@ public class SideFragment extends SimpleElement implements Cloneable {
     }
 
     /**
+     * @param matcher THe SequenceMatcher which the SideFragment will match.
      * @param minOffset The minimum offset to begin looking for this fragment
      * @param maxOffset The maximum offset to begin looking for this fragment
      * @param position the position in file of this fragment
