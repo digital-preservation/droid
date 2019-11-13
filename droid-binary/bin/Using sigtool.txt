@@ -32,7 +32,7 @@ The options control how signatures are processed, or print help.
 | -x    | --xml        | Output an xml representation of an expression, or a transformed signature file using the new syntax. (Default)                                                                                      |
 | -e    | --expression | Output a tab delimited format containing PRONOM syntax compiled from another expression or signature file.                                                                                          |
 | -f    | --file       | Specify a signature file to process.  The next argument is the filename of the signature file.  Both binary and container signatures files can be specified.                                        |
-| -a    | --anchor     | Specify whether an expression is anchored to BOFoffset, EOFoffset or Variable.  For example: "--offset bofoffset"                                                                                   |
+| -a    | --anchor     | Specify whether an expression is anchored to BOFoffset, EOFoffset or Variable.  For example: "--anchor bofoffset"                                                                                   |
 | -n    | --notabs     | Don't output tab delimited metadata along with a compiled expression - just output the result of compiling on its own.                                                                              |
 | -m    | --match      | Match the file or files against the expressions.  The next argument is the file or folder to scan.                                                                                                  |                                                                          |
 
