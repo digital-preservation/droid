@@ -212,7 +212,7 @@ would add all the different expressions as columns against each file.
 
 | .                                  | .                | .               | .
 |------------------------------------|------------------|-----------------|-------------------------------
-|Expressions:                        | 'SOMEFILEHEADER' | 'Another thing' | 01 02 03 (04|05|06) 'complex'
+|Expressions:                        | 'SOMEFILEHEADER' | 'Another thing' | 01 02 03 \(04\|05\|06) 'complex'
 |File                                | Hits             |  Hits           | Hits
 |/home/user/Documents/somefile.xyz   | 1                |  0              | 0
 |/home/user/Documents/another.txt    | 0                |  1              | 0
