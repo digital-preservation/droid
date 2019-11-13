@@ -73,9 +73,9 @@
         <exclude>droid.sh</exclude>
         <exclude>droid.bat</exclude>
         <exclude>Running DROID.txt</exclude>
-        <exclude>sigTool</exclude>
-        <exclude>sigTool.bat</exclude>
-        <exclude>Using sigTool.txt</exclude>
+        <exclude>sigtool</exclude>
+        <exclude>sigtool.bat</exclude>
+        <exclude>Using sigtTool.txt</exclude>
       </excludes>
       <fileMode>644</fileMode>
     </fileSet>
@@ -102,13 +102,13 @@
       <fileMode>644</fileMode>
     </file>
     <file>
-      <source>bin/sigTool</source>
+      <source>bin/sigtool</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>755</fileMode>
     </file>
     <file>
-      <source>bin/sigTool.bat</source>
+      <source>bin/sigtool.bat</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>644</fileMode>
@@ -120,7 +120,7 @@
       <fileMode>644</fileMode>
     </file>
     <file>
-      <source>bin/Using sigTool.txt</source>
+      <source>bin/Using sigtool.txt</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>644</fileMode>
