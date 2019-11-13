@@ -172,6 +172,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * Error message when exception reading a byte from positionInFile
      */
     private static final String BYTE_READ_ERROR = "An error occurred reading a byte at positionInFile ";
+
     /**
     *Use static log for optimal performance..
      */
@@ -206,7 +207,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * be prepared for use multiple times even with this flag set.
      */
     //TODO: investigate threading issues around ByteSequence compilation and preparation in container signatures.
-    private boolean preparedForUse = false;
+    private boolean preparedForUse;
 
     /**
      * 
@@ -389,9 +390,13 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     }
 
     private ByteSequenceAnchor getAnchor() {
-        if (reference.endsWith("BOFoffset")) return ByteSequenceAnchor.BOFOffset;
-        if (reference.endsWith("EOFoffset")) return ByteSequenceAnchor.EOFOffset;
-        return ByteSequenceAnchor.VariableOffset;
+        ByteSequenceAnchor anchor = ByteSequenceAnchor.VariableOffset;
+        if (reference.endsWith(BOF_OFFSET)) {
+            anchor = ByteSequenceAnchor.BOFOffset;
+        } else if (reference.endsWith(EOF_OFFSET)) {
+            anchor = ByteSequenceAnchor.EOFOffset;
+        }
+        return anchor;
     }
 
     /**
