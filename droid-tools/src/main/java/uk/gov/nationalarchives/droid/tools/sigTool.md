@@ -31,6 +31,7 @@ The options control how signatures are processed, or print help.
 | -f    | --file       | Specify a signature file to process.  The next argument is the filename of the signature file.  Both binary and container signatures files can be specified.                                        |
 | -a    | --anchor     | Specify whether an expression is anchored to BOFoffset, EOFoffset or Variable.  For example: "--offset bofoffset"                                                                                   |
 | -n    | --notabs     | Don't output tab delimited metadata along with a compiled expression - just output the result of compiling on its own.                                                                              |
+| -m    | --match      | Match the file or files against the expressions.  The next argument is the file or folder to scan.                                                                                                  |                                                                          |
 
 
 ### Expressions
