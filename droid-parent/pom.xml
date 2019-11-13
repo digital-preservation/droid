@@ -288,6 +288,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <excludes>
                         <exclude>**/resources/**</exclude>
+                        <exclude>**/bin/</exclude>
                         <exclude>.travis.yml</exclude>
                         <exclude>pom.xml</exclude>
                         <exclude>**/pom.xml</exclude>
