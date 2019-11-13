@@ -1,5 +1,8 @@
 # sigtool
 
+(Note: this text file is in Markdown format - if you have a markdown reader this can be rendered as a document).
+
+
 sigtool can:
 
 * convert signatures into signature XML
@@ -50,8 +53,8 @@ sigtool "01 02 03 (B1 B2 | C1 C2)" "'start:'(22|27)[01:2F]"
 ```
 This gives a tab delimited output consisting of each expression, a tab, and the signature XML for the expression:
 ```
-01 02 03 (B1 B2 | C1 C2)	<ByteSequence Reference="BOFoffset"><SubSequence Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0"><Sequence>010203</Sequence><RightFragment MaxOffset="0" MinOffset="0" Position="1">B1B2</RightFragment><RightFragment MaxOffset="0" MinOffset="0" Position="1">C1C2</RightFragment></SubSequence></ByteSequence>
-'start:'(22|27)[01:2F]	<ByteSequence Reference="BOFoffset"><SubSequence Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0"><Sequence>'start:'[2227][01:'/']</Sequence></SubSequence></ByteSequence>
+01 02 03 (B1 B2 | C1 C2)    <ByteSequence Reference="BOFoffset"><SubSequence Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0"><Sequence>010203</Sequence><RightFragment MaxOffset="0" MinOffset="0" Position="1">B1B2</RightFragment><RightFragment MaxOffset="0" MinOffset="0" Position="1">C1C2</RightFragment></SubSequence></ByteSequence>
+'start:'(22|27)[01:2F]    <ByteSequence Reference="BOFoffset"><SubSequence Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0"><Sequence>'start:'[2227][01:'/']</Sequence></SubSequence></ByteSequence>
 ```
 Note that the signatures are using container syntax (e.g. they use strings and multi-byte sets).  If we wanted a more backwards compatible binary signature, we can specify the --binary option:
 ```
@@ -59,8 +62,8 @@ sigtool --binary "01 02 03 (B1 B2 | C1 C2)" "'start:'(22|27)[01:2F]"
 ```
 This gives a more backwards compatible output, where strings are represented as hex byte sequences:
 ```
-01 02 03 (B1 B2 | C1 C2)	<ByteSequence Reference="BOFoffset"><SubSequence Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0"><Sequence>010203</Sequence><RightFragment MaxOffset="0" MinOffset="0" Position="1">B1B2</RightFragment><RightFragment MaxOffset="0" MinOffset="0" Position="1">C1C2</RightFragment></SubSequence></ByteSequence>
-'start:'(22|27)[01:2F]	<ByteSequence Reference="BOFoffset"><SubSequence Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0"><Sequence>73746172743A(22|27)[01:2F]</Sequence></SubSequence></ByteSequence>
+01 02 03 (B1 B2 | C1 C2)    <ByteSequence Reference="BOFoffset"><SubSequence Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0"><Sequence>010203</Sequence><RightFragment MaxOffset="0" MinOffset="0" Position="1">B1B2</RightFragment><RightFragment MaxOffset="0" MinOffset="0" Position="1">C1C2</RightFragment></SubSequence></ByteSequence>
+'start:'(22|27)[01:2F]    <ByteSequence Reference="BOFoffset"><SubSequence Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0"><Sequence>73746172743A(22|27)[01:2F]</Sequence></SubSequence></ByteSequence>
 ```
 
 ## Convert between signature syntax
@@ -70,7 +73,7 @@ sigtool --expression --binary "'Microsoft Word'"
 ```
 Gives the tab delimited output of the original expression and its conversion to binary signature syntax:
 ```
-'Microsoft Word'	4D6963726F736F667420576F7264
+'Microsoft Word'    4D6963726F736F667420576F7264
 ```
 Conversely, if we ran:
 ```
@@ -125,35 +128,36 @@ You can obtain a summary of all signatures in a signature file into a tab-delimi
 sigtool --expression --file "DROID_SignatureFile_V91.xml"
 ```
 Would give the following output (snippet):
-```
-Version	Sig ID	Reference	Sequence
-91	    18	    EOFoffset	3B{0-4}
-91	    20	    BOFoffset	'%PDF-1.4'
-91	    20	    EOFoffset	'%%EOF'{0-1024}
-91	    21	    BOFoffset	'%PDF-1.6'
-91	    21	    EOFoffset	'%%EOF'{0-1024}
-91	    22	    BOFoffset	'%PDF-1.5'
-91	    22	    EOFoffset	'%%EOF'{0-1024}
-91	    23	    BOFoffset	'%PDF-1.3'
-91	    23	    EOFoffset	'%%EOF'{0-1024}
-```
+
+|Version    |Sig ID  |Reference |Sequence
+|-----------|--------|----------|---------------
+|91         |18      |EOFoffset |3B{0-4}
+|91         |20      |BOFoffset |'%PDF-1.4'
+|91         |20      |EOFoffset |'%%EOF'{0-1024}
+|91         |21      |BOFoffset |'%PDF-1.6'
+|91         |21      |EOFoffset |'%%EOF'{0-1024}
+|91         |22      |BOFoffset |'%PDF-1.5'
+|91         |22      |EOFoffset |'%%EOF'{0-1024}
+|91         |23      |BOFoffset |'%PDF-1.3'
+|91         |23      |EOFoffset |'%%EOF'{0-1024}
+
 You can also specify --binary signature syntax or use --container syntax (the default).  This also works for container files, where you get a little more metadata:
 ```
 sigtool --expression --file "container-signature-20170330.xml"
 ```
 Gives the following output (snippet):
-```
-Description	                        Sig ID	Container File	    Internal Sig ID	Reference	Sequence
-Microsoft Word 6.0/95 OLE2	        1000	CompObj     	    306	            BOFoffset	{40-1024}10000000'Word.Document.'['6':'7']00
-Microsoft Word 97 OLE2	            1020	CompObj	            300	            BOFoffset	{40-1024}10000000'Word.Document.8'00
-Microsoft Word OOXML	            1030	[Content_Types].xml	302	            BOFoffset	{0-32768}'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"'
-Microsoft Word Macro enabled OOXML	1060	[Content_Types].xml	1060	        Variable	{0-4096}'ContentType="application/vnd.ms-word.document.macroEnabled.main+xml"'
-Microsoft Word OOXML Template	    1070	[Content_Types].xml	1070	        Variable	{0-4096}'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"'
-Microsoft Word 97 OLE2 Template	    1100	CompObj	            1100	        BOFoffset	{40-1024}10000000'Word.Document.8'00
-Microsoft Word 97 OLE2 Template	    1100	WordDocument	    1100	        BOFoffset	{10}[&01]
-Microsoft Excel OOXML	            2030	[Content_Types].xml 317	            BOFoffset	{0-40000}'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"'
+
+| Description                        | Sig ID | Container File       | Internal Sig ID |   Reference |   Sequence
+|------------------------------------|--------|----------------------|-----------------|-------------|----------------------------------------------------------------------------------------------------------
+|Microsoft Word 6.0/95 OLE2          |  1000  |  CompObj             | 306             | BOFoffset   | {40-1024}10000000'Word.Document.'['6':'7']00
+|Microsoft Word 97 OLE2              |  1020  |  CompObj             | 300             | BOFoffset   | {40-1024}10000000'Word.Document.8'00
+|Microsoft Word OOXML                |  1030  |  [Content_Types].xml | 302             | BOFoffset   | {0-32768}'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"'
+|Microsoft Word Macro enabled OOXML  |  1060  |  [Content_Types].xml | 1060            | Variable    | {0-4096}'ContentType="application/vnd.ms-word.document.macroEnabled.main+xml"'
+|Microsoft Word OOXML Template       |  1070  |  [Content_Types].xml | 1070            | Variable    | {0-4096}'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"'
+|Microsoft Word 97 OLE2 Template     |  1100  |  CompObj             | 1100            | BOFoffset   | {40-1024}10000000'Word.Document.8'00
+|Microsoft Word 97 OLE2 Template     |  1100  |  WordDocument        | 1100            | BOFoffset   | {10}[&01]
+|Microsoft Excel OOXML               |  2030  |  [Content_Types].xml | 317             | BOFoffset   | {0-40000}'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"'
 ...
-```
 
 ## Test signatures
 You can use sigtool to try out a signature on a file or a folder directly, using the --match option.  For example, if you write:
@@ -161,22 +165,25 @@ You can use sigtool to try out a signature on a file or a folder directly, using
 sigtool --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
 ```
 You will get a tab delimited output like the following:
-```
-Expressions:	                    'SOMEFILEHEADER'
-File	                            Hits
-/home/user/Documents/somefile.xyz	0
-```
+
+| .                                  | .
+|------------------------------------|------------------
+| Expressions:                       | 'SOMEFILEHEADER'
+| File                               | Hits
+| /home/user/Documents/somefile.xyz  | 0
+
 In this example we didn't get a match.  Note that, by default, sigtool assumes that signatures are anchored to the beginning of the file.  So this expression would only match if it is literally the first bytes in the file.
 If you want to search the entire file for the sequence, you have to specify a "variable" anchor, as follows:
 ```
 sigtool --anchor Variable --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
 ```
 which gives:
-```
-Expressions:	                    'SOMEFILEHEADER'
-File	                            Hits
-/home/user/Documents/somefile.xyz	1
-```
+
+| .                                  | .
+|------------------------------------|------------------
+|Expressions:                        | 'SOMEFILEHEADER'
+|File                                | Hits
+|/home/user/Documents/somefile.xyz   | 1
 
 If you want to scan more than one file, you can specify a folder instead of a file.
 sigtool will then scan all the immediate child files of that folder, although it
@@ -185,23 +192,29 @@ won't process sub-folders currently.  For example:
 sigtool --match "/home/user/Documents/" "'SOMEFILEHEADER'"
 ```
 which might give:
-```
-Expressions:	                    'SOMEFILEHEADER'
-File	                            Hits
-/home/user/Documents/somefile.xyz	1
-/home/user/Documents/another.txt    0
-/home/user/Documents/more.doc       0
-/home/user/Documents/example.png    1
-```
+
+| .                                  | .
+|------------------------------------|------------------
+|Expressions:                        | 'SOMEFILEHEADER'
+|File                                | Hits
+|/home/user/Documents/somefile.xyz   | 1
+|/home/user/Documents/another.txt    | 0
+|/home/user/Documents/more.doc       | 0
+|/home/user/Documents/example.png    | 1
+
+
 Finally, if you want to test more than one expression at a time against a file or folder, you can just add more expressions as arguments.  For example:
 ```
 sigtool --match "/home/user/Documents/" "'SOMEFILEHEADER'" "'Another thing'" "01 02 03 (04|05|06) 'complex'"
 ```
-```
-Expressions:	                    'SOMEFILEHEADER'    'Another thing'    01 02 03 (04|05|06) 'complex'
-File	                            Hits	            Hits               Hits
-/home/user/Documents/somefile.xyz	1                   0                  0
-/home/user/Documents/another.txt    0                   1                  0
-/home/user/Documents/more.doc       0                   0                  1
-/home/user/Documents/example.png    1                   0                  0
-```
+
+would add all the different expressions as columns against each file.
+
+| .                                  | .                | .               | .
+|------------------------------------|------------------|-----------------|-------------------------------
+|Expressions:                        | 'SOMEFILEHEADER' | 'Another thing' | 01 02 03 (04|05|06) 'complex'
+|File                                | Hits             |  Hits           | Hits
+|/home/user/Documents/somefile.xyz   | 1                |  0              | 0
+|/home/user/Documents/another.txt    | 0                |  1              | 0
+|/home/user/Documents/more.doc       | 0                |  0              | 1
+|/home/user/Documents/example.png    | 1                |  0              | 0
