@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2019, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+/**
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,6 +62,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.BOFOffset;
+import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.EOFOffset;
+import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.VariableOffset;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
 
@@ -81,10 +84,8 @@ public class SigTool {
         System.exit(returnCode);
     }
 
-
-
     private static int executeArguments(String[] args) {
-        int exitCode = 0;
+        int exitCode;
         CommandLineParser parser = new DefaultParser();
         try {
             Options options = createOptions();
@@ -108,29 +109,42 @@ public class SigTool {
         SignatureType sigType = cli.hasOption("b") ? SignatureType.BINARY : SignatureType.CONTAINER;
         boolean spaceElements = cli.hasOption("s"); // only add spaces if requested.
         boolean processSigFiles = cli.hasOption("f");
+        boolean noTabs = cli.hasOption("n");
+        ByteSequenceAnchor anchorType = cli.hasOption("a") ?
+                anchorType = getAnchor(cli.getOptionValue("a")) : BOFOffset;
+        if (anchorType == null) {
+            System.err.println("The value provided for the --anchor " + cli.getOptionValue("a") + " is not recognised.  Must be bofoffset, eofoffset or variable.");
+            return 13;
+        }
 
         // Process the commands:
         if (processSigFiles) { // using a file as an input:
             if (cli.hasOption("e")) {
-                return processExpressionSigFile(cli.getOptionValue("f"), sigType, spaceElements);
+                return processExpressionSigFile(cli.getOptionValue("f"), sigType, spaceElements, noTabs);
             } else {
-                return processXMLSigFile(cli.getOptionValue("f"), compileType, sigType, spaceElements);
+                return processXMLSigFile(cli.getOptionValue("f"), sigType, spaceElements);
             }
         } else { // using expressions on the command line as an input
             if (cli.hasOption("e")) {
-                return processExpressionCommands(cli.getArgList(), compileType, sigType, spaceElements);
+                return processExpressionCommands(cli.getArgList(), sigType, spaceElements, noTabs);
             } else {
-                //TODO: why no spacing control over XML commands?
-                return processXMLCommands(cli.getArgList(), compileType, sigType);
+                return processXMLCommands(cli.getArgList(), compileType, sigType, anchorType, noTabs);
             }
         }
     }
 
+    private static ByteSequenceAnchor getAnchor(String anchorText) {
+        switch (anchorText.toLowerCase()) {
+            case "bofoffset" : return BOFOffset;
+            case "eofoffset" : return EOFOffset;
+            case "variable"  : return VariableOffset;
+        }
+        return null;
+    }
+
     private static Options createOptions() {
         // General options
-        OptionGroup miscGroup = new OptionGroup();
         Option help = new Option("h", "help", false, "Prints help on commands.");
-        miscGroup.addOption(help);
 
         // Input options
         OptionGroup inputOptions = new OptionGroup();
@@ -159,25 +173,32 @@ public class SigTool {
         compileTypeOptions.addOption(pronomCompile);
 
         // Formatting options
-        OptionGroup formattingOptions = new OptionGroup();
         Option spaceElements = new Option("s", "spaces", false, "Signature elements have spaces between them.");
-        formattingOptions.addOption(spaceElements);
+        Option noTabs        = new Option("n", "notabs", false, "Don't include tab separated metadata - just output the expressions.");
+        Option sigAnchor     = new Option("a", "anchor", true, "Where a signature is anchored - BOFoffset, EOFoffset or Variable.  Defaults to BOFoffset if not set.");
 
         Options options = new Options();
-        options.addOptionGroup(miscGroup);
+
+        // options which can be used at any time:
+        options.addOption(help);
+        options.addOption(spaceElements);
+        options.addOption(noTabs);
+        options.addOption(sigAnchor);
+
+        // options which have mutually exclusive options (in groups):
         options.addOptionGroup(inputOptions);
         options.addOptionGroup(outputOptions);
         options.addOptionGroup(sigTypeOptions);
         options.addOptionGroup(compileTypeOptions);
-        options.addOptionGroup(formattingOptions);
+
         return options;
     }
 
-    private static int processXMLSigFile(String filename, ByteSequenceCompiler.CompileType compileType, SignatureType sigType, boolean spaceElements) {
-        int exitCode = 0;
+    private static int processXMLSigFile(String filename, SignatureType sigType, boolean spaceElements) {
+        int exitCode;
         try {
             Document doc = XmlUtils.readXMLFile(filename);
-            processSigFileToXMLWithExpressions(doc, compileType, sigType, spaceElements);
+            exitCode = processSigFileToXMLWithExpressions(doc, sigType, spaceElements);
         } catch (IOException e) {
             System.err.println("IO problem reading file: " + filename + "\n" + e.getMessage());
             exitCode = 19;
@@ -185,9 +206,9 @@ public class SigTool {
         return exitCode;
     }
 
-    private static int processExpressionSigFile(String filename, SignatureType sigType, boolean spaceElements) {
-        int exitCode = 0;
-        Document doc = null;
+    private static int processExpressionSigFile(String filename, SignatureType sigType, boolean spaceElements, boolean noTabs) {
+        int exitCode;
+        Document doc;
         try {
             doc = XmlUtils.readXMLFile(filename);
         } catch (IOException e) {
@@ -198,9 +219,9 @@ public class SigTool {
         if (fileType == null) {
             exitCode = 10; // couldn't parse sig filetype.
         } else if (fileType == CONTAINER) {
-            processContainerSigFileToExpressions(filename, sigType, spaceElements);
+            exitCode = processContainerSigFileToExpressions(filename, sigType, spaceElements, noTabs);
         } else if (fileType == BINARY) {
-            processBinarySigFileToExpressions(filename, sigType, spaceElements);
+            exitCode = processBinarySigFileToExpressions(filename, sigType, spaceElements, noTabs);
         } else {
             System.err.println("Unknown type of signature file: " + fileType);
             exitCode = 20;
@@ -208,16 +229,8 @@ public class SigTool {
         return exitCode;
     }
 
-    /**
-     * Go through all container signatures in a container sig file, and output some metadata along with
-     * a compiled PRONOM expression for each.
-     *
-     * @param filename The container signature file to process.
-     * @param sigType
-     * @param spaceElements
-     * @return
-     */
-    private static int processContainerSigFileToExpressions(String filename, SignatureType sigType, boolean spaceElements) {
+    private static int processContainerSigFileToExpressions(String filename, SignatureType sigType,
+                                                            boolean spaceElements,  boolean noTabs) {
         int exitCode = 0;
         ContainerSignatureDefinitions sigDefs = SigUtils.readContainerSignatures(filename);
         System.out.println("Description\tContainer Sig ID\tContainer File\tInternal Sig ID\tReference\tSequence");
@@ -228,37 +241,48 @@ public class SigTool {
                 InternalSignatureCollection sigcol = cFile.getCompiledBinarySignatures();
                 if (sigcol != null) { // container files don't have to have binary signatures
                     String header = sig.getDescription() + '\t' + sig.getId() + '\t' + cfilename;
-                    processInternalSignatures(header, sigcol.getInternalSignatures(), sigType, spaceElements);
+                    exitCode = processInternalSignatures(header, sigcol.getInternalSignatures(), sigType, spaceElements, noTabs);
                 }
             }
         }
         return exitCode;
     }
 
-    private static int processBinarySigFileToExpressions(String filename, SignatureType sigType, boolean spaceElements) {
+    private static int processBinarySigFileToExpressions(String filename, SignatureType sigType,
+                                                         boolean spaceElements, boolean noTabs) {
         int exitCode = 0;
         FFSignatureFile sigFile = SigUtils.readBinarySignatures(filename);
-        System.out.println("Version\tSig ID\tReference\tSequence");
-        processInternalSignatures(sigFile.getVersion(), sigFile.getSignatures(), sigType, spaceElements);
+        if (!noTabs) {
+            System.out.println("Version\tSig ID\tReference\tSequence");
+        }
+
+        processInternalSignatures(sigFile.getVersion(), sigFile.getSignatures(), sigType, spaceElements, noTabs);
         return exitCode;
     }
 
-    private static void processInternalSignatures(String header, List<InternalSignature> sigcol,
-                                                  SignatureType sigType, boolean spaceElements) {
+    private static int processInternalSignatures(String header, List<InternalSignature> sigcol,
+                                                  SignatureType sigType, boolean spaceElements, boolean noTabs) {
+        int exitCode = 0;
         for (InternalSignature isig : sigcol) {
             for (ByteSequence seq : isig.getByteSequences()) {
                 try {
-                    seq.prepareForUse(); //TODO: check NPE if not prepared for use?  If so, why?
+                    seq.prepareForUse();
                     String sequence = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, sigType, spaceElements);
-                    System.out.println( header + '\t' + isig.getID() + '\t' + seq.getReference() + '\t' + sequence);
+                    if (noTabs) {
+                        System.out.println(sequence);
+                    } else {
+                        System.out.println(header + '\t' + isig.getID() + '\t' + seq.getReference() + '\t' + sequence);
+                    }
                 } catch (CompileException e) {
                     System.err.println("ERROR compiling sequence: " + seq);
+                    exitCode = 15;
                 }
             }
         }
+        return exitCode;
     }
 
-    private static int processSigFileToXMLWithExpressions(Document doc, ByteSequenceCompiler.CompileType compileType, SignatureType sigType, boolean spaceElements) {
+    private static int processSigFileToXMLWithExpressions(Document doc, SignatureType sigType, boolean spaceElements) {
 
         // Convert all ByteSequence elements into a simpler version with just a PRONOM expression in the Reference attribute:
         NodeList byteSequenceElements = doc.getElementsByTagName("ByteSequence");
@@ -295,13 +319,17 @@ public class SigTool {
         return 0;
     }
 
-    private static int processXMLCommands(List<String> expressions, ByteSequenceCompiler.CompileType compileType, SignatureType sigType) {
+    private static int processXMLCommands(List<String> expressions, ByteSequenceCompiler.CompileType compileType,
+                                          SignatureType sigType, ByteSequenceAnchor offset, boolean noTabs) {
         // anything not an option are the expressions to process.
         for (String expression : expressions) {
             try {
-                //TODO: specify Offset types for signature.
-                String xml = ByteSequenceSerializer.SERIALIZER.toXML(expression, ByteSequenceAnchor.BOFOffset, compileType, sigType);
-                System.out.println(expression + "\t" + xml);
+                String xml = ByteSequenceSerializer.SERIALIZER.toXML(expression, offset, compileType, sigType);
+                if (noTabs) {
+                    System.out.println(xml);
+                } else {
+                    System.out.println(expression + "\t" + xml);
+                }
             } catch (CompileException e) {
                 System.err.println("ERROR: could not compile expression: " + expression + "\n" + e.getMessage());
                 return 3; // compilation error processing expression.
@@ -310,14 +338,17 @@ public class SigTool {
         return 0;
     }
 
-    private static int processExpressionCommands(List<String> expressions, ByteSequenceCompiler.CompileType compileType,
-                                                 SignatureType sigType, boolean spaceElements) {
+    private static int processExpressionCommands(List<String> expressions, SignatureType sigType,
+                                                 boolean spaceElements, boolean noTabs) {
         // anything not an option are the expressions to process.
         for (String expression : expressions) {
             try {
-                //TODO: specify element spacing.
                 String xml = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(expression, sigType, spaceElements) ;
-                System.out.println(expression + "\t" + xml);
+                if (noTabs) {
+                    System.out.println(xml);
+                } else {
+                    System.out.println(expression + "\t" + xml);
+                }
             } catch (CompileException e) {
                 System.err.println("ERROR: could not compile expression: " + expression + "\n" + e.getMessage());
                 return 3; // compilation error processing expression.
@@ -328,7 +359,7 @@ public class SigTool {
 
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "SigTool [Options] {expressions|filename}", options);
+        formatter.printHelp( "sigTool [Options] {expressions|filename}", options);
     }
 
 
