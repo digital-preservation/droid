@@ -56,8 +56,7 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
 
-import static net.byteseek.parser.tree.ParseTreeType.BYTE;
-import static net.byteseek.parser.tree.ParseTreeType.STRING;
+import static net.byteseek.parser.tree.ParseTreeType.*;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
 
@@ -67,7 +66,7 @@ import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureTyp
  * e.g. you could put a binary signature into the serializer with container as the output target, and the
  * signature will be rewritten using the more advanced syntax.
  */
-public class ByteSequenceSerializer {
+public final class ByteSequenceSerializer {
 
     /**
      * Convenient static serializer instance (it's all stateless, so you don't need more than one).
@@ -84,13 +83,13 @@ public class ByteSequenceSerializer {
      *
      * @param sequence The PRONOM expression in either binary or container syntax.
      * @param anchor   Whether the expression is anchored to BOF, EOF or is variable.
-     * @param type     Whether to compile the XML with a PRONOM target, or a DROID target.  DROID supports longer anchor sequences.
+     * @param compileType Whether to compile the XML with a PRONOM target, or a DROID target.  DROID supports longer anchor sequences.
      * @param sigType  Whether the XML is intended to be binary compatible, or container compatible.
      * @return An XML string containing the output of compiling the PRONOM expression.
      * @throws CompileException If anything goes wrong during the compilation.
      */
-    public String toXML(String sequence, ByteSequenceAnchor anchor, ByteSequenceCompiler.CompileType type, SignatureType sigType) throws CompileException {
-        return toXML(ByteSequenceCompiler.COMPILER.compile(sequence, anchor, type), sigType);
+    public String toXML(String sequence, ByteSequenceAnchor anchor, ByteSequenceCompiler.CompileType compileType, SignatureType sigType) throws CompileException {
+        return toXML(ByteSequenceCompiler.COMPILER.compile(sequence, anchor, compileType), sigType);
     }
 
     /**
@@ -167,7 +166,7 @@ public class ByteSequenceSerializer {
 
     private Document getXMLDocument() {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = null;
+        DocumentBuilder dBuilder;
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -301,11 +300,10 @@ public class ByteSequenceSerializer {
                 break;
             }
             case SET: { // represent as multi-byte sets [abc]?  Or use (a|b|c) syntax?
-                ParseTree alternativeSet = detectAlternativeSetRanges(tree);
+                ParseTree alternativeSet = detectAlternativeSetRanges(tree, sigType);
                 if (alternativeSet != null) {
                     toPRONOMExpression(alternativeSet, builder, sigType, spaceElements, false, inAlternatives);
                 } else if (sigType == BINARY && allChildrenAreSingleBytes(tree)) {
-                    //TODO: check what effect inBrackets has when processing sets as alternatives.
                     appendAlternatives(tree, builder, sigType, spaceElements, true, inAlternatives);
                 } else {
                     if (!inSet) {
@@ -343,7 +341,7 @@ public class ByteSequenceSerializer {
         }
     }
 
-    private ParseTree detectAlternativeSetRanges(ParseTree node) throws ParseException {
+    private ParseTree detectAlternativeSetRanges(ParseTree node, SignatureType sigType) throws ParseException {
         final int numChildren = node.getNumChildren();
         // Only try this for sets large enough for two alternative ranges to matter syntactically
         if (numChildren > 16) {
@@ -405,13 +403,13 @@ public class ByteSequenceSerializer {
                 rangeChildren.add(rangeNode);
             }
 
-            // Return the set of ranges as list of alternative ranges:
-            return new ChildrenNode(ParseTreeType.ALTERNATIVES, rangeChildren);
+            // Return the set of ranges, using () syntax for binary, and [] syntax for container signatures:
+            final ParseTreeType nodeType = sigType == BINARY ? ALTERNATIVES : SET;
+            return new ChildrenNode(nodeType, rangeChildren);
         }
         return null;
     }
 
-    //TODO: have "break strings into bytes" option so sets can process strings as byte elements, rather than strings.
     private void appendAlternatives(ParseTree alternatives, StringBuilder builder,
                                     SignatureType sigType, boolean spaceElements, boolean inSet, boolean inAlternatives)  throws ParseException {
         if (!inAlternatives) {
