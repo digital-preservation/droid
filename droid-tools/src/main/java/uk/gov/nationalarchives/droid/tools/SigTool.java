@@ -65,7 +65,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentifi
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.FileFormat;
-import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceSerializer;
@@ -524,26 +523,6 @@ public final class SigTool {
         IdentificationRequest fileRequest = new FileSystemIdentificationRequest(metaData, identifier);
         fileRequest.open(file);
         return new IdentificationRequestByteReaderAdapter(fileRequest);
-    }
-
-    private static List<InternalSignature> runFileIdentification(final ByteReader targetFile, InternalSignatureCollection sigs) {
-        //TODO: set max bytes to scan.
-        final List<InternalSignature> matchingSigs = sigs.getMatchingSignatures(targetFile, -1);
-        final int numSigs = matchingSigs.size(); // reduce garbage: use an indexed loop rather than an iterator.
-        for (int i = 0; i < numSigs; i++) {
-            final InternalSignature internalSig = matchingSigs.get(i);
-            targetFile.setPositiveIdent();
-            final int numFileFormats = internalSig.getNumFileFormats();
-            for (int fileFormatIndex = 0; fileFormatIndex < numFileFormats; fileFormatIndex++) {
-                final FileFormatHit fileHit =
-                        new FileFormatHit(internalSig.getFileFormat(fileFormatIndex),
-                                FileFormatHit.HIT_TYPE_POSITIVE_GENERIC_OR_SPECIFIC,
-                                internalSig.isSpecific(), "");
-
-                targetFile.addHit(fileHit);
-            }
-        }
-        return matchingSigs;
     }
 
     private static InternalSignatureCollection compileExpressions(List<String> expressions, ByteSequenceAnchor anchor) throws CompileException {

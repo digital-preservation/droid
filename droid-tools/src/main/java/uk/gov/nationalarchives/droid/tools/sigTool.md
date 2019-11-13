@@ -1,11 +1,12 @@
 # sigTool
 
-sigTool can convert:
+sigTool can:
 
-* signatures into signature XML
-* signatures between binary and container syntax
-* signature XML files into new signature XML files using the new syntax.
-* signature XML files into a tab-delimited signature summary using the new syntax.
+* convert signatures into signature XML
+* convert signatures between binary and container syntax
+* convert signature XML files into new signature XML files using the new syntax.
+* summarise signature XML files into a tab-delimited signature summary using the new syntax.
+* test signatures to see if they work on files or a folder.
 
 ## Usage
 To use sigTool:
@@ -151,4 +152,55 @@ Microsoft Word 97 OLE2 Template	    1100	CompObj	            1100	        BOFoff
 Microsoft Word 97 OLE2 Template	    1100	WordDocument	    1100	        BOFoffset	{10}[&01]
 Microsoft Excel OOXML	            2030	[Content_Types].xml 317	            BOFoffset	{0-40000}'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"'
 ...
+```
+
+## Test signatures
+You can use sigTool to try out a signature on a file or a folder directly, using the --match option.  For example, if you write:
+```
+sigTool --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
+```
+You will get a tab delimited output like the following:
+```
+Expressions:	                    'SOMEFILEHEADER'
+File	                            Hits
+/home/user/Documents/somefile.xyz	0
+```
+In this example we didn't get a match.  Note that, by default, sigTool assumes that signatures are anchored to the beginning of the file.  So this expression would only match if it is literally the first bytes in the file.
+If you want to search the entire file for the sequence, you have to specify a "variable" anchor, as follows:
+```
+sigTool --anchor Variable --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
+```
+which gives:
+```
+Expressions:	                    'SOMEFILEHEADER'
+File	                            Hits
+/home/user/Documents/somefile.xyz	1
+```
+
+If you want to scan more than one file, you can specify a folder instead of a file.
+sigTool will then scan all the immediate child files of that folder, although it
+won't process sub-folders currently.  For example:
+```
+sigTool --match "/home/user/Documents/" "'SOMEFILEHEADER'"
+```
+which might give:
+```
+Expressions:	                    'SOMEFILEHEADER'
+File	                            Hits
+/home/user/Documents/somefile.xyz	1
+/home/user/Documents/another.txt    0
+/home/user/Documents/more.doc       0
+/home/user/Documents/example.png    1
+```
+Finally, if you want to test more than one expression at a time against a file or folder, you can just add more expressions as arguments.  For example:
+```
+sigTool --match "/home/user/Documents/" "'SOMEFILEHEADER'" "'Another thing'" "01 02 03 (04|05|06) 'complex'"
+```
+```
+Expressions:	                    'SOMEFILEHEADER'    'Another thing'    01 02 03 (04|05|06) 'complex'
+File	                            Hits	            Hits               Hits
+/home/user/Documents/somefile.xyz	1                   0                  0
+/home/user/Documents/another.txt    0                   1                  0
+/home/user/Documents/more.doc       0                   0                  1
+/home/user/Documents/example.png    1                   0                  0
 ```
