@@ -31,7 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.tools;
 
-import net.byteseek.compiler.CompileException;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.transform.TransformerException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -40,9 +45,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import uk.gov.nationalarchives.droid.container.ContainerFile;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
@@ -57,16 +64,7 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignature;
 import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection;
 import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
 
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.BOFOffset;
-import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.EOFOffset;
-import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.VariableOffset;
-import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
-import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
+import net.byteseek.compiler.CompileException;
 
 /**
  * A simple command line utility that can parse PRONOM / Container syntax signatures, and either output
@@ -76,9 +74,45 @@ import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureTyp
  * Usage is: SigTool [options] {expressions|filename}
  *
  */
-public class SigTool {
+public final class SigTool {
 
+    private static final String PRONOM_OPTION = "p";
+    private static final String BINARY_OPTION = "b";
+    private static final String SPACE_OPTION = "s";
+    private static final String FILE_OPTION = "f";
+    private static final String NOTABS_OPTION = "n";
+    private static final String ANCHOR_OPTION = "a";
+    private static final String HELP_OPTION = "h";
+    private static final String XML_OPTION = "x";
+    private static final String EXPRESSION_OUTPUT = "e";
+    private static final String EXPRESSION_OPTION = EXPRESSION_OUTPUT;
+    private static final String CONTAINER_OPTION = "c";
+    private static final String DROID_OPTION = "d";
+    private static final String IO_PROBLEM_READING_FILE = "IO problem reading file: ";
 
+    private static final int FAILED_TO_PARSE_ARGUMENTS = 1;
+    private static final int COULDNT_READ_SIGFILE = 10;
+    private static final int ANCHOR_VALUE_INCORRECT = 13;
+    private static final int IO_PROBLEM = 19;
+    private static final int UNKNOWN_SIG_FILE_TYPE = 20;
+    private static final int ERROR_COMPILING = 15;
+    private static final int ERROR_CONVERTING_SEQUENCE = 17;
+    private static final int ERROR_PARSING_BYTE_SEQUENCE_XML = 18;
+    private static final int ERROR_TRANSFORMING_XML_TO_STRING = 16;
+    private static final int ERROR_COMPILING_EXPRESSION = 3;
+
+    private static final String ERROR_COMPILING_EXPRESSION_MESSAGE = "ERROR: could not compile expression: ";
+    private static final String TAB_CHAR = "\t";
+    private static final String NEW_LINE_CHAR = "\n";
+
+    private SigTool() {
+    }
+
+    /**
+     * Runs the sigtool.
+     *
+     * @param args The command line arguments.
+     */
     public static void main(String [] args) {
         final int returnCode = executeArguments(args);
         System.exit(returnCode);
@@ -93,89 +127,109 @@ public class SigTool {
             exitCode = processCommands(cli, options);
         } catch (ParseException e) {
             System.err.println("ERROR: " + e.getMessage());
-            return 1; // failed to parse.
+            exitCode = FAILED_TO_PARSE_ARGUMENTS; // failed to parse.
         }
         return exitCode;
     }
 
     private static int processCommands(CommandLine cli, Options options) {
+        int exitCode = 0;
+
         // General commands:
-        if (cli.hasOption("h")) {
+        if (cli.hasOption(HELP_OPTION)) {
             printHelp(options);
         }
 
         // Get option settings:
-        ByteSequenceCompiler.CompileType compileType = cli.hasOption("p") ? ByteSequenceCompiler.CompileType.PRONOM : ByteSequenceCompiler.CompileType.DROID;
-        SignatureType sigType = cli.hasOption("b") ? SignatureType.BINARY : SignatureType.CONTAINER;
-        boolean spaceElements = cli.hasOption("s"); // only add spaces if requested.
-        boolean processSigFiles = cli.hasOption("f");
-        boolean noTabs = cli.hasOption("n");
-        ByteSequenceAnchor anchorType = cli.hasOption("a") ?
-                anchorType = getAnchor(cli.getOptionValue("a")) : BOFOffset;
+        ByteSequenceCompiler.CompileType compileType = cli.hasOption(PRONOM_OPTION)
+                ? ByteSequenceCompiler.CompileType.PRONOM : ByteSequenceCompiler.CompileType.DROID;
+        SignatureType sigType = cli.hasOption(BINARY_OPTION) ? SignatureType.BINARY : SignatureType.CONTAINER;
+        boolean spaceElements = cli.hasOption(SPACE_OPTION); // only add spaces if requested.
+        boolean processSigFiles = cli.hasOption(FILE_OPTION);
+        boolean noTabs = cli.hasOption(NOTABS_OPTION);
+        ByteSequenceAnchor anchorType = cli.hasOption(ANCHOR_OPTION)
+                ? getAnchor(cli.getOptionValue(ANCHOR_OPTION)) : ByteSequenceAnchor.BOFOffset;
         if (anchorType == null) {
-            System.err.println("The value provided for the --anchor " + cli.getOptionValue("a") + " is not recognised.  Must be bofoffset, eofoffset or variable.");
-            return 13;
+            System.err.println("The value provided for the --anchor " + cli.getOptionValue(ANCHOR_OPTION)
+                    + " is not recognised.  Must be bofoffset, eofoffset or variable.");
+            exitCode = ANCHOR_VALUE_INCORRECT;
         }
 
         // Process the commands:
-        if (processSigFiles) { // using a file as an input:
-            if (cli.hasOption("e")) {
-                return processExpressionSigFile(cli.getOptionValue("f"), sigType, spaceElements, noTabs);
-            } else {
-                return processXMLSigFile(cli.getOptionValue("f"), sigType, spaceElements);
-            }
-        } else { // using expressions on the command line as an input
-            if (cli.hasOption("e")) {
-                return processExpressionCommands(cli.getArgList(), sigType, spaceElements, noTabs);
-            } else {
-                return processXMLCommands(cli.getArgList(), compileType, sigType, anchorType, noTabs);
+        if (exitCode == 0) {
+            if (processSigFiles) { // using a file as an input:
+                if (cli.hasOption(EXPRESSION_OUTPUT)) {
+                    exitCode = processExpressionSigFile(cli.getOptionValue(FILE_OPTION), sigType, spaceElements, noTabs);
+                } else {
+                    exitCode = processXMLSigFile(cli.getOptionValue(FILE_OPTION), sigType, spaceElements);
+                }
+            } else { // using expressions on the command line as an input
+                if (cli.hasOption(EXPRESSION_OUTPUT)) {
+                    exitCode = processExpressionCommands(cli.getArgList(), sigType, spaceElements, noTabs);
+                } else {
+                    exitCode = processXMLCommands(cli.getArgList(), compileType, sigType, anchorType, noTabs);
+                }
             }
         }
+        return exitCode;
     }
 
     private static ByteSequenceAnchor getAnchor(String anchorText) {
+        ByteSequenceAnchor anchor;
         switch (anchorText.toLowerCase()) {
-            case "bofoffset" : return BOFOffset;
-            case "eofoffset" : return EOFOffset;
-            case "variable"  : return VariableOffset;
+            case "bofoffset" : anchor = ByteSequenceAnchor.BOFOffset; break;
+            case "eofoffset" : anchor = ByteSequenceAnchor.EOFOffset; break;
+            default: anchor = ByteSequenceAnchor.VariableOffset;
         }
-        return null;
+        return anchor;
     }
 
     private static Options createOptions() {
         // General options
-        Option help = new Option("h", "help", false, "Prints help on commands.");
+        Option help = new Option(HELP_OPTION, "help", false,
+                "Prints help on commands.");
 
         // Input options
         OptionGroup inputOptions = new OptionGroup();
-        Option fileInput = new Option("f", "file", true, "Filename of signature file to process.");
+        Option fileInput = new Option(FILE_OPTION, "file", true,
+                "Filename of signature file to process.");
         inputOptions.addOption(fileInput);
 
         // Output options
         OptionGroup outputOptions = new OptionGroup();
-        Option xmlOutput = new Option ("x", "xml", false, "Output is in XML format");
-        Option expressionOutput = new Option("e", "expression", false, "Output is a regular expression");
+        Option xmlOutput = new Option(XML_OPTION, "xml", false,
+                "Output is in XML format");
+        Option expressionOutput = new Option(EXPRESSION_OPTION, "expression", false,
+                "Output is a regular expression");
         outputOptions.addOption(xmlOutput);
         outputOptions.addOption(expressionOutput);
 
         // Binary or Container signatures
         OptionGroup sigTypeOptions = new OptionGroup();
-        Option binarySignatures = new Option("b", "binary", false, "Signatures are in binary syntax.");
-        Option containerSignatures = new Option("c", "container", false, "Signatures are in container syntax.");
+        Option binarySignatures = new Option(BINARY_OPTION, "binary", false,
+                "Signatures are in binary syntax.");
+        Option containerSignatures = new Option(CONTAINER_OPTION, "container", false,
+                "Signatures are in container syntax.");
         sigTypeOptions.addOption(binarySignatures);
         sigTypeOptions.addOption(containerSignatures);
 
         // Compile type options
         OptionGroup compileTypeOptions = new OptionGroup();
-        Option droidCompile = new Option("d", "droid", false, "Signatures are compiled for DROID.");
-        Option pronomCompile = new Option("p", "pronom", false, "Signatures are compiled for PRONOM.");
+        Option droidCompile = new Option(DROID_OPTION, "droid", false,
+                "Signatures are compiled for DROID.");
+        Option pronomCompile = new Option(PRONOM_OPTION, "pronom", false,
+                "Signatures are compiled for PRONOM.");
         compileTypeOptions.addOption(droidCompile);
         compileTypeOptions.addOption(pronomCompile);
 
         // Formatting options
-        Option spaceElements = new Option("s", "spaces", false, "Signature elements have spaces between them.");
-        Option noTabs        = new Option("n", "notabs", false, "Don't include tab separated metadata - just output the expressions.");
-        Option sigAnchor     = new Option("a", "anchor", true, "Where a signature is anchored - BOFoffset, EOFoffset or Variable.  Defaults to BOFoffset if not set.");
+        Option spaceElements = new Option(SPACE_OPTION, "spaces", false,
+                "Signature elements have spaces between them.");
+        Option noTabs        = new Option(NOTABS_OPTION, "notabs", false,
+                "Don't include tab separated metadata - just output the expressions.");
+        Option sigAnchor     = new Option(ANCHOR_OPTION, "anchor", true,
+                "Where a signature is anchored - BOFoffset, EOFoffset or Variable."
+                        + "Defaults to BOFoffset if not set.");
 
         Options options = new Options();
 
@@ -186,12 +240,15 @@ public class SigTool {
         options.addOption(sigAnchor);
 
         // options which have mutually exclusive options (in groups):
-        options.addOptionGroup(inputOptions);
-        options.addOptionGroup(outputOptions);
-        options.addOptionGroup(sigTypeOptions);
-        options.addOptionGroup(compileTypeOptions);
+        addOptionGroups(options, inputOptions, outputOptions, sigTypeOptions, compileTypeOptions);
 
         return options;
+    }
+
+    private static void addOptionGroups(Options options, OptionGroup... groups) {
+        for (OptionGroup group : groups) {
+            options.addOptionGroup(group);
+        }
     }
 
     private static int processXMLSigFile(String filename, SignatureType sigType, boolean spaceElements) {
@@ -200,8 +257,8 @@ public class SigTool {
             Document doc = XmlUtils.readXMLFile(filename);
             exitCode = processSigFileToXMLWithExpressions(doc, sigType, spaceElements);
         } catch (IOException e) {
-            System.err.println("IO problem reading file: " + filename + "\n" + e.getMessage());
-            exitCode = 19;
+            System.err.println(IO_PROBLEM_READING_FILE + filename + NEW_LINE_CHAR + e.getMessage());
+            exitCode = IO_PROBLEM;
         }
         return exitCode;
     }
@@ -212,19 +269,19 @@ public class SigTool {
         try {
             doc = XmlUtils.readXMLFile(filename);
         } catch (IOException e) {
-            System.err.println("IO problem reading file: " + filename + "\n" + e.getMessage());
-            return 19;
+            System.err.println(IO_PROBLEM_READING_FILE + filename + NEW_LINE_CHAR + e.getMessage());
+            return IO_PROBLEM;
         }
         SignatureType fileType = SigUtils.getSigFileType(doc);
         if (fileType == null) {
-            exitCode = 10; // couldn't parse sig filetype.
-        } else if (fileType == CONTAINER) {
+            exitCode = COULDNT_READ_SIGFILE; // couldn't parse sig filetype.
+        } else if (fileType == SignatureType.CONTAINER) {
             exitCode = processContainerSigFileToExpressions(filename, sigType, spaceElements, noTabs);
-        } else if (fileType == BINARY) {
+        } else if (fileType == SignatureType.BINARY) {
             exitCode = processBinarySigFileToExpressions(filename, sigType, spaceElements, noTabs);
         } else {
             System.err.println("Unknown type of signature file: " + fileType);
-            exitCode = 20;
+            exitCode = UNKNOWN_SIG_FILE_TYPE;
         }
         return exitCode;
     }
@@ -275,7 +332,7 @@ public class SigTool {
                     }
                 } catch (CompileException e) {
                     System.err.println("ERROR compiling sequence: " + seq);
-                    exitCode = 15;
+                    exitCode = ERROR_COMPILING;
                 }
             }
         }
@@ -283,7 +340,7 @@ public class SigTool {
     }
 
     private static int processSigFileToXMLWithExpressions(Document doc, SignatureType sigType, boolean spaceElements) {
-
+        int exitCode = 0;
         // Convert all ByteSequence elements into a simpler version with just a PRONOM expression in the Reference attribute:
         NodeList byteSequenceElements = doc.getElementsByTagName("ByteSequence");
         for (int i = 0; i < byteSequenceElements.getLength(); i++) {
@@ -301,22 +358,24 @@ public class SigTool {
                     }
                 } catch (CompileException e) {
                     System.err.println("ERROR converting byte sequence into a PRONOM expression: " + e.getMessage());
-                    return 17;
+                    exitCode = ERROR_CONVERTING_SEQUENCE;
                 }
             } catch (SignatureParseException e) {
                 System.err.println("ERROR parsing XML of byte sequence: " + e.getMessage());
-                return 18;
+                exitCode = ERROR_PARSING_BYTE_SEQUENCE_XML;
             }
         }
 
         // Output the XML
-        try {
-            System.out.println(XmlUtils.toXmlString(doc, true));
-        } catch (TransformerException e) {
-            System.err.println("ERROR transforming XML document to string.");
-            return 16;
+        if (exitCode == 0) {
+            try {
+                System.out.println(XmlUtils.toXmlString(doc, true));
+            } catch (TransformerException e) {
+                System.err.println("ERROR transforming XML document to string.");
+                return ERROR_TRANSFORMING_XML_TO_STRING;
+            }
         }
-        return 0;
+        return exitCode;
     }
 
     private static int processXMLCommands(List<String> expressions, ByteSequenceCompiler.CompileType compileType,
@@ -328,11 +387,11 @@ public class SigTool {
                 if (noTabs) {
                     System.out.println(xml);
                 } else {
-                    System.out.println(expression + "\t" + xml);
+                    System.out.println(expression + TAB_CHAR + xml);
                 }
             } catch (CompileException e) {
-                System.err.println("ERROR: could not compile expression: " + expression + "\n" + e.getMessage());
-                return 3; // compilation error processing expression.
+                System.err.println(ERROR_COMPILING_EXPRESSION_MESSAGE + expression + NEW_LINE_CHAR + e.getMessage());
+                return ERROR_COMPILING_EXPRESSION; // compilation error processing expression.
             }
         }
         return 0;
@@ -347,11 +406,11 @@ public class SigTool {
                 if (noTabs) {
                     System.out.println(xml);
                 } else {
-                    System.out.println(expression + "\t" + xml);
+                    System.out.println(expression + TAB_CHAR + xml);
                 }
             } catch (CompileException e) {
-                System.err.println("ERROR: could not compile expression: " + expression + "\n" + e.getMessage());
-                return 3; // compilation error processing expression.
+                System.err.println(ERROR_COMPILING_EXPRESSION_MESSAGE + expression + NEW_LINE_CHAR + e.getMessage());
+                return ERROR_COMPILING_EXPRESSION; // compilation error processing expression.
             }
         }
         return 0;
@@ -359,7 +418,7 @@ public class SigTool {
 
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "sigTool [Options] {expressions|filename}", options);
+        formatter.printHelp("sigTool [Options] {expressions|filename}", options);
     }
 
 
