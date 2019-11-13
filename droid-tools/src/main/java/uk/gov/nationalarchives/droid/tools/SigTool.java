@@ -132,11 +132,12 @@ public final class SigTool {
         return exitCode;
     }
 
+    //CHECKSTYLE:OFF - cyclomatic complexity too high.
     private static int processCommands(CommandLine cli, Options options) {
         int exitCode = 0;
 
         // General commands:
-        if (cli.hasOption(HELP_OPTION)) {
+        if (cli.hasOption(HELP_OPTION) || cli.getArgs().length == 0) {
             printHelp(options);
         }
 
@@ -173,6 +174,7 @@ public final class SigTool {
         }
         return exitCode;
     }
+    //CHECKSTYLE:ON
 
     private static ByteSequenceAnchor getAnchor(String anchorText) {
         ByteSequenceAnchor anchor;
