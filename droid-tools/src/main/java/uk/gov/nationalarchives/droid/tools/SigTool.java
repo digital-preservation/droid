@@ -123,8 +123,13 @@ public final class SigTool {
         CommandLineParser parser = new DefaultParser();
         try {
             Options options = createOptions();
-            CommandLine cli = parser.parse(options, args);
-            exitCode = processCommands(cli, options);
+            if (args.length == 0) {
+                printHelp(options);
+                exitCode = 0;
+            } else {
+                CommandLine cli = parser.parse(options, args);
+                exitCode = processCommands(cli, options);
+            }
         } catch (ParseException e) {
             System.err.println("ERROR: " + e.getMessage());
             exitCode = FAILED_TO_PARSE_ARGUMENTS; // failed to parse.
@@ -137,7 +142,7 @@ public final class SigTool {
         int exitCode = 0;
 
         // General commands:
-        if (cli.hasOption(HELP_OPTION) || cli.getArgs().length == 0) {
+        if (cli.hasOption(HELP_OPTION)) {
             printHelp(options);
         }
 
