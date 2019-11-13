@@ -1,6 +1,6 @@
-# sigTool
+# sigtool
 
-sigTool can:
+sigtool can:
 
 * convert signatures into signature XML
 * convert signatures between binary and container syntax
@@ -9,10 +9,10 @@ sigTool can:
 * test signatures to see if they work on files or a folder.
 
 ## Usage
-To use sigTool:
+To use sigtool:
 
 ```
-sigTool [Options] {expressions}
+sigtool [Options] {expressions}
 ```
 
 ### Options
@@ -20,7 +20,7 @@ The options control how signatures are processed, or print help.
 
 | Short | Long         | Description                                                                                                                                                                                         |
 |-------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| -h    | --help       | Prints sigTool help.                                                                                                                                                                                |
+| -h    | --help       | Prints sigtool help.                                                                                                                                                                                |
 | -d    | --droid      | Compile signatures for DROID. This can mean longer sequences to search for, which is usually faster. (Default)                                                                                      |
 | -p    | --pronom     | Compile signatures for PRONOM. PRONOM only allows bytes in the main search sequences.                                                                                                               |
 | -b    | --binary     | Render expressions as closely as possible to binary signature format. This attempts to make signatures compatible with older versions of DROID.                                                     |
@@ -38,15 +38,15 @@ The options control how signatures are processed, or print help.
 Expressions are PRONOM syntax regular expressions we want to convert. For example, two expressions are given in the command below:
 
 ```
-sigTool "01 02 03 (B1 B2 | C1 C2)" "'start:'(22|27)[01:2F]"
+sigtool "01 02 03 (B1 B2 | C1 C2)" "'start:'(22|27)[01:2F]"
 ```
 
 These aren't required if we're processing a signature file (the -f option).
 
 ## Convert signatures into signature file XML
-To convert a PRONOM regular expression signature into its signature file XML, just run sigTool with one or more expressions:
+To convert a PRONOM regular expression signature into its signature file XML, just run sigtool with one or more expressions:
 ```
-sigTool "01 02 03 (B1 B2 | C1 C2)" "'start:'(22|27)[01:2F]"
+sigtool "01 02 03 (B1 B2 | C1 C2)" "'start:'(22|27)[01:2F]"
 ```
 This gives a tab delimited output consisting of each expression, a tab, and the signature XML for the expression:
 ```
@@ -55,7 +55,7 @@ This gives a tab delimited output consisting of each expression, a tab, and the 
 ```
 Note that the signatures are using container syntax (e.g. they use strings and multi-byte sets).  If we wanted a more backwards compatible binary signature, we can specify the --binary option:
 ```
-sigTool --binary "01 02 03 (B1 B2 | C1 C2)" "'start:'(22|27)[01:2F]"
+sigtool --binary "01 02 03 (B1 B2 | C1 C2)" "'start:'(22|27)[01:2F]"
 ```
 This gives a more backwards compatible output, where strings are represented as hex byte sequences:
 ```
@@ -66,7 +66,7 @@ This gives a more backwards compatible output, where strings are represented as 
 ## Convert between signature syntax
 Signatures can use different syntax depending on whether they're a traditional binary signature, or a container signature.  You can convert between these formats using the --expression option.  For example, running:
 ```
-sigTool --expression --binary "'Microsoft Word'" --notabs
+sigtool --expression --binary "'Microsoft Word'" --notabs
 ```
 Gives the tab delimited output of the original expression and its conversion to binary signature syntax:
 ```
@@ -74,7 +74,7 @@ Gives the tab delimited output of the original expression and its conversion to 
 ```
 Conversely, if we ran:
 ```
-sigTool --expression --container "65617369657220746F207265616420696E20636F6E7461696E65722073796E746178" --notabs
+sigtool --expression --container "65617369657220746F207265616420696E20636F6E7461696E65722073796E746178" --notabs
 ```
 We would get this:
 ```
@@ -86,7 +86,7 @@ You can read an existing binary or container signature file, and output a new si
 
 For example, if you ran:
 ```
-sigTool --file "DROID_SignatureFile_V91.xml"
+sigtool --file "DROID_SignatureFile_V91.xml"
 ```
 It would write a new XML file to the console.  You can pipe this into a new file using your shell.  The signature file will be transformed to use the new syntax, e.g.:
 ```
@@ -103,7 +103,7 @@ It would write a new XML file to the console.  You can pipe this into a new file
 ```
 You can see that it's transformed a binary signature file using container syntax (the default).  If we wanted to use the older binary syntax for this transformation, we could write:
 ```
-sigTool --binary --file "DROID_SignatureFile_V91.xml"
+sigtool --binary --file "DROID_SignatureFile_V91.xml"
 ```
 It would give this output (snippet):
 ```
@@ -122,7 +122,7 @@ It would give this output (snippet):
 ## Summarise all signatures in a syntax file.
 You can obtain a summary of all signatures in a signature file into a tab-delimited format, by specifying the --expression option.  For example, running:
 ```
-sigTool --expression --file "DROID_SignatureFile_V91.xml"
+sigtool --expression --file "DROID_SignatureFile_V91.xml"
 ```
 Would give the following output (snippet):
 ```
@@ -139,7 +139,7 @@ Version	Sig ID	Reference	Sequence
 ```
 You can also specify --binary signature syntax or use --container syntax (the default).  This also works for container files, where you get a little more metadata:
 ```
-sigTool --expression --file "container-signature-20170330.xml"
+sigtool --expression --file "container-signature-20170330.xml"
 ```
 Gives the following output (snippet):
 ```
@@ -156,9 +156,9 @@ Microsoft Excel OOXML	            2030	[Content_Types].xml 317	            BOFof
 ```
 
 ## Test signatures
-You can use sigTool to try out a signature on a file or a folder directly, using the --match option.  For example, if you write:
+You can use sigtool to try out a signature on a file or a folder directly, using the --match option.  For example, if you write:
 ```
-sigTool --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
+sigtool --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
 ```
 You will get a tab delimited output like the following:
 ```
@@ -166,10 +166,10 @@ Expressions:	                    'SOMEFILEHEADER'
 File	                            Hits
 /home/user/Documents/somefile.xyz	0
 ```
-In this example we didn't get a match.  Note that, by default, sigTool assumes that signatures are anchored to the beginning of the file.  So this expression would only match if it is literally the first bytes in the file.
+In this example we didn't get a match.  Note that, by default, sigtool assumes that signatures are anchored to the beginning of the file.  So this expression would only match if it is literally the first bytes in the file.
 If you want to search the entire file for the sequence, you have to specify a "variable" anchor, as follows:
 ```
-sigTool --anchor Variable --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
+sigtool --anchor Variable --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
 ```
 which gives:
 ```
@@ -179,10 +179,10 @@ File	                            Hits
 ```
 
 If you want to scan more than one file, you can specify a folder instead of a file.
-sigTool will then scan all the immediate child files of that folder, although it
+sigtool will then scan all the immediate child files of that folder, although it
 won't process sub-folders currently.  For example:
 ```
-sigTool --match "/home/user/Documents/" "'SOMEFILEHEADER'"
+sigtool --match "/home/user/Documents/" "'SOMEFILEHEADER'"
 ```
 which might give:
 ```
@@ -195,7 +195,7 @@ File	                            Hits
 ```
 Finally, if you want to test more than one expression at a time against a file or folder, you can just add more expressions as arguments.  For example:
 ```
-sigTool --match "/home/user/Documents/" "'SOMEFILEHEADER'" "'Another thing'" "01 02 03 (04|05|06) 'complex'"
+sigtool --match "/home/user/Documents/" "'SOMEFILEHEADER'" "'Another thing'" "01 02 03 (04|05|06) 'complex'"
 ```
 ```
 Expressions:	                    'SOMEFILEHEADER'    'Another thing'    01 02 03 (04|05|06) 'complex'
