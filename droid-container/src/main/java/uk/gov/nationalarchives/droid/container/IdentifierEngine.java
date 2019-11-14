@@ -54,7 +54,7 @@ public interface IdentifierEngine {
 
     /**
      * Sets the identification request factory to use to obtain new readers for internal byte streams.
-     * @param requestFactory
+     * @param requestFactory The IdentificationRequestFactory to set.
      */
     void setRequestFactory(IdentificationRequestFactory requestFactory);
 }
