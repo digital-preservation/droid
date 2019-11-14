@@ -31,15 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.tools;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.transform.TransformerException;
+import java.io.PrintStream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -50,30 +43,10 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import uk.gov.nationalarchives.droid.container.ContainerFile;
-import uk.gov.nationalarchives.droid.container.ContainerSignature;
-import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.signature.ByteReader;
-import uk.gov.nationalarchives.droid.core.signature.FileFormat;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler;
-import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceSerializer;
 import uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType;
-import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
-import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
-import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignature;
-import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection;
-import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
 
 import net.byteseek.compiler.CompileException;
 
@@ -100,22 +73,14 @@ public final class SigTool {
     private static final String CONTAINER_OPTION = "c";
     private static final String DROID_OPTION = "d";
     private static final String MATCH_OPTION = "m";
-    private static final String IO_PROBLEM_READING_FILE = "IO problem reading file: ";
 
+    private static final int SUCCESS = 0;
     private static final int FAILED_TO_PARSE_ARGUMENTS = 1;
-    private static final int COULDNT_READ_SIGFILE = 10;
-    private static final int ANCHOR_VALUE_INCORRECT = 13;
-    private static final int IO_PROBLEM = 19;
-    private static final int UNKNOWN_SIG_FILE_TYPE = 20;
-    private static final int ERROR_COMPILING = 15;
-    private static final int ERROR_CONVERTING_SEQUENCE = 17;
-    private static final int ERROR_PARSING_BYTE_SEQUENCE_XML = 18;
-    private static final int ERROR_TRANSFORMING_XML_TO_STRING = 16;
-    private static final int ERROR_COMPILING_EXPRESSION = 3;
+    private static final int ANCHOR_VALUE_INCORRECT = 2;
+    private static final int IO_EXCEPTION = 3;
+    private static final int PARSE_ERROR = 4;
+    private static final int COMPILE_ERROR = 5;
 
-    private static final String ERROR_COMPILING_EXPRESSION_MESSAGE = "ERROR: could not compile expression: ";
-    private static final String TAB_CHAR = "\t";
-    private static final String NEW_LINE_CHAR = "\n";
 
     private SigTool() {
     }
@@ -137,7 +102,7 @@ public final class SigTool {
             Options options = createOptions();
             if (args.length == 0) {
                 printHelp(options);
-                exitCode = 0;
+                exitCode = SUCCESS;
             } else {
                 CommandLine cli = parser.parse(options, args);
                 exitCode = processCommands(cli, options);
@@ -149,9 +114,8 @@ public final class SigTool {
         return exitCode;
     }
 
-    //CHECKSTYLE:OFF - cyclomatic complexity too high.
     private static int processCommands(CommandLine cli, Options options) {
-        int exitCode = 0;
+        int exitCode = SUCCESS;
 
         // General commands:
         if (cli.hasOption(HELP_OPTION)) {
@@ -171,29 +135,45 @@ public final class SigTool {
             System.err.println("The value provided for the --anchor " + cli.getOptionValue(ANCHOR_OPTION)
                     + " is not recognised.  Must be bofoffset, eofoffset or variable.");
             exitCode = ANCHOR_VALUE_INCORRECT;
-        }
-
-        // Process the commands:
-        if (exitCode == 0) {
-            if (processSigFiles) { // using a file as an input:
-                if (cli.hasOption(EXPRESSION_OUTPUT)) {
-                    exitCode = processExpressionSigFile(cli.getOptionValue(FILE_OPTION), sigType, spaceElements, noTabs);
-                } else {
-                    exitCode = processXMLSigFile(cli.getOptionValue(FILE_OPTION), sigType, spaceElements);
-                }
-            } else { // using expressions on the command line as an input
-                if (cli.hasOption(MATCH_OPTION)) {
-                    exitCode = testSignatureMatch(cli.getArgList(), anchorType, cli.getOptionValue(MATCH_OPTION));
-                } else if (cli.hasOption(EXPRESSION_OUTPUT)) {
-                    exitCode = processExpressionCommands(cli.getArgList(), sigType, spaceElements, noTabs);
-                } else {
-                    exitCode = processXMLCommands(cli.getArgList(), compileType, sigType, anchorType, noTabs);
-                }
+        } else {
+            try {
+                processCommands(cli, processSigFiles, compileType, sigType, anchorType, spaceElements, noTabs);
+            } catch (IOException e) {
+                exitCode = IO_EXCEPTION;
+                System.err.println("IO ERROR: " + e.getMessage());
+            } catch (SignatureParseException e) {
+                exitCode = PARSE_ERROR;
+                System.err.println("PARSE ERROR: " + e.getMessage());
+            } catch (CompileException e) {
+                exitCode = COMPILE_ERROR;
+                System.err.println("COMPILE ERROR: " + e.getMessage());
             }
         }
         return exitCode;
     }
-    //CHECKSTYLE:ON
+
+    private static void processCommands(CommandLine cli, boolean processSigFiles,
+                                        ByteSequenceCompiler.CompileType compileType, SignatureType sigType,
+                                        ByteSequenceAnchor anchorType, boolean spaceElements, boolean noTabs)
+            throws IOException, SignatureParseException, CompileException {
+        PrintStream output = System.out; //TODO: specify output file as well.
+        // Process the commands:
+        if (processSigFiles) { // using a file as an input:
+            if (cli.hasOption(EXPRESSION_OUTPUT)) {
+                SigUtils.summariseSignatures(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements, noTabs);
+            } else {
+                SigUtils.convertSignatureFileToNewFormat(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements);
+            }
+        } else { // using expressions on the command line as an input
+            if (cli.hasOption(MATCH_OPTION)) {
+                SigUtils.matchExpressions(output, cli.getArgList(), anchorType, cli.getOptionValue(MATCH_OPTION));
+            } else if (cli.hasOption(EXPRESSION_OUTPUT)) {
+                SigUtils.convertExpressionSyntax(output, cli.getArgList(), sigType, spaceElements, noTabs);
+            } else {
+                SigUtils.convertExpressionsToXML(output, cli.getArgList(), compileType, sigType, anchorType, noTabs);
+            }
+        }
+    }
 
     private static ByteSequenceAnchor getAnchor(String anchorText) {
         ByteSequenceAnchor anchor;
@@ -278,282 +258,9 @@ public final class SigTool {
         }
     }
 
-    private static int processXMLSigFile(String filename, SignatureType sigType, boolean spaceElements) {
-        int exitCode;
-        try {
-            Document doc = XmlUtils.readXMLFile(filename);
-            exitCode = processSigFileToXMLWithExpressions(doc, sigType, spaceElements);
-        } catch (IOException e) {
-            System.err.println(IO_PROBLEM_READING_FILE + filename + NEW_LINE_CHAR + e.getMessage());
-            exitCode = IO_PROBLEM;
-        }
-        return exitCode;
-    }
-
-    private static int processExpressionSigFile(String filename, SignatureType sigType, boolean spaceElements, boolean noTabs) {
-        int exitCode;
-        Document doc;
-        try {
-            doc = XmlUtils.readXMLFile(filename);
-        } catch (IOException e) {
-            System.err.println(IO_PROBLEM_READING_FILE + filename + NEW_LINE_CHAR + e.getMessage());
-            return IO_PROBLEM;
-        }
-        SignatureType fileType = SigUtils.getSigFileType(doc);
-        if (fileType == null) {
-            exitCode = COULDNT_READ_SIGFILE; // couldn't parse sig filetype.
-        } else if (fileType == SignatureType.CONTAINER) {
-            exitCode = processContainerSigFileToExpressions(filename, sigType, spaceElements, noTabs);
-        } else if (fileType == SignatureType.BINARY) {
-            exitCode = processBinarySigFileToExpressions(filename, sigType, spaceElements, noTabs);
-        } else {
-            System.err.println("Unknown type of signature file: " + fileType);
-            exitCode = UNKNOWN_SIG_FILE_TYPE;
-        }
-        return exitCode;
-    }
-
-    private static int processContainerSigFileToExpressions(String filename, SignatureType sigType,
-                                                            boolean spaceElements,  boolean noTabs) {
-        int exitCode = 0;
-        ContainerSignatureDefinitions sigDefs = SigUtils.readContainerSignatures(filename);
-        System.out.println("Description\tContainer Sig ID\tContainer File\tInternal Sig ID\tReference\tSequence");
-        for (ContainerSignature sig : sigDefs.getContainerSignatures()) {
-            Map<String, ContainerFile> map = sig.getFiles();
-            for (String cfilename : map.keySet()) {
-                ContainerFile cFile = map.get(cfilename);
-                InternalSignatureCollection sigcol = cFile.getCompiledBinarySignatures();
-                if (sigcol != null) { // container files don't have to have binary signatures
-                    String header = sig.getDescription() + TAB_CHAR + sig.getId() + TAB_CHAR + cfilename;
-                    exitCode = processInternalSignatures(header, sigcol.getInternalSignatures(), sigType, spaceElements, noTabs);
-                }
-            }
-        }
-        return exitCode;
-    }
-
-    private static int processBinarySigFileToExpressions(String filename, SignatureType sigType,
-                                                         boolean spaceElements, boolean noTabs) {
-        int exitCode = 0;
-        FFSignatureFile sigFile = SigUtils.readBinarySignatures(filename);
-        if (!noTabs) {
-            System.out.println("Version\tSig ID\tReference\tSequence");
-        }
-
-        processInternalSignatures(sigFile.getVersion(), sigFile.getSignatures(), sigType, spaceElements, noTabs);
-        return exitCode;
-    }
-
-    private static int processInternalSignatures(String header, List<InternalSignature> sigcol,
-                                                  SignatureType sigType, boolean spaceElements, boolean noTabs) {
-        int exitCode = 0;
-        for (InternalSignature isig : sigcol) {
-            for (ByteSequence seq : isig.getByteSequences()) {
-                try {
-                    seq.prepareForUse();
-                    String sequence = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, sigType, spaceElements);
-                    if (noTabs) {
-                        System.out.println(sequence);
-                    } else {
-                        System.out.println(header + TAB_CHAR + isig.getID() + TAB_CHAR + seq.getReference() + TAB_CHAR + sequence);
-                    }
-                } catch (CompileException e) {
-                    System.err.println("ERROR compiling sequence: " + seq);
-                    exitCode = ERROR_COMPILING;
-                }
-            }
-        }
-        return exitCode;
-    }
-
-    private static int processSigFileToXMLWithExpressions(Document doc, SignatureType sigType, boolean spaceElements) {
-        int exitCode = 0;
-        // Convert all ByteSequence elements into a simpler version with just a PRONOM expression in the Reference attribute:
-        NodeList byteSequenceElements = doc.getElementsByTagName("ByteSequence");
-        for (int i = 0; i < byteSequenceElements.getLength(); i++) {
-            Element byteSequence = (Element) byteSequenceElements.item(i);
-            try {
-                ByteSequence seq = SigUtils.parseByteSequenceXML(byteSequence);
-                seq.prepareForUse();
-                try {
-                    // Set a PRONOM expression as the Sequence attribute of the ByteSequence element:
-                    String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, sigType, spaceElements);
-                    byteSequence.setAttribute("Sequence", expression);
-                    // Remove all child subsequence and other nodes from the byte sequence.
-                    while (byteSequence.hasChildNodes()) {
-                        byteSequence.removeChild(byteSequence.getFirstChild());
-                    }
-                } catch (CompileException e) {
-                    System.err.println("ERROR converting byte sequence into a PRONOM expression: " + e.getMessage());
-                    exitCode = ERROR_CONVERTING_SEQUENCE;
-                }
-            } catch (SignatureParseException e) {
-                System.err.println("ERROR parsing XML of byte sequence: " + e.getMessage());
-                exitCode = ERROR_PARSING_BYTE_SEQUENCE_XML;
-            }
-        }
-
-        // Output the XML
-        if (exitCode == 0) {
-            try {
-                System.out.println(XmlUtils.toXmlString(doc, true));
-            } catch (TransformerException e) {
-                System.err.println("ERROR transforming XML document to string.");
-                return ERROR_TRANSFORMING_XML_TO_STRING;
-            }
-        }
-        return exitCode;
-    }
-
-    private static int processXMLCommands(List<String> expressions, ByteSequenceCompiler.CompileType compileType,
-                                          SignatureType sigType, ByteSequenceAnchor offset, boolean noTabs) {
-        // anything not an option are the expressions to process.
-        for (String expression : expressions) {
-            try {
-                String xml = ByteSequenceSerializer.SERIALIZER.toXML(expression, offset, compileType, sigType);
-                if (noTabs) {
-                    System.out.println(xml);
-                } else {
-                    System.out.println(expression + TAB_CHAR + xml);
-                }
-            } catch (CompileException e) {
-                System.err.println(ERROR_COMPILING_EXPRESSION_MESSAGE + expression + NEW_LINE_CHAR + e.getMessage());
-                return ERROR_COMPILING_EXPRESSION; // compilation error processing expression.
-            }
-        }
-        return 0;
-    }
-
-    private static int processExpressionCommands(List<String> expressions, SignatureType sigType,
-                                                 boolean spaceElements, boolean noTabs) {
-        // anything not an option are the expressions to process.
-        for (String expression : expressions) {
-            try {
-                String xml = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(expression, sigType, spaceElements) ;
-                if (noTabs) {
-                    System.out.println(xml);
-                } else {
-                    System.out.println(expression + TAB_CHAR + xml);
-                }
-            } catch (CompileException e) {
-                System.err.println(ERROR_COMPILING_EXPRESSION_MESSAGE + expression + NEW_LINE_CHAR + e.getMessage());
-                return ERROR_COMPILING_EXPRESSION; // compilation error processing expression.
-            }
-        }
-        return 0;
-    }
-
-    private static int testSignatureMatch(List<String> expressions, ByteSequenceAnchor anchor, String pathToScan) {
-        int exitCode = 0;
-        try {
-            InternalSignatureCollection sigs = compileExpressions(expressions, anchor);
-            String pathToUse;
-            if (pathToScan.endsWith(File.separator)) {
-                pathToUse = pathToScan.substring(0, pathToScan.length() - File.separator.length());
-            } else {
-                pathToUse = pathToScan;
-            }
-            File scanFile = new File(pathToUse);
-            String header = "File";
-            String header2 = "Expressions:";
-            for (int i = 0; i < expressions.size(); i++) {
-                header += "\tHits";
-                header2 += TAB_CHAR + expressions.get(i);
-            }
-            System.out.println(header2);
-            System.out.println(header);
-            if (scanFile.exists()) {
-                if (scanFile.isDirectory()) {
-                    String[] files = scanFile.list();
-                    for (String filename : files) {
-                        try {
-                            String childPath = pathToUse + File.separator + filename;
-                            File childFile = new File(childPath);
-                            if (childFile.isFile()) {
-                                scanFile(childPath, sigs);
-                            }
-                        } catch (IOException e) {
-                            System.err.println(filename + TAB_CHAR + IO_PROBLEM_READING_FILE + TAB_CHAR + e.getMessage());
-                        }
-                    }
-                } else {
-                    try {
-                        scanFile(pathToScan, sigs);
-                    } catch (IOException e) {
-                        System.err.println(pathToScan + TAB_CHAR + IO_PROBLEM_READING_FILE + TAB_CHAR + e.getMessage());
-                    }
-                }
-            }
-        } catch (CompileException e) {
-            System.err.println(ERROR_COMPILING_EXPRESSION_MESSAGE + TAB_CHAR + pathToScan + TAB_CHAR + e.getMessage());
-            exitCode = ERROR_COMPILING;
-        }
-        return exitCode;
-    }
-
-    private static void scanFile(String filename, InternalSignatureCollection sigs) throws IOException {
-        ByteReader reader =  null;
-        try {
-            Path file = Paths.get(filename);
-            reader = getByteReaderForFile(file);
-            //List<InternalSignature> hits = runFileIdentification(reader, sigs);
-            List<InternalSignature> hits = sigs.getMatchingSignatures(reader, -1);
-
-            int[] hitNums = new int[sigs.getInternalSignatures().size()];
-            for (InternalSignature hit : hits) {
-                hitNums[hit.getID()] = 1;
-            }
-            StringBuilder builder = new StringBuilder(filename);
-            for (int i = 0; i < hitNums.length; i++) {
-                builder.append(TAB_CHAR).append(hitNums[i]);
-            }
-            System.out.println(builder.toString());
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-    }
-
-    private static ByteReader getByteReaderForFile(Path file) throws IOException {
-        long size = Files.size(file);
-        long lastmodified = Files.getLastModifiedTime(file).toMillis();
-        RequestMetaData metaData = new RequestMetaData(size, lastmodified, file.toString());
-        RequestIdentifier identifier = new RequestIdentifier(file.toUri());
-        IdentificationRequest fileRequest = new FileSystemIdentificationRequest(metaData, identifier);
-        fileRequest.open(file);
-        return new IdentificationRequestByteReaderAdapter(fileRequest);
-    }
-
-    private static InternalSignatureCollection compileExpressions(List<String> expressions, ByteSequenceAnchor anchor) throws CompileException {
-        int sigID = 0;
-        InternalSignatureCollection sigs = new InternalSignatureCollection();
-        for (String expression : expressions) {
-            ByteSequence sequence = ByteSequenceCompiler.COMPILER.compile(expression, anchor);
-            InternalSignature sig = new InternalSignature();
-            String sigIDString = Integer.toString(sigID++);
-            sig.setID(sigIDString);
-            sig.addByteSequence(sequence);
-            sig.addFileFormat(getFakeFileFormat(sigIDString));
-            sig.prepareForUse();
-            sigs.addInternalSignature(sig);
-        }
-        return sigs;
-    }
-
-    private static FileFormat getFakeFileFormat(String sigID) {
-        FileFormat fakeFormat = new FileFormat();
-        fakeFormat.setAttributeValue("Name", "Test format: " + sigID);
-        fakeFormat.setAttributeValue("PUID", "tst/" + sigID);
-        fakeFormat.setInternalSignatureID(sigID);
-        return fakeFormat;
-    }
-
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("sigTool [Options] {expressions|filename}", options);
     }
-
-
 
 }

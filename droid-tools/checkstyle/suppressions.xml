@@ -39,9 +39,9 @@
 
 <suppressions>
     <suppress checks="ClassFanOutComplexity"
-              files="SigTool.java" />
+              files="SigUtils.java" />
     <suppress checks="ClassDataAbstractionCoupling"
-              files="SigTool.java" />
+              files="SigUtils.java" />
     <!--
       Turn off all checks for Generated and Test code. Fixes issues with using
       Eclipse plug-in.
