@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.container;
 import java.io.IOException;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 
 /**
  *
@@ -50,4 +51,10 @@ public interface IdentifierEngine {
      * @throws IOException if a problem occurred with processing
      */
     void process(IdentificationRequest  request, ContainerSignatureMatchCollection matches) throws IOException;
+
+    /**
+     * Sets the identification request factory to use to obtain new readers for internal byte streams.
+     * @param requestFactory
+     */
+    void setRequestFactory(IdentificationRequestFactory requestFactory);
 }

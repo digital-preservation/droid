@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.tools;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -57,6 +58,7 @@ import net.byteseek.compiler.CompileException;
 import uk.gov.nationalarchives.droid.container.BinarySignatureXMLParser;
 import uk.gov.nationalarchives.droid.container.ContainerFile;
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequest;
+import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
@@ -95,7 +97,7 @@ public final class SigUtils {
     private static final String ZIP_SIG_XML =
             "<InternalSignature ID=\"200\" Specificity=\"Specific\">"
                     + "<ByteSequence Reference=\"BOFoffset\" Sequence=\"{0-4}'PK'0304\"/>"
-                    + "<ByteSequence Endianness=\"Little-endian\" Reference=\"EOFoffset\""
+                    + "<ByteSequence Endianness=\"Little-endian\" Reference=\"EOFoffset\" "
                     + "Sequence=\"'PK'01{43-65531}'PK'0506{18-65531}\"/></InternalSignature>";
 
     private static final String OLE2_SIG_XML = "<InternalSignature ID=\"170\" Specificity=\"Specific\">"
@@ -117,9 +119,11 @@ public final class SigUtils {
         InternalSignature ole2Sig = createInternalSignatureFromXML(OLE2_SIG_XML);
         CONTAINER_SIGNATURES = new InternalSignatureCollection();
         if (zipSig != null) {
+            zipSig.prepareForUse();
             CONTAINER_SIGNATURES.addInternalSignature(zipSig);
         }
         if (ole2Sig != null) {
+            ole2Sig.prepareForUse();
             CONTAINER_SIGNATURES.addInternalSignature(ole2Sig);
         }
     }
@@ -603,12 +607,13 @@ public final class SigUtils {
      * @throws IOException If an IO problem happens reading the file.
      */
     public static boolean matchContainerFile(String filename, ContainerSignature sig) throws IOException {
-        IdentificationRequest fileRequest = null;
+        ContainerFileIdentificationRequest fileRequest = null;
         try {
             Path file = Paths.get(filename);
-            fileRequest = new ContainerFileIdentificationRequest(file);
-            fileRequest.open(file);
-            return matchContainerFile(fileRequest, sig);
+            fileRequest = new ContainerFileIdentificationRequest(null);
+            InputStream stream = new FileInputStream(new File(filename));
+            fileRequest.open(stream);
+            return matchContainerFile(filename, fileRequest, sig);
         } finally {
             if (fileRequest != null) {
                 fileRequest.close();
@@ -619,14 +624,15 @@ public final class SigUtils {
     /**
      * Returns true if a container signature matches a file.
      *
+     * @param filename The file to identify.
      * @param request An identification request for the container file.
      * @param sig The container signature to test against.
      * @return  true if a container signature matches a file.
      * @throws IOException If an IO problem happens reading the file.
      */
-    public static boolean matchContainerFile(IdentificationRequest request, ContainerSignature sig) throws IOException {
+    public static boolean matchContainerFile(String filename, IdentificationRequest request, ContainerSignature sig) throws IOException {
         boolean result = false;
-        IdentifierEngine engine = getContainerIdentifierEngine(request.getFileName());
+        IdentifierEngine engine = getContainerIdentifierEngine(filename);
         if (engine != null) {
             ContainerSignatureMatchCollection collection = getContainerMatchCollection(sig);
             engine.process(request, collection);
@@ -675,6 +681,9 @@ public final class SigUtils {
                 }
                 default : engine = null;
             }
+        }
+        if (engine != null) {
+            engine.setRequestFactory(new ContainerFileIdentificationRequestFactory());
         }
         return engine;
     }
