@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.core.signature.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -46,6 +47,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -97,5 +100,21 @@ public final class XmlUtils {
         } catch (SAXException e) {
             throw new IOException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Parses an XML fragment string into an XML Element object.
+     * @param xmlElementFragment The XML fragment to parse into an Element.
+     * @return An XML element containing the parsed string.
+     * @throws ParserConfigurationException If there is a problem with the XML parser.
+     * @throws IOException If there was a problem reading the fragment.
+     * @throws SAXException If there was a problem parsing the XML.
+     */
+    public static Element readXMLFragment(String xmlElementFragment)
+            throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(new InputSource(new StringReader(xmlElementFragment)));
+        return document.getDocumentElement(); // return root element.
     }
 }
