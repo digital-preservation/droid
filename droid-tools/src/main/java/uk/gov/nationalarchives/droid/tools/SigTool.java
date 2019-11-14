@@ -31,6 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.tools;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -42,6 +45,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor;
@@ -60,6 +66,8 @@ import net.byteseek.compiler.CompileException;
  */
 public final class SigTool {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SigTool.class);
+
     private static final String PRONOM_OPTION = "p";
     private static final String BINARY_OPTION = "b";
     private static final String SPACE_OPTION = "s";
@@ -73,6 +81,7 @@ public final class SigTool {
     private static final String CONTAINER_OPTION = "c";
     private static final String DROID_OPTION = "d";
     private static final String MATCH_OPTION = "m";
+    private static final String OUTPUT_FILE = "o";
 
     private static final int SUCCESS = 0;
     private static final int FAILED_TO_PARSE_ARGUMENTS = 1;
@@ -128,6 +137,7 @@ public final class SigTool {
         SignatureType sigType = cli.hasOption(BINARY_OPTION) ? SignatureType.BINARY : SignatureType.CONTAINER;
         boolean spaceElements = cli.hasOption(SPACE_OPTION); // only add spaces if requested.
         boolean processSigFiles = cli.hasOption(FILE_OPTION);
+        boolean outputFile = cli.hasOption(OUTPUT_FILE);
         boolean noTabs = cli.hasOption(NOTABS_OPTION);
         ByteSequenceAnchor anchorType = cli.hasOption(ANCHOR_OPTION)
                 ? getAnchor(cli.getOptionValue(ANCHOR_OPTION)) : ByteSequenceAnchor.BOFOffset;
@@ -137,7 +147,7 @@ public final class SigTool {
             exitCode = ANCHOR_VALUE_INCORRECT;
         } else {
             try {
-                processCommands(cli, processSigFiles, compileType, sigType, anchorType, spaceElements, noTabs);
+                processCommands(outputFile, cli, processSigFiles, compileType, sigType, anchorType, spaceElements, noTabs);
             } catch (IOException e) {
                 exitCode = IO_EXCEPTION;
                 System.err.println("IO ERROR: " + e.getMessage());
@@ -152,27 +162,42 @@ public final class SigTool {
         return exitCode;
     }
 
-    private static void processCommands(CommandLine cli, boolean processSigFiles,
+    private static void processCommands(boolean outputFile, CommandLine cli, boolean processSigFiles,
                                         ByteSequenceCompiler.CompileType compileType, SignatureType sigType,
                                         ByteSequenceAnchor anchorType, boolean spaceElements, boolean noTabs)
             throws IOException, SignatureParseException, CompileException {
-        PrintStream output = System.out; //TODO: specify output file as well.
-        // Process the commands:
-        if (processSigFiles) { // using a file as an input:
-            if (cli.hasOption(EXPRESSION_OUTPUT)) {
-                SigUtils.summariseSignatures(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements, noTabs);
-            } else {
-                SigUtils.convertSignatureFileToNewFormat(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements);
-            }
-        } else { // using expressions on the command line as an input
-            if (cli.hasOption(MATCH_OPTION)) {
-                SigUtils.matchExpressions(output, cli.getArgList(), anchorType, cli.getOptionValue(MATCH_OPTION));
-            } else if (cli.hasOption(EXPRESSION_OUTPUT)) {
-                SigUtils.convertExpressionSyntax(output, cli.getArgList(), sigType, spaceElements, noTabs);
-            } else {
-                SigUtils.convertExpressionsToXML(output, cli.getArgList(), compileType, sigType, anchorType, noTabs);
-            }
+        final PrintStream output;
+        if (outputFile) {
+            output = createOutputFile(cli.getOptionValue(OUTPUT_FILE));
+        } else {
+            output = System.out;
         }
+        try {
+            // Process the commands:
+            if (processSigFiles) { // using a file as an input:
+                if (cli.hasOption(EXPRESSION_OUTPUT)) {
+                    SigUtils.summariseSignatures(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements, noTabs);
+                } else {
+                    SigUtils.convertSignatureFileToNewFormat(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements);
+                }
+            } else { // using expressions on the command line as an input
+                if (cli.hasOption(MATCH_OPTION)) {
+                    SigUtils.matchExpressions(output, cli.getArgList(), anchorType, cli.getOptionValue(MATCH_OPTION));
+                } else if (cli.hasOption(EXPRESSION_OUTPUT)) {
+                    SigUtils.convertExpressionSyntax(output, cli.getArgList(), sigType, spaceElements, noTabs);
+                } else {
+                    SigUtils.convertExpressionsToXML(output, cli.getArgList(), compileType, sigType, anchorType, noTabs);
+                }
+            }
+        } finally {
+            output.close();
+        }
+    }
+
+    private static PrintStream createOutputFile(String filename) throws FileNotFoundException {
+        File file = new File(filename);
+        FileOutputStream fos = new FileOutputStream(file);
+        return new PrintStream(fos);
     }
 
     private static ByteSequenceAnchor getAnchor(String anchorText) {
@@ -186,23 +211,18 @@ public final class SigTool {
     }
 
     private static Options createOptions() {
-        // General options
-        Option help = new Option(HELP_OPTION, "help", false,
-                "Prints help on commands.");
-        // Formatting options
-        Option spaceElements = new Option(SPACE_OPTION, "spaces", false,
-                "Signature elements have spaces between them.");
-        Option noTabs        = new Option(NOTABS_OPTION, "notabs", false,
-                "Don't include tab separated metadata - just output the expressions.");
-        Option sigAnchor     = new Option(ANCHOR_OPTION, "anchor", true,
-                "Where a signature is anchored - BOFoffset, EOFoffset or Variable."
-                        + "Defaults to BOFoffset if not set.");
-
         Options options = new Options();
-        options.addOption(help);
-        options.addOption(spaceElements);
-        options.addOption(noTabs);
-        options.addOption(sigAnchor);
+        options.addOption(new Option(HELP_OPTION, "help", false,
+                "Prints help on commands."));
+        options.addOption(new Option(SPACE_OPTION, "spaces", false,
+                "Signature elements have spaces between them."));
+        options.addOption(new Option(NOTABS_OPTION, "notabs", false,
+                "Don't include tab separated metadata - just output the expressions."));
+        options.addOption(new Option(ANCHOR_OPTION, "anchor", true,
+                "Where a signature is anchored - BOFoffset, EOFoffset or Variable."
+                        + "Defaults to BOFoffset if not set."));
+        options.addOption(new Option(OUTPUT_FILE, "output", true,
+                "Specifies a file to output the results to.  If not specified, will output to console."));
         addOptionGroups(options, buildFileOptions(), buildOutputOptions(), buildSignatureOptions(), buildCompileOptions());
         return options;
     }

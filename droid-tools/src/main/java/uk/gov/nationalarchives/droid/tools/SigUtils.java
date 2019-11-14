@@ -413,7 +413,8 @@ public final class SigUtils {
                         String childPath = pathToUse + File.separator + filename;
                         File childFile = new File(childPath);
                         if (childFile.isFile()) {
-                            matchFile(output, childPath, sigs);
+                            List<InternalSignature> matchingSigs = matchFile(childPath, sigs);
+                            printSignatureMatches(output, childPath, sigs, matchingSigs);
                         }
                     } catch (IOException e) {
                         exceptionMessages.append("IO exception processing: ").append(filename).append(':')
@@ -425,7 +426,8 @@ public final class SigUtils {
                     throw new IOException(failureMessages);
                 }
             } else {
-                matchFile(output, pathToScan, sigs);
+                List<InternalSignature> matchingSigs = matchFile(pathToUse, sigs);
+                printSignatureMatches(output, pathToUse, sigs, matchingSigs);
             }
         }
     }
@@ -433,27 +435,17 @@ public final class SigUtils {
     /**
      * Matches an InternalSignatureCollection against a given file.
      *
-     * @param output The PrintStream to write the output to.
      * @param filename The filename to scan.
      * @param sigs The InternalSignatureCollection to match.
+     * @return A list of InternalSignatures which matched the file.
      * @throws IOException If a problem occurs during IO.
      */
-    public static void matchFile(PrintStream output, String filename, InternalSignatureCollection sigs) throws IOException {
+    public static List<InternalSignature> matchFile(String filename, InternalSignatureCollection sigs) throws IOException {
         ByteReader reader =  null;
         try {
             Path file = Paths.get(filename);
             reader = getByteReaderForFile(file);
-            List<InternalSignature> hits = sigs.getMatchingSignatures(reader, -1);
-
-            int[] hitNums = new int[sigs.getInternalSignatures().size()];
-            for (InternalSignature hit : hits) {
-                hitNums[hit.getID()] = 1;
-            }
-            StringBuilder builder = new StringBuilder(filename);
-            for (int i = 0; i < hitNums.length; i++) {
-                builder.append(TAB_CHAR).append(hitNums[i]);
-            }
-            output.println(builder.toString());
+            return sigs.getMatchingSignatures(reader, -1);
         } finally {
             if (reader != null) {
                 reader.close();
@@ -500,6 +492,18 @@ public final class SigUtils {
             sigs.addInternalSignature(sig);
         }
         return sigs;
+    }
+
+    private static void printSignatureMatches(PrintStream output, String header, InternalSignatureCollection sigs, List<InternalSignature> matchingSignatures) {
+        int[] hitNums = new int[sigs.getInternalSignatures().size()];
+        for (InternalSignature hit : matchingSignatures) {
+            hitNums[hit.getID()] = 1;
+        }
+        StringBuilder builder = new StringBuilder(header);
+        for (int i = 0; i < hitNums.length; i++) {
+            builder.append(TAB_CHAR).append(hitNums[i]);
+        }
+        output.println(builder.toString());
     }
 
     private static FileFormat getFakeFileFormat(String sigID) {
