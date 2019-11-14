@@ -9,7 +9,7 @@ sigtool can:
 * convert signatures between binary and container syntax
 * convert signature XML files into new signature XML files using the new syntax.
 * summarise signature XML files into a tab-delimited signature summary using the new syntax.
-* test signatures to see if they work on files or a folder.
+* test binary or container signatures to see if they work on files or a folder.
 
 ## Usage
 To use sigtool:
@@ -34,8 +34,8 @@ The options control how signatures are processed, or print help.
 | -f    | --file       | Specify a signature file to process.  The next argument is the filename of the signature file.  Both binary and container signatures files can be specified.                                        |
 | -a    | --anchor     | Specify whether an expression is anchored to BOFoffset, EOFoffset or Variable.  For example: "--anchor bofoffset"                                                                                   |
 | -n    | --notabs     | Don't output tab delimited metadata along with a compiled expression - just output the result of compiling on its own.                                                                              |
-| -m    | --match      | Match the file or files against the expressions.  The next argument is the file or folder to scan.                                                                                                  |                                                                          |
-
+| -m    | --match      | Match the file or files against the expressions.  The next argument is the file or folder to scan.                                                                                                  |
+| -i    | --internal   | Specify an internal file path to run a signature for container signature matching.  The next argument is the file path inside the container.                                                        |
 
 ### Expressions
 Expressions are PRONOM syntax regular expressions we want to convert. For example, two expressions are given in the command below:
@@ -157,12 +157,9 @@ Gives the following output (snippet):
 |Microsoft Word 97 OLE2 Template     |  1100  |  CompObj              | 1100            | BOFoffset   | {40-1024}10000000'Word.Document.8'00
 |Microsoft Word 97 OLE2 Template     |  1100  |  WordDocument         | 1100            | BOFoffset   | {10}\[&01]
 |Microsoft Excel OOXML               |  2030  |  \[Content_Types].xml | 317             | BOFoffset   | {0-40000}'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"'
-...
 
-## Test signatures
+## Test binary signatures
 You can use sigtool to try out a signature on a file or a folder directly, using the --match option.
-
-_Note_: the tool only scans within the file you specify, it won't recognise container formats, unpack them and then run the signature on the contained files.
 
 For example, if you write:
 ```
@@ -170,9 +167,8 @@ sigtool --match "/home/user/Documents/somefile.xyz" "'SOMEFILEHEADER'"
 ```
 You will get a tab delimited output like the following:
 
-| .                                  | .
-|------------------------------------|------------------
 | Expressions:                       | 'SOMEFILEHEADER'
+|------------------------------------|------------------
 | File                               | Hits
 | /home/user/Documents/somefile.xyz  | 0
 
@@ -183,9 +179,8 @@ sigtool --anchor Variable --match "/home/user/Documents/somefile.xyz" "'SOMEFILE
 ```
 which gives:
 
-| .                                  | .
+|Expressions:                        | 'SOMEFILEHEADER' |
 |------------------------------------|------------------
-|Expressions:                        | 'SOMEFILEHEADER'
 |File                                | Hits
 |/home/user/Documents/somefile.xyz   | 1
 
@@ -197,9 +192,8 @@ sigtool --match "/home/user/Documents/" "'SOMEFILEHEADER'"
 ```
 which might give:
 
-| .                                  | .
-|------------------------------------|------------------
 |Expressions:                        | 'SOMEFILEHEADER'
+|------------------------------------|------------------
 |File                                | Hits
 |/home/user/Documents/somefile.xyz   | 1
 |/home/user/Documents/another.txt    | 0
@@ -214,11 +208,29 @@ sigtool --match "/home/user/Documents/" "'SOMEFILEHEADER'" "'Another thing'" "01
 
 would add all the different expressions as columns against each file.
 
-| .                                  | .                | .               | .
-|------------------------------------|------------------|-----------------|-------------------------------
 |Expressions:                        | 'SOMEFILEHEADER' | 'Another thing' | 01 02 03 \(04\|05\|06) 'complex'
+|------------------------------------|------------------|-----------------|-------------------------------
 |File                                | Hits             |  Hits           | Hits
 |/home/user/Documents/somefile.xyz   | 1                |  0              | 0
 |/home/user/Documents/another.txt    | 0                |  1              | 0
 |/home/user/Documents/more.doc       | 0                |  0              | 1
 |/home/user/Documents/example.png    | 1                |  0              | 0
+
+## Test container signatures
+You can also test container signatures directly from sigTool. It is almost the same as matching binary signatures, except:
+* You can only match one signature at a time (so you can't get multi-column output as above).
+* You must specify the path to the internal file to which the binary signature will be applied.
+
+For example:
+```
+sigTool --match "/home/user/Documents/" --internal "META-INF/manifest.xml" "{0-1024}'manifest:media-type=\"application/vnd.oasis.opendocument.text'"
+```
+Could give an output like this:
+
+|Expressions:                        | {0-1024}'manifest:media-type=\"application/vnd.oasis.opendocument.text'
+|------------------------------------|------------------
+|File                                | Hits
+|/home/user/Documents/somefile.zip   | 0
+|/home/user/Documents/another.odt    | 1
+|/home/user/Documents/more.doc       | 0
+|/home/user/Documents/example.png    | 0
