@@ -4,12 +4,8 @@
 // to be identified as x-fmt/384.
 // Enter each file on a new line.  You may add comments on the same line by using a tab separator, also entries can be
 //commented out by prefacing with //.
-fmt-59-signature-id-76.xlw    //GUI identifies only by extension
-x-fmt-384-signature-id-212.mov
-x-fmt-384-signature-id-691.mov
-x-fmt-384-signature-id-717.mov
-x-fmt-384-signature-id-760.mov
-x-fmt-384-signature-id-780.mov
+fmt-1157-signature-id-1539.nfo  malformated test file, see https://github.com/exponential-decay/skeleton-test-suite-generator/issues/11
+//fmt-59-signature-id-76.xlw    //GUI identifies only by extension
 //x-fmt-412-signature-id-199.jar //Not identified in GUI.  Test identifies as x-fmt/412 but normal no profile run as x-fmt/263
 //fmt-292-signature-id-309.odp      -Not identified in GUI but name-based identification in test.
 //fmt-292-signature-id-310.odp      -Not identified in GUI but name-based identification in test.
