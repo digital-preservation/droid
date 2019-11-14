@@ -31,11 +31,11 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -->
-<!-- To assemble osx/linux package. JRE not provided, will use existing jre available-->
+<!-- To assemble osx/linux/windows package. JRE not provided, will use existing jre available-->
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>bin-unix</id>
+  <id>bin</id>
   <formats>
     <format>zip</format>
   </formats>
@@ -86,6 +86,18 @@
   </fileSets>
 
   <files>
+    <file>
+      <source>bin/droid.bat</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>644</fileMode>
+    </file>
+    <file>
+      <source>bin/Running DROID.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>644</fileMode>
+    </file>
     <file>
       <source>bin/droid.sh</source>
       <outputDirectory>/</outputDirectory>
