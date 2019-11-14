@@ -39,23 +39,32 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import net.byteseek.compiler.CompileException;
 
 import uk.gov.nationalarchives.droid.container.BinarySignatureXMLParser;
 import uk.gov.nationalarchives.droid.container.ContainerFile;
+import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequest;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
+import uk.gov.nationalarchives.droid.container.IdentifierEngine;
+import uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine;
+import uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine;
 import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
 import uk.gov.nationalarchives.droid.core.SignatureFileParser;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
@@ -80,9 +89,43 @@ import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
  */
 public final class SigUtils {
 
-    private static final BinarySignatureXMLParser<ByteSequence> XML_PARSER = new BinarySignatureXMLParser<>();
-    private static final char TAB_CHAR = '\t';
+    private static final BinarySignatureXMLParser<ByteSequence> SEQ_PARSER = new BinarySignatureXMLParser<>();
+    private static final BinarySignatureXMLParser<InternalSignature> SIG_PARSER = new BinarySignatureXMLParser<>();
+
+    private static final String ZIP_SIG_XML =
+            "<InternalSignature ID=\"200\" Specificity=\"Specific\">"
+                    + "<ByteSequence Reference=\"BOFoffset\" Sequence=\"{0-4}'PK'0304\"/>"
+                    + "<ByteSequence Endianness=\"Little-endian\" Reference=\"EOFoffset\""
+                    + "Sequence=\"'PK'01{43-65531}'PK'0506{18-65531}\"/></InternalSignature>";
+
+    private static final String OLE2_SIG_XML = "<InternalSignature ID=\"170\" Specificity=\"Specific\">"
+            + "<ByteSequence Reference=\"BOFoffset\" Sequence=\"D0CF11E0A1B11AE1{20}FEFF\"/></InternalSignature>";
+
     private static final char NEW_LINE_CHAR = '\n';
+    private static final char TAB_CHAR = '\t';
+    private static final String TAB_ONE = "\t1";
+    private static final String TAB_ZERO = "\t0";
+
+    private static final InternalSignatureCollection CONTAINER_SIGNATURES;
+    private static final String IO_EXCEPTION_PROCESSING = "IO exception processing: ";
+
+    private static final int ZIP_SIG_ID = 200;
+    private static final int OLE2_SIG_ID = 170;
+
+    static {
+        InternalSignature zipSig = createInternalSignatureFromXML(ZIP_SIG_XML);
+        InternalSignature ole2Sig = createInternalSignatureFromXML(OLE2_SIG_XML);
+        CONTAINER_SIGNATURES = new InternalSignatureCollection();
+        if (zipSig != null) {
+            CONTAINER_SIGNATURES.addInternalSignature(zipSig);
+        }
+        if (ole2Sig != null) {
+            CONTAINER_SIGNATURES.addInternalSignature(ole2Sig);
+        }
+    }
+
+    private static final IdentifierEngine ZIP_IDENTIFIER_ENGINE = new ZipIdentifierEngine();
+    private static final IdentifierEngine OLE2_IDENTIFIER_ENGINE = new Ole2IdentifierEngine();
 
     /**
      * Private constructor for static utility class.
@@ -150,7 +193,35 @@ public final class SigUtils {
      * @throws SignatureParseException If there is a problem parsing the XML element.
      */
     public static ByteSequence parseByteSequenceXML(Element byteSequenceElement) throws SignatureParseException {
-        return XML_PARSER.fromXmlElement(byteSequenceElement);
+        return SEQ_PARSER.fromXmlElement(byteSequenceElement);
+    }
+
+    /**
+     * Parses an InternalSignature XML fragment into an InternalSignature object.
+     * @param internalSigElement An InternalSignature XML element.
+     * @return An InternalSignature object parsed from an XML element.
+     * @throws SignatureParseException If there is a problem parsing the XML element.
+     */
+    public static InternalSignature parseInternalSignatureXML(Element internalSigElement) throws SignatureParseException {
+        return SIG_PARSER.fromXmlElement(internalSigElement);
+    }
+
+    /**
+     * Parses an InternalSignature from an XML fragment string.  If it could not be parsed, or any other error
+     * occurs, it return null.
+     *
+     * @param xml The XML string containing an internal signature to parse.
+     * @return An InternalSignature object created from the XML fragment string.
+     */
+    public static InternalSignature createInternalSignatureFromXML(String xml)  {
+        try {
+            return parseInternalSignatureXML(XmlUtils.readXMLFragment(xml));
+        } catch (ParserConfigurationException e) {
+        } catch (SAXException e) {
+        } catch (IOException e) {
+        } catch (SignatureParseException e) {
+        }
+        return null;
     }
 
     /**
@@ -379,7 +450,7 @@ public final class SigUtils {
             expressionHeader.append(TAB_CHAR).append(expression);
         }
         output.println(expressionHeader.toString());
-        matchSignatures(output, compileExpressions(expressions, anchor), anchor, pathToScan);
+        matchSignatures(output, compileExpressions(expressions, anchor), pathToScan);
     }
 
     /**
@@ -388,11 +459,10 @@ public final class SigUtils {
      *
      * @param output The PrintStream to write the output to.
      * @param sigs The InternalSignatureCollection to match against the files.
-     * @param anchor Whether the expressions are anchored to the BOFoffset, EOFoffset or VariableOffset.
      * @param pathToScan The path of a file or a folder to match.
      * @throws IOException If a problem occurs during IO.
      */
-    public static void matchSignatures(PrintStream output, InternalSignatureCollection sigs, ByteSequenceAnchor anchor,
+    public static void matchSignatures(PrintStream output, InternalSignatureCollection sigs,
                                        String pathToScan) throws IOException {
         String pathToUse = getPathWithoutEndingSeparator(pathToScan);
         File scanFile = new File(pathToUse);
@@ -417,7 +487,7 @@ public final class SigUtils {
                             printSignatureMatches(output, childPath, sigs, matchingSigs);
                         }
                     } catch (IOException e) {
-                        exceptionMessages.append("IO exception processing: ").append(filename).append(':')
+                        exceptionMessages.append(IO_EXCEPTION_PROCESSING).append(filename).append(':')
                         .append(e.getMessage()).append(NEW_LINE_CHAR);
                     }
                 }
@@ -454,6 +524,211 @@ public final class SigUtils {
     }
 
     /**
+     * Matches ContainerSignature against a file or files in a folder and outputs a tab-delimited summary
+     * of the matches.
+     *
+     * @param output The PrintStream to write the output to.
+     * @param signature The container signature
+     * @param internalPath The path of the file inside the container to match the signature against.
+     * @param anchor Whether the signture is anchored to BOF, EOF or Variable.
+     * @param pathToScan The path of a file or a folder to match.
+     * @throws IOException If a problem occurs during IO.
+     * @throws CompileException if there is a problem compiling the signature.
+     */
+    public static void matchContainerFile(PrintStream output, String signature, String internalPath,
+                                                ByteSequenceAnchor anchor, String pathToScan) throws IOException, CompileException {
+        String pathToUse = getPathWithoutEndingSeparator(pathToScan);
+        File scanFile = new File(pathToUse);
+        if (scanFile.exists()) {
+            // Output header:
+            output.println("File\tHit");
+
+            // Scan file or directory:
+            if (scanFile.isDirectory()) {
+                StringBuilder exceptionMessages = new StringBuilder();
+                String[] files = scanFile.list();
+                for (String filename : files) {
+                    try {
+                        String childPath = pathToUse + File.separator + filename;
+                        File childFile = new File(childPath);
+                        if (childFile.isFile()) {
+                            if (matchContainerFile(filename, signature, internalPath, anchor)) {
+                                output.println(filename + TAB_ONE);
+                            } else {
+                                output.println(filename + TAB_ZERO);
+                            }
+                        }
+                    } catch (IOException e) {
+                        exceptionMessages.append(IO_EXCEPTION_PROCESSING).append(filename).append(':')
+                                .append(e.getMessage()).append(NEW_LINE_CHAR);
+                    }
+                }
+                String failureMessages = exceptionMessages.toString();
+                if (!failureMessages.isEmpty()) {
+                    throw new IOException(failureMessages);
+                }
+            } else {
+                if (matchContainerFile(pathToUse, signature, internalPath, anchor)) {
+                    output.println(pathToUse + TAB_ONE);
+                } else {
+                    output.println(pathToUse + TAB_ZERO);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns true if a container signature matches a file.
+     *
+     * @param filename The filename of the file to test.
+     * @param signature The signature to try.
+     * @param internalPath The internal path of the file inside the container to match against.
+     * @param signatureAnchor Whether the signature is anchored to BOF, EOF or Variable.
+     * @return true if a container signature matches a file.
+     * @throws IOException If an IO problem happens reading the file.
+     * @throws CompileException If the signature can't be compiled.
+     */
+    public static boolean matchContainerFile(String filename, String signature, String internalPath,
+                                             ByteSequenceAnchor signatureAnchor) throws IOException, CompileException {
+        ContainerSignature sig = createContainerSignature(1, signature, signature, internalPath, signatureAnchor);
+        return matchContainerFile(filename, sig);
+    }
+
+    /**
+     * Returns true if a container signature matches a file.
+     *
+     * @param filename The filename of the file to test.
+     * @param sig The container signature to test against.
+     * @return  true if a container signature matches a file.
+     * @throws IOException If an IO problem happens reading the file.
+     */
+    public static boolean matchContainerFile(String filename, ContainerSignature sig) throws IOException {
+        IdentificationRequest fileRequest = null;
+        try {
+            Path file = Paths.get(filename);
+            fileRequest = new ContainerFileIdentificationRequest(file);
+            fileRequest.open(file);
+            return matchContainerFile(fileRequest, sig);
+        } finally {
+            if (fileRequest != null) {
+                fileRequest.close();
+            }
+        }
+    }
+
+    /**
+     * Returns true if a container signature matches a file.
+     *
+     * @param request An identification request for the container file.
+     * @param sig The container signature to test against.
+     * @return  true if a container signature matches a file.
+     * @throws IOException If an IO problem happens reading the file.
+     */
+    public static boolean matchContainerFile(IdentificationRequest request, ContainerSignature sig) throws IOException {
+        boolean result = false;
+        IdentifierEngine engine = getContainerIdentifierEngine(request.getFileName());
+        if (engine != null) {
+            ContainerSignatureMatchCollection collection = getContainerMatchCollection(sig);
+            engine.process(request, collection);
+            for (ContainerSignatureMatch match : collection.getContainerSignatureMatches()) {
+                if (!match.isMatch()) {
+                    return false;
+                }
+            }
+            result = true;
+        }
+        return result;
+    }
+
+    /**
+     * Builds a ContainerSignatureMatchCollection object from a ContainerSignature.
+     *
+     * @param sig The ContainerSignature to build the collection from.
+     * @return a ContainerSignatureMatchCollection object from a ContainerSignature.
+     */
+    public static ContainerSignatureMatchCollection getContainerMatchCollection(ContainerSignature sig) {
+        ArrayList<ContainerSignature> sigs = new ArrayList<>();
+        sigs.add(sig);
+        ArrayList<String> filesInSig = new ArrayList<>(sig.getFiles().keySet());
+        return new ContainerSignatureMatchCollection(sigs, filesInSig, -1);
+    }
+
+    /**
+     * Returns an identification engine (zip or ole2) for a file, or null if it can' be recognised.
+     * @param filename The filename to get an identifier engine for.
+     * @return an identification engine (zip or ole2) for a file, or null if it can' be recognised.
+     * @throws IOException If an IO problem happens reading the file.
+     */
+    public static IdentifierEngine getContainerIdentifierEngine(String filename) throws IOException {
+        IdentifierEngine engine = null;
+        List<InternalSignature> matches = matchFile(filename, CONTAINER_SIGNATURES);
+        if (matches.size() == 1) {
+            InternalSignature sig = matches.get(0);
+            switch (sig.getID()) {
+                case ZIP_SIG_ID: { // zip sig identifier.
+                    engine = ZIP_IDENTIFIER_ENGINE;
+                    break;
+                }
+                case OLE2_SIG_ID: { // ole2 sig identifier.
+                    engine = OLE2_IDENTIFIER_ENGINE;
+                    break;
+                }
+                default : engine = null;
+            }
+        }
+        return engine;
+    }
+
+    /**
+     * Creates a container signature.
+     *
+     * @param id The id of the signature.
+     * @param description A description of the signature.
+     * @param signature The signature to compile.
+     * @param internalPath The internal path of the file the signature will be matched against.
+     * @param signatureAnchor Whether the signature is anchored to BOF, EOF or Variable.
+     * @return a container signature.
+     * @throws CompileException if there was a problem compiling the signature.
+     */
+    public static ContainerSignature createContainerSignature(int id, String description, String signature,
+                                                               String internalPath, ByteSequenceAnchor signatureAnchor)
+            throws CompileException {
+        InternalSignatureCollection sigs = compileExpression(signature, signatureAnchor);
+        ContainerFile file = createContainerFile(sigs, internalPath);
+        List<ContainerFile> files = new ArrayList<>();
+        files.add(file);
+        return createContainerSignature(id, description, files);
+    }
+
+    /**
+     * Creates a container signature from a list of ContainerFile objects.
+     * @param id The id of the signature.
+     * @param description The description of the signature.
+     * @param containerFiles A list of ContainerFile objects which define what signatures match against which files.
+     * @return a container signature from a list of ContainerFile objects.
+     */
+    public static ContainerSignature createContainerSignature(int id, String description, List<ContainerFile> containerFiles) {
+        ContainerSignature containerSig = new ContainerSignature();
+        containerSig.setId(id);
+        containerSig.setDescription(description);
+        containerSig.setFiles(containerFiles);
+        return containerSig;
+    }
+
+    /**
+     * Creates a ContainerFile from an InternalSignatureCollection and the path to match against.
+     * @param binarySigs The binary sigs which will be run on the internal container file path.
+     * @param containerFilePath The file path inside the container to run the binary signatures against.
+     * @return a ContainerFile from an InternalSignatureCollection and the path to match against.
+     */
+    public static ContainerFile createContainerFile(InternalSignatureCollection binarySigs, String containerFilePath) {
+        ContainerFile containerFile = new ContainerFile();
+        containerFile.setPath(containerFilePath);
+        containerFile.setBinarySignatures(binarySigs);
+        return containerFile;
+    }
+
+    /**
      * Returns a ByteReader (required for matching signatures) for a given file.
      *
      * @param file The file to obtain a ByteReader for.
@@ -468,6 +743,20 @@ public final class SigUtils {
         IdentificationRequest fileRequest = new FileSystemIdentificationRequest(metaData, identifier);
         fileRequest.open(file);
         return new IdentificationRequestByteReaderAdapter(fileRequest);
+    }
+
+    /**
+     * Compiles an expression into an InternalSignatureCollection.
+     * A fake file format will be appended using PUID format: "tst/1"
+     * @param expression The list of expression to compile.
+     * @param anchor Whether the expressions are anchored to the BOFoffset, EOFoffset or VariableOffset.
+     * @return An InternalSignatureCollection containing the compiled expressions.
+     * @throws CompileException If a problem occurs during compilation.
+     */
+    public static InternalSignatureCollection compileExpression(String expression, ByteSequenceAnchor anchor) throws CompileException {
+        ArrayList<String> expressions = new ArrayList<>();
+        expressions.add(expression);
+        return compileExpressions(expressions, anchor);
     }
 
     /**

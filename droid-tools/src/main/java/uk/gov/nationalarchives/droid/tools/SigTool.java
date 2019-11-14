@@ -82,6 +82,8 @@ public final class SigTool {
     private static final String DROID_OPTION = "d";
     private static final String MATCH_OPTION = "m";
     private static final String OUTPUT_FILE = "o";
+    private static final String INTERNAL_FILE = "i";
+
 
     private static final int SUCCESS = 0;
     private static final int FAILED_TO_PARSE_ARGUMENTS = 1;
@@ -175,14 +177,10 @@ public final class SigTool {
         try {
             // Process the commands:
             if (processSigFiles) { // using a file as an input:
-                if (cli.hasOption(EXPRESSION_OUTPUT)) {
-                    SigUtils.summariseSignatures(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements, noTabs);
-                } else {
-                    SigUtils.convertSignatureFileToNewFormat(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements);
-                }
+                processSigFiles(cli, output, sigType, spaceElements, noTabs);
             } else { // using expressions on the command line as an input
                 if (cli.hasOption(MATCH_OPTION)) {
-                    SigUtils.matchExpressions(output, cli.getArgList(), anchorType, cli.getOptionValue(MATCH_OPTION));
+                    matchFiles(cli, output, anchorType);
                 } else if (cli.hasOption(EXPRESSION_OUTPUT)) {
                     SigUtils.convertExpressionSyntax(output, cli.getArgList(), sigType, spaceElements, noTabs);
                 } else {
@@ -191,6 +189,29 @@ public final class SigTool {
             }
         } finally {
             output.close();
+        }
+    }
+
+    private static void processSigFiles(CommandLine cli, PrintStream output, SignatureType sigType,
+                                   boolean spaceElements, boolean noTabs) throws IOException, SignatureParseException {
+        if (cli.hasOption(EXPRESSION_OUTPUT)) {
+            SigUtils.summariseSignatures(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements, noTabs);
+        } else {
+            SigUtils.convertSignatureFileToNewFormat(output, cli.getOptionValue(FILE_OPTION), sigType, spaceElements);
+        }
+    }
+
+    private static void matchFiles(CommandLine cli, PrintStream output, ByteSequenceAnchor anchorType)
+            throws IOException, CompileException, SignatureParseException {
+        if (cli.hasOption(INTERNAL_FILE)) { // match a container signature - there's an internal path.
+            if (cli.getArgList().size() == 0) {
+                throw new SignatureParseException("No container signature specified.");
+            }
+            String signature = cli.getArgList().get(0); // only process one container expression.
+            SigUtils.matchContainerFile(output, signature, cli.getOptionValue(INTERNAL_FILE),
+                    anchorType, cli.getOptionValue(MATCH_OPTION));
+        } else { // match a binary signature (no internal path).
+            SigUtils.matchExpressions(output, cli.getArgList(), anchorType, cli.getOptionValue(MATCH_OPTION));
         }
     }
 
@@ -223,6 +244,8 @@ public final class SigTool {
                         + "Defaults to BOFoffset if not set."));
         options.addOption(new Option(OUTPUT_FILE, "output", true,
                 "Specifies a file to output the results to.  If not specified, will output to console."));
+        options.addOption(new Option(INTERNAL_FILE, "internal", true,
+                "The path of an internal file if matching container signatures."));
         addOptionGroups(options, buildFileOptions(), buildOutputOptions(), buildSignatureOptions(), buildCompileOptions());
         return options;
     }
