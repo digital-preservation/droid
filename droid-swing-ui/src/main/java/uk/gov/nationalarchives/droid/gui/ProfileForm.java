@@ -60,6 +60,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -223,6 +224,20 @@ public class ProfileForm extends JPanel {
                 }
             }
         });
+    }
+
+    /**
+     * Workaround method to fire a TableModelEvent when a node is inserted at a tree path.
+     * This is documented in https://github.com/digital-preservation/droid/issues/306
+     * and is due to a bug in the netbeans outline component after version 8.0.  The fix is being
+     * tracked at Apache Netbeans as this PR: https://github.com/apache/netbeans/pull/1639
+     * @param path The TreePath at which a node was dynamically inserted.
+     */
+    public void insertNodesAtPath(TreePath path) {
+        int row = mdl.getLayout().getRowForPath(path);
+        TableModelEvent event = new TableModelEvent (mdl, row, row,
+                TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+        resultsOutline.tableChanged(event);
     }
 
     /**

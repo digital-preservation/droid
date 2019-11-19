@@ -85,12 +85,16 @@ public class ExpandingTreeListener implements TreeWillExpandListener {
                     profileForm.getInMemoryNodes().put(node.getId(), newNode);
                 }
             }
-            
+
             if (expandingNode.getChildCount() == 0) {
                 expandingNode.setAllowsChildren(false);
             }
-            
             profileForm.getTreeModel().nodeStructureChanged(expandingNode);
+            //WORKAROUND: issue 306 - latest netbeans outline doesn't resort when node expands.
+            // Once netbeans fixes the bug (tracked as this PR: https://github.com/apache/netbeans/pull/1639)
+            // then we should not need this anymore.
+            profileForm.nodesInsertedAtPath(event.getPath());
+
         } finally {
             profileForm.setCursor(Cursor.getDefaultCursor());
         }
