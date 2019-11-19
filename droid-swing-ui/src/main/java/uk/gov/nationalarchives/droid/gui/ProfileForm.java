@@ -235,8 +235,7 @@ public class ProfileForm extends JPanel {
      */
     public void insertNodesAtPath(TreePath path) {
         int row = mdl.getLayout().getRowForPath(path);
-        TableModelEvent event = new TableModelEvent (mdl, row, row,
-                TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+        TableModelEvent event = new TableModelEvent(mdl, row, row, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
         resultsOutline.tableChanged(event);
     }
 
