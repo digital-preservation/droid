@@ -33,7 +33,10 @@ package uk.gov.nationalarchives.droid.container.ole2;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,10 +89,13 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
                     throw new IOException(String.format(NO_READER_ERROR, identifier));
                 }
             }
+
             DirectoryEntry root = reader.getRoot();
-            for (Iterator<Entry> it = root.getEntries(); it.hasNext();) {
-                Entry entry = it.next();
-                String entryName = entry.getName().trim();
+            Iterator<EntryInfo> iterator = new OLE2Walker(root, true);
+            while (iterator.hasNext()) {
+                EntryInfo info = iterator.next();
+                Entry entry = info.entry;
+                String entryName = info.path;
 
                 boolean needsBinaryMatch = false;
 
@@ -132,4 +138,80 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
             }
         }
     }
+
+    /**
+     * A class which iterates over all the file entries in an OLE2 file.
+     * It can optionally process children in sub folders, or just do the immediate children of the root.
+     * It returns an EntryInfo on next(), which wraps the Entry, and the path to the entry.
+     */
+    private static class OLE2Walker implements Iterator<EntryInfo> {
+
+        private List<PathIterator> entries = new ArrayList<>();
+        EntryInfo nextEntry = null;
+        boolean processSubFolders = false;
+
+        public OLE2Walker(DirectoryEntry rootEntry, boolean processSubFolders) {
+            entries.add(new PathIterator("", rootEntry.getEntries()));
+            this.processSubFolders = processSubFolders;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (nextEntry == null) {
+                while (!entries.isEmpty()) {
+                    // We get the last entry so that removing it after processing doesn't cause the whole array to shift.
+                    // They all have to be processed, so the order doesn't matter.
+                    int posToProcess = entries.size() - 1;
+                    PathIterator currentEntries = entries.get(posToProcess);
+                    if (currentEntries.iterator.hasNext()) {
+                        Entry entry = currentEntries.iterator.next();
+                        String entryName = entry.getName().trim();
+                        String entryPath = currentEntries.path + entryName;
+                        if (processSubFolders && entry.isDirectoryEntry()) {
+                            entries.add(new PathIterator(entryPath + '/', ((DirectoryEntry) entry).getEntries()));
+                        }
+                        nextEntry = new EntryInfo(entryPath, entry);
+                        return true;
+                    }
+                    entries.remove(posToProcess); // remove the current entry iterator from the list of entries.
+                }
+            }
+            return nextEntry != null;
+        }
+
+        @Override
+        public EntryInfo next() {
+            if (hasNext()) {
+                EntryInfo toReturn = nextEntry;
+                nextEntry = null;
+                return toReturn;
+            }
+            throw new NoSuchElementException("No more OLE2 entries");
+        }
+
+        /**
+         * A record of an Entry iterator to process and the path for the files in that iterator.
+         */
+        private static class PathIterator {
+            public final String path;
+            public final Iterator<Entry> iterator;
+            PathIterator(String path, Iterator<Entry> iterator) {
+                this.path = path;
+                this.iterator = iterator;
+            }
+        }
+    }
+
+    /**
+     * A wrapper for an OLE2 file entry object and its path.
+     */
+    private static class EntryInfo {
+        public final String path;
+        public final Entry entry;
+        public EntryInfo(String path, Entry entry) {
+            this.path = path;
+            this.entry = entry;
+        }
+    }
+
 }
