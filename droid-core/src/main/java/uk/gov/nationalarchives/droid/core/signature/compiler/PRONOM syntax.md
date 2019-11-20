@@ -146,12 +146,6 @@ This is equivalent to writing a fixed gap followed by an unlimited gap:
 01 02 03 {128} * FF FE
 ```
 
-### Minimum to unlimited gaps {n-*}
-To specify that there's a minimum gap which must exist, but then it's unlimited after that, we can use a number and an asterisk separated by a hyphen, enclosed in curly brackets:
-```
-01 02 03 {128-*} FF FE
-```
-
 ### Whitespace
 **Container signature syntax**
 All whitespace (space, tab, newline, carriage return) between elements is ignored when parsing.  You could write a single expression as:
