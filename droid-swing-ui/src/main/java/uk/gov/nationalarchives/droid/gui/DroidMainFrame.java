@@ -1354,6 +1354,11 @@ public class DroidMainFrame extends JFrame {
 
     }// GEN-LAST:event_jButtonAddFileActionPerformed
 
+    public void addFilesAndFolders(List<File> files) {
+        AddFilesAndFoldersAction action = new AddFilesAndFoldersAction(droidContext, profileManager);
+        action.add(files, true);
+    }
+
     public void jButtonRemoveFilesAndFolderActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonRemoveFilesAndFolderActionPerformed
         if (droidContext.getSelectedProfile().getResultsOutline().getSelectedRows().length == 0) {
             DialogUtils.showNothingIsSelectedForRemoveDialog(this);
