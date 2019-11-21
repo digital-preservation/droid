@@ -90,5 +90,6 @@
       Turn off all checks for hotfixes.
       -->
     <suppress checks="." files="TreePathSupport\.java"/>
+    <suppress checks="." files="RawZipFile\.java"/>
 
 </suppressions>

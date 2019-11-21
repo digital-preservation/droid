@@ -1,9 +1,35 @@
-/*
- * Copyright (C) 2005-2015 Schlichtherle IT Services.
- * All rights reserved. Use is subject to license terms.
+/**
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ *  * Neither the name of the The National Archives nor the
+ *    names of its contributors may be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package de.schlichtherle.truezip.zip;
-
 import de.schlichtherle.truezip.rof.BufferedReadOnlyFile;
 import de.schlichtherle.truezip.rof.IntervalReadOnlyFile;
 import de.schlichtherle.truezip.rof.ReadOnlyFile;
@@ -55,14 +81,26 @@ import static de.schlichtherle.truezip.zip.ZipParametersUtils.parameters;
  * <p>
  * This class is able to skip a preamble like the one found in self extracting
  * archives.
+ * <br/>
+ * <br/>
+ * <br/>
+ * <br/>
+ * <h3>Class overriden to enable the processing of OLM files by ignoring EOCDR if full of FF</h3>
+ * <p>
+ *     the EOCD in the OLM file looks like the EOCD of a ZIP64 file. With this extension, some or all of the usual fields may be set to FF bytes.
+ *     <br/>
+ *     If a ZIP parser is not aware of the ZIP64 extension, or if the supposed ZIP64 file doesn't implement the extension correctly, one of these FF sequences may indeed lead to the impression of a ZIP file spanning multiple disks: this looks like this is disk number 65535, implying there is a bunch of other disks that are required to unpack this ZIP file. However in this implementation, "ZIP file spanning/splitting is not supported". So to process OLM files we bypass this error.
+ *     <br/>
+ *     see <a href="https://github.com/digital-preservation/droid/issues/232">github droid issue</a>
  *
+ * </p>
  * @param  <E> the type of the ZIP entries.
  * @see    RawZipOutputStream
  * @author Christian Schlichtherle
  */
 @NotThreadSafe
 public abstract class RawZipFile<E extends ZipEntry>
-implements Iterable<E>, Closeable {
+        implements Iterable<E>, Closeable {
 
     private static final int LFH_FILE_NAME_LENGTH_OFF =
             /* Local File Header signature     */ 4 +
@@ -127,7 +165,7 @@ implements Iterable<E>, Closeable {
     protected RawZipFile(
             @WillCloseWhenClosed ReadOnlyFile zip,
             ZipFileParameters<E> param)
-    throws IOException {
+            throws IOException {
         this(new SingleReadOnlyFilePool(zip), param);
     }
 
@@ -135,7 +173,7 @@ implements Iterable<E>, Closeable {
     RawZipFile(
             final Pool<ReadOnlyFile, IOException> source,
             final ZipFileParameters<E> param)
-    throws IOException {
+            throws IOException {
         if (null == param)
             throw new NullPointerException();
         final ReadOnlyFile rof = source.allocate();
@@ -168,7 +206,7 @@ implements Iterable<E>, Closeable {
     }
 
     private void checkZipFileSignature(final ReadOnlyFile rof)
-    throws IOException {
+            throws IOException {
         final byte[] sig = new byte[4];
         rof.seek(this.preamble);
         rof.readFully(sig);
@@ -176,8 +214,8 @@ implements Iterable<E>, Closeable {
         // Constraint: A ZIP file must start with a Local File Header
         // or a (ZIP64) End Of Central Directory Record iff it's emtpy.
         if (LFH_SIG != signature
-                  && ZIP64_EOCDR_SIG != signature
-                  && EOCDR_SIG != signature)
+                && ZIP64_EOCDR_SIG != signature
+                && EOCDR_SIG != signature)
             throw new ZipException(
                     "Expected Local File Header or (ZIP64) End Of Central Directory Record!");
     }
@@ -205,7 +243,7 @@ implements Iterable<E>, Closeable {
     private int findCentralDirectory(
             final ReadOnlyFile rof,
             final boolean postambled)
-    throws IOException {
+            throws IOException {
         final byte[] sig = new byte[4];
         final long max = this.length - EOCDR_MIN_LEN;
         final long min = !postambled && max >= 0xffff ? max - 0xffff : 0;
@@ -234,9 +272,12 @@ implements Iterable<E>, Closeable {
             off += 2;
             cdEntries = readUShort(eocdr, off);
             off += 2;
-            if (0 != diskNo || 0 != cdDiskNo || cdEntriesDisk != cdEntries)
+            if(diskNo==65535 && cdDiskNo == 65535 && cdEntriesDisk==65535 && cdEntries==65535){
+                // we assume it's an OLM file
+            }else if (0 != diskNo || 0 != cdDiskNo || cdEntriesDisk != cdEntries){
                 throw new ZipException(
                         "ZIP file spanning/splitting is not supported!");
+            }
             cdSize = readUInt(eocdr, off);
             off += 4;
             cdOffset = readUInt(eocdr, off);
@@ -371,7 +412,7 @@ implements Iterable<E>, Closeable {
      * @throws IOException On any other I/O related issue.
      */
     private void mountCentralDirectory(final ReadOnlyFile rof, int numEntries)
-    throws IOException {
+            throws IOException {
         final Map<String, E> entries = new LinkedHashMap<String, E>(
                 Math.max(initialCapacity(numEntries), 16));
         final byte[] cfh = new byte[CFH_MIN_LEN];
@@ -481,9 +522,9 @@ implements Iterable<E>, Closeable {
         if (0 != numEntries % 0x10000)
             throw new ZipException(
                     "Expected " +
-                    Math.abs(numEntries) +
-                    (numEntries > 0 ? " more" : " less") +
-                    " entries in the Central Directory!");
+                            Math.abs(numEntries) +
+                            (numEntries > 0 ? " more" : " less") +
+                            " entries in the Central Directory!");
 
         // Commit map of entries.
         this.entries = entries;
@@ -594,10 +635,10 @@ implements Iterable<E>, Closeable {
                                     + " is not supported)");
                         erof = new WinZipAesEntryReadOnlyFile(erof,
                                 new WinZipAesEntryParameters(
-                                    parameters(
-                                        WinZipAesParameters.class,
-                                        getCryptoParameters()),
-                                    entry));
+                                        parameters(
+                                                WinZipAesParameters.class,
+                                                getCryptoParameters()),
+                                        entry));
                         field = (WinZipAesEntryExtraField)
                                 entry.getExtraField(WINZIP_AES_ID);
                         method = field.getMethod();
@@ -656,8 +697,8 @@ implements Iterable<E>, Closeable {
                     // Let's parse and check it.
                     final byte[] dd = new byte[
                             entry.isZip64ExtensionsRequired()
-                            ? 4 + 8 + 8
-                            : 4 + 4 + 4];
+                                    ? 4 + 8 + 8
+                                    : 4 + 4 + 4];
                     rof.seek(fp);
                     rof.readFully(dd, 0, 4);
                     long crc = readUInt(dd, 0);
@@ -893,7 +934,7 @@ implements Iterable<E>, Closeable {
      */
     @CreatesObligation
     public final @Nullable InputStream getInputStream(String name)
-    throws IOException {
+            throws IOException {
         return getInputStream(name, null, true);
     }
 
@@ -903,7 +944,7 @@ implements Iterable<E>, Closeable {
      */
     @CreatesObligation
     public final @Nullable InputStream getInputStream(ZipEntry entry)
-    throws IOException {
+            throws IOException {
         return getInputStream(entry.getName(), null, true);
     }
 
@@ -913,7 +954,7 @@ implements Iterable<E>, Closeable {
      */
     @CreatesObligation
     public final @Nullable InputStream getCheckedInputStream(String name)
-    throws IOException {
+            throws IOException {
         return getInputStream(name, true, true);
     }
 
@@ -923,7 +964,7 @@ implements Iterable<E>, Closeable {
      */
     @CreatesObligation
     public final @Nullable InputStream getCheckedInputStream(ZipEntry entry)
-    throws IOException {
+            throws IOException {
         return getInputStream(entry.getName(), true, true);
     }
 
@@ -976,7 +1017,7 @@ implements Iterable<E>, Closeable {
             final String name,
             @CheckForNull Boolean check,
             final boolean process)
-    throws IOException {
+            throws IOException {
         final ReadOnlyFile rof = rof();
         if (name == null)
             throw new NullPointerException();
@@ -1001,7 +1042,7 @@ implements Iterable<E>, Closeable {
         } catch (IllegalArgumentException ex) {
             throw (IOException) new ZipException(name +
                     " (invalid meta data in Local File Header or Central Directory Record)"
-                    ).initCause(ex);
+            ).initCause(ex);
         }
         try {
             if (!process) {
@@ -1019,11 +1060,11 @@ implements Iterable<E>, Closeable {
                             + " is not supported)");
                 final WinZipAesEntryReadOnlyFile
                         eerof = new WinZipAesEntryReadOnlyFile(erof,
-                                new WinZipAesEntryParameters(
-                                    parameters(
+                        new WinZipAesEntryParameters(
+                                parameters(
                                         WinZipAesParameters.class,
                                         getCryptoParameters()),
-                                    entry));
+                                entry));
                 erof = eerof;
                 if (check) {
                     eerof.authenticate();
@@ -1129,7 +1170,7 @@ implements Iterable<E>, Closeable {
         @CreatesObligation
         @edu.umd.cs.findbugs.annotations.SuppressWarnings("OBL_UNSATISFIED_OBLIGATION")
         EntryReadOnlyFile(final long start, final long length)
-        throws IOException {
+                throws IOException {
             super(rof(), start, length);
             RawZipFile.this.open++;
         }
@@ -1150,7 +1191,7 @@ implements Iterable<E>, Closeable {
      * growing file, e.g. when another thread is appending to it.
      */
     private static final class SafeBufferedReadOnlyFile
-    extends BufferedReadOnlyFile {
+            extends BufferedReadOnlyFile {
 
         final long length;
 
@@ -1159,7 +1200,7 @@ implements Iterable<E>, Closeable {
         public SafeBufferedReadOnlyFile(
                 final @WillCloseWhenClosed ReadOnlyFile rof,
                 final long length)
-        throws IOException {
+                throws IOException {
             super(rof);
             assert length <= rof.length();
             this.length = length;

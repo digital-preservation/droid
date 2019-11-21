@@ -1,15 +1,40 @@
-/*
- * Copyright (C) 2005-2015 Schlichtherle IT Services.
- * All rights reserved. Use is subject to license terms.
+/**
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ *  * Neither the name of the The National Archives nor the
+ *    names of its contributors may be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package de.schlichtherle.truezip.zip;
-
 import de.schlichtherle.truezip.rof.BufferedReadOnlyFile;
 import de.schlichtherle.truezip.rof.IntervalReadOnlyFile;
 import de.schlichtherle.truezip.rof.ReadOnlyFile;
 import de.schlichtherle.truezip.rof.ReadOnlyFileInputStream;
 import de.schlichtherle.truezip.util.Pool;
-import de.schlichtherle.truezip.zip.*;
 import edu.umd.cs.findbugs.annotations.CreatesObligation;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
@@ -56,7 +81,19 @@ import static de.schlichtherle.truezip.zip.ZipParametersUtils.parameters;
  * <p>
  * This class is able to skip a preamble like the one found in self extracting
  * archives.
+ * <br/>
+ * <br/>
+ * <br/>
+ * <br/>
+ * <h3>Class overriden to enable the processing of OLM files by ignoring EOCDR if full of FF</h3>
+ * <p>
+ *     the EOCD in the OLM file looks like the EOCD of a ZIP64 file. With this extension, some or all of the usual fields may be set to FF bytes.
+ *     <br/>
+ *     If a ZIP parser is not aware of the ZIP64 extension, or if the supposed ZIP64 file doesn't implement the extension correctly, one of these FF sequences may indeed lead to the impression of a ZIP file spanning multiple disks: this looks like this is disk number 65535, implying there is a bunch of other disks that are required to unpack this ZIP file. However in this implementation, "ZIP file spanning/splitting is not supported". So to process OLM files we bypass this error.
+ *     <br/>
+ *     see <a href="https://github.com/digital-preservation/droid/issues/232">github droid issue</a>
  *
+ * </p>
  * @param  <E> the type of the ZIP entries.
  * @see    RawZipOutputStream
  * @author Christian Schlichtherle
@@ -235,9 +272,12 @@ implements Iterable<E>, Closeable {
             off += 2;
             cdEntries = readUShort(eocdr, off);
             off += 2;
-            if (0 != diskNo || 0 != cdDiskNo || cdEntriesDisk != cdEntries)
+            if(diskNo==65535 && cdDiskNo == 65535 && cdEntriesDisk==65535 && cdEntries==65535){
+                // we assume it's an OLM file
+            }else if (0 != diskNo || 0 != cdDiskNo || cdEntriesDisk != cdEntries){
                 throw new ZipException(
                         "ZIP file spanning/splitting is not supported!");
+            }
             cdSize = readUInt(eocdr, off);
             off += 4;
             cdOffset = readUInt(eocdr, off);
