@@ -28,13 +28,13 @@ DROID is made available under the New BSD License: https://raw.github.com/digita
 DROID can be built simply from source using Maven. Executing `mvn clean install` inside the `droid` folder should be enough. Two archives are provided inside the `droid-binary/target` folder.
 
 
-#### Linux / OSX users
+#### Linux / OSX / Windows users
 
 Archive `droid-binary-${VERSION}-bin-unix.zip`
 
 You will need JAVA 8 to 11 installed to run it.
 
-once unpacked, use the `droid.sh` script to run the application
+once unpacked, use the `droid.sh` or `droid.bat` script to run the application
 #### Windows users
 Archive  `droid-binary-${VERSION}-bin-win32-with-jre.zip`
 
