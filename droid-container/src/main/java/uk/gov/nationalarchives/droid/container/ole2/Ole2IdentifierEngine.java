@@ -38,6 +38,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
@@ -91,11 +93,12 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
             }
 
             DirectoryEntry root = reader.getRoot();
-            Iterator<EntryInfo> iterator = new OLE2Walker(root, true);
+            Iterator<EntryInfo> iterator = new OLE2Walker((DirectoryNode) root, true);
             while (iterator.hasNext()) {
                 EntryInfo info = iterator.next();
                 Entry entry = info.entry;
                 String entryName = info.path;
+                DirectoryNode parent = info.parent;
 
                 boolean needsBinaryMatch = false;
 
@@ -106,11 +109,11 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
                     }
                 }
 
-                if (needsBinaryMatch) {
+                if (needsBinaryMatch && entry instanceof DocumentNode) {
                     DocumentInputStream docIn = null;
                     ByteReader byteReader = null;
                     try {
-                        docIn = reader.createDocumentInputStream(entry.getName());
+                        docIn = parent.createDocumentInputStream(entry.getName());
                         byteReader = newByteReader(docIn);
                         for (ContainerSignatureMatch match : matches.getContainerSignatureMatches()) {
                             match.matchBinaryContent(entryName, byteReader);
@@ -150,8 +153,8 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
         EntryInfo nextEntry = null;
         boolean processSubFolders = false;
 
-        public OLE2Walker(DirectoryEntry rootEntry, boolean processSubFolders) {
-            entries.add(new PathIterator("", rootEntry.getEntries()));
+        public OLE2Walker(DirectoryNode rootEntry, boolean processSubFolders) {
+            entries.add(new PathIterator(rootEntry, "", rootEntry.getEntries()));
             this.processSubFolders = processSubFolders;
         }
 
@@ -168,9 +171,10 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
                         String entryName = entry.getName().trim();
                         String entryPath = currentEntries.path + entryName;
                         if (processSubFolders && entry.isDirectoryEntry()) {
-                            entries.add(new PathIterator(entryPath + '/', ((DirectoryEntry) entry).getEntries()));
+                            entries.add(new PathIterator((DirectoryNode) entry,
+                                    entryPath + '/', ((DirectoryEntry) entry).getEntries()));
                         }
-                        nextEntry = new EntryInfo(entryPath, entry);
+                        nextEntry = new EntryInfo(currentEntries.parent, entryPath, entry);
                         return true;
                     }
                     entries.remove(posToProcess); // remove the current entry iterator from the list of entries.
@@ -193,9 +197,11 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
          * A record of an Entry iterator to process and the path for the files in that iterator.
          */
         private static class PathIterator {
+            public final DirectoryNode parent;
             public final String path;
             public final Iterator<Entry> iterator;
-            PathIterator(String path, Iterator<Entry> iterator) {
+            PathIterator(DirectoryNode parent, String path, Iterator<Entry> iterator) {
+                this.parent = parent;
                 this.path = path;
                 this.iterator = iterator;
             }
@@ -203,12 +209,14 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
     }
 
     /**
-     * A wrapper for an OLE2 file entry object and its path.
+     * A wrapper for an OLE2 file entry object and its path and directory entry parent.
      */
     private static class EntryInfo {
+        public final DirectoryNode parent;
         public final String path;
         public final Entry entry;
-        public EntryInfo(String path, Entry entry) {
+        public EntryInfo(DirectoryNode parent, String path, Entry entry) {
+            this.parent = parent;
             this.path = path;
             this.entry = entry;
         }
