@@ -4,6 +4,4 @@
 // Each line should consist of the filename followed by the expected identification, separated by a tab.
 // You can then add a further tab to add a comment if required.
 // Also, Entries can be commented out by adding // at the start of a line
-fmt-202-signature-id-1046.nef   fmt/353
-fmt-202-signature-id-1047.nef   fmt/353
 //x-fmt-412-signature-id-199.jar //Not identified in GUI.  Test identifies as x-fmt/412 but normal no profile run as x-fmt/263
