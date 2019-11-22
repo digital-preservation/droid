@@ -62,8 +62,8 @@ public class PUIDMetadata extends GenericMetadata {
         addOperation(CriterionOperator.NONE_OF);
         int index = 0;
 
-        List<FilterValue> possibleFilterValues = new ArrayList<>();
-        for (Format format : data) {
+        final List<FilterValue> possibleFilterValues = new ArrayList<>();
+        for (final Format format : data) {
 
             String formatWithVersion = "";
             if (format.getVersion() != null) {
@@ -79,7 +79,7 @@ public class PUIDMetadata extends GenericMetadata {
 
         possibleFilterValues.sort(PUID_SORT);
 
-        for (FilterValue value : possibleFilterValues) {
+        for (final FilterValue value : possibleFilterValues) {
             addPossibleValue(value);
         }
     }
@@ -100,40 +100,47 @@ public class PUIDMetadata extends GenericMetadata {
 
         @Override
         public int compare(FilterValue o1, FilterValue o2) {
-            String puid1 = o1.getQueryParameter();
-            String puid2 = o2.getQueryParameter();
-            int separator1Pos = puid1.indexOf('/');
-            int separator2Pos = puid2.indexOf('/');
+            final String puid1 = o1.getQueryParameter();
+            final String puid2 = o2.getQueryParameter();
+            final int separator1Pos = puid1.indexOf('/');
+            final int separator2Pos = puid2.indexOf('/');
+
+            int result = -1;
 
             // If the PUIDs have a / in them (they all should be we'll be careful).
             if (separator1Pos >= 0 && separator2Pos >= 0) {
 
                 // If they aren't equal, the shorter header is less than the longer header.
                 if (separator1Pos != separator2Pos) {
-                    return separator1Pos - separator2Pos;
-                }
+                    result = separator1Pos - separator2Pos;
+                } else {
 
-                // If the strings aren't the same, we return the string comparision of the headers.
-                String puid1header = puid1.substring(0, separator1Pos);
-                String puid2header = puid2.substring(0, separator2Pos);
-                if (!puid1header.equals(puid2header)) {
-                    return puid1.compareTo(puid2);
-                }
+                    // If the strings aren't the same, we return the string comparision of the headers.
+                    final String puid1header = puid1.substring(0, separator1Pos);
+                    final String puid2header = puid2.substring(0, separator2Pos);
+                    if (!puid1header.equals(puid2header)) {
+                        result = puid1.compareTo(puid2);
+                    } else {
 
-                // The headers are equal, we'll sort based on the PUID number (if it has numbers)
-                String puid1ID = puid1.substring(separator1Pos + 1);
-                String puid2ID = puid2.substring(separator2Pos + 1);
-                int puid1Num = getInteger(puid1ID);
-                int puid2Num = getInteger(puid2ID);
+                        // The headers are equal, we'll sort based on the PUID number (if it has numbers)
+                        final String puid1ID = puid1.substring(separator1Pos + 1);
+                        final String puid2ID = puid2.substring(separator2Pos + 1);
+                        final int puid1Num = getInteger(puid1ID);
+                        final int puid2Num = getInteger(puid2ID);
 
-                // If they could both parse as numbers, return the numeric comparison.
-                if (puid1Num >= 0 && puid2Num >= 0) {
-                    return puid1Num - puid2Num;
+                        // If they could both parse as numbers, return the numeric comparison.
+                        if (puid1Num >= 0 && puid2Num >= 0) {
+                            result = puid1Num - puid2Num;
+                        }
+                    }
                 }
+            } else {
+
+                // Can't compare on numbers or headers alone, just return string comparison.
+                result = puid1.compareTo(puid2);
             }
 
-            // Can't compare on numbers or headers alone, just return string comparison.
-            return puid1.compareTo(puid2);
+            return result;
         }
 
         private int getInteger(String string) {
