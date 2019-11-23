@@ -57,7 +57,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSlider;
+import javax.swing.JTable;
+import javax.swing.TransferHandler;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -231,18 +239,10 @@ public class ProfileForm extends JPanel {
         component.setDropTarget(new DropTarget() {
             public synchronized void drop(DropTargetDropEvent evt) {
                 if (profile.getState() == ProfileState.VIRGIN) {
-                    boolean acceptDrop = false;
-                    for (DataFlavor flavour : evt.getCurrentDataFlavors()) {
-                        if (flavour.equals(DataFlavor.javaFileListFlavor)) {
-                            acceptDrop = true;
-                            break;
-                        }
-                    }
-                    if (acceptDrop) {
+                    if (acceptDrop(evt)) {
                         evt.acceptDrop(DnDConstants.ACTION_COPY);
-                        List<File> droppedFiles = null;
                         try {
-                            droppedFiles = (List<File>)
+                            final List<File> droppedFiles = (List<File>)
                                     evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                             droidMainUi.addFilesAndFolders(droppedFiles);
                         } catch (UnsupportedFlavorException e) {
@@ -255,6 +255,17 @@ public class ProfileForm extends JPanel {
                 }
             }
         });
+    }
+
+    private boolean acceptDrop(DropTargetDropEvent evt) {
+        boolean acceptDrop = false;
+        for (DataFlavor flavour : evt.getCurrentDataFlavors()) {
+            if (flavour.equals(DataFlavor.javaFileListFlavor)) {
+                acceptDrop = true;
+                break;
+            }
+        }
+        return acceptDrop;
     }
 
 

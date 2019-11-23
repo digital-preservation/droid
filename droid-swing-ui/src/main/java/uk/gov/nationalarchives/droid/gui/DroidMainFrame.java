@@ -1354,6 +1354,11 @@ public class DroidMainFrame extends JFrame {
 
     }// GEN-LAST:event_jButtonAddFileActionPerformed
 
+    /**
+     * Adds a list of files to the profile.
+     *
+     * @param files The list of files to add.
+     */
     public void addFilesAndFolders(List<File> files) {
         AddFilesAndFoldersAction action = new AddFilesAndFoldersAction(droidContext, profileManager);
         action.add(files, true);
