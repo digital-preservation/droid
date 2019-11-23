@@ -42,10 +42,14 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
  *
  */
 public class ZipIdentifier extends AbstractContainerIdentifier {
-    
+
     /**
-     * {@inheritDoc}
+     * Constructs a ZipIdentifier.
      */
+    public ZipIdentifier() {
+        setIdentifierEngine(new ZipIdentifierEngine());
+    }
+
     @Override
     public final void process(final IdentificationRequest request,
         final ContainerSignatureMatchCollection matches) throws IOException {
