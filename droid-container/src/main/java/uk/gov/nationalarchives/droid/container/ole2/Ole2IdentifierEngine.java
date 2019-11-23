@@ -96,9 +96,9 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
             Iterator<EntryInfo> iterator = new OLE2Walker((DirectoryNode) root, true);
             while (iterator.hasNext()) {
                 EntryInfo info = iterator.next();
-                Entry entry = info.entry;
-                String entryName = info.path;
-                DirectoryNode parent = info.parent;
+                Entry entry = info.getEntry();
+                String entryName = info.getPath();
+                DirectoryNode parent = info.getParent();
 
                 boolean needsBinaryMatch = false;
 
@@ -129,7 +129,6 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
                 }
             }
         } catch (IOException e) {
-            //System.out.println(e.getMessage());
             log.error(e.getMessage());
         } finally {
             if (reader != null) {
@@ -149,9 +148,9 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
      */
     private static class OLE2Walker implements Iterator<EntryInfo> {
 
-        private List<PathIterator> entries = new ArrayList<>();
-        EntryInfo nextEntry = null;
-        boolean processSubFolders = false;
+        private final List<PathIterator> entries = new ArrayList<>();
+        private final boolean processSubFolders;
+        private EntryInfo nextEntry;
 
         public OLE2Walker(DirectoryNode rootEntry, boolean processSubFolders) {
             entries.add(new PathIterator(rootEntry, "", rootEntry.getEntries()));
@@ -166,15 +165,15 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
                     // They all have to be processed, so the order doesn't matter.
                     int posToProcess = entries.size() - 1;
                     PathIterator currentEntries = entries.get(posToProcess);
-                    if (currentEntries.iterator.hasNext()) {
-                        Entry entry = currentEntries.iterator.next();
+                    if (currentEntries.getIterator().hasNext()) {
+                        Entry entry = currentEntries.getIterator().next();
                         String entryName = entry.getName().trim();
-                        String entryPath = currentEntries.path + entryName;
+                        String entryPath = currentEntries.getPath() + entryName;
                         if (processSubFolders && entry.isDirectoryEntry()) {
                             entries.add(new PathIterator((DirectoryNode) entry,
                                     entryPath + '/', ((DirectoryEntry) entry).getEntries()));
                         }
-                        nextEntry = new EntryInfo(currentEntries.parent, entryPath, entry);
+                        nextEntry = new EntryInfo(currentEntries.getParent(), entryPath, entry);
                         return true;
                     }
                     entries.remove(posToProcess); // remove the current entry iterator from the list of entries.
@@ -197,13 +196,25 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
          * A record of an Entry iterator to process and the path for the files in that iterator.
          */
         private static class PathIterator {
-            public final DirectoryNode parent;
-            public final String path;
-            public final Iterator<Entry> iterator;
+            private final DirectoryNode parent;
+            private final String path;
+            private final Iterator<Entry> iterator;
             PathIterator(DirectoryNode parent, String path, Iterator<Entry> iterator) {
                 this.parent = parent;
                 this.path = path;
                 this.iterator = iterator;
+            }
+
+            public DirectoryNode getParent() {
+                return parent;
+            }
+
+            public String getPath() {
+                return path;
+            }
+
+            public Iterator<Entry> getIterator() {
+                return iterator;
             }
         }
     }
@@ -212,13 +223,25 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
      * A wrapper for an OLE2 file entry object and its path and directory entry parent.
      */
     private static class EntryInfo {
-        public final DirectoryNode parent;
-        public final String path;
-        public final Entry entry;
+        private final DirectoryNode parent;
+        private final String path;
+        private final Entry entry;
         public EntryInfo(DirectoryNode parent, String path, Entry entry) {
             this.parent = parent;
             this.path = path;
             this.entry = entry;
+        }
+
+        public DirectoryNode getParent() {
+            return parent;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public Entry getEntry() {
+            return entry;
         }
     }
 
