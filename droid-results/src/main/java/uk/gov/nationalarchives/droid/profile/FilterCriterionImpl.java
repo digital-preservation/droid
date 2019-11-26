@@ -219,13 +219,13 @@ public class FilterCriterionImpl implements FilterCriterion {
                 o = ISODateTimeFormat.date().parseDateTime(s).toDate();
                 break;
             case IDENTIFICATION_METHOD:
-                o = IdentificationMethod.values()[Integer.valueOf(s)];
+                o = IdentificationMethod.values()[Integer.valueOf(s)].ordinal();
                 break;
             case JOB_STATUS:
-                o = NodeStatus.values()[Integer.valueOf(s)];
+                o = NodeStatus.values()[Integer.valueOf(s)].ordinal();
                 break;
             case RESOURCE_TYPE:
-                o = ResourceType.values()[Integer.valueOf(s)];
+                o = ResourceType.values()[Integer.valueOf(s)].ordinal();
                 break;
             case IDENTIFICATION_COUNT:
                 o = Integer.valueOf(s);
