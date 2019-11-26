@@ -68,7 +68,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  * @author rflitcroft
  *
  */
-//@Ignore
 public class Ole2RootFileTest {
 
     private Ole2Identifier ole2Identifier;
@@ -312,9 +311,8 @@ public class Ole2RootFileTest {
         
     }
 
-    // This test needs looking at - it fails on the verify step - probably a different signature file was used originally.
-    // @Test
-    public void testInitialiseDeregistersOle2BinarySignaturesFromDroid4() throws Exception {
+    @Test
+    public void testInitialiseDeregistersOle2BinarySignaturesFromDroid() throws Exception {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature.xml");
         final Path path = Paths.get(containerSignatureUrl.getPath());
@@ -331,8 +329,6 @@ public class Ole2RootFileTest {
         ole2Identifier.setSignatureFilePath(path);
         ole2Identifier.init();
         
-        verify(droidCore).removeSignatureForPuid("fmt/41");
-        verify(droidCore).removeSignatureForPuid("fmt/43");
-        
+        verify(droidCore).removeSignatureForPuid("fmt/39");
     }
 }
