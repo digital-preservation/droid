@@ -135,14 +135,20 @@
                               </Group>
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="defaultThrottleTextBox1" min="-2" pref="63" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="defaultThrottleTextBox1" min="-2" pref="63" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                                      <Component id="processZipCheckBox" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="processJarCheckBox" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          </Group>
                       </Group>
                   </Group>
               </Group>
@@ -163,6 +169,11 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="processArchivesCheckBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="processZipCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="processJarCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                       <Component id="processWebArchivesCheckBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -347,24 +358,44 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="processWebArchivesCheckBox">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processWebArchivesCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                            </Property>
+                          </Properties>
+                          <BindingProperties>
+                            <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processWebArchives\&quot;]}" target="processWebArchivesCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
+                              <Property name="nullValue" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                                <Connection code="false" type="code"/>
+                              </Property>
+                              <Property name="incompletePathValue" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                                <Connection code="false" type="code"/>
+                              </Property>
+                              <Property name="name" type="java.lang.String" value="webArchiveBinding"/>
+                            </BindingProperty>
+                          </BindingProperties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processWebArchivesCheckBoxActionPerformed"/>
+                          </Events>
+                        </Component>
+            <Component class="javax.swing.JCheckBox" name="processZipCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processWebArchivesCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processZipCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-              <BindingProperties>
-                <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processWebArchives\&quot;]}" target="processWebArchivesCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                  <Property name="nullValue" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                    <Connection code="false" type="code"/>
-                  </Property>
-                  <Property name="incompletePathValue" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                    <Connection code="false" type="code"/>
-                  </Property>
-                  <Property name="name" type="java.lang.String" value="webArchiveBinding"/>
-                </BindingProperty>
-              </BindingProperties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processWebArchivesCheckBoxActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processZipCheckBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="processJarCheckBox">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processJarCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processJarCheckBoxActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

@@ -220,6 +220,8 @@ public class ConfigDialog extends JDialog {
         hashAlgorithmCombo = new JComboBox();
         jLabel10 = new JLabel();
         processWebArchivesCheckBox = new JCheckBox();
+        processZipCheckBox = new JCheckBox();
+        processJarCheckBox = new JCheckBox();
         jPanel2 = new JPanel();
         jPanel1 = new JPanel();
         rowPerFileButton1 = new JRadioButton();
@@ -352,6 +354,20 @@ public class ConfigDialog extends JDialog {
             }
         });
 
+        processZipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processZipCheckBox.text")); // NOI18N
+        processZipCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processZipCheckBoxActionPerformed(evt);
+            }
+        });
+
+        processJarCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processJarCheckBox.text")); // NOI18N
+        processJarCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processJarCheckBoxActionPerformed(evt);
+            }
+        });
+
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
@@ -390,11 +406,18 @@ public class ConfigDialog extends JDialog {
                                 .addComponent(jTextField2, GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
                         .addGap(20, 20, 20))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
+                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(jLabel4))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addComponent(processZipCheckBox)
+                                .addGap(18, 18, 18)
+                                .addComponent(processJarCheckBox)))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
@@ -410,6 +433,9 @@ public class ConfigDialog extends JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(processArchivesCheckBox)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(processZipCheckBox)
+                    .addComponent(processJarCheckBox))
                 .addComponent(processWebArchivesCheckBox)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
@@ -800,6 +826,14 @@ public class ConfigDialog extends JDialog {
         containerSigUrl.setText(pronomContainerUrl);
     }//GEN-LAST:event_pronomUrlResetButtonActionPerformed
 
+    private void processZipCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processZipCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processZipCheckBoxActionPerformed
+
+    private void processJarCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processJarCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processJarCheckBoxActionPerformed
+
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
         for (Component c : panel.getComponents()) {
@@ -849,7 +883,9 @@ public class ConfigDialog extends JDialog {
     private JButton okButton;
     //TODO JC need a checkbox for each container type
     private JCheckBox processArchivesCheckBox;
+    private JCheckBox processJarCheckBox;
     private JCheckBox processWebArchivesCheckBox;
+    private JCheckBox processZipCheckBox;
     private JButton pronomUrlResetButton;
     private JButton proxySettingsButton;
     private JRadioButton rowPerFileButton1;
