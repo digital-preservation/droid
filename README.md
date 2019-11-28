@@ -23,16 +23,65 @@ DROID allows files and folders to be selected from a file system for identificat
 
 DROID is made available under the New BSD License: https://raw.github.com/digital-preservation/droid/master/license.md
 
-## Signatures Management
+## Building DROID
 
-### New capabilities
+DROID can be built from source using Maven. The source code can be obtained from the Github repository at [https://github.com/digital-preservation/droid](https://github.com/digital-preservation/droid)
+   
+Once the code is cloned into a folder (e.g. `droid`), executing `mvn clean install` inside it will build the code. After a successful build, two archives are provided inside the `droid-binary/target` folder.
 
-Since version 6.5, DROID can compile signatures itself, without needing a full XML specification in either the binary or container signature files. Inside signature files, the actual sequences to match are specified under `<ByteSequence>` elements. For example:
+### Linux / OSX / Windows users
+Archive `droid-binary-${VERSION}-bin-unix.zip`
+
+You will need JAVA 8 to 11 installed to run it.
+
+Once unpacked, use the `droid.sh` or `droid.bat` script to run the application.
+
+### Windows users
+Archive  `droid-binary-${VERSION}-bin-win32-with-jre.zip`
+
+For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 11.
+
+Once unpacked, use the `droid.bat` script to run the application.
+
+## Signatures
+Since version 6.5, DROID adds some new capabilities to support developing and testing signatures.
+
+### Types
+There are three basic types of signature in DROID:
+
+  * file extensions (least reliable, just matches the file extension of a file)
+  * binary signatures (very reliable, looks for complex patterns inside a file)
+  * container signatures (extremely reliable - looks for internal files and patterns inside them) 
+
+Binary signatures are compiled by the PRONOM registry into binary signature XML for publication to DROID.  Container signatures cannot currently be compiled by PRONOM into signature XML files.  This can make developing container signatures harder than binary signatures, as the signature file XML is hand written (see `sigtool` below for details of a tool which can produce this XML automatically).
+
+### Syntax
+The signature syntax compiled into XML by PRONOM is the original syntax defined for DROID, and should be backwards compatible with all versions of DROID.  This syntax is used in binary signature files.
+
+Container signatures support a wider syntax than binary signatures, for example allowing whitespace and ASCII strings. For the most part, this extended syntax just makes the signatures more human readable.  In a few cases some new capabilities are supported that PRONOM can't currently compile for binary signatures.
+
+[PRONOM Syntax](PRONOM%20syntax.md) provides details on the regular expression syntax supported by DROID. All of the syntax can be used in either binary or container signatures in DROID itself, but PRONOM won't be able to compile container syntax into XML for binary signatures if you want to submit them to TNA.
+
+### sigtool
+To aid work on signatures, we provide `sigtool`, packaged with DROID. `sigtool` is a simple command line application which can:
+
+ * test binary or container signatures directly against files.
+ * generate signature XML from binary or container signatures.
+ * convert signatures between the original (binary) and the newer (container) syntax.
+ * produce summaries of signature XML files, converting the XML back into signatures.
+ * convert standard XML signature files into a simpler format, which uses the signatures directly.
+
+More details are provided in [Sigtool's user guide](droid-binary/bin/Using sigtool.txt).
+
+### Simpler signature XML 
+Since version 6.5, DROID can compile signatures itself, without needing a full XML specification. Inside current signature files, the actual sequences to match are specified in various sub-elements and attributes of `<ByteSequence>` elements. 
+
+For example, the signature `{10-1024} 01 02 03 04 05 [00:30] * 01 02 03` is represented in signature XML by:
 
   ```xml
 <ByteSequence Reference="BOFoffset">
     <SubSequence SubSeqMinOffset="10" SubSeqMaxOffset="1024">
-        <Sequence>0102030405[00:30]</Sequence>
+        <Sequence>01 02 03 04 05 [00:30]</Sequence>
     </SubSequence>
     <SubSequence>
         <Sequence>01 02 03</Sequence>
@@ -40,39 +89,12 @@ Since version 6.5, DROID can compile signatures itself, without needing a full X
 </ByteSequence>
 ```
 
-DROID can now simply take a full PRONOM signature inside a new Sequence attribute on the ByteSequence. For example, the signature above could be written as:
+DROID can now put a signature directly inside a `Sequence` attribute on the `<ByteSequence>` element, with no further XML required.  For example, the signature above can be simply written as:
 
 ```xml
 <ByteSequence Reference="BOFoffset" Sequence="{10-1024} 01 02 03 04 05 [00:30] * 01 02 03" />
 ```
 
-<br/>
-<br/>
-
-The full syntax can be used in either binary or container signatures. However, if you use the new syntax, to submit them to TNA and get those signatures included in PRONOM registry, you will need to compile those signatures for PRONOM using Sigtool.
-
-### Sigtool
-
-To work further on signatures, we provide Sigtool, packaged with DROID. Sigtool is a command line interface to convert signatures in different formats, generate reports and test signatures on files.
-More details are provided in [Sigtool's user guide](droid-binary/bin/Using sigtool.txt).
-
-[PRONOM Syntax](PRONOM%20syntax.md) also provides details on the regular expression syntax supported by DROID. All of the syntax can be used in either binary or container signatures (but PRONOM won't be able to parse them for binary signatures if you want to submit them to TNA)
-
-## Packaging
-
-DROID can be built simply from source using Maven. Executing `mvn clean install` inside the `droid` folder should be enough. Two archives are provided inside the `droid-binary/target` folder.
+The full syntax can be used in either binary or container signature files.
 
 
-#### Linux / OSX / Windows users
-
-Archive `droid-binary-${VERSION}-bin-unix.zip`
-
-You will need JAVA 8 to 11 installed to run it.
-
-once unpacked, use the `droid.sh` or `droid.bat` script to run the application
-#### Windows users
-Archive  `droid-binary-${VERSION}-bin-win32-with-jre.zip`
-
-For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 11.
-
-once unpacked, use the `droid.bat` script to run the application  
