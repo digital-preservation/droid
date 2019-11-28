@@ -7,7 +7,7 @@ There are three basic types of signature in DROID:
   * binary signatures (very reliable, looks for complex patterns inside a file)
   * container signatures (extremely reliable - looks for internal files and patterns inside them) 
 
-Binary signatures are compiled by the PRONOM registry into binary signature XML for publication to DROID.  Container signatures cannot currently be compiled by PRONOM into signature XML files.  This can make developing container signatures harder than binary signatures, as the signature file XML is hand written (see `sigtool` below for details of a tool which can produce this XML automatically).
+Binary signatures are compiled by the PRONOM registry into binary signature XML for publication to DROID.  Container signatures cannot currently be compiled by PRONOM into signature XML files.  This can make developing container signatures harder than binary signatures, as the signature file XML is hand written (see `sigtool` description in [README](README.md#sigtool) for details of a tool which can produce this XML automatically).
 
 ## Syntax
 The signature syntax compiled into XML by PRONOM is the original syntax defined for DROID, and should be backwards compatible with all versions of DROID.  This syntax is used in binary signature files.
