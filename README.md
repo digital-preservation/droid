@@ -46,21 +46,7 @@ Once unpacked, use the `droid.bat` script to run the application.
 ## Signatures
 Since version 6.5, DROID adds some new capabilities to support developing and testing signatures.
 
-### Types
-There are three basic types of signature in DROID:
-
-  * file extensions (least reliable, just matches the file extension of a file)
-  * binary signatures (very reliable, looks for complex patterns inside a file)
-  * container signatures (extremely reliable - looks for internal files and patterns inside them) 
-
-Binary signatures are compiled by the PRONOM registry into binary signature XML for publication to DROID.  Container signatures cannot currently be compiled by PRONOM into signature XML files.  This can make developing container signatures harder than binary signatures, as the signature file XML is hand written (see `sigtool` below for details of a tool which can produce this XML automatically).
-
-### Syntax
-The signature syntax compiled into XML by PRONOM is the original syntax defined for DROID, and should be backwards compatible with all versions of DROID.  This syntax is used in binary signature files.
-
-Container signatures support a wider syntax than binary signatures, for example allowing whitespace and ASCII strings. For the most part, this extended syntax just makes the signatures more human readable.  In a few cases some new capabilities are supported that PRONOM can't currently compile for binary signatures.
-
-[PRONOM Syntax](PRONOM%20syntax.md) provides details on the regular expression syntax supported by DROID. All of the syntax can be used in either binary or container signatures in DROID itself, but PRONOM won't be able to compile container syntax into XML for binary signatures if you want to submit them to TNA.
+[Signature syntax](Signature%20syntax.md) provides details on the types of signatures and regular expression syntax supported by DROID.
 
 ### sigtool
 To aid work on signatures, we provide `sigtool`, packaged with DROID. `sigtool` is a simple command line application which can:
