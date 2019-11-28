@@ -71,7 +71,7 @@ To aid work on signatures, we provide `sigtool`, packaged with DROID. `sigtool` 
  * produce summaries of signature XML files, converting the XML back into signatures.
  * convert standard XML signature files into a simpler format, which uses the signatures directly.
 
-More details are provided in [Sigtool's user guide](droid-binary/bin/Using sigtool.txt) .
+More details are provided in [Sigtool's user guide](droid-binary/bin/Using%20sigtool.txt) .
 
 ### Simpler signature XML 
 Since version 6.5, DROID can compile signatures itself, without needing a full XML specification. Inside current signature files, the actual sequences to match are specified in various sub-elements and attributes of `<ByteSequence>` elements. 
