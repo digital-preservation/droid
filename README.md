@@ -71,7 +71,7 @@ To aid work on signatures, we provide `sigtool`, packaged with DROID. `sigtool` 
  * produce summaries of signature XML files, converting the XML back into signatures.
  * convert standard XML signature files into a simpler format, which uses the signatures directly.
 
-More details are provided in [Sigtool's user guide](droid-binary/bin/Using sigtool.txt).
+More details are provided in [Sigtool's user guide](droid-binary/bin/Using sigtool.txt) .
 
 ### Simpler signature XML 
 Since version 6.5, DROID can compile signatures itself, without needing a full XML specification. Inside current signature files, the actual sequences to match are specified in various sub-elements and attributes of `<ByteSequence>` elements. 
@@ -81,7 +81,8 @@ For example, the signature `{10-1024} 01 02 03 04 05 [00:30] * 01 02 03` is repr
   ```xml
 <ByteSequence Reference="BOFoffset">
     <SubSequence SubSeqMinOffset="10" SubSeqMaxOffset="1024">
-        <Sequence>01 02 03 04 05 [00:30]</Sequence>
+        <Sequence>01 02 03 04 05</Sequence>
+        <RightFragment MaxOffset="0" MinOffset="0" Position="1">[00:30]</RightFragment>
     </SubSequence>
     <SubSequence>
         <Sequence>01 02 03</Sequence>
