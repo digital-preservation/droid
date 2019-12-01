@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.profile.FilterImpl;
 import uk.gov.nationalarchives.droid.report.dao.GroupByField;
 import uk.gov.nationalarchives.droid.report.dao.ReportFieldEnum;
@@ -55,66 +56,48 @@ public class ReportSpecItem {
     
     @XmlElement(name = "Field", required = true)
     private ReportFieldEnum field;
-    
-    /*
-    @XmlElement(name = "GroupByField")
-    private ReportFieldEnum groupByField;
-    
-    @XmlElement(name = "Function")
-    private String function;
-    */
-    
+
     @XmlElementWrapper(name = "GroupByFields")
     @XmlElement(name = "GroupByField")
     private List<GroupByField> groupByFields = new ArrayList<GroupByField>();
-    
-    
+
     @XmlElement(name = "Filter")
     private FilterImpl filter;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ReportSpecItem() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param description The description.
+     * @param field The field
+     * @param groupByFields what fields to group by.
+     * @param filter A filter to use.
+     */
+    public ReportSpecItem(String description, ReportFieldEnum field, List<GroupByField> groupByFields, FilterImpl filter) {
+        setDescription(description);
+        setField(field);
+        setGroupByFields(groupByFields);
+        setFilter(filter);
+    }
+
     /**
      * @param field the fieldName to set
      */
     public void setField(ReportFieldEnum field) {
         this.field = field;
     }
-    
-    /**
-     * @param groupByField the groupByField to set
-     */
-//    public void setGroupByField(ReportFieldEnum groupByField) {
-//        this.groupByField = groupByField;
-//    }
-    
-    /**
-     * @param function the function to set
-     */
-//    public void setFunction(String function) {
-//        this.function = function;
-//    }
 
-    
     /**
      * @return the fieldName
      */
     public ReportFieldEnum getField() {
         return field;
     }
-    
-    /**
-     * @return the function
-     */
-//    public String getFunction() {
-//        return function;
-//    }
-    
-    /**
-     * @return the groupByFieldName
-     */
-//    public ReportFieldEnum getGroupByField() {
-//        return groupByField;
-//    }
-  
+
     /**
      * @return the list of groupByFields
      */
@@ -136,7 +119,15 @@ public class ReportSpecItem {
     public FilterImpl getFilter() {
         return filter;
     }
-    
+
+    /**
+     * Sets the filter to use.
+     * @param filter The filter.
+     */
+    public void setFilter(FilterImpl filter) {
+        this.filter = filter;
+    }
+
     /**
      * @return the description
      */

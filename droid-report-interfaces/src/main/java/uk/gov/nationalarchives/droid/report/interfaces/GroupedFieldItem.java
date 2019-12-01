@@ -43,15 +43,10 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  */
 public class GroupedFieldItem {
 
-    
-    //@XmlElement(name = "Value")
-    //private String value;
-
     @XmlElementWrapper(name = "Values")
     @XmlElement(name = "Value")
     private List<String> values = new ArrayList<String>();
 
-    
     @XmlElementWrapper(name = "ProfileSummaries")
     @XmlElement(name = "ProfileSummary")
     private List<ProfileReportData> profileSummaries = new ArrayList<ProfileReportData>();
@@ -60,14 +55,21 @@ public class GroupedFieldItem {
     private ReportData groupAggregateData = new ReportData();
     
     private Aggregator aggregator;
-    
+
     /**
-     * @param value the value to set
+     * Empty bean constructor.
      */
-//    public void setValue(String value) {
-//        this.value = value;
-//    }
-    
+    public GroupedFieldItem() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param values The list of values for the item.
+     */
+    public GroupedFieldItem(List<String> values) {
+        setValues(values);
+    }
+
     /**
      * @param values list of values to set.
      */

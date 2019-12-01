@@ -56,7 +56,20 @@ public class ReportItem implements Aggregator {
     private ReportData aggregateSummary = new ReportData();
     
     private Set<ReportData> aggregatedData = new HashSet<ReportData>();
-    
+
+    /**
+     * Empty bean constructor
+     */
+    public ReportItem() {
+    }
+
+    /**
+     * Parameterized constructor
+     * @param item The ReportSpecItem to use.
+     */
+    public ReportItem(ReportSpecItem item) {
+        setReportSpecItem(item);
+    }
     
     /**
      * @param reportSpecItem the reportSpec to set
@@ -73,10 +86,7 @@ public class ReportItem implements Aggregator {
         groupFields.add(groupedFieldItem);
         groupedFieldItem.addAggregator(this);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void aggregate(ReportData reportData) {
         if (aggregatedData.add(reportData)) {

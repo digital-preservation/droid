@@ -38,4 +38,26 @@ package uk.gov.nationalarchives.droid.report.interfaces;
 public class ProfileSummaryReport extends ReportData {
 
     private String profileName;
+
+    /**
+     * Empty bean constructor.
+     */
+    public ProfileSummaryReport() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param profileName The profile name.
+     */
+    public ProfileSummaryReport(String profileName) {
+        this.profileName = profileName;
+    }
+
+    /**
+     * Sets the profile name.
+     * @param profileName the profile name.
+     */
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
 }
