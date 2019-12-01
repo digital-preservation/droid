@@ -64,7 +64,7 @@ public class ReportItem implements Aggregator {
     }
 
     /**
-     * Parameterized constructor
+     * Parameterized constructor.
      * @param item The ReportSpecItem to use.
      */
     public ReportItem(ReportSpecItem item) {

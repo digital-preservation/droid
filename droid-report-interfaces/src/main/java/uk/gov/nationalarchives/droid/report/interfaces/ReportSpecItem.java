@@ -39,7 +39,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.profile.FilterImpl;
 import uk.gov.nationalarchives.droid.report.dao.GroupByField;
 import uk.gov.nationalarchives.droid.report.dao.ReportFieldEnum;

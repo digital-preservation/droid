@@ -86,10 +86,10 @@ public class ReportSpec {
 
     /**
      *
-     * @param items A list of report spec items to set.
+     * @param newItems A list of report spec items to set.
      */
-    public void setReportSpecItems(List<ReportSpecItem> items) {
-        this.items = items;
+    public void setReportSpecItems(List<ReportSpecItem> newItems) {
+        this.items = newItems;
     }
 
     /**
