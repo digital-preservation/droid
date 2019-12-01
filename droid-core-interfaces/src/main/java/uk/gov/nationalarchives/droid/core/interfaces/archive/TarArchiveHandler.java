@@ -62,10 +62,27 @@ public class TarArchiveHandler implements ArchiveHandler {
     private AsynchDroid droidCore;
     private IdentificationRequestFactory<InputStream> factory;
     private ResultHandler resultHandler;
-    
+
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public TarArchiveHandler() {
+    }
+
+    /**
+     * Constructor which sets internal parameters.
+     * @param droidCore The droid core to use.
+     * @param factory The IdentificationRequestFactory to use.
+     * @param resultHandler The ResultHandler to use.
+     */
+    public TarArchiveHandler(AsynchDroid droidCore,
+                             IdentificationRequestFactory<InputStream> factory,
+                             ResultHandler resultHandler) {
+        this.droidCore = droidCore;
+        this.factory = factory;
+        this.resultHandler = resultHandler;
+    }
+
     @Override
     public final void handle(IdentificationRequest request) throws IOException {
 

@@ -51,10 +51,24 @@ public class GZipArchiveHandler implements ArchiveHandler {
 
     private IdentificationRequestFactory factory;
     private AsynchDroid droid;
-    
+
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public GZipArchiveHandler() {
+    }
+
+    /**
+     * Constructor which sets internal parameters.
+     * @param droidCore The droid core to use.
+     * @param factory The IdentificationRequestFactory to use.
+     */
+    public GZipArchiveHandler(AsynchDroid droidCore,
+                             IdentificationRequestFactory factory) {
+        this.droid = droidCore;
+        this.factory = factory;
+    }
+
     @Override
     public final void handle(IdentificationRequest request) throws IOException {
         IdentificationRequest<InputStream> archiveRequest = null;
