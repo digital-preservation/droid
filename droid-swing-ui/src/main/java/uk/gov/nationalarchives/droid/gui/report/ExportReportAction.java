@@ -148,7 +148,7 @@ public class ExportReportAction {
 
     private void initialiseSaveAsDialog() {
         exportFileChooser = new SaveAsFileChooser();
-        exportFileChooser.setSelectedFile(lastSelectedDir.toFile());
+        exportFileChooser.setSelectedFile(lastSelectedDir == null ? null : lastSelectedDir.toFile());
         exportFileChooser.setAcceptAllFileFilterUsed(false);
         final String dialogTitle = "Export Report";
         exportFileChooser.setWarningDialogTitle(dialogTitle);

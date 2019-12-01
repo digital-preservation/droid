@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -432,7 +433,8 @@ public class SignatureManagerImpl implements SignatureManager {
         final SignatureFileInfo sigFileInfo = forBinarySigFile(signatureFile, parser);
 
         try {
-            final Path newSignatureFile = Files.copy(signatureFile, config.getSignatureFileDir());
+            final Path newSignatureFile = Files.copy(signatureFile,
+                    Paths.get(config.getSignatureFileDir().toString(), signatureFile.getFileName().toString()));
             sigFileInfo.setFile(newSignatureFile);
             
             if (setDefault) {

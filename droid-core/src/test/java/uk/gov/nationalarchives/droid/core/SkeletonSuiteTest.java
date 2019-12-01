@@ -62,7 +62,7 @@ import java.util.regex.Pattern;
  *
  * This test is based around the skeleton file suite provide by Ross Spencer at:
  * https://github.com/exponential-decay/pronom-archive-and-skeleton-test-suite/releases/tag/
- * skeleton-test-suite-2016-01-21-sig-file-v84
+ * skeleton-test-suite-2019-05-09-sig-file-v95
  * See also: https://github.com/digital-preservation/droid/issues/87
  *
  * It can be adapted and expanded as required.  The  default expectation is that
@@ -80,9 +80,9 @@ public class SkeletonSuiteTest {
 
     private static final String TEST_FILES_DIR = "test-skeletons/";
     //TODO: Read latest signature file by default where required in this and other tests.
-    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V88.xml";
-    private static final Pattern PuidInFilenamePattern = Pattern.compile("^(x-)?fmt-\\d{1,3}");
-    private static final Pattern PuidPattern = Pattern.compile("^(x-)?fmt/\\d{1,3}");
+    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V95.xml";
+    private static final Pattern PuidInFilenamePattern = Pattern.compile("^(x-)?fmt-\\d{1,4}");
+    private static final Pattern PuidPattern = Pattern.compile("^(x-)?fmt/\\d{1,4}");
 
     private HashMap<String, String> filesWithPuids;
     private HashMap<String, String> currentMisidentifiedFiles = new HashMap<>();

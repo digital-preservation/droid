@@ -49,6 +49,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContainerSignature {
 
+    private static final String FORWARD_SLASH = "/";
+
     @XmlAttribute(name = "Id")
     private int id;
     
@@ -79,19 +81,41 @@ public class ContainerSignature {
     }
     
     /**
+     * Returns a map of container file paths to container file objects.
+     * The paths are normalised, in that any trailing forward slash is removed from them,
+     * to ensure that they can be matched no matter how they are specified.
      * @return the files
      */
     public Map<String, ContainerFile> getFiles() {
         if (this.filesMap == null) {
             Map<String, ContainerFile> containerFileMap = new HashMap<String, ContainerFile>();
             for (ContainerFile file : files) {
-                containerFileMap.put(file.getPath(), file);
+                final String path = stripTrailingForwardSlash(file.getPath());
+                containerFileMap.put(path, file);
             }
             this.filesMap = containerFileMap;
         }
         return this.filesMap;
     }
-    
+
+    /**
+     * Removes any trailing forward slash from a path.
+     * This ensures that paths are presented for matching in a standardised format,
+     * no matter how they are specified in the container signature file.
+     * The ContainerSignatureMatch object also strips trailing forward slashes before attempting
+     * a match, ensuring they are also matched no matter whether OLE2, ZIP or another container
+     * format uses trailing slashes or not.
+     *
+     * @param path The path to strip a trailing forward slash from, if it exists.
+     * @return The path without any trailing forward slash.
+     */
+    private String stripTrailingForwardSlash(String path) {
+        if (path != null && path.endsWith(FORWARD_SLASH)) {
+            return path.substring(0, path.length() - 1);
+        }
+        return path;
+    }
+
     /**
      * 
      * @return a list of all the signature files

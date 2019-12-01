@@ -71,7 +71,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     private DroidCore droidCore;
     private Path signatureFilePath;
     
-    private ContainerIdentifierInit init;
+    private ContainerIdentifierInit init = new ContainerIdentifierInit();
 
     //private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
     private Map<Integer, List<FileFormatMapping>> formats = new HashMap<Integer, List<FileFormatMapping>>(); 
@@ -79,7 +79,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     
     private long maxBytesToScan = -1;
     private IdentifierEngine identifierEngine;
-    
+
     /**
      * {@inheritDoc}
      * @throws IOException 
