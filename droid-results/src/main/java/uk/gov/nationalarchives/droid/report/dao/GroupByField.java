@@ -48,7 +48,23 @@ public class GroupByField {
     
     @XmlElement(name = "Function")
     private String function;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public GroupByField() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param field The field
+     * @param function The function.
+     */
+    public GroupByField(ReportFieldEnum field, String function) {
+        setGroupByField(field);
+        setFunction(function);
+    }
+
     /**
      * 
      * @return The grouping field

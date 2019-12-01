@@ -125,6 +125,14 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
         this.typeParameterClass = typeParameterClass;
     }
 
+    /**
+     * Parameterized constructor.
+     * @param resultHandlerDao Sets the resulthandlerdao to use.
+     */
+    public JDBCSqlItemReader(JDBCBatchResultHandlerDao resultHandlerDao) {
+        this.typeParameterClass = (Class<T>) ProfileResourceNode.class;
+        setResultHandlerDao(resultHandlerDao);
+    }
 
     /**
      * Get the JDBCBatchResultHandlerDao.
@@ -258,7 +266,6 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      */
     //@Override
     public void close() {
-
         try {
             if (this.cursor != null) {
                 this.cursor.close();

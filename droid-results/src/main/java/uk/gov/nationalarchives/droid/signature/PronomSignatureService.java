@@ -42,8 +42,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.apache.commons.configuration.event.ConfigurationEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduit;
@@ -71,15 +70,25 @@ import uk.gov.nationalarchives.pronom.Version;
  */
 public class PronomSignatureService implements SignatureUpdateService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
     private PronomService pronomService;
     private String filenamePattern;
 
     /**
-     * 
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public PronomSignatureService() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param pronomService The pronomservice to use.
+     * @param filenamePattern The filename pattern.
+     */
+    public PronomSignatureService(PronomService pronomService, String filenamePattern) {
+        setPronomService(pronomService);
+        setFilenamePattern(filenamePattern);
+    }
+
     @Override
     public SignatureFileInfo importSignatureFile(final Path targetDir) throws SignatureServiceException {
         final Element sigFile = pronomService.getSignatureFileV1().getElement();
@@ -150,10 +159,7 @@ public class PronomSignatureService implements SignatureUpdateService {
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                 url); 
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void configurationChanged(ConfigurationEvent evt) {
         final String propertyName = evt.getPropertyName();
@@ -161,10 +167,7 @@ public class PronomSignatureService implements SignatureUpdateService {
             setEndpointUrl((String) evt.getPropertyValue());
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void onProxyChange(ProxySettings proxySettings) {
         HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
@@ -187,10 +190,7 @@ public class PronomSignatureService implements SignatureUpdateService {
         HTTPConduit http = (HTTPConduit) client.getConduit();
         http.setClient(httpClientPolicy);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void init(DroidGlobalConfig config) {
         setEndpointUrl(config.getProperties().getString(DroidGlobalProperty.BINARY_UPDATE_URL.getName()));

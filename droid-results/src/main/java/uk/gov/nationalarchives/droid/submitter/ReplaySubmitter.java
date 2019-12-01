@@ -57,7 +57,26 @@ public class ReplaySubmitter {
     private FileEventHandler fileEventHandler;
     private SubmissionQueue submissionQueue;
     private ResultHandlerDao resultHandlerDao;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ReplaySubmitter() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param fileEventHandler The file event handler to use.
+     * @param submissionQueue The submission queue to use.
+     * @param resultHandler The resulthandler to use.
+     */
+    public ReplaySubmitter(FileEventHandler fileEventHandler, SubmissionQueue submissionQueue,
+                           ResultHandlerDao resultHandler) {
+        setFileEventHandler(fileEventHandler);
+        setSubmissionQueue(submissionQueue);
+        setResultHandlerDao(resultHandler);
+    }
+
     /**
      * Re-submits all unfinished archival nodes as new Identification requests.
      * All existing data under those nodes are destroyed.

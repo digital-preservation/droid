@@ -60,6 +60,20 @@ public class SqlReportDaoImpl implements ReportDao {
     private DataSource datasource;
 
     /**
+     * Empty bean constructor.
+     */
+    public SqlReportDaoImpl() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param datasource The datasource to use.
+     */
+    public SqlReportDaoImpl(DataSource datasource) {
+        setDatasource(datasource);
+    }
+
+    /**
      * Flushes the DROID entity manager.
      */
     void flush() {

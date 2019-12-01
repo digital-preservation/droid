@@ -181,6 +181,20 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
     private Thread databaseWriterThread;
     private DatabaseWriter writer;
 
+    /**
+     * Empty bean constructor.
+     */
+    public JDBCBatchResultHandlerDao() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param datasource The datasource to use.
+     */
+    public JDBCBatchResultHandlerDao(DataSource datasource) {
+        setDatasource(datasource);
+    }
+
     @Override
     public void init() {
 

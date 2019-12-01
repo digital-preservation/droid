@@ -58,7 +58,7 @@ public class ProfileWalkerDao {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final JAXBContext context;
     private Path profileHomeDir;
-    
+
     /**
      * @throws JAXBException if the JAXBContext could not be instantiated.
      */
@@ -66,6 +66,18 @@ public class ProfileWalkerDao {
         
         context = JAXBContext.newInstance(new Class[] {
             ProfileWalkState.class,
+        });
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param profileHomeDir The profile home dir.
+     * @throws JAXBException if the JAXBContext could not be instantiated.
+     */
+    public ProfileWalkerDao(Path profileHomeDir) throws JAXBException {
+        setProfileHomeDir(profileHomeDir);
+        context = JAXBContext.newInstance(new Class[] {
+                ProfileWalkState.class,
         });
     }
     

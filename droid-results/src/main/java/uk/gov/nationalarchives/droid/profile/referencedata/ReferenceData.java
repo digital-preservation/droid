@@ -44,8 +44,19 @@ public class ReferenceData {
     private List<Format> formats;
 
     /**
-     * @return the list of IdentificationMethods
+     * Empty bean constructor.
      */
+    public ReferenceData() {
+    }
+
+    /**
+     * Parameterized constructor.
+     *
+     * @param formats The list of formats
+     */
+    public ReferenceData(List<Format> formats) {
+        setFormats(formats);
+    }
 
     /**
      * @return the list of Formats
@@ -55,8 +66,7 @@ public class ReferenceData {
     }
 
     /**
-     * @param formats
-     *            the Formats to set
+     * @param formats the Formats to set
      */
     public void setFormats(List<Format> formats) {
         this.formats = formats;

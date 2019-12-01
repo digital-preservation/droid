@@ -70,6 +70,22 @@ public class JDBCResultHandler implements ResultHandler {
     private Map<String, Format> formats;
 
     /**
+     * Empty bean constructor.
+     */
+    public JDBCResultHandler() {
+    }
+
+    /**
+     * Paramaterized constructor.
+     * @param resultHandlerDao The resulthandlerdao to use.
+     * @param progressMonitor The progress monitor to use.
+     */
+    public JDBCResultHandler(ResultHandlerDao resultHandlerDao, ProgressMonitor progressMonitor) {
+        setResultHandlerDao(resultHandlerDao);
+        setProgressMonitor(progressMonitor);
+    }
+
+    /**
      * Saves the incoming result to the database.
      *
      * @param results

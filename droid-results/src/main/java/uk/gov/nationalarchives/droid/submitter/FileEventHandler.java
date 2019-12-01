@@ -86,6 +86,21 @@ public class FileEventHandler {
     }
 
     /**
+     * Paramaterized constructor.
+     * @param droidCore The engine to submit to.
+     * @param resultHandler The result handler
+     * @param requestFactory The request factory.
+     * @param submissionThrottle The submission throttle.
+     */
+    public FileEventHandler(AsynchDroid droidCore, ResultHandler resultHandler,
+                            IdentificationRequestFactory<Path> requestFactory, SubmissionThrottle submissionThrottle) {
+        setDroidCore(droidCore);
+        setResultHandler(resultHandler);
+        setRequestFactory(requestFactory);
+        setSubmissionThrottle(submissionThrottle);
+    }
+
+    /**
      * Creates a job in the database and submits the job to the identification
      * engine.
      * 

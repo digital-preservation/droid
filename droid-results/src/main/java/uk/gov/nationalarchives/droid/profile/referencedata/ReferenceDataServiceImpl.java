@@ -41,16 +41,28 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     private ReferenceData referenceData;
 
     @Autowired
-    private ReferenceDataDao rerferenceDataDao;
+    private ReferenceDataDao referenceDataDao;
 
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public ReferenceDataServiceImpl() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * 
+     * @param referenceDataDao The ReferenceDataDao to use.
+     */
+    public ReferenceDataServiceImpl(ReferenceDataDao referenceDataDao) {
+        this.referenceDataDao = referenceDataDao;
+    }
+
     @Override
     public ReferenceData getReferenceData() {
         if (referenceData == null) {
             referenceData = new ReferenceData();
-            referenceData.setFormats(rerferenceDataDao.getFormats());
+            referenceData.setFormats(referenceDataDao.getFormats());
         }
         return referenceData;
     }

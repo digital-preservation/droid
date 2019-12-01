@@ -204,6 +204,22 @@ public class JDBCProfileDao implements ProfileDao {
     private JdbcTemplate jdbcTemplate;
 
     /**
+     * Empty bean constructor.
+     */
+    public JDBCProfileDao() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param datasource The datasource to use.
+     * @param resultHandlerDao The ResultHandlerDao to use.
+     */
+    public JDBCProfileDao(DataSource datasource, ResultHandlerDao resultHandlerDao) {
+        setDatasource(datasource);
+        setResultHandlerDao(resultHandlerDao);
+    }
+
+    /**
      *
      * @param datasource The SQL datasource to use.
      */

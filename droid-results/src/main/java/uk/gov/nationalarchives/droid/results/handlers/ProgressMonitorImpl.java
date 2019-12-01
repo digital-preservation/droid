@@ -56,6 +56,22 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     private ProfileResultObserver resultObserver;
 
     /**
+     * Empty bean constructor.
+     */
+    public ProgressMonitorImpl() {
+    }
+
+    /**
+     * Paramaterized constructor.
+     * @param observer The progress observer to use.
+     * @param resultObserver The result observer to use.
+     */
+    public ProgressMonitorImpl(ProgressObserver observer, ProfileResultObserver resultObserver) {
+        setPercentIncrementObserver(observer);
+        setResultObserver(resultObserver);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
