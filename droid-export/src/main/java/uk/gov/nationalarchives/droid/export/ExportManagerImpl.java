@@ -54,10 +54,25 @@ public class ExportManagerImpl implements ExportManager {
     private ItemWriter<ProfileResourceNode> itemWriter;
     
     private ExecutorService executor = Executors.newSingleThreadExecutor();
-    
+
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public ExportManagerImpl() {
+    }
+
+    /**
+     * Parameterised constructor.
+     *
+     * @param profileContextLocator The profilecontextlocator to use.
+     * @param itemWriter The itemwriter to use.
+     */
+    public ExportManagerImpl(ProfileContextLocator profileContextLocator,
+                             ItemWriter<ProfileResourceNode> itemWriter) {
+        this.profileContextLocator = profileContextLocator;
+        this.itemWriter = itemWriter;
+    }
+
     @Override
     public Future<?> exportProfiles(final List<String> profileIds, final String destination, 
         final Filter filter, final ExportOptions options, final String outputEncoding, final boolean bom) {
