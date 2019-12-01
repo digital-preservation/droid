@@ -57,7 +57,7 @@ public class ProxySettings implements ConfigurationListener {
     private Set<ProxySubscriber> proxySubscribers = new HashSet<ProxySubscriber>();
 
     /**
-     * Empty bean constructor
+     * Empty bean constructor.
      */
     public ProxySettings() {
     }

@@ -51,13 +51,14 @@ public class IdentificationResultImpl implements IdentificationResult {
     private RequestMetaData requestMetaData;
 
     /**
-     * Empty constructor
+     * Empty constructor.
      */
     public IdentificationResultImpl() {
     }
 
     /**
      * Constructs an IdentificationResult given all the data it needs.
+     *
      * @param puid The PUID identified.
      * @param name The name
      * @param version The version

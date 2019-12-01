@@ -58,7 +58,7 @@ public class ReportItem implements Aggregator {
     private Set<ReportData> aggregatedData = new HashSet<ReportData>();
 
     /**
-     * Empty bean constructor
+     * Empty bean constructor.
      */
     public ReportItem() {
     }
