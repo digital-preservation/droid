@@ -53,7 +53,30 @@ public class InstallSignatureFileAction {
     private String fileName;
     private boolean useAsDefault;
     private SignatureType type;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public InstallSignatureFileAction() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param filename The filename of the signature file to install.
+     * @param signatureType The type of signature.
+     * @param signatureManager The signature manager to use.
+     * @param useAsDefault Whether the signature should be used by default.
+     */
+    public InstallSignatureFileAction(String filename,
+                                      SignatureType signatureType,
+                                      SignatureManager signatureManager,
+                                      boolean useAsDefault) {
+        setFileName(filename);
+        setType(signatureType);
+        setSignatureManager(signatureManager);
+        setUseAsDefault(useAsDefault);
+    }
+
     /**
      * Executes this action.
      * @param parent the parent window

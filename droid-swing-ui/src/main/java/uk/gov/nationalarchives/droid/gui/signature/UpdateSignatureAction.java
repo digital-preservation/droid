@@ -72,6 +72,16 @@ public class UpdateSignatureAction extends SwingWorker<Map<SignatureType, Signat
      */
     public UpdateSignatureAction() {
     }
+
+    /**
+     * Parameterized constructor.
+     * @param signatureManager The signature manager to use.
+     * @param updates The updates to apply.
+     */
+    public UpdateSignatureAction(SignatureManager signatureManager, Collection<SignatureFileInfo> updates) {
+        setSignatureManager(signatureManager);
+        setUpdates(updates);
+    }
     
     /**
      * Starts the action.
@@ -87,10 +97,7 @@ public class UpdateSignatureAction extends SwingWorker<Map<SignatureType, Signat
             cancel(true);
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     protected Map<SignatureType, SignatureFileInfo> doInBackground() throws SignatureManagerException {
         Map<SignatureType, SignatureFileInfo> downloaded = new HashMap<SignatureType, SignatureFileInfo>();

@@ -71,6 +71,25 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     }
 
     /**
+     * Parameterized constructor.
+     * @param exportManager The exportmanager to use.
+     * @param destination The destination file.
+     * @param options The output options.
+     * @param outputEncoding The output encoding.
+     * @param bom use the bom flag in the output.
+     * @param profileIds The ids of the profiles to export.
+     */
+    public ExportAction(ExportManager exportManager, File destination, ExportOptions options, String outputEncoding,
+                        boolean bom, List<String> profileIds) {
+        setExportManager(exportManager);
+        setDestination(destination);
+        setExportOptions(options);
+        setOutputEncoding(outputEncoding);
+        setBom(bom);
+        setProfileIds(profileIds);
+    }
+
+    /**
      * Initialsies the export action.
      */
     public void init() {

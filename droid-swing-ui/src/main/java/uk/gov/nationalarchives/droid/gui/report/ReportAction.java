@@ -81,29 +81,59 @@ public class ReportAction extends SwingWorker<Void, Integer> {
     /**
      * Default constructor.
      */
-
     public ReportAction() {
+        setBackgroundProgressObserver();
+    }
+
+    //CHECKSTYLE:OFF too many parameters.
+    /**
+     *
+     * @param config The global config to use.
+     * @param reportManager The report manager.
+     * @param reportXmlWriter The report Xml writer.
+     * @param reportSpec The report spec.
+     * @param progressDialog The progress dialog.
+     * @param viewDialog The report dialog.
+     * @param exportReportAction The export report actions.
+     * @param profileIds The list of profile ids to report on.
+     */
+    public ReportAction(DroidGlobalConfig config, ReportManager reportManager, ReportXmlWriter reportXmlWriter,
+                        ReportSpec reportSpec, ReportProgressDialog progressDialog, ReportViewFrame viewDialog,
+                        ExportReportAction exportReportAction, List<String> profileIds) {
+        setBackgroundProgressObserver();
+        setConfig(config);
+        setReportManager(reportManager);
+        setReportXmlWriter(reportXmlWriter);
+        setReportSpec(reportSpec);
+        setProgressDialog(progressDialog);
+        setViewDialog(viewDialog);
+        setExportReportAction(exportReportAction);
+        setProfileIds(profileIds);
+    }
+    //CHECKSTYLE:ON
+
+    private void setBackgroundProgressObserver() {
         backgroundProgressObserver = new CancellableProgressObserver() {
-            
+
             private boolean cancelled;
-            
+
             @Override
             public void onProgress(Integer progress) {
                 publish(progress);
             }
-            
+
             @Override
             public void cancel() {
                 cancelled = true;
             }
-            
+
             @Override
             public boolean isCancelled() {
                 return cancelled;
             }
         };
     }
-    
+
     /**
      * @see javax.swing.SwingWorker#done()
      */
