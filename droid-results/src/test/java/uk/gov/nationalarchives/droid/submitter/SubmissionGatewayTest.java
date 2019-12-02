@@ -86,6 +86,12 @@ public class SubmissionGatewayTest {
         submissionGateway.setProcessArchives(true);
         submissionGateway.setProcessTar(true);
         submissionGateway.setProcessZip(true);
+        submissionGateway.setProcessGzip(true);
+        submissionGateway.setProcessRar(true);
+        submissionGateway.setProcess7zip(true);
+        submissionGateway.setProcessIso(true);
+        submissionGateway.setProcessBzip2(true);
+
         submissionGateway.setProcessWebArchives(false);
         submissionGateway.setExecutorService(Executors.newFixedThreadPool(2));
         

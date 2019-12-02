@@ -1,22 +1,22 @@
 /**
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following
  * conditions are met:
- *
- *  * Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- *  * Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- *  * Neither the name of the The National Archives nor the
- *    names of its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
+ * <p>
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * <p>
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * <p>
+ * * Neither the name of the The National Archives nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -69,30 +69,35 @@ import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
  * requests. Requests are removed from the queue when the droid ID task finishes
  * All requests should come through this pipeline.
  * @author rflitcroft
- * 
+ *
  *
  */
 //CHECKSTYLE:OFF - fan out complexity too high.
 public class SubmissionGateway implements AsynchDroid {
-/**
-     * 
+    /**
+     *
      */
     private static final String CONTAINER_ERROR = "Could not process the potential container format (%s): %s\t%s\t%s";
 
-/**
-     * 
+    /**
+     *
      */
     private static final String ARCHIVE_ERROR = "Could not process the archival format(%s): %s\t%s\t%s";
 
     //CHECKSTYLE:ON    
     private final Logger log = LoggerFactory.getLogger(getClass());
-
+    private final JobCounter jobCounter = new JobCounter();
     private DroidCore droidCore;
     private ResultHandler resultHandler;
     private ExecutorService executorService;
     private boolean processArchives;
     private boolean processZip;
     private boolean processTar;
+    private boolean processGzip;
+    private boolean processRar;
+    private boolean process7zip;
+    private boolean processIso;
+    private boolean processBzip2;
     private boolean processWebArchives;
     private ArchiveFormatResolver archiveFormatResolver;
     private ArchiveFormatResolver containerFormatResolver;
@@ -103,14 +108,12 @@ public class SubmissionGateway implements AsynchDroid {
     private boolean generateHash;
     private boolean matchAllExtensions;
     private long maxBytesToScan = -1;
-    
     private SubmissionQueue submissionQueue;
-    private final JobCounter jobCounter = new JobCounter();
     private ReplaySubmitter replaySubmitter;
-    
+
     private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -119,7 +122,7 @@ public class SubmissionGateway implements AsynchDroid {
     public Future<IdentificationResultCollection> submit(final IdentificationRequest request) {
         jobCounter.increment();
         requests.add(request);
-        
+
         // old code blocking identification:
         Callable<IdentificationResultCollection> callable = new Callable<IdentificationResultCollection>() {
             @Override
@@ -129,12 +132,12 @@ public class SubmissionGateway implements AsynchDroid {
                 return results;
             }
         };
-        
+
         FutureTask<IdentificationResultCollection> task = new SubmissionFutureTask(callable, request);
         executorService.submit(task);
         return task;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -142,76 +145,7 @@ public class SubmissionGateway implements AsynchDroid {
     public void replay() {
         replaySubmitter.replay();
     }
-    
-    private final class SubmissionFutureTask extends FutureTask<IdentificationResultCollection> {
 
-        private IdentificationRequest request;
-        
-        SubmissionFutureTask(Callable<IdentificationResultCollection> callable, IdentificationRequest request) {
-            super(callable);
-            this.request = request;
-        }
-
-        @Override
-        protected void done() {
-            boolean jobCountDecremented = false;
-            try {
-                generateHash(request);
-                IdentificationResultCollection results = get();
-                IdentificationResultCollection containerResults = handleContainer(request, results);
-                if (containerResults == null) {
-                    // no container results - process the normal results.
-                    droidCore.removeLowerPriorityHits(results);
-                    results = handleExtensions(request, results);
-                    
-                    // Are we processing archive formats?
-                    //TODO JC include list of included archive types in handleArchive
-                    String archiveFormat=null;
-                    if(archiveFormatResolver != null){
-                        archiveFormat = getArchiveFormat(results);
-                    }
-                    if (archiveFormat!=null) {
-                        handleArchive(request, results, archiveFormat);
-                        jobCountDecremented=true;
-                    } else { // just process the results so far:
-                        results.setArchive(getArchiveFormat(results) != null);
-                        ResourceId id = resultHandler.handle(results);
-                        request.getIdentifier().setResourceId(id);
-                    }
-                } else { // we have possible container formats:
-                    droidCore.removeLowerPriorityHits(containerResults);
-                    containerResults = handleExtensions(request, containerResults);
-                    ResourceId id = resultHandler.handle(containerResults);
-                    request.getIdentifier().setResourceId(id);
-                }
-            } catch (ExecutionException e) {
-                final Throwable cause = e.getCause();
-                log.error(cause.getStackTrace().toString(), cause);
-                resultHandler.handleError(new IdentificationException(
-                        request, IdentificationErrorType.OTHER, cause));
-            } catch (InterruptedException e) {
-                log.debug(e.getMessage(), e);
-            } catch (IOException e) {
-                resultHandler.handleError(new IdentificationException(
-                        request, IdentificationErrorType.OTHER, e));
-            } finally {
-                closeRequest();
-                if (!jobCountDecremented) {
-                    jobCounter.decrement();
-                }
-            }
-        }
-        
-        private void closeRequest() {
-            requests.remove(request);
-            try {
-                request.close();
-            } catch (IOException e) {
-                log.error(String.format("Error closing request [%s]", request.getIdentifier().getUri()), e);
-            }
-        }
-    }
-    
     private void generateHash(IdentificationRequest request) throws IOException {
         if (generateHash) {
             try {
@@ -224,7 +158,7 @@ public class SubmissionGateway implements AsynchDroid {
                         in.close();
                     }
                 }
-            //CHECKSTYLE:OFF - generating a hash can't prejudice any other results
+                //CHECKSTYLE:OFF - generating a hash can't prejudice any other results
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
@@ -232,8 +166,8 @@ public class SubmissionGateway implements AsynchDroid {
         }
     }
 
-    private IdentificationResultCollection handleExtensions(IdentificationRequest request, 
-            IdentificationResultCollection results) {
+    private IdentificationResultCollection handleExtensions(IdentificationRequest request,
+                                                            IdentificationResultCollection results) {
         IdentificationResultCollection extensionResults = results;
         try {
             List<IdentificationResult> resultList = results.getResults();
@@ -243,16 +177,16 @@ public class SubmissionGateway implements AsynchDroid {
                 // If "false", it will only match file formats for which
                 // there is no other signature defined.
                 IdentificationResultCollection checkExtensionResults =
-                    droidCore.matchExtensions(request, matchAllExtensions);
+                        droidCore.matchExtensions(request, matchAllExtensions);
                 if (checkExtensionResults != null) {
                     extensionResults = checkExtensionResults;
                 }
             } else {
-                droidCore.checkForExtensionsMismatches(extensionResults, 
-                        request.getExtension());                        
+                droidCore.checkForExtensionsMismatches(extensionResults,
+                        request.getExtension());
             }
-        //CHECKSTYLE:OFF - do not allow any errors in other code to
-        //    prevent results so far from being recorded.
+            //CHECKSTYLE:OFF - do not allow any errors in other code to
+            //    prevent results so far from being recorded.
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -266,7 +200,7 @@ public class SubmissionGateway implements AsynchDroid {
      * @return
      */
     private void handleArchive(IdentificationRequest request,
-        IdentificationResultCollection results, String archiveFormat) {
+                               IdentificationResultCollection results, String archiveFormat) {
         results.setArchive(true);
         ResourceId id = resultHandler.handle(results);
         jobCounter.incrementPostProcess();
@@ -304,9 +238,9 @@ public class SubmissionGateway implements AsynchDroid {
         }
     }
 
-    private IdentificationResultCollection handleContainer(IdentificationRequest request, 
-            IdentificationResultCollection results)
-        throws IOException {
+    private IdentificationResultCollection handleContainer(IdentificationRequest request,
+                                                           IdentificationResultCollection results)
+            throws IOException {
         // process a container format (ole2, odf, ooxml etc)
         String containerFormat = getContainerFormat(results);
         try {
@@ -318,23 +252,23 @@ public class SubmissionGateway implements AsynchDroid {
                 droidCore.checkForExtensionsMismatches(containerResults, request.getExtension());
                 containerResults.setFileLength(request.size());
                 containerResults.setRequestMetaData(request.getRequestMetaData());
-                return containerResults.getResults().isEmpty() ? null : containerResults; 
+                return containerResults.getResults().isEmpty() ? null : containerResults;
             }
-        //CHECKSTYLE:OFF - rules say don't catch this, but other code keeps on throwing them.
+            //CHECKSTYLE:OFF - rules say don't catch this, but other code keeps on throwing them.
             // Don't prejudice any results so far because other code isn't following 'the rules'.
         } catch (Exception e) {
-        //CHECKSTYLE:ON
+            //CHECKSTYLE:ON
             String causeMessage = "";
             if (e.getCause() != null) {
                 causeMessage = e.getCause().getMessage();
             }
-            final String message = String.format(CONTAINER_ERROR, 
+            final String message = String.format(CONTAINER_ERROR,
                     containerFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
-            log.warn(message);  
+            log.warn(message);
         }
         return null;
     }
-    
+
     /**
      * @param results A previous identification of an archival format.
      * @return format or null
@@ -346,19 +280,29 @@ public class SubmissionGateway implements AsynchDroid {
             final IdentificationResult result = theResults.get(i);
             String format = archiveFormatResolver.forPuid(result.getPuid());
             if (format != null) { // exit on the first non-null format met
-                //TODO JC process list of archival types here
-                if (!processWebArchives && isWebArchiveFormat(format)
-                    || !processArchives && !isWebArchiveFormat(format)
-                    || "ZIP".equals(format) && !processZip
-                    || "TAR".equals(format) && !processTar) {
+                if (isFormatFilteredOut(format)) {
                     format = null;
                 }
                 return format;
             }
         }
-        
+
         return null;
     }
+
+    //CHECKSTYLE:OFF - cyclomatic complexity too high.
+    private boolean isFormatFilteredOut(String format) {
+        return !processWebArchives && isWebArchiveFormat(format)
+                || !processArchives && !isWebArchiveFormat(format)
+                || "ZIP".equals(format) && !processZip
+                || "TAR".equals(format) && !processTar
+                || "GZ".equals(format) && !processGzip
+                || "RAR".equals(format) && !processRar
+                || "7Z".equals(format) && !process7zip
+                || "ISO".equals(format) && !processIso
+                || "BZ".equals(format) && !processBzip2;
+    }
+    //CHECKSTYLE:ON
 
     /**
      *
@@ -379,10 +323,10 @@ public class SubmissionGateway implements AsynchDroid {
                 return format;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Waits until all in-process jobs have completed.
      * @throws InterruptedException if the calling thread was interrupted.
@@ -391,7 +335,7 @@ public class SubmissionGateway implements AsynchDroid {
     public void awaitIdle() throws InterruptedException {
         jobCounter.awaitIdle();
     }
-    
+
     /**
      * Waits until the job queue is empty AND all sub-tasks (archives etc.) have finished.
      * @throws InterruptedException if the calling thread was interrupted.
@@ -407,42 +351,42 @@ public class SubmissionGateway implements AsynchDroid {
     public void setArchiveFormatResolver(ArchiveFormatResolver archiveFormatResolver) {
         this.archiveFormatResolver = archiveFormatResolver;
     }
-    
+
     /**
      * @param archiveHandlerFactory the archiveHandlerFactory to set
      */
     public void setArchiveHandlerFactory(ArchiveHandlerFactory archiveHandlerFactory) {
         this.archiveHandlerFactory = archiveHandlerFactory;
     }
-    
+
     /**
      * @param containerFormatResolver the containerFormatResolver to set
      */
     public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
         this.containerFormatResolver = containerFormatResolver;
     }
-    
+
     /**
      * @param containerIdentifierFactory the containerIdentifierFactory to set
      */
     public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
         this.containerIdentifierFactory = containerIdentifierFactory;
     }
-    
+
     /**
      * @param droidCore the droidCore to set
      */
     public void setDroidCore(DroidCore droidCore) {
         this.droidCore = droidCore;
     }
-    
+
     /**
      * @param executorService the executorService to set
      */
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
-    
+
     /**
      * @param processArchives set whether to process Archives
      */
@@ -455,16 +399,56 @@ public class SubmissionGateway implements AsynchDroid {
      * @param processWebArchives set whether to process Web Archives
      */
     public void setProcessWebArchives(boolean processWebArchives) {
-        //TODO JC I would replace boolean with a pojo and booleans for each managed container
         this.processWebArchives = processWebArchives;
     }
 
+    /**
+     * @param processZip set whether to process Zip files
+     */
     public void setProcessZip(boolean processZip) {
         this.processZip = processZip;
     }
 
+    /**
+     * @param processTar set whether to process Tar files
+     */
     public void setProcessTar(boolean processTar) {
         this.processTar = processTar;
+    }
+
+    /**
+     * @param processGzip set whether to process Gzip files
+     */
+    public void setProcessGzip(boolean processGzip) {
+        this.processGzip = processGzip;
+    }
+
+    /**
+     * @param processRar set whether to process Rar files
+     */
+    public void setProcessRar(boolean processRar) {
+        this.processRar = processRar;
+    }
+
+    /**
+     * @param process7zip set whether to process 7zip files
+     */
+    public void setProcess7zip(boolean process7zip) {
+        this.process7zip = process7zip;
+    }
+
+    /**
+     * @param processIso set whether to process Iso files
+     */
+    public void setProcessIso(boolean processIso) {
+        this.processIso = processIso;
+    }
+
+    /**
+     * @param processBzip2 set whether to process Bzip2 files
+     */
+    public void setProcessBzip2(boolean processBzip2) {
+        this.processBzip2 = processBzip2;
     }
 
     /**
@@ -473,14 +457,14 @@ public class SubmissionGateway implements AsynchDroid {
     public void setResultHandler(ResultHandler resultHandler) {
         this.resultHandler = resultHandler;
     }
-    
+
     /**
      * @param submissionQueue the submissionQueue to set
      */
     public void setSubmissionQueue(SubmissionQueue submissionQueue) {
         this.submissionQueue = submissionQueue;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -489,35 +473,35 @@ public class SubmissionGateway implements AsynchDroid {
         resultHandler.commit(); // flush any remaining entities out to the database.
         submissionQueue.save();
     }
-    
+
     /**
      * @param replaySubmitter the replaySubmitter to set
      */
     public void setReplaySubmitter(ReplaySubmitter replaySubmitter) {
         this.replaySubmitter = replaySubmitter;
     }
-    
+
     /**
      * @param hashGenerator the hashGenerator to set
      */
     public void setHashGenerator(HashGenerator hashGenerator) {
         this.hashGenerator = hashGenerator;
     }
-    
+
     /**
      * @param generateHash the generateHash to set
      */
     public void setGenerateHash(boolean generateHash) {
         this.generateHash = generateHash;
     }
-    
-        /**
+
+    /**
      * @param hashAlgorithm the algorithm to set
      */
     public void setHashAlgorithm(String hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
     }
-    
+
     /**
      * Shuts down the executor service and closes any in-flight requests.
      * @throws IOException if temp files could not be deleted.
@@ -536,15 +520,83 @@ public class SubmissionGateway implements AsynchDroid {
     public void setMaxBytesToScan(long maxBytesToScan) {
         this.maxBytesToScan = maxBytesToScan;
     }
-    
-    
+
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
     public void setMatchAllExtensions(boolean matchAllExtensions) {
         this.matchAllExtensions = matchAllExtensions;
     }
-    
+
+    private final class SubmissionFutureTask extends FutureTask<IdentificationResultCollection> {
+
+        private IdentificationRequest request;
+
+        SubmissionFutureTask(Callable<IdentificationResultCollection> callable, IdentificationRequest request) {
+            super(callable);
+            this.request = request;
+        }
+
+        @Override
+        protected void done() {
+            boolean jobCountDecremented = false;
+            try {
+                generateHash(request);
+                IdentificationResultCollection results = get();
+                IdentificationResultCollection containerResults = handleContainer(request, results);
+                if (containerResults == null) {
+                    // no container results - process the normal results.
+                    droidCore.removeLowerPriorityHits(results);
+                    results = handleExtensions(request, results);
+
+                    // Are we processing archive formats?
+                    //TODO JC include list of included archive types in handleArchive
+                    String archiveFormat = null;
+                    if (archiveFormatResolver != null) {
+                        archiveFormat = getArchiveFormat(results);
+                    }
+                    if (archiveFormat != null) {
+                        handleArchive(request, results, archiveFormat);
+                        jobCountDecremented = true;
+                    } else { // just process the results so far:
+                        results.setArchive(getArchiveFormat(results) != null);
+                        ResourceId id = resultHandler.handle(results);
+                        request.getIdentifier().setResourceId(id);
+                    }
+                } else { // we have possible container formats:
+                    droidCore.removeLowerPriorityHits(containerResults);
+                    containerResults = handleExtensions(request, containerResults);
+                    ResourceId id = resultHandler.handle(containerResults);
+                    request.getIdentifier().setResourceId(id);
+                }
+            } catch (ExecutionException e) {
+                final Throwable cause = e.getCause();
+                log.error(cause.getStackTrace().toString(), cause);
+                resultHandler.handleError(new IdentificationException(
+                        request, IdentificationErrorType.OTHER, cause));
+            } catch (InterruptedException e) {
+                log.debug(e.getMessage(), e);
+            } catch (IOException e) {
+                resultHandler.handleError(new IdentificationException(
+                        request, IdentificationErrorType.OTHER, e));
+            } finally {
+                closeRequest();
+                if (!jobCountDecremented) {
+                    jobCounter.decrement();
+                }
+            }
+        }
+
+        private void closeRequest() {
+            requests.remove(request);
+            try {
+                request.close();
+            } catch (IOException e) {
+                log.error(String.format("Error closing request [%s]", request.getIdentifier().getUri()), e);
+            }
+        }
+    }
+
 }

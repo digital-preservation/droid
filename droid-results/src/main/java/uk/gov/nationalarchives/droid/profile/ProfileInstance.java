@@ -131,13 +131,20 @@ public class ProfileInstance {
     @XmlElement(name = "ProcessWebArchiveFiles")
     private Boolean processWebArchiveFiles;
 
-    //TODO JC add archival types here
-
     @XmlElement(name = "ProcessTarFiles")
     private Boolean processTarFiles;
-
     @XmlElement(name = "ProcessZipFiles")
     private Boolean processZipFiles;
+    @XmlElement(name = "ProcessRarFiles")
+    private Boolean processRarFiles;
+    @XmlElement(name = "ProcessGzipFiles")
+    private Boolean processGzipFiles;
+    @XmlElement(name = "Process7zipFiles")
+    private Boolean process7zipFiles;
+    @XmlElement(name = "ProcessIsoFiles")
+    private Boolean processIsoFiles;
+    @XmlElement(name = "ProcessBzip2Files")
+    private Boolean processBzip2Files;
 
     @XmlElement(name = "MaxBytesToScan")
     private Long maxBytesToScan;
@@ -147,7 +154,7 @@ public class ProfileInstance {
     
     @XmlTransient
     private Set<ProfileEventListener> eventListeners = new HashSet<ProfileEventListener>();
-    
+
     /**
      * Constructs a profile instance in a default state.
      * @param state the default state.
@@ -599,18 +606,34 @@ public class ProfileInstance {
         this.processWebArchiveFiles = processWebArchiveFiles;
     }
 
+    /**
+     *
+     * @return Whether to process Tar files or not.
+     */
     public Boolean getProcessTarFiles() {
         return processTarFiles;
     }
 
+    /**
+     *
+     * @param processTarFiles Whether to process Tar files or not.
+     */
     public void setProcessTarFiles(Boolean processTarFiles) {
         this.processTarFiles = processTarFiles;
     }
 
+    /**
+     *
+     * @return Whether to process Zip files or not.
+     */
     public Boolean getProcessZipFiles() {
         return processZipFiles;
     }
 
+    /**
+     *
+     * @param processZipFiles Whether to process Zip files or not.
+     */
     public void setProcessZipFiles(Boolean processZipFiles) {
         this.processZipFiles = processZipFiles;
     }
@@ -650,5 +673,84 @@ public class ProfileInstance {
     public Boolean getMatchAllExtensions() {
         return matchAllExtensions;
     }
-    
+
+    /**
+     *
+     * @return Whether to process Rar files or not.
+     */
+    public Boolean getProcessRarFiles() {
+        return processRarFiles;
+    }
+
+    /**
+     *
+     * @param processRarFiles Whether to process Rar files or not.
+     */
+    public void setProcessRarFiles(Boolean processRarFiles) {
+        this.processRarFiles = processRarFiles;
+    }
+
+    /**
+     *
+     * @return Whether to process Gzip files or not.
+     */
+    public Boolean getProcessGzipFiles() {
+        return processGzipFiles;
+    }
+
+    /**
+     *
+     * @param processGzipFiles Whether to process Gzip files or not.
+     */
+    public void setProcessGzipFiles(Boolean processGzipFiles) {
+        this.processGzipFiles = processGzipFiles;
+    }
+
+    /**
+     *
+     * @return Whether to process 7zip files or not.
+     */
+    public Boolean getProcess7zipFiles() {
+        return process7zipFiles;
+    }
+
+    /**
+     *
+     * @param process7zipFiles Whether to process 7zip files or not.
+     */
+    public void setProcess7zipFiles(Boolean process7zipFiles) {
+        this.process7zipFiles = process7zipFiles;
+    }
+
+    /**
+     *
+     * @return Whether to process Iso files or not.
+     */
+    public Boolean getProcessIsoFiles() {
+        return processIsoFiles;
+    }
+
+    /**
+     *
+     * @param processIsoFiles Whether to process Iso files or not.
+     */
+    public void setProcessIsoFiles(Boolean processIsoFiles) {
+        this.processIsoFiles = processIsoFiles;
+    }
+
+    /**
+     *
+     * @return Whether to process Bzip2 files or not.
+     */
+    public Boolean getProcessBzip2Files() {
+        return processBzip2Files;
+    }
+
+    /**
+     *
+     * @param processBzip2Files Whether to process Bzip2 files or not.
+     */
+    public void setProcessBzip2Files(Boolean processBzip2Files) {
+        this.processBzip2Files = processBzip2Files;
+    }
 }
