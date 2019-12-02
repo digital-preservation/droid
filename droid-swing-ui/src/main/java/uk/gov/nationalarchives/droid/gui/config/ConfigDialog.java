@@ -222,6 +222,8 @@ public class ConfigDialog extends JDialog {
         processWebArchivesCheckBox = new JCheckBox();
         processZipCheckBox = new JCheckBox();
         processTarCheckBox = new JCheckBox();
+        toggleArchivesButton = new JButton();
+        archivesLabel = new JLabel();
         jPanel2 = new JPanel();
         jPanel1 = new JPanel();
         rowPerFileButton1 = new JRadioButton();
@@ -378,6 +380,16 @@ public class ConfigDialog extends JDialog {
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
 
+        toggleArchivesButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.toggleArchivesButton.text")); // NOI18N
+        toggleArchivesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                toggleArchivesButtonActionPerformed(evt);
+            }
+        });
+
+        archivesLabel.setLabelFor(containerSigCombo);
+        archivesLabel.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.archivesLabel.text")); // NOI18N
+
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
@@ -399,13 +411,6 @@ public class ConfigDialog extends JDialog {
                         .addContainerGap())
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(processArchivesCheckBox)
-                            .addComponent(rowPerFileButton2)
-                            .addComponent(rowPerFormatButton2)
-                            .addComponent(processWebArchivesCheckBox))
-                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(generateHashCheckBox)
                                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -418,17 +423,28 @@ public class ConfigDialog extends JDialog {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(44, 44, 44)
+                                .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
+                                    .addComponent(toggleArchivesButton)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(processZipCheckBox)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(processTarCheckBox))))
+                            .addComponent(archivesLabel))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(processArchivesCheckBox)
+                            .addComponent(rowPerFileButton2)
+                            .addComponent(rowPerFormatButton2)
+                            .addComponent(processWebArchivesCheckBox)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(jLabel4))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(29, 29, 29)
-                                .addComponent(processZipCheckBox)
-                                .addGap(18, 18, 18)
-                                .addComponent(processTarCheckBox)))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(jLabel4)))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -443,9 +459,14 @@ public class ConfigDialog extends JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(processArchivesCheckBox)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(archivesLabel)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(toggleArchivesButton)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(processZipCheckBox)
                     .addComponent(processTarCheckBox))
+                .addGap(25, 25, 25)
                 .addComponent(processWebArchivesCheckBox)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
@@ -576,27 +597,27 @@ public class ConfigDialog extends JDialog {
         GroupLayout autoUpdatePanelLayout = new GroupLayout(autoUpdatePanel);
         autoUpdatePanel.setLayout(autoUpdatePanelLayout);
         autoUpdatePanelLayout.setHorizontalGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
-            .addGroup(autoUpdatePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(updateOnStartupRadioButton)
-                    .addGroup(autoUpdatePanelLayout.createSequentialGroup()
-                        .addComponent(updateScheduleRadioButton)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(updateFrequencyTextBox, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jLabel6)))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(autoUpdatePanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
+                                .addComponent(updateOnStartupRadioButton)
+                                .addGroup(autoUpdatePanelLayout.createSequentialGroup()
+                                        .addComponent(updateScheduleRadioButton)
+                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                        .addComponent(updateFrequencyTextBox, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                        .addComponent(jLabel6)))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         autoUpdatePanelLayout.setVerticalGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.LEADING)
-            .addGroup(autoUpdatePanelLayout.createSequentialGroup()
-                .addComponent(updateOnStartupRadioButton)
-                .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(updateFrequencyTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateScheduleRadioButton)
-                    .addComponent(jLabel6))
-                .addGap(12, 12, 12))
+                .addGroup(autoUpdatePanelLayout.createSequentialGroup()
+                        .addComponent(updateOnStartupRadioButton)
+                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addGroup(autoUpdatePanelLayout.createParallelGroup(Alignment.BASELINE)
+                                .addComponent(updateFrequencyTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(updateScheduleRadioButton)
+                                .addComponent(jLabel6))
+                        .addGap(12, 12, 12))
         );
 
         autoUpdateCheckbox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoUpdateCheckbox.text")); // NOI18N
@@ -662,67 +683,67 @@ public class ConfigDialog extends JDialog {
         GroupLayout jPanel5Layout = new GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pronomUrlResetButton)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(proxySettingsButton)
-                .addContainerGap())
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(askToDownloadCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(pronomUrlResetButton)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(proxySettingsButton)
+                        .addContainerGap())
+                .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(autoSetDefaultSignatureFileCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(autoUpdateCheckbox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(autoUpdatePanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel5))
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
-                                    .addComponent(containerSigUrl)
-                                    .addComponent(updateUrlTextBox)))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addGap(0, 253, Short.MAX_VALUE))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(jTextField1)))
-                        .addContainerGap())))
+                                .addComponent(askToDownloadCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+                                                .addComponent(autoSetDefaultSignatureFileCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(autoUpdateCheckbox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(autoUpdatePanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGroup(jPanel5Layout.createSequentialGroup()
+                                                        .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+                                                                .addComponent(jLabel2)
+                                                                .addComponent(jLabel5))
+                                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                                        .addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+                                                                .addComponent(containerSigUrl)
+                                                                .addComponent(updateUrlTextBox)))
+                                                .addGroup(jPanel5Layout.createSequentialGroup()
+                                                        .addComponent(jLabel7)
+                                                        .addGap(0, 253, Short.MAX_VALUE))
+                                                .addGroup(jPanel5Layout.createSequentialGroup()
+                                                        .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                                        .addComponent(jTextField1)))
+                                        .addContainerGap())))
         );
         jPanel5Layout.setVerticalGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel7)
-                .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(updateUrlTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17)
-                .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(containerSigUrl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(proxySettingsButton)
-                    .addComponent(pronomUrlResetButton))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(autoUpdateCheckbox)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(askToDownloadCheckBox)
-                .addGap(5, 5, 5)
-                .addComponent(autoSetDefaultSignatureFileCheckBox)
-                .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(autoUpdatePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
+                                .addComponent(jLabel5)
+                                .addComponent(updateUrlTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGap(17, 17, 17)
+                        .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
+                                .addComponent(containerSigUrl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2))
+                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
+                                .addComponent(proxySettingsButton)
+                                .addComponent(pronomUrlResetButton))
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(autoUpdateCheckbox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(askToDownloadCheckBox)
+                        .addGap(5, 5, 5)
+                        .addComponent(autoSetDefaultSignatureFileCheckBox)
+                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addComponent(autoUpdatePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(Alignment.BASELINE)
+                                .addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel1))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel3.TabConstraints.tabTitle"), jPanel5); // NOI18N
@@ -744,29 +765,29 @@ public class ConfigDialog extends JDialog {
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(cancelButton)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(okButton))
-                    .addComponent(generalTabbedPane1))
-                .addContainerGap())
+                .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(cancelButton)
+                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                        .addComponent(okButton))
+                                .addComponent(generalTabbedPane1))
+                        .addContainerGap())
         );
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {cancelButton, okButton});
 
         layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(generalTabbedPane1)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(okButton)
-                    .addComponent(cancelButton))
-                .addContainerGap())
+                .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(generalTabbedPane1)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                                .addComponent(okButton)
+                                .addComponent(cancelButton))
+                        .addContainerGap())
         );
 
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {cancelButton, okButton});
@@ -791,31 +812,31 @@ public class ConfigDialog extends JDialog {
         if (proxyDialog.getResponse() == UpdateProxyConfigDialog.OK) {
             globalConfig.putAll(proxyDialog.getProperties());
         }
-}//GEN-LAST:event_proxySettingsButtonActionPerformed
+    }//GEN-LAST:event_proxySettingsButtonActionPerformed
 
     private void updateOnStartupRadioButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_updateOnStartupRadioButtonActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_updateOnStartupRadioButtonActionPerformed
+    }//GEN-LAST:event_updateOnStartupRadioButtonActionPerformed
 
     private void autoSetDefaultSignatureFileCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_autoSetDefaultSignatureFileCheckBoxActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_autoSetDefaultSignatureFileCheckBoxActionPerformed
+    }//GEN-LAST:event_autoSetDefaultSignatureFileCheckBoxActionPerformed
 
     private void updateUrlTextBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_updateUrlTextBoxActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_updateUrlTextBoxActionPerformed
+    }//GEN-LAST:event_updateUrlTextBoxActionPerformed
 
     private void containerSigComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_containerSigComboActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_containerSigComboActionPerformed
+    }//GEN-LAST:event_containerSigComboActionPerformed
 
     private void generateHashCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generateHashCheckBoxActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_generateHashCheckBoxActionPerformed
+    }//GEN-LAST:event_generateHashCheckBoxActionPerformed
 
     private void processArchivesCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processArchivesCheckBoxActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_processArchivesCheckBoxActionPerformed
+    }//GEN-LAST:event_processArchivesCheckBoxActionPerformed
 
     private void rowPerFormatButton1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_rowPerFormatButton1ActionPerformed
         // TODO add your handling code here:
@@ -844,14 +865,24 @@ public class ConfigDialog extends JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_processTarCheckBoxActionPerformed
 
+    private void toggleArchivesButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_toggleArchivesButtonActionPerformed
+        if(!processTarCheckBox.isSelected() || !processZipCheckBox.isSelected()){
+            processTarCheckBox.setSelected(true);
+            processZipCheckBox.setSelected(true);
+        }else{
+            processTarCheckBox.setSelected(false);
+            processZipCheckBox.setSelected(false);
+        }
+    }//GEN-LAST:event_toggleArchivesButtonActionPerformed
+
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
         for (Component c : panel.getComponents()) {
             c.setEnabled(enabled);
         }
     }
-    
-    private void autoUpdateItemStateChanged(ItemEvent evt) {                                            
+
+    private void autoUpdateItemStateChanged(ItemEvent evt) {
         setPanelComponents(autoUpdatePanel, evt.getStateChange() == ItemEvent.SELECTED);
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             updateFrequencyTextBox.setEnabled(updateScheduleRadioButton.isSelected());
@@ -865,8 +896,10 @@ public class ConfigDialog extends JDialog {
     private JPanel autoUpdatePanel;
     private ButtonGroup buttonGroupExtension;
     private JButton cancelButton;
+    private JButton toggleArchivesButton;
     private JComboBox containerSigCombo;
     private JLabel containerSigFileLabel;
+    private JLabel archivesLabel;
     private JTextField containerSigUrl;
     private ButtonGroup csvExportButtonGroup;
     private JComboBox defaultSigFileComboBox1;
@@ -909,7 +942,7 @@ public class ConfigDialog extends JDialog {
     private JTextField updateUrlTextBox;
     private BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
-    
+
     /**
      * @return the dialog response
      */
@@ -936,7 +969,7 @@ public class ConfigDialog extends JDialog {
     JButton getCancelButton() {
         return cancelButton;
     }
-    
+
     /**
      * @return the okButton
      */
@@ -951,29 +984,29 @@ public class ConfigDialog extends JDialog {
         return globalConfig;
     }
 
-       /**
-     * 
+    /**
+     *
      * @return collection of available signature files.
      */
     public List<String> getAllBinarySigFiles() {
         return allBinarySigFiles;
     }
-    
+
     /**
-     * 
+     *
      * @return collection of available hash algorithms.
      */
     public List<String> getAllHashAlgorithms() {
         return allHashAlgorithms;
     }
-    
+
     /**
      * @return the allContainerSigFiles
      */
     public List<String> getAllContainerSigFiles() {
         return allContainerSigFiles;
     }
-    
+
     /**
      * @return the allTextSigFiles
      */
