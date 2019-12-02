@@ -221,7 +221,7 @@ public class ConfigDialog extends JDialog {
         jLabel10 = new JLabel();
         processWebArchivesCheckBox = new JCheckBox();
         processZipCheckBox = new JCheckBox();
-        processJarCheckBox = new JCheckBox();
+        processTarCheckBox = new JCheckBox();
         jPanel2 = new JPanel();
         jPanel1 = new JPanel();
         rowPerFileButton1 = new JRadioButton();
@@ -361,12 +361,22 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        processJarCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processJarCheckBox.text")); // NOI18N
-        processJarCheckBox.addActionListener(new ActionListener() {
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processZip\"]}"), processZipCheckBox, BeanProperty.create("selected"), "zipBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+        processTarCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processTarCheckBox.text")); // NOI18N
+        processTarCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                processJarCheckBoxActionPerformed(evt);
+                processTarCheckBoxActionPerformed(evt);
             }
         });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processTar\"]}"), processTarCheckBox, BeanProperty.create("selected"), "tarBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -417,7 +427,7 @@ public class ConfigDialog extends JDialog {
                                 .addGap(29, 29, 29)
                                 .addComponent(processZipCheckBox)
                                 .addGap(18, 18, 18)
-                                .addComponent(processJarCheckBox)))
+                                .addComponent(processTarCheckBox)))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
@@ -435,7 +445,7 @@ public class ConfigDialog extends JDialog {
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(processZipCheckBox)
-                    .addComponent(processJarCheckBox))
+                    .addComponent(processTarCheckBox))
                 .addComponent(processWebArchivesCheckBox)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
@@ -830,9 +840,9 @@ public class ConfigDialog extends JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_processZipCheckBoxActionPerformed
 
-    private void processJarCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processJarCheckBoxActionPerformed
+    private void processTarCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processTarCheckBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_processJarCheckBoxActionPerformed
+    }//GEN-LAST:event_processTarCheckBoxActionPerformed
 
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
@@ -883,7 +893,7 @@ public class ConfigDialog extends JDialog {
     private JButton okButton;
     //TODO JC need a checkbox for each container type
     private JCheckBox processArchivesCheckBox;
-    private JCheckBox processJarCheckBox;
+    private JCheckBox processTarCheckBox;
     private JCheckBox processWebArchivesCheckBox;
     private JCheckBox processZipCheckBox;
     private JButton pronomUrlResetButton;

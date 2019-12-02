@@ -146,7 +146,7 @@
                                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                                       <Component id="processZipCheckBox" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="processJarCheckBox" min="-2" max="-2" attributes="0"/>
+                                      <Component id="processTarCheckBox" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
@@ -171,7 +171,7 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="processZipCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="processJarCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="processTarCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                       <Component id="processWebArchivesCheckBox" min="-2" max="-2" attributes="0"/>
@@ -388,14 +388,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processZipCheckBoxActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="processJarCheckBox">
+            <Component class="javax.swing.JCheckBox" name="processTarCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processJarCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processTarCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processJarCheckBoxActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processTarCheckBoxActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

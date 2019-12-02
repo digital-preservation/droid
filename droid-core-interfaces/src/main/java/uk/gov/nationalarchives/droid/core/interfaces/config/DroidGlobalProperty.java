@@ -98,6 +98,10 @@ public enum DroidGlobalProperty {
     //TODO JC have boolean here for each container type
     /** Whether to process files in archives. */
     PROCESS_ARCHIVES("profile.processArchives", PropertyType.BOOLEAN, true),
+    /** Whether to process tar files in archives. */
+    PROCESS_TAR("profile.processTar", PropertyType.BOOLEAN, true),
+    /** Whether to process zip files in archives. */
+    PROCESS_ZIP("profile.processZip", PropertyType.BOOLEAN, true),
 
     /** Whether to process files in web archives. */
     PROCESS_WEB_ARCHIVES("profile.processWebArchives", PropertyType.BOOLEAN, true),

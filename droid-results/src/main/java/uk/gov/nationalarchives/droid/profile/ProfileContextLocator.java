@@ -95,6 +95,10 @@ public class ProfileContextLocator {
             // could have a single pojo on profile instance
             profileInstance.setProcessArchiveFiles(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.PROCESS_ARCHIVES.getName()));
+            profileInstance.setProcessTarFiles(globalConfig.getProperties()
+                    .getBoolean(DroidGlobalProperty.PROCESS_TAR.getName()));
+            profileInstance.setProcessZipFiles(globalConfig.getProperties()
+                    .getBoolean(DroidGlobalProperty.PROCESS_ZIP.getName()));
             profileInstance.setProcessWebArchiveFiles(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.PROCESS_WEB_ARCHIVES.getName()));
             profileInstance.setMaxBytesToScan(globalConfig.getProperties()
@@ -171,6 +175,8 @@ public class ProfileContextLocator {
         
         props.setProperty("containerSigPath", containerSignatureFile.toAbsolutePath().toString());
         props.setProperty("processArchives", String.valueOf(profile.getProcessArchiveFiles()));
+        props.setProperty("processTar", String.valueOf(profile.getProcessTarFiles()));
+        props.setProperty("processZip", String.valueOf(profile.getProcessZipFiles()));
         props.setProperty("processWebArchives", String.valueOf(profile.getProcessWebArchiveFiles()));
         props.setProperty("generateHash", String.valueOf(profile.getGenerateHash()));
         props.setProperty("hashAlgorithm", String.valueOf(profile.getHashAlgorithm()));

@@ -200,6 +200,8 @@ public class ProfileManagerIntegrationTest {
 
       profile.changeState(ProfileState.VIRGIN);
       profile.setProcessArchiveFiles(false);
+      profile.setProcessTarFiles(false);
+      profile.setProcessZipFiles(false);
       profile.setProcessWebArchiveFiles(false);
 
       final String profileId = profile.getUuid();

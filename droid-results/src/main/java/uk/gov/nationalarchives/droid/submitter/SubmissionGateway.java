@@ -91,6 +91,8 @@ public class SubmissionGateway implements AsynchDroid {
     private ResultHandler resultHandler;
     private ExecutorService executorService;
     private boolean processArchives;
+    private boolean processZip;
+    private boolean processTar;
     private boolean processWebArchives;
     private ArchiveFormatResolver archiveFormatResolver;
     private ArchiveFormatResolver containerFormatResolver;
@@ -163,9 +165,14 @@ public class SubmissionGateway implements AsynchDroid {
                     results = handleExtensions(request, results);
                     
                     // Are we processing archive formats?
-                    if ((processArchives || processWebArchives) && archiveFormatResolver != null) {
-                        //TODO JC include list of included archive types in handleArchive
-                        jobCountDecremented = handleArchive(request, results);
+                    //TODO JC include list of included archive types in handleArchive
+                    String archiveFormat=null;
+                    if(archiveFormatResolver != null){
+                        archiveFormat = getArchiveFormat(results);
+                    }
+                    if (archiveFormat!=null) {
+                        handleArchive(request, results, archiveFormat);
+                        jobCountDecremented=true;
                     } else { // just process the results so far:
                         results.setArchive(getArchiveFormat(results) != null);
                         ResourceId id = resultHandler.handle(results);
@@ -258,55 +265,43 @@ public class SubmissionGateway implements AsynchDroid {
      * @param results The previous identification results for the archive format.
      * @return
      */
-    private boolean handleArchive(IdentificationRequest request, 
-            IdentificationResultCollection results) {
-        
-        boolean jobCountDecremented = false;
-        
-        String archiveFormat = getArchiveFormat(results);
-        //TODO JC check for all formats here (archiveFormat="ZIP" if zip)
-        if (archiveFormat != null) {
-            results.setArchive(true);
-            ResourceId id = resultHandler.handle(results); 
-            jobCounter.incrementPostProcess();
-            RequestIdentifier identifier = request.getIdentifier();
-            identifier.setResourceId(id);
-            if (identifier.getAncestorId() == null) {
-                identifier.setAncestorId(id.getId());
-            }
-            submissionQueue.add(request.getIdentifier());
-            jobCounter.decrement();
-            jobCountDecremented = true;
-            try {
-                //BNO: Does this always return the same archive handler for any given container format?
-                //And will it end up using the same submission gateway, or a new one with a different thread pool?
-                ArchiveHandler handler = archiveHandlerFactory.getHandler(archiveFormat);
-                handler.handle(request);
-                // CHECKSTYLE:OFF
-            } catch (Exception e) {
-                // CHECKSTYLE:ON
-                String causeMessage = "";
-                if (e.getCause() != null) {
-                    causeMessage = e.getCause().getMessage();
-                }
-                final String message = String.format(ARCHIVE_ERROR, 
-                        archiveFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
-                if (log.isDebugEnabled()) {
-                    log.debug(message, e); // exception details included in debug.
-                } else {
-                    log.warn(message); // Just the message in normal operation.
-                }
-                resultHandler.handleError(new IdentificationException(
-                        request, IdentificationErrorType.OTHER, e));
-            } finally {
-                submissionQueue.remove(request.getIdentifier());
-                jobCounter.decrementPostProcess();
-            }
-        } else {
-            ResourceId id = resultHandler.handle(results);
-            request.getIdentifier().setNodeId(id.getId());
+    private void handleArchive(IdentificationRequest request,
+        IdentificationResultCollection results, String archiveFormat) {
+        results.setArchive(true);
+        ResourceId id = resultHandler.handle(results);
+        jobCounter.incrementPostProcess();
+        RequestIdentifier identifier = request.getIdentifier();
+        identifier.setResourceId(id);
+        if (identifier.getAncestorId() == null) {
+            identifier.setAncestorId(id.getId());
         }
-        return jobCountDecremented;
+        submissionQueue.add(request.getIdentifier());
+        jobCounter.decrement();
+        try {
+            //BNO: Does this always return the same archive handler for any given container format?
+            //And will it end up using the same submission gateway, or a new one with a different thread pool?
+            ArchiveHandler handler = archiveHandlerFactory.getHandler(archiveFormat);
+            handler.handle(request);
+            // CHECKSTYLE:OFF
+        } catch (Exception e) {
+            // CHECKSTYLE:ON
+            String causeMessage = "";
+            if (e.getCause() != null) {
+                causeMessage = e.getCause().getMessage();
+            }
+            final String message = String.format(ARCHIVE_ERROR,
+                    archiveFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
+            if (log.isDebugEnabled()) {
+                log.debug(message, e); // exception details included in debug.
+            } else {
+                log.warn(message); // Just the message in normal operation.
+            }
+            resultHandler.handleError(new IdentificationException(
+                    request, IdentificationErrorType.OTHER, e));
+        } finally {
+            submissionQueue.remove(request.getIdentifier());
+            jobCounter.decrementPostProcess();
+        }
     }
 
     private IdentificationResultCollection handleContainer(IdentificationRequest request, 
@@ -351,9 +346,11 @@ public class SubmissionGateway implements AsynchDroid {
             final IdentificationResult result = theResults.get(i);
             String format = archiveFormatResolver.forPuid(result.getPuid());
             if (format != null) { // exit on the first non-null format met
-                if (processArchives && !processWebArchives && isWebArchiveFormat(format)) {
-                    format = null;
-                } else if (!processArchives && processWebArchives && !isWebArchiveFormat(format)) {
+                //TODO JC process list of archival types here
+                if (!processWebArchives && isWebArchiveFormat(format)
+                    || !processArchives && !isWebArchiveFormat(format)
+                    || "ZIP".equals(format) && !processZip
+                    || "TAR".equals(format) && !processTar) {
                     format = null;
                 }
                 return format;
@@ -460,6 +457,14 @@ public class SubmissionGateway implements AsynchDroid {
     public void setProcessWebArchives(boolean processWebArchives) {
         //TODO JC I would replace boolean with a pojo and booleans for each managed container
         this.processWebArchives = processWebArchives;
+    }
+
+    public void setProcessZip(boolean processZip) {
+        this.processZip = processZip;
+    }
+
+    public void setProcessTar(boolean processTar) {
+        this.processTar = processTar;
     }
 
     /**

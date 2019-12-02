@@ -131,6 +131,14 @@ public class ProfileInstance {
     @XmlElement(name = "ProcessWebArchiveFiles")
     private Boolean processWebArchiveFiles;
 
+    //TODO JC add archival types here
+
+    @XmlElement(name = "ProcessTarFiles")
+    private Boolean processTarFiles;
+
+    @XmlElement(name = "ProcessZipFiles")
+    private Boolean processZipFiles;
+
     @XmlElement(name = "MaxBytesToScan")
     private Long maxBytesToScan;
     
@@ -590,6 +598,23 @@ public class ProfileInstance {
     public void setProcessWebArchiveFiles(boolean processWebArchiveFiles) {
         this.processWebArchiveFiles = processWebArchiveFiles;
     }
+
+    public Boolean getProcessTarFiles() {
+        return processTarFiles;
+    }
+
+    public void setProcessTarFiles(Boolean processTarFiles) {
+        this.processTarFiles = processTarFiles;
+    }
+
+    public Boolean getProcessZipFiles() {
+        return processZipFiles;
+    }
+
+    public void setProcessZipFiles(Boolean processZipFiles) {
+        this.processZipFiles = processZipFiles;
+    }
+
     /**
      * 
      * @return The maximum bytes to scan from the beginning and end of a file, 

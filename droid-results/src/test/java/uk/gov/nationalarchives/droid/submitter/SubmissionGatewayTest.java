@@ -84,6 +84,8 @@ public class SubmissionGatewayTest {
         ResultHandler resultHandler = mock(ResultHandler.class);
         submissionGateway.setResultHandler(resultHandler);
         submissionGateway.setProcessArchives(true);
+        submissionGateway.setProcessTar(true);
+        submissionGateway.setProcessZip(true);
         submissionGateway.setProcessWebArchives(false);
         submissionGateway.setExecutorService(Executors.newFixedThreadPool(2));
         
