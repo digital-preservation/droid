@@ -90,7 +90,6 @@ public class SubmissionGateway implements AsynchDroid {
     private DroidCore droidCore;
     private ResultHandler resultHandler;
     private ExecutorService executorService;
-    private boolean processArchives;
     private boolean processZip;
     private boolean processTar;
     private boolean processGzip;
@@ -293,7 +292,6 @@ public class SubmissionGateway implements AsynchDroid {
     //CHECKSTYLE:OFF - cyclomatic complexity too high.
     private boolean isFormatFilteredOut(String format) {
         return !processWebArchives && isWebArchiveFormat(format)
-                || !processArchives && !isWebArchiveFormat(format)
                 || "ZIP".equals(format) && !processZip
                 || "TAR".equals(format) && !processTar
                 || "GZ".equals(format) && !processGzip
@@ -385,14 +383,6 @@ public class SubmissionGateway implements AsynchDroid {
      */
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
-    }
-
-    /**
-     * @param processArchives set whether to process Archives
-     */
-    public void setProcessArchives(boolean processArchives) {
-        //TODO JC I would replace boolean with a pojo and booleans for each managed container
-        this.processArchives = processArchives;
     }
 
     /**

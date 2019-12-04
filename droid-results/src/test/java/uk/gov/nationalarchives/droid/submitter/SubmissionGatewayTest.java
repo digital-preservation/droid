@@ -83,7 +83,6 @@ public class SubmissionGatewayTest {
         droid.setSignatureFile("test_sig_files/DROID_SignatureFile_V26.xml");
         ResultHandler resultHandler = mock(ResultHandler.class);
         submissionGateway.setResultHandler(resultHandler);
-        submissionGateway.setProcessArchives(true);
         submissionGateway.setProcessTar(true);
         submissionGateway.setProcessZip(true);
         submissionGateway.setProcessGzip(true);

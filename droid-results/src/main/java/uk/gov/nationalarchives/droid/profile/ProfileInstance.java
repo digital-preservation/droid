@@ -125,9 +125,6 @@ public class ProfileInstance {
     @XmlElement(name = "HashAlgorithm")
     private String hashAlgorithm;
 
-    @XmlElement(name = "ProcessArchiveFiles")
-    private Boolean processArchiveFiles;
-
     @XmlElement(name = "ProcessWebArchiveFiles")
     private Boolean processWebArchiveFiles;
 
@@ -578,26 +575,13 @@ public class ProfileInstance {
     public void setHashAlgorithm(String hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
     }
-    /**
-     * 
-     * @return Whether to process archive files or not.
-     */
-    public Boolean getProcessArchiveFiles() {
-        return processArchiveFiles;
-    }
 
     /**
      *
      * @return Whether to process webarchive files or not.
      */
     public Boolean getProcessWebArchiveFiles() { return processWebArchiveFiles; }
-    /**
-     * 
-     * @param processArchiveFiles Whether to process archive files or not.
-     */
-    public void setProcessArchiveFiles(boolean processArchiveFiles) {
-        this.processArchiveFiles = processArchiveFiles;
-    }
+
     /**
      *
      * @param processWebArchiveFiles Whether to process web archive files or not.

@@ -313,7 +313,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="archiveHandlerFactory" ref="archiveHandlerLocator"/>
         <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
         <property name="executorService" ref="coreExecutorService"/>
-        <property name="processArchives" value="${processArchives}"/>
         <property name="processWebArchives" value="#{${processWebArchives} == null?false : ${processWebArchives}}"/>
 
         <property name="processTar" value="${processTar}"/>

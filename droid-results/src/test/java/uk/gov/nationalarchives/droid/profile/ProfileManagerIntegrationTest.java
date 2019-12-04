@@ -199,7 +199,6 @@ public class ProfileManagerIntegrationTest {
       ProfileInstance profile = profileManager.createProfile(signatureFiles);
 
       profile.changeState(ProfileState.VIRGIN);
-      profile.setProcessArchiveFiles(false);
       profile.setProcessTarFiles(false);
       profile.setProcessZipFiles(false);
       profile.setProcessGzipFiles(false);

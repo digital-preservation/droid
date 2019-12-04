@@ -92,8 +92,6 @@ public class ProfileContextLocator {
             profileInstance.setGenerateHash(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.GENERATE_HASH.getName()));
 
-            profileInstance.setProcessArchiveFiles(globalConfig.getProperties()
-                    .getBoolean(DroidGlobalProperty.PROCESS_ARCHIVES.getName()));
             profileInstance.setProcessTarFiles(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.PROCESS_TAR.getName()));
             profileInstance.setProcessZipFiles(globalConfig.getProperties()
@@ -180,7 +178,6 @@ public class ProfileContextLocator {
         
         props.setProperty("containerSigPath", containerSignatureFile.toAbsolutePath().toString());
 
-        props.setProperty("processArchives", String.valueOf(profile.getProcessArchiveFiles()));
         props.setProperty("processTar", String.valueOf(profile.getProcessTarFiles()));
         props.setProperty("processZip", String.valueOf(profile.getProcessZipFiles()));
         props.setProperty("processGzip", String.valueOf(profile.getProcessGzipFiles()));
