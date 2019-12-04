@@ -218,7 +218,6 @@ public class ConfigDialog extends JDialog {
         rowPerFormatButton2 = new JRadioButton();
         hashAlgorithmCombo = new JComboBox();
         jLabel10 = new JLabel();
-        processWebArchivesCheckBox = new JCheckBox();
         jPanel4 = new JPanel();
         processZipCheckBox = new JCheckBox();
         processTarCheckBox = new JCheckBox();
@@ -226,9 +225,14 @@ public class ConfigDialog extends JDialog {
         processRarCheckBox = new JCheckBox();
         process7zipCheckBox = new JCheckBox();
         processIsoCheckBox = new JCheckBox();
+        processBzip2CheckBox = new JCheckBox();
         toggleArchivesButton = new JButton();
         archivesLabel = new JLabel();
-        processBzip2CheckBox = new JCheckBox();
+        jPanel6 = new JPanel();
+        webArchivesLabel = new JLabel();
+        processArcCheckBox = new JCheckBox();
+        processWarcCheckBox = new JCheckBox();
+        toggleWebArchivesButton = new JButton();
         jPanel2 = new JPanel();
         jPanel1 = new JPanel();
         rowPerFileButton1 = new JRadioButton();
@@ -337,19 +341,6 @@ public class ConfigDialog extends JDialog {
         });
 
         jLabel10.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel10.text_1")); // NOI18N
-
-        processWebArchivesCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processWebArchivesCheckBox.text")); // NOI18N
-
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processWebArchives\"]}"), processWebArchivesCheckBox, BeanProperty.create("selected"), "webArchiveBinding");
-        binding.setSourceNullValue(false);
-        binding.setSourceUnreadableValue(false);
-        bindingGroup.addBinding(binding);
-
-        processWebArchivesCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processWebArchivesCheckBoxActionPerformed(evt);
-            }
-        });
 
         processZipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processZipCheckBox.text")); // NOI18N
         processZipCheckBox.addActionListener(new ActionListener() {
@@ -467,10 +458,10 @@ public class ConfigDialog extends JDialog {
                         .addComponent(processIsoCheckBox)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(processBzip2CheckBox)))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(archivesLabel, GroupLayout.PREFERRED_SIZE, 461, GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
+                .addGap(0, 121, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(jPanel4Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
@@ -488,6 +479,55 @@ public class ConfigDialog extends JDialog {
                     .addComponent(processIsoCheckBox)
                     .addComponent(processBzip2CheckBox))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        webArchivesLabel.setLabelFor(containerSigCombo);
+        webArchivesLabel.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.webArchivesLabel.text")); // NOI18N
+
+        processArcCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processArcCheckBox.text")); // NOI18N
+        processArcCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processArcCheckBoxActionPerformed(evt);
+            }
+        });
+
+        processWarcCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processWarcCheckBox.text")); // NOI18N
+        processWarcCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processWarcCheckBoxActionPerformed(evt);
+            }
+        });
+
+        toggleWebArchivesButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.toggleWebArchivesButton.text")); // NOI18N
+        toggleWebArchivesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                toggleWebArchivesButtonActionPerformed(evt);
+            }
+        });
+
+        GroupLayout jPanel6Layout = new GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(jPanel6Layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(webArchivesLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(jPanel6Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(processArcCheckBox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(processWarcCheckBox))
+                    .addComponent(toggleWebArchivesButton))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(jPanel6Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addComponent(webArchivesLabel)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(toggleWebArchivesButton)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(processArcCheckBox)
+                    .addComponent(processWarcCheckBox)))
         );
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
@@ -524,15 +564,18 @@ public class ConfigDialog extends JDialog {
                         .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
                             .addComponent(rowPerFileButton2)
                             .addComponent(rowPerFormatButton2)
-                            .addComponent(processWebArchivesCheckBox)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(jLabel4))
-                            .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 121, Short.MAX_VALUE))))
+                                .addComponent(jLabel4)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.TRAILING)
+                            .addComponent(jPanel6, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -546,8 +589,8 @@ public class ConfigDialog extends JDialog {
                     .addComponent(containerSigFileLabel))
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(processWebArchivesCheckBox)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(jPanel6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(generateHashCheckBox)
@@ -567,7 +610,7 @@ public class ConfigDialog extends JDialog {
                     .addComponent(jLabel4))
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(jLabel10)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle"), jPanel3); // NOI18N
@@ -623,7 +666,7 @@ public class ConfigDialog extends JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(524, Short.MAX_VALUE))
+                .addContainerGap(596, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle_1"), jPanel2); // NOI18N
@@ -961,10 +1004,6 @@ public class ConfigDialog extends JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_processZipCheckBoxActionPerformed
 
-    private void processWebArchivesCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processWebArchivesCheckBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_processWebArchivesCheckBoxActionPerformed
-
     private void hashAlgorithmComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_hashAlgorithmComboActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_hashAlgorithmComboActionPerformed
@@ -980,6 +1019,18 @@ public class ConfigDialog extends JDialog {
     private void processBzip2CheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processBzip2CheckBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_processBzip2CheckBoxActionPerformed
+
+    private void processArcCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processArcCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processArcCheckBoxActionPerformed
+
+    private void processWarcCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processWarcCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processWarcCheckBoxActionPerformed
+
+    private void toggleWebArchivesButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_toggleWebArchivesButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_toggleWebArchivesButtonActionPerformed
 
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
@@ -1027,16 +1078,18 @@ public class ConfigDialog extends JDialog {
     private JPanel jPanel3;
     private JPanel jPanel4;
     private JPanel jPanel5;
+    private JPanel jPanel6;
     private JTextField jTextField1;
     private JTextField jTextField2;
     private JButton okButton;
     private JCheckBox process7zipCheckBox;
+    private JCheckBox processArcCheckBox;
     private JCheckBox processBzip2CheckBox;
     private JCheckBox processGzipCheckBox;
     private JCheckBox processIsoCheckBox;
     private JCheckBox processRarCheckBox;
     private JCheckBox processTarCheckBox;
-    private JCheckBox processWebArchivesCheckBox;
+    private JCheckBox processWarcCheckBox;
     private JCheckBox processZipCheckBox;
     private JButton pronomUrlResetButton;
     private JButton proxySettingsButton;
@@ -1045,11 +1098,13 @@ public class ConfigDialog extends JDialog {
     private JRadioButton rowPerFormatButton1;
     private JRadioButton rowPerFormatButton2;
     private JButton toggleArchivesButton;
+    private JButton toggleWebArchivesButton;
     private ButtonGroup updateFrequencyButtonGroup;
     private JSpinner updateFrequencyTextBox;
     private JRadioButton updateOnStartupRadioButton;
     private JRadioButton updateScheduleRadioButton;
     private JTextField updateUrlTextBox;
+    private JLabel webArchivesLabel;
     private BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
