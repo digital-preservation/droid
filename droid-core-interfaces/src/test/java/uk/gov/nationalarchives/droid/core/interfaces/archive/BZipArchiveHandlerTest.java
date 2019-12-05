@@ -42,6 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
@@ -64,8 +65,7 @@ public class BZipArchiveHandlerTest  {
 
         IdentificationRequestFactory factory = mock(IdentificationRequestFactory.class);
 
-
-        URI expectedUri = ArchiveFileUtils.toBZipUri(file.toUri());
+        URI expectedUri = URI.create(BZip2Utils.getUncompressedFilename(file.toUri().toString()));
 
         RequestIdentifier identifier = new RequestIdentifier(file.toUri());
         identifier.setAncestorId(10L);
