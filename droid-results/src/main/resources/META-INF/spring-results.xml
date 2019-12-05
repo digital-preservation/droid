@@ -313,15 +313,17 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="archiveHandlerFactory" ref="archiveHandlerLocator"/>
         <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
         <property name="executorService" ref="coreExecutorService"/>
-        <property name="processWebArchives" value="#{${processWebArchives} == null?false : ${processWebArchives}}"/>
 
-        <property name="processTar" value="${processTar}"/>
-        <property name="processZip" value="${processZip}"/>
-        <property name="processGzip" value="${processGzip}"/>
-        <property name="processRar" value="${processRar}"/>
-        <property name="process7zip" value="${process7zip}"/>
-        <property name="processIso" value="${processIso}"/>
-        <property name="processBzip2" value="${processBzip2}"/>
+        <property name="processTar" value="#{${processTar} == null?false : ${processTar}}"/>
+        <property name="processZip" value="#{${processZip} == null?false : ${processZip}}"/>
+        <property name="processGzip" value="#{${processGzip} == null?false : ${processGzip}}"/>
+        <property name="processRar" value="#{${processRar} == null?false : ${processRar}}"/>
+        <property name="process7zip" value="#{${process7zip} == null?false : ${process7zip}}"/>
+        <property name="processIso" value="#{${processIso} == null?false : ${processIso}}"/>
+        <property name="processBzip2" value="#{${processBzip2} == null?false : ${processBzip2}}"/>
+
+        <property name="processArc" value="#{${processArc} == null?false : ${processArc}}"/>
+        <property name="processWarc" value="#{${processWarc} == null?false : ${processWarc}}"/>
 
         <property name="generateHash" value="${generateHash}"/>
         <property name="hashAlgorithm" value="${hashAlgorithm}"/>

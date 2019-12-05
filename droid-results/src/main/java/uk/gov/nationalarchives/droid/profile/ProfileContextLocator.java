@@ -102,8 +102,9 @@ public class ProfileContextLocator {
             profileInstance.setProcessIsoFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_ISO.getName()));
             profileInstance.setProcessBzip2Files(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_BZIP2.getName()));
 
-            profileInstance.setProcessWebArchiveFiles(globalConfig.getProperties()
-                    .getBoolean(DroidGlobalProperty.PROCESS_WEB_ARCHIVES.getName()));
+            profileInstance.setProcessArcFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_ARC.getName()));
+            profileInstance.setProcessWarcFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_WARC.getName()));
+
             profileInstance.setMaxBytesToScan(globalConfig.getProperties()
                     .getLong(DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName()));
             profileInstance.setMatchAllExtensions(globalConfig.getProperties()
@@ -186,7 +187,9 @@ public class ProfileContextLocator {
         props.setProperty("processIso", String.valueOf(profile.getProcessIsoFiles()));
         props.setProperty("processBzip2", String.valueOf(profile.getProcessBzip2Files()));
 
-        props.setProperty("processWebArchives", String.valueOf(profile.getProcessWebArchiveFiles()));
+        props.setProperty("processArc", String.valueOf(profile.getProcessArcFiles()));
+        props.setProperty("processWarc", String.valueOf(profile.getProcessWarcFiles()));
+
         props.setProperty("generateHash", String.valueOf(profile.getGenerateHash()));
         props.setProperty("hashAlgorithm", String.valueOf(profile.getHashAlgorithm()));
         props.setProperty("maxBytesToScan", String.valueOf(profile.getMaxBytesToScan()));

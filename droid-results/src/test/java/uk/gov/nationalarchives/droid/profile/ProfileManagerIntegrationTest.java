@@ -207,7 +207,8 @@ public class ProfileManagerIntegrationTest {
       profile.setProcessIsoFiles(false);
       profile.setProcessBzip2Files(false);
 
-      profile.setProcessWebArchiveFiles(false);
+      profile.setProcessArcFiles(false);
+      profile.setProcessWarcFiles(false);
 
       final String profileId = profile.getUuid();
       profileManager.updateProfileSpec(profileId, profileSpec);

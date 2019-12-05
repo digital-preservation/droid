@@ -97,7 +97,8 @@ public class SubmissionGateway implements AsynchDroid {
     private boolean process7zip;
     private boolean processIso;
     private boolean processBzip2;
-    private boolean processWebArchives;
+    private boolean processArc;
+    private boolean processWarc;
     private ArchiveFormatResolver archiveFormatResolver;
     private ArchiveFormatResolver containerFormatResolver;
     private ArchiveHandlerFactory archiveHandlerFactory;
@@ -279,7 +280,7 @@ public class SubmissionGateway implements AsynchDroid {
             final IdentificationResult result = theResults.get(i);
             String format = archiveFormatResolver.forPuid(result.getPuid());
             if (format != null) { // exit on the first non-null format met
-                if (isFormatFilteredOut(format)) {
+                if (isProcessedArchiveOrWebArchiveFormat(format)) {
                     format = null;
                 }
                 return format;
@@ -290,17 +291,19 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     //CHECKSTYLE:OFF - cyclomatic complexity too high.
-    private boolean isFormatFilteredOut(String format) {
-        return !processWebArchives && isWebArchiveFormat(format)
-                || "ZIP".equals(format) && !processZip
+    private boolean isProcessedArchiveOrWebArchiveFormat(String format) {
+        return "ZIP".equals(format) && !processZip
                 || "TAR".equals(format) && !processTar
                 || "GZ".equals(format) && !processGzip
                 || "RAR".equals(format) && !processRar
                 || "7Z".equals(format) && !process7zip
                 || "ISO".equals(format) && !processIso
-                || "BZ".equals(format) && !processBzip2;
+                || "BZ".equals(format) && !processBzip2
+                || "ARC".equals(format) && !processArc
+                || "WARC".equals(format) && !processWarc;
     }
     //CHECKSTYLE:ON
+
 
     /**
      *
@@ -386,13 +389,6 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     /**
-     * @param processWebArchives set whether to process Web Archives
-     */
-    public void setProcessWebArchives(boolean processWebArchives) {
-        this.processWebArchives = processWebArchives;
-    }
-
-    /**
      * @param processZip set whether to process Zip files
      */
     public void setProcessZip(boolean processZip) {
@@ -439,6 +435,21 @@ public class SubmissionGateway implements AsynchDroid {
      */
     public void setProcessBzip2(boolean processBzip2) {
         this.processBzip2 = processBzip2;
+    }
+
+
+    /**
+     * @param processArc set whether to process Arc files
+     */
+    public void setProcessArc(boolean processArc) {
+        this.processArc = processArc;
+    }
+
+    /**
+     * @param processWarc set whether to process Warc files
+     */
+    public void setProcessWarc(boolean processWarc) {
+        this.processWarc = processWarc;
     }
 
     /**

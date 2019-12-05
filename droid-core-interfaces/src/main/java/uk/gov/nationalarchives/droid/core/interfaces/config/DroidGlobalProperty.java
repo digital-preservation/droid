@@ -95,7 +95,6 @@ public enum DroidGlobalProperty {
     /** Development mode. */
     DEV_MODE("development_mode", PropertyType.BOOLEAN, false),
 
-    //TODO JC have boolean here for each container type
     /** Whether to process tar files in archives. */
     PROCESS_TAR("profile.processTar", PropertyType.BOOLEAN, true),
     /** Whether to process zip files in archives. */
@@ -110,9 +109,10 @@ public enum DroidGlobalProperty {
     PROCESS_ISO("profile.processIso", PropertyType.BOOLEAN, true),
     /** Whether to process bzip2 files in archives. */
     PROCESS_BZIP2("profile.processBzip2", PropertyType.BOOLEAN, true),
-
-    /** Whether to process files in web archives. */
-    PROCESS_WEB_ARCHIVES("profile.processWebArchives", PropertyType.BOOLEAN, true),
+    /** Whether to process arc files in archives. */
+    PROCESS_ARC("profile.processArc", PropertyType.BOOLEAN, true),
+    /** Whether to process warc files in archives. */
+    PROCESS_WARC("profile.processWarc", PropertyType.BOOLEAN, true),
 
     /** Whether to process files in archives. */
     PUID_URL_PATTERN("puid.urlPattern", PropertyType.TEXT, true), 

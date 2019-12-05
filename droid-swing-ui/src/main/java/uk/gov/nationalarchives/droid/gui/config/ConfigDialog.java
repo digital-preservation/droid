@@ -491,12 +491,22 @@ public class ConfigDialog extends JDialog {
             }
         });
 
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processArc\"]}"), processArcCheckBox, BeanProperty.create("selected"), "arcBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
         processWarcCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processWarcCheckBox.text")); // NOI18N
         processWarcCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 processWarcCheckBoxActionPerformed(evt);
             }
         });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processWarc\"]}"), processWarcCheckBox, BeanProperty.create("selected"), "warcBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
 
         toggleWebArchivesButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.toggleWebArchivesButton.text")); // NOI18N
         toggleWebArchivesButton.addActionListener(new ActionListener() {
@@ -961,7 +971,14 @@ public class ConfigDialog extends JDialog {
     }//GEN-LAST:event_pronomUrlResetButtonActionPerformed
 
     private void toggleArchivesButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_toggleArchivesButtonActionPerformed
-        if(!processTarCheckBox.isSelected() || !processZipCheckBox.isSelected()){
+        if(!processTarCheckBox.isSelected()
+                || !processZipCheckBox.isSelected()
+                || !processGzipCheckBox.isSelected()
+                || !processRarCheckBox.isSelected()
+                || !process7zipCheckBox.isSelected()
+                || !processIsoCheckBox.isSelected()
+                || !processBzip2CheckBox.isSelected()
+        ){
             processTarCheckBox.setSelected(true);
             processZipCheckBox.setSelected(true);
             processGzipCheckBox.setSelected(true);
@@ -1029,7 +1046,13 @@ public class ConfigDialog extends JDialog {
     }//GEN-LAST:event_processWarcCheckBoxActionPerformed
 
     private void toggleWebArchivesButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_toggleWebArchivesButtonActionPerformed
-        // TODO add your handling code here:
+        if(!processArcCheckBox.isSelected() || !processWarcCheckBox.isSelected()){
+            processArcCheckBox.setSelected(true);
+            processWarcCheckBox.setSelected(true);
+        }else{
+            processArcCheckBox.setSelected(false);
+            processWarcCheckBox.setSelected(false);
+        }
     }//GEN-LAST:event_toggleWebArchivesButtonActionPerformed
 
     private void setPanelComponents(JPanel panel, boolean enabled) {

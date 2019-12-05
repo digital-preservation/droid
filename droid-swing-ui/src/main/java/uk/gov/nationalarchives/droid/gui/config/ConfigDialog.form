@@ -570,6 +570,11 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processArcCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
+                    <BindingProperties>
+                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processArc\&quot;]}" target="processArcCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
+                            <Property name="name" type="java.lang.String" value="arcBinding"/>
+                        </BindingProperty>
+                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processArcCheckBoxActionPerformed"/>
                   </Events>
@@ -580,6 +585,11 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processWarcCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
+                    <BindingProperties>
+                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processWarc\&quot;]}" target="processWarcCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
+                            <Property name="name" type="java.lang.String" value="warcBinding"/>
+                        </BindingProperty>
+                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processWarcCheckBoxActionPerformed"/>
                   </Events>

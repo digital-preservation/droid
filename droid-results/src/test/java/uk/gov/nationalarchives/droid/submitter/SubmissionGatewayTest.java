@@ -91,7 +91,9 @@ public class SubmissionGatewayTest {
         submissionGateway.setProcessIso(true);
         submissionGateway.setProcessBzip2(true);
 
-        submissionGateway.setProcessWebArchives(false);
+        submissionGateway.setProcessArc(true);
+        submissionGateway.setProcessWarc(true);
+
         submissionGateway.setExecutorService(Executors.newFixedThreadPool(2));
         
         SubmissionQueue submissionQueue = mock(SubmissionQueue.class);

@@ -125,9 +125,6 @@ public class ProfileInstance {
     @XmlElement(name = "HashAlgorithm")
     private String hashAlgorithm;
 
-    @XmlElement(name = "ProcessWebArchiveFiles")
-    private Boolean processWebArchiveFiles;
-
     @XmlElement(name = "ProcessTarFiles")
     private Boolean processTarFiles;
     @XmlElement(name = "ProcessZipFiles")
@@ -143,12 +140,17 @@ public class ProfileInstance {
     @XmlElement(name = "ProcessBzip2Files")
     private Boolean processBzip2Files;
 
+    @XmlElement(name = "ProcessArcFiles")
+    private Boolean processArcFiles;
+    @XmlElement(name = "ProcessWarcFiles")
+    private Boolean processWarcFiles;
+
     @XmlElement(name = "MaxBytesToScan")
     private Long maxBytesToScan;
-    
+
     @XmlElement(name = "MatchAllExtensions")
     private Boolean matchAllExtensions;
-    
+
     @XmlTransient
     private Set<ProfileEventListener> eventListeners = new HashSet<ProfileEventListener>();
 
@@ -578,20 +580,6 @@ public class ProfileInstance {
 
     /**
      *
-     * @return Whether to process webarchive files or not.
-     */
-    public Boolean getProcessWebArchiveFiles() { return processWebArchiveFiles; }
-
-    /**
-     *
-     * @param processWebArchiveFiles Whether to process web archive files or not.
-     */
-    public void setProcessWebArchiveFiles(boolean processWebArchiveFiles) {
-        this.processWebArchiveFiles = processWebArchiveFiles;
-    }
-
-    /**
-     *
      * @return Whether to process Tar files or not.
      */
     public Boolean getProcessTarFiles() {
@@ -736,5 +724,37 @@ public class ProfileInstance {
      */
     public void setProcessBzip2Files(Boolean processBzip2Files) {
         this.processBzip2Files = processBzip2Files;
+    }
+
+    /**
+     *
+     * @param processArcFiles Whether to process Arc files or not.
+     */
+    public void setProcessArcFiles(Boolean processArcFiles) {
+        this.processArcFiles = processArcFiles;
+    }
+
+    /**
+     *
+     * @return Whether to process Arc files or not.
+     */
+    public Boolean getProcessArcFiles() {
+        return processArcFiles;
+    }
+
+    /**
+     *
+     * @param processWarcFiles Whether to process Warc files or not.
+     */
+    public void setProcessWarcFiles(Boolean processWarcFiles) {
+        this.processWarcFiles = processWarcFiles;
+    }
+
+    /**
+     *
+     * @return Whether to process Warc files or not.
+     */
+    public Boolean getProcessWarcFiles() {
+        return processWarcFiles;
     }
 }
