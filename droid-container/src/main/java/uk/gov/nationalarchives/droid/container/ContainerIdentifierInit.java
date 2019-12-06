@@ -45,7 +45,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
  */
 public class ContainerIdentifierInit {
     
-    private List<String> uniqueFileEntries;
+    private List<String> uniqueFileEntries = new ArrayList<>();
     private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
     
     /**
