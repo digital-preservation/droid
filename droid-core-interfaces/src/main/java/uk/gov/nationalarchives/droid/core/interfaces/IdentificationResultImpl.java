@@ -49,7 +49,34 @@ public class IdentificationResultImpl implements IdentificationResult {
     private IdentificationMethod method;
     private RequestIdentifier identifier;
     private RequestMetaData requestMetaData;
-    
+
+    /**
+     * Empty constructor.
+     */
+    public IdentificationResultImpl() {
+    }
+
+    /**
+     * Constructs an IdentificationResult given all the data it needs.
+     *
+     * @param puid The PUID identified.
+     * @param name The name
+     * @param version The version
+     * @param extId The extension id.
+     * @param method The identification method.
+     * @param identifier The request identifier.
+     * @param metadata The request metadata.
+     */
+    public IdentificationResultImpl(String puid, String name, String version, String extId,
+                                    IdentificationMethod method, RequestIdentifier identifier, RequestMetaData metadata) {
+        this.puid = puid;
+        this.name = name;
+        this.version = version;
+        this.method = method;
+        this.identifier = identifier;
+        this.requestMetaData = metadata;
+    }
+
     /**
      * @return the puid
      */

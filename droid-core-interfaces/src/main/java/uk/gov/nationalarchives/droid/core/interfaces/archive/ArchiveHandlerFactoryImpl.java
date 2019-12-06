@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -40,7 +41,7 @@ import java.util.Map;
  */
 public class ArchiveHandlerFactoryImpl implements ArchiveHandlerFactory {
 
-    private Map<String, ArchiveHandler> handlers;
+    private Map<String, ArchiveHandler> handlers = new HashMap<>();
     
     /**
      * @param handlers the handlers to set

@@ -59,7 +59,21 @@ public class Report {
     @XmlElementWrapper(name = "ReportItems")
     @XmlElement(name = "ReportItem")
     private List<ReportItem> reportItems = new ArrayList<ReportItem>();
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public Report() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param title The report title.
+     */
+    public Report(String title) {
+        this.title = title;
+    }
+
     /**
      * 
      * @param title The title of the report.

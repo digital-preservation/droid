@@ -69,6 +69,26 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
     private ResultHandler resultHandler;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Empty bean constructor.
+     */
+    public ISOImageArchiveHandler() {
+    }
+
+    /**
+     * Constructor which sets internal parameters.
+     * @param droidCore The droid core to use.
+     * @param factory The IdentificationRequestFactory to use.
+     * @param resultHandler The ResultHandler to use.
+     */
+    public ISOImageArchiveHandler(AsynchDroid droidCore,
+                             IdentificationRequestFactory factory,
+                             ResultHandler resultHandler) {
+        this.droid = droidCore;
+        this.factory = factory;
+        this.resultHandler = resultHandler;
+    }
+
     @Override
     public void handle(IdentificationRequest request) throws IOException {
 

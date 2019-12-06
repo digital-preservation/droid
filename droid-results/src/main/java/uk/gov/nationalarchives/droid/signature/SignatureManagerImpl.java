@@ -89,7 +89,23 @@ public class SignatureManagerImpl implements SignatureManager {
     private DroidGlobalConfig config;
     private Map<SignatureType, SignatureUpdateService> signatureUpdateServices;
     private ProxySettings proxySettings = new ProxySettings();
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public SignatureManagerImpl() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param config The droid global config.
+     * @param updateServices The update services to use.
+     */
+    public SignatureManagerImpl(DroidGlobalConfig config, Map<SignatureType, SignatureUpdateService> updateServices) {
+        setConfig(config);
+        setSignatureUpdateServices(updateServices);
+    }
+
     /**
      * Initailisation post-construct.
      */

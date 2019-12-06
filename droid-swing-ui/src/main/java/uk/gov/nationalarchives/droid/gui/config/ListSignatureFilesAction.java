@@ -45,7 +45,21 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 public class ListSignatureFilesAction {
 
     private SignatureManager signatureManager;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ListSignatureFilesAction() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param signatureManager The signature manager to use.
+     */
+    public ListSignatureFilesAction(SignatureManager signatureManager) {
+        setSignatureManager(signatureManager);
+    }
+
     /**
      * 
      * @return a map of available signature files.

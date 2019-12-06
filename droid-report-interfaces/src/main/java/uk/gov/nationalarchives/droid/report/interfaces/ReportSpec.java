@@ -59,14 +59,39 @@ public class ReportSpec {
     
     
     @XmlTransient
-    private List<Path> xslTransforms;
+    private List<Path> xslTransforms = new ArrayList<>();
+
+    /**
+     * Empty bean constructor.
+     */
+    public ReportSpec() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param name The name of the report spec.
+     * @param reportSpecItems The list of report spec items.
+     */
+    public ReportSpec(String name, List<ReportSpecItem> reportSpecItems) {
+        setName(name);
+        setReportSpecItems(reportSpecItems);
+    }
+
     /**
      * @return the items
      */
     public List<ReportSpecItem> getItems() {
         return items;
     }
-    
+
+    /**
+     *
+     * @param newItems A list of report spec items to set.
+     */
+    public void setReportSpecItems(List<ReportSpecItem> newItems) {
+        this.items = newItems;
+    }
+
     /**
      * @return the name
      */

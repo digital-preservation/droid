@@ -67,7 +67,23 @@ public class FilterImpl implements Cloneable, Filter {
 
     private Map<Integer, FilterCriterionImpl> filterCriteriaMap = new TreeMap<Integer, FilterCriterionImpl>();
 
-    // this only to save in xml --- begins
+    /**
+     * Empty bean constructor.
+     */
+    public FilterImpl() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param criteria A list of filtercriterionimpls.
+     * @param enabled Whether the filter is enabled.
+     * @param narrowed Whether the filter is narrowed.
+     */
+    public FilterImpl(List<FilterCriterionImpl> criteria, boolean enabled, boolean narrowed) {
+        setCriteria(criteria);
+        setEnabled(enabled);
+        setNarrowed(narrowed);
+    }
 
     /**
      * Getter method for filter criteria list.

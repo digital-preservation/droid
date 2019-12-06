@@ -69,7 +69,23 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
     private ProfileForm profileForm;
     private ProfileManager profileManager;
     private DefaultTreeModel treeModel;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public DroidJob() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param profileForm The profile form.
+     * @param profileManager The profile manager.
+     */
+    public DroidJob(ProfileForm profileForm, ProfileManager profileManager) {
+        setProfileForm(profileForm);
+        setProfileManager(profileManager);
+    }
+
     /**
      * 
      * @param profileManager a profile manager.

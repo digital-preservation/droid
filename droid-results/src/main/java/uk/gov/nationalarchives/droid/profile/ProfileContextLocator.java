@@ -75,7 +75,23 @@ public class ProfileContextLocator {
         LazyMap.lazyMap(new HashMap<String, ProfileInstance>(), new ProfileTransformer());
     
     private ProfileInstanceLocator profileInstanceLocator;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ProfileContextLocator() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param config The global config to use.
+     * @param instanceLocator The profile instance locator to use.
+     */
+    public ProfileContextLocator(DroidGlobalConfig config, ProfileInstanceLocator instanceLocator) {
+        setGlobalConfig(config);
+        setProfileInstanceLocator(instanceLocator);
+    }
+
     /**
      * Transformer for creating profile instance objects.
      * @author rflitcroft

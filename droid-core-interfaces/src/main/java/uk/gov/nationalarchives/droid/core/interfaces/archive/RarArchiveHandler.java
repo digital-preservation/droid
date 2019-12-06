@@ -76,6 +76,25 @@ public final class RarArchiveHandler implements ArchiveHandler {
     private AsynchDroid droid;
     private IdentificationRequestFactory<InputStream> identificationRequestFactory;
 
+    /**
+     * Empty bean constructor.
+     */
+    public RarArchiveHandler() {
+    }
+
+    /**
+     * Constructor which sets internal parameters.
+     * @param droidCore The droid core to use.
+     * @param factory The IdentificationRequestFactory to use.
+     * @param resultHandler The ResultHandler to use.
+     */
+    public RarArchiveHandler(AsynchDroid droidCore,
+                             IdentificationRequestFactory<InputStream> factory,
+                             ResultHandler resultHandler) {
+        this.droid = droidCore;
+        this.identificationRequestFactory = factory;
+        this.resultHandler = resultHandler;
+    }
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {

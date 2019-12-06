@@ -99,6 +99,23 @@ public class FileWalker {
     }
 
     /**
+     * Parameterized constructor.
+     * @param root the root of the walk.
+     * @param recursive if the walker should walk recursively.
+     * @param fileHandler The handler for files.
+     * @param directoryHandler The handler for directories.
+     * @param restrictedDirectoryHandler The handler for restricted directories.
+     */
+    public FileWalker(final URI root, final boolean recursive, final FileWalkerHandler fileHandler,
+                      final FileWalkerHandler directoryHandler, final FileWalkerHandler restrictedDirectoryHandler) {
+        this.recursive = recursive;
+        setRootUri(root);
+        setFileHandler(fileHandler);
+        setDirectoryHandler(directoryHandler);
+        setRestrictedDirectoryHandler(restrictedDirectoryHandler);
+    }
+
+    /**
      *
      * @return the current root Uri.
      */
