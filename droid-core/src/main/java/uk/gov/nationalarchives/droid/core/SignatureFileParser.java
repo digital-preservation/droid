@@ -65,7 +65,7 @@ public class SignatureFileParser {
      * @return sig file
      * @throws SignatureParseException if there is a problem parsing the signature file.
      */
-    FFSignatureFile parseSigFile(final Path theFileName) throws SignatureParseException {
+    public FFSignatureFile parseSigFile(final Path theFileName) throws SignatureParseException {
 
         final SAXModelBuilder mb = new SAXModelBuilder();
         final XMLReader parser = getXMLReader(mb);

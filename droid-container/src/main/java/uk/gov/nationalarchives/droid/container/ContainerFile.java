@@ -104,6 +104,15 @@ public class ContainerFile {
         this.textSignature = textSignature;
     }
     */
+
+    /**
+     * Set a collection of binary signatures directly, rather than parsing from XML.
+     * This is useful when programmatically constructing ContainerFiles, rather than parsing from XML.
+     * @param binarySigs The binary signatures to set.
+     */
+    public void setBinarySignatures(InternalSignatureCollection binarySigs) {
+        signatures = binarySigs;
+    }
     
     
     /**

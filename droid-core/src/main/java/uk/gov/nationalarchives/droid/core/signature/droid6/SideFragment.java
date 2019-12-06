@@ -130,7 +130,38 @@ public class SideFragment extends SimpleElement implements Cloneable {
     private SequenceMatcher matcher;
     private Searcher searcher;
     private boolean isInvalidFragment;
-  
+
+    /**
+     * default constructor.
+     */
+    public SideFragment() {
+    }
+
+    /**
+     * @param matcher THe SequenceMatcher which the SideFragment will match.
+     * @param minOffset The minimum offset to begin looking for this fragment
+     * @param maxOffset The maximum offset to begin looking for this fragment
+     * @param position the position in file of this fragment
+     */
+    public SideFragment(SequenceMatcher matcher, int minOffset, int maxOffset, int position) {
+        this.matcher = matcher;
+        this.myMinOffset = minOffset;
+        this.myMaxOffset = maxOffset;
+        this.myPosition  = position;
+        buildSearcher();
+    }
+
+    /**
+     * @param toCopy sideFragment to copy
+     */
+    public SideFragment(final SideFragment toCopy) {
+        this.matcher = toCopy.matcher;
+        this.myMinOffset = toCopy.myMinOffset;
+        this.myMaxOffset = toCopy.myMaxOffset;
+        this.myPosition = toCopy.myPosition;
+        buildSearcher();
+    }
+
     /* setters */
     /**
      * @param thePosition the positionInFile of the fragment in the
@@ -183,16 +214,29 @@ public class SideFragment extends SimpleElement implements Cloneable {
         try {
             final String transformed = FragmentRewriter.rewriteFragment(expression);
             matcher = EXPRESSION_COMPILER.compile(transformed);
-            if (matcher.length() == 1) {
-                searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0));
-            } else {
-                searcher = new HorspoolFinalFlagSearcher(matcher);
-            }
+            buildSearcher();
         } catch (CompileException ex) {
             final String warning = String.format(FRAGMENT_PARSE_ERROR, expression, ex.getMessage());
             isInvalidFragment = true;
             getLog().warn(warning);            
         }
+    }
+
+    private void buildSearcher() {
+        if (matcher.length() == 1) {
+            searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0));
+        } else {
+            searcher = new HorspoolFinalFlagSearcher(matcher);
+        }
+    }
+
+    /**
+     * Returns the SequenceMatcher object which matches the fragment.
+     *
+     * @return the SequenceMatcher object which matches the fragment.
+     */
+    public final SequenceMatcher getMatcher() {
+        return matcher; // SequenceMatchers are immutable, so can just return it directly without fear.
     }
     
     /**

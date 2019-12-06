@@ -121,5 +121,11 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
   	</dependency>
+        <dependency>
+            <groupId>uk.gov.nationalarchives</groupId>
+            <artifactId>droid-tools</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
   </dependencies>
 </project>
