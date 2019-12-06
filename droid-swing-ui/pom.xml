@@ -160,12 +160,17 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>RELEASE111</version>
+            <version>RELEASE112</version>
         </dependency>
+        <!--
+            droid-swing-ui has hotfix of org-netbeans-swing-outline:org.netbeans.swing.outline.TreePathSupport
+            If you need to update this library:
+            if bug fixed in later release, remove hotfix class ; otherwise make sure hotfix is still working
+        -->
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-swing-outline</artifactId>
-            <version>RELEASE111</version>
+            <version>RELEASE112</version>
         </dependency>
         <dependency>
             <groupId>org.jdesktop</groupId>

@@ -45,11 +45,13 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureColl
  */
 public class ContainerSignatureMatch {
 
+    private static final String FORWARD_SLASH = "/";
+
     private ContainerSignature signature;
     private long maxBytesToScan = -1;
-    
-    private Set<String> unmatchedFiles = new HashSet<String>();
-    
+
+    private Set<String> unmatchedFiles = new HashSet<>();
+
     /**
      * Constructs a new Container signature match.
      * @param sig the signature to match against
@@ -60,23 +62,23 @@ public class ContainerSignatureMatch {
         this.signature = sig;
         this.maxBytesToScan = maxBytesToScan;
     }
-    
+
     /**
-     * 
+     *
      * @return The set of unmatched files.
      */
     public Set<String> getUnmatchedFiles() {
         return unmatchedFiles;
     }
-    
+
     /**
-     * 
+     *
      * @return true if the signature has matched completely; false otherwise
      */
     public boolean isMatch() {
         return unmatchedFiles.isEmpty();
     }
-    
+
     /**
      * Matches a file entry name against the signature.
      * If there are no signatures defined, just having the
@@ -84,33 +86,15 @@ public class ContainerSignatureMatch {
      * @param entryName the name of the container file entry
      */
     public void matchFileEntry(String entryName) {
-        if (unmatchedFiles.contains(entryName)) {
-            //String textSig = signature.getFiles().get(entryName).getTextSignature();
-            InternalSignatureCollection binSigs = signature.getFiles().get(entryName).getCompiledBinarySignatures();
-            //if (textSig == null && binSig == null) {
+        final String name = stripEndingForwardSlash(entryName);
+        if (unmatchedFiles.contains(name)) {
+            InternalSignatureCollection binSigs = signature.getFiles().get(name).getCompiledBinarySignatures();
             if (binSigs == null) {
-                unmatchedFiles.remove(entryName);
+                unmatchedFiles.remove(name);
             }
         }
     }
-    
-    /**
-     * Determines if an entry requires a text signature match.
-     * @param entryName the name of the container file path
-     * @return true if this file is subject to a text signature; false otherwise
-     */
-    /*
-    public boolean needsTextMatch(String entryName) {
-        boolean needsMatch = false;
-        if (unmatchedFiles.contains(entryName)) {
-            String textSig = signature.getFiles().get(entryName).getTextSignature();
-            needsMatch = textSig != null;
-        }
-        
-        return needsMatch;
-    }
-    */
-    
+
     /**
      * Determines if an entry requires a text signature match.
      * @param entryName the name of the container file path
@@ -118,68 +102,55 @@ public class ContainerSignatureMatch {
      */
     public boolean needsBinaryMatch(String entryName) {
         boolean needsMatch = false;
-        if (unmatchedFiles.contains(entryName)) {
-            InternalSignatureCollection binarySigs = signature.getFiles().get(entryName).getCompiledBinarySignatures();
+        final String name = stripEndingForwardSlash(entryName);
+        if (unmatchedFiles.contains(name)) {
+            InternalSignatureCollection binarySigs = signature.getFiles().get(name).getCompiledBinarySignatures();
             needsMatch = binarySigs != null;
         }
         return needsMatch;
     }
 
     /**
-     * Matches some text against a text signature of a container file.
-     * @param entryName the name of a container entry
-     * @param content the content to me matched against a text signature
-     */
-    /*
-    public void matchTextContent(String entryName, String content) {
-        boolean matched = false;
-        if (unmatchedFiles.contains(entryName)) {
-            matched = true;
-            String textSig = signature.getFiles().get(entryName).getTextSignature();
-            if (textSig == null) {
-                throw new NullPointerException(
-                    String.format("No text signature for file entry [%s]. "
-                        + "Use needsTextMatch(String) before calling this method.", entryName));
-            }
-            matched = TextSignatureMatcher.matches(textSig, content);
-        }
-        
-        if (matched) {
-            unmatchedFiles.remove(entryName);
-        }
-    }
-    */
-    
-    /**
      * Matches some a binary files against a binary signature.
      * If there is no binary signature defined for the file,
      * then merely matching the name will cause a match,
-     * otherwise, the match depends on whether the binary 
+     * otherwise, the match depends on whether the binary
      * signature matche
      * @param entryName the name of a container entry
      * @param content the content to me matched against a text signature
      */
     public void matchBinaryContent(String entryName, ByteReader content) {
         boolean matched = true;
-        if (unmatchedFiles.contains(entryName)) {
+        String name = stripEndingForwardSlash(entryName);
+        if (unmatchedFiles.contains(name)) {
             Map<String, ContainerFile> sigFiles = signature.getFiles();
-            InternalSignatureCollection binSigs = sigFiles.get(entryName).getCompiledBinarySignatures();
+            InternalSignatureCollection binSigs = sigFiles.get(name).getCompiledBinarySignatures();
             if (binSigs != null) {
                 matched = binSigs.getMatchingSignatures(content, maxBytesToScan).size() > 0;
             }
             if (matched) {
-                unmatchedFiles.remove(entryName);
+                unmatchedFiles.remove(name);
             }
         }
     }
 
-    
-    
     /**
      * @return the signature
      */
     public ContainerSignature getSignature() {
         return signature;
     }
-    
+
+    /**
+     * Removes a last forward slash on a path if it exists.
+     * @param path The path to strip.
+     * @return A path without an ending forward slash.
+     */
+    private String stripEndingForwardSlash(String path) {
+        if (path != null && path.endsWith(FORWARD_SLASH)) {
+            return path.substring(0, path.length() - 1);
+        }
+        return path;
+    }
+
 }

@@ -42,13 +42,14 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
  *
  */
 public class Ole2Identifier extends AbstractContainerIdentifier {
-    
-    
-    
+
     /**
-     * {@inheritDoc}
-     * @throws IOException 
+     * Constructs an Ole2Identifier.
      */
+    public Ole2Identifier() {
+        setIdentifierEngine(new Ole2IdentifierEngine());
+    }
+
     @Override
     public final void process(IdentificationRequest request,
         ContainerSignatureMatchCollection matches) throws IOException {

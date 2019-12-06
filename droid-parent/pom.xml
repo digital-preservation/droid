@@ -83,18 +83,18 @@
 
         <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
 
-        <spring.version>5.2.0.RELEASE</spring.version>
+        <spring.version>5.2.2.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
         <cxf.version>3.3.4</cxf.version>
-        <aspectj.version>1.9.4</aspectj.version>
+        <aspectj.version>1.9.5</aspectj.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
-        <flying-saucer.version>9.1.18</flying-saucer.version>
+        <flying-saucer.version>9.1.19</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
         <jwat.version>1.1.1</jwat.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <slf4j.version>1.7.28</slf4j.version>
+        <slf4j.version>1.7.29</slf4j.version>
     </properties>
   
     <build>
@@ -155,12 +155,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                 </plugin>
 
                 <plugin>
@@ -189,7 +189,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
                 <!--
@@ -252,7 +252,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>5.2.2</version>
+                <version>5.2.4</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                 </configuration>
@@ -287,6 +287,8 @@
                     </properties>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <excludes>
+                        <exclude>**/resources/**</exclude>
+                        <exclude>**/bin/</exclude>
                         <exclude>.travis.yml</exclude>
                         <exclude>pom.xml</exclude>
                         <exclude>**/pom.xml</exclude>
@@ -682,7 +684,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>

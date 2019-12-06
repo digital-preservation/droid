@@ -23,13 +23,61 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.4.2</version>
+                <executions>
+                    <execution>
+                        <id>download-files-windows</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <!-- To update, retrieve link for windows jdk on x86 architecture from https://adoptopenjdk.net/ -->
+                            <url>https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.5%2B10/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.5_10.zip</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-files-windows</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- Update binary from https://adoptopenjdk.net/releases.html -->
+                                <unzip src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.5_10.zip" dest="${project.build.directory}/jre_tmp/"/>
+
+                                <move todir="${project.build.directory}/jre-windows/">
+                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.5+10-jre/">
+                                        <include name="**/*"/>
+                                    </fileset>
+                                </move>
+
+                                <delete includeemptydirs="true">
+                                    <fileset dir="${project.build.directory}/jre_tmp/">
+                                    </fileset>
+                                </delete>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>assembly.xml</descriptor>
-                    </descriptors>
-                </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id> <!-- this is used for inheritance merges -->
@@ -37,6 +85,23 @@
                         <goals>
                             <goal>single</goal> <!-- goals == mojos -->
                         </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>make-assembly-windows</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly-windows-with-jre.xml</descriptor>
+                            </descriptors>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -56,5 +121,11 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
   	</dependency>
+        <dependency>
+            <groupId>uk.gov.nationalarchives</groupId>
+            <artifactId>droid-tools</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
   </dependencies>
 </project>

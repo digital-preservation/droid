@@ -31,6 +31,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -->
+<!-- To assemble osx/linux/windows package. JRE not provided, will use existing jre available-->
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
@@ -47,6 +48,7 @@
       <excludes>
         <exclude>uk.gov.nationalarchives:droid-ui</exclude>
         <exclude>uk.gov.nationalarchives:droid-command-line</exclude>
+        <exclude>uk.gov.nationalarchives:droid-tools</exclude>
       </excludes>
       <fileMode>644</fileMode>
     </dependencySet>
@@ -56,10 +58,12 @@
       <includes>
         <include>uk.gov.nationalarchives:droid-ui</include>
         <include>uk.gov.nationalarchives:droid-command-line</include>
+        <include>uk.gov.nationalarchives:droid-tools</include>
       </includes>
       <fileMode>644</fileMode>
     </dependencySet>
   </dependencySets>
+
   <fileSets>
     <fileSet>
       <directory>${project.build.outputDirectory}</directory>
@@ -71,6 +75,9 @@
         <exclude>droid.sh</exclude>
         <exclude>droid.bat</exclude>
         <exclude>Running DROID.txt</exclude>
+        <exclude>sigtool</exclude>
+        <exclude>sigtool.bat</exclude>
+        <exclude>Using sigtTool.txt</exclude>
       </excludes>
       <fileMode>644</fileMode>
     </fileSet>
@@ -85,12 +92,6 @@
 
   <files>
     <file>
-      <source>bin/droid.sh</source>
-      <outputDirectory>/</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>755</fileMode>
-    </file>
-    <file>
       <source>bin/droid.bat</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
@@ -98,6 +99,30 @@
     </file>
     <file>
       <source>bin/Running DROID.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>644</fileMode>
+    </file>
+    <file>
+      <source>bin/droid.sh</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>755</fileMode>
+    </file>
+    <file>
+      <source>bin/sigtool</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>755</fileMode>
+    </file>
+    <file>
+      <source>bin/Running DROID.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>644</fileMode>
+    </file>
+    <file>
+      <source>bin/Using sigtool.txt</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>644</fileMode>

@@ -159,7 +159,9 @@ public class InternalSignature extends SimpleElement {
     * Does anything that needs to be done before this signature is used.
     */
     public final void prepareForUse() {
-        isInvalidSignature = prepareByteSequences();
+        if (!isInvalidSignature) {
+            isInvalidSignature = prepareByteSequences();
+        }
     }
     
     /**
