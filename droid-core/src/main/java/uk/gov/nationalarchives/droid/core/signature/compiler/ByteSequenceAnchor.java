@@ -29,32 +29,46 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.container;
-
-import java.io.IOException;
-
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
+package uk.gov.nationalarchives.droid.core.signature.compiler;
 
 /**
- *
- * @author rbrennan
+ * Enum which describes how a ByteSequence is to be anchored to a file.
  */
-public interface IdentifierEngine {
+public enum ByteSequenceAnchor {
 
     /**
-     * Process the identification request.
-     * 
-     * @param request The identification request
-     * @param matches the Container signature match collection
-     * 
-     * @throws IOException if a problem occurred with processing
+     * Beginning of file.
      */
-    void process(IdentificationRequest  request, ContainerSignatureMatchCollection matches) throws IOException;
+    BOFOffset {
+        @Override
+        public String getAnchorText() {
+            return "BOFoffset";
+        }
+    },
 
     /**
-     * Sets the identification request factory to use to obtain new readers for internal byte streams.
-     * @param requestFactory The IdentificationRequestFactory to set.
+     * Variable search from beginning of file.
      */
-    void setRequestFactory(IdentificationRequestFactory requestFactory);
+    VariableOffset {
+        @Override
+        public String getAnchorText() {
+            return "Variable";
+        }
+    },
+
+    /**
+     * End of file.
+     */
+    EOFOffset {
+        @Override
+        public String getAnchorText() {
+            return "EOFoffset";
+        }
+    };
+
+    /**
+     * @return how the ByteSequence is to be anchored to a file
+     */
+    public abstract String getAnchorText();
+
 }

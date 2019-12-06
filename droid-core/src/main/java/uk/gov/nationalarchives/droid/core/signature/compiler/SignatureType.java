@@ -29,32 +29,20 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.container;
-
-import java.io.IOException;
-
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
+package uk.gov.nationalarchives.droid.core.signature.compiler;
 
 /**
- *
- * @author rbrennan
+ * The type of signature we are targeting for output.
  */
-public interface IdentifierEngine {
+public enum SignatureType {
+    /**
+     * The signature should be as close to a standard binary signature as possible.
+     * This means it will use the more standard PRONOM syntax (e.g. alternatives instead of sets) and have no strings.
+     */
+    BINARY,
 
     /**
-     * Process the identification request.
-     * 
-     * @param request The identification request
-     * @param matches the Container signature match collection
-     * 
-     * @throws IOException if a problem occurred with processing
+     * The signature can use the full potential of container syntax.  This includes strings and multi-byte sets.
      */
-    void process(IdentificationRequest  request, ContainerSignatureMatchCollection matches) throws IOException;
-
-    /**
-     * Sets the identification request factory to use to obtain new readers for internal byte streams.
-     * @param requestFactory The IdentificationRequestFactory to set.
-     */
-    void setRequestFactory(IdentificationRequestFactory requestFactory);
+    CONTAINER
 }

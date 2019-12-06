@@ -23,21 +23,65 @@ DROID allows files and folders to be selected from a file system for identificat
 
 DROID is made available under the New BSD License: https://raw.github.com/digital-preservation/droid/master/license.md
 
-## Packaging
+## Building DROID
 
-DROID can be built simply from source using Maven. Executing `mvn clean install` inside the `droid` folder should be enough. Two archives are provided inside the `droid-binary/target` folder.
+DROID can be built from source using Maven. The source code can be obtained from the Github repository at [https://github.com/digital-preservation/droid](https://github.com/digital-preservation/droid)
+   
+Once the code is cloned into a folder (e.g. `droid`), executing `mvn clean install` inside it will build the code. After a successful build, two archives are provided inside the `droid-binary/target` folder.
 
-
-#### Linux / OSX users
-
+### Linux / OSX / Windows users
 Archive `droid-binary-${VERSION}-bin-unix.zip`
 
 You will need JAVA 8 to 11 installed to run it.
 
-once unpacked, use the `droid.sh` script to run the application
-#### Windows users
+Once unpacked, use the `droid.sh` or `droid.bat` script to run the application.
+
+### Windows users
 Archive  `droid-binary-${VERSION}-bin-win32-with-jre.zip`
 
 For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 11.
 
-once unpacked, use the `droid.bat` script to run the application  
+Once unpacked, use the `droid.bat` script to run the application.
+
+## Signatures
+Since version 6.5, DROID adds some new capabilities to support developing and testing signatures.
+
+[Signature syntax](Signature%20syntax.md) provides details on the types of signatures and regular expression syntax supported by DROID.
+
+### sigtool
+To aid work on signatures, we provide `sigtool`, packaged with DROID. `sigtool` is a simple command line application which can:
+
+ * test binary or container signatures directly against files.
+ * generate signature XML from binary or container signatures.
+ * convert signatures between the original (binary) and the newer (container) syntax.
+ * produce summaries of signature XML files, converting the XML back into signatures.
+ * convert standard XML signature files into a simpler format, which uses the signatures directly.
+
+More details are provided in [Sigtool's user guide](droid-binary/bin/Using%20sigtool.txt) .
+
+### Simpler signature XML 
+Since version 6.5, DROID can compile signatures itself, without needing a full XML specification. Inside current signature files, the actual sequences to match are specified in various sub-elements and attributes of `<ByteSequence>` elements. 
+
+For example, the signature `{10-1024} 01 02 03 04 05 [00:30] * 01 02 03` is represented in signature XML by:
+
+  ```xml
+<ByteSequence Reference="BOFoffset">
+    <SubSequence SubSeqMinOffset="10" SubSeqMaxOffset="1024">
+        <Sequence>01 02 03 04 05</Sequence>
+        <RightFragment MaxOffset="0" MinOffset="0" Position="1">[00:30]</RightFragment>
+    </SubSequence>
+    <SubSequence>
+        <Sequence>01 02 03</Sequence>
+    </SubSequence>
+</ByteSequence>
+```
+
+DROID can now put a signature directly inside a `Sequence` attribute on the `<ByteSequence>` element, with no further XML required.  For example, the signature above can be simply written as:
+
+```xml
+<ByteSequence Reference="BOFoffset" Sequence="{10-1024} 01 02 03 04 05 [00:30] * 01 02 03" />
+```
+
+The full syntax can be used in either binary or container signature files.
+
+
