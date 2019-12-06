@@ -553,7 +553,6 @@ public class SubmissionGateway implements AsynchDroid {
                     results = handleExtensions(request, results);
 
                     // Are we processing archive formats?
-                    //TODO JC include list of included archive types in handleArchive
                     String archiveFormat = null;
                     if (archiveFormatResolver != null) {
                         archiveFormat = getArchiveFormat(results);
