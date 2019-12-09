@@ -63,6 +63,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolv
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
@@ -79,7 +80,9 @@ public class SubmissionGatewayTest {
         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
         SubmissionGateway submissionGateway = new SubmissionGateway();
         submissionGateway.setDroidCore(droid);
-        
+        PauseAspect pauseControl = new PauseAspect();
+        submissionGateway.setPauseAspect(pauseControl);
+
         droid.setSignatureFile("test_sig_files/DROID_SignatureFile_V26.xml");
         ResultHandler resultHandler = mock(ResultHandler.class);
         submissionGateway.setResultHandler(resultHandler);
@@ -173,7 +176,9 @@ public class SubmissionGatewayTest {
         SubmissionQueue submissionQueue = mock(SubmissionQueue.class);
         submissionGateway.setSubmissionQueue(submissionQueue);
         submissionGateway.setDroidCore(droid);
-        
+        PauseAspect pauseControl = new PauseAspect();
+        submissionGateway.setPauseAspect(pauseControl);
+
         droid.setSignatureFile("test_sig_files/DROID_SignatureFile_V26.xml");
         ResultHandler resultHandler = mock(ResultHandler.class);
         submissionGateway.setResultHandler(resultHandler);

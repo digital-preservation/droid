@@ -87,7 +87,6 @@
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
         <cxf.version>3.3.4</cxf.version>
-        <aspectj.version>1.9.5</aspectj.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.19</flying-saucer.version>
@@ -540,16 +539,6 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <groupId>net.byteseek</groupId>
                 <artifactId>byteseek</artifactId>
                 <version>2.0.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
-                <version>${aspectj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>${aspectj.version}</version>
             </dependency>
             <dependency>
                 <groupId>xerces</groupId>

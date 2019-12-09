@@ -61,7 +61,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.control.PauseBefore;
+import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
 import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
 
 /**
@@ -110,6 +110,7 @@ public class SubmissionGateway implements AsynchDroid {
     private long maxBytesToScan = -1;
     private SubmissionQueue submissionQueue;
     private ReplaySubmitter replaySubmitter;
+    private PauseAspect pauseControl;
 
     private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
@@ -119,8 +120,10 @@ public class SubmissionGateway implements AsynchDroid {
     public SubmissionGateway() {
     }
 
+    //CHECKSTYLE:OFF - too many parameters - but this is how many you need to instantiate safely.
     /**
-     * Paramterized constructor.
+     * Parameterized constructor.
+     *
      * @param droidCore The droid core to use.
      * @param resultHandler The result handler.
      * @param executorService The executor service.
@@ -128,12 +131,14 @@ public class SubmissionGateway implements AsynchDroid {
      * @param containerFormatResolver The container format resolver.
      * @param archiveHandlerFactory The archive handler factory.
      * @param containerFactory The container identifier factory.
-     * @param maxBytesToScan Max bytes to scan (negative means unlimited)
+     * @param pauseControl the PauseAspect to use.
+     * @param replaySubmitter the ReplaySubmitter to use.
+     * @param maxBytesToScan the bytes to scan at the start and end of a file, or negative if unlimited.
      */
     public SubmissionGateway(DroidCore droidCore, ResultHandler resultHandler, ExecutorService executorService,
                              ArchiveFormatResolver archiveFormatResolver, ArchiveFormatResolver containerFormatResolver,
                              ArchiveHandlerFactory archiveHandlerFactory, ContainerIdentifierFactory containerFactory,
-                             long maxBytesToScan) {
+                             PauseAspect pauseControl, ReplaySubmitter replaySubmitter, long maxBytesToScan) {
         setDroidCore(droidCore);
         setResultHandler(resultHandler);
         setExecutorService(executorService);
@@ -141,7 +146,8 @@ public class SubmissionGateway implements AsynchDroid {
         setContainerFormatResolver(containerFormatResolver);
         setArchiveHandlerFactory(archiveHandlerFactory);
         setContainerIdentifierFactory(containerFactory);
-        setHashGenerator(hashGenerator);
+        setPauseAspect(pauseControl);
+        setReplaySubmitter(replaySubmitter);
         setMaxBytesToScan(maxBytesToScan);
 
         setProcess7zip(processZip);
@@ -157,13 +163,14 @@ public class SubmissionGateway implements AsynchDroid {
         setMatchAllExtensions(matchAllExtensions);
         setGenerateHash(generateHash);
     }
+    //CHECKSTYLE:ON
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @PauseBefore
     public Future<IdentificationResultCollection> submit(final IdentificationRequest request) {
+        pauseControl.awaitUnpaused();
         jobCounter.increment();
         requests.add(request);
 
@@ -524,6 +531,13 @@ public class SubmissionGateway implements AsynchDroid {
      */
     public void setReplaySubmitter(ReplaySubmitter replaySubmitter) {
         this.replaySubmitter = replaySubmitter;
+    }
+
+    /**
+     * @param pauseAspect The pauseAspect to use.
+     */
+    public void setPauseAspect(PauseAspect pauseAspect) {
+        this.pauseControl = pauseAspect;
     }
 
     /**
