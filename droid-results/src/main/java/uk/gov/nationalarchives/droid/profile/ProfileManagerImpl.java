@@ -72,6 +72,30 @@ public class ProfileManagerImpl implements ProfileManager {
     private DroidGlobalConfig config;
 
     /**
+     * Empty bean constructor.
+     */
+    public ProfileManagerImpl() {
+    }
+
+    /**
+     * Paramterized constructor.
+     * @param contextLocator The profile context locator.
+     * @param profileSpecDao The profile spec dao.
+     * @param diskAction The profile disk action.
+     * @param signatureManager The signature manager.
+     * @param config The global config.
+     */
+    public ProfileManagerImpl(ProfileContextLocator contextLocator, ProfileSpecDao profileSpecDao,
+                              ProfileDiskAction diskAction, SignatureManager signatureManager,
+                              DroidGlobalConfig config) {
+        setProfileContextLocator(contextLocator);
+        setProfileSpecDao(profileSpecDao);
+        setProfileDiskAction(diskAction);
+        setSignatureManager(signatureManager);
+        setConfig(config);
+    }
+
+    /**
      * Gets a profile instance manager.
      * 
      * @param sigFileInfos

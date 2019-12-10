@@ -55,7 +55,25 @@ public class ProxySettings implements ConfigurationListener {
     private boolean enabled;
     
     private Set<ProxySubscriber> proxySubscribers = new HashSet<ProxySubscriber>();
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ProxySettings() {
+    }
+
+    /**
+     * Constructor taking the host, port and whether the proxy is currently enabled.
+     * @param proxyHost The proxy host to use.
+     * @param proxyPort The proxy port to use.
+     * @param enabled Whether the proxy settings are enabled.
+     */
+    public ProxySettings(String proxyHost, int proxyPort, boolean enabled) {
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
+        this.enabled = enabled;
+    }
+
     /**
      * @return the proxyHost
      */

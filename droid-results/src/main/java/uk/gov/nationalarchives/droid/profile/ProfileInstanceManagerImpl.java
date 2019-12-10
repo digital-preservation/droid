@@ -106,17 +106,41 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
     private volatile String pausedThreadId;
 
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public ProfileInstanceManagerImpl() {
+    }
+
+    /**
+     * Paramaterized constructor.
+     * @param profileDao The profiledao to use.
+     * @param reportDao The reportdao to use.
+     * @param planetsDao The planetsdao to use.
+     * @param referenceDataService The referencedataservice to use.
+     * @param profileInstance The profile instance
+     * @param specWalker The spec walker to use.
+     * @param submission The submission gateway to use.
+     * @param profileWalkerDao The profile walker dao to use.
+     */
+    public ProfileInstanceManagerImpl(ProfileDao profileDao, ReportDao reportDao, PlanetsXMLDao planetsDao,
+                                  ReferenceDataService referenceDataService, ProfileInstance profileInstance,
+                                  ProfileSpecWalker specWalker, AsynchDroid submission, ProfileWalkerDao profileWalkerDao) {
+        setProfileDao(profileDao);
+        setReportDao(reportDao);
+        setPlanetsDao(planetsDao);
+        setReferenceDataService(referenceDataService);
+        setProfile(profileInstance);
+        setSpecWalker(specWalker);
+        setSubmissionGateway(submission);
+        setProfileWalkerDao(profileWalkerDao);
+    }
+
     @Override
     public void cancel() {
         log.info("**** Profile Cancelled ****");
         task.cancel(false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     //@Transactional(propagation = Propagation.REQUIRED)
     public void initProfile(URI signatureFileUri) throws SignatureFileException {
@@ -143,18 +167,11 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         profileDao.initialise();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setProfile(ProfileInstance profile) {
         profileInstance = profile;
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public void pause() {
         pauseControl.setThreadWaitingHandler(new ThreadWaitingHandler() {
@@ -197,10 +214,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         pauseControl.resume();
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public Future<?> start() throws IOException {
 
@@ -314,9 +327,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         this.profileDao = profileDao;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<ProfileResourceNode> findRootProfileResourceNodes() {
 
@@ -347,8 +357,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         return new ArrayList<ProfileResourceNode>(primordialNodes.values());
     }
 
-    /**
-     */
     private List<ProfileResourceNode> findRootProfileResourceNodes(Filter filter) {
 
         // // Handle the root uri i.e. all root level resource nodes
@@ -386,9 +394,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         return new ArrayList<ProfileResourceNode>(primordialNodesAfterFilter.values());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<ProfileResourceNode> findAllProfileResourceNodes(Long parentId) {
         final Filter filter = profileInstance.getFilter();
@@ -405,9 +410,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         return profileInstance;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setResultsObserver(ProfileResultObserver observer) {
         specWalker.getProgressMonitor().setResultObserver(observer);
@@ -433,9 +435,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         return referenceDataService.getReferenceData();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setThrottleValue(int throttleValue) {
         final SubmissionThrottle submissionThrottle = specWalker.getFileEventHandler().getSubmissionThrottle();
@@ -527,9 +526,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
         this.specWalker = specWalker;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ProgressMonitor getProgressMonitor() {
         return specWalker.getProgressMonitor();

@@ -60,11 +60,28 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
 
     private AsynchDroid droidCore;
     private IdentificationRequestFactory<InputStream> factory;
-    private ResultHandler resultHandler;    
-    
+    private ResultHandler resultHandler;
+
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public TrueZipArchiveHandler() {
+    }
+
+    /**
+     * Constructor which sets internal parameters.
+     * @param droidCore The droid core to use.
+     * @param factory The IdentificationRequestFactory to use.
+     * @param resultHandler The ResultHandler to use.
+     */
+    public TrueZipArchiveHandler(AsynchDroid droidCore,
+                             IdentificationRequestFactory<InputStream> factory,
+                             ResultHandler resultHandler) {
+        this.droidCore = droidCore;
+        this.factory = factory;
+        this.resultHandler = resultHandler;
+    }
+
     @Override
     public void handle(IdentificationRequest request) throws IOException {
         final ZipFile zipFile = new ZipFile(new TrueZipReader(request.getWindowReader()));

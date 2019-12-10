@@ -45,13 +45,30 @@ public class Format {
     public static final Format NULL = nullFormat();
     
     private String puid;
-    
     private String mimeType;
-    
     private String name;
-
     private String version;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public Format() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param puid The puid
+     * @param mimeType The mimetype
+     * @param name The name
+     * @param version The version
+     */
+    public Format(String puid, String mimeType, String name, String version) {
+        setPuid(puid);
+        setMimeType(mimeType);
+        setName(name);
+        setVersion(version);
+    }
+
     /**
      * @return the puid
      */

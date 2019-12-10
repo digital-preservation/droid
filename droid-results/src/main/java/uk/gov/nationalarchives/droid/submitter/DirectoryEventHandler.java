@@ -55,6 +55,20 @@ public class DirectoryEventHandler {
     private StringBuilder uriStringBuilder = new StringBuilder(URI_STRING_BUILDER_CAPACITY);
 
     /**
+     * Empty bean constructor.
+     */
+    public DirectoryEventHandler() {
+    }
+
+    /**
+     * Paramaterized constructor.
+     * @param resultHandler The result handler to use.
+     */
+    public DirectoryEventHandler(ResultHandler resultHandler) {
+        setResultHandler(resultHandler);
+    }
+
+    /**
      * Handles a directory.
      * @param dir the directory to handle
      * @param parentId the directory's parent id

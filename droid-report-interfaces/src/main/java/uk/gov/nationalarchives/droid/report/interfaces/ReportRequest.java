@@ -45,7 +45,25 @@ public class ReportRequest {
     private ReportSpec reportSpec;
     private Filter filter;
     private List<String> profileIds;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ReportRequest() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param reportSpec The report spec to use.
+     * @param filter the filter to use.
+     * @param profileIds The list of profile ids to use.
+     */
+    public ReportRequest(ReportSpec reportSpec, Filter filter, List<String> profileIds) {
+        setReportSpec(reportSpec);
+        setFilter(filter);
+        setProfileIds(profileIds);
+    }
+
     /**
      * @return the filter
      */

@@ -84,7 +84,29 @@ public class ReportManagerImpl implements ReportManager {
     private ReportSpecDao reportSpecDao;
     private ProgressObserver observer;
     private DroidGlobalConfig config;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ReportManagerImpl() {
+    }
+
+    /**
+     * Parameterized constructor.
+     *
+     * @param contextLocator The profilecontextlocator to use.
+     * @param reportSpecDao The report spec dao to use.
+     * @param observer The progress observer to use.
+     * @param config The droid global config to use.
+     */
+    public ReportManagerImpl(ProfileContextLocator contextLocator, ReportSpecDao reportSpecDao,
+                             ProgressObserver observer, DroidGlobalConfig config) {
+        this.profileContextLocator = profileContextLocator;
+        this.reportSpecDao = reportSpecDao;
+        this.observer = observer;
+        this.config = config;
+    }
+
     /**
      * {@inheritDoc}
      * @deprecated PLANETS XML is now built using XSLT to transform normal report XML.
@@ -115,9 +137,6 @@ public class ReportManagerImpl implements ReportManager {
         log.info(String.format("Time for profile [%s]: %s ms", profileId, stopTime - startTime));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Report generateReport(ReportRequest request, Filter optionalFilter,
             CancellableProgressObserver progressObserver) 
@@ -184,10 +203,7 @@ public class ReportManagerImpl implements ReportManager {
         }
         return result;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public List<ReportSpec> listReportSpecs() {
         

@@ -57,6 +57,30 @@ public class DerbyPooledDataSourceFactory implements FactoryBean<DerbyPooledData
 
     private HikariConfig config;
 
+    /**
+     * Empty bean constructor.
+     */
+    public DerbyPooledDataSourceFactory() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param config The config to use.
+     */
+    public DerbyPooledDataSourceFactory(HikariConfig config) {
+        setConfig(config);
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param config the config to use
+     * @param createUrl The createUrl to use.
+     */
+    public DerbyPooledDataSourceFactory(HikariConfig config, String createUrl) {
+        setConfig(config);
+        setCreateUrl(createUrl);
+    }
+
     @Override
     public DerbyPooledDataSource getObject() throws Exception {
         String droidLogDir = System.getProperty(RuntimeConfig.LOG_DIR);
@@ -82,7 +106,6 @@ public class DerbyPooledDataSourceFactory implements FactoryBean<DerbyPooledData
     private String getDriverClassName() {
         return config.getDriverClassName();
     }
-
 
     private String getCreateURL() {
         String url = config.getJdbcUrl() + ";create=true";

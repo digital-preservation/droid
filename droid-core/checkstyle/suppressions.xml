@@ -66,12 +66,14 @@
     <suppress checks="MagicNumber|ClassFanOutComplexity|Javadoc|IllegalThrows|MultipleStringLiterals|ExecutableStatementCount|EmptyBlock"
               files=".*Test\.java$"/>
 
+    <suppress checks="JavaNCSS|CyclomaticComplexityCheck" files="ByteSequenceParser.java|DroidSubSequenceParser.java"/>
+
     <!--
     The SAXModelBuilder instantiates all the objects needed by signature files.
     This violates the checkstyle rule that objects shouldn't have more than 9 dependencies on other classes,
     so we suppress this rule for that class.  It has to be able to instantiate all the objects.
     -->
-    <suppress checks="ClassDataAbstractionCoupling" files=".*SAXModelBuilder.java"/>
+    <suppress checks="ClassDataAbstractionCoupling" files=".*SAXModelBuilder.java|ByteSequenceCompiler.java"/>
 
     <!--
       Turn off all checks for Generated and Test code. Fixes issues with using

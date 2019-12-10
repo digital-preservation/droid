@@ -94,15 +94,25 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private CsvWriter csvWriter;
-    private DroidGlobalConfig config;
     private FastDateFormat dateFormat = DateFormatUtils.ISO_DATETIME_FORMAT;
     private ExportOptions options = ExportOptions.ONE_ROW_PER_FILE;
     
     private String[] headers;
-    
+
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public CsvItemWriter() {
+    }
+
+    /**
+     * Constructor taking parameters.
+     * @param writer The CsvWriter to use.
+     */
+    public CsvItemWriter(CsvWriter writer) {
+        this.csvWriter = writer;
+    }
+
     @Override
     public void write(List<? extends ProfileResourceNode> nodes) {
         switch (options) {
@@ -118,11 +128,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 writeOneRowPerFile(nodes);
             }
         }
-//        if (config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)) {
-//            writeOneRowPerFormat(nodes);
-//        } else {
-//            writeOneRowPerFile(nodes);
-//        }
     }
     
     private void writeOneRowPerFile(List<? extends ProfileResourceNode> nodes) {
@@ -210,9 +215,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         this.csvWriter = csvWriter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void open(final Writer writer) {
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
@@ -221,19 +223,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         if (headers == null) {
             headers = HEADERS;
         }
-        //We need the null reference check since the config may be null when called from JUnit tests
-        //if (config.getProperties() != null) {
-        //    String hashName = config.getProperties().getProperty("profile.hashAlgorithm").toString().toUpperCase();
-        //    headers[HASH_ARRAY_INDEX] = String.format(headers[HASH_ARRAY_INDEX], hashName);
-        //}
-
         csvWriter.writeHeaders(headers);
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public void setOptions(ExportOptions options) {
         this.options = options;
@@ -272,10 +264,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
     
     /**
+     * No config is needed by this class, but it's retained temporarily for backwards compatibility purposes.
      * @param config the config to set
      */
     public void setConfig(DroidGlobalConfig config) {
-        this.config = config;
     }
 
     /**

@@ -63,6 +63,26 @@ public abstract class WebArchiveHandler {
     private ResultHandler resultHandler;
 
     /**
+     * Empty bean constructor.
+     */
+    public WebArchiveHandler() {
+    }
+
+    /**
+     * Constructor which sets internal parameters.
+     * @param droidCore The droid core to use.
+     * @param factory The IdentificationRequestFactory to use.
+     * @param resultHandler The ResultHandler to use.
+     */
+    public WebArchiveHandler(AsynchDroid droidCore,
+                                 IdentificationRequestFactory<InputStream> factory,
+                                 ResultHandler resultHandler) {
+        this.droidCore = droidCore;
+        this.factory = factory;
+        this.resultHandler = resultHandler;
+    }
+
+    /**
      * @param factory the factory to set
      */
     public final void setFactory(IdentificationRequestFactory factory) {

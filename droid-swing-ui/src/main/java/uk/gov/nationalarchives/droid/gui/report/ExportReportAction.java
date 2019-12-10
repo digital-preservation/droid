@@ -74,7 +74,25 @@ public class ExportReportAction {
     private List<ExportType> exportTypes;
     private Path lastSelectedDir;
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ExportReportAction() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param reportTransformer The reporttransformer to use.
+     * @param droidReportXML The path to the droid report xml.
+     * @param exportTypes A list of export types
+     */
+    public ExportReportAction(ReportTransformer reportTransformer, Path droidReportXML, List<ExportType> exportTypes) {
+        setReportTransformer(reportTransformer);
+        setDroidReportXml(droidReportXML);
+        this.exportTypes = exportTypes;
+    }
+
     /**
      * Executes the export of a report.
      * 

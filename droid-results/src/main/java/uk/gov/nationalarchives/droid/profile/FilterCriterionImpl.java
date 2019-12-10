@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -64,7 +65,7 @@ public class FilterCriterionImpl implements FilterCriterion {
     private String valueFreeText;
 
     @XmlElement(name = "Parameter", required = true)
-    private List<FilterValue> selectedValues;
+    private List<FilterValue> selectedValues = new ArrayList<>();
 
     @XmlElement(name = "RowNumber", required = true)
     private int rowNumber;
@@ -74,6 +75,23 @@ public class FilterCriterionImpl implements FilterCriterion {
      * Default constructor.
      */
     public FilterCriterionImpl() { }
+
+    /**
+     * Parameterized constructor.
+     * @param field The field
+     * @param operator The operator
+     * @param valueFreeText The value free text (or empty)
+     * @param selectedValues The selected filter values (or empty)
+     * @param rowNumber The row number.
+     */
+    public FilterCriterionImpl(CriterionFieldEnum field, CriterionOperator operator, String valueFreeText,
+                               List<FilterValue> selectedValues, int rowNumber) {
+        setField(field);
+        setOperator(operator);
+        setValueFreeText(valueFreeText);
+        setSelectedValues(selectedValues);
+        setRowNumber(rowNumber);
+    }
     
     /**
      * Getter method for row number.

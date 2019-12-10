@@ -49,25 +49,41 @@ public class NodeMetaData {
     private static final int MAX_STRING_LENGTH = 4095;
 
     private Long size;
-    
     private Date lastModifiedDate;
-
     private String name;
-
     private String extension;
-
     private NodeStatus nodeStatus;
-
     private IdentificationMethod identificationMethod;
-
     private ResourceType  resourceType;
-    
     private String hash;
 
     /**
      * Default constructor.
      */
     public NodeMetaData() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param size The size
+     * @param lastModifiedDate The last modified date.
+     * @param name The name
+     * @param extension The extension
+     * @param nodeStatus The node status
+     * @param method The identification method
+     * @param resourceType The resource type
+     * @param hash The hash
+     */
+    public NodeMetaData(Long size, Date lastModifiedDate, String name, String extension, NodeStatus nodeStatus,
+                        IdentificationMethod method, ResourceType resourceType, String hash) {
+        setSize(size);
+        setLastModifiedDate(lastModifiedDate);
+        setName(name);
+        setExtension(extension);
+        setNodeStatus(nodeStatus);
+        setIdentificationMethod(method);
+        setResourceType(resourceType);
+        setHash(hash);
     }
 
     /**

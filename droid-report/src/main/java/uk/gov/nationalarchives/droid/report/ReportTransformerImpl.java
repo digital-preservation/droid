@@ -72,7 +72,21 @@ public class ReportTransformerImpl implements ReportTransformer {
 
     private DroidGlobalConfig globalConfig;
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ReportTransformerImpl() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param config The global config to use.
+     */
+    public ReportTransformerImpl(DroidGlobalConfig config) {
+        this.globalConfig = config;
+    }
+
     /**
      * Transforms a report using xsl either for display or for use in a subsequent transformation.
      * 

@@ -47,8 +47,6 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
@@ -64,9 +62,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureUpdateSe
  */
 public class ContainerSignatureHttpService implements SignatureUpdateService {
 
-    /**
-     * 
-     */
     private static final String DATE_PATTERN = "yyyyMMdd";
     private static final String LAST_MODIFIED_HEADER = "Last-Modified";
     private static final String FILENAME_PATTERN = "container-signature-%s.xml";
@@ -75,15 +70,24 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
     private static final String COULD_NOT_FIND_SERVER = "Could not contact the signature web server at\n%s";
     private static final String FILE_NOT_FOUND_404 = "The signature file was not found on the signature web"
         + "server at\n[%s]"; 
-    
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private String endpointUrl;
     private HttpClient client = new HttpClient();
-    
+
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public ContainerSignatureHttpService() {
+    }
+
+    /**
+     * Constructs a ContainerSignatureHttpService with the endpoint URL to use.
+     * @param endpointUrl The endpoint url the signature service should use.
+     */
+    public ContainerSignatureHttpService(String endpointUrl) {
+        this.endpointUrl = endpointUrl;
+    }
+
     @Override
     public SignatureFileInfo getLatestVersion(int currentVersion) throws SignatureServiceException {
         GetMethod get = new GetMethod(endpointUrl);
@@ -101,16 +105,11 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
                         String.format(ERROR_MESSAGE_PATTERN, endpointUrl, statusCode));
             }
             int version = getVersion(get);
-            SignatureFileInfo signatureFileInfo = new SignatureFileInfo(version, false, SignatureType.CONTAINER);
-            return signatureFileInfo;
+            return new SignatureFileInfo(version, false, SignatureType.CONTAINER);
         } catch (UnknownHostException e) {
             throw new SignatureServiceException(
                     String.format(COULD_NOT_FIND_SERVER, endpointUrl));
-        } catch (IOException e) {
-            throw new SignatureServiceException(e);
-        } catch (DateParseException e) {
-            throw new SignatureServiceException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException | DateParseException e) {
             throw new SignatureServiceException(e);
         } finally {
             get.releaseConnection();
@@ -134,11 +133,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
         return sdf.parse(versionString);
     }
-    
-    /**
-     * {@inheritDoc}
-     * @throws SignatureServiceException 
-     */
+
     @Override
     public SignatureFileInfo importSignatureFile(final Path targetDir) throws SignatureServiceException {
         final GetMethod get = new GetMethod(endpointUrl);
@@ -181,10 +176,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
     void setEndpointUrl(String url) {
         this.endpointUrl = url;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void configurationChanged(ConfigurationEvent evt) {
         final String propertyName = evt.getPropertyName();
@@ -193,9 +185,6 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onProxyChange(ProxySettings proxySettings) {
         
@@ -207,10 +196,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
         }
         
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void init(DroidGlobalConfig config) {
         setEndpointUrl(config.getProperties().getString(DroidGlobalProperty.CONTAINER_UPDATE_URL.getName()));

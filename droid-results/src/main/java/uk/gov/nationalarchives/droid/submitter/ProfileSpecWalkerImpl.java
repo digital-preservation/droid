@@ -70,8 +70,24 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
     private StringBuilder uriBuilder = new StringBuilder(URI_BUILDER_SIZE);
 
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public ProfileSpecWalkerImpl() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param fileEventHandler The file event handler.
+     * @param directoryEventHandler The directory event handler.
+     * @param progressMonitor The progress monitor.
+     */
+    public ProfileSpecWalkerImpl(FileEventHandler fileEventHandler, DirectoryEventHandler directoryEventHandler,
+                                 ProgressMonitor progressMonitor) {
+        setFileEventHandler(fileEventHandler);
+        setDirectoryEventHandler(directoryEventHandler);
+        setProgressMonitor(progressMonitor);
+    }
+
     @Override
     public void walk(final ProfileSpec profileSpec, final ProfileWalkState walkState) throws IOException {
         
@@ -194,10 +210,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
     public ProgressMonitor getProgressMonitor() {
         return progressMonitor;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public FileEventHandler getFileEventHandler() {
         return fileEventHandler;

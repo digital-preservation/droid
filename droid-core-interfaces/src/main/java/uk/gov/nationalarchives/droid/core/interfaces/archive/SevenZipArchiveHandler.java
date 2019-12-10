@@ -62,6 +62,26 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
     private IdentificationRequestFactory<InputStream> factory;
     private ResultHandler resultHandler;
 
+    /**
+     * Empty bean constructor.
+     */
+    public SevenZipArchiveHandler() {
+    }
+
+    /**
+     * Constructor which sets internal parameters.
+     * @param droidCore The droid core to use.
+     * @param factory The IdentificationRequestFactory to use.
+     * @param resultHandler The ResultHandler to use.
+     */
+    public SevenZipArchiveHandler(AsynchDroid droidCore,
+                             IdentificationRequestFactory<InputStream> factory,
+                             ResultHandler resultHandler) {
+        this.droid = droidCore;
+        this.factory = factory;
+        this.resultHandler = resultHandler;
+    }
+
     @Override
     public void handle(IdentificationRequest request) throws IOException {
         SeekableByteChannel     sevenZipReader = new SevenZipReader(request.getWindowReader());
@@ -70,7 +90,6 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
         SevenZArchiveWalker     walker         = new SevenZArchiveWalker(droid, factory, request.getIdentifier(), resultHandler);
         walker.walk(sevenZIterator);
     }
-
 
     /**
      * A SevenZEntryInfo class which wraps entry information and a stream for that entry.

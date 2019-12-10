@@ -69,6 +69,14 @@ public class CheckSignatureUpdateAction extends SwingWorker<Map<SignatureType, S
      */
     public CheckSignatureUpdateAction() {
     }
+
+    /**
+     * Parameterized constructor.
+     * @param signatureManager The signature manager to use.
+     */
+    public CheckSignatureUpdateAction(SignatureManager signatureManager) {
+        setSignatureManager(signatureManager);
+    }
     
     /**
      * {@inheritDoc}

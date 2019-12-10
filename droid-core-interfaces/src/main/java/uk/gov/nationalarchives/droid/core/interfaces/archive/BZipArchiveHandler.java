@@ -35,7 +35,6 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-//import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
@@ -54,8 +53,23 @@ public class BZipArchiveHandler implements ArchiveHandler {
 
     private AsynchDroid droidCore;
     private IdentificationRequestFactory<InputStream> factory;
-    private ResultHandler resultHandler;
 
+    /**
+     * Empty bean constructor.
+     */
+    public BZipArchiveHandler() {
+    }
+
+    /**
+     * Constructor which sets internal parameters.
+     * @param droidCore The droid core to use.
+     * @param factory The IdentificationRequestFactory to use.
+     */
+    public BZipArchiveHandler(AsynchDroid droidCore,
+                              IdentificationRequestFactory factory) {
+        this.droidCore = droidCore;
+        this.factory = factory;
+    }
 
     @Override
     public final void handle(IdentificationRequest request) throws IOException {
@@ -111,9 +125,7 @@ public class BZipArchiveHandler implements ArchiveHandler {
      * @param resultHandler the resultHandler to set
      */
     public final void setResultHandler(ResultHandler resultHandler) {
-        this.resultHandler = resultHandler;
     }
-
 
 }
 

@@ -37,6 +37,11 @@ import java.awt.Desktop;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -52,6 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -93,6 +99,7 @@ import uk.gov.nationalarchives.droid.profile.ProfileEventListener;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
+import uk.gov.nationalarchives.droid.profile.ProfileState;
 
 /**
  * 
@@ -210,7 +217,7 @@ public class ProfileForm extends JPanel {
         int modelIndex = nodeColumn0.getModelIndex();
         resultsOutline.setColumnSorted(modelIndex, true, 1);
         
-        
+
         //((DefaultTreeModel) treeModel).reload();
 
         jScrollPane1.addComponentListener(new ComponentAdapter() {
@@ -223,7 +230,44 @@ public class ProfileForm extends JPanel {
                 }
             }
         });
+
+        setDropFilesOn(resultsOutline);
     }
+
+    private void setDropFilesOn(JComponent component) {
+        // Support dropping files on to the results outline.
+        component.setDropTarget(new DropTarget() {
+            public synchronized void drop(DropTargetDropEvent evt) {
+                if (profile.getState() == ProfileState.VIRGIN) {
+                    if (acceptDrop(evt)) {
+                        evt.acceptDrop(DnDConstants.ACTION_COPY);
+                        try {
+                            final List<File> droppedFiles = (List<File>)
+                                    evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                            droidMainUi.addFilesAndFolders(droppedFiles);
+                        } catch (UnsupportedFlavorException e) {
+                            // Ignore - the worst that can happen is we don't get to drop files.
+                        } catch (IOException e) {
+                            // Ignore - the worst that can happen is we don't get to drop files.
+                        }
+                        evt.dropComplete(true);
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean acceptDrop(DropTargetDropEvent evt) {
+        boolean acceptDrop = false;
+        for (DataFlavor flavour : evt.getCurrentDataFlavors()) {
+            if (flavour.equals(DataFlavor.javaFileListFlavor)) {
+                acceptDrop = true;
+                break;
+            }
+        }
+        return acceptDrop;
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

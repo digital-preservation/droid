@@ -67,6 +67,14 @@ public class ProfileWalkState {
      */
     ProfileWalkState() {
     }
+
+    /**
+     * Parameterized constructor.
+     * @param fileWalker The file walker to use.
+     */
+    public ProfileWalkState(FileWalker fileWalker) {
+        setCurrentFileWalker(fileWalker);
+    }
     
     /**
      * @return the currentFileWalker

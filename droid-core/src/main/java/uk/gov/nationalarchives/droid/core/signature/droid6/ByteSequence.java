@@ -89,9 +89,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.byteseek.compiler.CompileException;
 import net.byteseek.io.reader.WindowReader;
 
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
+import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor;
+import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler;
 
 /**
  * A ByteSequence is a regular-expression like object
@@ -166,11 +169,12 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      */
     private static final int QUOTE_CHARACTER_VALUE = 39;
     /**
-     * Error message when excption reading a byte from positionInFile
+     * Error message when exception reading a byte from positionInFile
      */
     private static final String BYTE_READ_ERROR = "An error occurred reading a byte at positionInFile ";
+
     /**
-    *Use static log for optimmal performance..
+    *Use static log for optimal performance..
      */
     private final Logger log = LoggerFactory.getLogger(ByteSequence.class);
     
@@ -189,6 +193,21 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     private int sortOrder;
 
     private boolean isInvalidByteSequence;
+
+    /**
+     * The signature sequence in PRONOM or container compatible syntax.
+     * It won't be set for most ByteSequences, but can be set from the signature XML
+     * using a Sequence attribute on a ByteSequence element.
+     */
+    private String sequence = "";
+
+    /**
+     * Whether the bytesequence is prepared for use or not.  The flag intends to only call this once,
+     * but container signature compile on demand from multiple threads.  This causes the ByteSequence to
+     * be prepared for use multiple times even with this flag set.
+     */
+    //TODO: investigate threading issues around ByteSequence compilation and preparation in container signatures.
+    private boolean preparedForUse;
 
     /**
      * 
@@ -239,6 +258,14 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
     }
 
     /**
+     * Return a defensive copy of any subsequences in this ByteSequence.
+     * @return a defensive copy of any subsequences in this ByteSequence.
+     */
+    public List<SubSequence> getSubSequences() {
+        return new ArrayList<SubSequence>(subSequences);
+    }
+
+    /**
      * If a reference attribute doesn't exist, this method may never be called.
      * Be careful with any general setup done in this method.  Defaults should already
      * exist which are true if the reference is not set.
@@ -255,6 +282,28 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
         this.reverseOrder = theRef.equalsIgnoreCase(EOF_OFFSET);
         //this.searchDirection = this.reverseOrder? -1 : 1;
         this.reference = theRef;
+        preparedForUse = false;
+        isInvalidByteSequence = false; // changed something - don't know if it's invalid anymore.
+    }
+
+    /**
+     * Sets a signature sequence value directly on a ByteSequence object.
+     * This is a full PRONOM or DROID container compatible signature.
+     *
+     * @param sequence A PRONOM or container signature sequence
+     */
+    public final void setSequence(final String sequence) {
+        this.sequence = sequence;
+        preparedForUse = false;
+        isInvalidByteSequence = false; // changed something - don't know if it's invalid anymore.
+    }
+
+    /**
+     * Returns a signature sequence set on this ByteSequence object.
+     * @return a signature sequence set on this ByteSequence object.
+     */
+    public String getSequence() {
+        return sequence;
     }
 
     /**
@@ -293,6 +342,8 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
             setIndirectOffsetLength(value);
         } else if ("IndirectOffsetLocation".equals(name)) {
             setIndirectOffsetLocation(value);
+        } else if ("Sequence".equals(name)) {
+            setSequence(value);
         } else {
             unknownAttributeWarning(name, this.getElementName());
         }
@@ -307,7 +358,51 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * MUST be called before using the byte sequence to match.
      */
     public final void prepareForUse() {
-        // set the sort order of a byte sequence.
+        if (!preparedForUse) {
+            // If we have a sequence attribute set, compile it:
+            if (!sequence.isEmpty()) {
+                compileSequence();
+            }
+
+            // Set the other properties of the ByteSequence needed to search.
+            if (!isInvalidByteSequence) {
+                setSortOrder();
+                prepareSequenceFragments();
+            }
+        }
+        preparedForUse = true;
+    }
+
+    /**
+     * Compiles the ByteSequence object from the PRONOM syntax defined in the sequence attribute.
+     */
+    private void compileSequence() {
+        try {
+            if (!subSequences.isEmpty()) {
+                log.warn("A sequence is defined - ByteSequence is clearing any sub-objects (probably from XML parsing) before compiling: " + sequence);
+                subSequences.clear();
+            }
+            ByteSequenceCompiler.COMPILER.compile(this, sequence, getAnchor());
+        } catch (CompileException e) {
+            log.warn("Compilation error in signature for sequence: " + sequence + "\n" + e.getMessage(), e);
+            isInvalidByteSequence = true;
+        }
+    }
+
+    private ByteSequenceAnchor getAnchor() {
+        ByteSequenceAnchor anchor = ByteSequenceAnchor.VariableOffset;
+        if (reference.endsWith(BOF_OFFSET)) {
+            anchor = ByteSequenceAnchor.BOFOffset;
+        } else if (reference.endsWith(EOF_OFFSET)) {
+            anchor = ByteSequenceAnchor.EOFOffset;
+        }
+        return anchor;
+    }
+
+    /**
+     * Defines the sort order which a parent collection applies to sort this ByteSequence relative to others.
+     */
+    private void setSortOrder() {
         final int noOfSubSequences = subSequences.size();
         if (anchoredToBOF) {
             if (noOfSubSequences == 1) {
@@ -324,7 +419,6 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
         } else {
             sortOrder = SORT5;
         }
-        prepareSequenceFragments();
     }
 
     /**
@@ -339,9 +433,9 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
         for (int subSequenceIndex = 0; subSequenceIndex < stop; subSequenceIndex++) {
             // Determine if the subsequence will scan the entire file, or be limited by a max offset:
             final boolean fullFileScan = !(subSequenceIndex == firstSequenceToMatch && isFixedStart);
-            SubSequence sequence = getSubSequence(subSequenceIndex);
-            sequence.prepareForUse(reverseOrder, fullFileScan);
-            if (sequence.isInvalidSubSequence()) {
+            SubSequence subSequence = getSubSequence(subSequenceIndex);
+            subSequence.prepareForUse(reverseOrder, fullFileScan);
+            if (subSequence.isInvalidSubSequence()) {
                 isInvalidByteSequence = true;
                 break;
             }
@@ -494,7 +588,6 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
         return regularExpression.toString().trim();
     }
 
-
     /**
      * 
      * @param prettyPrint whether to pretty print the regular expression.
@@ -553,7 +646,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
             final StringBuffer buffer, final int minGap, final int maxGap) {
         if (maxGap < 0) {
             if (minGap > 0) {
-                final String formatString = prettyPrint ? "  .{%d-*}  " : ".{%d-*}";
+                final String formatString = prettyPrint ? "  .{%d,*}  " : ".{%d,*}";
                 buffer.append(String.format(formatString, minGap));
             } else {
                 buffer.append(prettyPrint ? "  .*  " : ".*");
@@ -563,7 +656,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
                 final String formatString = prettyPrint ? " .{%d} " : ".{%d}";
                 buffer.append(String.format(formatString, minGap));
             } else {
-                final String formatString = prettyPrint ? " .{%d-%d} " : ".{%d-%d}";
+                final String formatString = prettyPrint ? " .{%d,%d} " : ".{%d,%d}";
                 buffer.append(String.format(formatString, minGap, maxGap));
             }
         }

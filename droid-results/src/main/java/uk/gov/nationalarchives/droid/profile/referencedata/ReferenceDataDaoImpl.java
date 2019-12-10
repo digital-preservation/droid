@@ -49,7 +49,6 @@ import uk.gov.nationalarchives.droid.profile.SqlUtils;
  * @author Alok Kumar Dash
  * 
  */
-
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
     private static final String SELECT_FORMATS = "SELECT * FROM FORMAT";
@@ -57,8 +56,20 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
     private DataSource datasource;
 
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public ReferenceDataDaoImpl() {
+    }
+
+    /**
+     * Parameterized constructor.
+     *
+     * @param datasource The datasource to use.
+     */
+    public ReferenceDataDaoImpl(DataSource datasource) {
+        setDatasource(datasource);
+    }
+
     @Override
     public List<Format> getFormats() {
         final List<Format> formats = new ArrayList<Format>(2000); // about 1500 formats as of 2015.

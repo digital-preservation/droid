@@ -113,6 +113,50 @@ public class SubmissionGateway implements AsynchDroid {
 
     private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
+    /**
+     * Empty bean constructor.
+     */
+    public SubmissionGateway() {
+    }
+
+    /**
+     * Paramterized constructor.
+     * @param droidCore The droid core to use.
+     * @param resultHandler The result handler.
+     * @param executorService The executor service.
+     * @param archiveFormatResolver The archive format resolver.
+     * @param containerFormatResolver The container format resolver.
+     * @param archiveHandlerFactory The archive handler factory.
+     * @param containerFactory The container identifier factory.
+     * @param maxBytesToScan Max bytes to scan (negative means unlimited)
+     */
+    public SubmissionGateway(DroidCore droidCore, ResultHandler resultHandler, ExecutorService executorService,
+                             ArchiveFormatResolver archiveFormatResolver, ArchiveFormatResolver containerFormatResolver,
+                             ArchiveHandlerFactory archiveHandlerFactory, ContainerIdentifierFactory containerFactory,
+                             long maxBytesToScan) {
+        setDroidCore(droidCore);
+        setResultHandler(resultHandler);
+        setExecutorService(executorService);
+        setArchiveFormatResolver(archiveFormatResolver);
+        setContainerFormatResolver(containerFormatResolver);
+        setArchiveHandlerFactory(archiveHandlerFactory);
+        setContainerIdentifierFactory(containerFactory);
+        setHashGenerator(hashGenerator);
+        setMaxBytesToScan(maxBytesToScan);
+
+        setProcess7zip(processZip);
+        setProcessTar(processTar);
+        setProcessGzip(processGzip);
+        setProcessRar(processRar);
+        setProcess7zip(process7zip);
+        setProcessIso(processIso);
+        setProcessBzip2(processBzip2);
+        setProcessArc(processArc);
+        setProcessWarc(processWarc);
+
+        setMatchAllExtensions(matchAllExtensions);
+        setGenerateHash(generateHash);
+    }
 
     /**
      * {@inheritDoc}

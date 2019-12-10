@@ -178,16 +178,41 @@ public class SubSequence extends SimpleElement {
     private final List<List<SideFragment>> orderedRightFragments = new ArrayList<List<SideFragment>>();
     private boolean backwardsSearch;
     private boolean isInvalidSubSequence;
-    private boolean hasLeftFragments;
-    private boolean hasRightFragments;
-
     private String subsequenceText;
-
     private boolean[] orderedLeftFragsHaveVariableOffset;
     private boolean[] orderedRightFragsHaveVariableOffset;
     private boolean useLeftFragmentBackTrack;
     private boolean useRightFragmentBackTrack;
+    private boolean preparedForUse;
 
+    /**
+     * Default constructor.
+     */
+    public SubSequence() {
+    }
+
+    /**
+     * Constructs a SubSequence object directly from pre-built components.
+     *
+     * @param anchor The SequenceMatcher which is used to search for the subsequence.
+     * @param leftFragments  fragments to add to the left of the subsequence.
+     * @param rightFragments fragments to add to the right of the subsequence.
+     * @param minSeqOffset The minimum offset to begin looking for this subsequence.
+     * @param maxSeqOffset The maximum offset to find this subsequence.
+     */
+    public SubSequence(final SequenceMatcher anchor,
+                       final List<List<SideFragment>> leftFragments,
+                       final List<List<SideFragment>> rightFragments,
+                       final int minSeqOffset, final int maxSeqOffset) {
+        this.matcher = anchor;
+        this.orderedLeftFragments.addAll(leftFragments);
+        this.orderedRightFragments.addAll(rightFragments);
+        this.minSeqOffset = minSeqOffset;
+        this.maxSeqOffset = maxSeqOffset;
+        calculateFragmentProperties();
+        buildSearcher();
+        preparedForUse = true;
+    }
 
     /**
      *
@@ -382,50 +407,107 @@ public class SubSequence extends SimpleElement {
         this.backwardsSearch = reverseOrder;
         this.fullFileScan = fullScan;
         processSequenceFragments();
-        hasLeftFragments  = !orderedLeftFragments.isEmpty();
-        hasRightFragments = !orderedRightFragments.isEmpty();
     }
 
+    /**
+     * Accessor method for internal objects to allow testing.
+     * @return matcher
+     */
+    public SequenceMatcher getAnchorMatcher() {
+        return matcher; // matchers are immutable, no harm in just returning it.
+    }
+
+    /**
+     * @return fragments to add to the left of the subsequence
+     */
+    public List<List<SideFragment>> getLeftFragments() {
+        return defensiveCopy(orderedLeftFragments);
+    }
+
+    /**
+     * @return fragments to add to the right of the subsequence
+     */
+    public List<List<SideFragment>> getRightFragments() {
+        return defensiveCopy(orderedRightFragments);
+    }
+
+    private List<List<SideFragment>> defensiveCopy(List<List<SideFragment>> toCopy) {
+        final List<List<SideFragment>> defensiveCopy = new ArrayList<>();
+        for (List<SideFragment> fragmentsAtPosition : toCopy) {
+            final List<SideFragment> newFragmentList = new ArrayList<>();
+            for (SideFragment fragment : fragmentsAtPosition) {
+                newFragmentList.add(new SideFragment(fragment));
+            }
+            defensiveCopy.add(newFragmentList);
+        }
+        return defensiveCopy;
+    }
 
     /*
      * Re-orders the left and right sequence fragments in increasing positionInFile order.
      * Also calculates the minimum and maximum lengths a fragment can have.
      */
     private void processSequenceFragments() {
-        buildOrderedLeftFragments();
-        buildOrderedRightFragments();
+        if (!preparedForUse) {
+            buildFragmentsFromXMLObjects();
+            calculateFragmentProperties();
+        }
+        preparedForUse = true;
+    }
 
-        optimiseSingleByteAlternatives(orderedLeftFragments);
-        optimiseSingleByteAlternatives(orderedRightFragments);
+    /**
+     * If a SubSequence was built by parsing XML, the fragments are stored in the leftFragments and rightFragments
+     * lists, which aren't ordered for searching.  To search, DROID needs to re-build those lists with the fragments
+     * in the right order, and collapsed into lists of lists (e.g. for each fragment position we have a list of
+     * possible alternative matches (alternatives fragments, e.g. (01 02 03 | 02 04 05) matches two fragments at the same position.
+     *
+     * It also performs some optimisation on the fragments:
+     *
+     * 1.  Turning alternatives of single bytes into sets, e.g. (01|02|03) is more efficiently matched as [01 02 03].
+     * 2.  Capturing some fragments back into the main anchor sequence, as DROID can search for some fragments directly.
+     *
+     * Once it has built and optimised the fragments, it builds the matcher and search required for actual searching.
+     */
+    private void buildFragmentsFromXMLObjects() {
+        if (leftFragments != null && rightFragments != null) {
+            buildOrderedLeftFragments();
+            buildOrderedRightFragments();
 
-        captureLeftFragments();
-        captureRightFragments();
+            optimiseSingleByteAlternatives(orderedLeftFragments);
+            optimiseSingleByteAlternatives(orderedRightFragments);
+            captureLeftFragments();
+            captureRightFragments();
 
-        calculateMinMaxLeftFragmentLength();
-        calculateMinMaxRightFragmentLength();
+            buildMatcherAndSearcher();
+            this.leftFragments = null;
+            this.rightFragments = null;
+        }
+    }
 
-        buildMatcherAndSearcher();
-
-        this.leftFragments = null;
-        this.rightFragments = null;
+    /**
+     * Calculates various properties of the fragments needed to search effectively with them.
+     */
+    private void calculateFragmentProperties() {
         this.numLeftFragmentPositions = orderedLeftFragments.size();
         this.numRightFragmentPositions = orderedRightFragments.size();
         isInvalidSubSequence = isInvalidSubSequence ? true : checkForInvalidFragments();
-
         if (this.numLeftFragmentPositions > 0) {
             this.orderedLeftFragsHaveVariableOffset =
                     determineFragmentPositionVariableOffsetStatus(this.orderedLeftFragments);
             this.useLeftFragmentBackTrack = ArrayUtils.contains(this.orderedLeftFragsHaveVariableOffset, true);
         }
-
         if (this.numRightFragmentPositions > 0) {
             this.orderedRightFragsHaveVariableOffset =
                     determineFragmentPositionVariableOffsetStatus(this.orderedRightFragments);
             this.useRightFragmentBackTrack = ArrayUtils.contains(this.orderedRightFragsHaveVariableOffset, true);
         }
-
+        calculateMinMaxLeftFragmentLength();
+        calculateMinMaxRightFragmentLength();
     }
 
+    /**
+     * Processes the left fragment XML list into a List<List<SideFragment>>
+     */
     private void buildOrderedLeftFragments() {
         int numPositions = 0;
         for (int i = 0; i < leftFragments.size(); i++) {
@@ -449,6 +531,9 @@ public class SubSequence extends SimpleElement {
         }
     }
 
+    /**
+     * Processes the right fragment XML list into a List<List<SideFragment>>
+     */
     private void buildOrderedRightFragments() {
     /* Right fragments */
         //Determine the number of fragment subsequences there are
@@ -511,6 +596,9 @@ public class SubSequence extends SimpleElement {
         }
     }
 
+    /**
+     * Find fragments on the left which could be captured back into the main anchor sequence:
+     */
     private void captureLeftFragments() {
         int captureFragPos = -1;
         int numLeftFragmentPos = orderedLeftFragments.size();
@@ -545,6 +633,9 @@ public class SubSequence extends SimpleElement {
         rewriteRemainingFragments(orderedLeftFragments, captureFragPos);
     }
 
+    /**
+     * Find fragments on the right which could be captured back into the main anchor sequence:
+     */
     private void captureRightFragments() {
         int captureFragPos = -1;
         int numRightPos = orderedRightFragments.size();
@@ -596,6 +687,9 @@ public class SubSequence extends SimpleElement {
         }
     }
 
+    /**
+     * Calculate the overall min and max offsets for all left fragments.
+     */
     private void calculateMinMaxLeftFragmentLength() {
         // Calculate minimum and maximum size of left fragments:
         minLeftFragmentLength = 0;
@@ -620,6 +714,9 @@ public class SubSequence extends SimpleElement {
         }
     }
 
+    /**
+     * Calculate the overall min and max offsets for all right fragments.
+     */
     private void calculateMinMaxRightFragmentLength() {
         // Calculate minimum and maximum size of right fragments:
         minRightFragmentLength = 0;
@@ -644,21 +741,30 @@ public class SubSequence extends SimpleElement {
         }
     }
 
-
+    /**
+     * Compiles the matcher and searcher objects to search for the main anchor sequence with.
+     */
     private void buildMatcherAndSearcher() {
         try {
             // CHECKSTYLE:OFF     Quite legitimate to have more than 120 chars per line just now...
             matcher = SEQUENCE_COMPILER.compile(subsequenceText);
-            if (matcher.length() == 1) {
-                searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0)); // use simplest byte matcher searcher if the matcher is length 1.
-            } else {
-                searcher = new HorspoolFinalFlagSearcher(matcher); // use shifting searcher if shifts can be bigger than one.
-            }
+            buildSearcher();
             // CHECKSTYLE:ON
         } catch (CompileException ex) {
             final String warning = String.format(SEQUENCE_PARSE_ERROR, subsequenceText, ex.getMessage());
             getLog().warn(warning);
             isInvalidSubSequence = true;
+        }
+    }
+
+    /**
+     * Creates the right searcher for the matcher.
+     */
+    private void buildSearcher() {
+        if (matcher.length() == 1) {
+            searcher = new ByteMatcherSearcher(matcher.getMatcherForPosition(0)); // use simplest byte matcher searcher if the matcher is length 1.
+        } else {
+            searcher = new HorspoolFinalFlagSearcher(matcher); // use shifting searcher if shifts can be bigger than one.
         }
     }
 

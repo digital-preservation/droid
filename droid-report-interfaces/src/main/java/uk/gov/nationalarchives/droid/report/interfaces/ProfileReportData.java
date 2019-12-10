@@ -45,7 +45,23 @@ public class ProfileReportData extends ReportData {
     
     @XmlAttribute(name = "Id")
     private String profileId;
-    
+
+    /**
+     * Empty bean constructor.
+     */
+    public ProfileReportData() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param profileName The name of the profile.
+     * @param profileId The id of the profile.
+     */
+    public ProfileReportData(String profileName, String profileId) {
+        this.profileName = profileName;
+        this.profileId = profileId;
+    }
+
     /**
      * @param profileName the profileName to set
      */
