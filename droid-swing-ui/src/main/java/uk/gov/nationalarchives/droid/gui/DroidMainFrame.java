@@ -410,6 +410,7 @@ public class DroidMainFrame extends JFrame {
         jButtonStop = new javax.swing.JButton();
         jSeparator11 = new javax.swing.JToolBar.Separator();
         jButtonFilter = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
         jFilterOnCheckBox = new javax.swing.JCheckBox();
         jSeparator10 = new javax.swing.JToolBar.Separator();
         jButtonReport = new javax.swing.JButton();
@@ -611,7 +612,6 @@ public class DroidMainFrame extends JFrame {
         jFilterOnCheckBox.setText("On");
         jFilterOnCheckBox.setFocusable(false);
         jFilterOnCheckBox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jFilterOnCheckBox.setIconTextGap(11);
         jFilterOnCheckBox.setInheritsPopupMenu(true);
         jFilterOnCheckBox.setPreferredSize(new java.awt.Dimension(24, 58));
         jFilterOnCheckBox.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
@@ -621,7 +621,23 @@ public class DroidMainFrame extends JFrame {
                 jFilterOnCheckBoxActionPerformed(evt);
             }
         });
-        droidToolBar.add(jFilterOnCheckBox);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jFilterOnCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jFilterOnCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        droidToolBar.add(jPanel1);
 
         jSeparator10.setSeparatorSize(new java.awt.Dimension(20, 40));
         droidToolBar.add(jSeparator10);
@@ -639,7 +655,6 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonReport);
 
-        jMenuBar1.setMinimumSize(null);
         jMenuBar1.setPreferredSize(new java.awt.Dimension(100, 21));
 
         jMenuFile.setMnemonic('F');
@@ -967,7 +982,7 @@ public class DroidMainFrame extends JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(droidToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jProfilesTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE))
+                .addComponent(jProfilesTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))
         );
 
         pack();
@@ -1437,6 +1452,7 @@ public class DroidMainFrame extends JFrame {
     protected javax.swing.JMenuItem jMenuSave;
     protected javax.swing.JMenuItem jMenuSaveAs;
     private javax.swing.JMenu jMenuTools;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane jProfilesTabbedPane;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator10;
