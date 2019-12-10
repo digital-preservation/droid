@@ -64,7 +64,6 @@ public class Droid4LegacyDroidTest {
 //        ResultHandler resultHandler = mock(ResultHandler.class);
 //        droid.setResultHandler(resultHandler);
 //        droid.setExecutorService(Executors.newFixedThreadPool(2));
-//        droid.setProcessArchives(true);
         try {
             droid.init();
         } catch (SignatureParseException x) {

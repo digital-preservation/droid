@@ -69,29 +69,36 @@ import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
  * requests. Requests are removed from the queue when the droid ID task finishes
  * All requests should come through this pipeline.
  * @author rflitcroft
- * 
+ *
  *
  */
 //CHECKSTYLE:OFF - fan out complexity too high.
 public class SubmissionGateway implements AsynchDroid {
-/**
-     * 
+    /**
+     *
      */
     private static final String CONTAINER_ERROR = "Could not process the potential container format (%s): %s\t%s\t%s";
 
-/**
-     * 
+    /**
+     *
      */
     private static final String ARCHIVE_ERROR = "Could not process the archival format(%s): %s\t%s\t%s";
 
     //CHECKSTYLE:ON    
     private final Logger log = LoggerFactory.getLogger(getClass());
-
+    private final JobCounter jobCounter = new JobCounter();
     private DroidCore droidCore;
     private ResultHandler resultHandler;
     private ExecutorService executorService;
-    private boolean processArchives;
-    private boolean processWebArchives;
+    private boolean processZip;
+    private boolean processTar;
+    private boolean processGzip;
+    private boolean processRar;
+    private boolean process7zip;
+    private boolean processIso;
+    private boolean processBzip2;
+    private boolean processArc;
+    private boolean processWarc;
     private ArchiveFormatResolver archiveFormatResolver;
     private ArchiveFormatResolver containerFormatResolver;
     private ArchiveHandlerFactory archiveHandlerFactory;
@@ -101,11 +108,9 @@ public class SubmissionGateway implements AsynchDroid {
     private boolean generateHash;
     private boolean matchAllExtensions;
     private long maxBytesToScan = -1;
-    
     private SubmissionQueue submissionQueue;
-    private final JobCounter jobCounter = new JobCounter();
     private ReplaySubmitter replaySubmitter;
-    
+
     private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
     /**
@@ -138,12 +143,21 @@ public class SubmissionGateway implements AsynchDroid {
         setContainerIdentifierFactory(containerFactory);
         setHashGenerator(hashGenerator);
         setMaxBytesToScan(maxBytesToScan);
-        setProcessArchives(processArchives);
-        setProcessWebArchives(processWebArchives);
+
+        setProcess7zip(processZip);
+        setProcessTar(processTar);
+        setProcessGzip(processGzip);
+        setProcessRar(processRar);
+        setProcess7zip(process7zip);
+        setProcessIso(processIso);
+        setProcessBzip2(processBzip2);
+        setProcessArc(processArc);
+        setProcessWarc(processWarc);
+
         setMatchAllExtensions(matchAllExtensions);
         setGenerateHash(generateHash);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -152,7 +166,7 @@ public class SubmissionGateway implements AsynchDroid {
     public Future<IdentificationResultCollection> submit(final IdentificationRequest request) {
         jobCounter.increment();
         requests.add(request);
-        
+
         // old code blocking identification:
         Callable<IdentificationResultCollection> callable = new Callable<IdentificationResultCollection>() {
             @Override
@@ -162,12 +176,12 @@ public class SubmissionGateway implements AsynchDroid {
                 return results;
             }
         };
-        
+
         FutureTask<IdentificationResultCollection> task = new SubmissionFutureTask(callable, request);
         executorService.submit(task);
         return task;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -175,11 +189,396 @@ public class SubmissionGateway implements AsynchDroid {
     public void replay() {
         replaySubmitter.replay();
     }
-    
+
+    private void generateHash(IdentificationRequest request) throws IOException {
+        if (generateHash) {
+            try {
+                InputStream in = request.getSourceInputStream();
+                try {
+                    String hash = hashGenerator.hash(in);
+                    request.getRequestMetaData().setHash(hash);
+                } finally {
+                    if (in != null) {
+                        in.close();
+                    }
+                }
+                //CHECKSTYLE:OFF - generating a hash can't prejudice any other results
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            //CHECKSTYLE:ON
+        }
+    }
+
+    private IdentificationResultCollection handleExtensions(IdentificationRequest request,
+                                                            IdentificationResultCollection results) {
+        IdentificationResultCollection extensionResults = results;
+        try {
+            List<IdentificationResult> resultList = results.getResults();
+            if (resultList != null && resultList.isEmpty()) {
+                // If we call matchExtensions with "true", it will match
+                // ALL files formats which have a given extension.
+                // If "false", it will only match file formats for which
+                // there is no other signature defined.
+                IdentificationResultCollection checkExtensionResults =
+                        droidCore.matchExtensions(request, matchAllExtensions);
+                if (checkExtensionResults != null) {
+                    extensionResults = checkExtensionResults;
+                }
+            } else {
+                droidCore.checkForExtensionsMismatches(extensionResults,
+                        request.getExtension());
+            }
+            //CHECKSTYLE:OFF - do not allow any errors in other code to
+            //    prevent results so far from being recorded.
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        //CHECKSTYLE:ON
+        return extensionResults;
+    }
+
+    /**
+     * @param request  The archive request to handle.
+     * @param results The previous identification results for the archive format.
+     * @return
+     */
+    private void handleArchive(IdentificationRequest request,
+                               IdentificationResultCollection results, String archiveFormat) {
+        results.setArchive(true);
+        ResourceId id = resultHandler.handle(results);
+        jobCounter.incrementPostProcess();
+        RequestIdentifier identifier = request.getIdentifier();
+        identifier.setResourceId(id);
+        if (identifier.getAncestorId() == null) {
+            identifier.setAncestorId(id.getId());
+        }
+        submissionQueue.add(request.getIdentifier());
+        jobCounter.decrement();
+        try {
+            //BNO: Does this always return the same archive handler for any given container format?
+            //And will it end up using the same submission gateway, or a new one with a different thread pool?
+            ArchiveHandler handler = archiveHandlerFactory.getHandler(archiveFormat);
+            handler.handle(request);
+            // CHECKSTYLE:OFF
+        } catch (Exception e) {
+            // CHECKSTYLE:ON
+            String causeMessage = "";
+            if (e.getCause() != null) {
+                causeMessage = e.getCause().getMessage();
+            }
+            final String message = String.format(ARCHIVE_ERROR,
+                    archiveFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
+            if (log.isDebugEnabled()) {
+                log.debug(message, e); // exception details included in debug.
+            } else {
+                log.warn(message); // Just the message in normal operation.
+            }
+            resultHandler.handleError(new IdentificationException(
+                    request, IdentificationErrorType.OTHER, e));
+        } finally {
+            submissionQueue.remove(request.getIdentifier());
+            jobCounter.decrementPostProcess();
+        }
+    }
+
+    private IdentificationResultCollection handleContainer(IdentificationRequest request,
+                                                           IdentificationResultCollection results)
+            throws IOException {
+        // process a container format (ole2, odf, ooxml etc)
+        String containerFormat = getContainerFormat(results);
+        try {
+            if (containerFormatResolver != null && containerFormat != null) {
+                ContainerIdentifier containerIdentifier = containerIdentifierFactory.getIdentifier(containerFormat);
+                containerIdentifier.setMaxBytesToScan(maxBytesToScan);
+                IdentificationResultCollection containerResults = containerIdentifier.submit(request);
+                droidCore.removeLowerPriorityHits(containerResults);
+                droidCore.checkForExtensionsMismatches(containerResults, request.getExtension());
+                containerResults.setFileLength(request.size());
+                containerResults.setRequestMetaData(request.getRequestMetaData());
+                return containerResults.getResults().isEmpty() ? null : containerResults;
+            }
+            //CHECKSTYLE:OFF - rules say don't catch this, but other code keeps on throwing them.
+            // Don't prejudice any results so far because other code isn't following 'the rules'.
+        } catch (Exception e) {
+            //CHECKSTYLE:ON
+            String causeMessage = "";
+            if (e.getCause() != null) {
+                causeMessage = e.getCause().getMessage();
+            }
+            final String message = String.format(CONTAINER_ERROR,
+                    containerFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
+            log.warn(message);
+        }
+        return null;
+    }
+
+    /**
+     * @param results A previous identification of an archival format.
+     * @return format or null
+     */
+    private String getArchiveFormat(IdentificationResultCollection results) {
+        final List<IdentificationResult> theResults = results.getResults();
+        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
+            String format = archiveFormatResolver.forPuid(result.getPuid());
+            if (format != null) { // exit on the first non-null format met
+                if (isProcessedArchiveOrWebArchiveFormat(format)) {
+                    format = null;
+                }
+                return format;
+            }
+        }
+
+        return null;
+    }
+
+    //CHECKSTYLE:OFF - cyclomatic complexity too high.
+    private boolean isProcessedArchiveOrWebArchiveFormat(String format) {
+        return "ZIP".equals(format) && !processZip
+                || "TAR".equals(format) && !processTar
+                || "GZ".equals(format) && !processGzip
+                || "RAR".equals(format) && !processRar
+                || "7Z".equals(format) && !process7zip
+                || "ISO".equals(format) && !processIso
+                || "BZ".equals(format) && !processBzip2
+                || "ARC".equals(format) && !processArc
+                || "WARC".equals(format) && !processWarc;
+    }
+    //CHECKSTYLE:ON
+
+
+    /**
+     *
+     * @param format
+     * @return true if a Web Archive format
+     */
+    private Boolean isWebArchiveFormat(String format) {
+        return "ARC".equals(format) || "WARC".equals(format);
+    }
+
+    private String getContainerFormat(IdentificationResultCollection results) {
+        final List<IdentificationResult> theResults = results.getResults();
+        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
+        for (int i = 0; i < numResults; i++) {
+            final IdentificationResult result = theResults.get(i);
+            final String format = containerFormatResolver.forPuid(result.getPuid());
+            if (format != null) {
+                return format;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Waits until all in-process jobs have completed.
+     * @throws InterruptedException if the calling thread was interrupted.
+     */
+    @Override
+    public void awaitIdle() throws InterruptedException {
+        jobCounter.awaitIdle();
+    }
+
+    /**
+     * Waits until the job queue is empty AND all sub-tasks (archives etc.) have finished.
+     * @throws InterruptedException if the calling thread was interrupted.
+     */
+    @Override
+    public void awaitFinished() throws InterruptedException {
+        jobCounter.awaitFinished();
+    }
+
+    /**
+     * @param archiveFormatResolver the archiveFormatResolver to set
+     */
+    public void setArchiveFormatResolver(ArchiveFormatResolver archiveFormatResolver) {
+        this.archiveFormatResolver = archiveFormatResolver;
+    }
+
+    /**
+     * @param archiveHandlerFactory the archiveHandlerFactory to set
+     */
+    public void setArchiveHandlerFactory(ArchiveHandlerFactory archiveHandlerFactory) {
+        this.archiveHandlerFactory = archiveHandlerFactory;
+    }
+
+    /**
+     * @param containerFormatResolver the containerFormatResolver to set
+     */
+    public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
+        this.containerFormatResolver = containerFormatResolver;
+    }
+
+    /**
+     * @param containerIdentifierFactory the containerIdentifierFactory to set
+     */
+    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
+        this.containerIdentifierFactory = containerIdentifierFactory;
+    }
+
+    /**
+     * @param droidCore the droidCore to set
+     */
+    public void setDroidCore(DroidCore droidCore) {
+        this.droidCore = droidCore;
+    }
+
+    /**
+     * @param executorService the executorService to set
+     */
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    /**
+     * @param processZip set whether to process Zip files
+     */
+    public void setProcessZip(boolean processZip) {
+        this.processZip = processZip;
+    }
+
+    /**
+     * @param processTar set whether to process Tar files
+     */
+    public void setProcessTar(boolean processTar) {
+        this.processTar = processTar;
+    }
+
+    /**
+     * @param processGzip set whether to process Gzip files
+     */
+    public void setProcessGzip(boolean processGzip) {
+        this.processGzip = processGzip;
+    }
+
+    /**
+     * @param processRar set whether to process Rar files
+     */
+    public void setProcessRar(boolean processRar) {
+        this.processRar = processRar;
+    }
+
+    /**
+     * @param process7zip set whether to process 7zip files
+     */
+    public void setProcess7zip(boolean process7zip) {
+        this.process7zip = process7zip;
+    }
+
+    /**
+     * @param processIso set whether to process Iso files
+     */
+    public void setProcessIso(boolean processIso) {
+        this.processIso = processIso;
+    }
+
+    /**
+     * @param processBzip2 set whether to process Bzip2 files
+     */
+    public void setProcessBzip2(boolean processBzip2) {
+        this.processBzip2 = processBzip2;
+    }
+
+
+    /**
+     * @param processArc set whether to process Arc files
+     */
+    public void setProcessArc(boolean processArc) {
+        this.processArc = processArc;
+    }
+
+    /**
+     * @param processWarc set whether to process Warc files
+     */
+    public void setProcessWarc(boolean processWarc) {
+        this.processWarc = processWarc;
+    }
+
+    /**
+     * @param resultHandler the resultHandler to set
+     */
+    public void setResultHandler(ResultHandler resultHandler) {
+        this.resultHandler = resultHandler;
+    }
+
+    /**
+     * @param submissionQueue the submissionQueue to set
+     */
+    public void setSubmissionQueue(SubmissionQueue submissionQueue) {
+        this.submissionQueue = submissionQueue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void save() {
+        resultHandler.commit(); // flush any remaining entities out to the database.
+        submissionQueue.save();
+    }
+
+    /**
+     * @param replaySubmitter the replaySubmitter to set
+     */
+    public void setReplaySubmitter(ReplaySubmitter replaySubmitter) {
+        this.replaySubmitter = replaySubmitter;
+    }
+
+    /**
+     * @param hashGenerator the hashGenerator to set
+     */
+    public void setHashGenerator(HashGenerator hashGenerator) {
+        this.hashGenerator = hashGenerator;
+    }
+
+    /**
+     * @param generateHash the generateHash to set
+     */
+    public void setGenerateHash(boolean generateHash) {
+        this.generateHash = generateHash;
+    }
+
+    /**
+     * @param hashAlgorithm the algorithm to set
+     */
+    public void setHashAlgorithm(String hashAlgorithm) {
+        this.hashAlgorithm = hashAlgorithm;
+    }
+
+    /**
+     * Shuts down the executor service and closes any in-flight requests.
+     * @throws IOException if temp files could not be deleted.
+     */
+    public void close() throws IOException {
+        executorService.shutdownNow();
+        for (IdentificationRequest request : requests) {
+            request.close();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setMaxBytesToScan(long maxBytesToScan) {
+        this.maxBytesToScan = maxBytesToScan;
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public void setMatchAllExtensions(boolean matchAllExtensions) {
+        this.matchAllExtensions = matchAllExtensions;
+    }
+
     private final class SubmissionFutureTask extends FutureTask<IdentificationResultCollection> {
 
         private IdentificationRequest request;
-        
+
         SubmissionFutureTask(Callable<IdentificationResultCollection> callable, IdentificationRequest request) {
             super(callable);
             this.request = request;
@@ -196,10 +595,15 @@ public class SubmissionGateway implements AsynchDroid {
                     // no container results - process the normal results.
                     droidCore.removeLowerPriorityHits(results);
                     results = handleExtensions(request, results);
-                    
+
                     // Are we processing archive formats?
-                    if ((processArchives || processWebArchives) && archiveFormatResolver != null) {
-                        jobCountDecremented = handleArchive(request, results);
+                    String archiveFormat = null;
+                    if (archiveFormatResolver != null) {
+                        archiveFormat = getArchiveFormat(results);
+                    }
+                    if (archiveFormat != null) {
+                        handleArchive(request, results, archiveFormat);
+                        jobCountDecremented = true;
                     } else { // just process the results so far:
                         results.setArchive(getArchiveFormat(results) != null);
                         ResourceId id = resultHandler.handle(results);
@@ -228,7 +632,7 @@ public class SubmissionGateway implements AsynchDroid {
                 }
             }
         }
-        
+
         private void closeRequest() {
             requests.remove(request);
             try {
@@ -238,340 +642,5 @@ public class SubmissionGateway implements AsynchDroid {
             }
         }
     }
-    
-    private void generateHash(IdentificationRequest request) throws IOException {
-        if (generateHash) {
-            try {
-                InputStream in = request.getSourceInputStream();
-                try {
-                    String hash = hashGenerator.hash(in);
-                    request.getRequestMetaData().setHash(hash);
-                } finally {
-                    if (in != null) {
-                        in.close();
-                    }
-                }
-            //CHECKSTYLE:OFF - generating a hash can't prejudice any other results
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-            //CHECKSTYLE:ON
-        }
-    }
 
-    private IdentificationResultCollection handleExtensions(IdentificationRequest request, 
-            IdentificationResultCollection results) {
-        IdentificationResultCollection extensionResults = results;
-        try {
-            List<IdentificationResult> resultList = results.getResults();
-            if (resultList != null && resultList.isEmpty()) {
-                // If we call matchExtensions with "true", it will match
-                // ALL files formats which have a given extension.
-                // If "false", it will only match file formats for which
-                // there is no other signature defined.
-                IdentificationResultCollection checkExtensionResults =
-                    droidCore.matchExtensions(request, matchAllExtensions);
-                if (checkExtensionResults != null) {
-                    extensionResults = checkExtensionResults;
-                }
-            } else {
-                droidCore.checkForExtensionsMismatches(extensionResults, 
-                        request.getExtension());                        
-            }
-        //CHECKSTYLE:OFF - do not allow any errors in other code to
-        //    prevent results so far from being recorded.
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        //CHECKSTYLE:ON
-        return extensionResults;
-    }
-
-    /**
-     * @param request  The archive request to handle.
-     * @param results The previous identification results for the archive format.
-     * @return
-     */
-    private boolean handleArchive(IdentificationRequest request, 
-            IdentificationResultCollection results) {
-        
-        boolean jobCountDecremented = false;
-        
-        String archiveFormat = getArchiveFormat(results);
-        if (archiveFormat != null) {
-            results.setArchive(true);
-            ResourceId id = resultHandler.handle(results); 
-            jobCounter.incrementPostProcess();
-            RequestIdentifier identifier = request.getIdentifier();
-            identifier.setResourceId(id);
-            if (identifier.getAncestorId() == null) {
-                identifier.setAncestorId(id.getId());
-            }
-            submissionQueue.add(request.getIdentifier());
-            jobCounter.decrement();
-            jobCountDecremented = true;
-            try {
-                //BNO: Does this always return the same archive handler for any given container format?
-                //And will it end up using the same submission gateway, or a new one with a different thread pool?
-                ArchiveHandler handler = archiveHandlerFactory.getHandler(archiveFormat);
-                handler.handle(request);
-                // CHECKSTYLE:OFF
-            } catch (Exception e) {
-                // CHECKSTYLE:ON
-                String causeMessage = "";
-                if (e.getCause() != null) {
-                    causeMessage = e.getCause().getMessage();
-                }
-                final String message = String.format(ARCHIVE_ERROR, 
-                        archiveFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
-                if (log.isDebugEnabled()) {
-                    log.debug(message, e); // exception details included in debug.
-                } else {
-                    log.warn(message); // Just the message in normal operation.
-                }
-                resultHandler.handleError(new IdentificationException(
-                        request, IdentificationErrorType.OTHER, e));
-            } finally {
-                submissionQueue.remove(request.getIdentifier());
-                jobCounter.decrementPostProcess();
-            }
-        } else {
-            ResourceId id = resultHandler.handle(results);
-            request.getIdentifier().setNodeId(id.getId());
-        }
-        return jobCountDecremented;
-    }
-
-    private IdentificationResultCollection handleContainer(IdentificationRequest request, 
-            IdentificationResultCollection results)
-        throws IOException {
-        // process a container format (ole2, odf, ooxml etc)
-        String containerFormat = getContainerFormat(results);
-        try {
-            if (containerFormatResolver != null && containerFormat != null) {
-                ContainerIdentifier containerIdentifier = containerIdentifierFactory.getIdentifier(containerFormat);
-                containerIdentifier.setMaxBytesToScan(maxBytesToScan);
-                IdentificationResultCollection containerResults = containerIdentifier.submit(request);
-                droidCore.removeLowerPriorityHits(containerResults);
-                droidCore.checkForExtensionsMismatches(containerResults, request.getExtension());
-                containerResults.setFileLength(request.size());
-                containerResults.setRequestMetaData(request.getRequestMetaData());
-                return containerResults.getResults().isEmpty() ? null : containerResults; 
-            }
-        //CHECKSTYLE:OFF - rules say don't catch this, but other code keeps on throwing them.
-            // Don't prejudice any results so far because other code isn't following 'the rules'.
-        } catch (Exception e) {
-        //CHECKSTYLE:ON
-            String causeMessage = "";
-            if (e.getCause() != null) {
-                causeMessage = e.getCause().getMessage();
-            }
-            final String message = String.format(CONTAINER_ERROR, 
-                    containerFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
-            log.warn(message);  
-        }
-        return null;
-    }
-    
-    /**
-     * @param results A previous identification of an archival format.
-     * @return format or null
-     */
-    private String getArchiveFormat(IdentificationResultCollection results) {
-        final List<IdentificationResult> theResults = results.getResults();
-        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
-        for (int i = 0; i < numResults; i++) {
-            final IdentificationResult result = theResults.get(i);
-            String format = archiveFormatResolver.forPuid(result.getPuid());
-            if (format != null) { // exit on the first non-null format met
-                if (processArchives && !processWebArchives && isWebArchiveFormat(format)) {
-                    format = null;
-                } else if (!processArchives && processWebArchives && !isWebArchiveFormat(format)) {
-                    format = null;
-                }
-                return format;
-            }
-        }
-        
-        return null;
-    }
-
-    /**
-     *
-     * @param format
-     * @return true if a Web Archive format
-     */
-    private Boolean isWebArchiveFormat(String format) {
-        return "ARC".equals(format) || "WARC".equals(format);
-    }
-
-    private String getContainerFormat(IdentificationResultCollection results) {
-        final List<IdentificationResult> theResults = results.getResults();
-        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
-        for (int i = 0; i < numResults; i++) {
-            final IdentificationResult result = theResults.get(i);
-            final String format = containerFormatResolver.forPuid(result.getPuid());
-            if (format != null) {
-                return format;
-            }
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Waits until all in-process jobs have completed.
-     * @throws InterruptedException if the calling thread was interrupted.
-     */
-    @Override
-    public void awaitIdle() throws InterruptedException {
-        jobCounter.awaitIdle();
-    }
-    
-    /**
-     * Waits until the job queue is empty AND all sub-tasks (archives etc.) have finished.
-     * @throws InterruptedException if the calling thread was interrupted.
-     */
-    @Override
-    public void awaitFinished() throws InterruptedException {
-        jobCounter.awaitFinished();
-    }
-
-    /**
-     * @param archiveFormatResolver the archiveFormatResolver to set
-     */
-    public void setArchiveFormatResolver(ArchiveFormatResolver archiveFormatResolver) {
-        this.archiveFormatResolver = archiveFormatResolver;
-    }
-    
-    /**
-     * @param archiveHandlerFactory the archiveHandlerFactory to set
-     */
-    public void setArchiveHandlerFactory(ArchiveHandlerFactory archiveHandlerFactory) {
-        this.archiveHandlerFactory = archiveHandlerFactory;
-    }
-    
-    /**
-     * @param containerFormatResolver the containerFormatResolver to set
-     */
-    public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
-        this.containerFormatResolver = containerFormatResolver;
-    }
-    
-    /**
-     * @param containerIdentifierFactory the containerIdentifierFactory to set
-     */
-    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
-        this.containerIdentifierFactory = containerIdentifierFactory;
-    }
-    
-    /**
-     * @param droidCore the droidCore to set
-     */
-    public void setDroidCore(DroidCore droidCore) {
-        this.droidCore = droidCore;
-    }
-    
-    /**
-     * @param executorService the executorService to set
-     */
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-    
-    /**
-     * @param processArchives set whether to process Archives
-     */
-    public void setProcessArchives(boolean processArchives) {
-
-        this.processArchives = processArchives;
-    }
-
-    /**
-     * @param processWebArchives set whether to process Web Archives
-     */
-    public void setProcessWebArchives(boolean processWebArchives) {
-        this.processWebArchives = processWebArchives;
-    }
-
-    /**
-     * @param resultHandler the resultHandler to set
-     */
-    public void setResultHandler(ResultHandler resultHandler) {
-        this.resultHandler = resultHandler;
-    }
-    
-    /**
-     * @param submissionQueue the submissionQueue to set
-     */
-    public void setSubmissionQueue(SubmissionQueue submissionQueue) {
-        this.submissionQueue = submissionQueue;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void save() {
-        resultHandler.commit(); // flush any remaining entities out to the database.
-        submissionQueue.save();
-    }
-    
-    /**
-     * @param replaySubmitter the replaySubmitter to set
-     */
-    public void setReplaySubmitter(ReplaySubmitter replaySubmitter) {
-        this.replaySubmitter = replaySubmitter;
-    }
-    
-    /**
-     * @param hashGenerator the hashGenerator to set
-     */
-    public void setHashGenerator(HashGenerator hashGenerator) {
-        this.hashGenerator = hashGenerator;
-    }
-    
-    /**
-     * @param generateHash the generateHash to set
-     */
-    public void setGenerateHash(boolean generateHash) {
-        this.generateHash = generateHash;
-    }
-    
-        /**
-     * @param hashAlgorithm the algorithm to set
-     */
-    public void setHashAlgorithm(String hashAlgorithm) {
-        this.hashAlgorithm = hashAlgorithm;
-    }
-    
-    /**
-     * Shuts down the executor service and closes any in-flight requests.
-     * @throws IOException if temp files could not be deleted.
-     */
-    public void close() throws IOException {
-        executorService.shutdownNow();
-        for (IdentificationRequest request : requests) {
-            request.close();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMaxBytesToScan(long maxBytesToScan) {
-        this.maxBytesToScan = maxBytesToScan;
-    }
-    
-    
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMatchAllExtensions(boolean matchAllExtensions) {
-        this.matchAllExtensions = matchAllExtensions;
-    }
-    
 }

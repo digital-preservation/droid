@@ -83,8 +83,17 @@ public class SubmissionGatewayTest {
         droid.setSignatureFile("test_sig_files/DROID_SignatureFile_V26.xml");
         ResultHandler resultHandler = mock(ResultHandler.class);
         submissionGateway.setResultHandler(resultHandler);
-        submissionGateway.setProcessArchives(true);
-        submissionGateway.setProcessWebArchives(false);
+        submissionGateway.setProcessTar(true);
+        submissionGateway.setProcessZip(true);
+        submissionGateway.setProcessGzip(true);
+        submissionGateway.setProcessRar(true);
+        submissionGateway.setProcess7zip(true);
+        submissionGateway.setProcessIso(true);
+        submissionGateway.setProcessBzip2(true);
+
+        submissionGateway.setProcessArc(true);
+        submissionGateway.setProcessWarc(true);
+
         submissionGateway.setExecutorService(Executors.newFixedThreadPool(2));
         
         SubmissionQueue submissionQueue = mock(SubmissionQueue.class);

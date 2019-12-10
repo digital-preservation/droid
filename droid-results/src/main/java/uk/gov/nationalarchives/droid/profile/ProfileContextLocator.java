@@ -107,10 +107,20 @@ public class ProfileContextLocator {
                     .getString(DroidGlobalProperty.HASH_ALGORITHM.getName()));
             profileInstance.setGenerateHash(globalConfig.getProperties()
                     .getBoolean(DroidGlobalProperty.GENERATE_HASH.getName()));
-            profileInstance.setProcessArchiveFiles(globalConfig.getProperties()
-                    .getBoolean(DroidGlobalProperty.PROCESS_ARCHIVES.getName()));
-            profileInstance.setProcessWebArchiveFiles(globalConfig.getProperties()
-                    .getBoolean(DroidGlobalProperty.PROCESS_WEB_ARCHIVES.getName()));
+
+            profileInstance.setProcessTarFiles(globalConfig.getProperties()
+                    .getBoolean(DroidGlobalProperty.PROCESS_TAR.getName()));
+            profileInstance.setProcessZipFiles(globalConfig.getProperties()
+                    .getBoolean(DroidGlobalProperty.PROCESS_ZIP.getName()));
+            profileInstance.setProcessGzipFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_GZIP.getName()));
+            profileInstance.setProcessRarFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_RAR.getName()));
+            profileInstance.setProcess7zipFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_7ZIP.getName()));
+            profileInstance.setProcessIsoFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_ISO.getName()));
+            profileInstance.setProcessBzip2Files(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_BZIP2.getName()));
+
+            profileInstance.setProcessArcFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_ARC.getName()));
+            profileInstance.setProcessWarcFiles(globalConfig.getProperties().getBoolean(DroidGlobalProperty.PROCESS_WARC.getName()));
+
             profileInstance.setMaxBytesToScan(globalConfig.getProperties()
                     .getLong(DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName()));
             profileInstance.setMatchAllExtensions(globalConfig.getProperties()
@@ -184,8 +194,18 @@ public class ProfileContextLocator {
         props.setProperty("profileHome", profileHome.toAbsolutePath().toString());
         
         props.setProperty("containerSigPath", containerSignatureFile.toAbsolutePath().toString());
-        props.setProperty("processArchives", String.valueOf(profile.getProcessArchiveFiles()));
-        props.setProperty("processWebArchives", String.valueOf(profile.getProcessWebArchiveFiles()));
+
+        props.setProperty("processTar", String.valueOf(profile.getProcessTarFiles()));
+        props.setProperty("processZip", String.valueOf(profile.getProcessZipFiles()));
+        props.setProperty("processGzip", String.valueOf(profile.getProcessGzipFiles()));
+        props.setProperty("processRar", String.valueOf(profile.getProcessRarFiles()));
+        props.setProperty("process7zip", String.valueOf(profile.getProcess7zipFiles()));
+        props.setProperty("processIso", String.valueOf(profile.getProcessIsoFiles()));
+        props.setProperty("processBzip2", String.valueOf(profile.getProcessBzip2Files()));
+
+        props.setProperty("processArc", String.valueOf(profile.getProcessArcFiles()));
+        props.setProperty("processWarc", String.valueOf(profile.getProcessWarcFiles()));
+
         props.setProperty("generateHash", String.valueOf(profile.getGenerateHash()));
         props.setProperty("hashAlgorithm", String.valueOf(profile.getHashAlgorithm()));
         props.setProperty("maxBytesToScan", String.valueOf(profile.getMaxBytesToScan()));

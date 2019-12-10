@@ -209,7 +209,6 @@ public class ConfigDialog extends JDialog {
         jLabel4 = new JLabel();
         jLabel11 = new JLabel();
         defaultSigFileComboBox1 = new JComboBox();
-        processArchivesCheckBox = new JCheckBox();
         generateHashCheckBox = new JCheckBox();
         containerSigCombo = new JComboBox();
         containerSigFileLabel = new JLabel();
@@ -219,7 +218,21 @@ public class ConfigDialog extends JDialog {
         rowPerFormatButton2 = new JRadioButton();
         hashAlgorithmCombo = new JComboBox();
         jLabel10 = new JLabel();
-        processWebArchivesCheckBox = new JCheckBox();
+        jPanel4 = new JPanel();
+        processZipCheckBox = new JCheckBox();
+        processTarCheckBox = new JCheckBox();
+        processGzipCheckBox = new JCheckBox();
+        processRarCheckBox = new JCheckBox();
+        process7zipCheckBox = new JCheckBox();
+        processIsoCheckBox = new JCheckBox();
+        processBzip2CheckBox = new JCheckBox();
+        toggleArchivesButton = new JButton();
+        archivesLabel = new JLabel();
+        jPanel6 = new JPanel();
+        webArchivesLabel = new JLabel();
+        processArcCheckBox = new JCheckBox();
+        processWarcCheckBox = new JCheckBox();
+        toggleWebArchivesButton = new JButton();
         jPanel2 = new JPanel();
         jPanel1 = new JPanel();
         rowPerFileButton1 = new JRadioButton();
@@ -269,16 +282,6 @@ public class ConfigDialog extends JDialog {
         binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultBinarySigFileVersion\"]}"), defaultSigFileComboBox1, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
-        processArchivesCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processArchivesCheckBox.text")); // NOI18N
-
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processArchives\"]}"), processArchivesCheckBox, BeanProperty.create("selected"), "archiveBinding");
-        bindingGroup.addBinding(binding);
-
-        processArchivesCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processArchivesCheckBoxActionPerformed(evt);
-            }
-        });
 
         generateHashCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.generateHashCheckBox.text")); // NOI18N
 
@@ -339,18 +342,203 @@ public class ConfigDialog extends JDialog {
 
         jLabel10.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel10.text_1")); // NOI18N
 
-        processWebArchivesCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processWebArchivesCheckBox.text")); // NOI18N
+        processZipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processZipCheckBox.text")); // NOI18N
+        processZipCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processZipCheckBoxActionPerformed(evt);
+            }
+        });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processWebArchives\"]}"), processWebArchivesCheckBox, BeanProperty.create("selected"), "webArchiveBinding");
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processZip\"]}"), processZipCheckBox, BeanProperty.create("selected"), "zipBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
 
-        processWebArchivesCheckBox.addActionListener(new ActionListener() {
+        processTarCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processTarCheckBox.text")); // NOI18N
+        processTarCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                processWebArchivesCheckBoxActionPerformed(evt);
+                processTarCheckBoxActionPerformed(evt);
             }
         });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processTar\"]}"), processTarCheckBox, BeanProperty.create("selected"), "tarBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+
+        processGzipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processGzipCheckBox.text")); // NOI18N
+        processGzipCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processGzipCheckBoxActionPerformed(evt);
+            }
+        });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processGzip\"]}"), processGzipCheckBox, BeanProperty.create("selected"), "gzipBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+        processRarCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processRarCheckBox.text")); // NOI18N
+        processRarCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processRarCheckBoxActionPerformed(evt);
+            }
+        });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processRar\"]}"), processRarCheckBox, BeanProperty.create("selected"), "rarBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+        process7zipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.process7zipCheckBox.text")); // NOI18N
+        process7zipCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                process7zipCheckBoxActionPerformed(evt);
+            }
+        });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.process7zip\"]}"), process7zipCheckBox, BeanProperty.create("selected"), "7zipBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+        processIsoCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processIsoCheckBox.text")); // NOI18N
+        processIsoCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processIsoCheckBoxActionPerformed(evt);
+            }
+        });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processIso\"]}"), processIsoCheckBox, BeanProperty.create("selected"), "isoBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+        processBzip2CheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processBzip2CheckBox.text")); // NOI18N
+        processBzip2CheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processBzip2CheckBoxActionPerformed(evt);
+            }
+        });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processBzip2\"]}"), processBzip2CheckBox, BeanProperty.create("selected"), "bzip2Binding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+        toggleArchivesButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.toggleArchivesButton.text")); // NOI18N
+        toggleArchivesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                toggleArchivesButtonActionPerformed(evt);
+            }
+        });
+
+        archivesLabel.setLabelFor(containerSigCombo);
+        archivesLabel.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.archivesLabel.text")); // NOI18N
+
+        GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(jPanel4Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(toggleArchivesButton)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(processZipCheckBox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(processTarCheckBox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(processGzipCheckBox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(processRarCheckBox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(process7zipCheckBox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(processIsoCheckBox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(processBzip2CheckBox)))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(archivesLabel, GroupLayout.PREFERRED_SIZE, 461, GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 121, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(3, 3, 3)
+                .addComponent(archivesLabel)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(toggleArchivesButton)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(processZipCheckBox)
+                    .addComponent(processTarCheckBox)
+                    .addComponent(processGzipCheckBox)
+                    .addComponent(process7zipCheckBox)
+                    .addComponent(processRarCheckBox)
+                    .addComponent(processIsoCheckBox)
+                    .addComponent(processBzip2CheckBox))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        webArchivesLabel.setLabelFor(containerSigCombo);
+        webArchivesLabel.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.webArchivesLabel.text")); // NOI18N
+
+        processArcCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processArcCheckBox.text")); // NOI18N
+        processArcCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processArcCheckBoxActionPerformed(evt);
+            }
+        });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processArc\"]}"), processArcCheckBox, BeanProperty.create("selected"), "arcBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+        processWarcCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processWarcCheckBox.text")); // NOI18N
+        processWarcCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                processWarcCheckBoxActionPerformed(evt);
+            }
+        });
+
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processWarc\"]}"), processWarcCheckBox, BeanProperty.create("selected"), "warcBinding");
+        binding.setSourceNullValue(false);
+        binding.setSourceUnreadableValue(false);
+        bindingGroup.addBinding(binding);
+
+        toggleWebArchivesButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.toggleWebArchivesButton.text")); // NOI18N
+        toggleWebArchivesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                toggleWebArchivesButtonActionPerformed(evt);
+            }
+        });
+
+        GroupLayout jPanel6Layout = new GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(jPanel6Layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(webArchivesLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(jPanel6Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(processArcCheckBox)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(processWarcCheckBox))
+                    .addComponent(toggleWebArchivesButton))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(jPanel6Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addComponent(webArchivesLabel)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(toggleWebArchivesButton)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(processArcCheckBox)
+                    .addComponent(processWarcCheckBox)))
+        );
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -373,13 +561,6 @@ public class ConfigDialog extends JDialog {
                         .addContainerGap())
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(processArchivesCheckBox)
-                            .addComponent(rowPerFileButton2)
-                            .addComponent(rowPerFormatButton2)
-                            .addComponent(processWebArchivesCheckBox))
-                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(generateHashCheckBox)
                                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -390,12 +571,21 @@ public class ConfigDialog extends JDialog {
                                 .addComponent(jTextField2, GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
                         .addGap(20, 20, 20))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(rowPerFileButton2)
+                            .addComponent(rowPerFormatButton2)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(Alignment.TRAILING)
+                            .addComponent(jPanel6, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -407,10 +597,10 @@ public class ConfigDialog extends JDialog {
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(containerSigCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(containerSigFileLabel))
-                .addGap(18, 18, 18)
-                .addComponent(processArchivesCheckBox)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(processWebArchivesCheckBox)
+                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(jPanel6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(generateHashCheckBox)
@@ -430,7 +620,7 @@ public class ConfigDialog extends JDialog {
                     .addComponent(jLabel4))
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(jLabel10)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle"), jPanel3); // NOI18N
@@ -486,7 +676,7 @@ public class ConfigDialog extends JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(424, Short.MAX_VALUE))
+                .addContainerGap(596, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle_1"), jPanel2); // NOI18N
@@ -651,7 +841,7 @@ public class ConfigDialog extends JDialog {
                                     .addComponent(updateUrlTextBox)))
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel7)
-                                .addGap(0, 253, Short.MAX_VALUE))
+                                .addGap(0, 270, Short.MAX_VALUE))
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -755,43 +945,23 @@ public class ConfigDialog extends JDialog {
         if (proxyDialog.getResponse() == UpdateProxyConfigDialog.OK) {
             globalConfig.putAll(proxyDialog.getProperties());
         }
-}//GEN-LAST:event_proxySettingsButtonActionPerformed
+    }//GEN-LAST:event_proxySettingsButtonActionPerformed
 
     private void updateOnStartupRadioButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_updateOnStartupRadioButtonActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_updateOnStartupRadioButtonActionPerformed
+    }//GEN-LAST:event_updateOnStartupRadioButtonActionPerformed
 
     private void autoSetDefaultSignatureFileCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_autoSetDefaultSignatureFileCheckBoxActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_autoSetDefaultSignatureFileCheckBoxActionPerformed
+    }//GEN-LAST:event_autoSetDefaultSignatureFileCheckBoxActionPerformed
 
     private void updateUrlTextBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_updateUrlTextBoxActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_updateUrlTextBoxActionPerformed
-
-    private void containerSigComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_containerSigComboActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_containerSigComboActionPerformed
-
-    private void generateHashCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generateHashCheckBoxActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_generateHashCheckBoxActionPerformed
-
-    private void processArchivesCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processArchivesCheckBoxActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_processArchivesCheckBoxActionPerformed
+    }//GEN-LAST:event_updateUrlTextBoxActionPerformed
 
     private void rowPerFormatButton1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_rowPerFormatButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rowPerFormatButton1ActionPerformed
-
-    private void hashAlgorithmComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_hashAlgorithmComboActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_hashAlgorithmComboActionPerformed
-
-    private void processWebArchivesCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processWebArchivesCheckBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_processWebArchivesCheckBoxActionPerformed
 
     private void pronomUrlResetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_pronomUrlResetButtonActionPerformed
         String pronomSignatureUrl = context.getGlobalConfig().getDefaultProperties().getString(PRONOM_SIGNATURE_URL_KEY);
@@ -800,14 +970,99 @@ public class ConfigDialog extends JDialog {
         containerSigUrl.setText(pronomContainerUrl);
     }//GEN-LAST:event_pronomUrlResetButtonActionPerformed
 
+    private void toggleArchivesButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_toggleArchivesButtonActionPerformed
+        if(!processTarCheckBox.isSelected()
+                || !processZipCheckBox.isSelected()
+                || !processGzipCheckBox.isSelected()
+                || !processRarCheckBox.isSelected()
+                || !process7zipCheckBox.isSelected()
+                || !processIsoCheckBox.isSelected()
+                || !processBzip2CheckBox.isSelected()
+        ){
+            processTarCheckBox.setSelected(true);
+            processZipCheckBox.setSelected(true);
+            processGzipCheckBox.setSelected(true);
+            processRarCheckBox.setSelected(true);
+            process7zipCheckBox.setSelected(true);
+            processIsoCheckBox.setSelected(true);
+            processBzip2CheckBox.setSelected(true);
+        }else{
+            processTarCheckBox.setSelected(false);
+            processZipCheckBox.setSelected(false);
+            processGzipCheckBox.setSelected(false);
+            processRarCheckBox.setSelected(false);
+            process7zipCheckBox.setSelected(false);
+            processIsoCheckBox.setSelected(false);
+            processBzip2CheckBox.setSelected(false);
+        }
+    }//GEN-LAST:event_toggleArchivesButtonActionPerformed
+
+    private void processIsoCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processIsoCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processIsoCheckBoxActionPerformed
+
+    private void process7zipCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_process7zipCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_process7zipCheckBoxActionPerformed
+
+    private void processRarCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processRarCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processRarCheckBoxActionPerformed
+
+    private void processGzipCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processGzipCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processGzipCheckBoxActionPerformed
+
+    private void processTarCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processTarCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processTarCheckBoxActionPerformed
+
+    private void processZipCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processZipCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processZipCheckBoxActionPerformed
+
+    private void hashAlgorithmComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_hashAlgorithmComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_hashAlgorithmComboActionPerformed
+
+    private void containerSigComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_containerSigComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_containerSigComboActionPerformed
+
+    private void generateHashCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generateHashCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_generateHashCheckBoxActionPerformed
+
+    private void processBzip2CheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processBzip2CheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processBzip2CheckBoxActionPerformed
+
+    private void processArcCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processArcCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processArcCheckBoxActionPerformed
+
+    private void processWarcCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_processWarcCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processWarcCheckBoxActionPerformed
+
+    private void toggleWebArchivesButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_toggleWebArchivesButtonActionPerformed
+        if(!processArcCheckBox.isSelected() || !processWarcCheckBox.isSelected()){
+            processArcCheckBox.setSelected(true);
+            processWarcCheckBox.setSelected(true);
+        }else{
+            processArcCheckBox.setSelected(false);
+            processWarcCheckBox.setSelected(false);
+        }
+    }//GEN-LAST:event_toggleWebArchivesButtonActionPerformed
+
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
         for (Component c : panel.getComponents()) {
             c.setEnabled(enabled);
         }
     }
-    
-    private void autoUpdateItemStateChanged(ItemEvent evt) {                                            
+
+    private void autoUpdateItemStateChanged(ItemEvent evt) {
         setPanelComponents(autoUpdatePanel, evt.getStateChange() == ItemEvent.SELECTED);
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             updateFrequencyTextBox.setEnabled(updateScheduleRadioButton.isSelected());
@@ -815,6 +1070,7 @@ public class ConfigDialog extends JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JLabel archivesLabel;
     private JCheckBox askToDownloadCheckBox;
     private JCheckBox autoSetDefaultSignatureFileCheckBox;
     private JCheckBox autoUpdateCheckbox;
@@ -843,26 +1099,38 @@ public class ConfigDialog extends JDialog {
     private JPanel jPanel1;
     private JPanel jPanel2;
     private JPanel jPanel3;
+    private JPanel jPanel4;
     private JPanel jPanel5;
+    private JPanel jPanel6;
     private JTextField jTextField1;
     private JTextField jTextField2;
     private JButton okButton;
-    private JCheckBox processArchivesCheckBox;
-    private JCheckBox processWebArchivesCheckBox;
+    private JCheckBox process7zipCheckBox;
+    private JCheckBox processArcCheckBox;
+    private JCheckBox processBzip2CheckBox;
+    private JCheckBox processGzipCheckBox;
+    private JCheckBox processIsoCheckBox;
+    private JCheckBox processRarCheckBox;
+    private JCheckBox processTarCheckBox;
+    private JCheckBox processWarcCheckBox;
+    private JCheckBox processZipCheckBox;
     private JButton pronomUrlResetButton;
     private JButton proxySettingsButton;
     private JRadioButton rowPerFileButton1;
     private JRadioButton rowPerFileButton2;
     private JRadioButton rowPerFormatButton1;
     private JRadioButton rowPerFormatButton2;
+    private JButton toggleArchivesButton;
+    private JButton toggleWebArchivesButton;
     private ButtonGroup updateFrequencyButtonGroup;
     private JSpinner updateFrequencyTextBox;
     private JRadioButton updateOnStartupRadioButton;
     private JRadioButton updateScheduleRadioButton;
     private JTextField updateUrlTextBox;
+    private JLabel webArchivesLabel;
     private BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
-    
+
     /**
      * @return the dialog response
      */
@@ -889,7 +1157,7 @@ public class ConfigDialog extends JDialog {
     JButton getCancelButton() {
         return cancelButton;
     }
-    
+
     /**
      * @return the okButton
      */
@@ -904,29 +1172,29 @@ public class ConfigDialog extends JDialog {
         return globalConfig;
     }
 
-       /**
-     * 
+    /**
+     *
      * @return collection of available signature files.
      */
     public List<String> getAllBinarySigFiles() {
         return allBinarySigFiles;
     }
-    
+
     /**
-     * 
+     *
      * @return collection of available hash algorithms.
      */
     public List<String> getAllHashAlgorithms() {
         return allHashAlgorithms;
     }
-    
+
     /**
      * @return the allContainerSigFiles
      */
     public List<String> getAllContainerSigFiles() {
         return allContainerSigFiles;
     }
-    
+
     /**
      * @return the allTextSigFiles
      */

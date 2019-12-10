@@ -199,8 +199,16 @@ public class ProfileManagerIntegrationTest {
       ProfileInstance profile = profileManager.createProfile(signatureFiles);
 
       profile.changeState(ProfileState.VIRGIN);
-      profile.setProcessArchiveFiles(false);
-      profile.setProcessWebArchiveFiles(false);
+      profile.setProcessTarFiles(false);
+      profile.setProcessZipFiles(false);
+      profile.setProcessGzipFiles(false);
+      profile.setProcessRarFiles(false);
+      profile.setProcess7zipFiles(false);
+      profile.setProcessIsoFiles(false);
+      profile.setProcessBzip2Files(false);
+
+      profile.setProcessArcFiles(false);
+      profile.setProcessWarcFiles(false);
 
       final String profileId = profile.getUuid();
       profileManager.updateProfileSpec(profileId, profileSpec);

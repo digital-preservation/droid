@@ -94,12 +94,25 @@ public enum DroidGlobalProperty {
     
     /** Development mode. */
     DEV_MODE("development_mode", PropertyType.BOOLEAN, false),
-    
-    /** Whether to process files in archives. */
-    PROCESS_ARCHIVES("profile.processArchives", PropertyType.BOOLEAN, true),
 
-    /** Whether to process files in web archives. */
-    PROCESS_WEB_ARCHIVES("profile.processWebArchives", PropertyType.BOOLEAN, true),
+    /** Whether to process tar files in archives. */
+    PROCESS_TAR("profile.processTar", PropertyType.BOOLEAN, true),
+    /** Whether to process zip files in archives. */
+    PROCESS_ZIP("profile.processZip", PropertyType.BOOLEAN, true),
+    /** Whether to process gzip files in archives. */
+    PROCESS_GZIP("profile.processGzip", PropertyType.BOOLEAN, true),
+    /** Whether to process rar files in archives. */
+    PROCESS_RAR("profile.processRar", PropertyType.BOOLEAN, true),
+    /** Whether to process 7zip files in archives. */
+    PROCESS_7ZIP("profile.process7zip", PropertyType.BOOLEAN, true),
+    /** Whether to process iso files in archives. */
+    PROCESS_ISO("profile.processIso", PropertyType.BOOLEAN, true),
+    /** Whether to process bzip2 files in archives. */
+    PROCESS_BZIP2("profile.processBzip2", PropertyType.BOOLEAN, true),
+    /** Whether to process arc files in archives. */
+    PROCESS_ARC("profile.processArc", PropertyType.BOOLEAN, true),
+    /** Whether to process warc files in archives. */
+    PROCESS_WARC("profile.processWarc", PropertyType.BOOLEAN, true),
 
     /** Whether to process files in archives. */
     PUID_URL_PATTERN("puid.urlPattern", PropertyType.TEXT, true), 
