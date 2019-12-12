@@ -14,8 +14,7 @@
       <SubComponents>
         <MenuItem class="javax.swing.JMenuItem" name="PopupAddFilesAndFolders">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Add small.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/OldIcons/Add.png&quot;, 16, 16)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="uk/gov/nationalarchives/droid/gui/Bundle.properties" key="ProfileForm.PopupAddFilesAndFolders.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
@@ -27,8 +26,7 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="PopupRemoveFilesOrFolders">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Remove small.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/OldIcons/Remove.png&quot;, 16, 16)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="uk/gov/nationalarchives/droid/gui/Bundle.properties" key="ProfileForm.PopupRemoveFilesOrFolders.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
@@ -42,8 +40,7 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="PopupOpenContainingFolder">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/icons/Icon_External_Link.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Icon_External_Link.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="uk/gov/nationalarchives/droid/gui/Bundle.properties" key="ProfileForm.PopupOpenContainingFolder.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
@@ -55,8 +52,7 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="PopupMenuCopyToClipboard">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Clipboard small.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/OldIcons/Clipboard.png&quot;, 16, 16)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="uk/gov/nationalarchives/droid/gui/Bundle.properties" key="ProfileForm.PopupMenuCopyToClipboard.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>

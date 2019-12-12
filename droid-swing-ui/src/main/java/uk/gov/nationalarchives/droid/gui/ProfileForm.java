@@ -91,6 +91,7 @@ import uk.gov.nationalarchives.droid.gui.treemodel.NodeRenderer;
 import uk.gov.nationalarchives.droid.gui.treemodel.OutlineColumn;
 import uk.gov.nationalarchives.droid.gui.treemodel.OutlineComparableComparator;
 import uk.gov.nationalarchives.droid.gui.treemodel.ProfileRowModel;
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxy;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxyImpl;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.JOptionPaneProxy;
@@ -315,7 +316,7 @@ public class ProfileForm extends JPanel {
             }
         });
 
-        PopupAddFilesAndFolders.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Add small.png"))); // NOI18N
+        PopupAddFilesAndFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Add.png", 16, 16)); // NOI18N
         PopupAddFilesAndFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupAddFilesAndFolders.text")); // NOI18N
         PopupAddFilesAndFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -324,7 +325,7 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupAddFilesAndFolders);
 
-        PopupRemoveFilesOrFolders.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Remove small.png"))); // NOI18N
+        PopupRemoveFilesOrFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Remove.png", 16, 16)); // NOI18N
         PopupRemoveFilesOrFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupRemoveFilesOrFolders.text")); // NOI18N
         PopupRemoveFilesOrFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -343,7 +344,7 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupOpenContainingFolder);
 
-        PopupMenuCopyToClipboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Clipboard small.png"))); // NOI18N
+        PopupMenuCopyToClipboard.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Clipboard.png", 16, 16)); // NOI18N
         PopupMenuCopyToClipboard.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuCopyToClipboard.text")); // NOI18N
         PopupMenuCopyToClipboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
