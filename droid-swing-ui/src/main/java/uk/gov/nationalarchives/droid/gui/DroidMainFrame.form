@@ -234,6 +234,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemExpandChildren">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/OldIcons/Expand.png&quot;, 16, 16)" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Expand"/>
               </Properties>
               <Events>
@@ -242,6 +245,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemExpandNextThree">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/OldIcons/Expand 3 levels.png&quot;, 16, 16)" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Expand next three levels"/>
               </Properties>
               <Events>
@@ -718,7 +724,7 @@
         <Component class="javax.swing.JButton" name="jButtonFilter">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Filter.png&quot;, 24, 24)" type="code"/>
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/OldIcons/Filter.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Filter"/>
             <Property name="toolTipText" type="java.lang.String" value="Define and apply filter to results"/>

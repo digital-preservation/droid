@@ -597,7 +597,7 @@ public class DroidMainFrame extends JFrame {
         jSeparator11.setSeparatorSize(new java.awt.Dimension(20, 40));
         droidToolBar.add(jSeparator11);
 
-        jButtonFilter.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Filter.png", 24, 24));
+        jButtonFilter.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Filter.png", 24, 24));
         jButtonFilter.setText("Filter");
         jButtonFilter.setToolTipText("Define and apply filter to results");
         jButtonFilter.setFocusable(false);
@@ -803,6 +803,7 @@ public class DroidMainFrame extends JFrame {
         jMenuEdit.add(jMenuItemCopyToClipboard);
         jMenuEdit.add(jSeparator2);
 
+        jMenuItemExpandChildren.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Expand.png", 16, 16));
         jMenuItemExpandChildren.setText("Expand");
         jMenuItemExpandChildren.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -811,6 +812,7 @@ public class DroidMainFrame extends JFrame {
         });
         jMenuEdit.add(jMenuItemExpandChildren);
 
+        jMenuItemExpandNextThree.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Expand 3 levels.png", 16, 16));
         jMenuItemExpandNextThree.setText("Expand next three levels");
         jMenuItemExpandNextThree.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
