@@ -158,9 +158,6 @@ public class SubmissionGateway implements AsynchDroid {
         setGenerateHash(generateHash);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @PauseBefore
     public Future<IdentificationResultCollection> submit(final IdentificationRequest request) {
@@ -171,9 +168,8 @@ public class SubmissionGateway implements AsynchDroid {
         Callable<IdentificationResultCollection> callable = new Callable<IdentificationResultCollection>() {
             @Override
             public IdentificationResultCollection call() throws IOException {
-                droidCore.setMaxBytesToScan(maxBytesToScan);
-                IdentificationResultCollection results = droidCore.matchBinarySignatures(request);
-                return results;
+                droidCore.setMaxBytesToScan(maxBytesToScan); //TODO: not sure why this needs to be set repeatedly on each call.
+                return droidCore.matchBinarySignatures(request);
             }
         };
 
@@ -182,9 +178,6 @@ public class SubmissionGateway implements AsynchDroid {
         return task;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void replay() {
         replaySubmitter.replay();
@@ -558,18 +551,11 @@ public class SubmissionGateway implements AsynchDroid {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setMaxBytesToScan(long maxBytesToScan) {
         this.maxBytesToScan = maxBytesToScan;
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     @Override
     public void setMatchAllExtensions(boolean matchAllExtensions) {
         this.matchAllExtensions = matchAllExtensions;
