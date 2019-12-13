@@ -51,11 +51,22 @@ public final class DroidImageUtils {
     public static ImageIcon getScaledImageIcon(String imagePath, int width, int height) {
         Image scaledImage=null;
         try {
-            final BufferedImage image = ImageIO.read(DroidMainFrame.class.getResource(imagePath));
+            final BufferedImage image = ImageIO.read(DroidImageUtils.class.getResource(imagePath));
             scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH );
         } catch (IOException e) {
             e.printStackTrace();
         }
         return new ImageIcon(scaledImage);
+    }
+
+    public static ImageIcon getScaledImageIcon(String imagePath, int width, int height, String description) {
+        Image scaledImage=null;
+        try {
+            final BufferedImage image = ImageIO.read(DroidImageUtils.class.getResource(imagePath));
+            scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ImageIcon(scaledImage, description);
     }
 }
