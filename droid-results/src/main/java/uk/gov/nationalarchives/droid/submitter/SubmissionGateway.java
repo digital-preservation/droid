@@ -519,13 +519,6 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     /**
-     * @param hashAlgorithm the algorithm to set
-     */
-    public void setHashAlgorithm(String hashAlgorithm) {
-        this.hashAlgorithm = hashAlgorithm;
-    }
-
-    /**
      * Shuts down the executor service and closes any in-flight requests.
      * @throws IOException if temp files could not be deleted.
      */
