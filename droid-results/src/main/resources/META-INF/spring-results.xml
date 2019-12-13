@@ -326,7 +326,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="processWarc" value="#{${processWarc} == null?false : ${processWarc}}"/>
 
         <property name="generateHash" value="${generateHash}"/>
-        <property name="hashAlgorithm" value="${hashAlgorithm}"/>
         <property name="matchAllExtensions" value="${matchAllExtensions}"/>
         <property name="maxBytesToScan" value="${maxBytesToScan}"/>
         <property name="droidCore" ref="droid"/>
