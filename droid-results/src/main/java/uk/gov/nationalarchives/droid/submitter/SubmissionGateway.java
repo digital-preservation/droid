@@ -74,15 +74,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
  */
 //CHECKSTYLE:OFF - fan out complexity too high.
 public class SubmissionGateway implements AsynchDroid {
-    /**
-     *
-     */
-    private static final String CONTAINER_ERROR = "Could not process the potential container format (%s): %s\t%s\t%s";
 
-    /**
-     *
-     */
+    private static final String CONTAINER_ERROR = "Could not process the potential container format (%s): %s\t%s\t%s";
     private static final String ARCHIVE_ERROR = "Could not process the archival format(%s): %s\t%s\t%s";
+    private static boolean PROCESS_ARCHIVE_DEFAULT = true;
 
     //CHECKSTYLE:ON    
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -90,15 +85,15 @@ public class SubmissionGateway implements AsynchDroid {
     private DroidCore droidCore;
     private ResultHandler resultHandler;
     private ExecutorService executorService;
-    private boolean processZip;
-    private boolean processTar;
-    private boolean processGzip;
-    private boolean processRar;
-    private boolean process7zip;
-    private boolean processIso;
-    private boolean processBzip2;
-    private boolean processArc;
-    private boolean processWarc;
+    private boolean processZip = PROCESS_ARCHIVE_DEFAULT;
+    private boolean processTar = PROCESS_ARCHIVE_DEFAULT;
+    private boolean processGzip = PROCESS_ARCHIVE_DEFAULT;
+    private boolean processRar = PROCESS_ARCHIVE_DEFAULT;
+    private boolean process7zip = PROCESS_ARCHIVE_DEFAULT;
+    private boolean processIso = PROCESS_ARCHIVE_DEFAULT;
+    private boolean processBzip2 = PROCESS_ARCHIVE_DEFAULT;
+    private boolean processArc = PROCESS_ARCHIVE_DEFAULT;
+    private boolean processWarc = PROCESS_ARCHIVE_DEFAULT;
     private ArchiveFormatResolver archiveFormatResolver;
     private ArchiveFormatResolver containerFormatResolver;
     private ArchiveHandlerFactory archiveHandlerFactory;
