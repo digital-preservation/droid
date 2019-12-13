@@ -74,16 +74,17 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
     </bean>
 
+    <bean id="signatureFileReader" class="uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader">
+        <property name="filePath" value="${containerSigPath}"/>
+    </bean>
+
     <bean id="zipContainerHandler" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifier" init-method="init">
-        <property name="signatureFileParser">
-            <bean class="uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser"/>
-        </property>
-        <property name="signatureFilePath" value="${containerSigPath}"/>
         <property name="containerType" value="ZIP"/>
         <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
         <property name="containerFormatResolver" ref="containerPuidResolver"/>
         <property name="droidCore" ref="droid"/>
         <property name="identifierEngine" ref="zipIdentifierEngine"/>
+        <property name="signatureReader" ref="signatureFileReader"/>
     </bean>
 
     <bean id="ole2IdentifierEngine" class="uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine">
@@ -92,15 +93,12 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="ole2ContainerHandler" class="uk.gov.nationalarchives.droid.container.ole2.Ole2Identifier"
           init-method="init">
-        <property name="signatureFileParser">
-            <bean class="uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser"/>
-        </property>
-        <property name="signatureFilePath" value="${containerSigPath}"/>
         <property name="containerType" value="OLE2"/>
         <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
         <property name="containerFormatResolver" ref="containerPuidResolver"/>
         <property name="droidCore" ref="droid"/>
         <property name="identifierEngine" ref="ole2IdentifierEngine"/>
+        <property name="signatureReader" ref="signatureFileReader"/>
     </bean>
 
     <bean id="archiveRequestFactory" abstract="true">

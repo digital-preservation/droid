@@ -54,6 +54,7 @@ import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.container.ContainerFile;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.container.FileFormatMapping;
 import uk.gov.nationalarchives.droid.container.zip.ZipIdentifier;
@@ -132,10 +133,8 @@ public class OoXmlIdentifierTest {
         
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
         ooXmlIdentifier.setContainerFormatResolver(containerFormatResolver);
-
-        ooXmlIdentifier.setSignatureFileParser(new ContainerSignatureSaxParser());
+        ooXmlIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ooXmlIdentifier.setContainerType("ZIP");
-        ooXmlIdentifier.setSignatureFilePath(path);
         ooXmlIdentifier.init();
         
         List<ContainerSignature> containerSignatures = ooXmlIdentifier.getContainerSignatures();
@@ -164,11 +163,8 @@ public class OoXmlIdentifierTest {
         
         ooXmlIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
         ooXmlIdentifier.setContainerFormatResolver(containerFormatResolver);
-        
-        ooXmlIdentifier.setSignatureFileParser(new ContainerSignatureSaxParser());
+        ooXmlIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ooXmlIdentifier.setContainerType("ZIP");
-        ooXmlIdentifier.setSignatureFilePath(path);
-
         ooXmlIdentifier.init();
         
         verify(containerIdentifierFactory, times(2)).addContainerIdentifier("ZIP", ooXmlIdentifier);
@@ -186,13 +182,10 @@ public class OoXmlIdentifierTest {
         
         DroidCore droidCore = mock(DroidCore.class);
         ooXmlIdentifier.setDroidCore(droidCore);
-
         ooXmlIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
         ooXmlIdentifier.setContainerFormatResolver(containerFormatResolver);
-        
-        ooXmlIdentifier.setSignatureFileParser(new ContainerSignatureSaxParser());
+        ooXmlIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ooXmlIdentifier.setContainerType("ZIP");
-        ooXmlIdentifier.setSignatureFilePath(path);
         ooXmlIdentifier.init();
         
         verify(containerIdentifierFactory, times(2)).addContainerIdentifier("ZIP", ooXmlIdentifier);
