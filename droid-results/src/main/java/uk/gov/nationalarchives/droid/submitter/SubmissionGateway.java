@@ -104,7 +104,6 @@ public class SubmissionGateway implements AsynchDroid {
     private ArchiveHandlerFactory archiveHandlerFactory;
     private ContainerIdentifierFactory containerIdentifierFactory;
     private HashGenerator hashGenerator;
-    private String hashAlgorithm;
     private boolean generateHash;
     private boolean matchAllExtensions;
     private long maxBytesToScan = -1;
