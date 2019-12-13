@@ -288,8 +288,7 @@ public class DroidMainFrame extends JFrame {
 
     private void init() {
         log.info("Starting DROID.");
-        URL icon = getClass().getResource("/uk/gov/nationalarchives/droid/icons/DROID16.gif");
-        setIconImage(new ImageIcon(icon).getImage());
+        setIconImage(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/DROID16.png",16,16).getImage());
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.gui.treemodel;
 
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.net.URL;
@@ -134,9 +136,8 @@ public class DefaultCellRenderer implements TableCellRenderer {
      * @return An icon containing the loaded icon resource.
      */
     protected Icon getIconResource(String resourceName) {
-        String resourcePath = String.format("uk/gov/nationalarchives/droid/icons/%s.gif", resourceName);
-        URL imgURL = getClass().getClassLoader().getResource(resourcePath);
-        return imgURL == null ? null : new ImageIcon(imgURL);        
+        String resourcePath = String.format("/uk/gov/nationalarchives/droid/icons/%s.png", resourceName);
+        return DroidImageUtils.getScaledImageIcon(resourcePath,16,16);
     }
     
     

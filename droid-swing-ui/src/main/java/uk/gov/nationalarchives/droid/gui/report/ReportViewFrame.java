@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.XHTMLPanel;
 
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
 import uk.gov.nationalarchives.droid.report.ReportTransformer;
 
 /**
@@ -99,8 +100,8 @@ public class ReportViewFrame extends JFrame {
         //super(parent);
         //setModal(true);
         initComponents();
-        URL icon = getClass().getResource("/uk/gov/nationalarchives/droid/icons/DROID16.gif");
-        setIconImage(new ImageIcon(icon).getImage());
+        setIconImage(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/DROID16.png",16,16).getImage());
+
 
         addWindowListener(new WindowAdapter() {
             @Override
