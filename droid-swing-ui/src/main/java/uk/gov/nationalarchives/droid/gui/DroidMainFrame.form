@@ -66,11 +66,11 @@
                 <Property name="text" type="java.lang.String" value="Save"/>
                 <Property name="toolTipText" type="java.lang.String" value="Save a profile"/>
                 <Property name="actionCommand" type="java.lang.String" value="save"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/icons/Save Blue 16 d g.gif"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/OldIcons/Save disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
-                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/icons/Save Blue 16 d g.gif"/>
+                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/OldIcons/Save disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
               </Properties>
               <Events>

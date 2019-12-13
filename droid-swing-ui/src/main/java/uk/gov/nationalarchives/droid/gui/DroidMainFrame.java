@@ -694,8 +694,8 @@ public class DroidMainFrame extends JFrame {
         jMenuSave.setText("Save");
         jMenuSave.setToolTipText("Save a profile");
         jMenuSave.setActionCommand("save");
-        jMenuSave.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/icons/Save Blue 16 d g.gif"))); // NOI18N
-        jMenuSave.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/icons/Save Blue 16 d g.gif"))); // NOI18N
+        jMenuSave.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Save disabled.png", 16, 16));
+        jMenuSave.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Save disabled.png", 16, 16));
         jMenuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuSaveActionPerformed(evt);
