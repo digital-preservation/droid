@@ -31,13 +31,14 @@
  */
 package uk.gov.nationalarchives.droid.container;
 
-import uk.gov.nationalarchives.droid.core.SignatureParseException;
-
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+
+import javax.xml.bind.JAXBException;
+
+import uk.gov.nationalarchives.droid.core.SignatureParseException;
 
 /**
  * A simple class that reads and parses a container signature file once,
@@ -73,7 +74,7 @@ public class ContainerSignatureFileReader {
 
     /**
      * Sets the file path of the container signature file.
-     * @param filePath
+     * @param filePath The file path of the signature file.
      */
     public void setFilePath(String filePath) {
         this.filePath = filePath;
