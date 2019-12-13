@@ -141,21 +141,7 @@ public class SubmissionGateway implements AsynchDroid {
         setContainerFormatResolver(containerFormatResolver);
         setArchiveHandlerFactory(archiveHandlerFactory);
         setContainerIdentifierFactory(containerFactory);
-        setHashGenerator(hashGenerator);
         setMaxBytesToScan(maxBytesToScan);
-
-        setProcess7zip(processZip);
-        setProcessTar(processTar);
-        setProcessGzip(processGzip);
-        setProcessRar(processRar);
-        setProcess7zip(process7zip);
-        setProcessIso(processIso);
-        setProcessBzip2(processBzip2);
-        setProcessArc(processArc);
-        setProcessWarc(processWarc);
-
-        setMatchAllExtensions(matchAllExtensions);
-        setGenerateHash(generateHash);
     }
 
     @Override
