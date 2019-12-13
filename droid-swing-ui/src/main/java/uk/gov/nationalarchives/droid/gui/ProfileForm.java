@@ -316,7 +316,7 @@ public class ProfileForm extends JPanel {
             }
         });
 
-        PopupAddFilesAndFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Add.png", 16, 16));
+        PopupAddFilesAndFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add.png", 16, 16));
         PopupAddFilesAndFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupAddFilesAndFolders.text")); // NOI18N
         PopupAddFilesAndFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -325,7 +325,7 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupAddFilesAndFolders);
 
-        PopupRemoveFilesOrFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Remove.png", 16, 16));
+        PopupRemoveFilesOrFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove.png", 16, 16));
         PopupRemoveFilesOrFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupRemoveFilesOrFolders.text")); // NOI18N
         PopupRemoveFilesOrFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -344,7 +344,7 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupOpenContainingFolder);
 
-        PopupMenuCopyToClipboard.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/OldIcons/Clipboard.png", 16, 16));
+        PopupMenuCopyToClipboard.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Clipboard.png", 16, 16));
         PopupMenuCopyToClipboard.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuCopyToClipboard.text")); // NOI18N
         PopupMenuCopyToClipboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
