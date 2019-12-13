@@ -296,19 +296,20 @@ public class SubmissionGateway implements AsynchDroid {
      * @return format or null
      */
     private String getArchiveFormat(IdentificationResultCollection results) {
-        final List<IdentificationResult> theResults = results.getResults();
-        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
-        for (int i = 0; i < numResults; i++) {
-            final IdentificationResult result = theResults.get(i);
-            String format = archiveFormatResolver.forPuid(result.getPuid());
-            if (format != null) { // exit on the first non-null format met
-                if (isProcessedArchiveOrWebArchiveFormat(format)) {
-                    format = null;
+        if (archiveFormatResolver != null) {
+            final List<IdentificationResult> theResults = results.getResults();
+            final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
+            for (int i = 0; i < numResults; i++) {
+                final IdentificationResult result = theResults.get(i);
+                String format = archiveFormatResolver.forPuid(result.getPuid());
+                if (format != null) { // exit on the first non-null format met
+                    if (isProcessedArchiveOrWebArchiveFormat(format)) {
+                        format = null;
+                    }
+                    return format;
                 }
-                return format;
             }
         }
-
         return null;
     }
 
@@ -561,10 +562,7 @@ public class SubmissionGateway implements AsynchDroid {
                     results = handleExtensions(request, results);
 
                     // Are we processing archive formats?
-                    String archiveFormat = null;
-                    if (archiveFormatResolver != null) {
-                        archiveFormat = getArchiveFormat(results);
-                    }
+                    String archiveFormat = getArchiveFormat(results);
                     if (archiveFormat != null) {
                         handleArchive(request, results, archiveFormat);
                         jobCountDecremented = true;
