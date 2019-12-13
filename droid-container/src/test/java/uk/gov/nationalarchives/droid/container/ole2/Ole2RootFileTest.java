@@ -271,11 +271,7 @@ public class Ole2RootFileTest {
 
         ole2Identifier.setContainerIdentifierFactory(containerIdentifierFactory);
         ole2Identifier.setContainerFormatResolver(containerFormatResolver);
-
-        //TODO: fix
-        //ContainerSignatureFileReader reader = new ContainerSignatureFileReader(path.);
-
-        //ole2Identifier.setSignatureReader(reader);
+        ole2Identifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ole2Identifier.setContainerType("OLE2");
         IdentificationRequestFactory requestFactory = mock(IdentificationRequestFactory.class);
         
