@@ -53,6 +53,7 @@ import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.container.ContainerFile;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.container.FileFormatMapping;
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
@@ -270,10 +271,8 @@ public class Ole2RootFileTest {
 
         ole2Identifier.setContainerIdentifierFactory(containerIdentifierFactory);
         ole2Identifier.setContainerFormatResolver(containerFormatResolver);
-        
-        ole2Identifier.setSignatureFileParser(new ContainerSignatureSaxParser());
+        ole2Identifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ole2Identifier.setContainerType("OLE2");
-        ole2Identifier.setSignatureFilePath(path);
         IdentificationRequestFactory requestFactory = mock(IdentificationRequestFactory.class);
         
         IdentificationRequest request = mock(IdentificationRequest.class);
@@ -300,10 +299,8 @@ public class Ole2RootFileTest {
 
         ole2Identifier.setContainerIdentifierFactory(containerIdentifierFactory);
         ole2Identifier.setContainerFormatResolver(containerFormatResolver);
-        
-        ole2Identifier.setSignatureFileParser(new ContainerSignatureSaxParser());
         ole2Identifier.setContainerType("OLE2");
-        ole2Identifier.setSignatureFilePath(path);
+        ole2Identifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ole2Identifier.init();
         
         verify(containerIdentifierFactory).addContainerIdentifier("OLE2", ole2Identifier);
@@ -324,9 +321,7 @@ public class Ole2RootFileTest {
         ole2Identifier.setContainerFormatResolver(containerFormatResolver);
         DroidCore droidCore = mock(DroidCore.class);
         ole2Identifier.setDroidCore(droidCore);
-        
-        ole2Identifier.setSignatureFileParser(new ContainerSignatureSaxParser());
-        ole2Identifier.setSignatureFilePath(path);
+        ole2Identifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ole2Identifier.init();
         
         verify(droidCore).removeSignatureForPuid("fmt/39");

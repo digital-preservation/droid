@@ -54,6 +54,7 @@ import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.container.ContainerFile;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.container.FileFormatMapping;
 import uk.gov.nationalarchives.droid.container.zip.ZipIdentifier;
@@ -148,11 +149,8 @@ public class OdfIdentifierTest {
 
         odfIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
         odfIdentifier.setContainerFormatResolver(containerFormatResolver);
-        
-        odfIdentifier.setSignatureFileParser(new ContainerSignatureSaxParser());
+        odfIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         odfIdentifier.setContainerType("ZIP");
-        odfIdentifier.setSignatureFilePath(path);
-
         odfIdentifier.init();
         
         verify(containerIdentifierFactory, times(2)).addContainerIdentifier("ZIP", odfIdentifier);
@@ -173,11 +171,8 @@ public class OdfIdentifierTest {
 
         odfIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
         odfIdentifier.setContainerFormatResolver(containerFormatResolver);
-        
-        odfIdentifier.setSignatureFileParser(new ContainerSignatureSaxParser());
+        odfIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         odfIdentifier.setContainerType("ZIP");
-        odfIdentifier.setSignatureFilePath(path);
-
         odfIdentifier.init();
         
         verify(containerIdentifierFactory, times(2)).addContainerIdentifier("ZIP", odfIdentifier);
