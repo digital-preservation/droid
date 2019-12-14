@@ -269,7 +269,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
 
-    <bean id="droid" class="uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier" init-method="init">
+    <bean id="droid" class="uk.gov.nationalarchives.droid.signature.SignatureIdentifier" init-method="init">
         <property name="signatureFile" value="${signatureFilePath}"/>
     </bean>
 

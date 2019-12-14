@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.core;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.FileFormat;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatCollection;
@@ -53,11 +55,16 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
 /**
  * Implementation of DroidCore which uses the droid binary signatures to identify files. 
  * identifications.
- * @author rflitcroft
+ * <p>
+ * <b>Warning</b> It does not support matching via container signatures - this implementation
+ * only matches binary signatures and file extensions.  Other subclasses may add this
+ * functionality.
  *
+ * @author rflitcroft
  */
 public class BinarySignatureIdentifier implements DroidCore {
 
+    private ArchiveFormatResolver containerFormatResolver;
     private FFSignatureFile sigFile;
     private SignatureFileParser sigFileParser = new SignatureFileParser();
     private URI signatureFile;
@@ -86,10 +93,20 @@ public class BinarySignatureIdentifier implements DroidCore {
         this.signatureFile = Paths.get(signatureFile).toUri();
     }
 
+    @Override
+    public IdentificationResultCollection match(IdentificationRequest request, boolean allExtensions) throws IOException {
+        IdentificationResultCollection matches = matchBinarySignatures(request);
+        String containerFormat = getContainerFormat(matches);
+        if (containerFormat != null) {
+            IdentificationResultCollection containerMatches = matchContainerSignatures(request, containerFormat);
+            if (containerMatches != null) {
+                matches = containerMatches;
+            }
+        }
+        removeLowerPriorityHits(matches);
+        return processExtensions(request, matches, allExtensions);
+    }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IdentificationResultCollection matchBinarySignatures(IdentificationRequest request) {
         //BNO: Called once for each identification request
@@ -113,10 +130,17 @@ public class BinarySignatureIdentifier implements DroidCore {
         return results;
     }
 
-
     /**
+     * No container signatures are defined for the BinarySignatureIdentifier.
+     * This will always return null.
+     * <p>
      * {@inheritDoc}
      */
+    @Override
+    public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request, String containerType) throws IOException {
+        return null; // no container signatures here, so return null.
+    }
+
     @Override
     public IdentificationResultCollection matchExtensions(
             IdentificationRequest request, boolean allExtensions) {
@@ -149,9 +173,6 @@ public class BinarySignatureIdentifier implements DroidCore {
         return results;
     }    
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void removeSignatureForPuid(String puid) {
         sigFile.puidHasOverridingSignatures(puid);
@@ -164,17 +185,11 @@ public class BinarySignatureIdentifier implements DroidCore {
         return sigFile;
     }
 
-    /** 
-     * {@inheritDoc}
-     */
     @Override
     public void setMaxBytesToScan(long maxBytes) {
         sigFile.setMaxBytesToScan(maxBytes);
     }
 
-    /**
-     * {@inheritDoc}   
-     */
     @Override
     public void removeLowerPriorityHits(
             IdentificationResultCollection results) {
@@ -253,6 +268,55 @@ public class BinarySignatureIdentifier implements DroidCore {
                 }
             }
         }
+    }
+
+    /**
+     * Sets the container format resolver to use.
+     * @param containerFormatResolver the container format resolver to use.
+     */
+    public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
+        this.containerFormatResolver = containerFormatResolver;
+    }
+
+    /**
+     * Returns a set of results with extension signature information added.
+     * If there are no existing results, it will match on extensions only.
+     * If there are existing results, it will look for extension mismatches.
+     * @param request The request
+     * @param results The results
+     * @param allExtensions Whether to match extensions only for formats with no other signatures defined,
+     *                      or whether to match extensions on all known formats, even if they have other signatures.
+     * @return
+     */
+    protected IdentificationResultCollection processExtensions(IdentificationRequest request,
+                                                               IdentificationResultCollection results,
+                                                               boolean allExtensions) {
+        List<IdentificationResult> resultList = results.getResults();
+        // If we have no results at all so far:
+        if (resultList != null && resultList.isEmpty()) {
+            IdentificationResultCollection extensionResults = matchExtensions(request, allExtensions);
+            if (extensionResults != null) {
+                return extensionResults;
+            }
+        } else { // check for extensions mismatches in the results we have.
+            checkForExtensionsMismatches(results, request.getExtension());
+        }
+        return results;
+    }
+
+    protected String getContainerFormat(IdentificationResultCollection results) {
+        if (containerFormatResolver != null) {
+            final List<IdentificationResult> theResults = results.getResults();
+            final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
+            for (int i = 0; i < numResults; i++) {
+                final IdentificationResult result = theResults.get(i);
+                final String format = containerFormatResolver.forPuid(result.getPuid());
+                if (format != null) {
+                    return format;
+                }
+            }
+        }
+        return null;
     }
    
 }

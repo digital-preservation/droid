@@ -31,38 +31,32 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
-
+import java.io.IOException;
 
 /**
  * DROID core API.
- * Call submit() to submit identification requests.
- * 
- * This interface is somewhat artificial, reflecting the original split
- * between binary signature processing and later forms of identification
- * (container signatures).  Since these signatures interact, we require
- * "fix-up" methods here.
- * 
- * Specifically:
- * 
- * 1) If there is a container signature for a puid, we do not
- * want to run any defined binary signatures for the same puid, as this 
- * would be redundant.
- * 
- * 2) All file formats and their extensions are defined in the binary
- * signature file alone (so exist in implementations of this interface).
- * However, we need to be able to perform extension checking and 
- * extension mismatch checking on container signature results
- * as well as for binary signature results, so there are public methods
- * to allow this.
- * 
- * Eventually, it would be a good idea to have a single identification interface,
- * with separate interfaces / classes to perform these other individual functions
- * accessible behind the main identification interface.  
- * 
- * @author rflitcroft
  *
+ * An interface for classes which match binary signatures, container signatures and file extensions.
+ * <p>
+ * It provides separate methods for each of these types, but also a main match method
+ * which implements all matching in one call.
+ * 
+ * @author rflitcroft, mpalmer
  */
 public interface DroidCore {
+
+    /**
+     * Submits an identification request to identify files using all
+     * available signatures and extensions defined.
+     *
+     * @param request the identification request
+     * @param allExtensions check the extension against all known extensions.
+     * If false, then only formats for which there is no other signature will
+     * produce a file extension match (this is the default in DROID 5 and below).
+     * @return the identification result.
+     * @throws IOException if there was a problem matching.
+     */
+    IdentificationResultCollection match(IdentificationRequest request, boolean allExtensions) throws IOException;
 
     /**
      * Submits an identification request to identify files using
@@ -72,6 +66,16 @@ public interface DroidCore {
      * @return the identification result.
      */
     IdentificationResultCollection matchBinarySignatures(IdentificationRequest request);
+
+    /**
+     * Submits an identification request to identify files using
+     * container signatures
+     * @param request the identification request.
+     * @param containerType the type of container to match (e.g. ZIP, OLE2).
+     * @return the identification result.
+     * @throws IOException if there was a problem matching a container signature.
+     */
+    IdentificationResultCollection matchContainerSignatures(IdentificationRequest request, String containerType) throws IOException;
 
     /**
      * 
@@ -85,8 +89,7 @@ public interface DroidCore {
      * @return the identification result.
      */
     IdentificationResultCollection matchExtensions(IdentificationRequest request, boolean allExtensions);
-    
-    
+
     /**
      * Sets the signature file for the DROID core to use.
      * @param sigFilename the signature file to use
@@ -106,8 +109,7 @@ public interface DroidCore {
      * @param maxBytes The number of bytes to scan, or negative meaning unlimited.
      */
     void setMaxBytesToScan(long maxBytes);
-    
-    
+
     /**
      * Removes hits from the collection where the file format is
      * flagged as lower priority than another in the collection.
@@ -115,8 +117,7 @@ public interface DroidCore {
      * @param results The results to remove lower priority hits for.
      */
     void removeLowerPriorityHits(IdentificationResultCollection results); 
-    
-    
+
     /**
      * Checks whether any of the results have a file extension mismatch.
      * 
@@ -124,6 +125,5 @@ public interface DroidCore {
      * @param fileExtension The file extension to check against.
      */
     void checkForExtensionsMismatches(IdentificationResultCollection results, String fileExtension);
-    
-    
+
 }
