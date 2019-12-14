@@ -69,7 +69,7 @@ public interface DroidCore {
 
     /**
      * Submits an identification request to identify files using
-     * container signatures
+     * container signatures.
      * @param request the identification request.
      * @param containerType the type of container to match (e.g. ZIP, OLE2).
      * @return the identification result.

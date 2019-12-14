@@ -286,7 +286,7 @@ public class BinarySignatureIdentifier implements DroidCore {
      * @param results The results
      * @param allExtensions Whether to match extensions only for formats with no other signatures defined,
      *                      or whether to match extensions on all known formats, even if they have other signatures.
-     * @return
+     * @return the results
      */
     protected IdentificationResultCollection processExtensions(IdentificationRequest request,
                                                                IdentificationResultCollection results,
@@ -304,6 +304,12 @@ public class BinarySignatureIdentifier implements DroidCore {
         return results;
     }
 
+    /**
+     * Returns a container format identifier (e.g. ZIP or OLE2) given a set of identification results which matches
+     * one of the trigger PUIDs for that type of container, or null if there is no container format match in the results.
+     * @param results Identification results obtained so far.
+     * @return A container format if one of them matches a container trigger PUID, or null if they don't.
+     */
     protected String getContainerFormat(IdentificationResultCollection results) {
         if (containerFormatResolver != null) {
             final List<IdentificationResult> theResults = results.getResults();
