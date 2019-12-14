@@ -32,8 +32,10 @@
 package uk.gov.nationalarchives.droid.signature;
 
 import java.io.IOException;
+import java.net.URI;
 
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
@@ -54,17 +56,24 @@ public class SignatureIdentifier extends BinarySignatureIdentifier {
      * Empty bean constructor.
      */
     public SignatureIdentifier() {
+        super();
     }
+
+    //TODO: the signature identifier should not be parsing the signature file.
+    //      This should be the responsibility of another class which parses signature files and caches the result.
 
     /**
      * A parameterized constructor.
      *
+     * @param signatureFileURI the URI of the binary signature file to parse.
      * @param containerFormatResolver The class which examines a set of results to see if there is a container type registered for them.
      * @param containerIdentifierFactory The class which can provide a container identifier given the container type.
+     * @throws SignatureParseException if the binary signature file could not be parsed.
      */
-    public SignatureIdentifier(ArchiveFormatResolver containerFormatResolver,
-                               ContainerIdentifierFactory containerIdentifierFactory) {
-        setContainerFormatResolver(containerFormatResolver);
+    public SignatureIdentifier(URI signatureFileURI,
+                               ArchiveFormatResolver containerFormatResolver,
+                               ContainerIdentifierFactory containerIdentifierFactory) throws SignatureParseException {
+        super(signatureFileURI, containerFormatResolver);
         setContainerIdentifierFactory(containerIdentifierFactory);
     }
 

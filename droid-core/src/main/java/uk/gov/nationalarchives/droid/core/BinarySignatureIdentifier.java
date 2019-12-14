@@ -66,20 +66,33 @@ public class BinarySignatureIdentifier implements DroidCore {
 
     private ArchiveFormatResolver containerFormatResolver;
     private FFSignatureFile sigFile;
-    private SignatureFileParser sigFileParser = new SignatureFileParser();
     private URI signatureFile;
     
     /**
      * Default constructor.
      */
     public BinarySignatureIdentifier() { }
-    
+
+    /**
+     * Parameterized constructor.
+     *
+     * @param signatureFile The path to the binary signature file.
+     * @param containerFormatResolver the class which sees if there is a container format identifier registered for identifications made.
+     * @throws SignatureParseException if there was a problem parsing the binary signatures.
+     */
+    public BinarySignatureIdentifier(URI signatureFile, ArchiveFormatResolver containerFormatResolver) throws SignatureParseException {
+        setSignatureFile(signatureFile);
+        setContainerFormatResolver(containerFormatResolver);
+        init();
+    }
+
     /**
      * Initialises this droid core with its signature file.
      * 
      * @throws SignatureParseException When a signature could not be parsed
      */
     public void init() throws SignatureParseException {
+        SignatureFileParser sigFileParser = new SignatureFileParser();
         sigFile = sigFileParser.parseSigFile(Paths.get(signatureFile));
         sigFile.prepareForUse();
     }
@@ -276,6 +289,14 @@ public class BinarySignatureIdentifier implements DroidCore {
      */
     public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
         this.containerFormatResolver = containerFormatResolver;
+    }
+
+    /**
+     * Sets the signature file URI to parse.
+     * @param signatureFileURI the URI of the signature file to parse.
+     */
+    public void setSignatureFile(URI signatureFileURI) {
+        this.signatureFile = signatureFileURI;
     }
 
     /**
