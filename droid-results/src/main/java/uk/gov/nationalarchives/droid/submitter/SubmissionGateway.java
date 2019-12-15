@@ -59,8 +59,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.control.PauseBefore;
 import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
 
@@ -75,7 +73,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
 //CHECKSTYLE:OFF - fan out complexity too high.
 public class SubmissionGateway implements AsynchDroid {
 
-    private static final String CONTAINER_ERROR = "Could not process the potential container format (%s): %s\t%s\t%s";
     private static final String ARCHIVE_ERROR = "Could not process the archival format(%s): %s\t%s\t%s";
     private static boolean PROCESS_ARCHIVE_DEFAULT = true;
 
@@ -95,9 +92,7 @@ public class SubmissionGateway implements AsynchDroid {
     private boolean processArc = PROCESS_ARCHIVE_DEFAULT;
     private boolean processWarc = PROCESS_ARCHIVE_DEFAULT;
     private ArchiveFormatResolver archiveFormatResolver;
-    private ArchiveFormatResolver containerFormatResolver;
     private ArchiveHandlerFactory archiveHandlerFactory;
-    private ContainerIdentifierFactory containerIdentifierFactory;
     private HashGenerator hashGenerator;
     private boolean generateHash;
     private boolean matchAllExtensions;
@@ -119,22 +114,18 @@ public class SubmissionGateway implements AsynchDroid {
      * @param resultHandler The result handler.
      * @param executorService The executor service.
      * @param archiveFormatResolver The archive format resolver.
-     * @param containerFormatResolver The container format resolver.
      * @param archiveHandlerFactory The archive handler factory.
-     * @param containerFactory The container identifier factory.
      * @param maxBytesToScan Max bytes to scan (negative means unlimited)
      */
     public SubmissionGateway(DroidCore droidCore, ResultHandler resultHandler, ExecutorService executorService,
-                             ArchiveFormatResolver archiveFormatResolver, ArchiveFormatResolver containerFormatResolver,
-                             ArchiveHandlerFactory archiveHandlerFactory, ContainerIdentifierFactory containerFactory,
+                             ArchiveFormatResolver archiveFormatResolver,
+                             ArchiveHandlerFactory archiveHandlerFactory,
                              long maxBytesToScan) {
         setDroidCore(droidCore);
         setResultHandler(resultHandler);
         setExecutorService(executorService);
         setArchiveFormatResolver(archiveFormatResolver);
-        setContainerFormatResolver(containerFormatResolver);
         setArchiveHandlerFactory(archiveHandlerFactory);
-        setContainerIdentifierFactory(containerFactory);
         setMaxBytesToScan(maxBytesToScan);
     }
 
@@ -149,7 +140,7 @@ public class SubmissionGateway implements AsynchDroid {
             @Override
             public IdentificationResultCollection call() throws IOException {
                 droidCore.setMaxBytesToScan(maxBytesToScan); //TODO: not sure why this needs to be set repeatedly on each call.
-                return droidCore.matchBinarySignatures(request);
+                return droidCore.match(request, matchAllExtensions);
             }
         };
 
@@ -181,34 +172,6 @@ public class SubmissionGateway implements AsynchDroid {
             }
             //CHECKSTYLE:ON
         }
-    }
-
-    private IdentificationResultCollection handleExtensions(IdentificationRequest request,
-                                                            IdentificationResultCollection results) {
-        IdentificationResultCollection extensionResults = results;
-        try {
-            List<IdentificationResult> resultList = results.getResults();
-            if (resultList != null && resultList.isEmpty()) {
-                // If we call matchExtensions with "true", it will match
-                // ALL files formats which have a given extension.
-                // If "false", it will only match file formats for which
-                // there is no other signature defined.
-                IdentificationResultCollection checkExtensionResults =
-                        droidCore.matchExtensions(request, matchAllExtensions);
-                if (checkExtensionResults != null) {
-                    extensionResults = checkExtensionResults;
-                }
-            } else {
-                droidCore.checkForExtensionsMismatches(extensionResults,
-                        request.getExtension());
-            }
-            //CHECKSTYLE:OFF - do not allow any errors in other code to
-            //    prevent results so far from being recorded.
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        //CHECKSTYLE:ON
-        return extensionResults;
     }
 
     /**
@@ -255,37 +218,6 @@ public class SubmissionGateway implements AsynchDroid {
         }
     }
 
-    private IdentificationResultCollection handleContainer(IdentificationRequest request,
-                                                           IdentificationResultCollection results)
-            throws IOException {
-        // process a container format (ole2, odf, ooxml etc)
-        String containerFormat = getContainerFormat(results);
-        try {
-            if (containerFormatResolver != null && containerFormat != null) {
-                ContainerIdentifier containerIdentifier = containerIdentifierFactory.getIdentifier(containerFormat);
-                containerIdentifier.setMaxBytesToScan(maxBytesToScan);
-                IdentificationResultCollection containerResults = containerIdentifier.submit(request);
-                droidCore.removeLowerPriorityHits(containerResults);
-                droidCore.checkForExtensionsMismatches(containerResults, request.getExtension());
-                containerResults.setFileLength(request.size());
-                containerResults.setRequestMetaData(request.getRequestMetaData());
-                return containerResults.getResults().isEmpty() ? null : containerResults;
-            }
-            //CHECKSTYLE:OFF - rules say don't catch this, but other code keeps on throwing them.
-            // Don't prejudice any results so far because other code isn't following 'the rules'.
-        } catch (Exception e) {
-            //CHECKSTYLE:ON
-            String causeMessage = "";
-            if (e.getCause() != null) {
-                causeMessage = e.getCause().getMessage();
-            }
-            final String message = String.format(CONTAINER_ERROR,
-                    containerFormat, request.getIdentifier().getUri().toString(), e.getMessage(), causeMessage);
-            log.warn(message);
-        }
-        return null;
-    }
-
     /**
      * @param results A previous identification of an archival format.
      * @return format or null
@@ -322,7 +254,6 @@ public class SubmissionGateway implements AsynchDroid {
     }
     //CHECKSTYLE:ON
 
-
     /**
      *
      * @param format
@@ -330,20 +261,6 @@ public class SubmissionGateway implements AsynchDroid {
      */
     private Boolean isWebArchiveFormat(String format) {
         return "ARC".equals(format) || "WARC".equals(format);
-    }
-
-    private String getContainerFormat(IdentificationResultCollection results) {
-        final List<IdentificationResult> theResults = results.getResults();
-        final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
-        for (int i = 0; i < numResults; i++) {
-            final IdentificationResult result = theResults.get(i);
-            final String format = containerFormatResolver.forPuid(result.getPuid());
-            if (format != null) {
-                return format;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -381,16 +298,16 @@ public class SubmissionGateway implements AsynchDroid {
     /**
      * @param containerFormatResolver the containerFormatResolver to set
      */
-    public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
-        this.containerFormatResolver = containerFormatResolver;
-    }
+//    public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
+//        this.containerFormatResolver = containerFormatResolver;
+//    }
 
     /**
      * @param containerIdentifierFactory the containerIdentifierFactory to set
      */
-    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
-        this.containerIdentifierFactory = containerIdentifierFactory;
-    }
+//    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
+//        this.containerIdentifierFactory = containerIdentifierFactory;
+//    }
 
     /**
      * @param droidCore the droidCore to set
@@ -546,42 +463,29 @@ public class SubmissionGateway implements AsynchDroid {
 
         @Override
         protected void done() {
+            // Whether the job count has already been decremented.  When handling an archive, the job counter
+            // is decremented, but it isn't if it's not an archive.  So we track whether this has happened yet or not.
             boolean jobCountDecremented = false;
             try {
                 generateHash(request);
                 IdentificationResultCollection results = get();
-                IdentificationResultCollection containerResults = handleContainer(request, results);
-                if (containerResults == null) {
-                    // no container results - process the normal results.
-                    droidCore.removeLowerPriorityHits(results);
-                    results = handleExtensions(request, results);
-
-                    // Are we processing archive formats?
-                    String archiveFormat = getArchiveFormat(results);
-                    if (archiveFormat != null) {
-                        handleArchive(request, results, archiveFormat);
-                        jobCountDecremented = true;
-                    } else { // just process the results so far:
-                        results.setArchive(getArchiveFormat(results) != null);
-                        ResourceId id = resultHandler.handle(results);
-                        request.getIdentifier().setResourceId(id);
-                    }
-                } else { // we have possible container formats:
-                    droidCore.removeLowerPriorityHits(containerResults);
-                    containerResults = handleExtensions(request, containerResults);
-                    ResourceId id = resultHandler.handle(containerResults);
+                String archiveFormat = getArchiveFormat(results);
+                if (archiveFormat != null) {
+                    handleArchive(request, results, archiveFormat);
+                    jobCountDecremented = true;
+                } else { // just process the results so far:
+                    results.setArchive(getArchiveFormat(results) != null);
+                    ResourceId id = resultHandler.handle(results);
                     request.getIdentifier().setResourceId(id);
                 }
             } catch (ExecutionException e) {
                 final Throwable cause = e.getCause();
                 log.error(cause.getStackTrace().toString(), cause);
-                resultHandler.handleError(new IdentificationException(
-                        request, IdentificationErrorType.OTHER, cause));
+                resultHandler.handleError(new IdentificationException(request, IdentificationErrorType.OTHER, cause));
             } catch (InterruptedException e) {
                 log.debug(e.getMessage(), e);
             } catch (IOException e) {
-                resultHandler.handleError(new IdentificationException(
-                        request, IdentificationErrorType.OTHER, e));
+                resultHandler.handleError(new IdentificationException(request, IdentificationErrorType.OTHER, e));
             } finally {
                 closeRequest();
                 if (!jobCountDecremented) {

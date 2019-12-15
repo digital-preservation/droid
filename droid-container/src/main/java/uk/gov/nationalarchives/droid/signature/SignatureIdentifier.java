@@ -29,16 +29,20 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.core;
+package uk.gov.nationalarchives.droid.signature;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
+import uk.gov.nationalarchives.droid.core.SignatureFileParser;
+import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -46,6 +50,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactory;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.FileFormat;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatCollection;
@@ -53,37 +59,62 @@ import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
 import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
 
 /**
- * Implementation of DroidCore which uses the droid binary signatures to identify files. 
- * identifications.
- * <p>
- * <b>Warning</b> It does not support matching via container signatures - this implementation
- * only matches binary signatures and file extensions.  Other subclasses may add this
- * functionality.
+ * Implementation of DroidCore which uses the droid binary signatures and container signatures
+ * to identify files, and can also match against file extensions.
  *
- * @author rflitcroft
+ * @author rflitcroft, mpalmer
  */
-public class BinarySignatureIdentifier implements DroidCore {
+public class SignatureIdentifier implements DroidCore {
 
+    private static final String FILE_SCHEME = "file://";
+    /**
+     * A class which can return the correct container signature identifier given its container type (e.g. ZIP or OLE2).
+     */
+    private ContainerIdentifierFactory containerIdentifierFactory;
+    /**
+     * A class which can return the correct container type given a PUID.
+     */
     private ArchiveFormatResolver containerFormatResolver;
+
+    /**
+     * The binary signatures.
+     */
     private FFSignatureFile sigFile;
+
+    /**
+     * The URI of the binary signature file to parse.
+     * TODO: this class shouldn't be doing the parsing - split this out into another bean.
+     */
     private URI signatureFile;
     
     /**
      * Default constructor.
      */
-    public BinarySignatureIdentifier() { }
+    public SignatureIdentifier() { }
 
     /**
      * Parameterized constructor.
      *
      * @param signatureFile The path to the binary signature file.
      * @param containerFormatResolver the class which sees if there is a container format identifier registered for identifications made.
+     * @param containerIdentifierFactory The class which can provide a container identifier given the container type.
      * @throws SignatureParseException if there was a problem parsing the binary signatures.
      */
-    public BinarySignatureIdentifier(URI signatureFile, ArchiveFormatResolver containerFormatResolver) throws SignatureParseException {
+    public SignatureIdentifier(URI signatureFile,
+                               ArchiveFormatResolver containerFormatResolver,
+                               ContainerIdentifierFactory containerIdentifierFactory) throws SignatureParseException {
         setSignatureFile(signatureFile);
         setContainerFormatResolver(containerFormatResolver);
+        setContainerIdentifierFactory(containerIdentifierFactory);
         init();
+    }
+
+    /**
+     * Sets the container identifier factory.
+     * @param containerIdentifierFactory The container identifier factory to set.
+     */
+    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
+        this.containerIdentifierFactory = containerIdentifierFactory;
     }
 
     /**
@@ -92,20 +123,20 @@ public class BinarySignatureIdentifier implements DroidCore {
      * @throws SignatureParseException When a signature could not be parsed
      */
     public void init() throws SignatureParseException {
-        SignatureFileParser sigFileParser = new SignatureFileParser();
-        sigFile = sigFileParser.parseSigFile(Paths.get(signatureFile));
-        sigFile.prepareForUse();
+        if (sigFile == null) {
+            try {
+                SignatureFileParser sigFileParser = new SignatureFileParser();
+                if (signatureFile.getScheme() == null) {
+                    signatureFile = new URI(FILE_SCHEME + signatureFile.toASCIIString());
+                }
+                sigFile = sigFileParser.parseSigFile(Paths.get(signatureFile));
+                sigFile.prepareForUse();
+            } catch (IllegalArgumentException | URISyntaxException ex) {
+                throw new SignatureParseException(ex.getMessage(), ex);
+            }
+        }
     }
     
-    /**
-     * Sets the signature file.
-     * @param signatureFile the signature file to set
-     */
-    @Override
-    public void setSignatureFile(final String signatureFile) {
-        this.signatureFile = Paths.get(signatureFile).toUri();
-    }
-
     @Override
     public IdentificationResultCollection match(IdentificationRequest request, boolean allExtensions) throws IOException {
         IdentificationResultCollection matches = matchBinarySignatures(request);
@@ -143,15 +174,17 @@ public class BinarySignatureIdentifier implements DroidCore {
         return results;
     }
 
-    /**
-     * No container signatures are defined for the BinarySignatureIdentifier.
-     * This will always return null.
-     * <p>
-     * {@inheritDoc}
-     */
     @Override
     public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request, String containerType) throws IOException {
-        return null; // no container signatures here, so return null.
+        if (containerType != null) {
+            ContainerIdentifier containerIdentifier = containerIdentifierFactory.getIdentifier(containerType);
+            //containerIdentifier.setMaxBytesToScan(maxBytesToScan); //TODO: where should max bytes to scan be set?
+            IdentificationResultCollection containerResults = containerIdentifier.submit(request);
+            containerResults.setFileLength(request.size());
+            containerResults.setRequestMetaData(request.getRequestMetaData());
+            return containerResults;
+        }
+        return null;
     }
 
     @Override
@@ -189,18 +222,6 @@ public class BinarySignatureIdentifier implements DroidCore {
     @Override
     public void removeSignatureForPuid(String puid) {
         sigFile.puidHasOverridingSignatures(puid);
-    }
-    
-    /**
-     * @return the sigFile, null if not initialized.
-     */
-    public FFSignatureFile getSigFile() {
-        return sigFile;
-    }
-
-    @Override
-    public void setMaxBytesToScan(long maxBytes) {
-        sigFile.setMaxBytesToScan(maxBytes);
     }
 
     @Override
@@ -283,6 +304,28 @@ public class BinarySignatureIdentifier implements DroidCore {
         }
     }
 
+    @Override
+    public void setMaxBytesToScan(long maxBytes) {
+        sigFile.setMaxBytesToScan(maxBytes);
+        //TODO: set on container identifiers too?
+    }
+
+    /**
+     * Sets the signature file path as a URI.
+     * @param signatureFile the signature file to set
+     */
+    @Override
+    public void setSignatureFile(final String signatureFile) {
+        this.signatureFile = Paths.get(signatureFile).toUri();
+    }
+
+    /**
+     * @return the sigFile, null if not initialized.
+     */
+    public FFSignatureFile getSigFile() {
+        return sigFile;
+    }
+
     /**
      * Sets the container format resolver to use.
      * @param containerFormatResolver the container format resolver to use.
@@ -345,5 +388,5 @@ public class BinarySignatureIdentifier implements DroidCore {
         }
         return null;
     }
-   
+
 }

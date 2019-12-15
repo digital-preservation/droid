@@ -104,6 +104,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <bean id="archiveRequestFactory" abstract="true">
         <property name="tempDirLocation" value="${tempDirLocation}"/>
     </bean>
+
     <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler">
         <property name="factory">
             <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory"
@@ -267,8 +268,17 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
 
+    <!--
     <bean id="droid" class="uk.gov.nationalarchives.droid.signature.SignatureIdentifier" init-method="init">
         <property name="signatureFile" value="${signatureFilePath}"/>
+        <property name="containerFormatResolver" ref="containerPuidResolver"/>
+        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
+    </bean>
+    -->
+    <bean id="droid" class="uk.gov.nationalarchives.droid.signature.SignatureIdentifier" init-method="init">
+        <property name="signatureFile" value="${signatureFilePath}"/>
+        <property name="containerFormatResolver" ref="containerPuidResolver"/>
+        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
     </bean>
 
     <bean id="coreExecutorService" factory-bean="pausableExecutorServiceFactory" factory-method="newInstance"/>
@@ -307,9 +317,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
           destroy-method="close">
         <property name="resultHandler" ref="databaseResultHandler"/>
         <property name="archiveFormatResolver" ref="archivePuidResolver"/>
-        <property name="containerFormatResolver" ref="containerPuidResolver"/>
         <property name="archiveHandlerFactory" ref="archiveHandlerLocator"/>
-        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
         <property name="executorService" ref="coreExecutorService"/>
 
         <property name="processTar" value="#{${processTar} == null?false : ${processTar}}"/>
@@ -319,7 +327,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="process7zip" value="#{${process7zip} == null?false : ${process7zip}}"/>
         <property name="processIso" value="#{${processIso} == null?false : ${processIso}}"/>
         <property name="processBzip2" value="#{${processBzip2} == null?false : ${processBzip2}}"/>
-
         <property name="processArc" value="#{${processArc} == null?false : ${processArc}}"/>
         <property name="processWarc" value="#{${processWarc} == null?false : ${processWarc}}"/>
 

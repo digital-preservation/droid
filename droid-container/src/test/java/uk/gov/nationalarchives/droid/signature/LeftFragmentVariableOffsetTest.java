@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.core.fragments;
+package uk.gov.nationalarchives.droid.signature;
 
 /**
  * Created by boreilly on 09/08/2016.
@@ -43,7 +43,6 @@ import java.util.List;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
@@ -71,7 +70,7 @@ public class LeftFragmentVariableOffsetTest {
         final String fileToScan = "left1200.ext";
         final String expectedPuid = "dev/1200";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile);
         try {
             droid.init();
@@ -114,7 +113,7 @@ public class LeftFragmentVariableOffsetTest {
         final String fileToScan = "left1200a.ext";
         final String expectedPuid = "dev/1200";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile);
         try {
             droid.init();
@@ -160,7 +159,7 @@ public class LeftFragmentVariableOffsetTest {
         final String fileToScan = "left1201.ext";
         final String expectedPuid = "dev/1201";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile);
         try {
             droid.init();
@@ -202,7 +201,7 @@ public class LeftFragmentVariableOffsetTest {
         final String fileToScan = "left1201.ext";
         final String expectedPuid = "dev/1201";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile);
         try {
             droid.init();

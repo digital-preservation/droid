@@ -34,7 +34,7 @@ package uk.gov.nationalarchives.droid.command.archive;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 
 import java.io.InputStream;
@@ -49,8 +49,8 @@ public class ArchiveContainerTestHelper {
     private static final Path CONTAINER_SIGNATURES =
             Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
 
-    public BinarySignatureIdentifier getBinarySignatureIdentifier() throws CommandExecutionException {
-        BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
+    public SignatureIdentifier getBinarySignatureIdentifier() throws CommandExecutionException {
+        SignatureIdentifier binarySignatureIdentifier = new SignatureIdentifier();
         binarySignatureIdentifier.setSignatureFile(STANDARD_SIGNATURES);
         try {
             binarySignatureIdentifier.init();

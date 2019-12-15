@@ -72,6 +72,7 @@ public class IdentificationResultImpl implements IdentificationResult {
         this.puid = puid;
         this.name = name;
         this.version = version;
+        this.extId = extId;
         this.method = method;
         this.identifier = identifier;
         this.requestMetaData = metadata;
@@ -118,7 +119,6 @@ public class IdentificationResultImpl implements IdentificationResult {
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
-    
 
     /**
      * @return the extId

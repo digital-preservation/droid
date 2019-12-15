@@ -36,7 +36,7 @@ import org.junit.Test;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
@@ -55,7 +55,7 @@ import java.nio.file.Paths;
 public class RarArchiveContainerIdentifierTest {
 
 
-    private BinarySignatureIdentifier binarySignatureIdentifier;
+    private SignatureIdentifier binarySignatureIdentifier;
     private RarArchiveContainerIdentifier rarArchiveContainerIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
@@ -67,7 +67,7 @@ public class RarArchiveContainerIdentifierTest {
 
     @Before
     public void setUp() throws CommandExecutionException {
-        binarySignatureIdentifier = new BinarySignatureIdentifier();
+        binarySignatureIdentifier = new SignatureIdentifier();
         binarySignatureIdentifier.setSignatureFile(standardSignatures);
         try {
             binarySignatureIdentifier.init();

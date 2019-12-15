@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.core;
+package uk.gov.nationalarchives.droid.signature;
 
 import java.net.URI;
 import java.nio.file.Files;
@@ -44,6 +44,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -59,7 +60,7 @@ public class Droid4LegacyDroidTest {
     @Test
     public void testDroid4Indentification() throws Exception {
         
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile("test_sig_files/DROID_SignatureFile_V26.xml");
 //        ResultHandler resultHandler = mock(ResultHandler.class);
 //        droid.setResultHandler(resultHandler);
@@ -107,7 +108,7 @@ public class Droid4LegacyDroidTest {
     @Test
     public void testRemovePuidRemovesInterbalSignaturesWithThisPuid() throws Exception {
         
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile("test_sig_files/DROID_SignatureFile_V26.xml");
         try {
             droid.init();

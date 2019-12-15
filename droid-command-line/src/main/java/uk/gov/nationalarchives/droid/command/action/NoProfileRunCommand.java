@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
@@ -139,7 +139,7 @@ public class NoProfileRunCommand implements DroidCommand {
             throw new CommandExecutionException(String.format("The specified input %s was not found", targetDirectoryOrFile));       	
         }
 
-        BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
+        SignatureIdentifier binarySignatureIdentifier = new SignatureIdentifier();
         final Path fileSignaturesFile = Paths.get(fileSignaturesFileName);
         if (!Files.exists(fileSignaturesFile)) {
             throw new CommandExecutionException("Signature file not found");

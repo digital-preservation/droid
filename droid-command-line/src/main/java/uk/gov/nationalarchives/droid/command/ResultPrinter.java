@@ -50,7 +50,7 @@ import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.TriggerPuid;
 import uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine;
 import uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
@@ -84,7 +84,7 @@ public class ResultPrinter {
     private static final String BZIP2_ARCHIVE = "x-fmt/268";
 
     
-    private BinarySignatureIdentifier binarySignatureIdentifier;
+    private SignatureIdentifier binarySignatureIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private List<TriggerPuid> triggerPuids;
     private IdentificationRequestFactory requestFactory;
@@ -106,7 +106,7 @@ public class ResultPrinter {
      * @param archives                      Should archives be examined?
      * @param webArchives                   Should web archives be examined?
      */
-    public ResultPrinter(final BinarySignatureIdentifier binarySignatureIdentifier,
+    public ResultPrinter(final SignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1, boolean archives, boolean webArchives) {
     

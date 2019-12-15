@@ -39,7 +39,7 @@ import java.nio.file.Paths;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 
@@ -54,7 +54,7 @@ public abstract class ArchiveContentIdentifier {
     // CHECKSTYLE:OFF  Doesn't like protected members but I think their use is justified here.
     protected String slash;
     protected String slash1;
-    protected BinarySignatureIdentifier binarySignatureIdentifier;
+    protected SignatureIdentifier binarySignatureIdentifier;
     protected ContainerSignatureDefinitions containerSignatureDefinitions;
     protected Path tmpDir;
     protected String path;
@@ -70,7 +70,7 @@ public abstract class ArchiveContentIdentifier {
      * @param slash1                        local first container prefix delimiter
      * @param expandWebArchives             optionally expand (W)ARC files
      */
-    public ArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
+    public ArchiveContentIdentifier(final SignatureIdentifier binarySignatureIdentifier,
                                        final ContainerSignatureDefinitions containerSignatureDefinitions,
                                        final String path, final String slash, final String slash1,
                                        final Boolean expandWebArchives) {
@@ -114,13 +114,13 @@ public abstract class ArchiveContentIdentifier {
     /**
      * @return binary signature identifier
      */
-    protected BinarySignatureIdentifier getBinarySignatureIdentifier() {
+    protected SignatureIdentifier getBinarySignatureIdentifier() {
         return  binarySignatureIdentifier;
     }
     /**
      * @param bis binary signature identifier
      */
-    protected void setBinarySignatureIdentifier(BinarySignatureIdentifier bis) {
+    protected void setBinarySignatureIdentifier(SignatureIdentifier bis) {
         this.binarySignatureIdentifier = bis;
     }
     /**

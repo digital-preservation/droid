@@ -43,7 +43,7 @@ import org.jwat.warc.WarcRecord;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
@@ -65,7 +65,7 @@ public class WarcArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public WarcArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
+    public WarcArchiveContentIdentifier(final SignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     

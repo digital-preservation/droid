@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.core.fragments;
+package uk.gov.nationalarchives.droid.signature;
 
 /**
  * Created by boreilly on 09/08/2016.
@@ -45,7 +45,6 @@ import java.util.List;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
@@ -75,7 +74,7 @@ public class RightFragmentVariableOffsetTest {
         final String fileToScan = "file1680-1a.ext";
         final String expectedPuid = "dev/1680";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile1);
         try {
             droid.init();
@@ -116,7 +115,7 @@ public class RightFragmentVariableOffsetTest {
         final String fileToScan = "file1680-1a.ext";
         final String expectedPuid = "dev/1681";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile1);
         try {
             droid.init();
@@ -161,7 +160,7 @@ public class RightFragmentVariableOffsetTest {
         final String fileToScan = "file1680-2.ext";
         final String expectedPuid = "dev/1682";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile1);
         try {
             droid.init();
@@ -204,7 +203,7 @@ public class RightFragmentVariableOffsetTest {
         final String fileToScan = "file1680-2a.ext";
         final String expectedPuid = "dev/1682";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile1);
         try {
             droid.init();
@@ -264,7 +263,7 @@ public class RightFragmentVariableOffsetTest {
         final String fileToScan = "819913.eps";
         final String expectedPuid = "x-fmt/91a";
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(TESTAREA + sigFile1);
         try {
             droid.init();

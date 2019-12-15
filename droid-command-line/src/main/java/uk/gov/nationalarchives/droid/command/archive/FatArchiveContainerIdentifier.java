@@ -47,7 +47,7 @@ import de.waldheinz.fs.util.FileDisk;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FatFileIdentificationRequest;
@@ -73,7 +73,7 @@ public class FatArchiveContainerIdentifier extends ArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public FatArchiveContainerIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
+    public FatArchiveContainerIdentifier(final SignatureIdentifier binarySignatureIdentifier,
                                          final ContainerSignatureDefinitions containerSignatureDefinitions,
                                          final String path, final String slash, final String slash1) {
 

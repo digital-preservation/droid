@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.core;
+package uk.gov.nationalarchives.droid.signature;
 
 import java.io.*;
 import java.net.URI;
@@ -48,6 +48,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
@@ -150,7 +151,7 @@ public class SkeletonSuiteTest {
     @Test
     public void testBinarySkeletonMatch() throws Exception {
 
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(SIGFILE);
 
         try {

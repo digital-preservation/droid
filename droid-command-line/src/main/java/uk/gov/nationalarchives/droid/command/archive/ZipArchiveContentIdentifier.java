@@ -40,7 +40,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
@@ -62,7 +62,7 @@ public class ZipArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      */
-    public ZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
+    public ZipArchiveContentIdentifier(final SignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1) {
     

@@ -41,7 +41,7 @@ import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -68,7 +68,7 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @param slash1                        local first container prefix delimiter
      * @param webArchives                   Whether to further expand gzipped web archive files
      */
-    public GZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
+    public GZipArchiveContentIdentifier(final SignatureIdentifier binarySignatureIdentifier,
             final ContainerSignatureDefinitions containerSignatureDefinitions,
             final String path, final String slash, final String slash1, final Boolean webArchives) {
 
