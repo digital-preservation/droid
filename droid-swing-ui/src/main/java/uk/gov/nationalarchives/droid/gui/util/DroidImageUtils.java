@@ -31,13 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.gui.util;
 
-import uk.gov.nationalarchives.droid.gui.DroidMainFrame;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  * Some bespoke image utils.
@@ -46,24 +45,50 @@ import java.io.IOException;
 public final class DroidImageUtils {
 
 
+    /**
+     * Default width and height for small icons.
+     */
+    public static final int SMALL_ICON_WIDTH_HEIGHT = 16;
+
+    /**
+     * Default width and height for large icons.
+     */
+    public static final int LARGE_ICON_WIDTH_HEIGHT = 24;
+
     private DroidImageUtils() { }
 
+    /**
+     * Get scaled version of an image.
+     * @param imagePath path of the image
+     * @param width expected width for the scaled image
+     * @param height expected height for the scaled image
+     * @return the scaled image
+     */
     public static ImageIcon getScaledImageIcon(String imagePath, int width, int height) {
-        Image scaledImage=null;
+        Image scaledImage = null;
         try {
             final BufferedImage image = ImageIO.read(DroidImageUtils.class.getResource(imagePath));
-            scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH );
+            scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return new ImageIcon(scaledImage);
     }
 
+    /**
+     *
+     * Get scaled version of an image.
+     * @param imagePath path of the image
+     * @param width expected width for the scaled image
+     * @param height expected height for the scaled image
+     * @param description description of the image
+     * @return the scaled image
+     */
     public static ImageIcon getScaledImageIcon(String imagePath, int width, int height, String description) {
-        Image scaledImage=null;
+        Image scaledImage = null;
         try {
             final BufferedImage image = ImageIO.read(DroidImageUtils.class.getResource(imagePath));
-            scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH );
+            scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

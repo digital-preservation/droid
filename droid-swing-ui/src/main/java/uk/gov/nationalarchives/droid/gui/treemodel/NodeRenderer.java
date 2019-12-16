@@ -34,10 +34,8 @@ package uk.gov.nationalarchives.droid.gui.treemodel;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
-import java.net.URL;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -109,7 +107,7 @@ public class NodeRenderer extends DefaultOutlineCellRenderer {
 
     private Icon getIconResource(String resourceName) {
         final String imagePath = String.format("/uk/gov/nationalarchives/droid/icons/%s.png", resourceName);
-        return DroidImageUtils.getScaledImageIcon(imagePath,16,16);
+        return DroidImageUtils.getScaledImageIcon(imagePath, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT);
     }
 
     /**

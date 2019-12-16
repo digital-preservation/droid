@@ -31,17 +31,16 @@
  */
 package uk.gov.nationalarchives.droid.gui.treemodel;
 
-import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
-
 import java.awt.Color;
 import java.awt.Component;
-import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
+
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
 
 /**
  * @author rflitcroft
@@ -150,7 +149,7 @@ public class FormatCountRenderer implements TableCellRenderer {
             }
 
             final String imagePath = String.format(ICON_URL_PATTERN, iconSuffix);
-            return DroidImageUtils.getScaledImageIcon(imagePath,16,16, iconSuffix);
+            return DroidImageUtils.getScaledImageIcon(imagePath, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, iconSuffix);
         }
         return null;
     }
