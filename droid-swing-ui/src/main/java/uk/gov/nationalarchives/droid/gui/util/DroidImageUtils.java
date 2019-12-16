@@ -54,7 +54,7 @@ public final class DroidImageUtils {
             final BufferedImage image = ImageIO.read(DroidImageUtils.class.getResource(imagePath));
             scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH );
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return new ImageIcon(scaledImage);
     }
@@ -65,7 +65,7 @@ public final class DroidImageUtils {
             final BufferedImage image = ImageIO.read(DroidImageUtils.class.getResource(imagePath));
             scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH );
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return new ImageIcon(scaledImage, description);
     }
