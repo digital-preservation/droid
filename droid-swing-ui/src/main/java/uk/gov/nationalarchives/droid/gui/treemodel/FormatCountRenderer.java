@@ -50,7 +50,7 @@ import javax.swing.table.TableCellRenderer;
 public class FormatCountRenderer implements TableCellRenderer {
 
     /** */
-    private static final String ICON_URL_PATTERN = "/uk/gov/nationalarchives/droid/icons/format_count_small_%s.png";
+    private static final String ICON_URL_PATTERN = "/uk/gov/nationalarchives/droid/icons/format_count_%s.png";
 
     /**
      * Cached Internal labels used to render the different types of format counts.
