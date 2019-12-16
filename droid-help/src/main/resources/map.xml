@@ -69,13 +69,13 @@
     <mapID target="droidlogo" url="Images/droidlogo.gif"/>
     <mapID target="Report" url="Images/icons/Report.png"/>
     <mapID target="Open file" url="Images/icons/Open file.png"/>
-    <mapID target="General" url="Images/screenshots/General.PNG"/>
-    <mapID target="Profile Defaults" url="Images/screenshots/Profile Defaults.PNG"/>
-    <mapID target="Profile paused" url="Images/screenshots/Profile paused.PNG"/>
-    <mapID target="Profile running" url="Images/screenshots/Profile running.PNG"/>
-    <mapID target="Signature Updates" url="Images/screenshots/Signature Updates.PNG"/>
-    <mapID target="Filter option selection" url="Images/screenshots/Filter option selection.PNG"/>
-    <mapID target="Filter selection" url="Images/screenshots/Filter selection.PNG"/>
+    <mapID target="General" url="Images/screenshots/General.png"/>
+    <mapID target="Profile Defaults" url="Images/screenshots/Profile Defaults.png"/>
+    <mapID target="Profile paused" url="Images/screenshots/Profile paused.png"/>
+    <mapID target="Profile running" url="Images/screenshots/Profile running.png"/>
+    <mapID target="Signature Updates" url="Images/screenshots/Signature Updates.png"/>
+    <mapID target="Filter option selection" url="Images/screenshots/Filter option selection.png"/>
+    <mapID target="Filter selection" url="Images/screenshots/Filter selection.png"/>
     <mapID target="Information collected by DROID" url="Web pages/Information collected by DROID.html"/>
     <mapID target="FAQ" url="Web pages/FAQ.html"/>
     <mapID target="Remove top level resources2" url="Images/screenshots/Remove top level resources2.png"/>
