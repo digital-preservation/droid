@@ -11,14 +11,14 @@
 			<directory title="Images">
                     <file title="droidlogo.gif"/>
 			    <directory title="icons">
-                    <file title="3d bar chart.png"/>
+                    <file title="Report.png"/>
                     <file title="Add.png"/>
-                    <file title="containerResourceType.gif"/>
+                    <file title="containerResourceType.png"/>
                     <file title="Delete.png"/>
                     <file title="Export.png"/>
-                    <file title="fileResourceType.gif"/>
+                    <file title="fileResourceType.png"/>
                     <file title="Filter.png"/>
-                    <file title="folderResourceType.gif"/>
+                    <file title="folderResourceType.png"/>
                     <file title="format_count_ONE.png"/>
                     <file title="format_count_ZERO.png"/>
                     <file title="Icon_External_Link.png"/>
@@ -33,8 +33,6 @@
                     <file title="Status Access Denied.png"/>
                     <file title="Stop.png"/>
                     <file title="Sync.png"/>
-                    <file title="Tune.png"/>
-                    <file title="Update.png"/>
 			    </directory>
 			    <directory title="screenshots">
                     <file title="Checkbox.png"/>

@@ -66,10 +66,8 @@
     <mapID target="Save" url="Images/icons/Save.png"/>
     <mapID target="Stop" url="Images/icons/Stop.png"/>
     <mapID target="Sync" url="Images/icons/Sync.png"/>
-    <mapID target="Tune" url="Images/icons/Tune.png"/>
-    <mapID target="Update" url="Images/icons/Update.png"/>
     <mapID target="droidlogo" url="Images/droidlogo.gif"/>
-    <mapID target="3d bar chart" url="Images/icons/3d bar chart.png"/>
+    <mapID target="Report" url="Images/icons/Report.png"/>
     <mapID target="Open file" url="Images/icons/Open file.png"/>
     <mapID target="General" url="Images/screenshots/General.PNG"/>
     <mapID target="Profile Defaults" url="Images/screenshots/Profile Defaults.PNG"/>
@@ -83,9 +81,9 @@
     <mapID target="Remove top level resources2" url="Images/screenshots/Remove top level resources2.png"/>
     <mapID target="Creating a new profile2" url="Images/screenshots/Creating a new profile2.png"/>
     <mapID target="Install signature" url="Images/screenshots/Install signature.png"/>
-    <mapID target="containerResourceType" url="Images/icons/containerResourceType.gif"/>
-    <mapID target="fileResourceType" url="Images/icons/fileResourceType.gif"/>
-    <mapID target="folderResourceType" url="Images/icons/folderResourceType.gif"/>
+    <mapID target="containerResourceType" url="Images/icons/containerResourceType.png"/>
+    <mapID target="fileResourceType" url="Images/icons/fileResourceType.png"/>
+    <mapID target="folderResourceType" url="Images/icons/folderResourceType.png"/>
     <mapID target="severity_WARN" url="Images/icons/severity_WARN.png"/>
     <mapID target="format_count_ONE" url="Images/icons/format_count_ONE.png"/>
     <mapID target="format_count_ZERO" url="Images/icons/format_count_ZERO.png"/>
