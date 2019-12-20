@@ -92,6 +92,7 @@ import uk.gov.nationalarchives.droid.gui.treemodel.OutlineColumn;
 import uk.gov.nationalarchives.droid.gui.treemodel.OutlineComparableComparator;
 import uk.gov.nationalarchives.droid.gui.treemodel.ProfileRowModel;
 import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+import uk.gov.nationalarchives.droid.gui.util.IconType;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxy;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxyImpl;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.JOptionPaneProxy;
@@ -316,7 +317,7 @@ public class ProfileForm extends JPanel {
             }
         });
 
-        PopupAddFilesAndFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add.png", 16, 16));
+        PopupAddFilesAndFolders.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Add.png", IconType.SMALL));
         PopupAddFilesAndFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupAddFilesAndFolders.text")); // NOI18N
         PopupAddFilesAndFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -325,7 +326,7 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupAddFilesAndFolders);
 
-        PopupRemoveFilesOrFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove.png", 16, 16));
+        PopupRemoveFilesOrFolders.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Remove.png", IconType.SMALL));
         PopupRemoveFilesOrFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupRemoveFilesOrFolders.text")); // NOI18N
         PopupRemoveFilesOrFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -335,7 +336,7 @@ public class ProfileForm extends JPanel {
         jPopupMenu1.add(PopupRemoveFilesOrFolders);
         jPopupMenu1.add(PopupSeparator1);
 
-        PopupOpenContainingFolder.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Icon_External_Link.png", 24, 24));
+        PopupOpenContainingFolder.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Icon_External_Link.png", IconType.LARGE));
         PopupOpenContainingFolder.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupOpenContainingFolder.text")); // NOI18N
         PopupOpenContainingFolder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -344,7 +345,7 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupOpenContainingFolder);
 
-        PopupMenuCopyToClipboard.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Clipboard.png", 16, 16));
+        PopupMenuCopyToClipboard.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Clipboard.png", IconType.SMALL));
         PopupMenuCopyToClipboard.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuCopyToClipboard.text")); // NOI18N
         PopupMenuCopyToClipboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

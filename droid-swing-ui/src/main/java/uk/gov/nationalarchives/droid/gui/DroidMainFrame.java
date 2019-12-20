@@ -106,6 +106,7 @@ import uk.gov.nationalarchives.droid.gui.report.ReportViewFrame;
 import uk.gov.nationalarchives.droid.gui.signature.CheckSignatureUpdateAction;
 import uk.gov.nationalarchives.droid.gui.signature.UpdateSignatureAction;
 import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+import uk.gov.nationalarchives.droid.gui.util.IconType;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.ProfileSelectionDialog;
 import uk.gov.nationalarchives.droid.planets.gui.PlanetXMLFileFilter;
 import uk.gov.nationalarchives.droid.planets.gui.PlanetXMLProgressDialog;
@@ -287,8 +288,7 @@ public class DroidMainFrame extends JFrame {
 
     private void init() {
         log.info("Starting DROID.");
-        setIconImage(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/DROID16.png",
-                DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT).getImage());
+        setIconImage(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","DROID16.png", IconType.SMALL).getImage());
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -473,7 +473,7 @@ public class DroidMainFrame extends JFrame {
             }
         });
 
-        jButtonNewProfile.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/New.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonNewProfile.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","New.png", IconType.LARGE));
         jButtonNewProfile.setText("New");
         jButtonNewProfile.setToolTipText("Create new profile");
         jButtonNewProfile.setFocusable(false);
@@ -486,7 +486,7 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonNewProfile);
 
-        jButtonOpenProfile.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Open file.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonOpenProfile.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Open file.png", IconType.LARGE));
         jButtonOpenProfile.setText("Open");
         jButtonOpenProfile.setToolTipText("Open existing profile");
         jButtonOpenProfile.setFocusable(false);
@@ -499,11 +499,11 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonOpenProfile);
 
-        jButtonSaveProfile.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonSaveProfile.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save.png", IconType.LARGE));
         jButtonSaveProfile.setText("Save");
         jButtonSaveProfile.setToolTipText("Save profile");
-        jButtonSaveProfile.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
-        jButtonSaveProfile.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonSaveProfile.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save disabled.png", IconType.LARGE));
+        jButtonSaveProfile.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save disabled.png", IconType.LARGE));
         jButtonSaveProfile.setFocusable(false);
         jButtonSaveProfile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonSaveProfile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -514,7 +514,7 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonSaveProfile);
 
-        jButtonExport.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Export.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonExport.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Export.png", IconType.LARGE));
         jButtonExport.setText("Export");
         jButtonExport.setToolTipText("Export results");
         jButtonExport.setFocusable(false);
@@ -530,11 +530,11 @@ public class DroidMainFrame extends JFrame {
         jSeparator13.setSeparatorSize(new java.awt.Dimension(20, 40));
         droidToolBar.add(jSeparator13);
 
-        jButtonAddFile.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonAddFile.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Add.png", IconType.LARGE));
         jButtonAddFile.setText("Add");
         jButtonAddFile.setToolTipText("Add files or folders to profile");
-        jButtonAddFile.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
-        jButtonAddFile.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonAddFile.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Add disabled.png", IconType.LARGE));
+        jButtonAddFile.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Add disabled.png", IconType.LARGE));
         jButtonAddFile.setFocusable(false);
         jButtonAddFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonAddFile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -545,11 +545,11 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonAddFile);
 
-        jButtonRemoveFilesAndFolder.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonRemoveFilesAndFolder.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Remove.png", IconType.LARGE));
         jButtonRemoveFilesAndFolder.setText("Remove");
         jButtonRemoveFilesAndFolder.setToolTipText("Remove files/folders from profile");
-        jButtonRemoveFilesAndFolder.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
-        jButtonRemoveFilesAndFolder.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonRemoveFilesAndFolder.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Remove disabled.png", IconType.LARGE));
+        jButtonRemoveFilesAndFolder.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Remove disabled.png", IconType.LARGE));
         jButtonRemoveFilesAndFolder.setFocusable(false);
         jButtonRemoveFilesAndFolder.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonRemoveFilesAndFolder.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -563,11 +563,11 @@ public class DroidMainFrame extends JFrame {
         jSeparator12.setSeparatorSize(new java.awt.Dimension(20, 40));
         droidToolBar.add(jSeparator12);
 
-        jButtonStart.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Play.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonStart.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Play.png", IconType.LARGE));
         jButtonStart.setText("Start");
         jButtonStart.setToolTipText("Run identification");
-        jButtonStart.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Play disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
-        jButtonStart.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Play disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonStart.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Play disabled.png", IconType.LARGE));
+        jButtonStart.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Play disabled.png", IconType.LARGE));
         jButtonStart.setFocusable(false);
         jButtonStart.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonStart.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -578,11 +578,11 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonStart);
 
-        jButtonStop.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Pause.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonStop.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Pause.png", IconType.LARGE));
         jButtonStop.setText("Pause");
         jButtonStop.setToolTipText("Pause identification");
-        jButtonStop.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Pause disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
-        jButtonStop.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Pause disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonStop.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Pause disabled.png", IconType.LARGE));
+        jButtonStop.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Pause disabled.png", IconType.LARGE));
         jButtonStop.setFocusable(false);
         jButtonStop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonStop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -596,7 +596,7 @@ public class DroidMainFrame extends JFrame {
         jSeparator11.setSeparatorSize(new java.awt.Dimension(20, 40));
         droidToolBar.add(jSeparator11);
 
-        jButtonFilter.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Filter.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonFilter.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Filter.png", IconType.LARGE));
         jButtonFilter.setText("Filter");
         jButtonFilter.setToolTipText("Define and apply filter to results");
         jButtonFilter.setFocusable(false);
@@ -642,7 +642,7 @@ public class DroidMainFrame extends JFrame {
         jSeparator10.setSeparatorSize(new java.awt.Dimension(20, 40));
         droidToolBar.add(jSeparator10);
 
-        jButtonReport.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Report.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jButtonReport.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Report.png", IconType.LARGE));
         jButtonReport.setText("Report");
         jButtonReport.setToolTipText("Generate a statistical report over the open profiles");
         jButtonReport.setFocusable(false);
@@ -667,7 +667,7 @@ public class DroidMainFrame extends JFrame {
         });
 
         jMenuItemNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemNew.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/New.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemNew.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","New.png", IconType.SMALL));
         jMenuItemNew.setText("New");
         jMenuItemNew.setToolTipText("New profile");
         jMenuItemNew.addActionListener(new java.awt.event.ActionListener() {
@@ -678,7 +678,7 @@ public class DroidMainFrame extends JFrame {
         jMenuFile.add(jMenuItemNew);
 
         jMenuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemOpen.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Open file.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemOpen.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Open file.png", IconType.SMALL));
         jMenuItemOpen.setText("Open");
         jMenuItemOpen.setToolTipText("Open a profile");
         jMenuItemOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -689,12 +689,12 @@ public class DroidMainFrame extends JFrame {
         jMenuFile.add(jMenuItemOpen);
 
         jMenuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuSave.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuSave.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save.png", IconType.SMALL));
         jMenuSave.setText("Save");
         jMenuSave.setToolTipText("Save a profile");
         jMenuSave.setActionCommand("save");
-        jMenuSave.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
-        jMenuSave.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuSave.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save disabled.png", IconType.SMALL));
+        jMenuSave.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save disabled.png", IconType.SMALL));
         jMenuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuSaveActionPerformed(evt);
@@ -703,12 +703,12 @@ public class DroidMainFrame extends JFrame {
         jMenuFile.add(jMenuSave);
 
         jMenuSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        jMenuSaveAs.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save As.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuSaveAs.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save As.png", IconType.SMALL));
         jMenuSaveAs.setText("Save As...");
         jMenuSaveAs.setToolTipText("Save a profile to a specified file");
         jMenuSaveAs.setActionCommand("save");
-        jMenuSaveAs.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save As disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
-        jMenuSaveAs.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Save As disabled.png", DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT, DroidImageUtils.LARGE_ICON_WIDTH_HEIGHT));
+        jMenuSaveAs.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save As disabled.png", IconType.LARGE));
+        jMenuSaveAs.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Save As disabled.png", IconType.LARGE));
         jMenuSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuSaveAsActionPerformed(evt);
@@ -717,7 +717,7 @@ public class DroidMainFrame extends JFrame {
         jMenuFile.add(jMenuSaveAs);
 
         jMenuItemExport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemExport.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Export.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemExport.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Export.png", IconType.SMALL));
         jMenuItemExport.setText("Export all...");
         jMenuItemExport.setToolTipText("Export profiles");
         jMenuItemExport.setActionCommand("export");
@@ -729,7 +729,7 @@ public class DroidMainFrame extends JFrame {
         jMenuFile.add(jMenuItemExport);
 
         jMenuQuit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuQuit.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Quit.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuQuit.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Quit.png", IconType.SMALL));
         jMenuQuit.setText("Quit");
         jMenuQuit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -755,11 +755,11 @@ public class DroidMainFrame extends JFrame {
         });
 
         jMenuItemAddFileOrFolders.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ADD, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemAddFileOrFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemAddFileOrFolders.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Add.png", IconType.SMALL));
         jMenuItemAddFileOrFolders.setText("Add file/folders");
         jMenuItemAddFileOrFolders.setToolTipText("Add files or folders to a profile");
-        jMenuItemAddFileOrFolders.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
-        jMenuItemAddFileOrFolders.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemAddFileOrFolders.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Add disabled.png", IconType.SMALL));
+        jMenuItemAddFileOrFolders.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Add disabled.png", IconType.SMALL));
         jMenuItemAddFileOrFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemAddFileOrFoldersActionPerformed(evt);
@@ -768,11 +768,11 @@ public class DroidMainFrame extends JFrame {
         jMenuEdit.add(jMenuItemAddFileOrFolders);
 
         jMenuItemRemoveFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_SUBTRACT, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemRemoveFolder.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemRemoveFolder.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Remove.png", IconType.SMALL));
         jMenuItemRemoveFolder.setText("Remove files/folders");
         jMenuItemRemoveFolder.setToolTipText("Remove files or folders from a profile");
-        jMenuItemRemoveFolder.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
-        jMenuItemRemoveFolder.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemRemoveFolder.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Remove disabled.png", IconType.SMALL));
+        jMenuItemRemoveFolder.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Remove disabled.png", IconType.SMALL));
         jMenuItemRemoveFolder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRemoveFolderActionPerformed(evt);
@@ -782,7 +782,7 @@ public class DroidMainFrame extends JFrame {
         jMenuEdit.add(jSeparator1);
 
         jMenuItemOpenFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemOpenFolder.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Open containing folder.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemOpenFolder.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Open containing folder.png", IconType.SMALL));
         jMenuItemOpenFolder.setText("Open containing folder...");
         jMenuItemOpenFolder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -792,7 +792,7 @@ public class DroidMainFrame extends JFrame {
         jMenuEdit.add(jMenuItemOpenFolder);
 
         jMenuItemCopyToClipboard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemCopyToClipboard.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Clipboard.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemCopyToClipboard.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Clipboard.png", IconType.SMALL));
         jMenuItemCopyToClipboard.setText("Copy to clipboard");
         jMenuItemCopyToClipboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -802,7 +802,7 @@ public class DroidMainFrame extends JFrame {
         jMenuEdit.add(jMenuItemCopyToClipboard);
         jMenuEdit.add(jSeparator2);
 
-        jMenuItemExpandChildren.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Expand.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemExpandChildren.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Expand.png", IconType.SMALL));
         jMenuItemExpandChildren.setText("Expand");
         jMenuItemExpandChildren.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -811,7 +811,7 @@ public class DroidMainFrame extends JFrame {
         });
         jMenuEdit.add(jMenuItemExpandChildren);
 
-        jMenuItemExpandNextThree.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Expand 3 levels.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemExpandNextThree.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Expand 3 levels.png", IconType.SMALL));
         jMenuItemExpandNextThree.setText("Expand next three levels");
         jMenuItemExpandNextThree.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -827,11 +827,11 @@ public class DroidMainFrame extends JFrame {
         jMenuRun.setActionCommand("run");
 
         jMenuItemStart.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemStart.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Play.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemStart.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Play.png", IconType.SMALL));
         jMenuItemStart.setText("Start identification");
         jMenuItemStart.setToolTipText("Start identifying files in the profile");
-        jMenuItemStart.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Play disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
-        jMenuItemStart.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Play disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemStart.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Play disabled.png", IconType.SMALL));
+        jMenuItemStart.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Play disabled.png", IconType.SMALL));
         jMenuItemStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemStartActionPerformed(evt);
@@ -840,11 +840,11 @@ public class DroidMainFrame extends JFrame {
         jMenuRun.add(jMenuItemStart);
 
         jMenuItemStop.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItemStop.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Pause.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemStop.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Pause.png", IconType.SMALL));
         jMenuItemStop.setText("Pause identification");
         jMenuItemStop.setToolTipText("Pause identification in the profile");
-        jMenuItemStop.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Pause disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
-        jMenuItemStop.setDisabledSelectedIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Pause disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuItemStop.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Pause disabled.png", IconType.SMALL));
+        jMenuItemStop.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Pause disabled.png", IconType.SMALL));
         jMenuItemStop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemStopActionPerformed(evt);
@@ -878,10 +878,10 @@ public class DroidMainFrame extends JFrame {
         jMenuFilter.add(jSeparator8);
 
         jMenuEditFilter.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        jMenuEditFilter.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Filter.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuEditFilter.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Filter.png", IconType.SMALL));
         jMenuEditFilter.setText("Edit filter...");
         jMenuEditFilter.setToolTipText("Edit the filter for a profile");
-        jMenuEditFilter.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Filter disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        jMenuEditFilter.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Filter disabled.png", IconType.SMALL));
         jMenuEditFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuEditFilterActionPerformed(evt);
@@ -905,10 +905,10 @@ public class DroidMainFrame extends JFrame {
         jMenuReport.setActionCommand("report");
 
         generateReportMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
-        generateReportMenuItem.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Report.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        generateReportMenuItem.setIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Report.png", IconType.SMALL));
         generateReportMenuItem.setText("Generate Report...");
         generateReportMenuItem.setToolTipText("Generates a report in DROID XML format");
-        generateReportMenuItem.setDisabledIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Report disabled.png", DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT));
+        generateReportMenuItem.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","Report disabled.png", IconType.SMALL));
         generateReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 generateReportMenuItemActionPerformed(evt);

@@ -32,8 +32,12 @@
 package uk.gov.nationalarchives.droid.gui.util;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
+import java.awt.image.BaseMultiResolutionImage;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -43,7 +47,6 @@ import javax.swing.ImageIcon;
  *
  */
 public final class DroidImageUtils {
-
 
     /**
      * Default width and height for small icons.
@@ -58,40 +61,44 @@ public final class DroidImageUtils {
     private DroidImageUtils() { }
 
     /**
-     * Get scaled version of an image.
-     * @param imagePath path of the image
-     * @param width expected width for the scaled image
-     * @param height expected height for the scaled image
+     * create image based on all existing resolutions (to manage high screen res screens)
+     * @param path path of the image
+     * @param baseName base name of the image
+     * @param type type of icon SMALL/LARGE
      * @return the scaled image
      */
-    public static ImageIcon getScaledImageIcon(String imagePath, int width, int height) {
-        Image scaledImage = null;
-        try {
-            final BufferedImage image = ImageIO.read(DroidImageUtils.class.getResource(imagePath));
-            scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public static ImageIcon createBaseMultiResolutionImage(String path, String baseName, IconType type) {
+        java.util.List<String> imageLocations;
+        switch (type){
+            default:
+            case LARGE:
+                imageLocations = List.of(
+                        path + "24x24-" + baseName,
+                        path + "48x48-" + baseName,
+                        path +  "96x96-" + baseName
+                );
+                break;
+            case SMALL:
+                imageLocations = List.of(
+                        path + "16x16-" + baseName,
+                        path + "32x32-" + baseName,
+                        path + "64x64-" + baseName
+                );
+                break;
         }
-        return new ImageIcon(scaledImage);
+
+        List<Image> imgList = new ArrayList<Image>();
+        for(String location: imageLocations) {
+            Image currentImg = null;
+            try {
+                currentImg = ImageIO.read(new File(DroidImageUtils.class.getResource(location).toURI()));
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+            imgList.add(currentImg);
+        }
+
+        return new ImageIcon(new BaseMultiResolutionImage(imgList.toArray(new Image[0])));
     }
 
-    /**
-     *
-     * Get scaled version of an image.
-     * @param imagePath path of the image
-     * @param width expected width for the scaled image
-     * @param height expected height for the scaled image
-     * @param description description of the image
-     * @return the scaled image
-     */
-    public static ImageIcon getScaledImageIcon(String imagePath, int width, int height, String description) {
-        Image scaledImage = null;
-        try {
-            final BufferedImage image = ImageIO.read(DroidImageUtils.class.getResource(imagePath));
-            scaledImage = image.getScaledInstance(width, height,  Image.SCALE_SMOOTH);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return new ImageIcon(scaledImage, description);
-    }
 }

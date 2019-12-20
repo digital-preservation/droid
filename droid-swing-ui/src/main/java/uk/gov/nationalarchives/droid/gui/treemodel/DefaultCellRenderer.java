@@ -125,20 +125,8 @@ public class DefaultCellRenderer implements TableCellRenderer {
     protected JLabel getRenderer() {
         return renderer;
     }
-    
-    
-    /**
-     * 
-     * @param resourceName the name of the icon resource to load.
-     * @return An icon containing the loaded icon resource.
-     */
-    protected Icon getIconResource(String resourceName) {
-        String resourcePath = String.format("/uk/gov/nationalarchives/droid/icons/%s.png", resourceName);
-        return DroidImageUtils.getScaledImageIcon(resourcePath, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT,
-                DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT);
-    }
-    
-    
+
+
     /**
      * 
      * @param value The value being displayed

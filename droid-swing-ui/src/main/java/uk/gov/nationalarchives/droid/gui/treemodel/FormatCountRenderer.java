@@ -41,6 +41,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
 import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+import uk.gov.nationalarchives.droid.gui.util.IconType;
 
 /**
  * @author rflitcroft
@@ -49,7 +50,7 @@ import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
 public class FormatCountRenderer implements TableCellRenderer {
 
     /** */
-    private static final String ICON_URL_PATTERN = "/uk/gov/nationalarchives/droid/icons/format_count_%s.png";
+    private static final String ICON_NAME_PATTERN = "format_count_%s.png";
 
     /**
      * Cached Internal labels used to render the different types of format counts.
@@ -148,8 +149,8 @@ public class FormatCountRenderer implements TableCellRenderer {
                 iconSuffix = "ZERO";
             }
 
-            final String imagePath = String.format(ICON_URL_PATTERN, iconSuffix);
-            return DroidImageUtils.getScaledImageIcon(imagePath, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, iconSuffix);
+            final String imageName = String.format(ICON_NAME_PATTERN, iconSuffix);
+            return DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/", imageName, IconType.SMALL);
         }
         return null;
     }

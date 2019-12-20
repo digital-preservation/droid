@@ -45,6 +45,7 @@ import org.netbeans.swing.outline.DefaultOutlineCellRenderer;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+import uk.gov.nationalarchives.droid.gui.util.IconType;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
@@ -105,9 +106,10 @@ public class NodeRenderer extends DefaultOutlineCellRenderer {
         this.darkerColor = TreeUtils.getDarkerColor(backColor);
     }
 
-    private Icon getIconResource(String resourceName) {
-        final String imagePath = String.format("/uk/gov/nationalarchives/droid/icons/%s.png", resourceName);
-        return DroidImageUtils.getScaledImageIcon(imagePath, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT);
+    protected Icon getIconResource(String resourceName) {
+        String resourceFilename = String.format("%s.png", resourceName);
+        return DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/", resourceFilename,
+                IconType.SMALL);
     }
 
     /**

@@ -64,6 +64,7 @@ import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.XHTMLPanel;
 
 import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+import uk.gov.nationalarchives.droid.gui.util.IconType;
 import uk.gov.nationalarchives.droid.report.ReportTransformer;
 
 /**
@@ -98,8 +99,7 @@ public class ReportViewFrame extends JFrame {
         //super(parent);
         //setModal(true);
         initComponents();
-        setIconImage(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/DROID16.png",
-                DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT).getImage());
+        setIconImage(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","DROID16.png", IconType.SMALL).getImage());
 
 
         addWindowListener(new WindowAdapter() {

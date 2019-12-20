@@ -31,6 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.gui.treemodel;
 
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+import uk.gov.nationalarchives.droid.gui.util.IconType;
+
 import java.awt.Color;
 
 import javax.swing.Icon;
@@ -50,7 +53,7 @@ public class FileExtensionRenderer extends DefaultCellRenderer {
     public FileExtensionRenderer(Color backColor) {
         super(backColor);
         getRenderer().setHorizontalTextPosition(SwingConstants.LEFT);
-        warningIcon = getIconResource("warning_extension_mismatch");
+        warningIcon = DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/", "warning_extension_mismatch.png", IconType.SMALL);
     }
     
     
