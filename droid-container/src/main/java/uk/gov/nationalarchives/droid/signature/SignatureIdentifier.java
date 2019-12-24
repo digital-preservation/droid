@@ -40,6 +40,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
+import uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader;
+import uk.gov.nationalarchives.droid.container.TriggerPuid;
 import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
 import uk.gov.nationalarchives.droid.core.SignatureFileParser;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
@@ -57,6 +60,10 @@ import uk.gov.nationalarchives.droid.core.signature.FileFormat;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatCollection;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
 import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
+import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignature;
+import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection;
+
+//TODO: design for subclassing or make final?
 
 /**
  * Implementation of DroidCore which uses the droid binary signatures and container signatures
@@ -67,10 +74,17 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
 public class SignatureIdentifier implements DroidCore {
 
     private static final String FILE_SCHEME = "file://";
+
     /**
      * A class which can return the correct container signature identifier given its container type (e.g. ZIP or OLE2).
      */
     private ContainerIdentifierFactory containerIdentifierFactory;
+
+    /**
+     * A class which parses, then caches a container signature file.
+     */
+    private ContainerSignatureFileReader containerSignatureFileReader;
+
     /**
      * A class which can return the correct container type given a PUID.
      */
@@ -82,11 +96,21 @@ public class SignatureIdentifier implements DroidCore {
     private FFSignatureFile sigFile;
 
     /**
+     * A list of the base binary signatures for a container format along with their container signatures.
+     */
+    private List<BinaryAndContainerSignatures> containerSignatureList = new ArrayList<>();
+
+    /**
      * The URI of the binary signature file to parse.
-     * TODO: this class shouldn't be doing the parsing - split this out into another bean.
+     * TODO: this class shouldn't be doing the parsing - split this out into another bean, like the container signature file reader.
      */
     private URI signatureFile;
-    
+
+    /**
+     * The max bytes to scan at the top and tail of a file or stream.  A negative number means unlimited.
+     */
+    private long maxBytesTosScan;
+
     /**
      * Default constructor.
      */
@@ -97,24 +121,19 @@ public class SignatureIdentifier implements DroidCore {
      *
      * @param signatureFile The path to the binary signature file.
      * @param containerFormatResolver the class which sees if there is a container format identifier registered for identifications made.
-     * @param containerIdentifierFactory The class which can provide a container identifier given the container type.
+     * @param containerIdentifierFactory The class which can provide a container identifier given the container format type.
+     * @param containerSignatureFileReader A class which can parse a container signature file and cache the parsed definitions.
      * @throws SignatureParseException if there was a problem parsing the binary signatures.
      */
     public SignatureIdentifier(URI signatureFile,
                                ArchiveFormatResolver containerFormatResolver,
-                               ContainerIdentifierFactory containerIdentifierFactory) throws SignatureParseException {
+                               ContainerIdentifierFactory containerIdentifierFactory,
+                               ContainerSignatureFileReader containerSignatureFileReader) throws SignatureParseException {
         setSignatureFile(signatureFile);
         setContainerFormatResolver(containerFormatResolver);
         setContainerIdentifierFactory(containerIdentifierFactory);
+        setContainerSignatureFileReader(containerSignatureFileReader);
         init();
-    }
-
-    /**
-     * Sets the container identifier factory.
-     * @param containerIdentifierFactory The container identifier factory to set.
-     */
-    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
-        this.containerIdentifierFactory = containerIdentifierFactory;
     }
 
     /**
@@ -130,25 +149,39 @@ public class SignatureIdentifier implements DroidCore {
                     signatureFile = new URI(FILE_SCHEME + signatureFile.toASCIIString());
                 }
                 sigFile = sigFileParser.parseSigFile(Paths.get(signatureFile));
+                processContainerSignatureTriggerPuids(); // get the binary signatures that identify container formats.
                 sigFile.prepareForUse();
             } catch (IllegalArgumentException | URISyntaxException ex) {
                 throw new SignatureParseException(ex.getMessage(), ex);
             }
         }
     }
-    
+
+    //TODO: should put the allExtensions modifier in the interface, or make it a configurable property of the implementation?
+    //      The more different variations we get, the more parameters we'll end up with in the basic matching interface.
+    //      Are these the sorts of decisions which will vary by method call, or will be set for a particular identifier?
     @Override
     public IdentificationResultCollection match(IdentificationRequest request, boolean allExtensions) throws IOException {
-        IdentificationResultCollection matches = matchBinarySignatures(request);
-        String containerFormat = getContainerFormat(matches);
-        if (containerFormat != null) {
-            IdentificationResultCollection containerMatches = matchContainerSignatures(request, containerFormat);
-            if (containerMatches != null) {
-                matches = containerMatches;
+        IdentificationResultCollection results = matchContainerSignatures(request);
+        if (results == null  || results.getResults().isEmpty()) {
+            results = matchBinarySignatures(request);
+        }
+        removeLowerPriorityHits(results);
+        return processExtensions(request, results, allExtensions);
+    }
+
+    @Override
+    public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request) throws IOException {
+        ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
+        for (BinaryAndContainerSignatures sigPair : containerSignatureList) {
+            if (!sigPair.getBinarySignatures().getMatchingSignatures(byteReader, maxBytesTosScan).isEmpty()) { // we have a match for a container signature base format, match containers:
+                IdentificationResultCollection containerResults = sigPair.getContainerSignatures().submit(request);
+                containerResults.setFileLength(request.size());
+                containerResults.setRequestMetaData(request.getRequestMetaData());
+                return containerResults;
             }
         }
-        removeLowerPriorityHits(matches);
-        return processExtensions(request, matches, allExtensions);
+        return null; //TODO: should return null or an empty collection?
     }
 
     @Override
@@ -175,21 +208,7 @@ public class SignatureIdentifier implements DroidCore {
     }
 
     @Override
-    public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request, String containerType) throws IOException {
-        if (containerType != null) {
-            ContainerIdentifier containerIdentifier = containerIdentifierFactory.getIdentifier(containerType);
-            //containerIdentifier.setMaxBytesToScan(maxBytesToScan); //TODO: where should max bytes to scan be set?
-            IdentificationResultCollection containerResults = containerIdentifier.submit(request);
-            containerResults.setFileLength(request.size());
-            containerResults.setRequestMetaData(request.getRequestMetaData());
-            return containerResults;
-        }
-        return null;
-    }
-
-    @Override
-    public IdentificationResultCollection matchExtensions(
-            IdentificationRequest request, boolean allExtensions) {
+    public IdentificationResultCollection matchExtensions(IdentificationRequest request, boolean allExtensions) {
         IdentificationResultCollection results = new IdentificationResultCollection(request);
         results.setRequestMetaData(request.getRequestMetaData());
         String fileExtension = request.getExtension();
@@ -225,11 +244,10 @@ public class SignatureIdentifier implements DroidCore {
     }
 
     @Override
-    public void removeLowerPriorityHits(
-            IdentificationResultCollection results) {
+    public void removeLowerPriorityHits(IdentificationResultCollection results) {
         // Build a set of format ids the results have priority over:
         FileFormatCollection allFormats = sigFile.getFileFormatCollection();
-        Set<Integer> lowerPriorityIDs = new HashSet<Integer>();
+        Set<Integer> lowerPriorityIDs = new HashSet<>();
         final List<IdentificationResult> theResults = results.getResults();
         int numResults = theResults.size();
         for (int i = 0; i < numResults; i++) {
@@ -240,7 +258,7 @@ public class SignatureIdentifier implements DroidCore {
         }
         
         // If a result has an id in this set, add it to the remove list;
-        List<IdentificationResult> lowerPriorityResults = new ArrayList<IdentificationResult>();
+        List<IdentificationResult> lowerPriorityResults = new ArrayList<>();
         for (int i = 0; i < numResults; i++) {
             final IdentificationResult result = theResults.get(i);
             final String resultPUID = result.getPuid();
@@ -306,8 +324,8 @@ public class SignatureIdentifier implements DroidCore {
 
     @Override
     public void setMaxBytesToScan(long maxBytes) {
+        this.maxBytesTosScan = maxBytes;
         sigFile.setMaxBytesToScan(maxBytes);
-        //TODO: set on container identifiers too?
     }
 
     /**
@@ -335,6 +353,22 @@ public class SignatureIdentifier implements DroidCore {
     }
 
     /**
+     * Sets the class which can parse container signature files and cache the parsed definitions.
+     * @param containerSignatureFileReader The container signature file reader to set.
+     */
+    public void setContainerSignatureFileReader(ContainerSignatureFileReader containerSignatureFileReader) {
+        this.containerSignatureFileReader = containerSignatureFileReader;
+    }
+
+    /**
+     * Sets the container identifier factory.
+     * @param containerIdentifierFactory The container identifier factory to set.
+     */
+    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
+        this.containerIdentifierFactory = containerIdentifierFactory;
+    }
+
+    /**
      * Sets the signature file URI to parse.
      * @param signatureFileURI the URI of the signature file to parse.
      */
@@ -352,7 +386,7 @@ public class SignatureIdentifier implements DroidCore {
      *                      or whether to match extensions on all known formats, even if they have other signatures.
      * @return the results
      */
-    protected IdentificationResultCollection processExtensions(IdentificationRequest request,
+    protected IdentificationResultCollection processExtensions(IdentificationRequest<?> request,
                                                                IdentificationResultCollection results,
                                                                boolean allExtensions) {
         List<IdentificationResult> resultList = results.getResults();
@@ -368,25 +402,33 @@ public class SignatureIdentifier implements DroidCore {
         return results;
     }
 
-    /**
-     * Returns a container format identifier (e.g. ZIP or OLE2) given a set of identification results which matches
-     * one of the trigger PUIDs for that type of container, or null if there is no container format match in the results.
-     * @param results Identification results obtained so far.
-     * @return A container format if one of them matches a container trigger PUID, or null if they don't.
-     */
-    protected String getContainerFormat(IdentificationResultCollection results) {
-        if (containerFormatResolver != null) {
-            final List<IdentificationResult> theResults = results.getResults();
-            final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.
-            for (int i = 0; i < numResults; i++) {
-                final IdentificationResult result = theResults.get(i);
-                final String format = containerFormatResolver.forPuid(result.getPuid());
-                if (format != null) {
-                    return format;
-                }
+    protected void processContainerSignatureTriggerPuids() throws SignatureParseException {
+        containerSignatureList.clear();
+        ContainerSignatureDefinitions definitions = containerSignatureFileReader.getDefinitions();
+        for (TriggerPuid trigger : definitions.getTiggerPuids()) {
+            String puid = trigger.getPuid();
+            InternalSignatureCollection baseContainerSignatures = new InternalSignatureCollection();
+            for (InternalSignature sig : sigFile.getSignaturesForPuid(puid)) {
+                baseContainerSignatures.addInternalSignature(sig);
             }
+            String containerFormat = containerFormatResolver.forPuid(puid);
+            ContainerIdentifier containerSignatures = containerIdentifierFactory.getIdentifier(containerFormat);
+            this.containerSignatureList.add(new BinaryAndContainerSignatures(baseContainerSignatures, containerSignatures));
         }
-        return null;
     }
 
+    protected static class BinaryAndContainerSignatures {
+        private final ContainerIdentifier containerSignatures;
+        private final InternalSignatureCollection binarySignatures;
+        public BinaryAndContainerSignatures(InternalSignatureCollection binarySignatures, ContainerIdentifier containerSignatures) {
+            this.containerSignatures = containerSignatures;
+            this.binarySignatures = binarySignatures;
+        }
+        public ContainerIdentifier getContainerSignatures() {
+            return containerSignatures;
+        }
+        public InternalSignatureCollection getBinarySignatures() {
+            return binarySignatures;
+        }
+    }
 }
