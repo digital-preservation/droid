@@ -62,16 +62,18 @@ public class IdentificationResultImpl implements IdentificationResult {
      * @param puid The PUID identified.
      * @param name The name
      * @param version The version
+     * @param mimeType The Mime type.
      * @param extId The extension id.
      * @param method The identification method.
      * @param identifier The request identifier.
      * @param metadata The request metadata.
      */
-    public IdentificationResultImpl(String puid, String name, String version, String extId,
+    public IdentificationResultImpl(String puid, String name, String version, String mimeType, String extId,
                                     IdentificationMethod method, RequestIdentifier identifier, RequestMetaData metadata) {
         this.puid = puid;
         this.name = name;
         this.version = version;
+        this.mimeType = mimeType;
         this.extId = extId;
         this.method = method;
         this.identifier = identifier;
