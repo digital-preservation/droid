@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FFSignatureFile DateCreated="2016-07-27T12:13:11" Version="86" xmlns="http://www.nationalarchives.gov.uk/pronom/SignatureFile">
+    <InternalSignatureCollection>
+        <!-- The following two signatures are identical except for the additional final right fragment option only in the second one-->
+        <InternalSignature ID="1000" Specificity="Specific">
+            <ByteSequence Reference="BOFoffset">
+                <SubSequence MinFragLength="0" Position="1"
+                    SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                    <Sequence>252150532D41646F62652D312E30</Sequence>
+                </SubSequence>
+            </ByteSequence>
+            <ByteSequence Reference="EOFoffset">
+                <SubSequence MinFragLength="1" Position="1"
+                    SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                    <Sequence>2525454F46</Sequence>
+                    <RightFragment MaxOffset="0" MinOffset="0" Position="1">0A</RightFragment>
+                    <RightFragment MaxOffset="0" MinOffset="0" Position="1">0D</RightFragment>
+                    <RightFragment MaxOffset="0" MinOffset="0" Position="1">0D0A</RightFragment>
+                    <!-- This last option is available in the next signature below.
+ See GitHub issue https://github.com/digital-preservation/droid/issues/104 -->
+					<!-- <RightFragment MaxOffset="0" MinOffset="0" Position="1">0A0A</RightFragment> -->
+                </SubSequence>
+            </ByteSequence>
+        </InternalSignature>
+        <!-- The following signature is identical to the previous one except for the additional final right fragment option -->
+        <InternalSignature ID="1001" Specificity="Specific">
+            <ByteSequence Reference="BOFoffset">
+                <SubSequence MinFragLength="0" Position="1"
+                             SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                    <Sequence>252150532D41646F62652D312E30</Sequence>
+                </SubSequence>
+            </ByteSequence>
+            <ByteSequence Reference="EOFoffset">
+                <SubSequence MinFragLength="1" Position="1"
+                             SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                    <Sequence>2525454F46</Sequence>
+                    <RightFragment MaxOffset="0" MinOffset="0" Position="1">0A</RightFragment>
+                    <RightFragment MaxOffset="0" MinOffset="0" Position="1">0D</RightFragment>
+                    <RightFragment MaxOffset="0" MinOffset="0" Position="1">0D0A</RightFragment>
+                    <!-- This last option is not available in the signature above.
+                     See GitHub issue https://github.com/digital-preservation/droid/issues/104 -->
+                    <RightFragment MaxOffset="0" MinOffset="0" Position="1">0A0A</RightFragment>
+                </SubSequence>
+            </ByteSequence>
+        </InternalSignature>
+    </InternalSignatureCollection>
+    <FileFormatCollection>
+
+        <FileFormat ID="10000" MIMEType="application/postscript"
+            Name="Postscript" PUID="x-fmt/91" Version="1.0">
+            <InternalSignatureID>1000</InternalSignatureID>
+            <Extension>ps</Extension>
+        </FileFormat>
+
+        <FileFormat ID="10000" MIMEType="application/postscript"
+                    Name="Postscript" PUID="x-fmt/91a" Version="1.0">
+            <InternalSignatureID>1001</InternalSignatureID>
+            <Extension>ps</Extension>
+        </FileFormat>
+
+     </FileFormatCollection>
+</FFSignatureFile>

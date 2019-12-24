@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FFSignatureFile DateCreated="2012-06-13T17:59:48" Version="409" xmlns="http://www.nationalarchives.gov.uk/pronom/SignatureFile">
+    <InternalSignatureCollection>
+        <InternalSignature ID="740" Specificity="Specific">
+            <ByteSequence Reference="BOFoffset">
+                <SubSequence MinFragLength="11" Position="1"
+                    SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                    <Sequence>000000</Sequence>
+                    <DefaultShift>4</DefaultShift>
+                    <Shift Byte="00">1</Shift>
+                    <LeftFragment MaxOffset="1" MinOffset="1" Position="1">3F</LeftFragment>
+                    <LeftFragment MaxOffset="1" MinOffset="0" Position="2">FE</LeftFragment>
+                    <LeftFragment MaxOffset="1" MinOffset="0" Position="2">FF</LeftFragment>
+                    <LeftFragment MaxOffset="4" MinOffset="4" Position="3">[00:0F]</LeftFragment>
+                    <LeftFragment MaxOffset="2" MinOffset="2" Position="4">01</LeftFragment>
+                    <RightFragment MaxOffset="1" MinOffset="1" Position="1">00</RightFragment>
+                </SubSequence>
+            </ByteSequence>
+        </InternalSignature>
+    </InternalSignatureCollection>
+    <FileFormatCollection>
+        <FileFormat ID="1242" Name="TEST ENL (Reverse scan bug)" PUID="x-fmt/757">
+            <InternalSignatureID>740</InternalSignatureID>
+        </FileFormat>
+    </FileFormatCollection>
+</FFSignatureFile>

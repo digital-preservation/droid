@@ -174,7 +174,8 @@ public class SignatureIdentifier implements DroidCore {
     public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request) throws IOException {
         ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
         for (BinaryAndContainerSignatures sigPair : containerSignatureList) {
-            if (!sigPair.getBinarySignatures().getMatchingSignatures(byteReader, maxBytesTosScan).isEmpty()) { // we have a match for a container signature base format, match containers:
+            // if we have a match for a container signature base format, match containers:
+            if (!sigPair.getBinarySignatures().getMatchingSignatures(byteReader, maxBytesTosScan).isEmpty()) {
                 IdentificationResultCollection containerResults = sigPair.getContainerSignatures().submit(request);
                 containerResults.setFileLength(request.size());
                 containerResults.setRequestMetaData(request.getRequestMetaData());
@@ -402,31 +403,56 @@ public class SignatureIdentifier implements DroidCore {
         return results;
     }
 
+    /**
+     * Find the binary signatures which match the base container type.
+     *
+     * @throws SignatureParseException If there was a problem parsing the container signatures.
+     */
     protected void processContainerSignatureTriggerPuids() throws SignatureParseException {
         containerSignatureList.clear();
-        ContainerSignatureDefinitions definitions = containerSignatureFileReader.getDefinitions();
-        for (TriggerPuid trigger : definitions.getTiggerPuids()) {
-            String puid = trigger.getPuid();
-            InternalSignatureCollection baseContainerSignatures = new InternalSignatureCollection();
-            for (InternalSignature sig : sigFile.getSignaturesForPuid(puid)) {
-                baseContainerSignatures.addInternalSignature(sig);
+        if (containerSignatureFileReader != null) {
+            ContainerSignatureDefinitions definitions = containerSignatureFileReader.getDefinitions();
+            for (TriggerPuid trigger : definitions.getTiggerPuids()) {
+                String puid = trigger.getPuid();
+                InternalSignatureCollection baseContainerSignatures = new InternalSignatureCollection();
+                for (InternalSignature sig : sigFile.getSignaturesForPuid(puid)) {
+                    baseContainerSignatures.addInternalSignature(sig);
+                }
+                String containerFormat = containerFormatResolver.forPuid(puid);
+                ContainerIdentifier containerSignatures = containerIdentifierFactory.getIdentifier(containerFormat);
+                this.containerSignatureList.add(new BinaryAndContainerSignatures(baseContainerSignatures, containerSignatures));
             }
-            String containerFormat = containerFormatResolver.forPuid(puid);
-            ContainerIdentifier containerSignatures = containerIdentifierFactory.getIdentifier(containerFormat);
-            this.containerSignatureList.add(new BinaryAndContainerSignatures(baseContainerSignatures, containerSignatures));
         }
     }
 
+    /**
+     * A simple wrapper class that holds the binary signatures required to identify a base container format (eg. ZIP)
+     * and the container signatures for that base type.cd
+     */
     protected static class BinaryAndContainerSignatures {
         private final ContainerIdentifier containerSignatures;
         private final InternalSignatureCollection binarySignatures;
+
+        /**
+         * Constructor for the wrapper.
+         * @param binarySignatures The binary signatures that match a base container format.
+         * @param containerSignatures The container signatures for that base format.
+         */
         public BinaryAndContainerSignatures(InternalSignatureCollection binarySignatures, ContainerIdentifier containerSignatures) {
             this.containerSignatures = containerSignatures;
             this.binarySignatures = binarySignatures;
         }
+
+        /**
+         * @return the container signatures.
+         */
         public ContainerIdentifier getContainerSignatures() {
             return containerSignatures;
         }
+
+        /**
+         * @return the binary signatures for the base container format.
+         */
         public InternalSignatureCollection getBinarySignatures() {
             return binarySignatures;
         }

@@ -1,0 +1,7 @@
+// Use this file to list those test suite skeleton files in the parent directory's fmt and x-fmt sub directories,
+// where the actual identification is expected to differ from the identification dervied from the filename.
+// E.g. fmt-202-signature-id-1046.nef is expected to identify as fmt/353, rather than fmt/202.
+// Each line should consist of the filename followed by the expected identification, separated by a tab.
+// You can then add a further tab to add a comment if required.
+// Also, Entries can be commented out by adding // at the start of a line
+//x-fmt-412-signature-id-199.jar //Not identified in GUI.  Test identifies as x-fmt/412 but normal no profile run as x-fmt/263

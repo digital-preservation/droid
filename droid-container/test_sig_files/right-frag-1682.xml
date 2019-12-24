@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FFSignatureFile xmlns="http://www.nationalarchives.gov.uk/pronom/SignatureFile" DateCreated="2016-07-18T13:00:00" Version="109" >
+    <InternalSignatureCollection>
+		<InternalSignature ID="1682" Specificity="Specific">
+			<ByteSequence Endianness="Little-endian" Reference="BOFoffset">
+				<SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+				<Sequence>49492A00</Sequence>
+					<DefaultShift>5</DefaultShift>
+					<Shift Byte="00">1</Shift>
+					<Shift Byte="2A">2</Shift>
+					<Shift Byte="49">3</Shift>
+				</SubSequence>
+			</ByteSequence>
+			<ByteSequence Endianness="Little-endian" Reference="EOFoffset">
+				<SubSequence MinFragLength="13" Position="1" SubSeqMaxOffset="15" SubSeqMinOffset="4">
+					<Sequence>AF876543</Sequence>
+					<DefaultShift>-5</DefaultShift>
+					<Shift Byte="00">-4</Shift>
+					<Shift Byte="03">-3</Shift>
+					<Shift Byte="87">-2</Shift>
+					<Shift Byte="AF">-1</Shift>
+					<RightFragment MaxOffset="5" MinOffset="5" Position="1">AABB</RightFragment>
+					<RightFragment MaxOffset="20" MinOffset="0" Position="2">CDEF</RightFragment>
+				</SubSequence>
+			</ByteSequence>
+		</InternalSignature>
+	</InternalSignatureCollection>
+	<FileFormatCollection>
+        <FileFormat ID="1682" Name="Right Fragment Test" PUID="dev/1682">
+            <InternalSignatureID>1682</InternalSignatureID>
+				<Extension>ext</Extension>
+            	<Extension>tif</Extension>
+				<Extension>tiff</Extension>
+        </FileFormat>
+    </FileFormatCollection>
+</FFSignatureFile>
