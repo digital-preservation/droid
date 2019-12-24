@@ -279,6 +279,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="signatureFile" value="${signatureFilePath}"/>
         <property name="containerFormatResolver" ref="containerPuidResolver"/>
         <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
+        <property name="containerSignatureFileReader" ref="signatureFileReader"/>
     </bean>
 
     <bean id="coreExecutorService" factory-bean="pausableExecutorServiceFactory" factory-method="newInstance"/>
