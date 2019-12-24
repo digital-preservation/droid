@@ -71,11 +71,10 @@ public interface DroidCore {
      * Submits an identification request to identify files using
      * container signatures.
      * @param request the identification request.
-     * @param containerType the type of container to match (e.g. ZIP, OLE2).
      * @return the identification result.
      * @throws IOException if there was a problem matching a container signature.
      */
-    IdentificationResultCollection matchContainerSignatures(IdentificationRequest request, String containerType) throws IOException;
+    IdentificationResultCollection matchContainerSignatures(IdentificationRequest request) throws IOException;
 
     /**
      * 
