@@ -319,6 +319,22 @@ public class FFSignatureFile extends SimpleElement {
         }
     }
 
+    /**
+     * Returns a list of binary signatures associated with a puid.
+     * @param puid The puid to get binary signatures for.
+     * @return  a list of binary signatures associated with a puid.
+     */
+    public List<InternalSignature> getSignaturesForPuid(String puid) {
+        List<InternalSignature> results = new ArrayList<>();
+        FileFormat format = getFileFormat(puid);
+        if (format != null) {
+            for (int sigIndex = 0; sigIndex < format.getNumInternalSignatures(); sigIndex++) {
+                results.add(intSigs.getInternalSignature(format.getInternalSignatureID(sigIndex)));
+            }
+        }
+        return results;
+    }
+
     
     /*
      * Ensures that each internal signature does whatever it needs to do
