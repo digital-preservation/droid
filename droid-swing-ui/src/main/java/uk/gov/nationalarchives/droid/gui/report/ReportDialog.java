@@ -174,8 +174,6 @@ public class ReportDialog extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
-
         cancelButton = new JButton();
         generateButton = new JButton();
         profileSelectLabel = new JLabel();
@@ -185,6 +183,7 @@ public class ReportDialog extends JDialog {
         reportSelectCombo = new JComboBox();
 
         setTitle(NbBundle.getMessage(ReportDialog.class, "ReportDialog.title_1")); // NOI18N
+
         cancelButton.setText(NbBundle.getMessage(ReportDialog.class, "ReportDialog.cancelButton.text")); // NOI18N
         cancelButton.setVerticalAlignment(SwingConstants.BOTTOM);
         cancelButton.addActionListener(new ActionListener() {
@@ -201,6 +200,7 @@ public class ReportDialog extends JDialog {
         });
 
         profileSelectLabel.setText(NbBundle.getMessage(ReportDialog.class, "ReportDialog.profileSelectLabel.text_1")); // NOI18N
+
         profileSelectTable.setModel(new DefaultTableModel(
             new Object [][] {
 
@@ -216,14 +216,13 @@ public class ReportDialog extends JDialog {
         profileSelectTable.setTableHeader(null);
         jScrollPane1.setViewportView(profileSelectTable);
 
-
         reportSelectLabel.setText(NbBundle.getMessage(ReportDialog.class, "ReportDialog.reportSelectLabel.text")); // NOI18N
+
         reportSelectCombo.setModel(new DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING)
@@ -239,8 +238,7 @@ public class ReportDialog extends JDialog {
                         .addComponent(reportSelectCombo, 0, 384, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
+        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(profileSelectLabel)
@@ -251,9 +249,9 @@ public class ReportDialog extends JDialog {
                     .addComponent(reportSelectCombo, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
                     .addComponent(reportSelectLabel))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(generateButton))
+                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                    .addComponent(cancelButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(generateButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents

@@ -57,9 +57,9 @@
                   <Component id="reportSelectLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="cancelButton" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                  <Component id="generateButton" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="cancelButton" max="32767" attributes="0"/>
+                  <Component id="generateButton" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
