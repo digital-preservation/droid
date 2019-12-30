@@ -32,7 +32,7 @@ Once the code is cloned into a folder (e.g. `droid`), executing `mvn clean insta
 ### Linux / OSX / Windows users
 Archive `droid-binary-${VERSION}-bin-unix.zip`
 
-You will need JAVA 8 to 11 installed to run it.
+You will need JAVA 9 to 11 installed to run it.
 
 Once unpacked, use the `droid.sh` or `droid.bat` script to run the application.
 
