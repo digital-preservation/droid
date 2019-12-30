@@ -520,11 +520,8 @@ public class FilterDialog extends JDialog {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         jButtonCancle.setText(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jButtonCancle.text")); // NOI18N
@@ -600,30 +597,32 @@ public class FilterDialog extends JDialog {
             }
         ));
         jScrollPane1.setViewportView(filterTable);
-        filterTable.getColumnModel().getColumn(0).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title0")); // NOI18N
-        filterTable.getColumnModel().getColumn(1).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title1")); // NOI18N
-        filterTable.getColumnModel().getColumn(2).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title2")); // NOI18N
-        filterTable.getColumnModel().getColumn(3).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title3")); // NOI18N
+        if (filterTable.getColumnModel().getColumnCount() > 0) {
+            filterTable.getColumnModel().getColumn(0).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title0")); // NOI18N
+            filterTable.getColumnModel().getColumn(1).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title1")); // NOI18N
+            filterTable.getColumnModel().getColumn(2).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title2")); // NOI18N
+            filterTable.getColumnModel().getColumn(3).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title3")); // NOI18N
+        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
