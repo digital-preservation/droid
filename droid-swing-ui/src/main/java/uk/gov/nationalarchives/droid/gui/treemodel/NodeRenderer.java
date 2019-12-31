@@ -106,6 +106,11 @@ public class NodeRenderer extends DefaultOutlineCellRenderer {
         this.darkerColor = TreeUtils.getDarkerColor(backColor);
     }
 
+    /**
+     * get Icon from resource name
+     * @param resourceName name of the resource
+     * @return the Icon
+     */
     protected Icon getIconResource(String resourceName) {
         String resourceFilename = String.format("%s.png", resourceName);
         return DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/", resourceFilename,

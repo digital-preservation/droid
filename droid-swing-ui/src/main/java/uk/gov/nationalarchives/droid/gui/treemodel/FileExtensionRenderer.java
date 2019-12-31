@@ -31,13 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.gui.treemodel;
 
-import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
-import uk.gov.nationalarchives.droid.gui.util.IconType;
-
 import java.awt.Color;
 
 import javax.swing.Icon;
 import javax.swing.SwingConstants;
+
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+import uk.gov.nationalarchives.droid.gui.util.IconType;
 
 /**
  * @author a-mpalmer

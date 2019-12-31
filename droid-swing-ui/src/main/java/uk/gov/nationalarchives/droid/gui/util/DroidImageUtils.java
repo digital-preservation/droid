@@ -61,7 +61,7 @@ public final class DroidImageUtils {
     private DroidImageUtils() { }
 
     /**
-     * create image based on all existing resolutions (to manage high screen res screens)
+     * Create image based on all existing resolutions (to manage high screen res screens).
      * @param path path of the image
      * @param baseName base name of the image
      * @param type type of icon SMALL/LARGE
@@ -69,15 +69,7 @@ public final class DroidImageUtils {
      */
     public static ImageIcon createBaseMultiResolutionImage(String path, String baseName, IconType type) {
         java.util.List<String> imageLocations;
-        switch (type){
-            default:
-            case LARGE:
-                imageLocations = List.of(
-                        path + "24x24-" + baseName,
-                        path + "48x48-" + baseName,
-                        path +  "96x96-" + baseName
-                );
-                break;
+        switch (type) {
             case SMALL:
                 imageLocations = List.of(
                         path + "16x16-" + baseName,
@@ -85,10 +77,18 @@ public final class DroidImageUtils {
                         path + "64x64-" + baseName
                 );
                 break;
+            case LARGE:
+            default:
+                imageLocations = List.of(
+                        path + "24x24-" + baseName,
+                        path + "48x48-" + baseName,
+                        path +  "96x96-" + baseName
+                );
+                break;
         }
 
         List<Image> imgList = new ArrayList<Image>();
-        for(String location: imageLocations) {
+        for (String location: imageLocations) {
             Image currentImg = null;
             try {
                 currentImg = ImageIO.read(new File(DroidImageUtils.class.getResource(location).toURI()));

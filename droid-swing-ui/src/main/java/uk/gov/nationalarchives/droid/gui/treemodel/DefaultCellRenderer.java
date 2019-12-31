@@ -40,8 +40,6 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
-import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
-
 
 /**
  * @author a-mpalmer

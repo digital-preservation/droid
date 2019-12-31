@@ -99,7 +99,7 @@ public class ReportViewFrame extends JFrame {
         //super(parent);
         //setModal(true);
         initComponents();
-        setIconImage(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/","DROID16.png", IconType.SMALL).getImage());
+        setIconImage(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/", "DROID16.png", IconType.SMALL).getImage());
 
 
         addWindowListener(new WindowAdapter() {
