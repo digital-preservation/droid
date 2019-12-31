@@ -73,7 +73,7 @@ public class FileWalkerPersistenceTest {
         XMLUnit.setIgnoreWhitespace(true);
         
         profileWalkerDao = new ProfileWalkerDao();
-        testDir = Paths.get("tmp/" + getClass().getSimpleName());
+        testDir = Paths.get("target/tmp/" + getClass().getSimpleName());
         Files.createDirectories(testDir);
         profileWalkerDao.setProfileHomeDir(testDir);
     }

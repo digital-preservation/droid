@@ -78,7 +78,7 @@ public class ProfileDiskActionTest {
 		
 	@Before
 	public void setUp() throws Exception {
-		profilesDir = Paths.get("profiles");
+		profilesDir = Paths.get("target/profiles");
         FileUtil.mkdirsQuietly(profilesDir);
 
 		profileToSaveDir = profilesDir.resolve("profileToSave");
@@ -115,7 +115,7 @@ public class ProfileDiskActionTest {
     public void testSaveProfileToFile() throws Exception {
         ProgressObserver callback = mock(ProgressObserver.class);
         ProfileDiskAction action = new ProfileDiskAction();
-        action.saveProfile(Paths.get("profiles", "profileToSave"), destination, callback);
+        action.saveProfile(Paths.get("target/profiles", "profileToSave"), destination, callback);
         //assertTrue(destination.exists());
 
         /* check the destination is a zip file with the following entries:
@@ -172,7 +172,7 @@ public class ProfileDiskActionTest {
         assertTrue(Files.isRegularFile(profileToLoadDir.resolve("db/file4")));
 
         // check that profiles.xml was unzipped OK
-        InputStream in = new FileInputStream("profiles/myProfile/profile.xml");
+        InputStream in = new FileInputStream("target/profiles/myProfile/profile.xml");
 
         StringBuilder sb = new StringBuilder();
         int bytesIn = 0;

@@ -103,7 +103,7 @@ public class ContainerSignatureHttpServiceTest {
         when(proxySettings.isEnabled()).thenReturn(false);
         httpService.onProxyChange(proxySettings);
 
-        final Path tmpDir = Paths.get("tmp");
+        final Path tmpDir = Paths.get("target/tmp");
         FileUtils.deleteQuietly(tmpDir.toFile());
 
         Files.createDirectories(tmpDir);
@@ -131,7 +131,7 @@ public class ContainerSignatureHttpServiceTest {
         when(proxySettings.getProxyPort()).thenReturn(8080);
         httpService.onProxyChange(proxySettings);
 
-        final Path tmpDir = Paths.get("tmp");
+        final Path tmpDir = Paths.get("target/tmp");
         FileUtils.deleteQuietly(tmpDir.toFile());
 
         Files.createDirectories(tmpDir);

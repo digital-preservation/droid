@@ -149,7 +149,7 @@ public class ReportExportTest {
     @Test
     public void testPdfTransform() throws Exception {
 
-        Path pdf = Paths.get("myPdf.pdf");
+        Path pdf = Paths.get("target/myPdf.pdf");
         Files.deleteIfExists(pdf);
 
         // Create a tmp dir
@@ -171,6 +171,6 @@ public class ReportExportTest {
         assertTrue(Files.exists(pdf));
         assertTrue(Files.size(pdf) > 1000);
         assertTrue(Files.size(pdf) < 5000);
-        
+
     }
 }

@@ -110,7 +110,7 @@ public class ArcArchiveContentIdentifierTest {
             RequestMetaData metaData = new RequestMetaData(
                     Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileName);
             WebArchiveEntryIdentificationRequest request =
-                new WebArchiveEntryIdentificationRequest(metaData, identifier, Paths.get("src/test/resources/temp"));
+                new WebArchiveEntryIdentificationRequest(metaData, identifier, Paths.get("target"));
 
             try(final InputStream arcStream = Files.newInputStream(file)) {
                 request.open(arcStream);

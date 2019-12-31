@@ -88,7 +88,7 @@ public class ReportCommandTest {
     @Test
     public void testReportCommandWithNonExistentCustomReportName() throws Exception {
         final String profileLocation = "profiles/12345.droid";
-        final String destination = "tmp/destination.xml";
+        final String destination = "target/destination.xml";
         Files.createDirectories(Paths.get("tmp"));
         final String profileId = "12345";
         
@@ -115,7 +115,7 @@ public class ReportCommandTest {
     @Test
     public void testReportCommandWithCustomReportName() throws Exception {
         final String profileLocation = "profiles/12345.droid";
-        final String destination = "tmp/destination.xml";
+        final String destination = "target/destination.xml";
         Files.createDirectories(Paths.get("tmp"));
         final String profileId = "12345";
         
