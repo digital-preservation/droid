@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.planet.xml.dao;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.profile.FilterCriterionImpl;
@@ -86,12 +88,14 @@ public class JpaPlanetsXMLDaoTest {
     public static void getTestData() throws Exception {
         testData = new FlatXmlDataSetBuilder().build(JpaPlanetsXMLDaoTest.class
                 .getResource("planets-xml-test-data-sans-formats.xml"));
+        System.setProperty("derby.stream.error.file", Paths.get("target/derby.log").toString());
         //System.setProperty("hibernate.generateDdl", "true");
     }
 
     @AfterClass
     public static void tearDown() {
         //System.clearProperty("hibernate.generateDdl");
+        System.clearProperty("derby.stream.error.file");
     }
 
     @Test
