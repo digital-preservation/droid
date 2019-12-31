@@ -22,3 +22,18 @@ before_cache:
 cache:
   directories:
     - $HOME/.m2
+
+install:
+  - if [ $(mvn -v | grep Java | sed -E 's/.*version: (.*\..*)\..*, vendor:.*/\1/g') = "1.8" ];
+    then echo "on Java 8, skip droid-ui module";
+    mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V  -pl '!droid-ui';
+    else mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V;
+    fi;
+
+
+script:
+  - if [ $(mvn -v | grep Java | sed -E 's/.*version: (.*\..*)\..*, vendor:.*/\1/g') = "1.8" ];
+    then echo "on Java 8, skip droid-ui module";
+    mvn test -B  -pl '!droid-ui';
+    else mvn test -B;
+    fi;
