@@ -31,11 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.container;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,13 +60,13 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
      * 
      */
     private static final String ERROR_READING_SIGNATURE_FILE = "Error reading signature file";
-    private ContainerSignatureSaxParser signatureFileParser;
+
+    private ContainerSignatureFileReader signatureReader;
     private ContainerIdentifierFactory containerIdentifierFactory;
     private String containerType;
     private ArchiveFormatResolver containerFormatResolver;
     private DroidCore droidCore;
-    private Path signatureFilePath;
-    
+
     private ContainerIdentifierInit init = new ContainerIdentifierInit();
 
     //private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
@@ -169,39 +165,14 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     }
     
     /**
-     * Initialises the Zip identifier using the XML parser configured.
+     * Initialises the container identifier using the XML parser configured.
      * @throws SignatureFileException if the Signature file could not be initialised
      */
     public void init() throws SignatureFileException {
-        try (final InputStream sigFile = new BufferedInputStream(Files.newInputStream(signatureFilePath))) {
-            ContainerSignatureDefinitions defs = signatureFileParser.parse(sigFile);
-            
+        try {
+            ContainerSignatureDefinitions defs = signatureReader.getDefinitions();
             init = new ContainerIdentifierInit();
             init.init(defs, containerType, formats, droidCore);
-            
-            /*
-            Set<String> uniqueFileSet = new HashSet<String>();
-            
-            for (ContainerSignature sig : defs.getContainerSignatures()) {
-                if (sig.getContainerType().equals(containerType)) {
-                    addContainerSignature(sig);
-                    uniqueFileSet.addAll(sig.getFiles().keySet());
-                }
-            }
-            uniqueFileEntries = new ArrayList<String>(uniqueFileSet); 
-            
-            for (FileFormatMapping fmt : defs.getFormats()) {
-                List<FileFormatMapping> mappings = formats.get(fmt.getSignatureId());
-                if (mappings == null) {
-                    mappings = new ArrayList<FileFormatMapping>();
-                    formats.put(fmt.getSignatureId(), mappings);
-                }
-                mappings.add(fmt);
-                droidCore.removeSignatureForPuid(fmt.getPuid());
-            }
-            */
-            
-            
             for (TriggerPuid triggerPuid : defs.getTiggerPuids()) {
                 if (triggerPuid.getContainerType().equals(containerType)) {
                     containerIdentifierFactory.addContainerIdentifier(containerType, this);
@@ -209,18 +180,16 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
                     containerFormatResolver.registerPuid(puid, containerType);
                 }
             }
-        } catch (IOException e) {
-            throw new SignatureFileException(ERROR_READING_SIGNATURE_FILE, e, ErrorCode.FILE_NOT_FOUND);
         } catch (SignatureParseException e) {
             throw new SignatureFileException(ERROR_READING_SIGNATURE_FILE, e, ErrorCode.INVALID_SIGNATURE_FILE);
         }
     }
     
     /**
-     * @param signatureFileParser the signatureFileParser to set
+     * @param signatureReader the signatureReader to set
      */
-    public void setSignatureFileParser(ContainerSignatureSaxParser signatureFileParser) {
-        this.signatureFileParser = signatureFileParser;
+    public void setSignatureReader(ContainerSignatureFileReader signatureReader) {
+        this.signatureReader = signatureReader;
     }
     
     /**
@@ -251,13 +220,6 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
         this.droidCore = droidCore;
     }
     
-    /**
-     * @param signatureFilePath the signatureFilePath to set
-     */
-    public void setSignatureFilePath(Path signatureFilePath) {
-        this.signatureFilePath = signatureFilePath;
-    }
-
     @Override
     public void setMaxBytesToScan(long maxBytesToScan) {
         this.maxBytesToScan = maxBytesToScan;
