@@ -91,8 +91,8 @@ public final class DroidImageUtils {
         for (String location: imageLocations) {
             Image currentImg = null;
             try {
-                currentImg = ImageIO.read(new File(DroidImageUtils.class.getResource(location).toURI()));
-            } catch (IOException | URISyntaxException e) {
+                currentImg = ImageIO.read(DroidImageUtils.class.getResource(location));
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             imgList.add(currentImg);
