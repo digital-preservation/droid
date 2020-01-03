@@ -34,15 +34,10 @@ package uk.gov.nationalarchives.droid.core.interfaces.control;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-
 /**
  * @author rflitcroft
  *
  */
-@Aspect
 public class PauseAspect {
 
     private boolean isPaused;
@@ -54,8 +49,6 @@ public class PauseAspect {
     /**
      * Blocks until the executor is not paused.
      */
-    @Before("@annotation(uk.gov.nationalarchives.droid.core.interfaces.control.PauseBefore)")
-    @After("@annotation(uk.gov.nationalarchives.droid.core.interfaces.control.PauseAfter)")
     public void awaitUnpaused() {
         pauseLock.lock();
         try {
