@@ -289,7 +289,7 @@ public class DroidMainFrame extends JFrame {
 
     private void init() {
         log.info("Starting DROID.");
-        setIconImage(DroidImageUtils.createBaseMultiResolutionImage(ICONS_PATH, "DROID16.png", IconType.SMALL).getImage());
+        setIconImage(DroidImageUtils.createBaseMultiResolutionImage(ICONS_PATH, "DROID.png", IconType.LARGE).getImage());
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
