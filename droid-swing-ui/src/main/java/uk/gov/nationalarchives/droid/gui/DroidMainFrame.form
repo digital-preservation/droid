@@ -92,10 +92,10 @@
                 <Property name="toolTipText" type="java.lang.String" value="Save a profile to a specified file"/>
                 <Property name="actionCommand" type="java.lang.String" value="save"/>
                 <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="DroidImageUtils.createBaseMultiResolutionImage(&quot;/uk/gov/nationalarchives/droid/icons/&quot;,&quot;Save As disabled.png&quot;, IconType.LARGE)" type="code"/>
+                  <Connection code="DroidImageUtils.createBaseMultiResolutionImage(&quot;/uk/gov/nationalarchives/droid/icons/&quot;,&quot;Save As disabled.png&quot;, IconType.SMALL)" type="code"/>
                 </Property>
                 <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="DroidImageUtils.createBaseMultiResolutionImage(&quot;/uk/gov/nationalarchives/droid/icons/&quot;,&quot;Save As disabled.png&quot;, IconType.LARGE)" type="code"/>
+                  <Connection code="DroidImageUtils.createBaseMultiResolutionImage(&quot;/uk/gov/nationalarchives/droid/icons/&quot;,&quot;Save As disabled.png&quot;, IconType.SMALL)" type="code"/>
                 </Property>
               </Properties>
               <Events>

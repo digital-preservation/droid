@@ -708,8 +708,8 @@ public class DroidMainFrame extends JFrame {
         jMenuSaveAs.setText("Save As...");
         jMenuSaveAs.setToolTipText("Save a profile to a specified file");
         jMenuSaveAs.setActionCommand("save");
-        jMenuSaveAs.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage(ICONS_PATH,"Save As disabled.png", IconType.LARGE));
-        jMenuSaveAs.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage(ICONS_PATH,"Save As disabled.png", IconType.LARGE));
+        jMenuSaveAs.setDisabledIcon(DroidImageUtils.createBaseMultiResolutionImage(ICONS_PATH,"Save As disabled.png", IconType.SMALL));
+        jMenuSaveAs.setDisabledSelectedIcon(DroidImageUtils.createBaseMultiResolutionImage(ICONS_PATH,"Save As disabled.png", IconType.SMALL));
         jMenuSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuSaveAsActionPerformed(evt);
