@@ -428,12 +428,12 @@ public class ProfileForm extends JPanel {
         throttlePanelLayout.setVerticalGroup(
             throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(throttlePanelLayout.createSequentialGroup()
-                .addGroup(throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(throttleSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(throttlePanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(throttleLabel)))
+                .addContainerGap()
+                .addComponent(throttleLabel)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(throttlePanelLayout.createSequentialGroup()
+                .addComponent(throttleSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         profileProgressBar.setToolTipText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.profileProgressBar.toolTipText")); // NOI18N
