@@ -54,6 +54,7 @@ import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
 import javax.help.SwingHelpUtilities;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -289,7 +290,7 @@ public class DroidMainFrame extends JFrame {
 
     private void init() {
         log.info("Starting DROID.");
-        setIconImage(DroidImageUtils.createBaseMultiResolutionImage(ICONS_PATH, "DROID.png", IconType.LARGE).getImage());
+        setIconImage(new ImageIcon(getClass().getResource(ICONS_PATH+"96x96-DROID.png")).getImage());
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

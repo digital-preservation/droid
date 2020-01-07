@@ -49,6 +49,7 @@ import java.util.List;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
@@ -99,7 +100,7 @@ public class ReportViewFrame extends JFrame {
         //super(parent);
         //setModal(true);
         initComponents();
-        setIconImage(DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/", "DROID.png", IconType.LARGE).getImage());
+        setIconImage(new ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/icons/96x96-DROID.png")).getImage());
 
 
         addWindowListener(new WindowAdapter() {
