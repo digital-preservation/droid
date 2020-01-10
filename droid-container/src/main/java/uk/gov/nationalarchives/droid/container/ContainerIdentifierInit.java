@@ -46,7 +46,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
 public class ContainerIdentifierInit {
     
     private List<String> uniqueFileEntries = new ArrayList<>();
-    private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
+    private List<ContainerSignature> containerSignatures = new ArrayList<>();
     
     /**
      * @param defs The definitions from the container signature
@@ -65,12 +65,12 @@ public class ContainerIdentifierInit {
                 uniqueFileSet.addAll(sig.getFiles().keySet());
             }
         }
-        uniqueFileEntries = new ArrayList<String>(uniqueFileSet); 
+        uniqueFileEntries = new ArrayList<>(uniqueFileSet);
         
         for (final FileFormatMapping fmt : defs.getFormats()) {
             List<FileFormatMapping> mappings = formats.get(fmt.getSignatureId());
             if (mappings == null) {
-                mappings = new ArrayList<FileFormatMapping>();
+                mappings = new ArrayList<>();
                 formats.put(fmt.getSignatureId(), mappings);
             }
             mappings.add(fmt);
