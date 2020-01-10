@@ -35,9 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 
@@ -52,11 +49,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
  */
 public class ContainerFileIdentificationRequest implements IdentificationRequest<InputStream> {
 
-    private static final  int TOP_TAIL_CAPACITY = 2 * 1024 * 1024; // hold 2Mb cache on either end of zip entry.
+    // hold max 2Mb in memory cache on either end of container file entry.
+    private static final  int TOP_TAIL_CAPACITY = 2 * 1024 * 1024;
 
     private long size;
     private Path tempDir;
-    private Logger log = LoggerFactory.getLogger(this.getClass());
     private WindowReader reader;
 
     /**
@@ -67,9 +64,6 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
         this.tempDir = tempDir;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final void open(final InputStream in) throws IOException {
         reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY);
@@ -83,12 +77,9 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
      */
     @Override
     public final void close() throws IOException {
-        reader.close(); // do not close  - it is the reader of the original file.
+        reader.close();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final byte getByte(long position) throws IOException {
         final int result = reader.readByte(position);
@@ -98,51 +89,31 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
         return (byte) result;
     }
         
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final String getExtension() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final String getFileName() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final long size() {
         return size;
     }
 
-    /**
-     * {@inheritDoc}
-     * @throws IOException 
-     */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
         return new ReaderInputStream(reader);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public RequestMetaData getRequestMetaData() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public RequestIdentifier getIdentifier() {
         return null;
