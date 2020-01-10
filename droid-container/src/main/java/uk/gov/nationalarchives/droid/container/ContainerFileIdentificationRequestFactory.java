@@ -33,7 +33,6 @@ package uk.gov.nationalarchives.droid.container;
 
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -47,16 +46,27 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class ContainerFileIdentificationRequestFactory implements IdentificationRequestFactory<InputStream> {
 
     private Path tempDirLocation;
-    
+
     /**
-     * {@inheritDoc}
+     * Empty bean constructor.
      */
+    public ContainerFileIdentificationRequestFactory() {
+    }
+
+    /**
+     * Parameterized constructor.
+     * @param tempDirLocation The location of the temporary directory used to store stream data when processing.
+     */
+    public ContainerFileIdentificationRequestFactory(Path tempDirLocation) {
+        this.tempDirLocation = tempDirLocation;
+    }
+
     @Override
     public final IdentificationRequest<InputStream> newRequest(RequestMetaData metaData,
                                                   RequestIdentifier identifier) {
         return new ContainerFileIdentificationRequest(getTempDirLocation());
     }
-    
+
     /**
      * @param tempDir the tempDir to set
      */
@@ -70,11 +80,6 @@ public class ContainerFileIdentificationRequestFactory implements Identification
      * @return The location of the temporary folder
      */
     public Path getTempDirLocation() {
-        synchronized (this) {
-            if (tempDirLocation == null) {
-                tempDirLocation = Paths.get(System.getProperty("java.io.tmpdir"));
-            }
-        }
         return tempDirLocation;
     }
 }
