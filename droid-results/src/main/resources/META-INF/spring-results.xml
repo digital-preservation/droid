@@ -61,46 +61,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         </property>
     </bean>
 
-    <bean id="containerIdentifierLocator"
-          class="uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactoryImpl">
-    </bean>
-
-    <bean id="containerFileIdentificationRequestFactory"
-          class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
-        <!-- <property name="tempDirLocation" value="${tempDirLocation}"/> -->
-    </bean>
-
-    <bean id="zipIdentifierEngine" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine">
-        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
-    </bean>
-
-    <bean id="signatureFileReader" class="uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader">
-        <property name="filePath" value="${containerSigPath}"/>
-    </bean>
-
-    <bean id="zipContainerHandler" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifier" init-method="init">
-        <property name="containerType" value="ZIP"/>
-        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
-        <property name="containerFormatResolver" ref="containerPuidResolver"/>
-        <property name="droidCore" ref="droid"/>
-        <property name="identifierEngine" ref="zipIdentifierEngine"/>
-        <property name="signatureReader" ref="signatureFileReader"/>
-    </bean>
-
-    <bean id="ole2IdentifierEngine" class="uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine">
-        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
-    </bean>
-
-    <bean id="ole2ContainerHandler" class="uk.gov.nationalarchives.droid.container.ole2.Ole2Identifier"
-          init-method="init">
-        <property name="containerType" value="OLE2"/>
-        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
-        <property name="containerFormatResolver" ref="containerPuidResolver"/>
-        <property name="droidCore" ref="droid"/>
-        <property name="identifierEngine" ref="ole2IdentifierEngine"/>
-        <property name="signatureReader" ref="signatureFileReader"/>
-    </bean>
-
     <bean id="archiveRequestFactory" abstract="true">
         <property name="tempDirLocation" value="${tempDirLocation}"/>
     </bean>
@@ -114,8 +74,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="droidCore" ref="submissionGateway"/>
         <property name="resultHandler" ref="databaseResultHandler"/>
     </bean>
-
-
     <bean id="tarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarArchiveHandler">
         <property name="factory">
             <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarEntryRequestFactory"
@@ -208,10 +166,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         </property>
     </bean>
 
-    <bean id="containerPuidResolver"
-          class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
-    </bean>
-
     <bean id="profileDao" class="uk.gov.nationalarchives.droid.profile.JDBCProfileDao">
         <property name="datasource" ref="dataSource"/>
         <property name="resultHandlerDao" ref="resultsDao"/>
@@ -268,18 +222,15 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
 
-    <!--
-    <bean id="droid" class="uk.gov.nationalarchives.droid.signature.SignatureIdentifier" init-method="init">
-        <property name="signatureFile" value="${signatureFilePath}"/>
-        <property name="containerFormatResolver" ref="containerPuidResolver"/>
-        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
+    <bean id="signatureFileReader" class="uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader">
+        <property name="filePath" value="${containerSigPath}"/>
     </bean>
-    -->
+
     <bean id="droid" class="uk.gov.nationalarchives.droid.signature.SignatureIdentifier" init-method="init">
         <property name="signatureFile" value="${signatureFilePath}"/>
-        <property name="containerFormatResolver" ref="containerPuidResolver"/>
-        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
         <property name="containerSignatureFileReader" ref="signatureFileReader"/>
+        <property name="matchAllExtensions" value="${matchAllExtensions}"/>
+        <property name="maxBytesToScan" value="${maxBytesToScan}"/>
     </bean>
 
     <bean id="coreExecutorService" factory-bean="pausableExecutorServiceFactory" factory-method="newInstance"/>
@@ -330,10 +281,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="processBzip2" value="#{${processBzip2} == null?false : ${processBzip2}}"/>
         <property name="processArc" value="#{${processArc} == null?false : ${processArc}}"/>
         <property name="processWarc" value="#{${processWarc} == null?false : ${processWarc}}"/>
-
         <property name="generateHash" value="${generateHash}"/>
-        <property name="matchAllExtensions" value="${matchAllExtensions}"/>
-        <property name="maxBytesToScan" value="${maxBytesToScan}"/>
         <property name="droidCore" ref="droid"/>
         <property name="submissionQueue" ref="submissionQueue"/>
         <property name="replaySubmitter" ref="replaySubmitter"/>
