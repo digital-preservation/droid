@@ -50,13 +50,12 @@ public interface DroidCore {
      * available signatures and extensions defined.
      *
      * @param request the identification request
-     * @param allExtensions check the extension against all known extensions.
      * If false, then only formats for which there is no other signature will
      * produce a file extension match (this is the default in DROID 5 and below).
      * @return the identification result.
      * @throws IOException if there was a problem matching.
      */
-    IdentificationResultCollection match(IdentificationRequest request, boolean allExtensions) throws IOException;
+    IdentificationResultCollection match(IdentificationRequest request) throws IOException;
 
     /**
      * Submits an identification request to identify files using
@@ -77,17 +76,12 @@ public interface DroidCore {
     IdentificationResultCollection matchContainerSignatures(IdentificationRequest request) throws IOException;
 
     /**
-     * 
      * matches a known file format extension.
      * 
-     * @param request The identification request to identify files using
-     * file extensions.
-     * @param allExtensions check the extension against all known extensions.
-     * If false, then only formats for which there is no other signature will
-     * produce a file extension match (this is the default in DROID 5 and below).
+     * @param request The identification request to identify files using file extensions.
      * @return the identification result.
      */
-    IdentificationResultCollection matchExtensions(IdentificationRequest request, boolean allExtensions);
+    IdentificationResultCollection matchExtensions(IdentificationRequest request);
 
     /**
      * Sets the signature file for the DROID core to use.
