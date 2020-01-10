@@ -290,20 +290,6 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     /**
-     * @param containerFormatResolver the containerFormatResolver to set
-     */
-//    public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
-//        this.containerFormatResolver = containerFormatResolver;
-//    }
-
-    /**
-     * @param containerIdentifierFactory the containerIdentifierFactory to set
-     */
-//    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
-//        this.containerIdentifierFactory = containerIdentifierFactory;
-//    }
-
-    /**
      * @param droidCore the droidCore to set
      */
     public void setDroidCore(DroidCore droidCore) {
