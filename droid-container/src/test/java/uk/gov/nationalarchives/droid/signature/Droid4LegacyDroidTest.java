@@ -116,7 +116,7 @@ public class Droid4LegacyDroidTest {
             assertEquals("Can't parse signature file", x.getMessage());
         }
         
-        List<InternalSignature> signatures = droid.getSigFile().getSignatures();
+        List<InternalSignature> signatures = droid.getBinarySignatureIdentifier().getSignatures();
         
         Set<String> puidsWithSignatures = new HashSet<String>();
         

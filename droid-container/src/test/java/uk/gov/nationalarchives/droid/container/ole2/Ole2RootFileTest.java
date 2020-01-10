@@ -264,13 +264,10 @@ public class Ole2RootFileTest {
         final Path path = Paths.get(containerSignatureUrl.toURI());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
-        ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
-        
+
         DroidCore droidCore = mock(DroidCore.class);
         ole2Identifier.setDroidCore(droidCore);
 
-        ole2Identifier.setContainerIdentifierFactory(containerIdentifierFactory);
-        ole2Identifier.setContainerFormatResolver(containerFormatResolver);
         ole2Identifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ole2Identifier.setContainerType("OLE2");
         IdentificationRequestFactory requestFactory = mock(IdentificationRequestFactory.class);
@@ -297,8 +294,6 @@ public class Ole2RootFileTest {
         DroidCore droidCore = mock(DroidCore.class);
         ole2Identifier.setDroidCore(droidCore);
 
-        ole2Identifier.setContainerIdentifierFactory(containerIdentifierFactory);
-        ole2Identifier.setContainerFormatResolver(containerFormatResolver);
         ole2Identifier.setContainerType("OLE2");
         ole2Identifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ole2Identifier.init();
@@ -313,12 +308,7 @@ public class Ole2RootFileTest {
         
         URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature.xml");
         final Path path = Paths.get(containerSignatureUrl.toURI());
-        
-        ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
-        ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
-        
-        ole2Identifier.setContainerIdentifierFactory(containerIdentifierFactory);
-        ole2Identifier.setContainerFormatResolver(containerFormatResolver);
+
         DroidCore droidCore = mock(DroidCore.class);
         ole2Identifier.setDroidCore(droidCore);
         ole2Identifier.setSignatureReader(new ContainerSignatureFileReader(path));

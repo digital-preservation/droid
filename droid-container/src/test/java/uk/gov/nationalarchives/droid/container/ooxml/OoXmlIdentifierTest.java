@@ -129,10 +129,8 @@ public class OoXmlIdentifierTest {
         ooXmlIdentifier.setDroidCore(droidCore);
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
-        ooXmlIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
-        
+
         ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
-        ooXmlIdentifier.setContainerFormatResolver(containerFormatResolver);
         ooXmlIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ooXmlIdentifier.setContainerType("ZIP");
         ooXmlIdentifier.init();
@@ -160,9 +158,6 @@ public class OoXmlIdentifierTest {
         
         DroidCore droidCore = mock(DroidCore.class);
         ooXmlIdentifier.setDroidCore(droidCore);
-        
-        ooXmlIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
-        ooXmlIdentifier.setContainerFormatResolver(containerFormatResolver);
         ooXmlIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ooXmlIdentifier.setContainerType("ZIP");
         ooXmlIdentifier.init();
@@ -182,8 +177,6 @@ public class OoXmlIdentifierTest {
         
         DroidCore droidCore = mock(DroidCore.class);
         ooXmlIdentifier.setDroidCore(droidCore);
-        ooXmlIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
-        ooXmlIdentifier.setContainerFormatResolver(containerFormatResolver);
         ooXmlIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         ooXmlIdentifier.setContainerType("ZIP");
         ooXmlIdentifier.init();

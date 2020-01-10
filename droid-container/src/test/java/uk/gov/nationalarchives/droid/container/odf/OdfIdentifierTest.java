@@ -147,8 +147,6 @@ public class OdfIdentifierTest {
         DroidCore droidCore = mock(DroidCore.class);
         odfIdentifier.setDroidCore(droidCore);
 
-        odfIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
-        odfIdentifier.setContainerFormatResolver(containerFormatResolver);
         odfIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         odfIdentifier.setContainerType("ZIP");
         odfIdentifier.init();
@@ -169,8 +167,6 @@ public class OdfIdentifierTest {
         DroidCore droidCore = mock(DroidCore.class);
         odfIdentifier.setDroidCore(droidCore);
 
-        odfIdentifier.setContainerIdentifierFactory(containerIdentifierFactory);
-        odfIdentifier.setContainerFormatResolver(containerFormatResolver);
         odfIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
         odfIdentifier.setContainerType("ZIP");
         odfIdentifier.init();
