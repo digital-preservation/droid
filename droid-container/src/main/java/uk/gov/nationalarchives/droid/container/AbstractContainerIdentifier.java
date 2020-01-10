@@ -42,9 +42,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ErrorCode;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 
@@ -56,30 +54,16 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileExce
 public abstract class AbstractContainerIdentifier implements ContainerIdentifier {
 //CHECKSTYLE:ON
 
-    /**
-     * 
-     */
     private static final String ERROR_READING_SIGNATURE_FILE = "Error reading signature file";
 
     private ContainerSignatureFileReader signatureReader;
-    private ContainerIdentifierFactory containerIdentifierFactory;
     private String containerType;
-    private ArchiveFormatResolver containerFormatResolver;
     private DroidCore droidCore;
-
     private ContainerIdentifierInit init = new ContainerIdentifierInit();
-
-    //private List<ContainerSignature> containerSignatures = new ArrayList<ContainerSignature>();
-    private Map<Integer, List<FileFormatMapping>> formats = new HashMap<Integer, List<FileFormatMapping>>(); 
-    //private List<String> uniqueFileEntries;
-    
+    private Map<Integer, List<FileFormatMapping>> formats = new HashMap<Integer, List<FileFormatMapping>>();
     private long maxBytesToScan = -1;
     private IdentifierEngine identifierEngine;
 
-    /**
-     * {@inheritDoc}
-     * @throws IOException 
-     */
     @Override
     public final IdentificationResultCollection submit(IdentificationRequest request) throws IOException {
         final ContainerSignatureMatchCollection matches = new ContainerSignatureMatchCollection(
@@ -105,7 +89,6 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
                 }
             }
         }
-        
         return results;
     }
     
@@ -173,13 +156,6 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
             ContainerSignatureDefinitions defs = signatureReader.getDefinitions();
             init = new ContainerIdentifierInit();
             init.init(defs, containerType, formats, droidCore);
-            for (TriggerPuid triggerPuid : defs.getTiggerPuids()) {
-                if (triggerPuid.getContainerType().equals(containerType)) {
-                    containerIdentifierFactory.addContainerIdentifier(containerType, this);
-                    final String puid = triggerPuid.getPuid();
-                    containerFormatResolver.registerPuid(puid, containerType);
-                }
-            }
         } catch (SignatureParseException e) {
             throw new SignatureFileException(ERROR_READING_SIGNATURE_FILE, e, ErrorCode.INVALID_SIGNATURE_FILE);
         }
@@ -193,26 +169,12 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
     }
     
     /**
-     * @param containerIdentifierFactory the containerIdentifierFactory to set
-     */
-    public void setContainerIdentifierFactory(ContainerIdentifierFactory containerIdentifierFactory) {
-        this.containerIdentifierFactory = containerIdentifierFactory;
-    }
-    
-    /**
      * @param containerType the containerType to set
      */
     public void setContainerType(String containerType) {
         this.containerType = containerType;
     }
-    
-    /**
-     * @param containerFormatResolver the containerFormatResolver to set
-     */
-    public void setContainerFormatResolver(ArchiveFormatResolver containerFormatResolver) {
-        this.containerFormatResolver = containerFormatResolver;
-    }
-    
+
     /**
      * @param droidCore the droidCore to set
      */

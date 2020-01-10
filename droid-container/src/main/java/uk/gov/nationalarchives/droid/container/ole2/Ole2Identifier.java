@@ -32,9 +32,12 @@
 package uk.gov.nationalarchives.droid.container.ole2;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import uk.gov.nationalarchives.droid.container.AbstractContainerIdentifier;
+import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
+import uk.gov.nationalarchives.droid.container.IdentifierEngine;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 
 /**
@@ -45,15 +48,25 @@ public class Ole2Identifier extends AbstractContainerIdentifier {
 
     /**
      * Constructs an Ole2Identifier.
+     * Will default to creating temporary files in the default system location.
      */
     public Ole2Identifier() {
-        setIdentifierEngine(new Ole2IdentifierEngine());
+        this(null);
+    }
+
+    /**
+     * Constructs an Ole2Identifier with the location where temporary files should be created during processing.
+     * @param tempFileDir The location where temporary files should be created.  If null defaults to default system.
+     */
+    public Ole2Identifier(Path tempFileDir) {
+        IdentifierEngine ole2Engine = new Ole2IdentifierEngine();
+        ole2Engine.setRequestFactory(new ContainerFileIdentificationRequestFactory(tempFileDir));
+        setIdentifierEngine(ole2Engine);
     }
 
     @Override
     public final void process(IdentificationRequest request,
-        ContainerSignatureMatchCollection matches) throws IOException {
-        
+                              ContainerSignatureMatchCollection matches) throws IOException {
         getIdentifierEngine().process(request, matches);
     }
 }

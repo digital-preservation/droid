@@ -32,9 +32,12 @@
 package uk.gov.nationalarchives.droid.container.zip;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import uk.gov.nationalarchives.droid.container.AbstractContainerIdentifier;
+import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
+import uk.gov.nationalarchives.droid.container.IdentifierEngine;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 
 /**
@@ -44,16 +47,26 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 public class ZipIdentifier extends AbstractContainerIdentifier {
 
     /**
-     * Constructs a ZipIdentifier.
+     * Constructs a ZipIdentifier with no parameters.
+     * Will default to putting temporary files in the default temporary file location.
      */
     public ZipIdentifier() {
-        setIdentifierEngine(new ZipIdentifierEngine());
+        this(null);
+    }
+
+    /**
+     * Constructs a ZipIdentifier with the path to the location where temporary files should be created.
+     * @param tempFileDir The location where temporary files should be created.
+     */
+    public ZipIdentifier(Path tempFileDir) {
+        IdentifierEngine zipEngine = new ZipIdentifierEngine();
+        zipEngine.setRequestFactory(new ContainerFileIdentificationRequestFactory(tempFileDir));
+        setIdentifierEngine(zipEngine);
     }
 
     @Override
     public final void process(final IdentificationRequest request,
-        final ContainerSignatureMatchCollection matches) throws IOException {
-        
+                              final ContainerSignatureMatchCollection matches) throws IOException {
         getIdentifierEngine().process(request, matches);
     }
 }
