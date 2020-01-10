@@ -95,8 +95,6 @@ public class SubmissionGateway implements AsynchDroid {
     private ArchiveHandlerFactory archiveHandlerFactory;
     private HashGenerator hashGenerator;
     private boolean generateHash;
-    private boolean matchAllExtensions;
-    private long maxBytesToScan = -1;
     private SubmissionQueue submissionQueue;
     private ReplaySubmitter replaySubmitter;
 
@@ -115,18 +113,15 @@ public class SubmissionGateway implements AsynchDroid {
      * @param executorService The executor service.
      * @param archiveFormatResolver The archive format resolver.
      * @param archiveHandlerFactory The archive handler factory.
-     * @param maxBytesToScan Max bytes to scan (negative means unlimited)
      */
     public SubmissionGateway(DroidCore droidCore, ResultHandler resultHandler, ExecutorService executorService,
                              ArchiveFormatResolver archiveFormatResolver,
-                             ArchiveHandlerFactory archiveHandlerFactory,
-                             long maxBytesToScan) {
+                             ArchiveHandlerFactory archiveHandlerFactory) {
         setDroidCore(droidCore);
         setResultHandler(resultHandler);
         setExecutorService(executorService);
         setArchiveFormatResolver(archiveFormatResolver);
         setArchiveHandlerFactory(archiveHandlerFactory);
-        setMaxBytesToScan(maxBytesToScan);
     }
 
     @Override
@@ -139,8 +134,7 @@ public class SubmissionGateway implements AsynchDroid {
         Callable<IdentificationResultCollection> callable = new Callable<IdentificationResultCollection>() {
             @Override
             public IdentificationResultCollection call() throws IOException {
-                droidCore.setMaxBytesToScan(maxBytesToScan); //TODO: not sure why this needs to be set repeatedly on each call.
-                return droidCore.match(request, matchAllExtensions);
+                return droidCore.match(request);
             }
         };
 
@@ -440,16 +434,6 @@ public class SubmissionGateway implements AsynchDroid {
         for (IdentificationRequest request : requests) {
             request.close();
         }
-    }
-
-    @Override
-    public void setMaxBytesToScan(long maxBytesToScan) {
-        this.maxBytesToScan = maxBytesToScan;
-    }
-
-    @Override
-    public void setMatchAllExtensions(boolean matchAllExtensions) {
-        this.matchAllExtensions = matchAllExtensions;
     }
 
     private final class SubmissionFutureTask extends FutureTask<IdentificationResultCollection> {

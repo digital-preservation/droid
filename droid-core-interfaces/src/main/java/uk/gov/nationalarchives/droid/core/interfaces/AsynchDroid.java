@@ -34,8 +34,8 @@ package uk.gov.nationalarchives.droid.core.interfaces;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
-
 /**
+ * An interface to submit identification requests for matching, to pause, save and replay any in flight requests.
  * @author rflitcroft
  *
  */
@@ -71,22 +71,5 @@ public interface AsynchDroid {
      * @throws IOException if the replayed files could not be read.
      */
     void replay() throws IOException;
-
-    
-    /**
-     * Sets the maximum number of bytes to scan.
-     * Negative values mean unlimited.
-     * 
-     * @param maxBytes The maximum number of bytes to scan
-     * or negative, meaning unlimited.
-     */
-    void setMaxBytesToScan(long maxBytes);
-    
-    
-    /** 
-     * 
-     * @param matchAllExtensions Whether to match all the extensions, or just ones with no other signatures defined.
-     */
-    void setMatchAllExtensions(boolean matchAllExtensions);
     
 }
