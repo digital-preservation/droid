@@ -222,15 +222,16 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="pauseControl" class="uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect"/>
 
-    <bean id="signatureFileReader" class="uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader">
+    <bean id="containerSignatureFileReader" class="uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader">
         <property name="filePath" value="${containerSigPath}"/>
     </bean>
 
     <bean id="droid" class="uk.gov.nationalarchives.droid.signature.SignatureIdentifier" init-method="init">
         <property name="signatureFile" value="${signatureFilePath}"/>
-        <property name="containerSignatureFileReader" ref="signatureFileReader"/>
+        <property name="containerSignatureFileReader" ref="containerSignatureFileReader"/>
         <property name="matchAllExtensions" value="${matchAllExtensions}"/>
         <property name="maxBytesToScan" value="${maxBytesToScan}"/>
+        <property name="tempDirLocation" value="${tempDirLocation}"/>
     </bean>
 
     <bean id="coreExecutorService" factory-bean="pausableExecutorServiceFactory" factory-method="newInstance"/>

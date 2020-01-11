@@ -76,6 +76,8 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureColl
 public class SignatureIdentifier implements DroidCore {
 
     private static final String FILE_SCHEME = "file://";
+    private static final String ZIP_CONTAINER_TYPE = "ZIP";
+    private static final String OLE2_CONTAINER_TYPE = "OLE2";
 
     /**
      * A class which parses, then caches a container signature file.
@@ -126,7 +128,7 @@ public class SignatureIdentifier implements DroidCore {
     /**
      * Path to store temporary files created when processing internal streams of container signatures.
      */
-    private Path tempFileDir;
+    private Path tempDirLocation;
 
     /**
      * Default constructor.
@@ -166,8 +168,8 @@ public class SignatureIdentifier implements DroidCore {
     }
 
     private void createZipIdentifier() throws SignatureFileException {
-        ZipIdentifier zipId = new ZipIdentifier(tempFileDir);
-        zipId.setContainerType("ZIP");
+        ZipIdentifier zipId = new ZipIdentifier(tempDirLocation);
+        zipId.setContainerType(ZIP_CONTAINER_TYPE);
         zipId.setMaxBytesToScan(maxBytesToScan);
         zipId.setSignatureReader(containerSignatureFileReader);
         zipId.setDroidCore(this);
@@ -177,8 +179,8 @@ public class SignatureIdentifier implements DroidCore {
     }
 
     private void createOle2Identifier() throws SignatureFileException {
-        Ole2Identifier ole2Id = new Ole2Identifier(tempFileDir);
-        ole2Id.setContainerType("OLE2");
+        Ole2Identifier ole2Id = new Ole2Identifier(tempDirLocation);
+        ole2Id.setContainerType(OLE2_CONTAINER_TYPE);
         ole2Id.setMaxBytesToScan(maxBytesToScan);
         ole2Id.setSignatureReader(containerSignatureFileReader);
         ole2Id.setDroidCore(this);
@@ -186,6 +188,11 @@ public class SignatureIdentifier implements DroidCore {
         ole2Identifier = ole2Id;
     }
 
+    /**
+     * Returns a binary signature identifier object.
+     * @return a binary signature identifier object
+     * @throws SignatureParseException If there was a problem parsing the signature file.
+     */
     public FFSignatureFile getBinarySignatureIdentifier() throws SignatureParseException {
         if (sigFile == null) {
             try {
@@ -214,20 +221,20 @@ public class SignatureIdentifier implements DroidCore {
 
     @Override
     public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request) throws IOException {
+        IdentificationResultCollection results = null;
         ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
         if (!zipBinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
             IdentificationResultCollection containerResults = zipIdentifier.submit(request);
             containerResults.setFileLength(request.size());
             containerResults.setRequestMetaData(request.getRequestMetaData());
-            return containerResults;
-        }
-        if (!ole2BinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
+            results = containerResults;
+        } else if (!ole2BinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
             IdentificationResultCollection containerResults = ole2Identifier.submit(request);
             containerResults.setFileLength(request.size());
             containerResults.setRequestMetaData(request.getRequestMetaData());
-            return containerResults;
+            results = containerResults;
         }
-        return null; //TODO: should return null or an empty collection?
+        return results; //TODO: should return null or an empty collection?
     }
 
     @Override
@@ -374,8 +381,22 @@ public class SignatureIdentifier implements DroidCore {
         this.maxBytesToScan = maxBytes;
     }
 
+    /**
+     * Sets whether we should identify all extensions, or only if there are no binary signatures defined for them.
+     * @param matchAllExtensions whether we should identify all extensions, or only if there are no binary signatures
+     *                          defined for them.
+     */
     public void setMatchAllExtensions(boolean matchAllExtensions) {
         this.matchAllExtensions = matchAllExtensions;
+    }
+
+    /**
+     * Sets the location for temporary files to be created while processing containers.
+     * If null, DROID will use the system default location for temporary files.
+     * @param tempDirLocation The location of the directory where temporary files should be created.
+     */
+    public void setTempDirLocation(Path tempDirLocation) {
+        this.tempDirLocation = tempDirLocation;
     }
 
     /**
@@ -457,16 +478,16 @@ public class SignatureIdentifier implements DroidCore {
                     binarySignatures.addInternalSignature(sig);
                 }
                 switch (trigger.getContainerType()) {
-                    case "ZIP" : {
+                    case ZIP_CONTAINER_TYPE : {
                         zipBinarySigs = binarySignatures;
                         break;
                     }
-                    case "OLE2": {
+                    case OLE2_CONTAINER_TYPE: {
                         ole2BinarySigs = binarySignatures;
                         break;
                     }
-                    default: throw new IllegalArgumentException("The container type is not supported: " +
-                            trigger.getContainerType());
+                    default: throw new IllegalArgumentException("The container type is not supported: "
+                                                                + trigger.getContainerType());
                 }
             }
         }
