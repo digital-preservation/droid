@@ -70,6 +70,13 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureColl
 /**
  * Implementation of DroidCore which uses the droid binary signatures and container signatures
  * to identify files, and can also match against file extensions.
+ * <p>
+ * This class must be initialised with the path to the binary signatures - it can do nothing without those,
+ * not in the least because this is where all the file formats are defined, and the binary signatures we need
+ * to identify container types.
+ * <p>
+ * Supplying container signatures is optional; if you supply them they will be used, if you do not, only
+ * the binary signatures and extensions will be used for matching.
  *
  * @author rflitcroft, mpalmer
  */
@@ -117,8 +124,9 @@ public class SignatureIdentifier implements DroidCore {
 
     /**
      * The max bytes to scan at the top and tail of a file or stream.  A negative number means unlimited.
+     * //TODO: what should this default to?
      */
-    private long maxBytesToScan;
+    private long maxBytesToScan = -1; // 65536; // default to 64K at top and tail of files to be identified.
 
     /**
      * Whether DROID should always match all extensions, or only match if no other signatures match.
@@ -157,13 +165,15 @@ public class SignatureIdentifier implements DroidCore {
      * @throws SignatureParseException When a signature could not be parsed
      */
     public void init() throws SignatureParseException {
-        try {
-            getBinarySignatureIdentifier().setMaxBytesToScan(maxBytesToScan);
-            createZipIdentifier();
-            createOle2Identifier();
-            processContainerSignatureTriggerPuids(); // get the binary signatures that identify container formats.
-        } catch (SignatureFileException e) {
-            throw new SignatureParseException(e.getMessage(), e);
+        getBinarySignatureIdentifier().setMaxBytesToScan(maxBytesToScan);
+        if (containerSignatureFileReader != null) {
+            try {
+                createZipIdentifier();
+                createOle2Identifier();
+                processContainerSignatureTriggerPuids(); // get the binary signatures that identify container formats.
+            } catch (SignatureFileException e) {
+                throw new SignatureParseException(e.getMessage(), e);
+            }
         }
     }
 
@@ -222,17 +232,19 @@ public class SignatureIdentifier implements DroidCore {
     @Override
     public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request) throws IOException {
         IdentificationResultCollection results = null;
-        ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
-        if (!zipBinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
-            IdentificationResultCollection containerResults = zipIdentifier.submit(request);
-            containerResults.setFileLength(request.size());
-            containerResults.setRequestMetaData(request.getRequestMetaData());
-            results = containerResults;
-        } else if (!ole2BinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
-            IdentificationResultCollection containerResults = ole2Identifier.submit(request);
-            containerResults.setFileLength(request.size());
-            containerResults.setRequestMetaData(request.getRequestMetaData());
-            results = containerResults;
+        if (containerSignatureFileReader != null) {
+            ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
+            if (!zipBinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
+                IdentificationResultCollection containerResults = zipIdentifier.submit(request);
+                containerResults.setFileLength(request.size());
+                containerResults.setRequestMetaData(request.getRequestMetaData());
+                results = containerResults;
+            } else if (!ole2BinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
+                IdentificationResultCollection containerResults = ole2Identifier.submit(request);
+                containerResults.setFileLength(request.size());
+                containerResults.setRequestMetaData(request.getRequestMetaData());
+                results = containerResults;
+            }
         }
         return results; //TODO: should return null or an empty collection?
     }
