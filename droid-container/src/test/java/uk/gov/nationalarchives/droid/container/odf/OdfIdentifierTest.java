@@ -134,46 +134,6 @@ public class OdfIdentifierTest {
         
         assertEquals("fmt/667", results.getResults().iterator().next().getPuid());
     }
-    
-    @Test
-    public void testInitialiseRegistersZipContainerIdentifierWithContainerIdentifierResolver() throws Exception {
-        
-        URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATUE_FILE);
-        final Path path = Paths.get(containerSignatureUrl.toURI());
-        
-        ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
-        ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
-        
-        DroidCore droidCore = mock(DroidCore.class);
-        odfIdentifier.setDroidCore(droidCore);
 
-        odfIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
-        odfIdentifier.setContainerType("ZIP");
-        odfIdentifier.init();
-        
-        verify(containerIdentifierFactory, times(2)).addContainerIdentifier("ZIP", odfIdentifier);
-        
-    }
-
-    @Test
-    public void testInitialiseRegistersZipContainerFormatsAgainstOdfPuid() throws Exception {
-        
-        URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATUE_FILE);
-        final Path path = Paths.get(containerSignatureUrl.toURI());
-        
-        ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
-        ArchiveFormatResolver containerFormatResolver = mock(ArchiveFormatResolver.class);
-        
-        DroidCore droidCore = mock(DroidCore.class);
-        odfIdentifier.setDroidCore(droidCore);
-
-        odfIdentifier.setSignatureReader(new ContainerSignatureFileReader(path));
-        odfIdentifier.setContainerType("ZIP");
-        odfIdentifier.init();
-        
-        verify(containerIdentifierFactory, times(2)).addContainerIdentifier("ZIP", odfIdentifier);
-        verify(containerFormatResolver).registerPuid("x-fmt/263", "ZIP");
-        
-    }
     
 }
