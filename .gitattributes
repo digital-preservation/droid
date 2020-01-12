@@ -1,3 +1,4 @@
 # Don't change the line endings on skeleton test files as this breaks identification tests on some files.
 droid-core/test-skeletons/** binary
+droid-container/test-skeletons/** binary
 */test_sig_files/** binary
