@@ -229,6 +229,8 @@ public class SignatureIdentifier implements DroidCore {
         return processExtensions(request, results);
     }
 
+    //TODO: split these methods so we can pass a single ByteReader into several rather than re-creating it each time.
+
     @Override
     public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request) throws IOException {
         IdentificationResultCollection results = null;
