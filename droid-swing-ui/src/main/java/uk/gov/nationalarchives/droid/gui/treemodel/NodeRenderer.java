@@ -34,10 +34,8 @@ package uk.gov.nationalarchives.droid.gui.treemodel;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
-import java.net.URL;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -46,6 +44,7 @@ import org.netbeans.swing.outline.DefaultOutlineCellRenderer;
 
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
@@ -105,11 +104,10 @@ public class NodeRenderer extends DefaultOutlineCellRenderer {
         this.backColor = backColor;
         this.darkerColor = TreeUtils.getDarkerColor(backColor);
     }
-    
+
     private Icon getIconResource(String resourceName) {
-        String resourcePath = String.format("uk/gov/nationalarchives/droid/icons/%s.gif", resourceName);
-        URL imgURL = getClass().getClassLoader().getResource(resourcePath);
-        return imgURL == null ? null : new ImageIcon(imgURL);        
+        final String imagePath = String.format("/uk/gov/nationalarchives/droid/icons/%s.png", resourceName);
+        return DroidImageUtils.getScaledImageIcon(imagePath, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT, DroidImageUtils.SMALL_ICON_WIDTH_HEIGHT);
     }
 
     /**

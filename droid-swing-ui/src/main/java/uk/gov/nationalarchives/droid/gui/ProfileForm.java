@@ -91,6 +91,7 @@ import uk.gov.nationalarchives.droid.gui.treemodel.NodeRenderer;
 import uk.gov.nationalarchives.droid.gui.treemodel.OutlineColumn;
 import uk.gov.nationalarchives.droid.gui.treemodel.OutlineComparableComparator;
 import uk.gov.nationalarchives.droid.gui.treemodel.ProfileRowModel;
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxy;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.FileChooserProxyImpl;
 import uk.gov.nationalarchives.droid.gui.widgetwrapper.JOptionPaneProxy;
@@ -315,7 +316,7 @@ public class ProfileForm extends JPanel {
             }
         });
 
-        PopupAddFilesAndFolders.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Add small.png"))); // NOI18N
+        PopupAddFilesAndFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Add.png", 16, 16));
         PopupAddFilesAndFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupAddFilesAndFolders.text")); // NOI18N
         PopupAddFilesAndFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -324,7 +325,7 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupAddFilesAndFolders);
 
-        PopupRemoveFilesOrFolders.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Remove small.png"))); // NOI18N
+        PopupRemoveFilesOrFolders.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Remove.png", 16, 16));
         PopupRemoveFilesOrFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupRemoveFilesOrFolders.text")); // NOI18N
         PopupRemoveFilesOrFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -334,7 +335,7 @@ public class ProfileForm extends JPanel {
         jPopupMenu1.add(PopupRemoveFilesOrFolders);
         jPopupMenu1.add(PopupSeparator1);
 
-        PopupOpenContainingFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/icons/Icon_External_Link.png"))); // NOI18N
+        PopupOpenContainingFolder.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Icon_External_Link.png", 24, 24));
         PopupOpenContainingFolder.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupOpenContainingFolder.text")); // NOI18N
         PopupOpenContainingFolder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -343,7 +344,7 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupOpenContainingFolder);
 
-        PopupMenuCopyToClipboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Clipboard small.png"))); // NOI18N
+        PopupMenuCopyToClipboard.setIcon(DroidImageUtils.getScaledImageIcon("/uk/gov/nationalarchives/droid/icons/Clipboard.png", 16, 16));
         PopupMenuCopyToClipboard.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuCopyToClipboard.text")); // NOI18N
         PopupMenuCopyToClipboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -427,12 +428,12 @@ public class ProfileForm extends JPanel {
         throttlePanelLayout.setVerticalGroup(
             throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(throttlePanelLayout.createSequentialGroup()
-                .addGroup(throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(throttleSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(throttlePanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(throttleLabel)))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(throttleLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(throttlePanelLayout.createSequentialGroup()
+                .addComponent(throttleSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         profileProgressBar.setToolTipText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.profileProgressBar.toolTipText")); // NOI18N
@@ -480,7 +481,7 @@ public class ProfileForm extends JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 868, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 826, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

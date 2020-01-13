@@ -37,6 +37,7 @@ import java.awt.Graphics;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+
 /**
  * Some bespoke string utils.
  * @author rflitcroft

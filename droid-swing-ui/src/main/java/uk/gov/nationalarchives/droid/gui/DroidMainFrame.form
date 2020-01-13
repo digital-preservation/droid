@@ -24,8 +24,8 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+N"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/New small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/New.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="New"/>
                 <Property name="toolTipText" type="java.lang.String" value="New profile"/>
@@ -42,8 +42,8 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+O"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Open file small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Open file.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Open"/>
                 <Property name="toolTipText" type="java.lang.String" value="Open a profile"/>
@@ -60,17 +60,17 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+S"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Save small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Save"/>
                 <Property name="toolTipText" type="java.lang.String" value="Save a profile"/>
                 <Property name="actionCommand" type="java.lang.String" value="save"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/icons/Save Blue 16 d g.gif"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
-                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/icons/Save Blue 16 d g.gif"/>
+                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -85,17 +85,17 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Shift+Ctrl+S"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Save As small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save As.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Save As..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Save a profile to a specified file"/>
                 <Property name="actionCommand" type="java.lang.String" value="save"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Save As small disabled.png"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save As disabled.png&quot;, 24, 24)" type="code"/>
                 </Property>
-                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Save As small disabled.png"/>
+                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save As disabled.png&quot;, 24, 24)" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -110,8 +110,8 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+E"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Export small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Export.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Export all..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Export profiles"/>
@@ -129,8 +129,8 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+Q"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Quit Small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Quit.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Quit"/>
               </Properties>
@@ -157,16 +157,16 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+ADD"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Add small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Add.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Add file/folders"/>
                 <Property name="toolTipText" type="java.lang.String" value="Add files or folders to a profile"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Add small disabled.png"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Add disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
-                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Add small disabled.png"/>
+                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Add disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -181,16 +181,16 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+SUBTRACT"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Remove small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Remove.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Remove files/folders"/>
                 <Property name="toolTipText" type="java.lang.String" value="Remove files or folders from a profile"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Remove small disabled.png"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Remove disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
-                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Remove small disabled.png"/>
+                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Remove disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -207,8 +207,8 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+ENTER"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/icons/Icon_External_Link.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Open containing folder.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Open containing folder..."/>
               </Properties>
@@ -221,8 +221,8 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+C"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Clipboard small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Clipboard.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Copy to clipboard"/>
               </Properties>
@@ -234,6 +234,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemExpandChildren">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Expand.png&quot;, 16, 16)" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Expand"/>
               </Properties>
               <Events>
@@ -242,6 +245,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemExpandNextThree">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Expand 3 levels.png&quot;, 16, 16)" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Expand next three levels"/>
               </Properties>
               <Events>
@@ -262,16 +268,16 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+I"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Play small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Play.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Start identification"/>
                 <Property name="toolTipText" type="java.lang.String" value="Start identifying files in the profile"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Play small disabled.png"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Play disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
-                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Play small disabled.png"/>
+                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Play disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -286,16 +292,16 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+P"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Pause small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Pause.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Pause identification"/>
                 <Property name="toolTipText" type="java.lang.String" value="Pause identification in the profile"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Pause small disabled.png"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Pause disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
-                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Pause small disabled.png"/>
+                <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Pause disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -335,13 +341,13 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Shift+Ctrl+F"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Filter small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Filter.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Edit filter..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Edit the filter for a profile"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Filter small disabled.png"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Filter disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -371,13 +377,13 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+R"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Report small.png"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Report.png&quot;, 16, 16)" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Generate Report..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Generates a report in DROID XML format"/>
-                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Report small disabled.png"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Report disabled.png&quot;, 16, 16)" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -531,8 +537,8 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="jButtonNewProfile">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/New.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/New.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="New"/>
             <Property name="toolTipText" type="java.lang.String" value="Create new profile"/>
@@ -546,8 +552,8 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonOpenProfile">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Open file.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Open file.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Open"/>
             <Property name="toolTipText" type="java.lang.String" value="Open existing profile"/>
@@ -564,16 +570,16 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonSaveProfile">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Save.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Save"/>
             <Property name="toolTipText" type="java.lang.String" value="Save profile"/>
-            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Save disabled.png"/>
+            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
-            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Save disabled.png"/>
+            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Save disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -588,8 +594,8 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonExport">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Export.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Export.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Export"/>
             <Property name="toolTipText" type="java.lang.String" value="Export results"/>
@@ -610,16 +616,16 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonAddFile">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Add.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Add.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Add"/>
             <Property name="toolTipText" type="java.lang.String" value="Add files or folders to profile"/>
-            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Add disabled.png"/>
+            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Add disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
-            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Add disabled.png"/>
+            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Add disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -634,16 +640,16 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonRemoveFilesAndFolder">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Remove.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Remove.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Remove"/>
             <Property name="toolTipText" type="java.lang.String" value="Remove files/folders from profile"/>
-            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Remove disabled.png"/>
+            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Remove disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
-            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Remove disabled.png"/>
+            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Remove disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -665,16 +671,16 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonStart">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Play.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Play.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Start"/>
             <Property name="toolTipText" type="java.lang.String" value="Run identification"/>
-            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Play disabled.png"/>
+            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Play disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
-            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Play disabled.png"/>
+            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Play disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -689,16 +695,16 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonStop">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Pause.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Pause.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Pause"/>
             <Property name="toolTipText" type="java.lang.String" value="Pause identification"/>
-            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Pause disabled.png"/>
+            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Pause disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
-            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Pause disabled.png"/>
+            <Property name="disabledSelectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Pause disabled.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -717,8 +723,8 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonFilter">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/icons/Filter.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Filter.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Filter"/>
             <Property name="toolTipText" type="java.lang.String" value="Define and apply filter to results"/>
@@ -778,8 +784,8 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonReport">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/uk/gov/nationalarchives/droid/OldIcons/Report.png"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="DroidImageUtils.getScaledImageIcon(&quot;/uk/gov/nationalarchives/droid/icons/Report.png&quot;, 24, 24)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Report"/>
             <Property name="toolTipText" type="java.lang.String" value="Generate a statistical report over the open profiles"/>
