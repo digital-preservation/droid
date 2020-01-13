@@ -33,9 +33,7 @@ package uk.gov.nationalarchives.droid.gui.util;
 
 import java.awt.Image;
 import java.awt.image.BaseMultiResolutionImage;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
