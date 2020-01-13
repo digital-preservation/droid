@@ -42,7 +42,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -77,10 +76,10 @@ import uk.gov.nationalarchives.droid.report.ReportTransformer;
 // maybe some refactoring could be done.  
 // Turning checkstyle off temporarily to make this next release.  
 public class ReportViewFrame extends JFrame {
-//CHECKSTYLE:ON
+    //CHECKSTYLE:ON
     private static final long serialVersionUID = 9212026527186933180L;
     private static final String UTF8 = "UTF-8";
-    
+
     private ReportTransformer reportTransformer;
     private ExportReportAction exportAction;
     
@@ -99,8 +98,8 @@ public class ReportViewFrame extends JFrame {
         //super(parent);
         //setModal(true);
         initComponents();
-        URL icon = getClass().getResource("/uk/gov/nationalarchives/droid/icons/DROID16.gif");
-        setIconImage(new ImageIcon(icon).getImage());
+        setIconImage(new ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/icons/96x96-DROID.png")).getImage());
+
 
         addWindowListener(new WindowAdapter() {
             @Override

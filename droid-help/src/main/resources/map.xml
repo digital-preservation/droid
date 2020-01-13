@@ -33,85 +33,65 @@
 
 -->
 <!DOCTYPE map PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN"
-                     "http://java.sun.com/products/javahelp/map_2_0.dtd">
+        "http://java.sun.com/products/javahelp/map_2_0.dtd">
 
 <map version="1.0">
-	<mapID target="Welcome to DROID" url="Web pages/Welcome to DROID.html"/>
-	<mapID target="License" url="Web pages/License.html"/>
-	<mapID target="Command line control" url="Web pages/Command line control.html"/>
-	<mapID target="Third-party components" url="Web pages/Third-party components.html"/>
-	<mapID target="Create a new profile" url="Web pages/Create a new profile.html"/>
-	<mapID target="Choose files and folders" url="Web pages/Choose files and folders.html"/>
-	<mapID target="Running a profile" url="Web pages/Running a profile.html"/>
-	<mapID target="Explore the results" url="Web pages/Explore the results.html"/>
-	<mapID target="Load and save profiles" url="Web pages/Load and save profiles.html"/>
-	<mapID target="Exporting profiles" url="Web pages/Exporting profiles.html"/>
-	<mapID target="Summary reporting" url="Web pages/Summary reporting.html"/>
-	<mapID target="Update file format signatures" url="Web pages/Update file format signatures.html"/>
-	<mapID target="Change preferences" url="Web pages/Change preferences.html"/>
-	<mapID target="Add small" url="Images/Add small.png"/>
-	<mapID target="Add" url="Images/Add.png"/>
-	<mapID target="Checkbox" url="Images/Checkbox.png"/>
-	<mapID target="Choose files and folders1" url="Images/Choose files and folders.png"/>
-	<mapID target="Creating a new profile" url="Images/Creating a new profile.png"/>
-	<mapID target="DROID Main Window" url="Images/DROID Main Window.png"/>
-	<mapID target="Export small" url="Images/Export small.png"/>
-	<mapID target="Export" url="Images/Export.png"/>
-	<mapID target="Filter small" url="Images/Filter small.png"/>
-	<mapID target="Filter" url="Images/Filter.png"/>
-	<mapID target="Icon_External_Link" url="Images/Icon_External_Link.png"/>
-	<mapID target="New small" url="Images/New small.png"/>
-	<mapID target="New" url="Images/New.png"/>
-	<mapID target="Pause small" url="Images/Pause small.png"/>
-	<mapID target="Pause" url="Images/Pause.png"/>
-	<mapID target="Play small" url="Images/Play small.png"/>
-	<mapID target="Play" url="Images/Play.png"/>
-	<mapID target="Remove small" url="Images/Remove small.png"/>
-	<mapID target="Remove top level resources" url="Images/Remove top level resources.png"/>
-	<mapID target="Remove" url="Images/Remove.png"/>
-	<mapID target="Report small" url="Images/Report small.png"/>
-	<mapID target="Report" url="Images/Report.png"/>
-	<mapID target="Save small" url="Images/Save small.png"/>
-	<mapID target="Save" url="Images/Save.png"/>
-	<mapID target="Stop small" url="Images/Stop small.png"/>
-	<mapID target="Stop" url="Images/Stop.png"/>
-	<mapID target="Sync small" url="Images/Sync small.png"/>
-	<mapID target="Sync" url="Images/Sync.png"/>
-	<mapID target="Tune small" url="Images/Tune small.png"/>
-	<mapID target="Tune" url="Images/Tune.png"/>
-	<mapID target="Update small" url="Images/Update small.png"/>
-	<mapID target="Update" url="Images/Update.png"/>
-	<mapID target="droidlogo" url="Images/droidlogo.gif"/>
-	<mapID target="3d bar chart small" url="Images/3d bar chart small.png"/>
-	<mapID target="3d bar chart" url="Images/3d bar chart.png"/>
-	<mapID target="Open file small" url="Images/Open file small.png"/>
-	<mapID target="Open file" url="Images/Open file.png"/>
-	<mapID target="General" url="Images/General.PNG"/>
-	<mapID target="Profile Defaults" url="Images/Profile Defaults.PNG"/>
-	<mapID target="Profile paused" url="Images/Profile paused.PNG"/>
-	<mapID target="Profile running" url="Images/Profile running.PNG"/>
-	<mapID target="Signature Updates" url="Images/Signature Updates.PNG"/>
-	<mapID target="Filter option selection" url="Images/Filter option selection.PNG"/>
-	<mapID target="Filter selection" url="Images/Filter selection.PNG"/>
-	<mapID target="Information collected by DROID" url="Web pages/Information collected by DROID.html"/>
-	<mapID target="FAQ" url="Web pages/FAQ.html"/>
-	<mapID target="Remove top level resources2" url="Images/Remove top level resources2.png"/>
-	<mapID target="Creating a new profile2" url="Images/Creating a new profile2.png"/>
-	<mapID target="Install signature" url="Images/Install signature.png"/>
-	<mapID target="containerResourceType" url="Images/containerResourceType.gif"/>
-	<mapID target="fileResourceType" url="Images/fileResourceType.gif"/>
-	<mapID target="folderResourceType" url="Images/folderResourceType.gif"/>
-	<mapID target="severity_small_WARN" url="Images/severity_small_WARN.png"/>
-	<mapID target="format_count_small_ONE" url="Images/format_count_small_ONE.png"/>
-	<mapID target="format_count_small_ZERO" url="Images/format_count_small_ZERO.png"/>
-	<mapID target="Export dialog" url="Images/Export dialog.png"/>
-	<mapID target="Export Defaults" url="Images/Export Defaults.png"/>
-	<mapID target="Delete small" url="Images/Delete small.png"/>
-	<mapID target="Status Access Denied Small" url="Images/Status Access Denied Small.png"/>
-	<mapID target="Problem small" url="Images/Problem small.png"/>
-	<mapID target="Select profiles to report" url="Images/Select profiles to report.png"/>
-	<mapID target="Report window" url="Images/Report window.png"/>
-	<mapID target="Detecting duplicate files" url="Web pages/Detecting duplicate files.html"/>
-	<mapID target="Whats New" url="Web pages/Whats New.html"/>
-	<mapID target="Startup configuration" url="Web pages/Startup configuration.html"/>
+    <mapID target="Welcome to DROID" url="Web pages/Welcome to DROID.html"/>
+    <mapID target="License" url="Web pages/License.html"/>
+    <mapID target="Command line control" url="Web pages/Command line control.html"/>
+    <mapID target="Third-party components" url="Web pages/Third-party components.html"/>
+    <mapID target="Create a new profile" url="Web pages/Create a new profile.html"/>
+    <mapID target="Choose files and folders" url="Web pages/Choose files and folders.html"/>
+    <mapID target="Running a profile" url="Web pages/Running a profile.html"/>
+    <mapID target="Explore the results" url="Web pages/Explore the results.html"/>
+    <mapID target="Load and save profiles" url="Web pages/Load and save profiles.html"/>
+    <mapID target="Exporting profiles" url="Web pages/Exporting profiles.html"/>
+    <mapID target="Summary reporting" url="Web pages/Summary reporting.html"/>
+    <mapID target="Update file format signatures" url="Web pages/Update file format signatures.html"/>
+    <mapID target="Change preferences" url="Web pages/Change preferences.html"/>
+    <mapID target="Add" url="Images/icons/Add.png"/>
+    <mapID target="Checkbox" url="Images/screenshots/Checkbox.png"/>
+    <mapID target="Choose files and folders1" url="Images/screenshots/Choose files and folders.png"/>
+    <mapID target="Creating a new profile" url="Images/screenshots/Creating a new profile.png"/>
+    <mapID target="Export" url="Images/icons/Export.png"/>
+    <mapID target="Filter" url="Images/icons/Filter.png"/>
+    <mapID target="Icon_External_Link" url="Images/icons/Icon_External_Link.png"/>
+    <mapID target="New" url="Images/icons/New.png"/>
+    <mapID target="Pause" url="Images/icons/Pause.png"/>
+    <mapID target="Play" url="Images/icons/Play.png"/>
+    <mapID target="Remove top level resources" url="Images/screenshots/Remove top level resources.png"/>
+    <mapID target="Remove" url="Images/icons/Remove.png"/>
+    <mapID target="Report" url="Images/icons/Report.png"/>
+    <mapID target="Save" url="Images/icons/Save.png"/>
+    <mapID target="Stop" url="Images/icons/Stop.png"/>
+    <mapID target="Sync" url="Images/icons/Sync.png"/>
+    <mapID target="droidlogo" url="Images/droidlogo.gif"/>
+    <mapID target="Report" url="Images/icons/Report.png"/>
+    <mapID target="Open file" url="Images/icons/Open file.png"/>
+    <mapID target="General" url="Images/screenshots/General.png"/>
+    <mapID target="Profile Defaults" url="Images/screenshots/Profile Defaults.png"/>
+    <mapID target="Profile paused" url="Images/screenshots/Profile paused.png"/>
+    <mapID target="Profile running" url="Images/screenshots/Profile running.png"/>
+    <mapID target="Signature Updates" url="Images/screenshots/Signature Updates.png"/>
+    <mapID target="Filter option selection" url="Images/screenshots/Filter option selection.png"/>
+    <mapID target="Filter selection" url="Images/screenshots/Filter selection.png"/>
+    <mapID target="Information collected by DROID" url="Web pages/Information collected by DROID.html"/>
+    <mapID target="FAQ" url="Web pages/FAQ.html"/>
+    <mapID target="Remove top level resources2" url="Images/screenshots/Remove top level resources2.png"/>
+    <mapID target="Creating a new profile2" url="Images/screenshots/Creating a new profile2.png"/>
+    <mapID target="Install signature" url="Images/screenshots/Install signature.png"/>
+    <mapID target="containerResourceType" url="Images/icons/containerResourceType.png"/>
+    <mapID target="fileResourceType" url="Images/icons/fileResourceType.png"/>
+    <mapID target="folderResourceType" url="Images/icons/folderResourceType.png"/>
+    <mapID target="severity_WARN" url="Images/icons/severity_WARN.png"/>
+    <mapID target="format_count_ONE" url="Images/icons/format_count_ONE.png"/>
+    <mapID target="format_count_ZERO" url="Images/icons/format_count_ZERO.png"/>
+    <mapID target="Export dialog" url="Images/screenshots/Export dialog.png"/>
+    <mapID target="Export Defaults" url="Images/screenshots/Export Defaults.png"/>
+    <mapID target="Status Access Denied" url="Images/icons/Status Access Denied.png"/>
+    <mapID target="Select profiles to report" url="Images/screenshots/Select profiles to report.png"/>
+    <mapID target="Report window" url="Images/screenshots/Report window.png"/>
+    <mapID target="Detecting duplicate files" url="Web pages/Detecting duplicate files.html"/>
+    <mapID target="Whats New" url="Web pages/Whats New.html"/>
+    <mapID target="Startup configuration" url="Web pages/Startup configuration.html"/>
 </map>

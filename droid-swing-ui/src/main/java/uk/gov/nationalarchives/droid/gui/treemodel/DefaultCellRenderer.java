@@ -33,15 +33,12 @@ package uk.gov.nationalarchives.droid.gui.treemodel;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.net.URL;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
-
 
 
 /**
@@ -126,20 +123,8 @@ public class DefaultCellRenderer implements TableCellRenderer {
     protected JLabel getRenderer() {
         return renderer;
     }
-    
-    
-    /**
-     * 
-     * @param resourceName the name of the icon resource to load.
-     * @return An icon containing the loaded icon resource.
-     */
-    protected Icon getIconResource(String resourceName) {
-        String resourcePath = String.format("uk/gov/nationalarchives/droid/icons/%s.gif", resourceName);
-        URL imgURL = getClass().getClassLoader().getResource(resourcePath);
-        return imgURL == null ? null : new ImageIcon(imgURL);        
-    }
-    
-    
+
+
     /**
      * 
      * @param value The value being displayed

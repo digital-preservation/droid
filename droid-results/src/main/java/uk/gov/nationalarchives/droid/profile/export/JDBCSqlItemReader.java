@@ -71,6 +71,8 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     private static final String PUID = "PUID";
     private static final String NODE_ID = "NODE_ID";
     private static final String NAME = "NAME";
+    private static final String MIME_TYPE = "MIME_TYPE";
+    private static final String VERSION = "VERSION";
     private static final String EMPTY_FOLTER_SUBSELECT = " CASE \n"
             + "\t\t  WHEN p.RESOURCE_TYPE = 0 THEN \n"
             + "\t\t  \tCASE\n"
@@ -408,9 +410,9 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
                         Format format = new Format();
                         String puid = rs.getString(PUID);
                         format.setPuid(puid);
-                        format.setMimeType(rs.getString("MIME_TYPE"));
-                        format.setName(NAME);
-                        format.setVersion("VERSION");
+                        format.setMimeType(rs.getString(MIME_TYPE));
+                        format.setName(rs.getString(NAME));
+                        format.setVersion(rs.getString(VERSION));
                         return format;
                     });
 

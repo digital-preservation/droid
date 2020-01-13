@@ -33,13 +33,15 @@ package uk.gov.nationalarchives.droid.gui.treemodel;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
+
+import uk.gov.nationalarchives.droid.gui.util.DroidImageUtils;
+import uk.gov.nationalarchives.droid.gui.util.IconType;
 
 /**
  * @author rflitcroft
@@ -48,7 +50,7 @@ import javax.swing.table.TableCellRenderer;
 public class FormatCountRenderer implements TableCellRenderer {
 
     /** */
-    private static final String ICON_URL_PATTERN = "uk/gov/nationalarchives/droid/icons/format_count_small_%s.png";
+    private static final String ICON_NAME_PATTERN = "format_count_%s.png";
 
     /**
      * Cached Internal labels used to render the different types of format counts.
@@ -146,9 +148,9 @@ public class FormatCountRenderer implements TableCellRenderer {
             } else {
                 iconSuffix = "ZERO";
             }
-            
-            URL imgURL = getClass().getClassLoader().getResource(String.format(ICON_URL_PATTERN, iconSuffix));
-            return imgURL == null ? null : new ImageIcon(imgURL, iconSuffix);
+
+            final String imageName = String.format(ICON_NAME_PATTERN, iconSuffix);
+            return DroidImageUtils.createBaseMultiResolutionImage("/uk/gov/nationalarchives/droid/icons/", imageName, IconType.SMALL);
         }
         return null;
     }
