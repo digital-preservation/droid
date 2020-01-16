@@ -75,10 +75,10 @@ public final class RuntimeConfig {
     
     
     /**
-     * The name of the default log4j property file.
+     * The name of the default log4j2 property file.
      * Will be created from a resource if it doesn't exist under the droid work system.
      */
-    private static final String LOG4J_PROPERTIES = "log4j.properties";
+    private static final String LOG4J2_PROPERTIES = "log4j2.properties";
 
     
     /**
@@ -90,14 +90,14 @@ public final class RuntimeConfig {
     /**
      * The name of the system property to set the log4j configuration file. 
      */
-    private static final String LOG4J_CONFIGURATION = "log4j.configuration";
+    private static final String LOG4J2_CONFIGURATION_FILE = "log4j.configurationFile";
     
     
     /**
      * Error message if you cannot create a default logging file.
      */
-    private static final String ERROR_CREATING_LOG4J_FILE = 
-        "Could not create the default log4j property file [%s] at: %s";
+    private static final String ERROR_CREATING_LOG4J2_FILE =
+        "Could not create the default log4j2 property file [%s] at: %s";
     
     
     private RuntimeConfig() { }
@@ -131,30 +131,30 @@ public final class RuntimeConfig {
         System.setProperty("logFile", logFile.toAbsolutePath().toString());
         
         // Configure default logging configuration.
-        // If the user does not specify the log4j.configuration property
-        final String logConfig = getSystemOrEnvironmentProperty(LOG4J_CONFIGURATION);
+        // If the user does not specify the log4j.configurationFile property
+        final String logConfig = getSystemOrEnvironmentProperty(LOG4J2_CONFIGURATION_FILE);
         if (logConfig == null) {
             // No log4j configuration specified by system property or command line. 
             // Create a default log4j file here if it doesn't already exist under
             // the droid work area, and set log4j to use that.
             // Had too many issues where DROID was not picking up the default 
-            // log4j.properties file.  Or it would work in the Eclipse environment, but
+            // log4j2.properties file.  Or it would work in the Eclipse environment, but
             // not in the final build produced by the build server.
             try {
-                final Path logConfigFile = createResourceFile(droidWorkDir, LOG4J_PROPERTIES, LOG4J_PROPERTIES);
+                final Path logConfigFile = createResourceFile(droidWorkDir, LOG4J2_PROPERTIES, LOG4J2_PROPERTIES);
                 String logFileURI = logConfigFile.toUri().toString();
-                System.setProperty(LOG4J_CONFIGURATION, logFileURI);
+                System.setProperty(LOG4J2_CONFIGURATION_FILE, logFileURI);
             //CHECKSTYLE:OFF
             } catch (Exception e) {
             //CHECKSTYLE:ON
-                final String message = String.format(ERROR_CREATING_LOG4J_FILE, LOG4J_PROPERTIES,
+                final String message = String.format(ERROR_CREATING_LOG4J2_FILE, LOG4J2_PROPERTIES,
                         droidWorkDir.toAbsolutePath().toString());
                 throw new RuntimeException(message, e);
             }
         } else {
             final Path logConfigFile = Paths.get(URI.create(logConfig));
             final String logFileURI = logConfigFile.toUri().toString();
-            System.setProperty(LOG4J_CONFIGURATION, logFileURI);
+            System.setProperty(LOG4J2_CONFIGURATION_FILE, logFileURI);
         }
         
         // Set a default console logging level of INFO:
@@ -162,7 +162,7 @@ public final class RuntimeConfig {
         if (consoleLogThreshold == null || consoleLogThreshold.isEmpty()) {
             System.setProperty(CONSOLE_LOG_THRESHOLD, "INFO");
         }
-        
+
     }
 
     private static Path createFolderAndSystemProperty(final String property, final Path defaultFolder) throws IOException {
