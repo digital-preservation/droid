@@ -65,8 +65,6 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile;
 import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignature;
 import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection;
 
-//TODO: design for subclassing or make final?
-
 /**
  * Implementation of DroidCore which uses the droid binary signatures and container signatures
  * to identify files, and can also match against file extensions.
@@ -118,15 +116,13 @@ public class SignatureIdentifier implements DroidCore {
 
     /**
      * The URI of the binary signature file to parse.
-     * TODO: this class shouldn't be doing the parsing - split this out into another bean, like the container signature file reader.
      */
     private URI signatureFile;
 
     /**
      * The max bytes to scan at the top and tail of a file or stream.  A negative number means unlimited.
-     * //TODO: what should this default to?
      */
-    private long maxBytesToScan = -1; // 65536; // default to 64K at top and tail of files to be identified.
+    private long maxBytesToScan = 65536; // default to 64K at top and tail of files to be identified.
 
     /**
      * Whether DROID should always match all extensions, or only match if no other signatures match.
@@ -139,7 +135,8 @@ public class SignatureIdentifier implements DroidCore {
     private Path tempDirLocation;
 
     /**
-     * Default constructor.
+     * Default bean constructor.
+     * Signature files must be set and init() called before this class is ready for use.
      */
     public SignatureIdentifier() { }
 
@@ -156,8 +153,6 @@ public class SignatureIdentifier implements DroidCore {
         setContainerSignatureFileReader(containerSignatureFileReader);
         init();
     }
-
-    //TODO: constructor for all parameters.
 
     /**
      * Initialises this droid core with its signature files.
@@ -184,7 +179,6 @@ public class SignatureIdentifier implements DroidCore {
         zipId.setSignatureReader(containerSignatureFileReader);
         zipId.setDroidCore(this);
         zipId.init();
-        //TODO: zipId.setFormats();
         zipIdentifier = zipId;
     }
 
@@ -229,33 +223,29 @@ public class SignatureIdentifier implements DroidCore {
         return processExtensions(request, results);
     }
 
-    //TODO: split these methods so we can pass a single ByteReader into several rather than re-creating it each time.
-
     @Override
     public IdentificationResultCollection matchContainerSignatures(IdentificationRequest request) throws IOException {
         IdentificationResultCollection results = null;
         if (containerSignatureFileReader != null) {
             ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
             if (!zipBinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
-                IdentificationResultCollection containerResults = zipIdentifier.submit(request);
-                containerResults.setFileLength(request.size());
-                containerResults.setRequestMetaData(request.getRequestMetaData());
-                results = containerResults;
+                results = zipIdentifier.submit(request);
             } else if (!ole2BinarySigs.getMatchingSignatures(byteReader, maxBytesToScan).isEmpty()) {
-                IdentificationResultCollection containerResults = ole2Identifier.submit(request);
-                containerResults.setFileLength(request.size());
-                containerResults.setRequestMetaData(request.getRequestMetaData());
-                results = containerResults;
+                results = ole2Identifier.submit(request);
             }
         }
-        return results; //TODO: should return null or an empty collection?
+        if (results == null) {
+            results = new IdentificationResultCollection(request);
+        }
+        results.setFileLength(request.size());
+        results.setRequestMetaData(request.getRequestMetaData());
+        return results;
     }
 
     @Override
     public IdentificationResultCollection matchBinarySignatures(IdentificationRequest request) {
         //BNO: Called once for each identification request
         IdentificationResultCollection results = new IdentificationResultCollection(request);
-        results.setRequestMetaData(request.getRequestMetaData());
         ByteReader byteReader = new IdentificationRequestByteReaderAdapter(request);
         sigFile.runFileIdentification(byteReader);
         final int numHits = byteReader.getNumHits();
@@ -277,7 +267,6 @@ public class SignatureIdentifier implements DroidCore {
     @Override
     public IdentificationResultCollection matchExtensions(IdentificationRequest request) {
         IdentificationResultCollection results = new IdentificationResultCollection(request);
-        results.setRequestMetaData(request.getRequestMetaData());
         String fileExtension = request.getExtension();
         if (fileExtension != null && !fileExtension.isEmpty()) {
             List<FileFormat> fileFormats;
@@ -307,7 +296,6 @@ public class SignatureIdentifier implements DroidCore {
     
     @Override
     public void removeSignatureForPuid(String puid) {
-        //TODO: deal with sig file not being loaded yet?  what calls this method, feels inside out being public.
         sigFile.puidHasOverridingSignatures(puid);
     }
 
