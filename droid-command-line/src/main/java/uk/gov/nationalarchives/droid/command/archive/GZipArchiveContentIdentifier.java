@@ -60,20 +60,21 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
 
 
     /**
-     * 
+     *
      * @param binarySignatureIdentifier     binary signature identifier
      * @param containerSignatureDefinitions container signatures
-     * @param path                          current archive path 
+     * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param webArchives                   Whether to further expand gzipped web archive files
+     * @param expandWebArchives             Whether to further expand gzipped web archive files
+     * @param expandWebArchiveTypes         list of web archive types to examine
      */
     public GZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
-            final ContainerSignatureDefinitions containerSignatureDefinitions,
-            final String path, final String slash, final String slash1, final Boolean webArchives) {
+                                        final ContainerSignatureDefinitions containerSignatureDefinitions,
+                                        final String path, final String slash, final String slash1, final Boolean expandWebArchives, String[] expandWebArchiveTypes) {
 
        super(binarySignatureIdentifier, containerSignatureDefinitions, path,
-            slash, slash1, webArchives);
+            slash, slash1, expandWebArchives, expandWebArchiveTypes);
 
     }
 
@@ -104,7 +105,7 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
                     binarySignatureIdentifier.matchBinarySignatures(gzRequest);
 
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandWebArchives());
+                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandWebArchives(), super.getExpandWebArchiveTypes());
             resultPrinter.print(gzResults, gzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive

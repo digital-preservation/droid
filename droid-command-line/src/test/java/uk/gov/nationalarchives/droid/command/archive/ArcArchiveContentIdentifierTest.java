@@ -71,6 +71,9 @@ public class ArcArchiveContentIdentifierTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+    private String[] webArchiveTypes = new String[]{"arc", "warc"};
+//    private String[] archiveTypes = new String[]{"zip", "tar", "gzip", "rar", "7", "zip", "bzip2", "iso"};
+
     @Before
     public void setUp() throws CommandExecutionException {
         binarySignatureIdentifier = new BinarySignatureIdentifier();
@@ -90,7 +93,7 @@ public class ArcArchiveContentIdentifierTest {
         }
         arcArchiveContentIdentifier =
                 new ArcArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/");
+                    containerSignatureDefinitions, "", "/", "/", true, webArchiveTypes);
     }
     
     @After

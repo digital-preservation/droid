@@ -51,6 +51,8 @@ public class IsoArchiveContainerIdentifierTest {
 
     private ArchiveContainerTestHelper testHelper = new ArchiveContainerTestHelper();
     private Path filePath = Paths.get("src/test/resources/testfiles/testiso.iso");
+    private String[] webArchiveTypes = new String[]{"arc", "warc"};
+//    private String[] archiveTypes = new String[]{"zip", "tar", "gzip", "rar", "7", "zip", "bzip2", "iso"};
 
     @Test
     public void identifyIsoFile()throws CommandExecutionException, IOException {
@@ -65,7 +67,7 @@ public class IsoArchiveContainerIdentifierTest {
 
         IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
                 new IsoArchiveContainerIdentifier(testHelper.getBinarySignatureIdentifier(),
-                        testHelper.getContainerSignatureDefinitions(), "", "/", "/");
+                        testHelper.getContainerSignatureDefinitions(), "", "/", "/", true, webArchiveTypes);
 
         isoArchiveContainerIdentifier.identify(filePath.toUri(), request);
     }

@@ -66,7 +66,9 @@ public class ZipArchiveContentIdentifierTest {
             Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String zipFile =
             "src/test/resources/testfiles/test.zip";
-    
+    private String[] webArchiveTypes = new String[]{"arc", "warc"};
+//    private String[] archiveTypes = new String[]{"zip", "tar", "gzip", "rar", "7", "zip", "bzip2", "iso"};
+
     @Before
     public void setUp() throws CommandExecutionException {
         binarySignatureIdentifier = new BinarySignatureIdentifier();
@@ -86,7 +88,7 @@ public class ZipArchiveContentIdentifierTest {
         }
         zipArchiveContentIdentifier =
                 new ZipArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/");
+                    containerSignatureDefinitions, "", "/", "/", true, webArchiveTypes);
     }
     
     @After

@@ -66,14 +66,15 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param webArchives                   Whether to further expand gzipped web archive files
+     * @param expandWebArchives             optionally expand all web archive files
+     * @param expandWebArchiveTypes         list of web archive types to examine
      */
     public Bzip2ArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
                                          final ContainerSignatureDefinitions containerSignatureDefinitions,
-                                         final String path, final String slash, final String slash1, final Boolean webArchives) {
+                                         final String path, final String slash, final String slash1, final Boolean expandWebArchives, String[] expandWebArchiveTypes) {
 
        super(binarySignatureIdentifier, containerSignatureDefinitions, path,
-            slash, slash1, webArchives);
+            slash, slash1, expandWebArchives, expandWebArchiveTypes);
 
     }
 
@@ -104,7 +105,7 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
                     binarySignatureIdentifier.matchBinarySignatures(bzRequest);
 
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandWebArchives());
+                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandWebArchives(), super.getExpandWebArchiveTypes());
             resultPrinter.print(bzResults, bzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive

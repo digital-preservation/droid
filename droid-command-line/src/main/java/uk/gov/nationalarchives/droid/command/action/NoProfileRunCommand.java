@@ -47,6 +47,7 @@ import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,9 @@ public class NoProfileRunCommand implements DroidCommand {
     private static final String BACKWARD_SLASH = "\\";
     private static final String PRINTABLE_TRUE = "True";
     private static final String PRINTABLE_FALSE = "False";
-    
+    private static final String PRINTABLE_ALL = "All";
+    private static final String PRINTABLE_NONE = "None";
+
     private String fileSignaturesFileName;
     private String containerSignaturesFileName;
     private String[] resources;
@@ -89,6 +92,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private boolean archives;
     private boolean webArchives;
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    private String[] webArchiveTypes;
 
     //CHECKSTYLE:OFF
     /**
@@ -174,7 +178,7 @@ public class NoProfileRunCommand implements DroidCommand {
         path = "";
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
-                path, slash, slash, archives, webArchives);
+                path, slash, slash, archives, webArchives, webArchiveTypes);
 
         for (final Path file : matchedFiles) {
             final String fileName = file.toAbsolutePath().toString();
@@ -238,8 +242,9 @@ public class NoProfileRunCommand implements DroidCommand {
             }
         }
         
-        System.out.println("Open archives: " + (this.archives ? PRINTABLE_TRUE : PRINTABLE_FALSE));
-        System.out.println("Open web archives: " + (this.webArchives ? PRINTABLE_TRUE : PRINTABLE_FALSE));
+        System.out.println("Open archives: " + (this.archives ? PRINTABLE_ALL : PRINTABLE_NONE));
+        System.out.println("Open web archives: " + (this.webArchives ? PRINTABLE_ALL :
+                (this.webArchiveTypes.length>0 ? String.join(", ", this.webArchiveTypes) : PRINTABLE_NONE)));
     }
     //CHECKSTYLE:ON
     /**
@@ -313,4 +318,13 @@ public class NoProfileRunCommand implements DroidCommand {
     public void setQuiet(final boolean quiet) {
         this.quietFlag = quiet;
     }
+
+    /**
+     *
+     * @param webArchiveTypes       list of web archive types to examine
+     */
+    public void setWebArchiveTypes(String[] webArchiveTypes) {
+        this.webArchiveTypes = webArchiveTypes;
+    }
+
 }

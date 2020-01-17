@@ -59,18 +59,19 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class ArcArchiveContentIdentifier extends ArchiveContentIdentifier {
 
     /**
-     * 
-     * @param binarySignatureIdentifier     binary signature identifier
+     *  @param binarySignatureIdentifier     binary signature identifier
      * @param containerSignatureDefinitions container signatures
-     * @param path                          current archive path 
+     * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
+     * @param expandWebArchives             optionally expand all web archive files
+     * @param expandWebArchiveTypes         optional list of web archive types to examine
      */
     public ArcArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
-            final ContainerSignatureDefinitions containerSignatureDefinitions,
-            final String path, final String slash, final String slash1) {
+                                       final ContainerSignatureDefinitions containerSignatureDefinitions,
+                                       final String path, final String slash, final String slash1, boolean expandWebArchives, String[] expandWebArchiveTypes) {
     
-        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, false);
+        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, expandWebArchives, expandWebArchiveTypes);
     }
     
     /**

@@ -67,7 +67,9 @@ public class BZip2ArchiveContentIdentifierTest {
             Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String gZipFile =
             "src/test/resources/testfiles/testXmlFile.xml.bz2";
-    
+    private String[] webArchiveTypes = new String[]{"arc", "warc"};
+//    private String[] archiveTypes = new String[]{"zip", "tar", "gzip", "rar", "7", "zip", "bzip2", "iso"};
+
     @Before
     public void setUp() throws CommandExecutionException {
         binarySignatureIdentifier = new BinarySignatureIdentifier();
@@ -87,7 +89,7 @@ public class BZip2ArchiveContentIdentifierTest {
         }
         bzip2ArchiveContentIdentifier =
                 new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", false);
+                    containerSignatureDefinitions, "", "/", "/", true, webArchiveTypes);
     }
     
     @After

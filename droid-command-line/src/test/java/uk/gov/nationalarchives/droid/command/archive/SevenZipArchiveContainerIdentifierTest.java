@@ -64,6 +64,8 @@ public class SevenZipArchiveContainerIdentifierTest {
             Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String sevenZipFile =
             "src/test/resources/testfiles/saved.7z";
+    private String[] webArchiveTypes = new String[]{"arc", "warc"};
+//    private String[] archiveTypes = new String[]{"zip", "tar", "gzip", "rar", "7", "zip", "bzip2", "iso"};
 
     @Before
     public void setUp() throws CommandExecutionException {
@@ -84,7 +86,7 @@ public class SevenZipArchiveContainerIdentifierTest {
         }
         sevenZipArchiveContainerIdentifier =
                 new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
-                        containerSignatureDefinitions, "", "/", "/");
+                        containerSignatureDefinitions, "", "/", "/", true, webArchiveTypes);
     }
 
     @Test
