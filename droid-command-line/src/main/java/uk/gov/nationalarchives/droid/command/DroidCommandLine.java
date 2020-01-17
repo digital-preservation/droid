@@ -167,7 +167,7 @@ public final class DroidCommandLine implements AutoCloseable {
         //BNO: The configureRuntimeEnvironment() method was getting called twice as it is also
         // the first call in  commandLine.processExecution() below.  This was causing a problem
         // with the log configuration file path getting appended to the current directory thereby
-        // producing an invalid file path, e.g. C:\Projects\Droid\droid\file:\C:\Users\Brian\.droid6\log4j.properties.
+        // producing an invalid file path, e.g. C:\Projects\Droid\droid\file:\C:\Users\Brian\.droid6\log4j2.properties.
         // There appears to be no other reason for the 2 calls so I have sinply removed the first call here.
         RuntimeConfig.configureRuntimeEnvironment();
 

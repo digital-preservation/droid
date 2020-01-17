@@ -94,6 +94,7 @@
         <jwat.version>1.1.1</jwat.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <log4j2.version>2.13.0</log4j2.version>
     </properties>
   
     <build>
@@ -235,8 +236,6 @@
                             <failOnWarning>true</failOnWarning>
                             <ignoreNonCompile>false</ignoreNonCompile>
                             <ignoredUnusedDeclaredDependencies>
-                                <ignoredUsedUndeclaredDependency>org.slf4j:jcl-over-slf4j</ignoredUsedUndeclaredDependency>
-                                <ignoredUsedUndeclaredDependency>org.slf4j:slf4j-log4j12</ignoredUsedUndeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>org.glassfish.jaxb:jaxb-runtime</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>org.bouncycastle:bcprov-jdk15on</ignoredUnusedDeclaredDependency>
@@ -556,14 +555,19 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j2.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j2.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
