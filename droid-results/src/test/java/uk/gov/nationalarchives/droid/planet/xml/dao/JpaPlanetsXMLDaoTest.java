@@ -31,38 +31,32 @@
  */
 package uk.gov.nationalarchives.droid.planet.xml.dao;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import static org.junit.Assert.assertEquals;
-
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.profile.FilterCriterionImpl;
 import uk.gov.nationalarchives.droid.profile.FilterImpl;
+
+import javax.sql.DataSource;
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Alok Kumar Dash
@@ -82,19 +76,39 @@ public class JpaPlanetsXMLDaoTest {
     @Autowired
     private DataSource dataSource;
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     private IDatabaseConnection conn;
 
     @BeforeClass
     public static void getTestData() throws Exception {
         testData = new FlatXmlDataSetBuilder().build(JpaPlanetsXMLDaoTest.class
                 .getResource("planets-xml-test-data-sans-formats.xml"));
-        System.setProperty("derby.stream.error.file", Paths.get("target/derby.log").toString());
-        //System.setProperty("hibernate.generateDdl", "true");
     }
 
-    @AfterClass
-    public static void tearDown() {
-        //System.clearProperty("hibernate.generateDdl");
+    @Before
+    public void setupTestData() throws Exception {
+
+        conn = getConnection();
+        try {
+            DatabaseOperation.CLEAN_INSERT.execute(conn, testData);
+        } finally {
+            conn.close();
+        }
+        File derbyLogFile = temporaryFolder.newFile("derby.log");
+        System.setProperty("derby.stream.error.file", derbyLogFile.getAbsolutePath());
+    }
+
+    @After
+    public void tearDownTestData() throws Exception {
+        conn = getConnection();
+
+        try {
+            DatabaseOperation.DELETE.execute(conn, testData);
+        } finally {
+            conn.close();
+        }
         System.clearProperty("derby.stream.error.file");
     }
 
@@ -103,9 +117,7 @@ public class JpaPlanetsXMLDaoTest {
         FilterImpl filter = new FilterImpl();
         filter.setEnabled(true);
         List<FilterCriterionImpl> filterCriteriaList = new ArrayList<FilterCriterionImpl>();
-        
-        
-        
+
         FilterCriterionImpl filterCriteriaImpl = new FilterCriterionImpl();
         
         filterCriteriaList.add(filterCriteriaImpl);
@@ -168,28 +180,6 @@ public class JpaPlanetsXMLDaoTest {
 
     }
     
-    @Before
-    public void setupTestData() throws Exception {
-
-        conn = getConnection();
-        try {
-            DatabaseOperation.CLEAN_INSERT.execute(conn, testData);
-        } finally {
-            conn.close();
-        }
-    }
-
-    @After
-    public void tearDownTestData() throws Exception {
-        conn = getConnection();
-
-        try {
-            DatabaseOperation.DELETE.execute(conn, testData);
-        } finally {
-            conn.close();
-        }
-    }
-
     protected IDatabaseConnection getConnection() throws Exception {
 
         Connection con = DataSourceUtils.getConnection(dataSource);
