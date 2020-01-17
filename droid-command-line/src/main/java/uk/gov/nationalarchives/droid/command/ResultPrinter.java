@@ -95,7 +95,7 @@ public class ResultPrinter {
     private String slash1;
     private String wrongSlash;
     private boolean archives;
-    private boolean webArchives;
+    private boolean expandAllWebArchives;
     private String[] webArchiveTypes;
 
     /**
@@ -106,12 +106,12 @@ public class ResultPrinter {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      * @param archives                      Should archives be examined?
-     * @param webArchives                   Should web archives be examined?
+     * @param expandAllWebArchives                   Should web archives be examined?
      * @param webArchiveTypes               Which web archive types should be examined?
      */
     public ResultPrinter(final BinarySignatureIdentifier binarySignatureIdentifier,
                          final ContainerSignatureDefinitions containerSignatureDefinitions,
-                         final String path, final String slash, final String slash1, boolean archives, boolean webArchives, String[] webArchiveTypes) {
+                         final String path, final String slash, final String slash1, boolean archives, boolean expandAllWebArchives, String[] webArchiveTypes) {
 
         this.binarySignatureIdentifier = binarySignatureIdentifier;
         this.containerSignatureDefinitions = containerSignatureDefinitions;
@@ -120,7 +120,7 @@ public class ResultPrinter {
         this.slash1 = slash1;
         this.wrongSlash = this.slash.equals(R_SLASH) ? DOUBLE_SLASH : R_SLASH;
         this.archives = archives;
-        this.webArchives = webArchives;
+        this.expandAllWebArchives = expandAllWebArchives;
         this.webArchiveTypes = webArchiveTypes;
         if (containerSignatureDefinitions != null) {
             triggerPuids = containerSignatureDefinitions.getTiggerPuids();
@@ -135,11 +135,11 @@ public class ResultPrinter {
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
      * @param archives                      Should archives be examined?
-     * @param webArchives                   Should web archives be examined?
+     * @param expandAllWebArchives                   Should web archives be examined?
      */
     public ResultPrinter(final BinarySignatureIdentifier binarySignatureIdentifier,
                          final ContainerSignatureDefinitions containerSignatureDefinitions,
-                         final String path, final String slash, final String slash1, boolean archives, boolean webArchives) {
+                         final String path, final String slash, final String slash1, boolean archives, boolean expandAllWebArchives) {
 
         this.binarySignatureIdentifier = binarySignatureIdentifier;
         this.containerSignatureDefinitions = containerSignatureDefinitions;
@@ -148,7 +148,7 @@ public class ResultPrinter {
         this.slash1 = slash1;
         this.wrongSlash = this.slash.equals(R_SLASH) ? DOUBLE_SLASH : R_SLASH;
         this.archives = archives;
-        this.webArchives = webArchives;
+        this.expandAllWebArchives = expandAllWebArchives;
         if (containerSignatureDefinitions != null) {
             triggerPuids = containerSignatureDefinitions.getTiggerPuids();
         }
@@ -193,48 +193,48 @@ public class ResultPrinter {
                         if (GZIP_ARCHIVE.equals(puid)) {
                             GZipArchiveContentIdentifier gzipArchiveIdentifier =
                                     new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, webArchives, webArchiveTypes);
+                                            containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, webArchiveTypes);
                             gzipArchiveIdentifier.identify(results.getUri(), request);
                         } else if (TAR_ARCHIVE.equals(puid)) {
                             TarArchiveContentIdentifier tarArchiveIdentifier =
                                     new TarArchiveContentIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, webArchives, webArchiveTypes);
+                                            containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, webArchiveTypes);
                             tarArchiveIdentifier.identify(results.getUri(), request);
                         } else if (ZIP_ARCHIVE.equals(puid) || JIP_ARCHIVE.equals(puid)) {
                             ZipArchiveContentIdentifier zipArchiveIdentifier =
                                     new ZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, webArchives, webArchiveTypes);
+                                            containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, webArchiveTypes);
                             zipArchiveIdentifier.identify(results.getUri(), request);
                         } else if (ISO_9660.equals(puid)) {
                             IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
                                     new IsoArchiveContainerIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, webArchives, webArchiveTypes);
+                                            containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, webArchiveTypes);
                             isoArchiveContainerIdentifier.identify(results.getUri(), request);
                         } else if (SEVEN_ZIP.equals(puid)) {
                             SevenZipArchiveContainerIdentifier sevenZipArchiveContainerIdentifier =
                                     new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, webArchives, webArchiveTypes);
+                                            containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, webArchiveTypes);
                             sevenZipArchiveContainerIdentifier.identify(results.getUri(), request);
                         } else if (BZIP2_ARCHIVE.equals(puid)) {
                             Bzip2ArchiveContentIdentifier bzip2ArchiveContentIdentifier =
                                     new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, webArchives, webArchiveTypes);
+                                            containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, webArchiveTypes);
                             bzip2ArchiveContentIdentifier.identify(results.getUri(), request);
                         }
                     }
                 }
-                if ((webArchives || containsCaseInsensitive("ARC", webArchiveTypes))
+                if ((expandAllWebArchives || containsCaseInsensitive("ARC", webArchiveTypes))
                         && (ARC_ARCHIVE.equals(puid) || OTHERARC_ARCHIVE.equals(puid))) {
                     ArcArchiveContentIdentifier arcArchiveIdentifier =
                             new ArcArchiveContentIdentifier(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, path, slash, slash1, webArchives, webArchiveTypes);
+                                    containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, webArchiveTypes);
                     arcArchiveIdentifier.identify(results.getUri(), request);
                 }
-                if ((webArchives || containsCaseInsensitive("WARC", webArchiveTypes))
+                if ((expandAllWebArchives || containsCaseInsensitive("WARC", webArchiveTypes))
                     && (WARC_ARCHIVE.equals(puid))) {
                     WarcArchiveContentIdentifier warcArchiveIdentifier =
                             new WarcArchiveContentIdentifier(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, path, slash, slash1, webArchives, webArchiveTypes);
+                                    containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, webArchiveTypes);
                     warcArchiveIdentifier.identify(results.getUri(), request);
                 }
             }

@@ -90,7 +90,7 @@ public class NoProfileRunCommand implements DroidCommand {
     private boolean quietFlag;
     private boolean recursive;
     private boolean archives;
-    private boolean webArchives;
+    private boolean expandAllWebArchives;
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private String[] webArchiveTypes;
 
@@ -178,7 +178,7 @@ public class NoProfileRunCommand implements DroidCommand {
         path = "";
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
-                path, slash, slash, archives, webArchives, webArchiveTypes);
+                path, slash, slash, archives, expandAllWebArchives, webArchiveTypes);
 
         for (final Path file : matchedFiles) {
             final String fileName = file.toAbsolutePath().toString();
@@ -243,7 +243,7 @@ public class NoProfileRunCommand implements DroidCommand {
         }
         
         System.out.println("Open archives: " + (this.archives ? PRINTABLE_ALL : PRINTABLE_NONE));
-        System.out.println("Open web archives: " + (this.webArchives ? PRINTABLE_ALL :
+        System.out.println("Open web archives: " + (this.expandAllWebArchives ? PRINTABLE_ALL :
                 (this.webArchiveTypes.length>0 ? String.join(", ", this.webArchiveTypes) : PRINTABLE_NONE)));
     }
     //CHECKSTYLE:ON
@@ -286,10 +286,10 @@ public class NoProfileRunCommand implements DroidCommand {
     /**
      * Set whether this examines Web Archives.
      *
-     * @param webArchives true if we should examine web archives, false otherwise
+     * @param expandAllWebArchives true if we should examine web archives, false otherwise
      */
-    public void setWebArchives(boolean webArchives) {
-        this.webArchives = webArchives;
+    public void setWebArchives(boolean expandAllWebArchives) {
+        this.expandAllWebArchives = expandAllWebArchives;
     }
     /**
      * Set recursive.

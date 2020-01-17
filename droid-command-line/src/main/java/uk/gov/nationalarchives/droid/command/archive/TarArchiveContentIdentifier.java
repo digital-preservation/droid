@@ -59,14 +59,14 @@ public class TarArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param expandWebArchives             optionally expand all web archive files
+     * @param expandAllWebArchives          optionally expand all web archive files
      * @param expandWebArchiveTypes         list of web archive types to examine
      */
     public TarArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
                                        final ContainerSignatureDefinitions containerSignatureDefinitions,
-                                       final String path, final String slash, final String slash1, boolean expandWebArchives, String[] expandWebArchiveTypes) {
+                                       final String path, final String slash, final String slash1, boolean expandAllWebArchives, String[] expandWebArchiveTypes) {
     
-        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash, expandWebArchives, expandWebArchiveTypes);
+        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash, expandAllWebArchives, expandWebArchiveTypes);
     }
     
     /**

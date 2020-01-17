@@ -66,15 +66,15 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param expandWebArchives             Whether to further expand gzipped web archive files
+     * @param expandAllWebArchives          Whether to further expand gzipped web archive files
      * @param expandWebArchiveTypes         list of web archive types to examine
      */
     public GZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
                                         final ContainerSignatureDefinitions containerSignatureDefinitions,
-                                        final String path, final String slash, final String slash1, final Boolean expandWebArchives, String[] expandWebArchiveTypes) {
+                                        final String path, final String slash, final String slash1, final Boolean expandAllWebArchives, String[] expandWebArchiveTypes) {
 
        super(binarySignatureIdentifier, containerSignatureDefinitions, path,
-            slash, slash1, expandWebArchives, expandWebArchiveTypes);
+            slash, slash1, expandAllWebArchives, expandWebArchiveTypes);
 
     }
 
@@ -105,7 +105,7 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
                     binarySignatureIdentifier.matchBinarySignatures(gzRequest);
 
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandWebArchives(), super.getExpandWebArchiveTypes());
+                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandAllWebArchives(), super.getExpandWebArchiveTypes());
             resultPrinter.print(gzResults, gzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive

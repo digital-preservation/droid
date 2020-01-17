@@ -59,7 +59,7 @@ public abstract class ArchiveContentIdentifier {
     protected Path tmpDir;
     protected String path;
     // CHECKSTYLE:ON
-    private Boolean expandWebArchives;
+    private Boolean expandAllWebArchives;
     private String[] expandWebArchiveTypes;
 
     /**
@@ -69,13 +69,13 @@ public abstract class ArchiveContentIdentifier {
      * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param expandWebArchives             optionally expand (W)ARC files
+     * @param expandAllWebArchives             optionally expand (W)ARC files
      * @param expandWebArchiveTypes         list of web archive types to examine
      */
     public ArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
                                     final ContainerSignatureDefinitions containerSignatureDefinitions,
                                     final String path, final String slash, final String slash1,
-                                    final Boolean expandWebArchives, String[] expandWebArchiveTypes) {
+                                    final Boolean expandAllWebArchives, String[] expandWebArchiveTypes) {
 
         synchronized (this) {
             setBinarySignatureIdentifier(binarySignatureIdentifier);
@@ -83,7 +83,7 @@ public abstract class ArchiveContentIdentifier {
             setPath(path);
             setSlash(slash);
             setSlash1(slash1);
-            setExpandWebArchives(expandWebArchives);
+            setExpandAllWebArchives(expandAllWebArchives);
             setExpandWebArchiveTypes(expandWebArchiveTypes);
             if (getTmpDir() == null) {
                 setTmpDir(Paths.get(System.getProperty("java.io.tmpdir")));
@@ -166,14 +166,14 @@ public abstract class ArchiveContentIdentifier {
     /**
      * @return whether to expand (W)ARCs
      */
-    protected Boolean getExpandWebArchives() {
-        return expandWebArchives;
+    protected Boolean getExpandAllWebArchives() {
+        return expandAllWebArchives;
     }
     /**
      * @param ewa whether to expand (W)ARCs
      */
-    protected void setExpandWebArchives(Boolean ewa) {
-        this.expandWebArchives = ewa;
+    protected void setExpandAllWebArchives(Boolean ewa) {
+        this.expandAllWebArchives = ewa;
     }
 
     /**
@@ -202,7 +202,7 @@ public abstract class ArchiveContentIdentifier {
             // CHECKSTYLE:OFF
             final ResultPrinter resultPrinter =
                     new ResultPrinter(getBinarySignatureIdentifier(),
-                            getContainerSignatureDefinitions(), newPath, getSlash(), getSlash1(), true, getExpandWebArchives(), getExpandWebArchiveTypes());
+                            getContainerSignatureDefinitions(), newPath, getSlash(), getSlash1(), true, getExpandAllWebArchives(), getExpandWebArchiveTypes());
             // CHECKSTYLE:ON
             resultPrinter.print(results, request);
             request.close();
