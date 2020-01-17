@@ -59,7 +59,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.control.PauseBefore;
+import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
 import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
 
 /**
@@ -97,6 +97,7 @@ public class SubmissionGateway implements AsynchDroid {
     private boolean generateHash;
     private SubmissionQueue submissionQueue;
     private ReplaySubmitter replaySubmitter;
+    private PauseAspect pauseControl;
 
     private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
@@ -106,8 +107,10 @@ public class SubmissionGateway implements AsynchDroid {
     public SubmissionGateway() {
     }
 
+    //CHECKSTYLE:OFF - too many parameters - but this is how many you need to instantiate safely.
     /**
-     * Paramterized constructor.
+     * Parameterized constructor.
+     *
      * @param droidCore The droid core to use.
      * @param resultHandler The result handler.
      * @param executorService The executor service.
@@ -125,8 +128,8 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     @Override
-    @PauseBefore
     public Future<IdentificationResultCollection> submit(final IdentificationRequest request) {
+        pauseControl.awaitUnpaused();
         jobCounter.increment();
         requests.add(request);
 
@@ -395,6 +398,13 @@ public class SubmissionGateway implements AsynchDroid {
      */
     public void setReplaySubmitter(ReplaySubmitter replaySubmitter) {
         this.replaySubmitter = replaySubmitter;
+    }
+
+    /**
+     * @param pauseAspect The pauseAspect to use.
+     */
+    public void setPauseAspect(PauseAspect pauseAspect) {
+        this.pauseControl = pauseAspect;
     }
 
     /**

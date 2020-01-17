@@ -142,7 +142,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
     }
 
     @Override
-    //@Transactional(propagation = Propagation.REQUIRED)
     public void initProfile(URI signatureFileUri) throws SignatureFileException {
 
 
