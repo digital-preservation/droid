@@ -216,7 +216,7 @@ public class SignatureIdentifier implements DroidCore {
     @Override
     public IdentificationResultCollection match(IdentificationRequest request) throws IOException {
         IdentificationResultCollection results = matchContainerSignatures(request);
-        if (results == null  || results.getResults().isEmpty()) {
+        if (results.getResults().isEmpty()) {
             results = matchBinarySignatures(request);
         }
         removeLowerPriorityHits(results);
