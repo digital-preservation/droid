@@ -153,7 +153,7 @@ public class SkeletonSuiteTest {
 
         SignatureIdentifier droid = new SignatureIdentifier();
         droid.setSignatureFile(SIGFILE);
-
+        droid.setMaxBytesToScan(-1);
         try {
             droid.init();
         } catch (SignatureParseException x) {
