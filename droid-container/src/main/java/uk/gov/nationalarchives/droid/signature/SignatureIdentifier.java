@@ -83,6 +83,7 @@ public class SignatureIdentifier implements DroidCore {
     private static final String FILE_SCHEME = "file://";
     private static final String ZIP_CONTAINER_TYPE = "ZIP";
     private static final String OLE2_CONTAINER_TYPE = "OLE2";
+    private static final long DEFAULT_BYTES_TO_SCAN = 65536; // scan 65536 bytes at top / tail of files by default.
 
     /**
      * A class which parses, then caches a container signature file.
@@ -122,7 +123,7 @@ public class SignatureIdentifier implements DroidCore {
     /**
      * The max bytes to scan at the top and tail of a file or stream.  A negative number means unlimited.
      */
-    private long maxBytesToScan = 65536; // default to 64K at top and tail of files to be identified.
+    private long maxBytesToScan = DEFAULT_BYTES_TO_SCAN;
 
     /**
      * Whether DROID should always match all extensions, or only match if no other signatures match.
