@@ -1,5 +1,5 @@
 @REM
-@REM Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+@REM Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
 @REM All rights reserved.
 @REM
 @REM Redistribution and use in source and binary forms, with or without

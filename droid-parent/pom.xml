@@ -81,7 +81,7 @@
         <project.build.target>1.8</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
+        <project.email>pronom@nationalarchives.gov.uk</project.email>
 
         <spring.version>5.2.2.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
