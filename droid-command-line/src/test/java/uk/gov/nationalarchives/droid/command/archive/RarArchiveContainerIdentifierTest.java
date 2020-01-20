@@ -86,7 +86,7 @@ public class RarArchiveContainerIdentifierTest {
         }
         rarArchiveContainerIdentifier =
                 new RarArchiveContainerIdentifier(binarySignatureIdentifier,
-                        containerSignatureDefinitions, "", "/", "/", true, webArchiveTypes);
+                        containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, webArchiveTypes));
     }
 
     @Test

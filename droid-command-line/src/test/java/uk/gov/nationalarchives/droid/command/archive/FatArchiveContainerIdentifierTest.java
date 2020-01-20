@@ -66,7 +66,7 @@ public class FatArchiveContainerIdentifierTest {
 
         FatArchiveContainerIdentifier fatArchiveContainerIdentifier =
                 new FatArchiveContainerIdentifier(testHelper.getBinarySignatureIdentifier(),
-                        testHelper.getContainerSignatureDefinitions(), "", "/", "/", true, webArchiveTypes);
+                        testHelper.getContainerSignatureDefinitions(), "", "/", "/", new ArchiveConfiguration(true, webArchiveTypes));
 
         fatArchiveContainerIdentifier.identify(filePath.toUri(), request);
     }

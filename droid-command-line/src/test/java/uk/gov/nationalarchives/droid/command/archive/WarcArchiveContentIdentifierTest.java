@@ -87,7 +87,7 @@ public class WarcArchiveContentIdentifierTest {
         }
         warcArchiveContentIdentifier =
                 new WarcArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", true, webArchiveTypes);
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, webArchiveTypes));
     }
     
     @After

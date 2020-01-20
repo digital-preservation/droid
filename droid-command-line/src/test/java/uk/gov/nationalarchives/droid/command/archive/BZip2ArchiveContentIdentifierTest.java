@@ -89,7 +89,7 @@ public class BZip2ArchiveContentIdentifierTest {
         }
         bzip2ArchiveContentIdentifier =
                 new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", true, webArchiveTypes);
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, webArchiveTypes));
     }
     
     @After

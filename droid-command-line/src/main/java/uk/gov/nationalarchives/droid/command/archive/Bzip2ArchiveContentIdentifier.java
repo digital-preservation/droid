@@ -66,15 +66,14 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param expandAllWebArchives          optionally expand all web archive files
-     * @param expandWebArchiveTypes         list of web archive types to examine
+     * @param archiveConfiguration          configuration to expand archives and web archives
      */
     public Bzip2ArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
                                          final ContainerSignatureDefinitions containerSignatureDefinitions,
-                                         final String path, final String slash, final String slash1, final Boolean expandAllWebArchives, String[] expandWebArchiveTypes) {
+                                         final String path, final String slash, final String slash1, final ArchiveConfiguration archiveConfiguration) {
 
        super(binarySignatureIdentifier, containerSignatureDefinitions, path,
-            slash, slash1, expandAllWebArchives, expandWebArchiveTypes);
+            slash, slash1, archiveConfiguration);
 
     }
 
@@ -105,7 +104,7 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
                     binarySignatureIdentifier.matchBinarySignatures(bzRequest);
 
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandAllWebArchives(), super.getExpandWebArchiveTypes());
+                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getArchiveConfiguration());
             resultPrinter.print(bzResults, bzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive

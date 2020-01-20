@@ -66,15 +66,14 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
      * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param expandAllWebArchives          Whether to further expand gzipped web archive files
-     * @param expandWebArchiveTypes         list of web archive types to examine
+     * @param archiveConfiguration          configuration to expand archives and web archives
      */
     public GZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
                                         final ContainerSignatureDefinitions containerSignatureDefinitions,
-                                        final String path, final String slash, final String slash1, final Boolean expandAllWebArchives, String[] expandWebArchiveTypes) {
+                                        final String path, final String slash, final String slash1, final ArchiveConfiguration archiveConfiguration) {
 
        super(binarySignatureIdentifier, containerSignatureDefinitions, path,
-            slash, slash1, expandAllWebArchives, expandWebArchiveTypes);
+            slash, slash1, archiveConfiguration);
 
     }
 
@@ -105,7 +104,7 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
                     binarySignatureIdentifier.matchBinarySignatures(gzRequest);
 
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandAllWebArchives(), super.getExpandWebArchiveTypes());
+                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getArchiveConfiguration());
             resultPrinter.print(gzResults, gzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive

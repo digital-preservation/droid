@@ -66,14 +66,13 @@ public class SevenZipArchiveContainerIdentifier extends ArchiveContentIdentifier
      * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param expandAllWebArchives          optionally expand all web archive files
-     * @param expandWebArchiveTypes         list of web archive types to examine
+     * @param archiveConfiguration          configuration to expand archives and web archives
      */
     public SevenZipArchiveContainerIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
                                               final ContainerSignatureDefinitions containerSignatureDefinitions,
-                                              final String path, final String slash, final String slash1, boolean expandAllWebArchives, String[] expandWebArchiveTypes) {
+                                              final String path, final String slash, final String slash1, ArchiveConfiguration archiveConfiguration) {
 
-        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, expandAllWebArchives, expandWebArchiveTypes);
+        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
     }
 
     /**

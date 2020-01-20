@@ -88,7 +88,7 @@ public class ZipArchiveContentIdentifierTest {
         }
         zipArchiveContentIdentifier =
                 new ZipArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", true, webArchiveTypes);
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, webArchiveTypes));
     }
     
     @After
