@@ -188,20 +188,20 @@ public class ResultPrinter {
                                         containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
                         bzip2ArchiveContentIdentifier.identify(results.getUri(), request);
                     }
-                }
-                if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("ARC", archiveConfiguration.getExpandWebArchiveTypes()))
-                        && (ARC_ARCHIVE.equals(puid) || OTHERARC_ARCHIVE.equals(puid))) {
-                    ArcArchiveContentIdentifier arcArchiveIdentifier =
-                            new ArcArchiveContentIdentifier(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
-                    arcArchiveIdentifier.identify(results.getUri(), request);
-                }
-                if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("WARC", archiveConfiguration.getExpandWebArchiveTypes()))
-                    && (WARC_ARCHIVE.equals(puid))) {
-                    WarcArchiveContentIdentifier warcArchiveIdentifier =
-                            new WarcArchiveContentIdentifier(binarySignatureIdentifier,
-                                    containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
-                    warcArchiveIdentifier.identify(results.getUri(), request);
+                    if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("ARC", archiveConfiguration.getExpandWebArchiveTypes()))
+                            && (ARC_ARCHIVE.equals(puid) || OTHERARC_ARCHIVE.equals(puid))) {
+                        ArcArchiveContentIdentifier arcArchiveIdentifier =
+                                new ArcArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                        arcArchiveIdentifier.identify(results.getUri(), request);
+                    }
+                    if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("WARC", archiveConfiguration.getExpandWebArchiveTypes()))
+                        && (WARC_ARCHIVE.equals(puid))) {
+                        WarcArchiveContentIdentifier warcArchiveIdentifier =
+                                new WarcArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                        warcArchiveIdentifier.identify(results.getUri(), request);
+                    }
                 }
             }
         } else {
