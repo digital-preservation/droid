@@ -36,15 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
-import uk.gov.nationalarchives.droid.command.archive.ArchiveConfiguration;
-import uk.gov.nationalarchives.droid.command.archive.Bzip2ArchiveContentIdentifier;
-import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
-import uk.gov.nationalarchives.droid.command.archive.IsoArchiveContainerIdentifier;
-import uk.gov.nationalarchives.droid.command.archive.SevenZipArchiveContainerIdentifier;
-import uk.gov.nationalarchives.droid.command.archive.ZipArchiveContentIdentifier;
-import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
-import uk.gov.nationalarchives.droid.command.archive.ArcArchiveContentIdentifier;
-import uk.gov.nationalarchives.droid.command.archive.WarcArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.*;
 import uk.gov.nationalarchives.droid.command.container.Ole2ContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
@@ -76,6 +68,8 @@ public class ResultPrinter {
     private static final String OLE2_CONTAINER = "OLE2";
     private static final String ZIP = "ZIP";
     private static final String ZIP_ARCHIVE = "x-fmt/263";
+    private static final String RAR_ARCHIVE = "x-fmt/264";
+    private static final String OTHERRAR_ARCHIVE = "fmt/411";
     private static final String JIP_ARCHIVE = "x-fmt/412";
     private static final String TAR_ARCHIVE = "x-fmt/265";
     private static final String GZIP_ARCHIVE = "x-fmt/266";
@@ -205,6 +199,15 @@ public class ResultPrinter {
                                         new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
                                 bzip2ArchiveContentIdentifier.identify(results.getUri(), request);
+                            }
+                            break;
+                        case RAR_ARCHIVE:
+                        case OTHERRAR_ARCHIVE:
+                            if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("RAR", archiveConfiguration.getExpandArchiveTypes()))) {
+                                RarArchiveContainerIdentifier rarArchiveContentIdentifier =
+                                        new RarArchiveContainerIdentifier(binarySignatureIdentifier,
+                                                containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                                rarArchiveContentIdentifier.identify(results.getUri(), request);
                             }
                             break;
 
