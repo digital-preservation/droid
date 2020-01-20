@@ -86,7 +86,7 @@ public class GZipArchiveContentIdentifierTest {
         }
         gZipArchiveContentIdentifier =
                 new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null));
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
     
     @After

@@ -212,7 +212,14 @@ public enum CommandLineParam {
     },
 
     /** Open archives flag. */
-    ARCHIVES("A", "open-archives", I18N.ARCHIVES_HELP) {
+    ARCHIVES("A", "open-all-archives", I18N.ARCHIVES_HELP) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+    /** Open archive types. */
+    ARCHIVE_TYPES("At", "open-archive-types", true, -1, I18N.ARCHIVE_TYPES_HELP, "archive types") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -396,6 +403,7 @@ public enum CommandLineParam {
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption());
         options.addOption(ARCHIVES.newOption());
+        options.addOption(ARCHIVE_TYPES.newOption());
         options.addOption(WEB_ARCHIVES.newOption());
         options.addOption(WEB_ARCHIVE_TYPES.newOption());
         options.addOption(RECURSIVE.newOption());

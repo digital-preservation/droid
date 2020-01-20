@@ -526,22 +526,28 @@
       </table>
     </p>
     <h3>
-       -A,&nbsp;--open-archives
+       -A,&nbsp;--open-all-archives
     </h3>
     <p>
-       [optional] Open archive (zip, tar, gzip) files and identify all their contents.
+       [optional] Open all archive (zip, tar, gzip, rar, 7zip, bzip2, iso) files and identify all their contents. Usually used in conjunction with -W or -Wt.
+    </p>
+    <h3>
+      -At,&nbsp;--open-archive-types
+    </h3>
+    <p>
+      [optional] List of archive types to analyse among "ZIP", "TAR", "GZIP", "RAR", "7ZIP", "BZIP2" and "ISO" separated by space. Ignored if -A is used. Usually used in conjunction with -W or -Wt.
     </p>
     <h3>
       -W,&nbsp;--open-all-webarchives
     </h3>
     <p>
-      [optional] Open all web archive (arc, warc) files and identify their contents. Usually used in conjunction with -A.
+      [optional] Open all web archive (arc, warc) files and identify their contents. Usually used in conjunction with -A or -At.
     </p>
     <h3>
       -Wt,&nbsp;--open-webarchive-types
     </h3>
     <p>
-      [optional] List of web archive types to analyse among "ARC" "WARC", separated by space. Ignored if -W is used. Usually used in conjunction with -A.
+      [optional] List of web archive types to analyse among "ARC" "WARC", separated by space. Ignored if -W is used. Usually used in conjunction with -A or -At.
     </p>
     <p>
        &nbsp;

@@ -86,7 +86,7 @@ public class TarArchiveContentIdentifierTest {
         }
         tarArchiveContentIdentifier =
                 new TarArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null));
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
     
     @After

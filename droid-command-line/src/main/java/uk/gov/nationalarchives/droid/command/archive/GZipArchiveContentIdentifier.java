@@ -104,7 +104,7 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
                     binarySignatureIdentifier.matchBinarySignatures(gzRequest);
 
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getArchiveConfiguration());
+                    containerSignatureDefinitions, newPath, slash, slash1, super.getArchiveConfiguration());
             resultPrinter.print(gzResults, gzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive

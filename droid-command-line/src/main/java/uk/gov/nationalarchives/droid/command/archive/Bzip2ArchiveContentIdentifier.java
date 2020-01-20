@@ -104,7 +104,7 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
                     binarySignatureIdentifier.matchBinarySignatures(bzRequest);
 
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getArchiveConfiguration());
+                    containerSignatureDefinitions, newPath, slash, slash1, super.getArchiveConfiguration());
             resultPrinter.print(bzResults, bzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive

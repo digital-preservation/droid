@@ -186,7 +186,7 @@ public abstract class ArchiveContentIdentifier {
             // CHECKSTYLE:OFF
             final ResultPrinter resultPrinter =
                     new ResultPrinter(getBinarySignatureIdentifier(),
-                            getContainerSignatureDefinitions(), newPath, getSlash(), getSlash1(), true, getArchiveConfiguration());
+                            getContainerSignatureDefinitions(), newPath, getSlash(), getSlash1(), getArchiveConfiguration());
             // CHECKSTYLE:ON
             resultPrinter.print(results, request);
             request.close();

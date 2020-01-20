@@ -35,15 +35,21 @@ package uk.gov.nationalarchives.droid.command.archive;
  * configuration to expand web archives and archives.
  */
 public class ArchiveConfiguration {
+    private Boolean expandAllArchives;
+    private String[] expandArchiveTypes;
     private Boolean expandAllWebArchives;
     private String[] expandWebArchiveTypes;
 
     /**
      *
+     * @param expandAllArchives whether to expand all archives
+     * @param expandArchiveTypes list of archive types to expand
      * @param expandAllWebArchives whether to expand all web archives
      * @param expandWebArchiveTypes list of web archive types to expand
      */
-    public ArchiveConfiguration(Boolean expandAllWebArchives, String[] expandWebArchiveTypes) {
+    public ArchiveConfiguration(Boolean expandAllArchives, String[] expandArchiveTypes, Boolean expandAllWebArchives, String[] expandWebArchiveTypes) {
+        this.expandAllArchives = expandAllArchives;
+        this.expandArchiveTypes = expandArchiveTypes;
         this.expandAllWebArchives = expandAllWebArchives;
         this.expandWebArchiveTypes = expandWebArchiveTypes;
     }
@@ -76,5 +82,33 @@ public class ArchiveConfiguration {
      */
     public void setExpandWebArchiveTypes(String[] expandWebArchiveTypes) {
         this.expandWebArchiveTypes = expandWebArchiveTypes;
+    }
+
+    /**
+     * @return whether to expand all archives
+     */
+    public Boolean getExpandAllArchives() {
+        return expandAllArchives;
+    }
+    /**
+     * @param expandAllArchives whether to expand all archives
+     */
+    public void setExpandAllArchives(Boolean expandAllArchives) {
+        this.expandAllArchives = expandAllArchives;
+    }
+
+    /**
+     *
+     * @return list of archive types to expand
+     */
+    public String[] getExpandArchiveTypes() {
+        return expandArchiveTypes;
+    }
+    /**
+     *
+     * @param expandArchiveTypes list of archive types to expand
+     */
+    public void setExpandArchiveTypes(String[] expandArchiveTypes) {
+        this.expandArchiveTypes = expandArchiveTypes;
     }
 }

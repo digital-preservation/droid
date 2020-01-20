@@ -89,9 +89,10 @@ public class NoProfileRunCommand implements DroidCommand {
     private int maxBytesToScan = -1;
     private boolean quietFlag;
     private boolean recursive;
-    private boolean archives;
+    private boolean expandAllArchives;
+    private String[] expandArchiveTypes;
     private boolean expandAllWebArchives;
-    private String[] webArchiveTypes;
+    private String[] expandWebArchiveTypes;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -179,7 +180,7 @@ public class NoProfileRunCommand implements DroidCommand {
         path = "";
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
-                path, slash, slash, archives, new ArchiveConfiguration(expandAllWebArchives, webArchiveTypes));
+                path, slash, slash, new ArchiveConfiguration(expandAllArchives, expandArchiveTypes, expandAllWebArchives, expandWebArchiveTypes));
 
         for (final Path file : matchedFiles) {
             final String fileName = file.toAbsolutePath().toString();
@@ -243,9 +244,10 @@ public class NoProfileRunCommand implements DroidCommand {
             }
         }
         
-        System.out.println("Open archives: " + (this.archives ? PRINTABLE_ALL : PRINTABLE_NONE));
+        System.out.println("Open archives: " + (this.expandAllArchives ? PRINTABLE_ALL :
+                (this.expandArchiveTypes!=null && this.expandArchiveTypes.length>0 ? String.join(", ", this.expandArchiveTypes) : PRINTABLE_NONE)));
         System.out.println("Open web archives: " + (this.expandAllWebArchives ? PRINTABLE_ALL :
-                (this.webArchiveTypes!=null && this.webArchiveTypes.length>0 ? String.join(", ", this.webArchiveTypes) : PRINTABLE_NONE)));
+                (this.expandWebArchiveTypes !=null && this.expandWebArchiveTypes.length>0 ? String.join(", ", this.expandWebArchiveTypes) : PRINTABLE_NONE)));
     }
     //CHECKSTYLE:ON
     /**
@@ -273,15 +275,6 @@ public class NoProfileRunCommand implements DroidCommand {
      */
     public void setContainerSignatureFile(final String containerSignatureFile) {
         this.containerSignaturesFileName = containerSignatureFile;
-    }
-    
-    /**
-     * Set whether this examines Archives.
-     * 
-     * @param archives true if we should examine archives, false otherwise
-     */
-    public void setArchives(boolean archives) {
-        this.archives = archives;
     }
 
     /**
@@ -323,10 +316,26 @@ public class NoProfileRunCommand implements DroidCommand {
 
     /**
      *
-     * @param webArchiveTypes       list of web archive types to expand
+     * @param expandWebArchiveTypes       list of web archive types to expand
      */
-    public void setWebArchiveTypes(String[] webArchiveTypes) {
-        this.webArchiveTypes = webArchiveTypes;
+    public void setExpandWebArchiveTypes(String[] expandWebArchiveTypes) {
+        this.expandWebArchiveTypes = expandWebArchiveTypes;
     }
 
+    /**
+     * Set whether this examines Archives.
+     *
+     * @param expandAllArchives true if we should examine archives, false otherwise
+     */
+    public void setExpandAllArchives(boolean expandAllArchives) {
+        this.expandAllArchives = expandAllArchives;
+    }
+
+    /**
+     *
+     * @param expandArchiveTypes       list of web archive types to expand
+     */
+    public void setExpandArchiveTypes(String[] expandArchiveTypes) {
+        this.expandArchiveTypes = expandArchiveTypes;
+    }
 }

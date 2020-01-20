@@ -245,9 +245,10 @@ public class CommandFactoryImpl implements CommandFactory {
         command.setSignatureFile(signatureFile);
         command.setContainerSignatureFile(containerSignatureFile);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
-        command.setArchives(cli.hasOption(CommandLineParam.ARCHIVES.toString()));
+        command.setExpandAllArchives(cli.hasOption(CommandLineParam.ARCHIVES.toString()));
+        command.setExpandArchiveTypes(cli.getOptionValues(CommandLineParam.ARCHIVE_TYPES.toString()));
         command.setExpandAllWebArchives(cli.hasOption(CommandLineParam.WEB_ARCHIVES.toString()));
-        command.setWebArchiveTypes(cli.getOptionValues(CommandLineParam.WEB_ARCHIVE_TYPES.toString()));
+        command.setExpandWebArchiveTypes(cli.getOptionValues(CommandLineParam.WEB_ARCHIVE_TYPES.toString()));
         command.setExtensionFilter(extensions);
         command.setQuiet(cli.hasOption(CommandLineParam.QUIET.toString()));
 

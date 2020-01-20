@@ -74,7 +74,7 @@ public class ResultPrinter {
     private static final String SPACE = " ";
 
     private static final String OLE2_CONTAINER = "OLE2";
-    private static final String ZIP_CONTAINER = "ZIP";
+    private static final String ZIP = "ZIP";
     private static final String ZIP_ARCHIVE = "x-fmt/263";
     private static final String JIP_ARCHIVE = "x-fmt/412";
     private static final String TAR_ARCHIVE = "x-fmt/265";
@@ -95,7 +95,6 @@ public class ResultPrinter {
     private String slash;
     private String slash1;
     private String wrongSlash;
-    private boolean archives;
     private ArchiveConfiguration archiveConfiguration;
 
     /**
@@ -105,12 +104,11 @@ public class ResultPrinter {
      * @param path                          current file/container path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param archives                      Should archives be examined?
      * @param archiveConfiguration          configuration to expand archives and web archives
      */
     public ResultPrinter(final BinarySignatureIdentifier binarySignatureIdentifier,
                          final ContainerSignatureDefinitions containerSignatureDefinitions,
-                         final String path, final String slash, final String slash1, boolean archives, ArchiveConfiguration archiveConfiguration) {
+                         final String path, final String slash, final String slash1, ArchiveConfiguration archiveConfiguration) {
 
         this.binarySignatureIdentifier = binarySignatureIdentifier;
         this.containerSignatureDefinitions = containerSignatureDefinitions;
@@ -118,7 +116,6 @@ public class ResultPrinter {
         this.slash = slash;
         this.slash1 = slash1;
         this.wrongSlash = this.slash.equals(R_SLASH) ? DOUBLE_SLASH : R_SLASH;
-        this.archives = archives;
         this.archiveConfiguration = archiveConfiguration;
         if (containerSignatureDefinitions != null) {
             triggerPuids = containerSignatureDefinitions.getTiggerPuids();
@@ -160,38 +157,36 @@ public class ResultPrinter {
                 }
                 System.out.println(fileName + "," + puid);
                 if (!container) {
-                    if (archives) {
-                        if (GZIP_ARCHIVE.equals(puid)) {
-                            GZipArchiveContentIdentifier gzipArchiveIdentifier =
-                                    new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
-                            gzipArchiveIdentifier.identify(results.getUri(), request);
-                        } else if (TAR_ARCHIVE.equals(puid)) {
-                            TarArchiveContentIdentifier tarArchiveIdentifier =
-                                    new TarArchiveContentIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
-                            tarArchiveIdentifier.identify(results.getUri(), request);
-                        } else if (ZIP_ARCHIVE.equals(puid) || JIP_ARCHIVE.equals(puid)) {
-                            ZipArchiveContentIdentifier zipArchiveIdentifier =
-                                    new ZipArchiveContentIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
-                            zipArchiveIdentifier.identify(results.getUri(), request);
-                        } else if (ISO_9660.equals(puid)) {
-                            IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
-                                    new IsoArchiveContainerIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
-                            isoArchiveContainerIdentifier.identify(results.getUri(), request);
-                        } else if (SEVEN_ZIP.equals(puid)) {
-                            SevenZipArchiveContainerIdentifier sevenZipArchiveContainerIdentifier =
-                                    new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
-                            sevenZipArchiveContainerIdentifier.identify(results.getUri(), request);
-                        } else if (BZIP2_ARCHIVE.equals(puid)) {
-                            Bzip2ArchiveContentIdentifier bzip2ArchiveContentIdentifier =
-                                    new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
-                                            containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
-                            bzip2ArchiveContentIdentifier.identify(results.getUri(), request);
-                        }
+                    if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("GZIP", archiveConfiguration.getExpandArchiveTypes())) && GZIP_ARCHIVE.equals(puid)) {
+                        GZipArchiveContentIdentifier gzipArchiveIdentifier =
+                                new GZipArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                        gzipArchiveIdentifier.identify(results.getUri(), request);
+                    } else if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("TAR", archiveConfiguration.getExpandArchiveTypes())) && TAR_ARCHIVE.equals(puid)) {
+                        TarArchiveContentIdentifier tarArchiveIdentifier =
+                                new TarArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                        tarArchiveIdentifier.identify(results.getUri(), request);
+                    } else if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive(ZIP, archiveConfiguration.getExpandArchiveTypes())) && ZIP_ARCHIVE.equals(puid) || JIP_ARCHIVE.equals(puid)) {
+                        ZipArchiveContentIdentifier zipArchiveIdentifier =
+                                new ZipArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                        zipArchiveIdentifier.identify(results.getUri(), request);
+                    } else if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("ISO", archiveConfiguration.getExpandArchiveTypes())) && ISO_9660.equals(puid)) {
+                        IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
+                                new IsoArchiveContainerIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                        isoArchiveContainerIdentifier.identify(results.getUri(), request);
+                    } else if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("7ZIP", archiveConfiguration.getExpandArchiveTypes())) && SEVEN_ZIP.equals(puid)) {
+                        SevenZipArchiveContainerIdentifier sevenZipArchiveContainerIdentifier =
+                                new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                        sevenZipArchiveContainerIdentifier.identify(results.getUri(), request);
+                    } else if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("BZIP2", archiveConfiguration.getExpandArchiveTypes())) && BZIP2_ARCHIVE.equals(puid)) {
+                        Bzip2ArchiveContentIdentifier bzip2ArchiveContentIdentifier =
+                                new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
+                                        containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
+                        bzip2ArchiveContentIdentifier.identify(results.getUri(), request);
                     }
                 }
                 if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("ARC", archiveConfiguration.getExpandWebArchiveTypes()))
@@ -252,7 +247,7 @@ public class ResultPrinter {
                             } catch (IOException e) {   // carry on after container i/o problems
                                 System.err.println(e + SPACE + L_BRACKET + fileName + R_BRACKET);
                             }
-                        } else if (ZIP_CONTAINER.equals(containerType)) {
+                        } else if (ZIP.equals(containerType)) {
                             try {
                                 ZipContainerContentIdentifier zipIdentifier =
                                             new ZipContainerContentIdentifier();

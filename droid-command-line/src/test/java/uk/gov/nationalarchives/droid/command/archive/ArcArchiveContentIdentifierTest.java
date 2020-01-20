@@ -90,7 +90,7 @@ public class ArcArchiveContentIdentifierTest {
         }
         arcArchiveContentIdentifier =
                 new ArcArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null));
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
     
     @After
