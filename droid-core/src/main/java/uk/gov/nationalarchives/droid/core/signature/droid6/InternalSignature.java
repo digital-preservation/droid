@@ -222,7 +222,7 @@ public class InternalSignature extends SimpleElement {
             }
         }
         if (hasOnlyVarSequences) {
-            getLog().warn(getPerformanceWarningMessage());
+            getLog().debug(getPerformanceWarningMessage());
         }
         // must call reorderByteSequences after first preparing byte sequences for use
         // as it relies on their sort orders defined when preparing them for use.
