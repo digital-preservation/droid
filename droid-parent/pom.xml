@@ -89,7 +89,7 @@
         <cxf.version>3.3.4</cxf.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
-        <flying-saucer.version>9.1.19</flying-saucer.version>
+        <flying-saucer.version>9.1.20</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
         <jwat.version>1.1.1</jwat.version>
         <hamcrest.version>2.2</hamcrest.version>
