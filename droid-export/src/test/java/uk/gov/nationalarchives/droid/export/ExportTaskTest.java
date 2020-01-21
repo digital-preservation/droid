@@ -32,18 +32,21 @@
 package uk.gov.nationalarchives.droid.export;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 
 /**
  * @author Adam Retter
@@ -51,34 +54,37 @@ import static org.mockito.Mockito.*;
  */
 public class ExportTaskTest {
 
-    static ItemWriter itemWriter;
-    static Path tempFile;
+    ItemWriter itemWriter;
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Before
     public void setup() throws IOException {
         itemWriter = mock(ItemWriter.class);
-        tempFile = Files.createTempFile("droid", "export-task-test");
     }
 
     @Test
     public void testEncodingDefault() throws IOException {
-        final String destination = tempFile.toAbsolutePath().toString();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        final String destination = tempFile.getAbsolutePath();
         final String encoding = null; //i.e. platform dependent
 
         final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, false, itemWriter, null));
         pmExportTask.run();
 
-        verify(pmExportTask, never()).newOutputFileWriterEncoded(encoding, tempFile);
+        verify(pmExportTask, never()).newOutputFileWriterEncoded(encoding, tempFile.toPath());
     }
 
     @Test
     public void testEncodingSpecific() throws IOException {
-        final String destination = tempFile.toAbsolutePath().toString();
+        File tempFile = temporaryFolder.newFile("export-task-test-specific-encoding");
+        final String destination = tempFile.getAbsolutePath();
         final String encoding = "UTF-8";
 
         final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, false, itemWriter, null));
         pmExportTask.run();
 
-        verify(pmExportTask, times(1)).newOutputFileWriterEncoded(encoding, tempFile);
+        verify(pmExportTask, times(1)).newOutputFileWriterEncoded(encoding, tempFile.toPath());
     }
 }
