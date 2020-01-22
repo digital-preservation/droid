@@ -36,7 +36,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
-import uk.gov.nationalarchives.droid.command.archive.*;
+import uk.gov.nationalarchives.droid.command.archive.ArchiveConfiguration;
+import uk.gov.nationalarchives.droid.command.archive.Bzip2ArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.GZipArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.IsoArchiveContainerIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.RarArchiveContainerIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.SevenZipArchiveContainerIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.ZipArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.TarArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.ArcArchiveContentIdentifier;
+import uk.gov.nationalarchives.droid.command.archive.WarcArchiveContentIdentifier;
 import uk.gov.nationalarchives.droid.command.container.Ole2ContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier;
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
@@ -70,7 +79,6 @@ public class ResultPrinter {
     private static final String ZIP_ARCHIVE = "x-fmt/263";
     private static final String RAR_ARCHIVE = "x-fmt/264";
     private static final String OTHERRAR_ARCHIVE = "fmt/411";
-    private static final String JIP_ARCHIVE = "x-fmt/412";
     private static final String TAR_ARCHIVE = "x-fmt/265";
     private static final String GZIP_ARCHIVE = "x-fmt/266";
     private static final String ARC_ARCHIVE = "x-fmt/219";
@@ -146,9 +154,6 @@ public class ResultPrinter {
         if (finalResults.getResults().size() > 0) {
             for (IdentificationResult identResult : finalResults.getResults()) {
                 String puid = identResult.getPuid();
-                if (!container && JIP_ARCHIVE.equals(puid)) {
-                    puid = ZIP_ARCHIVE;
-                }
                 System.out.println(fileName + "," + puid);
                 if (!container) {
                     switch (puid){
@@ -169,7 +174,6 @@ public class ResultPrinter {
                             }
                             break;
                         case ZIP_ARCHIVE:
-//                        case JIP_ARCHIVE:
                             if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive(ZIP, archiveConfiguration.getExpandArchiveTypes()))) {
                                 ZipArchiveContentIdentifier zipArchiveIdentifier =
                                         new ZipArchiveContentIdentifier(binarySignatureIdentifier,
