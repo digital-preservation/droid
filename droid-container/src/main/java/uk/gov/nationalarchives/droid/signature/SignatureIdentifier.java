@@ -136,8 +136,16 @@ public class SignatureIdentifier implements DroidCore {
     private Path tempDirLocation;
 
     /**
+     * The strategy used to identify file formats.
+     * Instantiate the strategy to be used here (it isn't currently user configurable).
+     * It assists in trying out different match strategies and benchmarking performance.
+     * In normal operation, the default should be ContainerOrBinaryMatching.
+     */
+    private MatchStrategy matchStrategy = new BinaryMatching();
+
+    /**
      * Default bean constructor.
-     * Signature files must be set and init() called before this class is ready for use.
+     * Signature files and desired properties  must be set, and init() called, before this class is ready for use.
      */
     public SignatureIdentifier() { }
 
@@ -155,6 +163,8 @@ public class SignatureIdentifier implements DroidCore {
         init();
     }
 
+    //TODO: constructor with any other properties needed by init().
+
     /**
      * Initialises this droid core with its signature files.
      * 
@@ -171,26 +181,6 @@ public class SignatureIdentifier implements DroidCore {
                 throw new SignatureParseException(e.getMessage(), e);
             }
         }
-    }
-
-    private void createZipIdentifier() throws SignatureFileException {
-        ZipIdentifier zipId = new ZipIdentifier(tempDirLocation);
-        zipId.setContainerType(ZIP_CONTAINER_TYPE);
-        zipId.setMaxBytesToScan(maxBytesToScan);
-        zipId.setSignatureReader(containerSignatureFileReader);
-        zipId.setDroidCore(this);
-        zipId.init();
-        zipIdentifier = zipId;
-    }
-
-    private void createOle2Identifier() throws SignatureFileException {
-        Ole2Identifier ole2Id = new Ole2Identifier(tempDirLocation);
-        ole2Id.setContainerType(OLE2_CONTAINER_TYPE);
-        ole2Id.setMaxBytesToScan(maxBytesToScan);
-        ole2Id.setSignatureReader(containerSignatureFileReader);
-        ole2Id.setDroidCore(this);
-        ole2Id.init();
-        ole2Identifier = ole2Id;
     }
 
     /**
@@ -216,12 +206,7 @@ public class SignatureIdentifier implements DroidCore {
 
     @Override
     public IdentificationResultCollection match(IdentificationRequest request) throws IOException {
-        IdentificationResultCollection results = matchContainerSignatures(request);
-        if (results.getResults().isEmpty()) {
-            results = matchBinarySignatures(request);
-        }
-        removeLowerPriorityHits(results);
-        return processExtensions(request, results);
+        return matchStrategy.match(request);
     }
 
     @Override
@@ -436,7 +421,7 @@ public class SignatureIdentifier implements DroidCore {
     }
 
     /**
-     * Sets the ol2 identifier.
+     * Sets the ole2 identifier.
      * @param ole2Identifier the ole2 identifier.
      */
     public void setOle2Identifier(ContainerIdentifier ole2Identifier) {
@@ -454,6 +439,7 @@ public class SignatureIdentifier implements DroidCore {
     protected IdentificationResultCollection processExtensions(IdentificationRequest<?> request,
                                                                IdentificationResultCollection results) {
         List<IdentificationResult> resultList = results.getResults();
+        //TODO: under what circumstances could the resultList be null?  If it is null, the logic doesn't look correct...
         // If we have no results at all so far:
         if (resultList != null && resultList.isEmpty()) {
             IdentificationResultCollection extensionResults = matchExtensions(request);
@@ -474,26 +460,163 @@ public class SignatureIdentifier implements DroidCore {
     protected void processContainerSignatureTriggerPuids() throws SignatureParseException {
         if (containerSignatureFileReader != null) {
             ContainerSignatureDefinitions definitions = containerSignatureFileReader.getDefinitions();
+            // For each trigger puid, add the signatures for it to the binary sigs that identify its container type.
             for (TriggerPuid trigger : definitions.getTiggerPuids()) {
                 String puid = trigger.getPuid();
-                InternalSignatureCollection binarySignatures = new InternalSignatureCollection();
+                InternalSignatureCollection binarySignatures = getSignaturesForContainerType(trigger.getContainerType());
                 for (InternalSignature sig : getBinarySignatureIdentifier().getSignaturesForPuid(puid)) {
                     binarySignatures.addInternalSignature(sig);
-                }
-                switch (trigger.getContainerType()) {
-                    case ZIP_CONTAINER_TYPE : {
-                        zipBinarySigs = binarySignatures;
-                        break;
-                    }
-                    case OLE2_CONTAINER_TYPE: {
-                        ole2BinarySigs = binarySignatures;
-                        break;
-                    }
-                    default: throw new IllegalArgumentException("The container type is not supported: "
-                                                                + trigger.getContainerType());
                 }
             }
         }
     }
 
+    /**
+     * Returns the collection of binary signatures which identify a type of container.
+     * @param containerType the type of the container (e.g. ZIP, OLE2).
+     * @return The binary signature collection for that container type.
+     * @throws IllegalArgumentException if the container type is unknown.
+     */
+    private InternalSignatureCollection getSignaturesForContainerType(String containerType) {
+        final InternalSignatureCollection binarySignatures;
+        switch (containerType) {
+            case ZIP_CONTAINER_TYPE : {
+                binarySignatures  = zipBinarySigs;
+                break;
+            }
+            case OLE2_CONTAINER_TYPE: {
+                binarySignatures = ole2BinarySigs;
+                break;
+            }
+            default: throw new IllegalArgumentException("The container type is not supported: " + containerType);
+        }
+        return binarySignatures;
+    }
+
+    private void createZipIdentifier() throws SignatureFileException {
+        ZipIdentifier zipId = new ZipIdentifier(tempDirLocation);
+        zipId.setContainerType(ZIP_CONTAINER_TYPE);
+        zipId.setMaxBytesToScan(maxBytesToScan);
+        zipId.setSignatureReader(containerSignatureFileReader);
+        zipId.setDroidCore(this);
+        zipId.init();
+        zipIdentifier = zipId;
+        zipBinarySigs = new InternalSignatureCollection();
+    }
+
+    private void createOle2Identifier() throws SignatureFileException {
+        Ole2Identifier ole2Id = new Ole2Identifier(tempDirLocation);
+        ole2Id.setContainerType(OLE2_CONTAINER_TYPE);
+        ole2Id.setMaxBytesToScan(maxBytesToScan);
+        ole2Id.setSignatureReader(containerSignatureFileReader);
+        ole2Id.setDroidCore(this);
+        ole2Id.init();
+        ole2Identifier = ole2Id;
+        ole2BinarySigs = new InternalSignatureCollection();
+    }
+
+    /**
+     * A simple interface for different signature matching strategies.
+     * This makes it easier to play with different match strategies and compare their performance and results.
+     * There is currently no intention to make this public and configurable, although it could if
+     * there was a demand for users to be able to select different match strategies.
+     */
+    private interface MatchStrategy {
+        IdentificationResultCollection match(IdentificationRequest request) throws IOException;
+    }
+
+    /**
+     * Returns an empty collection of results and does no matching.
+     * Useful to baseline the other match strategies against.
+     * Note you can never process archives with this strategy, as the archival types will not be recognised.
+     */
+    private class NoMatching implements MatchStrategy {
+        @Override
+        public IdentificationResultCollection match(IdentificationRequest request) {
+            IdentificationResultCollection result = new IdentificationResultCollection(request);
+            result.setRequestMetaData(request.getRequestMetaData());
+            result.setFileLength(request.size());
+            return result;
+        }
+    }
+
+    /**
+     * Matches only on extensions.
+     * If you want to process archives, you should set matchAllExtensions to true, as otherwise the archival
+     * types will not be recognised (as there are binary signatures for those extensions, so extensions will not
+     * be matched for them if matchAllExtensions is false).
+     */
+    private class ExtensionMatching implements MatchStrategy {
+        @Override
+        public IdentificationResultCollection match(IdentificationRequest request) {
+            return matchExtensions(request);
+        }
+    }
+
+    /**
+     * Matches binary signatures and extensions.
+     * This is how DROID matched before container signatures were introduced.
+     */
+    private class BinaryMatching implements MatchStrategy {
+        @Override
+        public IdentificationResultCollection match(IdentificationRequest request) {
+            IdentificationResultCollection results = matchBinarySignatures(request);
+            removeLowerPriorityHits(results);
+            return processExtensions(request, results);
+        }
+    }
+
+    /**
+     * Matches container signatures and extensions.
+     * Binary signatures are not run (except the ones which identify ZIP or OLE2 container types).
+     * This isn't a particularly useful strategy, except to benchmark the performance impact of different strategies.
+     */
+    private class ContainerMatching implements MatchStrategy {
+        @Override
+        public IdentificationResultCollection match(IdentificationRequest request) throws IOException {
+            IdentificationResultCollection results = matchContainerSignatures(request);
+            removeLowerPriorityHits(results);
+            return processExtensions(request, results);
+        }
+    }
+
+    /**
+     * Matches binary first, then any container signatures (if we found any binary signatures), then extensions.
+     * If there were no binary matches, we can't have any containers (as we won't have recognised ZIP or OLE2 types).
+     * If there was a result from container matching, that is used, otherwise it uses the binary matches.
+     * This is the strategy used in all earlier versions of DROID that match container signatures.
+     */
+    private class BinaryAndContainerMatching implements MatchStrategy {
+        @Override
+        public IdentificationResultCollection match(IdentificationRequest request) throws IOException {
+            IdentificationResultCollection results = matchBinarySignatures(request);
+            if (!results.getResults().isEmpty()) {
+                IdentificationResultCollection containerResults = matchContainerSignatures(request);
+                if (!containerResults.getResults().isEmpty()) {
+                    results = containerResults;
+                }
+            }
+            removeLowerPriorityHits(results);
+            return processExtensions(request, results);
+        }
+    }
+
+    /**
+     * Matches container first, but only matches binary if there were no results from container matching,
+     * then matches extensions.  This should be more efficient than the traditional strategy, since it
+     * avoids running the binary signatures if we already found a container.  It should give identical
+     * results to the traditional strategy (since it always preferred a container match over any binary
+     * matches, even though it ran both of them).
+     */
+    private class ContainerOrBinaryMatching implements MatchStrategy {
+        @Override
+        public IdentificationResultCollection match(IdentificationRequest request) throws IOException {
+            IdentificationResultCollection results = matchContainerSignatures(request);
+            if (results.getResults().isEmpty()) {
+                results = matchBinarySignatures(request);
+            }
+            removeLowerPriorityHits(results);
+            return processExtensions(request, results);
+        }
+    }
 }
