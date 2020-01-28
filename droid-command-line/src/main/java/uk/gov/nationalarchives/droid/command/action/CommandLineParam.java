@@ -449,9 +449,16 @@ public enum CommandLineParam {
     public static Options noProfileRunSubOptions() {
         Options options = new Options();
 
-        Arrays.asList(SIGNATURE_FILE, CONTAINER_SIGNATURE_FILE, EXTENSION_LIST, ARCHIVES, WEB_ARCHIVES, WEB_ARCHIVE_TYPES, RECURSIVE, QUIET).forEach(
-                option -> options.addOption(option.newOption())
-        );
+        options.addOption(SIGNATURE_FILE.newOption());
+        options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
+        options.addOption(EXTENSION_LIST.newOption());
+        options.addOption(ARCHIVES.newOption());
+        options.addOption(ARCHIVE_TYPES.newOption());
+        options.addOption(WEB_ARCHIVES.newOption());
+        options.addOption(WEB_ARCHIVE_TYPES.newOption());
+        options.addOption(RECURSIVE.newOption());
+        options.addOption(QUIET.newOption());
+
         return options;
     }
 

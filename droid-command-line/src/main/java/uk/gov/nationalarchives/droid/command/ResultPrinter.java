@@ -78,15 +78,16 @@ public class ResultPrinter {
     private static final String ZIP = "ZIP";
     private static final String ZIP_ARCHIVE = "x-fmt/263";
     private static final String RAR_ARCHIVE = "x-fmt/264";
-    private static final String OTHERRAR_ARCHIVE = "fmt/411";
+    private static final String RAR_ARCHIVE_OTHER = "fmt/411";
     private static final String TAR_ARCHIVE = "x-fmt/265";
     private static final String GZIP_ARCHIVE = "x-fmt/266";
     private static final String ARC_ARCHIVE = "x-fmt/219";
-    private static final String OTHERARC_ARCHIVE = "fmt/410";
+    private static final String ARC_ARCHIVE_OTHER = "fmt/410";
     private static final String WARC_ARCHIVE = "fmt/289";
     private static final String ISO_9660 = "fmt/468";
     private static final String SEVEN_ZIP = "fmt/484";
-    private static final String BZIP2_ARCHIVE = "x-fmt/268";
+    private static final String BZIP2_ARCHIVE = "x-fmt/267";
+    private static final String BZIP2_ARCHIVE_OTHER = "x-fmt/268";
 
 
     private BinarySignatureIdentifier binarySignatureIdentifier;
@@ -198,6 +199,7 @@ public class ResultPrinter {
                             }
                             break;
                         case BZIP2_ARCHIVE:
+                        case BZIP2_ARCHIVE_OTHER:
                             if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("BZIP2", archiveConfiguration.getExpandArchiveTypes()))) {
                                 Bzip2ArchiveContentIdentifier bzip2ArchiveContentIdentifier =
                                         new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
@@ -206,7 +208,7 @@ public class ResultPrinter {
                             }
                             break;
                         case RAR_ARCHIVE:
-                        case OTHERRAR_ARCHIVE:
+                        case RAR_ARCHIVE_OTHER:
                             if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("RAR", archiveConfiguration.getExpandArchiveTypes()))) {
                                 RarArchiveContainerIdentifier rarArchiveContentIdentifier =
                                         new RarArchiveContainerIdentifier(binarySignatureIdentifier,
@@ -216,7 +218,7 @@ public class ResultPrinter {
                             break;
 
                         case ARC_ARCHIVE:
-                        case OTHERARC_ARCHIVE:
+                        case ARC_ARCHIVE_OTHER:
                             if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("ARC", archiveConfiguration.getExpandWebArchiveTypes()))) {
                                 ArcArchiveContentIdentifier arcArchiveIdentifier =
                                         new ArcArchiveContentIdentifier(binarySignatureIdentifier,
