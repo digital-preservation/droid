@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
