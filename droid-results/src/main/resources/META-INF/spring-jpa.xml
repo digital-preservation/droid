@@ -54,7 +54,7 @@ each open profile will have its own Spring context.
   </bean>
 
   <!-- Due to complicated initialization we using "factory bean" pattern to create instance of datasource -->
-  <bean id="dataSource" class="uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSourceFactory">
+  <bean id="dataSource" class="uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSource" init-method="init">
     <property name="config" ref="dataSourceConfig" />
     <property name="createUrl" value="${datasource.createUrl}"/>
   </bean>

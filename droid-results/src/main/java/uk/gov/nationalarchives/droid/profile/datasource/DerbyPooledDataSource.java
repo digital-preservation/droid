@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile.datasource;
 
+import java.nio.file.Paths;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 
 /**
  * @author rflitcroft
@@ -48,9 +50,13 @@ import com.zaxxer.hikari.HikariDataSource;
 public class DerbyPooledDataSource extends HikariDataSource {
 
     private static final long serialVersionUID = -8613139738021279720L;
+    private static final String NO_CREATE_URL = "{none}";
+
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final HikariConfig config;
+    private HikariConfig config;
+    private String createUrl = NO_CREATE_URL;
+
 
     /**
      * Constructor.
@@ -59,6 +65,48 @@ public class DerbyPooledDataSource extends HikariDataSource {
      */
     public DerbyPooledDataSource(final HikariConfig config) {
         super(config);
+        this.config = config;
+    }
+
+    public void init() {
+        String droidLogDir = System.getProperty(RuntimeConfig.LOG_DIR);
+        System.setProperty("derby.stream.error.file",
+                Paths.get(droidLogDir, "derby.log").toAbsolutePath().toString());
+        log.debug(String.format("Booting database [%s]", config.getJdbcUrl()));
+        String url = getCreateURL();
+        String driverClassName = getDriverClassName();
+        try {
+            Class.forName(driverClassName);
+            DriverManager.getConnection(url).close();
+        } catch (ClassNotFoundException | SQLException e) {
+            String message = String.format("Problem booting database with driver class: %s.  Error message was: %s",
+                    driverClassName, e.getMessage());
+            log.error(message, e);
+            throw new RuntimeException(message, e);
+        }
+    }
+
+    private String getCreateURL() {
+        String url = config.getJdbcUrl() + ";create=true";
+        if (createUrl != null && !createUrl.isEmpty() && !NO_CREATE_URL.equals(createUrl)) {
+            url = url + ";" + createUrl;
+        }
+        return url;
+    }
+
+    /**
+     * URL to create derby database.
+     * @param createUrl parameter.
+     */
+    public void setCreateUrl(String createUrl) {
+        this.createUrl = createUrl;
+    }
+
+    /**
+     * HikariConfig config.
+     * @param config Database pool configuration.
+     */
+    public void setConfig(HikariConfig config) {
         this.config = config;
     }
 
