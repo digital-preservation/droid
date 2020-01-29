@@ -198,7 +198,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
                 <entry key="7Z" value="${archive.7z}"/>
                 <entry key="ISO" value="${archive.iso}"/>
                 <entry key="RAR" value="${archive.rar}"/>
-                <entry key="FAT" value="fmt/1087"/>
+                <entry key="FAT" value="${archive.fat}}"/>
             </map>
         </property>
     </bean>
