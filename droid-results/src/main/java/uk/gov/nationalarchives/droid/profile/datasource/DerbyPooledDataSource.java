@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 
 /**
@@ -68,6 +69,9 @@ public class DerbyPooledDataSource extends HikariDataSource {
         this.config = config;
     }
 
+    /**
+     * Initialises the derby driver and logging.
+     */
     public void init() {
         String droidLogDir = System.getProperty(RuntimeConfig.LOG_DIR);
         System.setProperty("derby.stream.error.file",
