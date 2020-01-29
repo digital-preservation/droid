@@ -66,7 +66,7 @@ public class TarArchiveContentIdentifierTest {
             Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String tarFile =
             "src/test/resources/testfiles/test.tar";
-    
+
     @Before
     public void setUp() throws CommandExecutionException {
         binarySignatureIdentifier = new BinarySignatureIdentifier();
@@ -86,7 +86,7 @@ public class TarArchiveContentIdentifierTest {
         }
         tarArchiveContentIdentifier =
                 new TarArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/");
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
     
     @After

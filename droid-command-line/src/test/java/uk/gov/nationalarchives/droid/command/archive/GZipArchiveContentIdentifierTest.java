@@ -66,7 +66,7 @@ public class GZipArchiveContentIdentifierTest {
             Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String gZipFile =
             "src/test/resources/testfiles/test.gz";
-    
+
     @Before
     public void setUp() throws CommandExecutionException {
         binarySignatureIdentifier = new BinarySignatureIdentifier();
@@ -86,7 +86,7 @@ public class GZipArchiveContentIdentifierTest {
         }
         gZipArchiveContentIdentifier =
                 new GZipArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", false);
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
     
     @After

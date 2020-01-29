@@ -66,7 +66,7 @@ public class ZipArchiveContentIdentifierTest {
             Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String zipFile =
             "src/test/resources/testfiles/test.zip";
-    
+
     @Before
     public void setUp() throws CommandExecutionException {
         binarySignatureIdentifier = new BinarySignatureIdentifier();
@@ -86,7 +86,7 @@ public class ZipArchiveContentIdentifierTest {
         }
         zipArchiveContentIdentifier =
                 new ZipArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/");
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
     
     @After

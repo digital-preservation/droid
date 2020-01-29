@@ -84,7 +84,7 @@ public class SevenZipArchiveContainerIdentifierTest {
         }
         sevenZipArchiveContainerIdentifier =
                 new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
-                        containerSignatureDefinitions, "", "/", "/");
+                        containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
 
     @Test

@@ -65,7 +65,7 @@ public class IsoArchiveContainerIdentifierTest {
 
         IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
                 new IsoArchiveContainerIdentifier(testHelper.getBinarySignatureIdentifier(),
-                        testHelper.getContainerSignatureDefinitions(), "", "/", "/");
+                        testHelper.getContainerSignatureDefinitions(), "", "/", "/", new ArchiveConfiguration(true, null, true, null));
 
         isoArchiveContainerIdentifier.identify(filePath.toUri(), request);
     }

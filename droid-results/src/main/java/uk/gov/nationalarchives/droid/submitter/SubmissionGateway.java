@@ -356,15 +356,6 @@ public class SubmissionGateway implements AsynchDroid {
     //CHECKSTYLE:ON
 
 
-    /**
-     *
-     * @param format
-     * @return true if a Web Archive format
-     */
-    private Boolean isWebArchiveFormat(String format) {
-        return "ARC".equals(format) || "WARC".equals(format);
-    }
-
     private String getContainerFormat(IdentificationResultCollection results) {
         final List<IdentificationResult> theResults = results.getResults();
         final int numResults = theResults.size(); // use an indexed loop to reduce garbage, don't allocate an iterator.

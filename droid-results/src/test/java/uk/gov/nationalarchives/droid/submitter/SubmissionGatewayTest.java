@@ -104,7 +104,6 @@ public class SubmissionGatewayTest {
 
         ArchiveFormatResolver archiveFormatResolver = mock(ArchiveFormatResolver.class);
         ArchiveHandlerFactory archiveHandlerFactory = mock(ArchiveHandlerFactory.class);
-        when(archiveFormatResolver.forPuid("x-fmt/412")).thenReturn("ZIP");
 
         TrueZipArchiveHandler zipHandler = new TrueZipArchiveHandler();
         zipHandler.setDroidCore(submissionGateway);

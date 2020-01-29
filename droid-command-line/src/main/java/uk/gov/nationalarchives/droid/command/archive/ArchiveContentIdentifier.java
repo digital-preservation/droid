@@ -58,8 +58,7 @@ public abstract class ArchiveContentIdentifier {
     protected ContainerSignatureDefinitions containerSignatureDefinitions;
     protected Path tmpDir;
     protected String path;
-    // CHECKSTYLE:ON
-    private Boolean expandWebArchives;
+    private ArchiveConfiguration archiveConfiguration;
 
     /**
      * Initialization of instance values must be explicitly called by all children.
@@ -68,12 +67,12 @@ public abstract class ArchiveContentIdentifier {
      * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param expandWebArchives             optionally expand (W)ARC files
+     * @param archiveConfiguration          configuration to expand archives and web archives
      */
     public ArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
-                                       final ContainerSignatureDefinitions containerSignatureDefinitions,
-                                       final String path, final String slash, final String slash1,
-                                       final Boolean expandWebArchives) {
+                                    final ContainerSignatureDefinitions containerSignatureDefinitions,
+                                    final String path, final String slash, final String slash1,
+                                    final ArchiveConfiguration archiveConfiguration) {
 
         synchronized (this) {
             setBinarySignatureIdentifier(binarySignatureIdentifier);
@@ -81,7 +80,7 @@ public abstract class ArchiveContentIdentifier {
             setPath(path);
             setSlash(slash);
             setSlash1(slash1);
-            setExpandWebArchives(expandWebArchives);
+            setArchiveConfiguration(archiveConfiguration);
             if (getTmpDir() == null) {
                 setTmpDir(Paths.get(System.getProperty("java.io.tmpdir")));
             }
@@ -160,18 +159,6 @@ public abstract class ArchiveContentIdentifier {
     protected void setPath(String path) {
         this.path = path;
     }
-    /**
-     * @return whether to expand (W)ARCs
-     */
-    protected Boolean getExpandWebArchives() {
-        return expandWebArchives;
-    }
-    /**
-     * @param ewa whether to expand (W)ARCs
-     */
-    protected void setExpandWebArchives(Boolean ewa) {
-        this.expandWebArchives = ewa;
-    }
 
     /**
      *
@@ -199,7 +186,7 @@ public abstract class ArchiveContentIdentifier {
             // CHECKSTYLE:OFF
             final ResultPrinter resultPrinter =
                     new ResultPrinter(getBinarySignatureIdentifier(),
-                            getContainerSignatureDefinitions(), newPath, getSlash(), getSlash1(), true, getExpandWebArchives());
+                            getContainerSignatureDefinitions(), newPath, getSlash(), getSlash1(), getArchiveConfiguration());
             // CHECKSTYLE:ON
             resultPrinter.print(results, request);
             request.close();
@@ -216,4 +203,19 @@ public abstract class ArchiveContentIdentifier {
         }
     }
 
+    /**
+     *
+     * @return configuration to expand web archives and archives
+     */
+    public ArchiveConfiguration getArchiveConfiguration() {
+        return archiveConfiguration;
+    }
+
+    /**
+     *
+     * @param archiveConfiguration configuration to expand web archives and archives
+     */
+    public void setArchiveConfiguration(ArchiveConfiguration archiveConfiguration) {
+        this.archiveConfiguration = archiveConfiguration;
+    }
 }
