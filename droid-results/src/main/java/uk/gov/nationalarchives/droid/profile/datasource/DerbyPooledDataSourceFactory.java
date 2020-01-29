@@ -138,7 +138,7 @@ public class DerbyPooledDataSourceFactory implements FactoryBean<DerbyPooledData
 
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
 
