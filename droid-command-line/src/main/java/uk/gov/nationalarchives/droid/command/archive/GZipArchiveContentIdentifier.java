@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,20 +60,20 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
 
 
     /**
-     * 
+     *
      * @param binarySignatureIdentifier     binary signature identifier
      * @param containerSignatureDefinitions container signatures
-     * @param path                          current archive path 
+     * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
-     * @param webArchives                   Whether to further expand gzipped web archive files
+     * @param archiveConfiguration          configuration to expand archives and web archives
      */
     public GZipArchiveContentIdentifier(final BinarySignatureIdentifier binarySignatureIdentifier,
-            final ContainerSignatureDefinitions containerSignatureDefinitions,
-            final String path, final String slash, final String slash1, final Boolean webArchives) {
+                                        final ContainerSignatureDefinitions containerSignatureDefinitions,
+                                        final String path, final String slash, final String slash1, final ArchiveConfiguration archiveConfiguration) {
 
        super(binarySignatureIdentifier, containerSignatureDefinitions, path,
-            slash, slash1, webArchives);
+            slash, slash1, archiveConfiguration);
 
     }
 
@@ -104,7 +104,7 @@ public class GZipArchiveContentIdentifier extends ArchiveContentIdentifier {
                     binarySignatureIdentifier.matchBinarySignatures(gzRequest);
 
             final ResultPrinter resultPrinter = new ResultPrinter(binarySignatureIdentifier,
-                    containerSignatureDefinitions, newPath, slash, slash1, true, super.getExpandWebArchives());
+                    containerSignatureDefinitions, newPath, slash, slash1, super.getArchiveConfiguration());
             resultPrinter.print(gzResults, gzRequest);
         } catch (IOException ioe) {
             System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive

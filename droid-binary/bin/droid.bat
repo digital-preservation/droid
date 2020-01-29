@@ -1,5 +1,5 @@
 @REM
-@REM Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+@REM Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
 @REM All rights reserved.
 @REM
 @REM Redistribution and use in source and binary forms, with or without
@@ -72,9 +72,9 @@ REM SET droidLog=
 REM Log configuration: 
 REM ------------------
 REM This is the location of the lo4j configuration file to use.
-REM By default, it will use a file called "log4j.properties"
+REM By default, it will use a file called "log4j2.properties"
 REM which is found under the droidUserDir.
-REM Also configure this property using the environment variable: log4j.configuration
+REM Also configure this property using the environment variable: log4j.configurationFile
 REM Remove the "REM " from the line below and set the log config file path after the "=".
 REM SET log4j=
 
@@ -120,7 +120,7 @@ SET DROID_OPTIONS=%DROID_OPTIONS% "-DdroidLogDir=%droidLog%"
 
 :Log4JConfig
 IF "%log4j%"=="" GOTO LogLevel
-SET DROID_OPTIONS=%DROID_OPTIONS% "-Dlog4j.configuration=%log4j%"
+SET DROID_OPTIONS=%DROID_OPTIONS% "-Dlog4j.configurationFile=%log4j%"
 
 :LogLevel
 IF "%logLevel%"=="" GOTO RunDROID

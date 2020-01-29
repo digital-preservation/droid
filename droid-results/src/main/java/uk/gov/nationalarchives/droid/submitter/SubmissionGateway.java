@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -355,15 +355,6 @@ public class SubmissionGateway implements AsynchDroid {
     }
     //CHECKSTYLE:ON
 
-
-    /**
-     *
-     * @param format
-     * @return true if a Web Archive format
-     */
-    private Boolean isWebArchiveFormat(String format) {
-        return "ARC".equals(format) || "WARC".equals(format);
-    }
 
     private String getContainerFormat(IdentificationResultCollection results) {
         final List<IdentificationResult> theResults = results.getResults();

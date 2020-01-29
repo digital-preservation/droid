@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,8 +44,10 @@ import static org.mockito.Mockito.when;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
+import org.junit.rules.TemporaryFolder;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 
 
@@ -58,7 +60,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 public class ReportExportTest {
 
     private ReportTransformerImpl reportTransformer;
-    
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @BeforeClass
     public static void init() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -149,28 +154,21 @@ public class ReportExportTest {
     @Test
     public void testPdfTransform() throws Exception {
 
-        Path pdf = Paths.get("myPdf.pdf");
-        Files.deleteIfExists(pdf);
-
-        // Create a tmp dir
-        Path tmp = Files.createTempDirectory("tmp");
+        final File pdf = temporaryFolder.newFile("myPdf.pdf");
 
         DroidGlobalConfig globalConfig = mock(DroidGlobalConfig.class);
-        when(globalConfig.getTempDir()).thenReturn(tmp);
+        when(globalConfig.getTempDir()).thenReturn(temporaryFolder.getRoot().toPath());
         reportTransformer.setConfig(globalConfig);
-
-        assertFalse(Files.exists(pdf));
 
         try (final InputStream in = getClass().getClassLoader().getResourceAsStream("test-report.xml");
              final Reader reader = new BufferedReader(new InputStreamReader(in));
-             final OutputStream pdfOut = Files.newOutputStream(pdf)) {
+             final OutputStream pdfOut = Files.newOutputStream(pdf.toPath())) {
 
             reportTransformer.transformToPdf(reader, "Web page.html.xsl", pdfOut);
         }
 
-        assertTrue(Files.exists(pdf));
-        assertTrue(Files.size(pdf) > 1000);
-        assertTrue(Files.size(pdf) < 5000);
-        
+        assertTrue(Files.exists(pdf.toPath()));
+        assertTrue(Files.size(pdf.toPath()) > 1000);
+        assertTrue(Files.size(pdf.toPath()) < 5000);
     }
 }
