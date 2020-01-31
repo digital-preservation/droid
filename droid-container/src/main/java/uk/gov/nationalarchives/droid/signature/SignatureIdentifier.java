@@ -141,7 +141,7 @@ public class SignatureIdentifier implements DroidCore {
      * It assists in trying out different match strategies and benchmarking performance.
      * In normal operation, the default should be ContainerOrBinaryMatching.
      */
-    private MatchStrategy matchStrategy = new BinaryMatching();
+    private MatchStrategy matchStrategy = new ContainerOrBinaryMatching();
 
     /**
      * Default bean constructor.
@@ -156,7 +156,7 @@ public class SignatureIdentifier implements DroidCore {
      * @param containerSignatureFileReader A class which can parse a container signature file and cache the parsed definitions.
      * @throws SignatureParseException if there was a problem parsing the binary signatures.
      */
-    public SignatureIdentifier(URI signatureFile, ContainerSignatureFileReader containerSignatureFileReader)
+    public SignatureIdentifier(String signatureFile, ContainerSignatureFileReader containerSignatureFileReader)
             throws SignatureParseException {
         setSignatureFile(signatureFile);
         setContainerSignatureFileReader(containerSignatureFileReader);
@@ -402,14 +402,6 @@ public class SignatureIdentifier implements DroidCore {
      */
     public void setContainerSignatureFileReader(ContainerSignatureFileReader containerSignatureFileReader) {
         this.containerSignatureFileReader = containerSignatureFileReader;
-    }
-
-    /**
-     * Sets the signature file URI to parse.
-     * @param signatureFileURI the URI of the signature file to parse.
-     */
-    public void setSignatureFile(URI signatureFileURI) {
-        this.signatureFile = signatureFileURI;
     }
 
     /**
