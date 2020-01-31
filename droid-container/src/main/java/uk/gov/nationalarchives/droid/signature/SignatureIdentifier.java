@@ -141,7 +141,7 @@ public class SignatureIdentifier implements DroidCore {
      * It assists in trying out different match strategies and benchmarking performance.
      * In normal operation, the default should be ContainerOrBinaryMatching.
      */
-    private MatchStrategy matchStrategy = new ContainerOrBinaryMatching();
+    private MatchStrategy matchStrategy = new BinaryAndContainerMatching();
 
     /**
      * Default bean constructor.
