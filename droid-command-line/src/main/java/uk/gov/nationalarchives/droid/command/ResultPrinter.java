@@ -84,6 +84,8 @@ public class ResultPrinter {
     private static final String ARC_ARCHIVE = "x-fmt/219";
     private static final String ARC_ARCHIVE_OTHER = "fmt/410";
     private static final String WARC_ARCHIVE = "fmt/289";
+    private static final String WARC_ARCHIVE_1_1 = "fmt/1281";
+    private static final String WARC_ARCHIVE_1_0 = "fmt/1355";
     private static final String ISO_9660 = "fmt/468";
     private static final String SEVEN_ZIP = "fmt/484";
     private static final String BZIP2_ARCHIVE = "x-fmt/267";
@@ -227,6 +229,8 @@ public class ResultPrinter {
                             }
                             break;
                         case WARC_ARCHIVE:
+                        case WARC_ARCHIVE_1_0:
+                        case WARC_ARCHIVE_1_1:
                             if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("WARC", archiveConfiguration.getExpandWebArchiveTypes()))) {
                                 WarcArchiveContentIdentifier warcArchiveIdentifier =
                                         new WarcArchiveContentIdentifier(binarySignatureIdentifier,

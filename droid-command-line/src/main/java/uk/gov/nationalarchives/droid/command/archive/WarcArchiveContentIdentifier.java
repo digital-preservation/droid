@@ -103,10 +103,11 @@ public class WarcArchiveContentIdentifier extends ArchiveContentIdentifier {
                         && httpACCEPTED == record.getHttpHeader().statusCode) {
                         // no directory structure, so we use the full url as name
                         String name = record.header.warcTargetUriStr;
+                        Long time = record.header.warcDate == null ? null : record.header.warcDate.getTime();
 
                         RequestMetaData metaData = new RequestMetaData(
                             record.header.contentLength,
-                            record.header.warcDate.getTime(),
+                            time,
                             name);
 
                         final RequestIdentifier identifier = new RequestIdentifier(uri);
