@@ -65,6 +65,8 @@
     <suppress checks="MagicNumber|ClassFanOutComplexity|Javadoc|IllegalThrows|MultipleStringLiterals|ExecutableStatementCount|EmptyBlock|JavaNCSS"
               files=".*Test\.java$"/>
 
+    <suppress checks="ClassDataAbstractionCoupling|ClassFanOutComplexity" files=".*SignatureIdentifier.java"/>
+
     <!--
       Turn off all checks for Generated and Test code. Fixes issues with using
       Eclipse plug-in.
