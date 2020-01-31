@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
+import uk.gov.nationalarchives.droid.command.archive.ArchiveConfiguration;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.signature.SignatureIdentifier;
@@ -78,7 +79,9 @@ public class NoProfileRunCommand implements DroidCommand {
     private static final String BACKWARD_SLASH = "\\";
     private static final String PRINTABLE_TRUE = "True";
     private static final String PRINTABLE_FALSE = "False";
-    
+    private static final String PRINTABLE_ALL = "All";
+    private static final String PRINTABLE_NONE = "None";
+
     private String fileSignaturesFileName;
     private String containerSignaturesFileName;
     private String[] resources;
@@ -86,8 +89,11 @@ public class NoProfileRunCommand implements DroidCommand {
     private int maxBytesToScan = -1;
     private boolean quietFlag;
     private boolean recursive;
-    private boolean archives;
-    private boolean webArchives;
+    private boolean expandAllArchives;
+    private String[] expandArchiveTypes;
+    private boolean expandAllWebArchives;
+    private String[] expandWebArchiveTypes;
+
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     //CHECKSTYLE:OFF
@@ -174,7 +180,7 @@ public class NoProfileRunCommand implements DroidCommand {
         path = "";
         ResultPrinter resultPrinter =
             new ResultPrinter(binarySignatureIdentifier, containerSignatureDefinitions,
-                path, slash, slash, archives, webArchives);
+                path, slash, slash, new ArchiveConfiguration(expandAllArchives, expandArchiveTypes, expandAllWebArchives, expandWebArchiveTypes));
 
         for (final Path file : matchedFiles) {
             final String fileName = file.toAbsolutePath().toString();
@@ -238,8 +244,10 @@ public class NoProfileRunCommand implements DroidCommand {
             }
         }
         
-        System.out.println("Open archives: " + (this.archives ? PRINTABLE_TRUE : PRINTABLE_FALSE));
-        System.out.println("Open web archives: " + (this.webArchives ? PRINTABLE_TRUE : PRINTABLE_FALSE));
+        System.out.println("Open archives: " + (this.expandAllArchives ? PRINTABLE_ALL :
+                (this.expandArchiveTypes!=null && this.expandArchiveTypes.length>0 ? String.join(", ", this.expandArchiveTypes) : PRINTABLE_NONE)));
+        System.out.println("Open web archives: " + (this.expandAllWebArchives ? PRINTABLE_ALL :
+                (this.expandWebArchiveTypes !=null && this.expandWebArchiveTypes.length>0 ? String.join(", ", this.expandWebArchiveTypes) : PRINTABLE_NONE)));
     }
     //CHECKSTYLE:ON
     /**
@@ -268,24 +276,16 @@ public class NoProfileRunCommand implements DroidCommand {
     public void setContainerSignatureFile(final String containerSignatureFile) {
         this.containerSignaturesFileName = containerSignatureFile;
     }
-    
-    /**
-     * Set whether this examines Archives.
-     * 
-     * @param archives true if we should examine archives, false otherwise
-     */
-    public void setArchives(boolean archives) {
-        this.archives = archives;
-    }
 
     /**
      * Set whether this examines Web Archives.
      *
-     * @param webArchives true if we should examine web archives, false otherwise
+     * @param expandAllWebArchives true if we should examine web archives, false otherwise
      */
-    public void setWebArchives(boolean webArchives) {
-        this.webArchives = webArchives;
+    public void setExpandAllWebArchives(boolean expandAllWebArchives) {
+        this.expandAllWebArchives = expandAllWebArchives;
     }
+
     /**
      * Set recursive.
      * 
@@ -312,5 +312,30 @@ public class NoProfileRunCommand implements DroidCommand {
      */
     public void setQuiet(final boolean quiet) {
         this.quietFlag = quiet;
+    }
+
+    /**
+     *
+     * @param expandWebArchiveTypes       list of web archive types to expand
+     */
+    public void setExpandWebArchiveTypes(String[] expandWebArchiveTypes) {
+        this.expandWebArchiveTypes = expandWebArchiveTypes;
+    }
+
+    /**
+     * Set whether this examines Archives.
+     *
+     * @param expandAllArchives true if we should examine archives, false otherwise
+     */
+    public void setExpandAllArchives(boolean expandAllArchives) {
+        this.expandAllArchives = expandAllArchives;
+    }
+
+    /**
+     *
+     * @param expandArchiveTypes       list of web archive types to expand
+     */
+    public void setExpandArchiveTypes(String[] expandArchiveTypes) {
+        this.expandArchiveTypes = expandArchiveTypes;
     }
 }

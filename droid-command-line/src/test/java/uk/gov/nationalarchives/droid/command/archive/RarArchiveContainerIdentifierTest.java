@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ public class RarArchiveContainerIdentifierTest {
         }
         rarArchiveContainerIdentifier =
                 new RarArchiveContainerIdentifier(binarySignatureIdentifier,
-                        containerSignatureDefinitions, "", "/", "/");
+                        containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
 
     @Test

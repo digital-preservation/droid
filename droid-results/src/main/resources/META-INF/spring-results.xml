@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -157,7 +157,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
                 <entry key="7Z" value="${archive.7z}"/>
                 <entry key="ISO" value="${archive.iso}"/>
                 <entry key="RAR" value="${archive.rar}"/>
-                <entry key="FAT" value="fmt/1087"/>
+                <entry key="FAT" value="${archive.fat}}"/>
             </map>
         </property>
     </bean>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,9 @@ import java.nio.file.Paths;
 import org.junit.After;
 import static org.junit.Assert.fail;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
@@ -65,7 +67,10 @@ public class ArcArchiveContentIdentifierTest {
             Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
     private String arcFile =
             "src/test/resources/testfiles/expanded.arc";
-    
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @Before
     public void setUp() throws CommandExecutionException {
         binarySignatureIdentifier = new SignatureIdentifier();
@@ -85,7 +90,7 @@ public class ArcArchiveContentIdentifierTest {
         }
         arcArchiveContentIdentifier =
                 new ArcArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/");
+                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
     }
     
     @After
@@ -110,7 +115,7 @@ public class ArcArchiveContentIdentifierTest {
             RequestMetaData metaData = new RequestMetaData(
                     Files.size(file), Files.getLastModifiedTime(file).toMillis(), fileName);
             WebArchiveEntryIdentificationRequest request =
-                new WebArchiveEntryIdentificationRequest(metaData, identifier, Paths.get("src/test/resources/temp"));
+                new WebArchiveEntryIdentificationRequest(metaData, identifier, Paths.get(temporaryFolder.getRoot().getAbsolutePath()));
 
             try(final InputStream arcStream = Files.newInputStream(file)) {
                 request.open(arcStream);

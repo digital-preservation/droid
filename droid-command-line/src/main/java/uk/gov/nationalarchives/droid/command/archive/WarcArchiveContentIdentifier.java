@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,18 +58,18 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class WarcArchiveContentIdentifier extends ArchiveContentIdentifier {
 
     /**
-     * 
-     * @param binarySignatureIdentifier     binary signature identifier
+     *  @param binarySignatureIdentifier     binary signature identifier
      * @param containerSignatureDefinitions container signatures
-     * @param path                          current archive path 
+     * @param path                          current archive path
      * @param slash                         local path element delimiter
      * @param slash1                        local first container prefix delimiter
+     * @param archiveConfiguration          configuration to expand archives and web archives
      */
     public WarcArchiveContentIdentifier(final SignatureIdentifier binarySignatureIdentifier,
-            final ContainerSignatureDefinitions containerSignatureDefinitions,
-            final String path, final String slash, final String slash1) {
+                                        final ContainerSignatureDefinitions containerSignatureDefinitions,
+                                        final String path, final String slash, final String slash1, ArchiveConfiguration archiveConfiguration) {
     
-        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, false);
+        super(binarySignatureIdentifier, containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
     }
     
     /**
@@ -103,10 +103,11 @@ public class WarcArchiveContentIdentifier extends ArchiveContentIdentifier {
                         && httpACCEPTED == record.getHttpHeader().statusCode) {
                         // no directory structure, so we use the full url as name
                         String name = record.header.warcTargetUriStr;
+                        Long time = record.header.warcDate == null ? null : record.header.warcDate.getTime();
 
                         RequestMetaData metaData = new RequestMetaData(
                             record.header.contentLength,
-                            record.header.warcDate.getTime(),
+                            time,
                             name);
 
                         final RequestIdentifier identifier = new RequestIdentifier(uri);

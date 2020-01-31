@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -335,7 +335,7 @@ public class FFSignatureFile extends SimpleElement {
         return results;
     }
 
-    
+
     /*
      * Ensures that each internal signature does whatever it needs to do
      * to ensure its own best performance.

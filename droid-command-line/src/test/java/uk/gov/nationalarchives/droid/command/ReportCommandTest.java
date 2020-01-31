@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
@@ -73,6 +75,9 @@ public class ReportCommandTest {
     private ProfileManager profileManager;
     private ReportManager reportManager;
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @Before
     public void setup() {
         reportCommand = new ReportCommand();
@@ -82,14 +87,12 @@ public class ReportCommandTest {
         
         reportCommand.setProfileManager(profileManager);
         reportCommand.setReportManager(reportManager);
-        
     }
 
     @Test
     public void testReportCommandWithNonExistentCustomReportName() throws Exception {
         final String profileLocation = "profiles/12345.droid";
-        final String destination = "tmp/destination.xml";
-        Files.createDirectories(Paths.get("tmp"));
+        final String destination = temporaryFolder.newFile("destination.xml").getAbsolutePath();
         final String profileId = "12345";
         
         final ProfileInstance profile = mock(ProfileInstance.class);
@@ -115,8 +118,7 @@ public class ReportCommandTest {
     @Test
     public void testReportCommandWithCustomReportName() throws Exception {
         final String profileLocation = "profiles/12345.droid";
-        final String destination = "tmp/destination.xml";
-        Files.createDirectories(Paths.get("tmp"));
+        final String destination = temporaryFolder.newFile("destination.xml").getAbsolutePath();
         final String profileId = "12345";
         
         

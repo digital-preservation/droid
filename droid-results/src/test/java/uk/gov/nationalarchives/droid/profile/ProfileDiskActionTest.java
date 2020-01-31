@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,9 @@ import static org.mockito.Mockito.verify;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.AdditionalMatchers;
 
 
@@ -63,8 +65,11 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
  *
  */
 public class ProfileDiskActionTest {
-	
-	Path profilesDir;
+
+    File profilesDir;
+    File destinationDir;
+
+	Path profilesDirPath;
     Path profileToSaveDir;
     Path profileToLoadDir;
     Path profileXml;
@@ -73,18 +78,24 @@ public class ProfileDiskActionTest {
     Path file2;
     Path file3;
     Path file4;
-    Path tmpDir;
     Path destination;
-		
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 	@Before
 	public void setUp() throws Exception {
-		profilesDir = Paths.get("profiles");
-        FileUtil.mkdirsQuietly(profilesDir);
 
-		profileToSaveDir = profilesDir.resolve("profileToSave");
+	    profilesDir = temporaryFolder.newFolder("profiles");
+	    profilesDir.mkdir();
+
+		profilesDirPath =  profilesDir.toPath();
+        FileUtil.mkdirsQuietly(profilesDirPath);
+
+		profileToSaveDir = profilesDirPath.resolve("profileToSave");
         FileUtil.mkdirsQuietly(profileToSaveDir);
 
-		profileToLoadDir = profilesDir.resolve("myProfile");
+		profileToLoadDir = profilesDirPath.resolve("myProfile");
 
 		profileXml = profileToSaveDir.resolve("profile.xml");
         Files.createFile(profileXml);
@@ -105,17 +116,17 @@ public class ProfileDiskActionTest {
         file4 = dbDir.resolve("file4");
         Files.createFile(file4);
 
-        tmpDir = Paths.get("tmp");
-        FileUtil.mkdirsQuietly(tmpDir);
+        destinationDir = temporaryFolder.newFolder("destination");
+        destinationDir.mkdir();
 
-        destination = tmpDir.resolve("saved.drd");
+        destination = temporaryFolder.newFile("destination/saved.drd").toPath();
 	}
 
 	@Test
     public void testSaveProfileToFile() throws Exception {
         ProgressObserver callback = mock(ProgressObserver.class);
         ProfileDiskAction action = new ProfileDiskAction();
-        action.saveProfile(Paths.get("profiles", "profileToSave"), destination, callback);
+        action.saveProfile(Paths.get(profilesDir.getAbsolutePath(), "profileToSave"), destination, callback);
         //assertTrue(destination.exists());
 
         /* check the destination is a zip file with the following entries:
@@ -156,9 +167,6 @@ public class ProfileDiskActionTest {
         final Path source = Paths.get("test-profiles/saved.drd");
         assertTrue(Files.exists(source));
 
-        //File destination = new File(profilesDir, "myProfile");
-        //FileUtils.deleteQuietly(destination);
-
         ProgressObserver observer = mock(ProgressObserver.class);
 
         ProfileDiskAction profileDiskAction = new ProfileDiskAction();
@@ -172,7 +180,8 @@ public class ProfileDiskActionTest {
         assertTrue(Files.isRegularFile(profileToLoadDir.resolve("db/file4")));
 
         // check that profiles.xml was unzipped OK
-        InputStream in = new FileInputStream("profiles/myProfile/profile.xml");
+        String profileXml = profilesDir.getAbsolutePath() + "/myProfile/profile.xml";
+        InputStream in = new FileInputStream(profileXml);
 
         StringBuilder sb = new StringBuilder();
         int bytesIn = 0;
@@ -200,42 +209,4 @@ public class ProfileDiskActionTest {
     	return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
                 + "<profiles/>";
     }
-    
-    @After
-    public void tearDown() throws IOException {
-    	if(Files.exists(destination)) {
-    		destination.toFile().deleteOnExit();
-    	}
-    	if(Files.exists(tmpDir)) {
-    		tmpDir.toFile().deleteOnExit();
-    	}
-    	if(Files.exists(file2)){
-            Files.delete(file2);
-    	}
-    	if(Files.exists(file3)) {
-            Files.delete(file3);
-    	}
-    	if(Files.exists(file4)) {
-            Files.delete(file4);
-    	}
-    	if(Files.exists(serviceProperties)) {
-            Files.delete(serviceProperties);
-    	}
-    	if(Files.exists(dbDir)) {
-    		dbDir.toFile().deleteOnExit();
-    	}
-    	if(Files.exists(profileXml)) {
-    		Files.delete(profileXml);
-    	}
-    	if(Files.exists(profileToSaveDir)) {
-    		profileToSaveDir.toFile().deleteOnExit();
-    	}
-    	if(Files.exists(profileToLoadDir)) {
-    		profileToLoadDir.toFile().deleteOnExit();
-    	}
-    	if(Files.exists(profilesDir)) {
-    		profilesDir.toFile().deleteOnExit();
-    	}
-    }
-
 }

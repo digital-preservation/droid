@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
     public ContainerFileIdentificationRequest(final Path tempDir) {
         this.tempDir = tempDir;
     }
-    
+
     @Override
     public final void open(final InputStream in) throws IOException {
         reader = ResourceUtils.getStreamReader(in, tempDir, TOP_TAIL_CAPACITY);
@@ -79,7 +79,7 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
     public final void close() throws IOException {
         reader.close();
     }
-    
+
     @Override
     public final byte getByte(long position) throws IOException {
         final int result = reader.readByte(position);
@@ -88,7 +88,7 @@ public class ContainerFileIdentificationRequest implements IdentificationRequest
         }
         return (byte) result;
     }
-        
+
     @Override
     public final String getExtension() {
         return null;

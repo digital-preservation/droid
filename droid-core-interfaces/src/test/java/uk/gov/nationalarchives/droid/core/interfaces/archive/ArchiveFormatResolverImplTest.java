@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,6 @@ public class ArchiveFormatResolverImplTest {
     
     @Test
     public void testForPuid() {
-        assertEquals("ZIP", formatResolver.forPuid("x-fmt/412"));
         assertEquals("ZIP", formatResolver.forPuid("x-fmt/263"));
         assertEquals("TAR", formatResolver.forPuid("x-fmt/265"));
         assertEquals("GZ", formatResolver.forPuid("x-fmt/266"));

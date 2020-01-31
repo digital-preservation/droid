@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -138,7 +138,7 @@ public class DerbyPooledDataSourceFactory implements FactoryBean<DerbyPooledData
 
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
 

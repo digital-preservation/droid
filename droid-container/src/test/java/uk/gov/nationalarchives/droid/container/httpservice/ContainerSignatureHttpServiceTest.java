@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.container.httpservice;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,8 +46,10 @@ import static org.mockito.Mockito.when;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
+import org.junit.rules.TemporaryFolder;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
@@ -59,6 +62,9 @@ public class ContainerSignatureHttpServiceTest {
 
     private ContainerSignatureHttpService httpService;
     private ProxySettings proxySettings;
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
     
     @Before
     public void setup() {
@@ -103,14 +109,12 @@ public class ContainerSignatureHttpServiceTest {
         when(proxySettings.isEnabled()).thenReturn(false);
         httpService.onProxyChange(proxySettings);
 
-        final Path tmpDir = Paths.get("tmp");
-        FileUtils.deleteQuietly(tmpDir.toFile());
+        final File tmpDir = temporaryFolder.newFolder("testImportSignatureFileEmptyFolder");
+        tmpDir.mkdir();
 
-        Files.createDirectories(tmpDir);
-        assertEquals(0, tmpDir.toFile().list().length);
         SignatureFileInfo sigFileInfo;
         try {
-            sigFileInfo = httpService.importSignatureFile(tmpDir);
+            sigFileInfo = httpService.importSignatureFile(tmpDir.toPath());
             assertEquals(false, sigFileInfo.isDeprecated());
             //assertEquals(20110114, sigFileInfo.getVersion());
             assertTrue(sigFileInfo.getVersion() > 20110114);
@@ -119,7 +123,7 @@ public class ContainerSignatureHttpServiceTest {
             e.printStackTrace();
         }
         
-        assertEquals(1, tmpDir.toFile().list().length);
+        assertEquals(1, tmpDir.list().length);
     }
     
     //TODO this only works inside of TNA! We need to mock out the proxy call!
@@ -131,14 +135,13 @@ public class ContainerSignatureHttpServiceTest {
         when(proxySettings.getProxyPort()).thenReturn(8080);
         httpService.onProxyChange(proxySettings);
 
-        final Path tmpDir = Paths.get("tmp");
-        FileUtils.deleteQuietly(tmpDir.toFile());
+        final File tmpDir = temporaryFolder.newFolder("testImportSignatureFileViaProxy");
+        tmpDir.mkdir();
 
-        Files.createDirectories(tmpDir);
-        assertEquals(0, tmpDir.toFile().list().length);
+        assertEquals(0, tmpDir.list().length);
         SignatureFileInfo sigFileInfo;
         try {
-            sigFileInfo = httpService.importSignatureFile(tmpDir);
+            sigFileInfo = httpService.importSignatureFile(tmpDir.toPath());
             assertEquals(false, sigFileInfo.isDeprecated());
             //assertEquals(20110114, sigFileInfo.getVersion());
             assertTrue(sigFileInfo.getVersion() > 20110114);
@@ -147,6 +150,6 @@ public class ContainerSignatureHttpServiceTest {
             e.printStackTrace();
         }
 
-        assertEquals(1, tmpDir.toFile().list().length);
+        assertEquals(1, tmpDir.list().length);
     }
 }

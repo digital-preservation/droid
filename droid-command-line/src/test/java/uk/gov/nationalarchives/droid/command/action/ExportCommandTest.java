@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,27 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Future;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
-
-import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
+import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -62,17 +48,33 @@ import uk.gov.nationalarchives.droid.profile.ProfileInstance;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 /**
  * @author rflitcroft
  *
  */
 public class ExportCommandTest {
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @Test
     public void testExportThreeProfiles() throws Exception {
-        
-        final String destination = Files.createTempFile("droid", "exportCommandTest").toAbsolutePath().toString();
-        
+        final String destination = temporaryFolder.newFile("exportCommandTest").getAbsolutePath();
+
         ExportManager exportManager = mock(ExportManager.class);
         ProfileManager profileManager = mock(ProfileManager.class);
         
@@ -108,7 +110,6 @@ public class ExportCommandTest {
         };
         
         verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8", false);
-        
     }
 
     @Test
@@ -144,8 +145,7 @@ public class ExportCommandTest {
         
         command.setFilter(cliFilter);
         command.execute();
-        
-        
+
         String[] expectedExportedProfiles = new String[] {
             "profile1",
         };
@@ -154,7 +154,6 @@ public class ExportCommandTest {
         verify(exportManager).exportProfiles(eq(Arrays.asList(expectedExportedProfiles)), 
                 eq("destination"), filterCaptor.capture(), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false));
 
-        
         Filter filter = filterCaptor.getValue();
         final List<FilterCriterion> criteria = filter.getCriteria();
         assertEquals(2, criteria.size());

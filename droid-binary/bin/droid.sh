@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+# Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,13 +65,13 @@ droidTempDir=""
 # variable of the same name.
 droidLogDir=""
 
-# Log configuration: log4j
+# Log configuration: log4j2
 # ------------------------
-# This is the location of the lo4j configuration file to use.
-# By default, it will use a file called "log4j.properties"
+# This is the location of the log4j2 configuration file to use.
+# By default, it will use a file called "log4j2.properties"
 # which is found under the droidWorkDir.
 # It can be configured using this setting, or by an environment
-# variable called log4j.configuration
+# variable called log4j.configurationFile
 log4j=""
 
 # Default console logging level
@@ -136,7 +136,7 @@ if [ -n "$droidLogDir" ]; then
     OPTIONS=$OPTIONS" -DdroidLogDir=$droidLogDir"
 fi
 if [ -n "$log4j" ]; then
-    OPTIONS=$OPTIONS" -Dlog4j.configuration=$log4j"
+    OPTIONS=$OPTIONS" -Dlog4j.configurationFile=$log4j"
 fi
 if [ -n "$logLevel" ]; then
     OPTIONS=$OPTIONS" -DconsoleLogThreshold=$logLevel"

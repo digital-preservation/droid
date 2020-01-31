@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -478,7 +478,7 @@
     </h3>
     <p>
        Specify the signature file to be used for identification. This must be used
-       each time no-profile mode is called. 
+       each time no-profile mode is called. Optional if the signature file is included in path used for -Nr option.
     </p>
     <p>
       <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
@@ -526,16 +526,28 @@
       </table>
     </p>
     <h3>
-       -A,&nbsp;--open-archives
+       -A,&nbsp;--open-all-archives
     </h3>
     <p>
-       [optional] Open archive (zip, tar, gzip) files and identify all their contents.
+       [optional] Open all archive (zip, tar, gzip, rar, 7zip, bzip2, iso) files and identify all their contents. Usually used in conjunction with -W or -Wt.
     </p>
     <h3>
-        -W,&nbsp;--open-webarchives
+      -At,&nbsp;--open-archive-types
     </h3>
     <p>
-        [optional] Open web archive (arc, warc) files and identify their contents. Usually used in conjunction with -A.
+      [optional] List of archive types to analyse among "ZIP", "TAR", "GZIP", "RAR", "7ZIP", "BZIP2" and "ISO" separated by space. Ignored if -A is used. Usually used in conjunction with -W or -Wt.
+    </p>
+    <h3>
+      -W,&nbsp;--open-all-webarchives
+    </h3>
+    <p>
+      [optional] Open all web archive (arc, warc) files and identify their contents. Usually used in conjunction with -A or -At.
+    </p>
+    <h3>
+      -Wt,&nbsp;--open-webarchive-types
+    </h3>
+    <p>
+      [optional] List of web archive types to analyse among "ARC" "WARC", separated by space. Ignored if -W is used. Usually used in conjunction with -A or -At.
     </p>
     <p>
        &nbsp;

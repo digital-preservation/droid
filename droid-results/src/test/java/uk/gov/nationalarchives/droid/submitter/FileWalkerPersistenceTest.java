@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gsi.gov.uk>
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,8 +51,10 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
+import org.junit.rules.TemporaryFolder;
 import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
 import uk.gov.nationalarchives.droid.submitter.FileWalker.ProgressEntry;
 
@@ -67,14 +69,16 @@ public class FileWalkerPersistenceTest {
 
     private ProfileWalkerDao profileWalkerDao;
     private Path testDir;
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
     
     @Before
     public void setup() throws JAXBException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
         
         profileWalkerDao = new ProfileWalkerDao();
-        testDir = Paths.get("tmp/" + getClass().getSimpleName());
-        Files.createDirectories(testDir);
+        testDir = Paths.get(temporaryFolder.getRoot().getAbsolutePath());
         profileWalkerDao.setProfileHomeDir(testDir);
     }
     

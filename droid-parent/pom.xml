@@ -52,6 +52,12 @@
         <developer>
             <name>Annabel Baynes</name>
         </developer>
+        <developer>
+            <name>Jeremie Charlet</name>
+        </developer>
+        <developer>
+            <name>Saurabh Parkhi</name>
+        </developer>
     </developers>
   
     <licenses>
@@ -81,19 +87,20 @@
         <project.build.target>1.8</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <project.email>pronom@nationalarchives.gsi.gov.uk</project.email>
+        <project.email>pronom@nationalarchives.gov.uk</project.email>
 
-        <spring.version>5.2.2.RELEASE</spring.version>
+        <spring.version>5.2.3.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
-        <cxf.version>3.3.4</cxf.version>
+        <cxf.version>3.3.5</cxf.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
-        <flying-saucer.version>9.1.19</flying-saucer.version>
+        <flying-saucer.version>9.1.20</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
         <jwat.version>1.1.1</jwat.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <log4j2.version>2.13.0</log4j2.version>
     </properties>
   
     <build>
@@ -235,13 +242,13 @@
                             <failOnWarning>true</failOnWarning>
                             <ignoreNonCompile>false</ignoreNonCompile>
                             <ignoredUnusedDeclaredDependencies>
-                                <ignoredUsedUndeclaredDependency>org.slf4j:jcl-over-slf4j</ignoredUsedUndeclaredDependency>
-                                <ignoredUsedUndeclaredDependency>org.slf4j:slf4j-log4j12</ignoredUsedUndeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>org.glassfish.jaxb:jaxb-runtime</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>org.bouncycastle:bcprov-jdk15on</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j-impl</ignoredUnusedDeclaredDependency>
                             </ignoredUnusedDeclaredDependencies>
                             <ignoredUsedUndeclaredDependencies>
+                                <ignoredUsedUndeclaredDependency>org.slf4j:slf4j-api</ignoredUsedUndeclaredDependency>
                                 <ignoredUsedUndeclaredDependency>jakarta.xml.bind:jakarta.xml.bind-api</ignoredUsedUndeclaredDependency>
                             </ignoredUsedUndeclaredDependencies>
                         </configuration>
@@ -251,7 +258,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>5.2.4</version>
+                <version>5.3.0</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                 </configuration>
@@ -556,14 +563,19 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j2.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j2.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -668,7 +680,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>4.13</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
