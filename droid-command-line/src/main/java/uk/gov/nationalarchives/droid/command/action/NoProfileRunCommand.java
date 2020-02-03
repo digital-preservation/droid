@@ -128,7 +128,7 @@ public class NoProfileRunCommand implements DroidCommand {
                                 }
                             }
                         }
-                        return false;
+                        return true;
                     }
                 };
 
