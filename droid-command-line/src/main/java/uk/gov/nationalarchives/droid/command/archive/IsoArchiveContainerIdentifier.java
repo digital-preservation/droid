@@ -94,7 +94,9 @@ public class IsoArchiveContainerIdentifier extends ArchiveContentIdentifier {
                         processEntry(entry, uri, fileSystem, newPath);
                     }
                 }
+            //CHECKSTYLE:OFF we have to ignore the RuntimeException when dealing with corrupted files
             } catch (IOException | RuntimeException e) {
+            //CHECKSTYLE:ON
                 System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
             }
         } else {

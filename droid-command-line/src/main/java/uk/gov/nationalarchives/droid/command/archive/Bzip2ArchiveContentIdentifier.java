@@ -57,6 +57,8 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
 
     private static final long SIZE = 12L;
     private static final long TIME = 13L;
+    private static final String START_PARENTHESIS = " (";
+    private static final String END_PARENTHESIS = ")";
 
 
     /**
@@ -107,20 +109,20 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
                     containerSignatureDefinitions, newPath, slash, slash1, super.getArchiveConfiguration());
             resultPrinter.print(bzResults, bzRequest);
         } catch (IOException ioe) {
-            System.err.println(ioe + " (" + newPath + ")"); // continue after corrupt archive
+            System.err.println(ioe + START_PARENTHESIS + newPath + END_PARENTHESIS); // continue after corrupt archive
         } finally {
             if (bzipIn != null) {
                 try {
                     bzipIn.close();
                 } catch (IOException e) {
-                    System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
+                    System.err.println(e + START_PARENTHESIS + newPath + END_PARENTHESIS); // continue after corrupt archive
                 }
             }
             if (bzRequest != null) {
                 try {
                     bzRequest.close();
                 } catch (IOException e) {
-                    System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
+                    System.err.println(e + START_PARENTHESIS + newPath + END_PARENTHESIS); // continue after corrupt archive
                 }
             }
         }
