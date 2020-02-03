@@ -130,6 +130,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
                         base = this.iterator.next();
                     } else {
                         base = null;
+                        break;
                     }
                 }
             }
