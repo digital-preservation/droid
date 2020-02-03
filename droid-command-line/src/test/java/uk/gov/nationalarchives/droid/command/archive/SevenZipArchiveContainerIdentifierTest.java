@@ -59,9 +59,9 @@ public class SevenZipArchiveContainerIdentifierTest {
     private SevenZipArchiveContainerIdentifier sevenZipArchiveContainerIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
     private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V91.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V96.xml";
     private Path containerSignatures =
-            Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
+            Paths.get("src/test/resources/signatures/container-signature-20200121.xml");
     private String sevenZipFile =
             "src/test/resources/testfiles/saved.7z";
 
