@@ -103,10 +103,8 @@ public class RarArchiveContainerIdentifier extends ArchiveContentIdentifier {
                         }
                     }
                 }
-            } catch (IOException e) {
-                throw new CommandExecutionException("IO error in RARFileSystem", e);
-            } catch (RarException ex) {
-                throw new CommandExecutionException("Rar exception in RARFileSystem", ex);
+            } catch (RarException | IOException e) {
+                System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
             }
         } else {
             log.info("Identification request for RAR archive ignored due to limited support.");

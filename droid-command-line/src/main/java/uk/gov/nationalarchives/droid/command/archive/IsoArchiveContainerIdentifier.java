@@ -94,8 +94,8 @@ public class IsoArchiveContainerIdentifier extends ArchiveContentIdentifier {
                         processEntry(entry, uri, fileSystem, newPath);
                     }
                 }
-            } catch (IOException e) {
-                throw new CommandExecutionException("IO error in ISOFileSystem", e);
+            } catch (IOException | RuntimeException e) {
+                System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
             }
         } else {
             log.info("Identification request for ISO image ignored due to limited support.");

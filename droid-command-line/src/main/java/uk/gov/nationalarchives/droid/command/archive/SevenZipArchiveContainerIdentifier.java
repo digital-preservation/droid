@@ -98,7 +98,7 @@ public class SevenZipArchiveContainerIdentifier extends ArchiveContentIdentifier
                     }
                 }
             } catch (IOException e) {
-                throw new CommandExecutionException("IO error in 7z FileSystem", e);
+                System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
             }
         } else {
             log.info("Identification request for 7z archive ignored due to limited support.");

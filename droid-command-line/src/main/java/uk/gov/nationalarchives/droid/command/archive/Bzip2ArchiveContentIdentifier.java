@@ -112,15 +112,15 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
             if (bzipIn != null) {
                 try {
                     bzipIn.close();
-                } catch (IOException ioe) {
-                    throw new CommandExecutionException(ioe.getMessage(), ioe);
+                } catch (IOException e) {
+                    System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
                 }
             }
             if (bzRequest != null) {
                 try {
                     bzRequest.close();
-                } catch (IOException ioe) {
-                    throw new CommandExecutionException(ioe.getMessage(), ioe);
+                } catch (IOException e) {
+                    System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
                 }
             }
         }
