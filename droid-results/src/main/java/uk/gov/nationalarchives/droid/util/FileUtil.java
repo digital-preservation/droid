@@ -311,9 +311,10 @@ public final class FileUtil {
 
         try {
             for (final Path child : dirStream) {
-                results.add(child);
                 if (recursive && Files.isDirectory(child)) {
                     listFiles(child, recursive, filter, results);
+                } else {
+                    results.add(child);
                 }
             }
         } finally {
