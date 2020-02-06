@@ -61,10 +61,6 @@ public class ArcArchiveContentIdentifierTest {
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private ArcArchiveContentIdentifier arcArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V96.xml";
-    private Path containerSignatures =
-            Paths.get("src/test/resources/signatures/container-signature-20200121.xml");
     private String arcFile =
             "src/test/resources/testfiles/expanded.arc";
 
@@ -73,24 +69,12 @@ public class ArcArchiveContentIdentifierTest {
 
     @Before
     public void setUp() throws CommandExecutionException {
-        binarySignatureIdentifier = new BinarySignatureIdentifier();
-        binarySignatureIdentifier.setSignatureFile(standardSignatures);
-        try {
-            binarySignatureIdentifier.init();
-        } catch (SignatureParseException e) {
-            throw new CommandExecutionException("Can't parse signature file");
-        }
-        try (final InputStream in = Files.newInputStream(containerSignatures)) {
-            ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
-            containerSignatureDefinitions = parser.parse(in);
-        } catch (SignatureParseException e) {
-            throw new CommandExecutionException ("Can't parse container signature file");
-        } catch (Exception e) {
-            throw new CommandExecutionException(e);
-        }
-        arcArchiveContentIdentifier =
-                new ArcArchiveContentIdentifier(binarySignatureIdentifier,
-                    containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
+        ArchiveContainerTestHelper helper = new ArchiveContainerTestHelper();
+        binarySignatureIdentifier = helper.getBinarySignatureIdentifier();
+        containerSignatureDefinitions = helper.getContainerSignatureDefinitions();
+        arcArchiveContentIdentifier = new ArcArchiveContentIdentifier(binarySignatureIdentifier,
+                    containerSignatureDefinitions, "", "/", "/",
+                new ArchiveConfiguration(true, null, true, null));
     }
     
     @After

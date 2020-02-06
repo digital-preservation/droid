@@ -60,30 +60,14 @@ public class TarArchiveContentIdentifierTest {
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private TarArchiveContentIdentifier tarArchiveContentIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V96.xml";
-    private Path containerSignatures =
-            Paths.get("src/test/resources/signatures/container-signature-20200121.xml");
     private String tarFile =
             "src/test/resources/testfiles/test.tar";
 
     @Before
     public void setUp() throws CommandExecutionException {
-        binarySignatureIdentifier = new BinarySignatureIdentifier();
-        binarySignatureIdentifier.setSignatureFile(standardSignatures);
-        try {
-            binarySignatureIdentifier.init();
-        } catch (SignatureParseException e) {
-            throw new CommandExecutionException("Can't parse signature file");
-        }
-        try (final InputStream in = Files.newInputStream(containerSignatures);) {
-            ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
-            containerSignatureDefinitions = parser.parse(in);
-        } catch (SignatureParseException e) {
-            throw new CommandExecutionException ("Can't parse container signature file");
-        } catch (Exception e) {
-            throw new CommandExecutionException(e);
-        }
+        ArchiveContainerTestHelper helper = new ArchiveContainerTestHelper();
+        binarySignatureIdentifier = helper.getBinarySignatureIdentifier();
+        containerSignatureDefinitions = helper.getContainerSignatureDefinitions();
         tarArchiveContentIdentifier =
                 new TarArchiveContentIdentifier(binarySignatureIdentifier,
                     containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));

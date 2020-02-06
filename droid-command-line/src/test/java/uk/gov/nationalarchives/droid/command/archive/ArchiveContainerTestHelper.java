@@ -49,6 +49,10 @@ public class ArchiveContainerTestHelper {
     private static final Path CONTAINER_SIGNATURES =
             Paths.get("src/test/resources/signatures/container-signature-20200121.xml");
 
+    public String getBinarySignatureFileLocation() {
+        return STANDARD_SIGNATURES;
+    }
+
     public BinarySignatureIdentifier getBinarySignatureIdentifier() throws CommandExecutionException {
         BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
         binarySignatureIdentifier.setSignatureFile(STANDARD_SIGNATURES);

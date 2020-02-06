@@ -58,30 +58,13 @@ public class SevenZipArchiveContainerIdentifierTest {
     private BinarySignatureIdentifier binarySignatureIdentifier;
     private SevenZipArchiveContainerIdentifier sevenZipArchiveContainerIdentifier;
     private ContainerSignatureDefinitions containerSignatureDefinitions;
-    private String standardSignatures =
-            "src/test/resources/signatures/DROID_SignatureFile_V96.xml";
-    private Path containerSignatures =
-            Paths.get("src/test/resources/signatures/container-signature-20200121.xml");
-    private String sevenZipFile =
-            "src/test/resources/testfiles/saved.7z";
+    private String sevenZipFile = "src/test/resources/testfiles/saved.7z";
 
     @Before
     public void setUp() throws CommandExecutionException {
-        binarySignatureIdentifier = new BinarySignatureIdentifier();
-        binarySignatureIdentifier.setSignatureFile(standardSignatures);
-        try {
-            binarySignatureIdentifier.init();
-        } catch (SignatureParseException e) {
-            throw new CommandExecutionException("Can't parse signature file");
-        }
-        try (final InputStream in = Files.newInputStream(containerSignatures)) {
-            ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
-            containerSignatureDefinitions = parser.parse(in);
-        } catch (SignatureParseException e) {
-            throw new CommandExecutionException ("Can't parse container signature file");
-        } catch (Exception e) {
-            throw new CommandExecutionException(e);
-        }
+        ArchiveContainerTestHelper helper = new ArchiveContainerTestHelper();
+        binarySignatureIdentifier = helper.getBinarySignatureIdentifier();
+        containerSignatureDefinitions = helper.getContainerSignatureDefinitions();
         sevenZipArchiveContainerIdentifier =
                 new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
                         containerSignatureDefinitions, "", "/", "/", new ArchiveConfiguration(true, null, true, null));
