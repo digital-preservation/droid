@@ -60,6 +60,7 @@ import uk.gov.nationalarchives.droid.command.action.ListAllSignatureFilesCommand
 import uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
+import uk.gov.nationalarchives.droid.command.archive.ArchiveContainerTestHelper;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
@@ -582,7 +583,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V91.xml",
+            new ArchiveContainerTestHelper().getBinarySignatureFileLocation(),
             "--extension-list",
             "xml", "txt", "jp2", "jpg"
         };
@@ -617,7 +618,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V91.xml"
+            new ArchiveContainerTestHelper().getBinarySignatureFileLocation()
         };
 
         //NB: BNO - added this call as otherwise an error occurs when trying instantiate the log

@@ -35,6 +35,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import uk.gov.nationalarchives.droid.command.action.CommandLineException;
+import uk.gov.nationalarchives.droid.command.archive.ArchiveContainerTestHelper;
 
 /**
  * Created by rhubner on 1/25/17.
@@ -52,7 +53,7 @@ public class TestContexCleanup {
                 "-Nr",
                 "src/test/resources/testfiles",
                 "-Ns",
-                "src/test/resources/signatures/DROID_SignatureFile_V91.xml"
+                new ArchiveContainerTestHelper().getBinarySignatureFileLocation()
         };
 
         DroidCommandLine.main(args);

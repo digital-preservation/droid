@@ -55,7 +55,6 @@ import org.junit.Test;
 import uk.gov.nationalarchives.droid.container.ContainerFile;
 import uk.gov.nationalarchives.droid.container.ContainerSignature;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader;
-import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.container.FileFormatMapping;
 import uk.gov.nationalarchives.droid.container.zip.ZipIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
@@ -73,7 +72,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 public class OdfIdentifierTest {
 
     private ZipIdentifier odfIdentifier;
-    public static final String CONTAINER_SIGNATUE_FILE = "container-signature-20170330.xml";
+    public static final String CONTAINER_SIGNATUE_FILE = "container-signature-20200121.xml";
     
     
     @Before

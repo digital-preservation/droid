@@ -45,9 +45,13 @@ import java.nio.file.Paths;
 public class ArchiveContainerTestHelper {
 
     private static final String STANDARD_SIGNATURES =
-            "src/test/resources/signatures/DROID_SignatureFile_V91.xml";
+            "src/test/resources/signatures/DROID_SignatureFile_V96.xml";
     private static final Path CONTAINER_SIGNATURES =
-            Paths.get("src/test/resources/signatures/container-signature-20170330.xml");
+            Paths.get("src/test/resources/signatures/container-signature-20200121.xml");
+
+    public String getBinarySignatureFileLocation() {
+        return STANDARD_SIGNATURES;
+    }
 
     public BinarySignatureIdentifier getBinarySignatureIdentifier() throws CommandExecutionException {
         BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
