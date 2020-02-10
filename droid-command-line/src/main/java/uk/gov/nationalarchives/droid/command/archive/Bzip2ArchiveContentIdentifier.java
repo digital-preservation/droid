@@ -57,9 +57,6 @@ public class Bzip2ArchiveContentIdentifier extends ArchiveContentIdentifier {
 
     private static final long SIZE = 12L;
     private static final long TIME = 13L;
-    private static final String START_PARENTHESIS = " (";
-    private static final String END_PARENTHESIS = ")";
-
 
     /**
      *

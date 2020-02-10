@@ -98,7 +98,7 @@ public class SevenZipArchiveContainerIdentifier extends ArchiveContentIdentifier
                     }
                 }
             } catch (IOException e) {
-                System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
+                System.err.println(e + START_PARENTHESIS + newPath + END_PARENTHESIS); // continue after corrupt archive
             }
         } else {
             log.info("Identification request for 7z archive ignored due to limited support.");

@@ -104,7 +104,7 @@ public class RarArchiveContainerIdentifier extends ArchiveContentIdentifier {
                     }
                 }
             } catch (RarException | IOException e) {
-                System.err.println(e + " (" + newPath + ")"); // continue after corrupt archive
+                System.err.println(e + START_PARENTHESIS + newPath + END_PARENTHESIS); // continue after corrupt archive
             }
         } else {
             log.info("Identification request for RAR archive ignored due to limited support.");
