@@ -734,11 +734,11 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     <pluginRepositories>
         <pluginRepository>
             <id>sonatype-releases</id>
-            <url>http://oss.sonatype.org/content/repositories/releases</url>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </pluginRepository>
         <pluginRepository>
             <id>clojars.org</id>
-            <url>http://clojars.org/repo</url>
+            <url>https://clojars.org/repo</url>
         </pluginRepository>
     </pluginRepositories>
 
