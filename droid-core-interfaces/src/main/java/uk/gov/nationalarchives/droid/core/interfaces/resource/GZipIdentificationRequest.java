@@ -100,7 +100,9 @@ public class GZipIdentificationRequest implements IdentificationRequest<InputStr
      */
     @Override
     public final void close() throws IOException {
-        reader.close();
+        if (reader != null) {
+            reader.close();
+        }
     }
     
     /**
