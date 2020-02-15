@@ -57,13 +57,12 @@ import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**
- * An implementation of the ResultHandler interface using JDBC to access the underlying profile database directly.
+ * An implementation of the ResultHandler interface, saving profile results to a ResultHandlerDao,
+ * which could store results in a database, or write them out to a file, or do anything else to persist them.
  *
  * @author Matt Palmer
  */
-public class JDBCResultHandler implements ResultHandler {
-
-    private Logger log = LoggerFactory.getLogger(getClass());
+public class ProfileNodeResultHandler implements ResultHandler {
 
     private ResultHandlerDao resultHandlerDao;
     private ProgressMonitor progressMonitor;
@@ -72,36 +71,23 @@ public class JDBCResultHandler implements ResultHandler {
     /**
      * Empty bean constructor.
      */
-    public JDBCResultHandler() {
+    public ProfileNodeResultHandler() {
     }
 
     /**
-     * Paramaterized constructor.
+     * Parameterized constructor.
      * @param resultHandlerDao The resulthandlerdao to use.
      * @param progressMonitor The progress monitor to use.
      */
-    public JDBCResultHandler(ResultHandlerDao resultHandlerDao, ProgressMonitor progressMonitor) {
+    public ProfileNodeResultHandler(ResultHandlerDao resultHandlerDao, ProgressMonitor progressMonitor) {
         setResultHandlerDao(resultHandlerDao);
         setProgressMonitor(progressMonitor);
     }
 
-    /**
-     * Saves the incoming result to the database.
-     *
-     * @param results
-     *            the results to be handled.
-     * @return long
-     *            node id.
-     */
     @Override
     public ResourceId handle(IdentificationResultCollection results) {
-
-        //log.debug(String.format("handling result for job [%s]", results.getUri()));
-
         ProfileResourceNode node = new ProfileResourceNode(results.getUri());
-
         RequestMetaData requestMetaData = results.getRequestMetaData();
-
         NodeMetaData metaData = new NodeMetaData();
         metaData.setLastModified(requestMetaData.getTime());
         metaData.setSize(results.getFileLength());
@@ -109,9 +95,7 @@ public class JDBCResultHandler implements ResultHandler {
         metaData.setExtension(ResourceUtils.getExtension(requestMetaData.getName()));
         metaData.setResourceType(results.isArchive() ? ResourceType.CONTAINER : ResourceType.FILE);
         metaData.setHash(requestMetaData.getHash());
-
         metaData.setNodeStatus(NodeStatus.DONE);
-
         node.setMetaData(metaData);
         node.setExtensionMismatch(results.getExtensionMismatch());
         node.setFinished(new Date());
@@ -135,22 +119,21 @@ public class JDBCResultHandler implements ResultHandler {
         return new ResourceId(node.getId(), node.getPrefix());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void handleError(IdentificationException e) {
         final IdentificationRequest request = e.getRequest();
         final RequestIdentifier identifier = request.getIdentifier();
-        final URI uri = identifier.getUri();
-        final Long nodeId = identifier.getNodeId();
 
-        final ProfileResourceNode node;
+        // If the node has already been saved, try to reload and update it, otherwise save it.
+        final Long nodeId = identifier.getNodeId();
         if (nodeId != null) { // node already has an id - it has been saved already.
-            node = resultHandlerDao.loadNode(nodeId);
-            node.getMetaData().setNodeStatus(NodeStatus.ERROR);
+            ProfileResourceNode node = resultHandlerDao.loadNode(nodeId);
+            if (node != null) {
+                node.getMetaData().setNodeStatus(NodeStatus.ERROR);
+                resultHandlerDao.save(node, identifier.getParentResourceId());
+            }
         } else { // error occurred before the node was saved: make a new one for the resource:
-            node = new ProfileResourceNode(uri);
+            ProfileResourceNode node = new ProfileResourceNode(identifier.getUri());
             final NodeMetaData metaData = node.getMetaData();
             metaData.setResourceType(ResourceType.FILE);
             metaData.setNodeStatus(getNodeStatus(e.getErrorType()));
@@ -161,43 +144,19 @@ public class JDBCResultHandler implements ResultHandler {
             metaData.setExtension(request.getExtension());
             metaData.setLastModified(request.getRequestMetaData().getTime());
             metaData.setHash(requestMetaData.getHash());
-            node.addFormatIdentification(Format.NULL); //TODO: check what happens with Format.NULL.
+            node.addFormatIdentification(Format.NULL);
             node.setFinished(new Date());
+            resultHandlerDao.save(node, identifier.getParentResourceId());
+            progressMonitor.stopJob(node);
         }
-        resultHandlerDao.save(node, identifier.getParentResourceId());
-        progressMonitor.stopJob(node);
     }
 
-
-
-    private NodeStatus getNodeStatus(IdentificationErrorType error) {
-        NodeStatus status;
-        switch(error) {
-            case ACCESS_DENIED:
-                status = NodeStatus.ACCESS_DENIED;
-                break;
-            case FILE_NOT_FOUND:
-                status = NodeStatus.NOT_FOUND;
-                break;
-            default:
-                status = NodeStatus.ERROR;
-        }
-        return status;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ResourceId handleDirectory(IdentificationResult result,
                                       ResourceId parentId, boolean restricted) {
         final URI uri = result.getIdentifier().getUri();
-        //log.debug(String.format("handling directory [%s]", uri));
         ProfileResourceNode node = new ProfileResourceNode(uri);
-
         RequestMetaData requestMetaData = result.getMetaData();
-
         NodeMetaData metaData = new NodeMetaData();
         metaData.setName(requestMetaData.getName());
         metaData.setSize(null);
@@ -214,45 +173,47 @@ public class JDBCResultHandler implements ResultHandler {
         return new ResourceId(node.getId(), node.getPrefix());
     }
 
-
     /**
-     * @param resultHandlerDao
-     *            the resultHandlerDao to set
+     * @param resultHandlerDao the resultHandlerDao to set
      */
     public void setResultHandlerDao(ResultHandlerDao resultHandlerDao) {
         this.resultHandlerDao = resultHandlerDao;
     }
 
     /**
-     * @param progressMonitor
-     *            the progressMonitor to set
+     * @param progressMonitor the progressMonitor to set
      */
     public void setProgressMonitor(ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void deleteCascade(Long nodeId) {
         resultHandlerDao.deleteNode(nodeId);
     }
 
-    /**
-     *
-     * {@inheritDoc}
-     */
     @Override
     public void commit() {
         resultHandlerDao.commit();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void init() {
         formats = resultHandlerDao.getPUIDFormatMap();
+    }
+
+    private NodeStatus getNodeStatus(IdentificationErrorType error) {
+        NodeStatus status;
+        switch(error) {
+            case ACCESS_DENIED:
+                status = NodeStatus.ACCESS_DENIED;
+                break;
+            case FILE_NOT_FOUND:
+                status = NodeStatus.NOT_FOUND;
+                break;
+            default:
+                status = NodeStatus.ERROR;
+        }
+        return status;
     }
 }
