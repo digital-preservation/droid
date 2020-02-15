@@ -36,9 +36,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationErrorType;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
@@ -72,6 +69,14 @@ public class ProfileNodeResultHandler implements ResultHandler {
      * Empty bean constructor.
      */
     public ProfileNodeResultHandler() {
+    }
+
+    /**
+     * Parameterized constructor which will not monitor progress.
+     * @param resultHandlerDao  The resulthandlerdao to use.
+     */
+    public ProfileNodeResultHandler(ResultHandlerDao resultHandlerDao) {
+        this(resultHandlerDao, ProgressMonitor.NO_MONITORING);
     }
 
     /**
