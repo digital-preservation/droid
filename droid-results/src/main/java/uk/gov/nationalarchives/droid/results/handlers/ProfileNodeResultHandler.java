@@ -82,6 +82,7 @@ public class ProfileNodeResultHandler implements ResultHandler {
     public ProfileNodeResultHandler(ResultHandlerDao resultHandlerDao, ProgressMonitor progressMonitor) {
         setResultHandlerDao(resultHandlerDao);
         setProgressMonitor(progressMonitor);
+        init();
     }
 
     @Override
