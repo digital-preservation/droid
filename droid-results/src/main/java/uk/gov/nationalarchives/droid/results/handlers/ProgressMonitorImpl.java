@@ -40,6 +40,8 @@ import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.ProfileResultObserver;
 
 /**
+ * Tracks progress and sends finished jobs to a ProfileResultObserver.
+ *
  * @author rflitcroft
  * 
  */
@@ -51,7 +53,7 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     private volatile int progressPercentage = INDETERMINATE_PROGRESS;
     private long target = INDETERMINATE_PROGRESS;
 
-    private Set<URI> jobsInProgress = Collections.synchronizedSet(new HashSet<URI>());
+    private Set<URI> jobsInProgress = Collections.synchronizedSet(new HashSet<>());
     private ProgressObserver observer;
     private ProfileResultObserver resultObserver;
 
@@ -71,42 +73,29 @@ public class ProgressMonitorImpl implements ProgressMonitor {
         setResultObserver(resultObserver);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getIdentificationCount() {
         return count;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getTargetCount() {
         return target;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getProfileSize() {
         return target;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getProgressPercentage() {
         return progressPercentage;
     }
 
-  /**
-   * Increments the internal count.
-   */
- 
+   /**
+    * Increments the internal count.
+    */
     synchronized void increment() {
         count++;
         if (target == ProgressMonitor.INDETERMINATE_PROGRESS) {
@@ -131,36 +120,22 @@ public class ProgressMonitorImpl implements ProgressMonitor {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public synchronized void setTargetCount(long targetCount) {
         this.target = targetCount;
         calcProgress();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setPercentIncrementObserver(ProgressObserver progressObserver) {
         this.observer = progressObserver;
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public void startJob(URI uri) {
         jobsInProgress.add(uri);
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public void stopJob(ProfileResourceNode node) {
         if (jobsInProgress.remove(node.getUri())) {
@@ -173,8 +148,7 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     }
 
     /**
-     * @param resultObserver
-     *            the resultObserver to set
+     * @param resultObserver the resultObserver to set
      */
     @Override
     public void setResultObserver(ProfileResultObserver resultObserver) {
