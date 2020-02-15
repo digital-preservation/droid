@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -56,8 +57,13 @@ public class WriterResultHandlerDao implements ResultHandlerDao {
     private static final Logger LOG = LoggerFactory.getLogger(WriterResultHandlerDao.class);
 
     private final List<ProfileResourceNode> items = new ArrayList<>(1);
+
     private ItemWriter itemWriter;
     private Writer writer;
+    private long nodeId = 1L;
+
+    private  Map<String, Format> puidFormats = Collections.emptyMap();
+    private List<Format> formats = Collections.emptyList();
 
     /**
      * Empty bean constructor.  You still need to set the itemwriter and writer, and then call init()
@@ -92,6 +98,7 @@ public class WriterResultHandlerDao implements ResultHandlerDao {
 
     @Override
     public synchronized void save(ProfileResourceNode node, ResourceId parentId) {
+        node.setId(nodeId++);
         if (parentId != null) {
             node.setParentId(parentId.getId());
         }
@@ -112,18 +119,18 @@ public class WriterResultHandlerDao implements ResultHandlerDao {
     //TODO: why should the result handler return all the formats - needs refactoring.
     @Override
     public Format loadFormat(String puid) {
-        return null;
+        return Format.NULL;
     }
 
 
     @Override
     public List<Format> getAllFormats() {
-        return null;
+        return formats;
     }
 
     @Override
     public Map<String, Format> getPUIDFormatMap() {
-        return null;
+        return puidFormats;
     }
     //TODO: format code above needs refactoring out of the result handler.
 
