@@ -291,7 +291,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     </bean>
 
 
-    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.JDBCResultHandler"
+    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.ProfileNodeResultHandler"
           init-method="init">
         <property name="resultHandlerDao" ref="resultsDao"/>
         <property name="progressMonitor" ref="progressMonitor"/>
