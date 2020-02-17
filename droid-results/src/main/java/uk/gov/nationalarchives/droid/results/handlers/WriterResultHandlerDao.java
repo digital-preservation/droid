@@ -35,9 +35,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,14 +43,24 @@ import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
-import uk.gov.nationalarchives.droid.profile.referencedata.Format;
+
+import javax.sql.DataSource;
 
 /**
- * An implementation of ResultsHandlerDao which writes results out to a Writer,
- * formatting them using an ItemWriter.  This can be used to output results to
- * CSV on the console for example, or XML to a file.
+ * An implementation of ResultHandlerDao which writes results out to a Writer,
+ * formatting them using an ItemWriter, instead of out to the profile database.
+ * This can be used to output results to CSV on the console for example, or XML to a file.
+ * <p>
+ * We inherit from the JDBCBatchResultHandlerDao class in order to get its
+ * database operations for initialising the db and loading lists of formats.
+ * Although these functions probably shouldn't belong in result handlers,
+ * it's where they are now, and refactoring this turns out to be fairly
+ * complex.  So we re-use all the database parts from the JDBCBatchResultHandler,
+ * but override the methods involved in writing out to a Writer, and those
+ * which can't work if the results aren't being saved to the database
+ * (e.g. loading previous results or deleting previous results).
  */
-public class WriterResultHandlerDao implements ResultHandlerDao {
+public class WriterResultHandlerDao extends JDBCBatchResultHandlerDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(WriterResultHandlerDao.class);
 
@@ -62,12 +70,10 @@ public class WriterResultHandlerDao implements ResultHandlerDao {
     private Writer writer;
     private long nodeId = 1L;
 
-    private  Map<String, Format> puidFormats = Collections.emptyMap();
-    private List<Format> formats = Collections.emptyList();
-
     /**
-     * Empty bean constructor.  You still need to set the itemwriter and writer, and then call init()
-     * before this class is ready to use.
+     * Empty bean constructor.  You still need to set the Itemwriter and DataSource,
+     * and then call init() before this class is ready to use.  If you don't also set a Writer,
+     * then output will go to the standard system out.
      */
     public WriterResultHandlerDao() {
     }
@@ -75,25 +81,35 @@ public class WriterResultHandlerDao implements ResultHandlerDao {
     /**
      * Parameterized constructor taking the ItemWriter to use to output results to standard out.
      * @param itemWriter The ItemWriter to write out results.
+     * @param datasource The database connection to the profile for initialising new databases.
      */
-    public WriterResultHandlerDao(ItemWriter itemWriter) {
-        this(itemWriter, new PrintWriter(System.out));
+    public WriterResultHandlerDao(ItemWriter itemWriter, DataSource datasource) {
+        this(itemWriter, null, datasource);
     }
 
     /**
      * Parameterized constructor taking the ItemWriter to use to output results to a Writer.
      * @param itemWriter The ItemWriter which formats results and writes them to the writer.
      * @param writer The writer to which results are written.
+     * @param datasource The database connection to the profile for initialising new databases.
      */
-    public WriterResultHandlerDao(ItemWriter itemWriter, Writer writer) {
+    public WriterResultHandlerDao(ItemWriter itemWriter, Writer writer, DataSource datasource) {
         setItemWriter(itemWriter);
         setWriter(writer);
+        setDatasource(datasource);
         init();
     }
 
     @Override
     public synchronized void init() {
-        itemWriter.open(writer);
+        try {
+            super.init();
+        } finally {
+            if (writer == null) { // If no writer is set, default to console output.
+                writer = new PrintWriter(System.out);
+            }
+            itemWriter.open(writer);
+        }
     }
 
     @Override
@@ -116,25 +132,7 @@ public class WriterResultHandlerDao implements ResultHandlerDao {
         }
     }
 
-    //TODO: why should the result handler return all the formats - needs refactoring.
-    @Override
-    public Format loadFormat(String puid) {
-        return Format.NULL;
-    }
-
-
-    @Override
-    public List<Format> getAllFormats() {
-        return formats;
-    }
-
-    @Override
-    public Map<String, Format> getPUIDFormatMap() {
-        return puidFormats;
-    }
-    //TODO: format code above needs refactoring out of the result handler.
-
-    /**
+   /**
      * <b>Note:</b> This result handler cannot load any prior results, and always returns null.
      * {@inheritDoc}
      */
@@ -149,13 +147,6 @@ public class WriterResultHandlerDao implements ResultHandlerDao {
      */
     @Override
     public void deleteNode(Long nodeId) {
-
-    }
-
-    //TODO: this is very database specific - should be refactored out of result handler interface?
-    @Override
-    public void initialiseForNewTemplate() {
-
     }
 
     /**
