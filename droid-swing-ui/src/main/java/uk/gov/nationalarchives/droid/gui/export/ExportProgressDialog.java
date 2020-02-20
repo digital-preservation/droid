@@ -129,9 +129,10 @@ public class ExportProgressDialog extends JDialog {
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
     private void cancelButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         action.cancel();
+        setVisible(false);
+        dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
 
