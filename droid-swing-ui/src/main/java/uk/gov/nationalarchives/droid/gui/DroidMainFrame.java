@@ -1547,6 +1547,7 @@ public class DroidMainFrame extends JFrame {
                     public void done(ExportAction action) {
                         try {
                             exportDialog.setVisible(false);
+                            exportDialog.dispose();
                             action.get();
                             JOptionPane.showMessageDialog(DroidMainFrame.this, "Export Complete.", "Export Complete",
                                     JOptionPane.INFORMATION_MESSAGE);

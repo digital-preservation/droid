@@ -270,7 +270,6 @@ public class ExportDialog extends JDialog {
         RadioOneRowPerIdentification.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerIdentification.toolTipText")); // NOI18N
 
         cmdEncoding.setModel(getOutputEncodings());
-        cmdEncoding.setEditor(null);
 
         jLabel1.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jLabel1.text_1")); // NOI18N
 
@@ -475,7 +474,7 @@ public class ExportDialog extends JDialog {
         private ProfileWrapper profile;
         
         /**
-         * @param checkBox
+         * Constructor
          */
         public CheckBoxEditor() {
             super(new JCheckBox());
