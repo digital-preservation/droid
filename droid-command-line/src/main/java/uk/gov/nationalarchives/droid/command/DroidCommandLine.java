@@ -32,6 +32,8 @@
 package uk.gov.nationalarchives.droid.command;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -124,12 +126,6 @@ public final class DroidCommandLine implements AutoCloseable {
         try {
             cli = parser.parse(CommandLineParam.options(), args);
 
-            String logThreshold = "INFO";
-            if (cli.hasOption(CommandLineParam.QUIET.toString())) {
-                logThreshold = "ERROR";
-            }
-            System.setProperty("consoleLogThreshold", logThreshold);
-
             CommandLineParam option = null;
             for (Option opt : cli.getOptions()) {
                 option = CommandLineParam.TOP_LEVEL_COMMANDS.get(opt.getOpt());
@@ -164,11 +160,12 @@ public final class DroidCommandLine implements AutoCloseable {
      */
     public static void main(final String[] args) throws CommandLineException {
 
-        //BNO: The configureRuntimeEnvironment() method was getting called twice as it is also
-        // the first call in  commandLine.processExecution() below.  This was causing a problem
-        // with the log configuration file path getting appended to the current directory thereby
-        // producing an invalid file path, e.g. C:\Projects\Droid\droid\file:\C:\Users\Brian\.droid6\log4j2.properties.
-        // There appears to be no other reason for the 2 calls so I have sinply removed the first call here.
+        // we process --quiet parameter manually first before we initialize the spring context, to set the tna logger level.
+        final List<String> argsList = Arrays.asList(args);
+        if (argsList.contains("-" + CommandLineParam.QUIET.toString()) || argsList.contains("--" + CommandLineParam.QUIET.getLongName())) {
+            System.setProperty("consoleLogThreshold", "ERROR");
+        }
+
         RuntimeConfig.configureRuntimeEnvironment();
 
         int returnCode = 0;
