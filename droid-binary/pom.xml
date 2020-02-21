@@ -86,6 +86,9 @@
                             <goal>single</goal> <!-- goals == mojos -->
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>${basedir}/src/assembly/filter.properties</filter>
+                            </filters>
                             <descriptors>
                                 <descriptor>assembly.xml</descriptor>
                             </descriptors>
@@ -98,6 +101,9 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>${basedir}/src/assembly/filter-windows-with-jre.properties</filter>
+                            </filters>
                             <descriptors>
                                 <descriptor>assembly-windows-with-jre.xml</descriptor>
                             </descriptors>
