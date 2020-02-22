@@ -220,8 +220,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="datasource" ref="dataSource"/>
     </bean>
 
-    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao"
-          init-method="init" destroy-method="cleanup">
+    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDaoFactory">
         <property name="datasource" ref="dataSource"/>
     </bean>
 
