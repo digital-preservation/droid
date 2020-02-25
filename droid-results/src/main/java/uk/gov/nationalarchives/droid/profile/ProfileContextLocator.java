@@ -64,6 +64,7 @@ public class ProfileContextLocator {
     private static final String HIBERNATE_CREATE = "hibernate.hbm2ddl.auto";
     private static final String BLANK_PROFILE = "profile.template";
     private static final String SIG_PROFILE = "profile\\.\\d+\\.template";
+    private static final String OUTPUT_FILE_PATH ="profile.outputFilePath";
     
     private final Logger log = LoggerFactory.getLogger(getClass());
     private DroidGlobalConfig globalConfig;
@@ -192,7 +193,6 @@ public class ProfileContextLocator {
         props.setProperty("submissionQueueFile", submissionQueueFile.toAbsolutePath().toString());
         props.setProperty("tempDirLocation", globalConfig.getTempDir().toAbsolutePath().toString());
         props.setProperty("profileHome", profileHome.toAbsolutePath().toString());
-        
         props.setProperty("containerSigPath", containerSignatureFile.toAbsolutePath().toString());
 
         props.setProperty("processTar", String.valueOf(profile.getProcessTarFiles()));
@@ -210,7 +210,10 @@ public class ProfileContextLocator {
         props.setProperty("hashAlgorithm", String.valueOf(profile.getHashAlgorithm()));
         props.setProperty("maxBytesToScan", String.valueOf(profile.getMaxBytesToScan()));
         props.setProperty("matchAllExtensions", String.valueOf(profile.getMatchAllExtensions()));
- 
+
+        String outputFilePath = globalConfig.getProperties().getString(OUTPUT_FILE_PATH);
+        props.setProperty("outputFilePath", outputFilePath == null? "" : outputFilePath);
+
         String createUrl = globalConfig.getProperties().getString("database.createUrl");
         if (createUrl == null || createUrl.isEmpty()) {
             createUrl = "{none}";

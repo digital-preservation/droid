@@ -222,6 +222,14 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDaoFactory">
         <property name="datasource" ref="dataSource"/>
+        <property name="itemWriter" ref="itemWriter"/>
+        <property name="outputFilePath" value="${outputFilePath}"/>
+    </bean>
+
+    <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
+
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.export.CsvItemWriter">
+        <property name="config" ref="globalConfig"/>
     </bean>
 
     <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl">
