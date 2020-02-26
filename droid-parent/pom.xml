@@ -89,7 +89,7 @@
 
         <project.email>pronom@nationalarchives.gov.uk</project.email>
 
-        <spring.version>5.2.3.RELEASE</spring.version>
+        <spring.version>5.2.4.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
         <cxf.version>3.3.5</cxf.version>
