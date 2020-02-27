@@ -85,7 +85,6 @@ public class AddFilesAndFoldersAction {
         DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) treeModel.getRoot();
         for (final File selectedFile : selectedFiles) {
             AbstractProfileResource newResource;
-            
             // VERY basic shortcut detection:
             boolean isShortcut = !selectedFile.toURI().getPath().endsWith("/");
             if (selectedFile.isDirectory() && !isShortcut) {

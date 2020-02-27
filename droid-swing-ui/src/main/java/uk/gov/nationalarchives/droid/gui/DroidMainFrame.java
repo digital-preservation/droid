@@ -1363,11 +1363,11 @@ public class DroidMainFrame extends JFrame {
         int returnVal = resourceFileChooser.showDialog(this);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            AddFilesAndFoldersAction action = new AddFilesAndFoldersAction(droidContext, profileManager);
-            action.add(resourceFileChooser.getSelectedFiles(), resourceFileChooser.isSelectionRecursive());
+            List<File> selectedFiles = resourceFileChooser.getSelectedFiles();
+            addFilesAndFolders(selectedFiles);
         }
-
     }// GEN-LAST:event_jButtonAddFileActionPerformed
+
 
     /**
      * Adds a list of files to the profile.
@@ -1375,8 +1375,15 @@ public class DroidMainFrame extends JFrame {
      * @param files The list of files to add.
      */
     public void addFilesAndFolders(List<File> files) {
-        AddFilesAndFoldersAction action = new AddFilesAndFoldersAction(droidContext, profileManager);
-        action.add(files, true);
+        FileSystemSelectionValidator validator = new FileSystemSelectionValidator(files);
+        if (validator.isSelectionValid()) {
+            AddFilesAndFoldersAction action = new AddFilesAndFoldersAction(droidContext, profileManager);
+            action.add(files, resourceFileChooser.isSelectionRecursive());
+        } else {
+            String error = validator.getErrorMessage();
+            DialogUtils.showGeneralErrorDialog(this, ERROR_TITLE, error);
+            return;
+        }
     }
 
     public void jButtonRemoveFilesAndFolderActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonRemoveFilesAndFolderActionPerformed
