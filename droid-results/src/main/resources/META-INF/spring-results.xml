@@ -226,11 +226,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="outputFilePath" value="${outputFilePath}"/>
     </bean>
 
-    <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
-
-    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.export.CsvItemWriter">
-        <property name="config" ref="globalConfig"/>
-    </bean>
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.export.CsvItemWriter"/>
 
     <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl">
         <property name="datasource" ref="dataSource"/>
