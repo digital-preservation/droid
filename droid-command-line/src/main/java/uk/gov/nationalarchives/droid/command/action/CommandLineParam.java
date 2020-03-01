@@ -100,6 +100,16 @@ public enum CommandLineParam {
         }
     },
 
+    /**
+     * Specifies a property file to use to override any global defaults.
+     */
+    PROPERTY_FILE("Pf", "property-file", true, 1, I18N.PROPERTY_FILE_HELP, "property file") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) throws CommandLineException {
+            return null;
+        }
+    },
+
     /** Narrow filter. */
     ALL_FILTER("f", "filter-all", true, -1, I18N.ALL_FILTER, filters()) {
         @Override
@@ -414,6 +424,7 @@ public enum CommandLineParam {
 
         options.addOption(PROFILES.newOption());
         options.addOption(PROFILE_PROPERTY.newOption());
+        options.addOption(PROPERTY_FILE.newOption());
         options.addOption(REPORT_NAME.newOption());
         options.addOption(REPORT_OUTPUT_TYPE.newOption());
         options.addOption(SIGNATURE_FILE.newOption());

@@ -34,7 +34,10 @@ package uk.gov.nationalarchives.droid.command.action;
 import java.io.PrintWriter;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.configuration.CombinedConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.tree.OverrideCombiner;
 import org.apache.commons.lang.StringUtils;
 
 import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
@@ -206,12 +209,40 @@ public class CommandFactoryImpl implements CommandFactory {
         command.setDestination(destination[0]);
         command.setResources(resources);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+        command.setProperties(getOverrideProperties(cli));
+        return command;
+    }
 
+    private PropertiesConfiguration getOverrideProperties(CommandLine cli) throws CommandLineSyntaxException {
+        PropertiesConfiguration overrideProperties = null;
+
+        // Get properties from a file:
+        final String propertyFile = cli.getOptionValue(CommandLineParam.PROPERTY_FILE.toString());
+        if (propertyFile != null && !propertyFile.isEmpty()) {
+            try {
+                overrideProperties = new PropertiesConfiguration(propertyFile);
+            } catch (ConfigurationException e) {
+                throw new CommandLineSyntaxException(e);
+            }
+        }
+
+        // Get properties from the command line directly:
         final String[] propertyOverrides = cli.getOptionValues(CommandLineParam.PROFILE_PROPERTY.toString());
         if (propertyOverrides != null && propertyOverrides.length > 0) {
-            command.setProperties(createProperties(propertyOverrides));
+            PropertiesConfiguration commandLineProperties = createProperties(propertyOverrides);
+            if (overrideProperties == null) {
+                overrideProperties = commandLineProperties;
+            } else {
+                CombinedConfiguration combined = new CombinedConfiguration();
+                combined.setNodeCombiner(new OverrideCombiner());
+                combined.addConfiguration(commandLineProperties);
+                combined.addConfiguration(overrideProperties);
+                PropertiesConfiguration merged = new PropertiesConfiguration();
+                merged.append(combined);
+                overrideProperties = merged;
+            }
         }
-        return command;
+        return overrideProperties;
     }
 
     @Override
