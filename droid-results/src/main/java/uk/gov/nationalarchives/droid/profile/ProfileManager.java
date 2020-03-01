@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
@@ -55,18 +57,27 @@ public interface ProfileManager {
     /**
      * Creates a profile using the signature file specified.
      * 
-     * @param sigFiles
-     *            the signature files.
+     * @param sigFiles the signature files.
      * @return the new Profile Instance.
      * @throws ProfileManagerException if the profile could not be created
      */
     ProfileInstance createProfile(Map<SignatureType, SignatureFileInfo> sigFiles) throws ProfileManagerException;
 
     /**
+     * Creates a profile using the signature file specified with global property overrides.
+     *
+     * @param sigFiles the signature files.
+     * @param propertyOverrides properties to override default global properties when creating a profile.
+     * @return the new Profile Instance.
+     * @throws ProfileManagerException if the profile could not be created
+     */
+    ProfileInstance createProfile(Map<SignatureType, SignatureFileInfo> sigFiles,
+                                  PropertiesConfiguration propertyOverrides) throws ProfileManagerException;
+
+    /**
      * Loads the reference data for the selected profile.
      * 
-     * @param profileId
-     *            the profile to start
+     * @param profileId the profile to start
      * @return the new Profile Instance.
      */
     ReferenceData getReferenceData(String profileId);
@@ -74,8 +85,7 @@ public interface ProfileManager {
     /**
      * Starts a profile asynchronously.
      * 
-     * @param profileId
-     *            the profile to start
+     * @param profileId the profile to start
      * @return future wihich is done when the profile finishes.
      * @throws IOException if there was a problem with the profile. 
      */
@@ -84,24 +94,21 @@ public interface ProfileManager {
     /**
      * Stops a profile.
      * 
-     * @param profileId
-     *            the profile to stop
+     * @param profileId the profile to stop
      */
     void stop(String profileId);
 
     /**
      * Closes a profile and releases all resources.
      * 
-     * @param profileId
-     *            the profile to close
+     * @param profileId the profile to close
      */
     void closeProfile(String profileId);
 
     /**
      * Opens a profile.
      * 
-     * @param profileId
-     *            the profile to open
+     * @param profileId the profile to open
      * @return the profile.
      */
     ProfileInstance openProfile(String profileId);
@@ -109,8 +116,7 @@ public interface ProfileManager {
     /**
      * Updates the profile spec.
      * 
-     * @param profileId
-     *            the profile ID
+     * @param profileId the profile ID
      * @param profileSpec
      *            the updated spec
      */
@@ -119,26 +125,22 @@ public interface ProfileManager {
     /**
      * Sets the results observer for the profile given.
      * 
-     * @param profileUuid
-     *            the profile ID
+     * @param profileUuid the profile ID
      * @param observer
      *            the observer to set
      */
     void setResultsObserver(String profileUuid, ProfileResultObserver observer);
 
     /**
-     * @param profileUuid
-     *            the profile ID
-     * @param parentId
-     *            the ID of the parent of the node
+     * @param profileUuid the profile ID
+     * @param parentId the ID of the parent of the node
      * @return the profile resource node at the URL with its immediate children,
      */
     List<ProfileResourceNode> findProfileResourceNodeAndImmediateChildren(
             String profileUuid, Long parentId);
 
     /**
-     * @param profileUuid
-     *            the profile ID
+     * @param profileUuid the profile ID
      * @return All root nodes for the profile given
      */
     List<ProfileResourceNode> findRootNodes(String profileUuid);
@@ -146,10 +148,8 @@ public interface ProfileManager {
     /**
      * Sets the progress monitor for the specified profile.
      * 
-     * @param profileId
-     *            the profile ID
-     * @param observer
-     *            the progress observer to set.
+     * @param profileId the profile ID
+     * @param observer the progress observer to set.
      */
     void setProgressObserver(String profileId, ProgressObserver observer);
 
@@ -157,15 +157,11 @@ public interface ProfileManager {
      * Saves the specified profile to the file specified. The file will be
      * created if it does not already exist or overwritten if it exists.
      * 
-     * @param profileId
-     *            the ID of the profile.
-     * @param destination
-     *            the file to be created or overwitten
-     * @param progressCallback
-     *            a progress call back object
+     * @param profileId the ID of the profile.
+     * @param destination the file to be created or overwitten
+     * @param progressCallback a progress call back object
      * @return the saved profile instance
-     * @throws IOException
-     *             - if the file IO failed.
+     * @throws IOException - if the file IO failed.
      */
     ProfileInstance save(String profileId, Path destination,
             ProgressObserver progressCallback) throws IOException;
@@ -173,21 +169,17 @@ public interface ProfileManager {
     /**
      * Opens a profile from the file specified.
      * 
-     * @param source
-     *            the source file
-     * @param progressCallback
-     *            a progress call back object
+     * @param source the source file
+     * @param progressCallback a progress call back object
      * @return the profile's UUID
-     * @throws IOException
-     *             if the File could not be read.
+     * @throws IOException if the File could not be read.
      */
     ProfileInstance open(Path source, ProgressObserver progressCallback)
         throws IOException;
 
     /**
      * Retrieves all the formats.
-     * @param profileId Profile Id of the profile.
-     *        for which format is required.
+     * @param profileId Profile Id of the profile for which format is required.
      * @return list of formats
      */
     List<Format> getAllFormats(String profileId);
