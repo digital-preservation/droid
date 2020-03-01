@@ -188,6 +188,57 @@
     <p>
        &nbsp;
     </p>
+
+    <h3>
+      -Pr,--profile-property &lt;properties...&gt;
+    </h3>
+    <p>
+      Specifies profile properties which should override any global defaults.  For example, to set the
+      max bytes to scan property of a profile when creating it:
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" size="3" color="#ffffff" face=
+                  "Monospaced, Courier New, Courier, mono">&nbsp;droid –a “C:\Files\A Folder”
+            “C:\Files\file.xxx” –p “C:\Results\result1.droid” -Pr "profile.maxBytesToScan=4096"</font>
+        </td>
+      </tr>
+    </table>
+    <p>
+      Properties defined on the command line will override properties specified by any other source.
+      The profile properties which can be set are defined in the droid.properties file.
+      This resides in the droid home folder, which is normally located under the user's home folder in the .droid6 folder.
+    </p>
+    <p>
+      &nbsp;
+    </p>
+
+    <h3>
+      -Pf,--property-file <property file name>
+    </h3>
+    <p>
+      Specifies a file containing properties to override properties contained in the global default droid properties.
+    </p>
+    <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" width="100%">
+      <tr>
+        <td width="100%">
+          <font style=" background-color: #000000;" size="3" color="#ffffff" face=
+                  "Monospaced, Courier New, Courier, mono">&nbsp;droid –a “C:\Files\A Folder”
+            “C:\Files\file.xxx” –p “C:\Results\result1.droid” -Pf "C:\Config\my.properties"</font>
+        </td>
+      </tr>
+    </table>
+    <p>
+      Properties defined in a file will override properties defined in the droid global default property file,
+      but can be overridden by properties specified directly on the command line with the -Pr option.
+      The profile properties which can be set are defined in the droid.properties file.
+      This resides in the droid home folder, which is normally located under the user's home folder in the .droid6 folder.
+    </p>
+    <p>
+      &nbsp;
+    </p>
+
     <h3>
        &nbsp;-p,--profile &lt;filename ...&gt;
     </h3>
