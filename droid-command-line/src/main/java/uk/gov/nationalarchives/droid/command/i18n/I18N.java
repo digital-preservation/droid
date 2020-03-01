@@ -55,9 +55,14 @@ public final class I18N {
     /** Export description. */
     public static final String EXPORT_FORMAT_HELP = "export.format.help";
     
-    
     /** Profiles description. */
     public static final String PROFILES_HELP = "profiles.help";
+
+    /**
+     * Override default properties from the command line.
+     */
+    public static final String PROFILE_PROPERTY_HELP = "profile.property.help";
+    
     /** Report description. */
     public static final String REPORT_HELP = "report.help";
 

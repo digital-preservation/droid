@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.command.action;
 import java.io.PrintWriter;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 
 import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
@@ -174,33 +175,21 @@ public class CommandFactoryImpl implements CommandFactory {
         return cmd;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FilterFieldCommand getFilterFieldCommand() {
         return new FilterFieldCommand(printWriter);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getHelpCommand() {
         return new HelpCommand(printWriter);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getVersionCommand() {
         return new VersionCommand(printWriter);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
         final String[] resources = cli.getOptionValues(CommandLineParam.RUN_PROFILE.toString());
@@ -216,15 +205,15 @@ public class CommandFactoryImpl implements CommandFactory {
         final ProfileRunCommand command = context.getProfileRunCommand();
         command.setDestination(destination[0]);
         command.setResources(resources);
-
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
 
+        final String[] propertyOverrides = cli.getOptionValues(CommandLineParam.PROFILE_PROPERTY.toString());
+        if (propertyOverrides != null && propertyOverrides.length > 0) {
+            command.setProperties(createProperties(propertyOverrides));
+        }
         return command;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getNoProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
         final String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
@@ -255,9 +244,6 @@ public class CommandFactoryImpl implements CommandFactory {
         return command;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getCheckSignatureUpdateCommand() {
         final CheckSignatureUpdateCommand command = context.getCheckSignatureUpdateCommand();
@@ -265,9 +251,6 @@ public class CommandFactoryImpl implements CommandFactory {
         return command;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getDownloadSignatureUpdateCommand() {
         final DownloadSignatureUpdateCommand command = context.getDownloadSignatureUpdateCommand();
@@ -275,9 +258,6 @@ public class CommandFactoryImpl implements CommandFactory {
         return command;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getDisplayDefaultSignatureVersionCommand() {
         final DisplayDefaultSignatureFileVersionCommand command = 
@@ -305,9 +285,6 @@ public class CommandFactoryImpl implements CommandFactory {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getListAllSignatureVersionsCommand() {
         final ListAllSignatureFilesCommand command = context.getListAllSignatureFilesCommand();
@@ -315,13 +292,27 @@ public class CommandFactoryImpl implements CommandFactory {
         return command;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidCommand getListReportCommand() {
         final ListReportsCommand command = context.getListReportsCommand();
         command.setPrintWriter(printWriter);
         return command;
+    }
+
+    private PropertiesConfiguration createProperties(String[] properties) {
+        PropertiesConfiguration result = new PropertiesConfiguration();
+        for (String property : properties) {
+            addProperty(property, result);
+        }
+        return result;
+    }
+
+    private void addProperty(String property, PropertiesConfiguration properties) {
+        final int separator = property.indexOf('=');
+        if (separator > 0) {
+            String key = property.substring(0, separator);
+            String value = property.substring(separator + 1);
+            properties.addProperty(key, value);
+        }
     }
 }
