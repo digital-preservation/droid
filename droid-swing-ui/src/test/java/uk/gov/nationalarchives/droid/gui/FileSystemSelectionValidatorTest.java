@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.gui;
 
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -44,10 +45,16 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.mockito.Mockito.when;
+import static org.openide.util.BaseUtilities.isWindows;
 
 public class FileSystemSelectionValidatorTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @Before
+    public void windowsOnly() {
+        org.junit.Assume.assumeTrue(isWindows());
+    }
 
     @Test
     public void shouldReturnTrueForAFileFromFileSystemAndReturnEmptyErrorMessage() throws IOException {
