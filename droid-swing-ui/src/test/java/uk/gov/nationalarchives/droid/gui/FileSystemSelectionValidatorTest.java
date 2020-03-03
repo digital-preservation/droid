@@ -78,11 +78,11 @@ public class FileSystemSelectionValidatorTest {
     public void shouldReturnErrorMessageIndicatingWhichFolderIsNotAllowed() throws IOException {
         ShellFolder mockfolder = Mockito.mock(ShellFolder.class);
         when(mockfolder.isFileSystem()).thenReturn(false);
-        when(mockfolder.getName()).thenReturn("Mock Libraries");
+        when(mockfolder.getDisplayName()).thenReturn("Mock Libraries");
         File file = temporaryFolder.newFile("someFile");
         FileSystemSelectionValidator validator = new FileSystemSelectionValidator(Arrays.asList(mockfolder, file));
         Assert.assertFalse(validator.isSelectionValid());
-        Assert.assertEquals("The following files/folders cannot be added as they are not from the file system: Mock Libraries",
+        Assert.assertEquals("The following folders cannot be added as they are not from the file system: Mock Libraries",
                 validator.getErrorMessage());
     }
 }

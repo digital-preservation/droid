@@ -40,6 +40,8 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.lang.SystemUtils;
 
+import sun.awt.shell.ShellFolder;
+
 /**
  * Validator to validate that all selected files are profilable.
  */
@@ -47,7 +49,7 @@ public class FileSystemSelectionValidator {
 
     private final boolean isValid;
     private String errorMessage = "";
-    private String errorTemplate = "The following files/folders cannot be added as they are not from the file system: ";
+    private String errorTemplate = "The following folders cannot be added as they are not from the file system: ";
 
     /**
      * Constructor.
@@ -55,6 +57,9 @@ public class FileSystemSelectionValidator {
      */
     public FileSystemSelectionValidator(List<File> files) {
         boolean valid = true; //valid until proven otherwise
+        //Note: We are importing ShellFolder from a restricted set. You can see a corresponding
+        //suppression of a checkstyle validation. This is acceptable here as we are using it
+        //specifically with Windows OS only.
         if (SystemUtils.IS_OS_WINDOWS) {
             List<File> nonFSFiles = files.stream().filter(item ->
                     !FileSystemView.getFileSystemView().isFileSystem(item)).collect(Collectors.toList());
@@ -62,7 +67,7 @@ public class FileSystemSelectionValidator {
                 valid = true;
             } else {
                 errorMessage = errorTemplate + nonFSFiles.stream().map(
-                        item -> item.getName()).collect(Collectors.joining(","));
+                        item -> ((ShellFolder) item).getDisplayName()).collect(Collectors.joining(","));
                 valid = false;
             }
         }
