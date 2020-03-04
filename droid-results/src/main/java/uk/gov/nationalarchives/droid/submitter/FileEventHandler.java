@@ -113,14 +113,13 @@ public class FileEventHandler {
      */
     public void onEvent(final Path file, ResourceId parentId, ResourceId nodeId) {
 
-        URI uri = SubmitterUtils.toURI(file.toFile(), uriStringBuilder);
         final FileTime lastModified = FileUtil.lastModifiedQuietly(file);
         RequestMetaData metaData = new RequestMetaData(
                 FileUtil.sizeQuietly(file),
                 lastModified == null ? new Date(0).getTime() : new Date(lastModified.toMillis()).getTime(),
                 FileUtil.fileName(file));
 
-        RequestIdentifier identifier = new RequestIdentifier(uri);
+        RequestIdentifier identifier = new RequestIdentifier(file.toUri());
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
         IdentificationRequest<Path> request = requestFactory.newRequest(metaData, identifier);

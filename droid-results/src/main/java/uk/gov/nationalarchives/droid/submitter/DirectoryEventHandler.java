@@ -86,7 +86,7 @@ public class DirectoryEventHandler {
                 lastModified == null ? new Date(0).getTime() : new Date(lastModified.toMillis()).getTime(),
                 depth == 0 ? dir.toAbsolutePath().toString() : FileUtil.fileName(dir));
         
-        RequestIdentifier identifier = new RequestIdentifier(SubmitterUtils.toURI(dir.toFile(), uriStringBuilder));
+        RequestIdentifier identifier = new RequestIdentifier(dir.toUri());
         identifier.setParentResourceId(parentId);
         result.setRequestMetaData(metaData);
         result.setIdentifier(identifier);

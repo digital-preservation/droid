@@ -63,6 +63,7 @@ public final class SubmitterUtils {
     }
 
     /**
+     * WARNING: does not work on windows network drives
      * A method to return a file URI from a file, without creating lots of char[] garbage.
      * <p>
      * The method in File.toURI() creates a lot of char[] garbage as it appends slashes
