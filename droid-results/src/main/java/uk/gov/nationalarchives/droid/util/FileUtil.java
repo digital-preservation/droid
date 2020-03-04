@@ -33,11 +33,12 @@ package uk.gov.nationalarchives.droid.util;
 
 import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.Files;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.NumberFormat;
@@ -302,14 +303,14 @@ public final class FileUtil {
 
     private static void listFiles(final Path path, final boolean recursive, final DirectoryStream.Filter<Path> filter,
             final List<Path> results) throws IOException {
-        final DirectoryStream<Path> dirStream;
-        if (filter == null) {
-            dirStream = Files.newDirectoryStream(path);
-        } else {
-            dirStream = Files.newDirectoryStream(path, filter);
-        }
+        DirectoryStream<Path> dirStream = null;
 
         try {
+            if (filter == null) {
+                dirStream = Files.newDirectoryStream(path);
+            } else {
+                dirStream = Files.newDirectoryStream(path, filter);
+            }
             for (final Path child : dirStream) {
                 if (recursive && Files.isDirectory(child)) {
                     listFiles(child, recursive, filter, results);
@@ -317,8 +318,12 @@ public final class FileUtil {
                     results.add(child);
                 }
             }
+        } catch (AccessDeniedException exception) {
+            // do nothing, managed in FileEventHandler
         } finally {
-            dirStream.close();
+            if (dirStream != null) {
+                dirStream.close();
+            }
         }
     }
 

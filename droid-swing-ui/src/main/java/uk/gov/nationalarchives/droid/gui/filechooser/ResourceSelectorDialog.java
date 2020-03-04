@@ -411,12 +411,13 @@ public class ResourceSelectorDialog extends JDialog {
                     table.setRowSorter(sorter);
                     sorter.sort();
                     sorter.toggleSortOrder(0);
+
+                    initColumnModel();
+                    tree.expandPath(treePath);
                     
                 } else {
                     table.setModel(new DefaultTableModel());
                 }
-                initColumnModel();
-                tree.expandPath(treePath);
                 
                 // Selection in the navigator tree selects a folder for profiling:
                 selectedFiles.clear();
