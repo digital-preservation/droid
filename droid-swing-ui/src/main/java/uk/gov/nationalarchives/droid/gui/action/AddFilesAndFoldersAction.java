@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.gui.action;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collection;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -88,15 +89,15 @@ public class AddFilesAndFoldersAction {
             // VERY basic shortcut detection:
             boolean isShortcut = !selectedFile.toURI().getPath().endsWith("/");
             if (selectedFile.isDirectory() && !isShortcut) {
-                newResource = new DirectoryProfileResource(selectedFile.toPath(), recursive);
+                newResource = new DirectoryProfileResource(Paths.get(selectedFile.toURI()), recursive);
             } else {
-                newResource = new FileProfileResource(selectedFile.toPath());
+                newResource = new FileProfileResource(Paths.get(selectedFile.toURI()));
             }
 
             if (profile.addResource(newResource)) {
                 ProfileResourceNode primordialNode = new ProfileResourceNode(newResource.getUri());
                 final NodeMetaData metaData = primordialNode.getMetaData();
-                metaData.setName(newResource.getUri().getPath());
+                metaData.setName(Paths.get(newResource.getUri()).toString());
                 metaData.setNodeStatus(NodeStatus.NOT_DONE);
                 metaData.setResourceType(
                         newResource.isDirectory() ? ResourceType.FOLDER : ResourceType.FILE);

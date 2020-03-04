@@ -35,6 +35,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Paths;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -141,7 +142,7 @@ public class NodeRenderer extends DefaultOutlineCellRenderer {
 
         ProfileResourceNode profileNode = (ProfileResourceNode) ((DefaultMutableTreeNode) node)
             .getUserObject();
-        return profileNode.getParentId() == null ? new File(profileNode.getUri()).getPath() 
+        return profileNode.getParentId() == null ? Paths.get(profileNode.getUri()).toString()
                 : profileNode.getMetaData().getName();
         //return profileNode.getParent() == null ? new File(profileNode.getUri()).getPath() 
         //        : profileNode.getMetaData().getName();
