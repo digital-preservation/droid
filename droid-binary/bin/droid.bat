@@ -147,6 +147,6 @@ GOTO end
 
 :NOPARAM
 REM No command-line parameters passed -- run GUI version:
-start ${JRE_BIN_PATH}javaw %DROID_OPTIONS% -jar "%DROID_HOME%droid-ui-${project.version}.jar"
+start "" "${JRE_BIN_PATH}javaw" %DROID_OPTIONS% -jar "%DROID_HOME%droid-ui-${project.version}.jar"
 
 :END
