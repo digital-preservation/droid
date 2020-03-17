@@ -37,11 +37,12 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import uk.gov.nationalarchives.droid.core.signature.ByteReader;
+import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection;
 
 /**
  * @author rflitcroft
@@ -96,81 +97,42 @@ public class ContainerSignatureMatchTest {
         assertTrue(match.isMatch());
     }
     
-    @Ignore
+
     @Test
-    public void testNeedsTextMatch() {
-        ContainerFile file1 = mock(ContainerFile.class);
-        //when(file1.getTextSignature()).thenReturn("sig");
-        when(file1.getPath()).thenReturn("entry1");
-        
-        ContainerFile file2 = mock(ContainerFile.class);
-        //when(file2.getTextSignature()).thenReturn(null);
-        when(file1.getPath()).thenReturn("entry2");
-        
+    public void shouldMatchBinaryContentByFileNameWithTheFullPathWhenNoBinaryContent() {
+        ByteReader binaryContent = null;
         Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
-        files.put("entry1", file1);
-        files.put("entry2", file2);
-        
+        files.put("header/siardversion/2.1/", new ContainerFile());
+
         ContainerSignature sig = mock(ContainerSignature.class);
         when(sig.getFiles()).thenReturn(files);
 
-        match = new ContainerSignatureMatch(sig, -1L);
-        
-        //assertTrue(match.needsTextMatch("entry1"));
-        //assertFalse(match.needsTextMatch("entry2"));
-    }
-    
-    @Ignore
-    @Test
-    public void testMatchTextContent() {
-        ContainerFile file1 = mock(ContainerFile.class);
-        //when(file1.getTextSignature()).thenReturn("sig");
-        when(file1.getPath()).thenReturn("entry1");
-        
-        ContainerFile file2 = mock(ContainerFile.class);
-        //when(file2.getTextSignature()).thenReturn(null);
-        when(file1.getPath()).thenReturn("entry2");
-        
-        Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
-        files.put("entry1", file1);
-        files.put("entry2", file2);
-        
-        ContainerSignature sig = mock(ContainerSignature.class);
-        when(sig.getFiles()).thenReturn(files);
+        ContainerSignatureMatch match = new ContainerSignatureMatch(sig, -1L);
 
-        match = new ContainerSignatureMatch(sig, -1L);
-        
-        //match.matchTextContent("entry1", "fig");
-        //assertFalse(match.isMatch());
-
-        match.matchFileEntry("entry2");
-        assertFalse(match.isMatch());
-
-        //match.matchTextContent("entry1", "sig");
-        //assertTrue(match.isMatch());
-        
+        match.matchBinaryContent("header/siardversion/2.1/", binaryContent);
+        assertTrue(match.isMatch());
     }
 
-    @Ignore
-    @Test(expected = NullPointerException.class)
-    public void testMatchTextContentWithFileWithoutTextSignature() {
-        ContainerFile file1 = mock(ContainerFile.class);
-        //when(file1.getTextSignature()).thenReturn("sig");
-        when(file1.getPath()).thenReturn("entry1");
-        
-        ContainerFile file2 = mock(ContainerFile.class);
-        //when(file2.getTextSignature()).thenReturn(null);
-        when(file1.getPath()).thenReturn("entry2");
-        
-        Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
-        files.put("entry1", file1);
-        files.put("entry2", file2);
-        
-        ContainerSignature sig = mock(ContainerSignature.class);
-        when(sig.getFiles()).thenReturn(files);
+//    @Test
+//    public void shouldDelegateToBinarySignatureMatcherWhenBinarySignatureExists() {
+//        ByteReader mockBinaryContent = mock(ByteReader.class);
+//        ContainerFile containerFile = mock(ContainerFile.class);
+//
+//        Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
+//        files.put("header/siardversion/2.1/", containerFile);
+//
+//        ContainerSignature sig = mock(ContainerSignature.class);
+//        when(sig.getFiles()).thenReturn(files);
+//
+//        InternalSignatureCollection mockSignatures = mock(InternalSignatureCollection.class);
+//        when(containerFile.getCompiledBinarySignatures()).thenReturn(mockSignatures);
+//
+//        ContainerSignatureMatch match = new ContainerSignatureMatch(sig, -1L);
+//
+//        match.matchBinaryContent("header/siardversion/2.1/", mockBinaryContent);
+//        assertTrue(match.isMatch());
+//
+//        verify(mockSignatures, times(1)).getMatchingSignatures(mockBinaryContent, -1L);
+//    }
 
-        match = new ContainerSignatureMatch(sig, -1L);
-        
-        //match.matchTextContent("entry2", "sig");
-    }
 }
