@@ -33,11 +33,18 @@ package uk.gov.nationalarchives.droid.container;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import uk.gov.nationalarchives.droid.core.SignatureParseException;
+
+import javax.xml.bind.JAXBException;
 
 /**
  * @author rflitcroft
@@ -88,5 +95,55 @@ public class ContainerSignatureSaxParserTest {
         assertEquals(10, excelSignature.getId());
         assertEquals(1, excelSignature.getFiles().size());
         assertEquals("Workbook", excelSignature.listFiles().get(0).getPath());
+    }
+
+    @Test
+    public void folderBasedContainerSignaturesShouldKeepThePathsAsPresentedInSignatureFileForContainerFileMap() throws JAXBException, UnsupportedEncodingException, SignatureParseException {
+        String xml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                        + "<ContainerSignatureMapping>"
+                        + "    <ContainerSignatures>"
+                        + "        <ContainerSignature ContainerType=\"ZIP\" Id=\"31020\">"
+                        + "            <Description>SIARD 2.1</Description>"
+                        + "            <Files>"
+                        + "                <File>"
+                        + "                   <Path>header/siardversion/2.1/</Path>"
+                        + "                </File>"
+                        + "            </Files>"
+                        + "        </ContainerSignature>"
+                        + "        <ContainerSignature ContainerType=\"ZIP\" Id=\"31010\">"
+                        + "            <Description>SIARD 2.0</Description>"
+                        + "            <Files>"
+                        + "                <File>"
+                        + "                    <Path>header/metadata.xml</Path>"
+                        + "                    <BinarySignatures>"
+                        + "                         <InternalSignatureCollection>"
+                        + "                             <InternalSignature ID=\"31010\">"
+                        + "                                 <ByteSequence Reference=\"BOFoffset\">"
+                        + "                                     <SubSequence Position=\"1\" SubSeqMaxOffset=\"256\"\n SubSeqMinOffset=\"50\">"
+                        + "                                         <Sequence>'xmlns=\"http://www.bar.admin.ch/xmlns/siard/2.0/metadata.xsd\"'</Sequence>"
+                        + "                                     </SubSequence>"
+                        + "                                 </ByteSequence>"
+                        + "                             </InternalSignature>"
+                        + "                         </InternalSignatureCollection>"
+                        + "                    </BinarySignatures>"
+                        + "                </File>"
+                        + "            </Files>"
+                        + "        </ContainerSignature>"
+                        + "    </ContainerSignatures>"
+                        + "</ContainerSignatureMapping>";
+        ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
+        InputStream in = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+        List<ContainerSignature> signatures = parser.parse(in).getContainerSignatures();
+
+        Optional<ContainerSignature> siard2_0 = signatures.stream().filter(sig -> sig.getId() == 31010).findFirst();
+        assertTrue("siard20 signature not found", siard2_0.isPresent());
+        Map<String, ContainerFile> fileMap = siard2_0.get().getFiles();
+        assertTrue("expected an entry for 2_0 in file map but found none", fileMap.containsKey("header/metadata.xml"));
+
+        Optional<ContainerSignature> siard2_1 = signatures.stream().filter(sig -> sig.getId() == 31020).findFirst();
+        assertTrue("siard20 signature not found", siard2_1.isPresent());
+        fileMap = siard2_1.get().getFiles();
+        assertTrue("expected an entry for 2_1 in file map but found none", fileMap.containsKey("header/siardversion/2.1/"));
     }
 }

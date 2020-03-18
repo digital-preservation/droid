@@ -45,8 +45,6 @@ import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureColl
  */
 public class ContainerSignatureMatch {
 
-    private static final String FORWARD_SLASH = "/";
-
     private ContainerSignature signature;
     private long maxBytesToScan = -1;
 
@@ -86,11 +84,10 @@ public class ContainerSignatureMatch {
      * @param entryName the name of the container file entry
      */
     public void matchFileEntry(String entryName) {
-        final String name = stripEndingForwardSlash(entryName);
-        if (unmatchedFiles.contains(name)) {
-            InternalSignatureCollection binSigs = signature.getFiles().get(name).getCompiledBinarySignatures();
+        if (unmatchedFiles.contains(entryName)) {
+            InternalSignatureCollection binSigs = signature.getFiles().get(entryName).getCompiledBinarySignatures();
             if (binSigs == null) {
-                unmatchedFiles.remove(name);
+                unmatchedFiles.remove(entryName);
             }
         }
     }
@@ -102,9 +99,8 @@ public class ContainerSignatureMatch {
      */
     public boolean needsBinaryMatch(String entryName) {
         boolean needsMatch = false;
-        final String name = stripEndingForwardSlash(entryName);
-        if (unmatchedFiles.contains(name)) {
-            InternalSignatureCollection binarySigs = signature.getFiles().get(name).getCompiledBinarySignatures();
+        if (unmatchedFiles.contains(entryName)) {
+            InternalSignatureCollection binarySigs = signature.getFiles().get(entryName).getCompiledBinarySignatures();
             needsMatch = binarySigs != null;
         }
         return needsMatch;
@@ -121,15 +117,14 @@ public class ContainerSignatureMatch {
      */
     public void matchBinaryContent(String entryName, ByteReader content) {
         boolean matched = true;
-        String name = stripEndingForwardSlash(entryName);
-        if (unmatchedFiles.contains(name)) {
+        if (unmatchedFiles.contains(entryName)) {
             Map<String, ContainerFile> sigFiles = signature.getFiles();
-            InternalSignatureCollection binSigs = sigFiles.get(name).getCompiledBinarySignatures();
+            InternalSignatureCollection binSigs = sigFiles.get(entryName).getCompiledBinarySignatures();
             if (binSigs != null) {
                 matched = binSigs.getMatchingSignatures(content, maxBytesToScan).size() > 0;
             }
             if (matched) {
-                unmatchedFiles.remove(name);
+                unmatchedFiles.remove(entryName);
             }
         }
     }
@@ -139,18 +134,6 @@ public class ContainerSignatureMatch {
      */
     public ContainerSignature getSignature() {
         return signature;
-    }
-
-    /**
-     * Removes a last forward slash on a path if it exists.
-     * @param path The path to strip.
-     * @return A path without an ending forward slash.
-     */
-    private String stripEndingForwardSlash(String path) {
-        if (path != null && path.endsWith(FORWARD_SLASH)) {
-            return path.substring(0, path.length() - 1);
-        }
-        return path;
     }
 
 }
