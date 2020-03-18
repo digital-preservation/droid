@@ -113,26 +113,25 @@ public class ContainerSignatureMatchTest {
         assertTrue(match.isMatch());
     }
 
-//    @Test
-//    public void shouldDelegateToBinarySignatureMatcherWhenBinarySignatureExists() {
-//        ByteReader mockBinaryContent = mock(ByteReader.class);
-//        ContainerFile containerFile = mock(ContainerFile.class);
-//
-//        Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
-//        files.put("header/siardversion/2.1/", containerFile);
-//
-//        ContainerSignature sig = mock(ContainerSignature.class);
-//        when(sig.getFiles()).thenReturn(files);
-//
-//        InternalSignatureCollection mockSignatures = mock(InternalSignatureCollection.class);
-//        when(containerFile.getCompiledBinarySignatures()).thenReturn(mockSignatures);
-//
-//        ContainerSignatureMatch match = new ContainerSignatureMatch(sig, -1L);
-//
-//        match.matchBinaryContent("header/siardversion/2.1/", mockBinaryContent);
-//        assertTrue(match.isMatch());
-//
-//        verify(mockSignatures, times(1)).getMatchingSignatures(mockBinaryContent, -1L);
-//    }
+    @Test
+    public void shouldDelegateToBinarySignatureMatcherWhenBinarySignatureExists() {
+        ByteReader mockBinaryContent = mock(ByteReader.class);
+        ContainerFile containerFile = mock(ContainerFile.class);
+
+        Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
+        files.put("header/siardversion/2.1/", containerFile);
+
+        ContainerSignature sig = mock(ContainerSignature.class);
+        when(sig.getFiles()).thenReturn(files);
+
+        InternalSignatureCollection mockSignatures = mock(InternalSignatureCollection.class);
+        when(containerFile.getCompiledBinarySignatures()).thenReturn(mockSignatures);
+
+        ContainerSignatureMatch match = new ContainerSignatureMatch(sig, -1L);
+
+        match.matchBinaryContent("header/siardversion/2.1/", mockBinaryContent);
+
+        verify(mockSignatures, times(1)).getMatchingSignatures(mockBinaryContent, -1L);
+    }
 
 }
