@@ -265,5 +265,10 @@
             <artifactId>fat32-lib</artifactId>
             <version>0.6.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
