@@ -56,6 +56,15 @@ public class DirectoryStreamFilterCreatorTest {
 
     @Rule
     public TemporaryFolder tempRoot = new TemporaryFolder();
+    private File root_flying_gif;
+    private File root_indiaNa_jpeg;
+    private File root_rocket_gif;
+    private File root_tna_icon_png;
+    private File root_tna_jpeg;
+    private File root_oneMore_flying_gif;
+    private File root_oneMore_tna_icon_png;
+    private File root_oneMore_tna_jpeg;
+    private File oneMoreFolder;
 
     /**
      * The structure being used for these tests is
@@ -82,17 +91,17 @@ public class DirectoryStreamFilterCreatorTest {
      */
     @Before
     public void setupFoldersAndFiles() throws IOException {
-        File oneMoreFolder = tempRoot.newFolder("one-more");
+        oneMoreFolder = tempRoot.newFolder("one-more");
         oneMoreFolder.mkdir();
 
-        tempRoot.newFile("flying.gif");
-        tempRoot.newFile("india-na.jpeg");
-        tempRoot.newFile("rocket.gif");
-        tempRoot.newFile("the_national_archives_icon.png");
-        tempRoot.newFile("tna.jpeg");
-        tempRoot.newFile("one-more/flying.gif");
-        tempRoot.newFile("one-more/the_national_archives_icon.png");
-        tempRoot.newFile("one-more/tna.jpeg");
+        root_flying_gif = tempRoot.newFile("flying.gif");
+        root_indiaNa_jpeg = tempRoot.newFile("india-na.jpeg");
+        root_rocket_gif = tempRoot.newFile("rocket.gif");
+        root_tna_icon_png =  tempRoot.newFile("the_national_archives_icon.png");
+        root_tna_jpeg = tempRoot.newFile("tna.jpeg");
+        root_oneMore_flying_gif = tempRoot.newFile("one-more/flying.gif");
+        root_oneMore_tna_icon_png = tempRoot.newFile("one-more/the_national_archives_icon.png");
+        root_oneMore_tna_jpeg = tempRoot.newFile("one-more/tna.jpeg");
     }
 
     @Test
@@ -100,11 +109,8 @@ public class DirectoryStreamFilterCreatorTest {
         List<Path> paths = getPathList(false, null);
         assertEquals(5, paths.size());
 
-        List<String> expectedPaths = Arrays.asList(tempRoot.getRoot().getPath() + "/tna.jpeg",
-                tempRoot.getRoot().getPath() + "/india-na.jpeg",
-                tempRoot.getRoot().getPath() + "/rocket.gif",
-                tempRoot.getRoot().getPath() + "/the_national_archives_icon.png",
-                tempRoot.getRoot().getPath() + "/flying.gif");
+        List<String> expectedPaths = Arrays.asList(root_tna_jpeg.getPath(), root_indiaNa_jpeg.getPath(),
+                root_rocket_gif.getPath(), root_tna_icon_png.getPath(), root_flying_gif.getPath());
 
         List<String> actualPaths = paths.stream().map(a -> a.toString()).collect(Collectors.toList());
         assertThat(actualPaths, containsInAnyOrder(expectedPaths.toArray()));
@@ -115,12 +121,8 @@ public class DirectoryStreamFilterCreatorTest {
         List<Path> paths = getPathList(true, null);
         assertEquals(6, paths.size());
 
-        List<String> expectedPaths = Arrays.asList(tempRoot.getRoot().getPath() + "/tna.jpeg",
-                tempRoot.getRoot().getPath() + "/india-na.jpeg",
-                tempRoot.getRoot().getPath() + "/rocket.gif",
-                tempRoot.getRoot().getPath() + "/the_national_archives_icon.png",
-                tempRoot.getRoot().getPath() + "/flying.gif",
-                tempRoot.getRoot().getPath() + "/one-more");
+        List<String> expectedPaths = Arrays.asList(root_tna_jpeg.getPath(), root_indiaNa_jpeg.getPath(),
+                root_rocket_gif.getPath(), root_tna_icon_png.getPath(), root_flying_gif.getPath(), oneMoreFolder.getPath());
 
         List<String> actualPaths = paths.stream().map(a -> a.toString()).collect(Collectors.toList());
         assertThat(actualPaths, containsInAnyOrder(expectedPaths.toArray()));
@@ -131,9 +133,7 @@ public class DirectoryStreamFilterCreatorTest {
         List<Path> paths = getPathList(false, new String[] {"gif"});
         assertEquals(2, paths.size());
 
-        List<String> expectedPaths = Arrays.asList(
-                tempRoot.getRoot().getPath() + "/rocket.gif",
-                tempRoot.getRoot().getPath() + "/flying.gif");
+        List<String> expectedPaths = Arrays.asList(root_rocket_gif.getPath(), root_flying_gif.getPath());
 
         List<String> actualPaths = paths.stream().map(a -> a.toString()).collect(Collectors.toList());
         assertThat(actualPaths, containsInAnyOrder(expectedPaths.toArray()));
@@ -144,10 +144,8 @@ public class DirectoryStreamFilterCreatorTest {
         List<Path> paths = getPathList(true, new String[] {"gif"});
         assertEquals(3, paths.size());
 
-        List<String> expectedPaths = Arrays.asList(
-                tempRoot.getRoot().getPath() + "/rocket.gif",
-                tempRoot.getRoot().getPath() + "/flying.gif",
-                tempRoot.getRoot().getPath() + "/one-more");
+        List<String> expectedPaths = Arrays.asList(root_rocket_gif.getPath(), root_flying_gif.getPath(),
+                oneMoreFolder.getPath());
 
         List<String> actualPaths = paths.stream().map(a -> a.toString()).collect(Collectors.toList());
         assertThat(actualPaths, containsInAnyOrder(expectedPaths.toArray()));
@@ -158,12 +156,8 @@ public class DirectoryStreamFilterCreatorTest {
         List<Path> paths = getPathList(true, new String[] {"gif", "jpeg"});
         assertEquals(5, paths.size());
 
-        List<String> expectedPaths = Arrays.asList(
-                tempRoot.getRoot().getPath() + "/rocket.gif",
-                tempRoot.getRoot().getPath() + "/flying.gif",
-                tempRoot.getRoot().getPath() + "/one-more",
-                tempRoot.getRoot().getPath() + "/tna.jpeg",
-                tempRoot.getRoot().getPath() + "/india-na.jpeg");
+        List<String> expectedPaths = Arrays.asList(root_rocket_gif.getPath(), root_flying_gif.getPath(),
+                oneMoreFolder.getPath(), root_tna_jpeg.getPath(), root_indiaNa_jpeg.getPath());
 
         List<String> actualPaths = paths.stream().map(a -> a.toString()).collect(Collectors.toList());
         assertThat(actualPaths, containsInAnyOrder(expectedPaths.toArray()));
