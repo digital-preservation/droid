@@ -655,7 +655,7 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonReport);
 
-        jMenuBar1.setPreferredSize(new java.awt.Dimension(100, 21));
+        jMenuBar1.setPreferredSize(new java.awt.Dimension(100, 25));
 
         jMenuFile.setMnemonic('F');
         jMenuFile.setText("File");
