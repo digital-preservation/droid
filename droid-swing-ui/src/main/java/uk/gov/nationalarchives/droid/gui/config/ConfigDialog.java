@@ -620,7 +620,7 @@ public class ConfigDialog extends JDialog {
                     .addComponent(jLabel4))
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(jLabel10)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addContainerGap(156, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle"), jPanel3); // NOI18N
@@ -651,7 +651,7 @@ public class ConfigDialog extends JDialog {
             .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(rowPerFormatButton1, GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
+                    .addComponent(rowPerFormatButton1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(rowPerFileButton1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -660,7 +660,7 @@ public class ConfigDialog extends JDialog {
                 .addContainerGap()
                 .addComponent(rowPerFileButton1)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(rowPerFormatButton1, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE)
+                .addComponent(rowPerFormatButton1)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
