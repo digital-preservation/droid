@@ -36,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.DefaultCellEditor;
@@ -101,6 +102,7 @@ public class ReportDialog extends JDialog {
         for (ProfileForm profile : profiles) {
             profilesRowData.add(new ProfileWrapper(profile));
         }
+        profilesRowData.sort(Comparator.comparing(profileWrapper -> profileWrapper.getProfile().getProfile().getName()));
         
         tableModel = new DefaultTableModel(0, 1) {
             @Override
@@ -134,6 +136,7 @@ public class ReportDialog extends JDialog {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         
         final List<ReportSpec> reports = droidMain.getGlobalContext().getReportManager().listReportSpecs();
+        reports.sort(Comparator.comparing(ReportSpec::getName));
         for (ReportSpec reportSpec : reports) {
             model.addElement(reportSpec);
         }
@@ -327,9 +330,6 @@ public class ReportDialog extends JDialog {
         private static final long serialVersionUID = 8023412072260282004L;
         private ProfileWrapper profile;
         
-        /**
-         * @param checkBox
-         */
         public CheckBoxEditor() {
             super(new JCheckBox());
         }
