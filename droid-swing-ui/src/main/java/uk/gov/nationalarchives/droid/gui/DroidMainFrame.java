@@ -609,11 +609,17 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonFilter);
 
+        jPanel1.setMaximumSize(new java.awt.Dimension(24, 60));
+        jPanel1.setMinimumSize(new java.awt.Dimension(24, 60));
+        jPanel1.setPreferredSize(new java.awt.Dimension(24, 60));
+
         jFilterOnCheckBox.setText("On");
         jFilterOnCheckBox.setFocusable(false);
         jFilterOnCheckBox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jFilterOnCheckBox.setInheritsPopupMenu(true);
-        jFilterOnCheckBox.setPreferredSize(new java.awt.Dimension(24, 58));
+        jFilterOnCheckBox.setMaximumSize(new java.awt.Dimension(24, 55));
+        jFilterOnCheckBox.setMinimumSize(new java.awt.Dimension(24, 55));
+        jFilterOnCheckBox.setPreferredSize(new java.awt.Dimension(24, 55));
         jFilterOnCheckBox.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jFilterOnCheckBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jFilterOnCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -633,8 +639,8 @@ public class DroidMainFrame extends JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jFilterOnCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jFilterOnCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         droidToolBar.add(jPanel1);
