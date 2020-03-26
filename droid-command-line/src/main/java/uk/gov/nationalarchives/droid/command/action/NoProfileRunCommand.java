@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.archive.ArchiveConfiguration;
+import uk.gov.nationalarchives.droid.command.filter.Creator.DirectoryStreamFilterCreator;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
@@ -114,7 +115,7 @@ public class NoProfileRunCommand implements DroidCommand {
        //BNO - allow processing of a single file as well as directory
         final Collection<Path> matchedFiles;
         if (Files.isDirectory(targetDirectoryOrFile)) {
-            final DirectoryStream.Filter<Path> filter = createFilter();
+            final DirectoryStream.Filter<Path> filter = new DirectoryStreamFilterCreator(recursive, extensions).create();
             try {
                 matchedFiles = FileUtil.listFiles(targetDirectoryOrFile, this.recursive, filter);
             } catch (final IOException e) {
@@ -322,41 +323,4 @@ public class NoProfileRunCommand implements DroidCommand {
         this.expandArchiveTypes = expandArchiveTypes;
     }
 
-    /**
-     * Create an appropriate filter based on whether the current command is recursive. If recursive
-     * include directories, if non-recursive exclude directories
-     * @return
-     */
-    private DirectoryStream.Filter<Path> createFilter() {
-        DirectoryStream.Filter<Path> filter;
-        if (this.recursive) {
-             filter = new DirectoryStream.Filter<Path>() {
-                @Override
-                public boolean accept(final Path entry) throws IOException {
-                    // for recursive call we do not filter anything out
-                    return true;
-                }
-            };
-        } else {
-            filter = new DirectoryStream.Filter<Path>() {
-                @Override
-                public boolean accept(final Path entry) throws IOException {
-                    boolean retVal = false;
-                    if (!Files.isDirectory(entry)) {
-                        if (extensions == null || extensions.length == 0) {
-                            retVal = true;
-                        } else {
-                            for (final String extension : extensions) {
-                                if (entry.getFileName().toString().endsWith("." + extension)) {
-                                    retVal = true;
-                                }
-                            }
-                        }
-                    }
-                    return retVal;
-                }
-            };
-        }
-        return filter;
-    }
 }
