@@ -80,4 +80,12 @@ public class DirectoryProfileResource extends FileProfileResource {
         return true;
     }
 
+    /**
+     * setting an arbitrary size of 0 for the folder resource.
+     * @param filePath - ignored for the folder
+     */
+    @Override
+    public void setSize(Path filePath) {
+        setSize(-1L);
+    }
 }

@@ -32,6 +32,11 @@
 package uk.gov.nationalarchives.droid.profile;
 
 
+import java.nio.file.Path;
+
+import uk.gov.nationalarchives.droid.util.FileUtil;
+
+
 /**
  * @author rflitcroft
  *
@@ -45,5 +50,11 @@ public class UrlProfileResource extends AbstractProfileResource {
     public boolean isDirectory() {
         return false;
     }
+
+    @Override
+    public void setSize(Path filePath) {
+        setSize(FileUtil.sizeQuietly(filePath));
+    }
+
 
 }
