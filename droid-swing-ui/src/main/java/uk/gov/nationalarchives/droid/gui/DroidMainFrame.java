@@ -609,17 +609,18 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonFilter);
 
-        jPanel1.setMaximumSize(new java.awt.Dimension(24, 60));
-        jPanel1.setMinimumSize(new java.awt.Dimension(24, 60));
-        jPanel1.setPreferredSize(new java.awt.Dimension(24, 60));
+        jPanel1.setMaximumSize(new java.awt.Dimension(30, 60));
+        jPanel1.setMinimumSize(new java.awt.Dimension(30, 60));
+        jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(30, 60));
 
         jFilterOnCheckBox.setText("On");
         jFilterOnCheckBox.setFocusable(false);
         jFilterOnCheckBox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jFilterOnCheckBox.setInheritsPopupMenu(true);
-        jFilterOnCheckBox.setMaximumSize(new java.awt.Dimension(24, 55));
-        jFilterOnCheckBox.setMinimumSize(new java.awt.Dimension(24, 55));
-        jFilterOnCheckBox.setPreferredSize(new java.awt.Dimension(24, 55));
+        jFilterOnCheckBox.setMaximumSize(new java.awt.Dimension(30, 55));
+        jFilterOnCheckBox.setMinimumSize(new java.awt.Dimension(30, 55));
+        jFilterOnCheckBox.setPreferredSize(new java.awt.Dimension(30, 55));
         jFilterOnCheckBox.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jFilterOnCheckBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jFilterOnCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -997,7 +998,7 @@ public class DroidMainFrame extends JFrame {
     private void OpenContainingFolder(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenContainingFolder
         OpenContainingFolderAction openFolders = new OpenContainingFolderAction();
         openFolders.open(getSelectedNodes());
-        
+
     }//GEN-LAST:event_OpenContainingFolder
 
     private void jMenuItemCopyToClipboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopyToClipboardActionPerformed
@@ -1039,15 +1040,15 @@ public class DroidMainFrame extends JFrame {
             // action.setTargetFile(reportDialog.getTarget());
             ReportProgressDialog reportProgressDialog = new ReportProgressDialog(this, action);
             ReportViewFrame reportViewDialog = new ReportViewFrame(this);
-            //FIXME: the report transformer is defined as a singleton bean in the export report 
-            // action configured through spring.  Here we are instantiating a new specific 
+            //FIXME: the report transformer is defined as a singleton bean in the export report
+            // action configured through spring.  Here we are instantiating a new specific
             // transformer - there was a bug in that this one did not have the droid config
             // object configured.  For the time being, just set up this transformer correctly.
             ReportTransformerImpl transformer = new ReportTransformerImpl();
             transformer.setConfig(globalContext.getGlobalConfig());
-            reportViewDialog.setReportTransformer(transformer);            
-            
-            
+            reportViewDialog.setReportTransformer(transformer);
+
+
             action.setProgressDialog(reportProgressDialog);
             action.setViewDialog(reportViewDialog);
             action.execute();
@@ -1354,7 +1355,7 @@ public class DroidMainFrame extends JFrame {
             }
         });
         exitListeners.add(newProfileAction);
-        
+
         try {
             newProfileAction.init(new ProfileForm(this, droidContext, buttonManager));
             newProfileAction.execute();
@@ -1402,7 +1403,7 @@ public class DroidMainFrame extends JFrame {
     }// GEN-LAST:event_jButtonRemoveFilesAndFolderActionPerformed
 
     /**
-     * 
+     *
      * @return true if the add file or folders menu item is enabled.
      */
     public boolean getAddEnabled() {
@@ -1410,7 +1411,7 @@ public class DroidMainFrame extends JFrame {
     }
 
     /**
-     * 
+     *
      * @return true if the remove file or folders menu item is enabled.
      */
     public boolean getRemoveEnabled() {
