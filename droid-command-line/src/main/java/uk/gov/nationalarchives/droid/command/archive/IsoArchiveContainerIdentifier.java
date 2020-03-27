@@ -81,7 +81,7 @@ public class IsoArchiveContainerIdentifier extends ArchiveContentIdentifier {
      */
     public void identify(final URI uri, final IdentificationRequest request) throws CommandExecutionException {
 
-        final String newPath = makeContainerURI("zip", request.getFileName());
+        final String newPath = makeContainerURI("iso", request.getFileName());
         setSlash1("");
 
         if (request.getClass().isAssignableFrom(FileSystemIdentificationRequest.class)) {
