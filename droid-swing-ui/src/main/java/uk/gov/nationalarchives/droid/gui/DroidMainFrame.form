@@ -733,13 +733,14 @@
         <Container class="javax.swing.JPanel" name="jPanel1">
           <Properties>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[24, 60]"/>
+              <Dimension value="[30, 60]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[24, 60]"/>
+              <Dimension value="[30, 60]"/>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[24, 60]"/>
+              <Dimension value="[30, 60]"/>
             </Property>
           </Properties>
 
@@ -769,13 +770,13 @@
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="inheritsPopupMenu" type="boolean" value="true"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[24, 55]"/>
+                  <Dimension value="[28, 55]"/>
                 </Property>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[24, 55]"/>
+                  <Dimension value="[30, 55]"/>
                 </Property>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[24, 55]"/>
+                  <Dimension value="[30, 55]"/>
                 </Property>
                 <Property name="verticalAlignment" type="int" value="3"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
