@@ -82,16 +82,17 @@ public class DroidCommandLineTest {
         context = mock(GlobalContext.class);
     }
     
-    @Test (expected=CommandLineException.class)
+    @Test //(expected=CommandLineException.class)
     public void testParseNonsense() throws CommandLineException{
         String[] args = new String[] {
             "--zzzzzz"
         };
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args, printWriter);
         
         //a return code of 1 denotes a failure
         Assert.assertEquals(1, droidCommandLine.processExecution());
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.UnrecognizedOptionException: Unrecognized option: --zzzzzz");
         
     }
     
@@ -285,7 +286,7 @@ public class DroidCommandLineTest {
         
     }
 
-    @Test(expected=CommandLineException.class)
+    @Test
     public void testHelpAndVersionIsNotValidCombination() throws Exception {
         
         String[] args = new String[] {
@@ -293,11 +294,13 @@ public class DroidCommandLineTest {
             "-v"
         };
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args, printWriter);
         
         droidCommandLine.setContext(context);
         
         droidCommandLine.processExecution();
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.AlreadySelectedException: The option 'v' was specified but an\n" +
+                "option from this group has already been selected: 'h'");
     }
     
     @Test
@@ -369,7 +372,7 @@ public class DroidCommandLineTest {
         });
     }
     
-    @Test(expected = CommandLineException.class)
+    @Test
     public void testRunAndSaveProfileToMultipleFiles() throws CommandLineException {
         String[] args = new String[] {
             "-a",
@@ -383,9 +386,10 @@ public class DroidCommandLineTest {
         ProfileRunCommand command = mock(ProfileRunCommand.class);
         when(context.getProfileRunCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args);
+        DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-        
+
+        verify(printWriter).println("Incorrect command line syntax: Must specify exactly one profile.");
     }
 
     @Test
@@ -416,7 +420,7 @@ public class DroidCommandLineTest {
         verify(command).setRecursive(true);
     }
 
-    @Test(expected = CommandLineException.class)
+    @Test
     public void testRunAndSaveProfileWithNoProfileName() throws CommandLineException {
         String[] args = new String[] {
             "-a",
@@ -424,12 +428,12 @@ public class DroidCommandLineTest {
             "file/number/2.txt"
         };
         
-        DroidCommandLine commandLine = new DroidCommandLine(args);
+        DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-
+        verify(printWriter).println("Incorrect command line syntax: Must specify exactly one profile.");
     }
 
-    @Test(expected = CommandLineException.class)
+    @Test
     public void testRunAndSaveProfileWithNoResources() throws CommandLineException {
         String[] args = new String[] {
             "-a",
@@ -437,9 +441,9 @@ public class DroidCommandLineTest {
             "test.droid"
         };
         
-        DroidCommandLine commandLine = new DroidCommandLine(args);
+        DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.MissingArgumentException: Missing argument for option: a");
     }
 
     
@@ -554,7 +558,7 @@ public class DroidCommandLineTest {
         verify(command).setSignatureFileVersion(99);
     }
 
-    @Test(expected = CommandLineSyntaxException.class)
+    @Test
     public void testConfigureDefaultSignatureFileVersionWithMissingValue() throws CommandLineException {
         
         String[] args = new String[] {
@@ -564,8 +568,9 @@ public class DroidCommandLineTest {
         ConfigureDefaultSignatureFileVersionCommand command = mock(ConfigureDefaultSignatureFileVersionCommand.class);
         when(context.getConfigureDefaultSignatureFileVersionCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args);
+        DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.MissingArgumentException: Missing argument for option: s");
     }
     
     /**
