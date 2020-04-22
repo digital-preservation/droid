@@ -31,27 +31,14 @@
  */
 package uk.gov.nationalarchives.droid.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.PrintWriter;
-
 import junit.framework.Assert;
-
-import org.apache.commons.cli.AlreadySelectedException;
-import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
 import uk.gov.nationalarchives.droid.command.action.CheckSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
 import uk.gov.nationalarchives.droid.command.action.CommandLineException;
-import uk.gov.nationalarchives.droid.command.action.CommandLineSyntaxException;
 import uk.gov.nationalarchives.droid.command.action.ConfigureDefaultSignatureFileVersionCommand;
 import uk.gov.nationalarchives.droid.command.action.DisplayDefaultSignatureFileVersionCommand;
 import uk.gov.nationalarchives.droid.command.action.DownloadSignatureUpdateCommand;
@@ -66,6 +53,14 @@ import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+
+import java.io.PrintWriter;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author rflitcroft
@@ -297,10 +292,10 @@ public class DroidCommandLineTest {
         DroidCommandLine droidCommandLine = new DroidCommandLine(args, printWriter);
         
         droidCommandLine.setContext(context);
-        
+
         droidCommandLine.processExecution();
-        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.AlreadySelectedException: The option 'v' was specified but an\n" +
-                "option from this group has already been selected: 'h'");
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.AlreadySelectedException: The option 'v' was specified but an" +
+                System.getProperty("line.separator") + "option from this group has already been selected: 'h'");
     }
     
     @Test
