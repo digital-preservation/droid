@@ -77,7 +77,7 @@ public class DroidCommandLineTest {
         context = mock(GlobalContext.class);
     }
     
-    @Test //(expected=CommandLineException.class)
+    @Test
     public void testParseNonsense() throws CommandLineException{
         String[] args = new String[] {
             "--zzzzzz"
