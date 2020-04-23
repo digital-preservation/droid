@@ -45,6 +45,7 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.univocity.parsers.csv.CsvFormat;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 import com.univocity.parsers.common.TextWritingException;
@@ -219,6 +220,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     public void open(final Writer writer) {
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
         csvWriterSettings.setQuoteAllFields(true);
+        CsvFormat format = new CsvFormat();
+        // following Unix convention on line separators as previously
+        format.setLineSeparator("\n");
+        csvWriterSettings.setFormat(format);
         csvWriter = new CsvWriter(writer, csvWriterSettings);
         if (headers == null) {
             headers = HEADERS;
