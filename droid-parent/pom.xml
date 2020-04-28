@@ -460,6 +460,14 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                </configuration>
+            </plugin>
 <!-- N.B. sourceFileExcludes won't work till version 2.11 is released 
             <plugin>
     <groupId>org.apache.maven.plugins</groupId>
