@@ -66,7 +66,8 @@ public class DerbyPooledDataSource extends HikariDataSource {
     * Shuts down the database.  
     * Derby throws a SQLNonTransientConnectionException on a SUCCESSFUL shutdown of the
     * database (with SQLstate 08006), so we catch this and log as debug, otherwise as an error.
-    * @throws SQLException if the database could not be shutdown.
+     *
+    * catch SQLException if the database could not be shutdown.
     */
     @Override
     public void close() {

@@ -132,7 +132,7 @@ public class GZipIdentificationRequest implements IdentificationRequest<InputStr
 
     /**
      * {@inheritDoc}
-     * @throws IOException 
+     * @throws IOException exception
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {

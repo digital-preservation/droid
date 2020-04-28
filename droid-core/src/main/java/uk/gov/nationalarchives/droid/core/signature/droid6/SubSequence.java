@@ -137,7 +137,7 @@ import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
  * the BoyerMooreHorpsool (BMH) algorithm.  This is known as the
  * "anchor" sequence.  
  *
- * <p/>If necessary, it can include Left and 
+ * If necessary, it can include Left and
  * Right Fragments, which are parts of the extended string of
  * bytes which cannot be searched for using BMH.  These fragments
  * include features like alternative (A|B|C) and gaps in the 

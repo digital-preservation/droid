@@ -65,8 +65,6 @@ import java.util.List;
  * <code>ExtTreeWillExpandListener</code>, so such a listener may be notified
  * if some other listener vetoes a pending expansion event.
  *
- * <br/>
- * <br/>
  * <p>
  *     Hot fix for issue mentioned in https://github.com/digital-preservation/droid/issues/306#issuecomment-555434012
  *
@@ -83,7 +81,10 @@ public final class TreePathSupport {
     private List<TreeWillExpandListener> weListeners = new ArrayList<TreeWillExpandListener>();
     private AbstractLayoutCache layout;
     
-    /** Creates a new instance of TreePathSupport */
+    /** Creates a new instance of TreePathSupport
+     * @param mdl mdl
+     * @param layout layout
+     * */
     public TreePathSupport(OutlineModel mdl, AbstractLayoutCache layout) {
         this.layout = layout;
     }
