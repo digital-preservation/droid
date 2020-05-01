@@ -9,6 +9,8 @@ Version 6.5
 * bundle jre with windows
 * FatFile support
 
+For a full list of the included changes with this version, please check the full changelog (http://www.github.com/digital-preservation/droid/releases/tag/droid-6.5/)
+
 Version 6.3
 * Signature updates: Signature file release 88, Container file 20160927
 * Fixes for fragment offset issues:

@@ -44,7 +44,7 @@ public class SHA1HashGenerator implements HashGenerator {
 
     /**
      * {@inheritDoc}
-     * @throws java.io.IOException
+     * @throws java.io.IOException exception
      */
     @Override
     public String hash(InputStream in) throws IOException {

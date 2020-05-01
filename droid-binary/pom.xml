@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.5-SNAPSHOT</version>
+        <version>6.6-SNAPSHOT</version>
   	    <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -56,11 +56,11 @@
                         <configuration>
                             <tasks>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.5_10.zip" dest="${project.build.directory}/jre_tmp/"/>
+                                <unzip src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.5_10.zip" dest="${project.build.directory}/jre_tmp/" />
 
                                 <move todir="${project.build.directory}/jre-windows/">
                                     <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.5+10-jre/">
-                                        <include name="**/*"/>
+                                        <include name="**/*" />
                                     </fileset>
                                 </move>
 
