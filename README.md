@@ -86,4 +86,4 @@ DROID can now put a signature directly inside a `Sequence` attribute on the `<By
 The full syntax can be used in either binary or container signature files.
 
 ## Developer related guidance
-Please check the [wiki](https://github.com/digital-preservation/droid/wiki)
+For any detais about contributing, testing, releasing, please check the [wiki](https://github.com/digital-preservation/droid/wiki)
