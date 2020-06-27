@@ -37,6 +37,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
-import javax.sql.DataSource;
 
 /**
  * An implementation of ResultHandlerDao which writes results out to a Writer,
@@ -137,7 +138,7 @@ public class WriterResultHandlerDao extends JDBCBatchResultHandlerDao {
      * {@inheritDoc}
      */
     @Override
-    public ProfileResourceNode loadNode(Long nodeId) {
+    public ProfileResourceNode loadNode(final Long nodeIdToLoad) {
         return null;
     }
 
@@ -146,7 +147,7 @@ public class WriterResultHandlerDao extends JDBCBatchResultHandlerDao {
      * {@inheritDoc}
      */
     @Override
-    public void deleteNode(Long nodeId) {
+    public void deleteNode(final Long nodeIdToDelete) {
     }
 
     /**
