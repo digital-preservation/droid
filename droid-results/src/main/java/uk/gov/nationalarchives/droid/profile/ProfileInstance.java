@@ -151,6 +151,9 @@ public class ProfileInstance {
     @XmlElement(name = "MatchAllExtensions")
     private Boolean matchAllExtensions;
 
+    @XmlElement(name = "outputFilePath")
+    private String outputFilePath;
+
     @XmlTransient
     private Set<ProfileEventListener> eventListeners = new HashSet<ProfileEventListener>();
 
@@ -756,5 +759,21 @@ public class ProfileInstance {
      */
     public Boolean getProcessWarcFiles() {
         return processWarcFiles;
+    }
+
+    /**
+     *
+     * @return the output file path, if set.
+     */
+    public String getOutputFilePath() {
+        return outputFilePath;
+    }
+
+    /**
+     *
+     * @param outputFilePath An output file path if the profile should be output to a file rather than the database.
+     */
+    public void setOutputFilePath(String outputFilePath) {
+        this.outputFilePath = outputFilePath;
     }
 }
