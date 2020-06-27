@@ -75,7 +75,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 public class CsvItemWriterTest {
 
 	private static DateTime testDateTime = new DateTime(12345678L);
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
+	private static final String LINE_SEPARATOR = "\n";
     private CsvItemWriter itemWriter;
     private File destination;
     private DroidGlobalConfig config;

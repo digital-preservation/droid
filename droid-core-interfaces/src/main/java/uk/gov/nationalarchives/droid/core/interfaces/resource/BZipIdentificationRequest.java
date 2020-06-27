@@ -100,7 +100,9 @@ public class BZipIdentificationRequest implements IdentificationRequest<InputStr
      */
     @Override
     public final void close() throws IOException {
-        reader.close();
+        if (reader != null) {
+            reader.close();
+        }
     }
 
     /**
@@ -130,7 +132,7 @@ public class BZipIdentificationRequest implements IdentificationRequest<InputStr
 
     /**
      * {@inheritDoc}
-     * @throws IOException
+     * @throws IOException exception
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {

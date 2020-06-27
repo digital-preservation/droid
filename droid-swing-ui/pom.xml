@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.5-SNAPSHOT</version>
+        <version>6.6-SNAPSHOT</version>
         <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -46,7 +46,7 @@
                     <dependency>
                         <groupId>uk.gov.nationalarchives</groupId>
                         <artifactId>droid-build-tools</artifactId>
-                        <version>6.5-SNAPSHOT</version>
+                        <version>6.6-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -164,7 +164,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>RELEASE112</version>
+            <version>RELEASE113</version>
         </dependency>
         <!--
             droid-swing-ui has hotfix of org-netbeans-swing-outline:org.netbeans.swing.outline.TreePathSupport
@@ -174,7 +174,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-swing-outline</artifactId>
-            <version>RELEASE112</version>
+            <version>RELEASE113</version>
         </dependency>
         <dependency>
             <groupId>org.jdesktop</groupId>

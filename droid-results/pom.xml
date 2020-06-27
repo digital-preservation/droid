@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>droid-parent</artifactId>
 		<groupId>uk.gov.nationalarchives</groupId>
-		<version>6.5-SNAPSHOT</version>
+		<version>6.6-SNAPSHOT</version>
 		<relativePath>../droid-parent</relativePath>
 	</parent>
 
@@ -55,6 +55,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
 					<systemProperties>
 						<property>
 							<name>derby.stream.error.file</name>
@@ -89,7 +90,7 @@
 					<dependency>
 						<groupId>uk.gov.nationalarchives</groupId>
 						<artifactId>droid-build-tools</artifactId>
-						<version>6.5-SNAPSHOT</version>
+						<version>6.6-SNAPSHOT</version>
 					</dependency>
 				</dependencies>
 			</plugin>

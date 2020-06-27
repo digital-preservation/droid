@@ -6,12 +6,12 @@
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>9</version>
-        <relativePath/>
+        <relativePath />
     </parent>
   
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.5-SNAPSHOT</version>
+    <version>6.6-SNAPSHOT</version>
     <packaging>pom</packaging>
   
     <name>droid-parent</name>
@@ -89,10 +89,10 @@
 
         <project.email>pronom@nationalarchives.gov.uk</project.email>
 
-        <spring.version>5.2.3.RELEASE</spring.version>
+        <spring.version>5.2.6.RELEASE</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
-        <cxf.version>3.3.5</cxf.version>
+        <cxf.version>3.3.6</cxf.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.20</flying-saucer.version>
@@ -100,7 +100,7 @@
         <jwat.version>1.1.1</jwat.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <log4j2.version>2.13.0</log4j2.version>
+        <log4j2.version>2.13.3</log4j2.version>
     </properties>
   
     <build>
@@ -109,7 +109,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.1.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.shared</groupId>
@@ -131,7 +131,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -154,9 +154,19 @@
                     <version>3.8.1</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.5</version>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>3.0.0-M4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>3.0.0-M4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +182,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.0</version>
                 </plugin>
 
                 <plugin>
@@ -185,6 +195,11 @@
                             <artifactId>maven-scm-provider-gitexe</artifactId>
                             <version>1.11.2</version>
                         </dependency>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-api</artifactId>
+                            <version>1.11.2</version>
+                        </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
@@ -195,7 +210,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
                 <!--
@@ -225,6 +240,24 @@
                     </configuration>
                 </plugin>
                 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.9.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>4.3.0</version>
+                    <configuration>
+                        <repoToken>${env.COVERALLS_TOKEN}</repoToken>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         
@@ -258,7 +291,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>5.3.0</version>
+                <version>5.3.2</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                 </configuration>
@@ -347,16 +380,32 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            <!--
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <propertyName>jacocoArgLine</propertyName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <useManifestOnlyJar>false</useManifestOnlyJar>
-                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
                 </configuration>
             </plugin>
-            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -411,6 +460,14 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                </configuration>
+            </plugin>
 <!-- N.B. sourceFileExcludes won't work till version 2.11 is released 
             <plugin>
     <groupId>org.apache.maven.plugins</groupId>
@@ -463,6 +520,13 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                     <mavenExecutorId>forked-path</mavenExecutorId> <!-- avoid a bug with GPG plugin hanging http://jira.codehaus.org/browse/MGPG-9 -->
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <configuration>
+                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>  <!-- TODO(AR) disabled due to slow `mvn site` build times -->
+                </configuration>
+            </plugin>
         </plugins>
 
         <resources>
@@ -472,6 +536,27 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             </resource>
         </resources>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <!-- select non-aggregate reports -->
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
     
     <profiles>
         <profile>
@@ -501,6 +586,26 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             </plugins>
           </build>
         </profile>
+
+        <profile>
+            <id>upload-jacoco-to-coveralls</id>
+            <activation>
+                <!-- enabled in CI environment i.e. Travis-CI -->
+                <property>
+                    <name>env.CI</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
       </profiles>
     
     <dependencyManagement>
@@ -529,7 +634,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-ri</artifactId>
-                <version>2.3.2</version>
+                <version>2.3.3</version>
                 <type>pom</type>
             </dependency>
             <dependency>
@@ -585,7 +690,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                <groupId>commons-io</groupId>
                <artifactId>commons-io</artifactId>
-               <version>2.6</version>
+               <version>2.7</version>
             </dependency>
             <dependency>
                <groupId>commons-lang</groupId>
@@ -645,7 +750,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.5</version>
+                <version>2.10.6</version>
             </dependency>
             <dependency>
                 <groupId>org.jwat</groupId>
@@ -685,7 +790,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.3</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
@@ -695,7 +800,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
-                <version>2.6.0</version>
+                <version>2.7.0</version>
             </dependency>
             <dependency>
                 <groupId>com.github.stephenc.java-iso-tools</groupId>
@@ -734,11 +839,11 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     <pluginRepositories>
         <pluginRepository>
             <id>sonatype-releases</id>
-            <url>http://oss.sonatype.org/content/repositories/releases</url>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </pluginRepository>
         <pluginRepository>
             <id>clojars.org</id>
-            <url>http://clojars.org/repo</url>
+            <url>https://clojars.org/repo</url>
         </pluginRepository>
     </pluginRepositories>
 

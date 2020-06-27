@@ -73,6 +73,10 @@
               
     <suppress checks="MagicNumber|ClassFanOutComplexity|Javadoc|IllegalThrows|MultipleStringLiterals|ExecutableStatementCount|EmptyBlock"
               files=".*Test\.java$"/>
+
+    <!-- The following IllegalImport supression is allowed only on a single file, do not increase its scope -->
+    <suppress checks="IllegalImport"
+              files="FileSystemSelectionValidator.java"/>
               
     <suppress checks="."
               files=".*[\\/]planets[\\/]domain[\\/].*\.java$"/>

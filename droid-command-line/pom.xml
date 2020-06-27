@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.5-SNAPSHOT</version>
+        <version>6.6-SNAPSHOT</version>
         <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -46,7 +46,7 @@
                     <dependency>
                         <groupId>uk.gov.nationalarchives</groupId>
                         <artifactId>droid-build-tools</artifactId>
-                        <version>6.5-SNAPSHOT</version>
+                        <version>6.6-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -264,6 +264,11 @@
             <groupId>de.waldheinz</groupId>
             <artifactId>fat32-lib</artifactId>
             <version>0.6.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

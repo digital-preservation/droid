@@ -31,27 +31,14 @@
  */
 package uk.gov.nationalarchives.droid.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.PrintWriter;
-
 import junit.framework.Assert;
-
-import org.apache.commons.cli.AlreadySelectedException;
-import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
 import uk.gov.nationalarchives.droid.command.action.CheckSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
 import uk.gov.nationalarchives.droid.command.action.CommandLineException;
-import uk.gov.nationalarchives.droid.command.action.CommandLineSyntaxException;
 import uk.gov.nationalarchives.droid.command.action.ConfigureDefaultSignatureFileVersionCommand;
 import uk.gov.nationalarchives.droid.command.action.DisplayDefaultSignatureFileVersionCommand;
 import uk.gov.nationalarchives.droid.command.action.DownloadSignatureUpdateCommand;
@@ -60,11 +47,20 @@ import uk.gov.nationalarchives.droid.command.action.ListAllSignatureFilesCommand
 import uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
+import uk.gov.nationalarchives.droid.command.archive.ArchiveContainerTestHelper;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+
+import java.io.PrintWriter;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author rflitcroft
@@ -81,16 +77,17 @@ public class DroidCommandLineTest {
         context = mock(GlobalContext.class);
     }
     
-    @Test (expected=CommandLineException.class)
+    @Test
     public void testParseNonsense() throws CommandLineException{
         String[] args = new String[] {
             "--zzzzzz"
         };
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args, printWriter);
         
         //a return code of 1 denotes a failure
         Assert.assertEquals(1, droidCommandLine.processExecution());
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.UnrecognizedOptionException: Unrecognized option: --zzzzzz");
         
     }
     
@@ -284,7 +281,7 @@ public class DroidCommandLineTest {
         
     }
 
-    @Test(expected=CommandLineException.class)
+    @Test
     public void testHelpAndVersionIsNotValidCombination() throws Exception {
         
         String[] args = new String[] {
@@ -292,11 +289,13 @@ public class DroidCommandLineTest {
             "-v"
         };
         
-        DroidCommandLine droidCommandLine = new DroidCommandLine(args);
+        DroidCommandLine droidCommandLine = new DroidCommandLine(args, printWriter);
         
         droidCommandLine.setContext(context);
-        
+
         droidCommandLine.processExecution();
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.AlreadySelectedException: The option 'v' was specified but an" +
+                System.getProperty("line.separator") + "option from this group has already been selected: 'h'");
     }
     
     @Test
@@ -368,7 +367,7 @@ public class DroidCommandLineTest {
         });
     }
     
-    @Test(expected = CommandLineException.class)
+    @Test
     public void testRunAndSaveProfileToMultipleFiles() throws CommandLineException {
         String[] args = new String[] {
             "-a",
@@ -382,9 +381,10 @@ public class DroidCommandLineTest {
         ProfileRunCommand command = mock(ProfileRunCommand.class);
         when(context.getProfileRunCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args);
+        DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-        
+
+        verify(printWriter).println("Incorrect command line syntax: Must specify exactly one profile.");
     }
 
     @Test
@@ -415,7 +415,7 @@ public class DroidCommandLineTest {
         verify(command).setRecursive(true);
     }
 
-    @Test(expected = CommandLineException.class)
+    @Test
     public void testRunAndSaveProfileWithNoProfileName() throws CommandLineException {
         String[] args = new String[] {
             "-a",
@@ -423,12 +423,12 @@ public class DroidCommandLineTest {
             "file/number/2.txt"
         };
         
-        DroidCommandLine commandLine = new DroidCommandLine(args);
+        DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-
+        verify(printWriter).println("Incorrect command line syntax: Must specify exactly one profile.");
     }
 
-    @Test(expected = CommandLineException.class)
+    @Test
     public void testRunAndSaveProfileWithNoResources() throws CommandLineException {
         String[] args = new String[] {
             "-a",
@@ -436,9 +436,9 @@ public class DroidCommandLineTest {
             "test.droid"
         };
         
-        DroidCommandLine commandLine = new DroidCommandLine(args);
+        DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.MissingArgumentException: Missing argument for option: a");
     }
 
     
@@ -553,7 +553,7 @@ public class DroidCommandLineTest {
         verify(command).setSignatureFileVersion(99);
     }
 
-    @Test(expected = CommandLineSyntaxException.class)
+    @Test
     public void testConfigureDefaultSignatureFileVersionWithMissingValue() throws CommandLineException {
         
         String[] args = new String[] {
@@ -563,8 +563,9 @@ public class DroidCommandLineTest {
         ConfigureDefaultSignatureFileVersionCommand command = mock(ConfigureDefaultSignatureFileVersionCommand.class);
         when(context.getConfigureDefaultSignatureFileVersionCommand()).thenReturn(command);
         
-        DroidCommandLine commandLine = new DroidCommandLine(args);
+        DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
+        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.MissingArgumentException: Missing argument for option: s");
     }
     
     /**
@@ -582,7 +583,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V91.xml",
+            new ArchiveContainerTestHelper().getBinarySignatureFileLocation(),
             "--extension-list",
             "xml", "txt", "jp2", "jpg"
         };
@@ -617,7 +618,7 @@ public class DroidCommandLineTest {
             "-Nr",
             "src",
             "-Ns",
-            "src/test/resources/signatures/DROID_SignatureFile_V91.xml"
+            new ArchiveContainerTestHelper().getBinarySignatureFileLocation()
         };
 
         //NB: BNO - added this call as otherwise an error occurs when trying instantiate the log

@@ -609,11 +609,18 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonFilter);
 
+        jPanel1.setMaximumSize(new java.awt.Dimension(30, 60));
+        jPanel1.setMinimumSize(new java.awt.Dimension(30, 60));
+        jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(30, 60));
+
         jFilterOnCheckBox.setText("On");
         jFilterOnCheckBox.setFocusable(false);
         jFilterOnCheckBox.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jFilterOnCheckBox.setInheritsPopupMenu(true);
-        jFilterOnCheckBox.setPreferredSize(new java.awt.Dimension(24, 58));
+        jFilterOnCheckBox.setMaximumSize(new java.awt.Dimension(30, 55));
+        jFilterOnCheckBox.setMinimumSize(new java.awt.Dimension(30, 55));
+        jFilterOnCheckBox.setPreferredSize(new java.awt.Dimension(30, 55));
         jFilterOnCheckBox.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jFilterOnCheckBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jFilterOnCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -633,8 +640,8 @@ public class DroidMainFrame extends JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jFilterOnCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jFilterOnCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         droidToolBar.add(jPanel1);
@@ -655,7 +662,7 @@ public class DroidMainFrame extends JFrame {
         });
         droidToolBar.add(jButtonReport);
 
-        jMenuBar1.setPreferredSize(new java.awt.Dimension(100, 21));
+        jMenuBar1.setPreferredSize(new java.awt.Dimension(100, 25));
 
         jMenuFile.setMnemonic('F');
         jMenuFile.setText("File");
@@ -991,7 +998,7 @@ public class DroidMainFrame extends JFrame {
     private void OpenContainingFolder(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenContainingFolder
         OpenContainingFolderAction openFolders = new OpenContainingFolderAction();
         openFolders.open(getSelectedNodes());
-        
+
     }//GEN-LAST:event_OpenContainingFolder
 
     private void jMenuItemCopyToClipboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopyToClipboardActionPerformed
@@ -1033,15 +1040,15 @@ public class DroidMainFrame extends JFrame {
             // action.setTargetFile(reportDialog.getTarget());
             ReportProgressDialog reportProgressDialog = new ReportProgressDialog(this, action);
             ReportViewFrame reportViewDialog = new ReportViewFrame(this);
-            //FIXME: the report transformer is defined as a singleton bean in the export report 
-            // action configured through spring.  Here we are instantiating a new specific 
+            //FIXME: the report transformer is defined as a singleton bean in the export report
+            // action configured through spring.  Here we are instantiating a new specific
             // transformer - there was a bug in that this one did not have the droid config
             // object configured.  For the time being, just set up this transformer correctly.
             ReportTransformerImpl transformer = new ReportTransformerImpl();
             transformer.setConfig(globalContext.getGlobalConfig());
-            reportViewDialog.setReportTransformer(transformer);            
-            
-            
+            reportViewDialog.setReportTransformer(transformer);
+
+
             action.setProgressDialog(reportProgressDialog);
             action.setViewDialog(reportViewDialog);
             action.execute();
@@ -1348,7 +1355,7 @@ public class DroidMainFrame extends JFrame {
             }
         });
         exitListeners.add(newProfileAction);
-        
+
         try {
             newProfileAction.init(new ProfileForm(this, droidContext, buttonManager));
             newProfileAction.execute();
@@ -1363,11 +1370,11 @@ public class DroidMainFrame extends JFrame {
         int returnVal = resourceFileChooser.showDialog(this);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            AddFilesAndFoldersAction action = new AddFilesAndFoldersAction(droidContext, profileManager);
-            action.add(resourceFileChooser.getSelectedFiles(), resourceFileChooser.isSelectionRecursive());
+            List<File> selectedFiles = resourceFileChooser.getSelectedFiles();
+            addFilesAndFolders(selectedFiles);
         }
-
     }// GEN-LAST:event_jButtonAddFileActionPerformed
+
 
     /**
      * Adds a list of files to the profile.
@@ -1375,8 +1382,15 @@ public class DroidMainFrame extends JFrame {
      * @param files The list of files to add.
      */
     public void addFilesAndFolders(List<File> files) {
-        AddFilesAndFoldersAction action = new AddFilesAndFoldersAction(droidContext, profileManager);
-        action.add(files, true);
+        FileSystemSelectionValidator validator = new FileSystemSelectionValidator(files);
+        if (validator.isSelectionValid()) {
+            AddFilesAndFoldersAction action = new AddFilesAndFoldersAction(droidContext, profileManager);
+            action.add(files, resourceFileChooser.isSelectionRecursive());
+        } else {
+            String error = validator.getErrorMessage();
+            DialogUtils.showGeneralErrorDialog(this, ERROR_TITLE, error);
+            return;
+        }
     }
 
     public void jButtonRemoveFilesAndFolderActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonRemoveFilesAndFolderActionPerformed
@@ -1389,7 +1403,7 @@ public class DroidMainFrame extends JFrame {
     }// GEN-LAST:event_jButtonRemoveFilesAndFolderActionPerformed
 
     /**
-     * 
+     *
      * @return true if the add file or folders menu item is enabled.
      */
     public boolean getAddEnabled() {
@@ -1397,7 +1411,7 @@ public class DroidMainFrame extends JFrame {
     }
 
     /**
-     * 
+     *
      * @return true if the remove file or folders menu item is enabled.
      */
     public boolean getRemoveEnabled() {
@@ -1547,6 +1561,7 @@ public class DroidMainFrame extends JFrame {
                     public void done(ExportAction action) {
                         try {
                             exportDialog.setVisible(false);
+                            exportDialog.dispose();
                             action.get();
                             JOptionPane.showMessageDialog(DroidMainFrame.this, "Export Complete.", "Export Complete",
                                     JOptionPane.INFORMATION_MESSAGE);

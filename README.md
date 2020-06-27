@@ -2,8 +2,9 @@ DROID (Digital Record Object Identification)
 =====
 The latest binary file can be downloaded from [The National Archives website](http://www.nationalarchives.gov.uk/information-management/projects-and-work/droid.htm "The National Archives website").
 
-[![Build Status](https://secure.travis-ci.org/digital-preservation/droid.png)](http://travis-ci.org/digital-preservation/droid)
-[![Build status](https://ci.appveyor.com/api/projects/status/hrr6c3ckbghjvd7h/branch/master?svg=true)](https://ci.appveyor.com/project/AdamRetter/droid/branch/master)
+[![Build Status](https://travis-ci.org/digital-preservation/droid.svg?branch=master)](https://travis-ci.org/digital-preservation/droid)
+[![Build status](https://ci.appveyor.com/api/projects/status/hrr6c3ckbghjvd7h/branch/master?svg=true)](https://ci.appveyor.com/project/dpreservation/droid/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/digital-preservation/droid/badge.svg?branch=master)](https://coveralls.io/github/digital-preservation/droid?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives/droid/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives)
 
 More information can be found on the DROID github pages here: http://digital-preservation.github.com/droid/
@@ -85,4 +86,4 @@ DROID can now put a signature directly inside a `Sequence` attribute on the `<By
 The full syntax can be used in either binary or container signature files.
 
 ## Developer related guidance
-Please check the [wiki](https://github.com/digital-preservation/droid/wiki)
+For any detais about contributing, testing, releasing, please check the [wiki](https://github.com/digital-preservation/droid/wiki)

@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.command.ResultPrinter;
 import uk.gov.nationalarchives.droid.command.archive.ArchiveConfiguration;
+import uk.gov.nationalarchives.droid.command.filter.Creator.DirectoryStreamFilterCreator;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
@@ -114,24 +115,7 @@ public class NoProfileRunCommand implements DroidCommand {
        //BNO - allow processing of a single file as well as directory
         final Collection<Path> matchedFiles;
         if (Files.isDirectory(targetDirectoryOrFile)) {
-            final DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-                    @Override
-                    public boolean accept(final Path entry) throws IOException {
-                        if (!Files.isDirectory(entry)) {
-                            if (extensions == null || extensions.length == 0) {
-                                return true;
-                            } else {
-                                for (final String extension : extensions) {
-                                    if (entry.getFileName().toString().endsWith("." + extension)) {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-                        return false;
-                    }
-                };
-
+            final DirectoryStream.Filter<Path> filter = new DirectoryStreamFilterCreator(recursive, extensions).create();
             try {
                 matchedFiles = FileUtil.listFiles(targetDirectoryOrFile, this.recursive, filter);
             } catch (final IOException e) {
@@ -338,4 +322,5 @@ public class NoProfileRunCommand implements DroidCommand {
     public void setExpandArchiveTypes(String[] expandArchiveTypes) {
         this.expandArchiveTypes = expandArchiveTypes;
     }
+
 }

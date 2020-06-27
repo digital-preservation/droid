@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.5-SNAPSHOT</version>
+        <version>6.6-SNAPSHOT</version>
         <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -46,7 +46,7 @@
                     <dependency>
                         <groupId>uk.gov.nationalarchives</groupId>
                         <artifactId>droid-build-tools</artifactId>
-                        <version>6.5-SNAPSHOT</version>
+                        <version>6.6-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -126,7 +126,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.64</version>
+            <version>1.65.01</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

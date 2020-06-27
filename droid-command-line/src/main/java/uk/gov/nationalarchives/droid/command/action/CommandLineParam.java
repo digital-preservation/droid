@@ -363,6 +363,13 @@ public enum CommandLineParam {
     }
 
     /**
+     * @return longName
+     */
+    public String getLongName() {
+        return longName;
+    }
+
+    /**
      *
      * @return a new option for the parameter.
      */

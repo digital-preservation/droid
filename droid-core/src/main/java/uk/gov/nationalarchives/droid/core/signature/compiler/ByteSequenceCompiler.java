@@ -57,7 +57,7 @@ import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequence
 
 /**
  * class to compile a ByteSequence from a DROID syntax regular expression created by {@link ByteSequenceParser}.
- * <br/>
+ *
  * See main method {@link #compile(ByteSequence, String, ByteSequenceAnchor, CompileType)}.
  *
  * @author Matt Palmer
@@ -82,7 +82,6 @@ public final class ByteSequenceCompiler {
     /**
      * Compilation type to build the objects from the expression.
      *
-     * <br/>
      * The length of the anchoring sequences can be different - PRONOM only allows straight bytes in anchors.
      */
     public enum CompileType {

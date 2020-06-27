@@ -82,11 +82,11 @@ public class DirectoryEventHandler {
 
         final FileTime lastModified = FileUtil.lastModifiedQuietly(dir);
         RequestMetaData metaData = new RequestMetaData(
-                FileUtil.sizeQuietly(dir),
+                -1L, //recursing causes performance hit and the size is never used for directories return -1L
                 lastModified == null ? new Date(0).getTime() : new Date(lastModified.toMillis()).getTime(),
                 depth == 0 ? dir.toAbsolutePath().toString() : FileUtil.fileName(dir));
         
-        RequestIdentifier identifier = new RequestIdentifier(SubmitterUtils.toURI(dir.toFile(), uriStringBuilder));
+        RequestIdentifier identifier = new RequestIdentifier(dir.toUri());
         identifier.setParentResourceId(parentId);
         result.setRequestMetaData(metaData);
         result.setIdentifier(identifier);

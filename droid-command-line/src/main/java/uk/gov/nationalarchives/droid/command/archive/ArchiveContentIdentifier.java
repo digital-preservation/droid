@@ -60,6 +60,10 @@ public abstract class ArchiveContentIdentifier {
     protected String path;
     private ArchiveConfiguration archiveConfiguration;
 
+    protected static final String START_PARENTHESIS = " (";
+    protected static final String END_PARENTHESIS = ")";
+
+
     /**
      * Initialization of instance values must be explicitly called by all children.
      * @param binarySignatureIdentifier     binary signature identifier

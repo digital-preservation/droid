@@ -16,6 +16,9 @@ matrix:
 services:
   - xvfb
 
+after_success:
+  - mvn -B jacoco:report coveralls:report
+
 before_cache:
   - rm -rf $HOME/.m2/repository/uk/gov/nationalarchives/
 

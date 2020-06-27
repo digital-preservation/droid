@@ -155,7 +155,7 @@ public class ZipEntryIdentificationRequest implements IdentificationRequest<Inpu
 
     /**
      * {@inheritDoc}
-     * @throws IOException 
+     * @throws IOException exception
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {

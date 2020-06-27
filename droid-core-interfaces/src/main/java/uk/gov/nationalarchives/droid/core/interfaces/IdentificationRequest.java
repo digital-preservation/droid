@@ -87,7 +87,6 @@ public interface IdentificationRequest<T> extends Closeable {
      * 
      * @return an InputStream which will read the binary data which formed the source
      * of this request.  
-     * @return
      * @throws IOException  if there was an error reading from the binary source
      */
     InputStream getSourceInputStream() throws IOException;

@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
@@ -105,7 +106,7 @@ public class ProfileSpecJobCounter implements Callable<Long> {
         public LukeFileWalker(final URI root, final boolean recursive) {
             super(null, recursive ? PROGRESS_DEPTH_LIMIT : 1);
             this.recursive = recursive;
-            this.root = new java.io.File(root);
+            this.root = Paths.get(root).toFile();
         }
         
         public void walk() throws IOException {

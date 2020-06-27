@@ -32,6 +32,8 @@
 package uk.gov.nationalarchives.droid.command;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -63,6 +65,11 @@ public final class DroidCommandLine implements AutoCloseable {
 
     /** Options message. */
     public static final String USAGE = "droid [options]";
+
+    /**
+     * Message about incorrect syntax.
+     */
+    public static final String CLI_SYNTAX_INCORRECT = "Incorrect command line syntax: %s";
     /** Wrap width. */
     public static final int WRAP_WIDTH = 120;
 
@@ -71,6 +78,7 @@ public final class DroidCommandLine implements AutoCloseable {
      * For testing. @see{uk.gov.nationalarchives.droid.command.TestContexCleanup}
      */
     public static boolean systemExit = true;
+    private PrintWriter errorPrintWriterForTests = null;
     //CHECKSTYLE:ON
 
     /**Logger slf4j.*/
@@ -92,7 +100,18 @@ public final class DroidCommandLine implements AutoCloseable {
      *            the command line arguments
      */
     DroidCommandLine(final String[] args) {
+        this(args, null);
+    }
+
+    /**
+     * Additional constructor, used only for unit tests involving exception.
+     *
+     * @param args the command line arguments
+     * @param errorPrintWriter print writer for error messages (used by unit tests only)
+     */
+    protected DroidCommandLine(final String[] args, PrintWriter errorPrintWriter) {
         this.args = args;
+        this.errorPrintWriterForTests = errorPrintWriter;
     }
     
     /**
@@ -123,12 +142,6 @@ public final class DroidCommandLine implements AutoCloseable {
 
         try {
             cli = parser.parse(CommandLineParam.options(), args);
-
-            String logThreshold = "INFO";
-            if (cli.hasOption(CommandLineParam.QUIET.toString())) {
-                logThreshold = "ERROR";
-            }
-            System.setProperty("consoleLogThreshold", logThreshold);
 
             CommandLineParam option = null;
             for (Option opt : cli.getOptions()) {
@@ -164,11 +177,12 @@ public final class DroidCommandLine implements AutoCloseable {
      */
     public static void main(final String[] args) throws CommandLineException {
 
-        //BNO: The configureRuntimeEnvironment() method was getting called twice as it is also
-        // the first call in  commandLine.processExecution() below.  This was causing a problem
-        // with the log configuration file path getting appended to the current directory thereby
-        // producing an invalid file path, e.g. C:\Projects\Droid\droid\file:\C:\Users\Brian\.droid6\log4j2.properties.
-        // There appears to be no other reason for the 2 calls so I have sinply removed the first call here.
+        // we process --quiet parameter manually first before we initialize the spring context, to set the tna logger level.
+        final List<String> argsList = Arrays.asList(args);
+        if (argsList.contains("-" + CommandLineParam.QUIET.toString()) || argsList.contains("--" + CommandLineParam.QUIET.getLongName())) {
+            System.setProperty("consoleLogThreshold", "ERROR");
+        }
+
         RuntimeConfig.configureRuntimeEnvironment();
 
         int returnCode = 0;
@@ -204,6 +218,14 @@ public final class DroidCommandLine implements AutoCloseable {
             out.flush(); //Only flush. Never close System.out
             context.close();
 
+        } catch (CommandLineSyntaxException clsx) {
+            returnCode = 1;
+            PrintWriter err = errorPrintWriterForTests == null ? new PrintWriter(System.err) : errorPrintWriterForTests;
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printWrapped(err, WRAP_WIDTH, String.format(CLI_SYNTAX_INCORRECT, clsx.getMessage()));
+            err.flush(); //Only flush. Never close System.err
+            //log.error("Droid CommandLineException", clex);
+            return returnCode;
         } catch (CommandExecutionException ceex) {
             returnCode = 1;
             PrintWriter err = new PrintWriter(System.err);

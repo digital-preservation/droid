@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
 # All rights reserved.

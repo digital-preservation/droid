@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -193,7 +194,13 @@ public abstract class AbstractProfileResource {
     public void setSize(long size) {
         this.size = size;
     }
-    
+
+    /**
+     * abstract method to set size based on the Path.
+     * @param filePath Path to a File associlated with this resource
+     */
+    public abstract void setSize(Path filePath);
+
     /**
      * Getter method for last modified date of resource.
      * @return lastModifiedDate

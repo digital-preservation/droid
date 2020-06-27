@@ -64,7 +64,7 @@ public class FileProfileResource extends AbstractProfileResource {
     public FileProfileResource(final Path file) {
         setUri(file.toUri());
         setName(FileUtil.fileName(file));
-        setSize(FileUtil.sizeQuietly(file));
+        setSize(file);
         final FileTime lastModified = FileUtil.lastModifiedQuietly(file);
         setLastModifiedDate(lastModified == null ? new Date(0) : new Date(lastModified.toMillis()));
         //setExtension(FilenameUtils.getExtension(file.getName()));
@@ -77,5 +77,10 @@ public class FileProfileResource extends AbstractProfileResource {
     @Override
     public boolean isDirectory() {
         return false;
+    }
+
+    @Override
+    public void setSize(Path filePath) {
+        setSize(FileUtil.sizeQuietly(filePath));
     }
 }

@@ -162,22 +162,20 @@ public class FileWalker {
     private void walk(final Path directory, final int depth) throws IOException {
         if (handleDirectory(directory, depth)) {
             final List<Path> children = FileUtil.listFiles(directory, false, (DirectoryStream.Filter<Path>) null);
-            if (children != null) {
-                handleDirectoryStart(directory, depth, children.toArray(new Path[children.size()]));
-                if (recursive || depth == 0) {
-                    final int childDepth = depth + 1;
-                    for (final Path child : children) {
-                        if (Files.isDirectory(child)) {
-                            walk(child, childDepth);
-                        } else {
-                            handleFile(child, childDepth);
-                        }
+            handleDirectoryStart(directory, depth, children.toArray(new Path[children.size()]));
+            if (recursive || depth == 0) {
+                final int childDepth = depth + 1;
+                for (final Path child : children) {
+                    if (Files.isDirectory(child)) {
+                        walk(child, childDepth);
+                    } else {
+                        handleFile(child, childDepth);
                     }
                 }
-                handleDirectoryEnd(directory, depth);
-            } else { // can't access children - restricted directory.
-                handleRestrictedDirectory(directory, depth);
             }
+            handleDirectoryEnd(directory, depth);
+        } else { // can't access children - restricted directory.
+            handleRestrictedDirectory(directory, depth);
         }
     }
 
@@ -190,6 +188,10 @@ public class FileWalker {
      */
     protected boolean handleDirectory(final Path dir, final int depth) throws IOException {
         boolean processDir = true;
+
+        if (!Files.isReadable(dir)) {
+            return false;
+        }
 
         if (!SubmitterUtils.isFileSystemAvailable(dir, topLevelAbsolutePath)) {
             log.error(String.format(FILE_SYSTEM_UNAVAILABLE, dir.toAbsolutePath().toString()));

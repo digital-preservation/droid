@@ -1,3 +1,16 @@
+Version 6.5
+
+* Manage opening of WARC 1.1 and update identification of WARC 1.0
+* Ability to cherry pick types of archival container to be scanned
+* adds drag drop support for files into a profile GUI window
+* match signatures in OLE2 sub folders
+* sort the PUID values in the filter dialog
+* Full implementation of standard signature syntax in container signatures
+* bundle jre with windows
+* FatFile support
+
+For a full list of the included changes with this version, please check the full changelog (http://www.github.com/digital-preservation/droid/releases/tag/droid-6.5/)
+
 Version 6.3
 * Signature updates: Signature file release 88, Container file 20160927
 * Fixes for fragment offset issues:

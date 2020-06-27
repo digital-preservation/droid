@@ -69,26 +69,27 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
     @Override
     public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
         //CHECKSTYLE:ON
-        final InputStream in = request.getSourceInputStream();
+        InputStream in = null;
         POIFSFileSystem reader = null;
         try {
-            try {
-                if (FileSystemIdentificationRequest.class.isAssignableFrom(request.getClass())) {
-                    FileSystemIdentificationRequest req = FileSystemIdentificationRequest.class.cast(request);
-                    reader = new POIFSFileSystem(req.getFile().toFile());
-                } else {
+            if (FileSystemIdentificationRequest.class.isAssignableFrom(request.getClass())) {
+                FileSystemIdentificationRequest req = FileSystemIdentificationRequest.class.cast(request);
+                reader = new POIFSFileSystem(req.getFile().toFile());
+            } else {
+                try {
+                    in = request.getSourceInputStream();
                     reader = new POIFSFileSystem(in);
-                }
-            } finally {
-                // We can get Out Of Memory errors when attempting to instantiate the POIFSFileSystem.  However, these
-                // are handled internally by POIFS and not propogated to the calling code.  Therefore we check here
-                // whether the reader has been assigned - if not, this is probably due to an Out Of Memory error,
-                // possibly caused by a low heap size.
-                if (reader == null) {
-                    //request.getIdentifier() is null when running in command line 'no profile' mode.
-                    String identifier = request.getIdentifier() != null
-                            ? request.getIdentifier().getUri().toString() : "the current container file";
-                    throw new IOException(String.format(NO_READER_ERROR, identifier));
+                } finally {
+                    // We can get Out Of Memory errors when attempting to instantiate the POIFSFileSystem.  However, these
+                    // are handled internally by POIFS and not propogated to the calling code.  Therefore we check here
+                    // whether the reader has been assigned - if not, this is probably due to an Out Of Memory error,
+                    // possibly caused by a low heap size.
+                    if (reader == null) {
+                        //request.getIdentifier() is null when running in command line 'no profile' mode.
+                        String identifier = request.getIdentifier() != null
+                                ? request.getIdentifier().getUri().toString() : "the current container file";
+                        throw new IOException(String.format(NO_READER_ERROR, identifier));
+                    }
                 }
             }
 
