@@ -227,8 +227,7 @@ public class ProfileManagerImplTest {
     }
 
     @Test
-    public void testOverrideProperties() throws ProfileManagerException, ConfigurationException {
-
+    public void testOverrideProperties() throws ProfileManagerException, ConfigurationException, InterruptedException {
         globalConfig.init();
         ProfileContextLocator realContextLocator = new ProfileContextLocator();
         realContextLocator.setGlobalConfig(globalConfig);
@@ -237,24 +236,28 @@ public class ProfileManagerImplTest {
         ProfileInstance mainInstance = createProfile();
 
         // Test process zip flag:
+        Thread.sleep(10);
         Boolean propertyFlag = globalConfig.getProperties().getBoolean("profile.processZip");
         ProfileInstance overridden = createOverriddenProfile("profile.processZip", propertyFlag);
         assertEquals(propertyFlag, mainInstance.getProcessZipFiles());
         assertNotEquals(propertyFlag, overridden.getProcessZipFiles());
 
         // Test process tar flag:
+        Thread.sleep(10);
         propertyFlag = globalConfig.getProperties().getBoolean("profile.processTar");
         overridden = createOverriddenProfile("profile.processTar", propertyFlag);
         assertEquals(propertyFlag, mainInstance.getProcessTarFiles());
         assertNotEquals(propertyFlag, overridden.getProcessTarFiles());
 
         // Test match all extensions:
+        Thread.sleep(10);
         propertyFlag = globalConfig.getProperties().getBoolean("profile.matchAllExtensions");
         overridden = createOverriddenProfile("profile.matchAllExtensions", propertyFlag);
         assertEquals(propertyFlag, mainInstance.getMatchAllExtensions());
         assertNotEquals(propertyFlag, overridden.getMatchAllExtensions());
 
         // Test max bytes to scan:
+        Thread.sleep(10);
         Long maxBytes = globalConfig.getProperties().getLong("profile.maxBytesToScan");
         overridden = createOverriddenProfile("profile.maxBytesToScan", maxBytes);
         assertEquals(maxBytes, mainInstance.getMaxBytesToScan());
