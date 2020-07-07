@@ -42,14 +42,15 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -94,15 +95,16 @@ public class ProfileManagerImplTest {
     public void setup() throws IOException {
         ProfileUuidGenerator uuidGenerator = mock(ProfileUuidGenerator.class);
         when(uuidGenerator.generateUuid()).thenReturn("abc");
-        
+        globalConfig = new DroidGlobalConfig();
+
         profileManager = new ProfileManagerImpl();
 //        profileManager.setUuidGenerator(uuidGenerator);
         profileSpecDao = mock(ProfileSpecDao.class);
         profileContextLocator = mock(ProfileContextLocator.class);
         profileManager.setProfileSpecDao(profileSpecDao);
+        profileManager.setConfig(globalConfig);
         
         profileManager.setProfileContextLocator(profileContextLocator);
-        globalConfig = new DroidGlobalConfig();
         profileContextLocator.setGlobalConfig(globalConfig);
     }
     
@@ -222,5 +224,67 @@ public class ProfileManagerImplTest {
         profileManager.setThrottleValue(profileId, 12345);
         
         verify(profileInstanceManager).setThrottleValue(12345);
+    }
+
+    @Test
+    public void testOverrideProperties() throws ProfileManagerException, ConfigurationException, InterruptedException {
+        globalConfig.init();
+        ProfileContextLocator realContextLocator = new ProfileContextLocator();
+        realContextLocator.setGlobalConfig(globalConfig);
+        profileManager.setProfileContextLocator(realContextLocator);
+
+        ProfileInstance mainInstance = createProfile();
+
+        // Test process zip flag:
+        Thread.sleep(10);
+        Boolean propertyFlag = globalConfig.getProperties().getBoolean("profile.processZip");
+        ProfileInstance overridden = createOverriddenProfile("profile.processZip", propertyFlag);
+        assertEquals(propertyFlag, mainInstance.getProcessZipFiles());
+        assertNotEquals(propertyFlag, overridden.getProcessZipFiles());
+
+        // Test process tar flag:
+        Thread.sleep(10);
+        propertyFlag = globalConfig.getProperties().getBoolean("profile.processTar");
+        overridden = createOverriddenProfile("profile.processTar", propertyFlag);
+        assertEquals(propertyFlag, mainInstance.getProcessTarFiles());
+        assertNotEquals(propertyFlag, overridden.getProcessTarFiles());
+
+        // Test match all extensions:
+        Thread.sleep(10);
+        propertyFlag = globalConfig.getProperties().getBoolean("profile.matchAllExtensions");
+        overridden = createOverriddenProfile("profile.matchAllExtensions", propertyFlag);
+        assertEquals(propertyFlag, mainInstance.getMatchAllExtensions());
+        assertNotEquals(propertyFlag, overridden.getMatchAllExtensions());
+
+        // Test max bytes to scan:
+        Thread.sleep(10);
+        Long maxBytes = globalConfig.getProperties().getLong("profile.maxBytesToScan");
+        overridden = createOverriddenProfile("profile.maxBytesToScan", maxBytes);
+        assertEquals(maxBytes, mainInstance.getMaxBytesToScan());
+        assertEquals((Long) (maxBytes + 1000L), (Long) overridden.getMaxBytesToScan());
+    }
+
+
+    private ProfileInstance createProfile() throws ProfileManagerException {
+        Map<SignatureType, SignatureFileInfo> sigInfo = new HashMap<>();
+        return profileManager.createProfile(sigInfo);
+    }
+
+    private ProfileInstance createOverriddenProfile(String propertyName, Boolean value) throws ProfileManagerException {
+        Map<SignatureType, SignatureFileInfo> sigInfo = new HashMap<>();
+        PropertiesConfiguration overrides = new PropertiesConfiguration();
+        if (value) {
+            overrides.setProperty(propertyName, "false");
+        } else {
+            overrides.setProperty(propertyName, "true");
+        }
+        return profileManager.createProfile(sigInfo, overrides);
+    }
+
+    private ProfileInstance createOverriddenProfile(String propertyName, Long value) throws ProfileManagerException {
+        Map<SignatureType, SignatureFileInfo> sigInfo = new HashMap<>();
+        PropertiesConfiguration overrides = new PropertiesConfiguration();
+        overrides.setProperty(propertyName, value + 1000);
+        return profileManager.createProfile(sigInfo, overrides);
     }
 }
