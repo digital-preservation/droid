@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
@@ -63,6 +65,7 @@ public class ProfileRunCommand implements DroidCommand {
     private SignatureManager signatureManager;
     private LocationResolver locationResolver;
 
+    private PropertiesConfiguration propertyOverrides;
     /**
      * {@inheritDoc}
      */
@@ -70,7 +73,7 @@ public class ProfileRunCommand implements DroidCommand {
     public void execute() throws CommandExecutionException {
         try {
             Map<SignatureType, SignatureFileInfo> sigs = signatureManager.getDefaultSignatures();
-            ProfileInstance profile = profileManager.createProfile(sigs);
+            ProfileInstance profile = profileManager.createProfile(sigs, propertyOverrides);
             profile.changeState(ProfileState.VIRGIN);
 
             for (String resource : resources) {
@@ -144,5 +147,12 @@ public class ProfileRunCommand implements DroidCommand {
      */
     public void setLocationResolver(LocationResolver locationResolver) {
         this.locationResolver = locationResolver;
+    }
+
+    /**
+     * @param properties properties which should be used to override global default profile properties.
+     */
+    public void setProperties(PropertiesConfiguration properties) {
+        this.propertyOverrides = properties;
     }
 }
