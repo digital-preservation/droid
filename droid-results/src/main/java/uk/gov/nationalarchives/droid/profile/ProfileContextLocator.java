@@ -411,6 +411,11 @@ public class ProfileContextLocator {
         profileInstance.setProcessWarcFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_WARC.getName()));
         profileInstance.setMaxBytesToScan(mergedConfig.getLong(DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName()));
         profileInstance.setMatchAllExtensions(mergedConfig.getBoolean(DroidGlobalProperty.EXTENSION_ALL.getName()));
+
+        //TODO manage OUTPUT_FILE_PATH overriding
+//        profileInstance.setOutputFilePath(mergedConfig.getString(DroidGlobalProperty.OUTPUT_FILE_PATH.getName()));
+        profileInstance.setOutputFilePath(globalConfig.getProperties().getString(OUTPUT_FILE_PATH));
+
         addProfileContext(profileInstance);
         return profileInstance;
     }
