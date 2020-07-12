@@ -93,7 +93,7 @@ public class ProfileRunCommandTest {
         
         ProfileInstance profileInstance = mock(ProfileInstance.class);
         when(profileInstance.getUuid()).thenReturn("abcde");
-        when(profileManager.createProfile(sigs)).thenReturn(profileInstance);
+        when(profileManager.createProfile(sigs, null)).thenReturn(profileInstance);
         
         Future future = mock(Future.class);
         when(profileManager.start("abcde")).thenReturn(future);
@@ -108,7 +108,7 @@ public class ProfileRunCommandTest {
         
         verify(profileInstance).addResource(resource1);
         verify(profileInstance).addResource(resource2);
-        verify(profileManager).createProfile(sigs);
+        verify(profileManager).createProfile(sigs, null);
         verify(profileManager).start("abcde");
         verify(future).get();
         verify(profileManager).save(eq("abcde"), eq(Paths.get("test")), any(ProgressObserver.class));
