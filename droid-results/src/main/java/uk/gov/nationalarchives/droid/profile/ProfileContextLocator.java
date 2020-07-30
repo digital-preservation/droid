@@ -191,6 +191,8 @@ public class ProfileContextLocator {
         String outputFilePath = profile.getOutputFilePath();
         if (outputFilePath != null && !outputFilePath.isEmpty()) {
             props.setProperty("outputFilePath", outputFilePath);
+        } else {
+            props.setProperty("outputFilePath", "");
         }
 
         String createUrl = globalConfig.getProperties().getString("database.createUrl");
@@ -411,6 +413,7 @@ public class ProfileContextLocator {
         profileInstance.setProcessWarcFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_WARC.getName()));
         profileInstance.setMaxBytesToScan(mergedConfig.getLong(DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName()));
         profileInstance.setMatchAllExtensions(mergedConfig.getBoolean(DroidGlobalProperty.EXTENSION_ALL.getName()));
+        profileInstance.setOutputFilePath(mergedConfig.getString(DroidGlobalProperty.OUTPUT_FILE_PATH.getName()));
         addProfileContext(profileInstance);
         return profileInstance;
     }
