@@ -130,7 +130,12 @@ public enum DroidGlobalProperty {
      * end of a file, or negative, meaning unlimited scanning.
      */
     MAX_BYTES_TO_SCAN("profile.maxBytesToScan", PropertyType.LONG, true),
-    
+
+    /** A path to output the results to as a CSV file.
+     * If this property is not set, then results will go to the profile database (default).
+     * If it is set, then the results will be written to the file, but not the profile database.
+     */
+    OUTPUT_FILE_PATH("profile.outputFilePath", PropertyType.TEXT, true),
     
     /** Whether to match all extensions, or just ones without another signature attached. */
     EXTENSION_ALL("profile.matchAllExtensions", PropertyType.BOOLEAN, true),
