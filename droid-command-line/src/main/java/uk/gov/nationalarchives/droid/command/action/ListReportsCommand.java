@@ -35,6 +35,7 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -51,6 +52,11 @@ import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
  */
 public class ListReportsCommand implements DroidCommand {
 
+    /**
+     * SINGLE QUOTE string to be used in messages.
+     */
+    public static final String SINGLE_QUOTE = "'";
+
     private PrintWriter printWriter;
     private ReportManager reportManager;
     
@@ -63,16 +69,16 @@ public class ListReportsCommand implements DroidCommand {
         if (reports.isEmpty()) {
             printWriter.println(I18N.getResource(I18N.NO_REPORTS_DEFINED));
         } else {
-            StringBuilder builder = new StringBuilder();
             for (ReportSpec report : reports) {
-                String reportDescription = String.format("\nReport:\t'%s'\n\tFormats:", report.getName());
+                StringBuilder builder = new StringBuilder();
+                String reportDescription = String.format("\nReport:\t'%s'\n\tFormats:\t", report.getName());
                 builder.append(reportDescription);
+
                 List<String> outputFormats = getReportOutputFormats(report);
-                for (String format : outputFormats) {
-                    builder.append("\t'");
-                    builder.append(format);
-                    builder.append("'");
+                if (outputFormats != null) {
+                    builder.append(outputFormats.stream().map(s -> SINGLE_QUOTE + s + SINGLE_QUOTE).collect(Collectors.joining("\t")));
                 }
+
                 builder.append("\t'Pdf'\t'DROID Report XML'");
                 printWriter.println(builder.toString());
             }

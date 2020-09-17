@@ -295,6 +295,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
             }
             
             // If there is a file, submit the file:
+            entryName = (entryName == null) ? null : entryName.trim();
             entryName = FilenameUtils.getName(entryName);
             if (!entryName.isEmpty()) {
                 submit(entry, entryName, parentName, zipFile, correlationId, originatorNodeId);
