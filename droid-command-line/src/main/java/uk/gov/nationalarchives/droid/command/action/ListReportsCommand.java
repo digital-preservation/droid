@@ -69,8 +69,8 @@ public class ListReportsCommand implements DroidCommand {
         if (reports.isEmpty()) {
             printWriter.println(I18N.getResource(I18N.NO_REPORTS_DEFINED));
         } else {
+            StringBuilder builder = new StringBuilder();
             for (ReportSpec report : reports) {
-                StringBuilder builder = new StringBuilder();
                 String reportDescription = String.format("\nReport:\t'%s'\n\tFormats:\t", report.getName());
                 builder.append(reportDescription);
 
@@ -80,8 +80,9 @@ public class ListReportsCommand implements DroidCommand {
                 }
 
                 builder.append("\t'Pdf'\t'DROID Report XML'");
-                printWriter.println(builder.toString());
+                builder.append(System.lineSeparator());
             }
+            printWriter.println(builder.toString());
         }
     }
     
