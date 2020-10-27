@@ -80,7 +80,7 @@ public class ListReportsCommand implements DroidCommand {
                 }
 
                 builder.append("\t'Pdf'\t'DROID Report XML'");
-                builder.append(System.lineSeparator());
+                builder.append("\n");
             }
             printWriter.println(builder.toString());
         }
