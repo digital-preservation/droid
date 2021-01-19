@@ -222,7 +222,8 @@ public final class FileUtil {
 
     /**
      * Wrapper method over the underlying File IO, this method simply delegates
-     * the call to nio Files
+     * the call to nio Files.
+     *
      * @param fileOrDir path to a file or directory to check if it exists
      * @return true if the file exists, false otherwise
      */
