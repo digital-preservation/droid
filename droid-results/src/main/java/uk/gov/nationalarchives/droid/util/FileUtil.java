@@ -221,6 +221,16 @@ public final class FileUtil {
     }
 
     /**
+     * Wrapper method over the underlying File IO, this method simply delegates
+     * the call to nio Files
+     * @param fileOrDir path to a file or directory to check if it exists
+     * @return true if the file exists, false otherwise
+     */
+    public static boolean exists(final Path fileOrDir) {
+        return Files.exists(fileOrDir);
+    }
+
+    /**
      * List files and directories in a path.
      *
      * @param path The path to list the children of

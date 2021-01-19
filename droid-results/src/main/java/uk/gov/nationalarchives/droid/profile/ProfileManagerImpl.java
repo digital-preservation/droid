@@ -114,13 +114,13 @@ public class ProfileManagerImpl implements ProfileManager {
                 throw new ProfileManagerException(e.getMessage());
             }
         }
-        
-        String profileId = String.valueOf(System.currentTimeMillis());
+
+        String profileId = getUniqueProfileId();
+        Path profileHomeDir = config.getProfilesDir().resolve(profileId);
+        FileUtil.mkdirsQuietly(profileHomeDir);
+
         log.info("Creating profile: " + profileId);
         ProfileInstance profile = profileContextLocator.getProfileInstance(profileId, propertyOverrides);
-        
-        final Path profileHomeDir = config.getProfilesDir().resolve(profile.getUuid());
-        FileUtil.mkdirsQuietly(profileHomeDir);
 
         createProfileBinarySigFile(signatures.get(SignatureType.BINARY), profile, profileHomeDir);
         createProfileContainerSigFile(signatures.get(SignatureType.CONTAINER), profile, profileHomeDir);
@@ -139,6 +139,23 @@ public class ProfileManagerImpl implements ProfileManager {
             
         profileContextLocator.addProfileContext(profile);
         return profile;
+    }
+
+    private String getUniqueProfileId() {
+        String profileId = String.valueOf(System.currentTimeMillis());
+        Path profileHomeDir = config.getProfilesDir().resolve(profileId);
+
+        //to avoid folder collision, check if the folder already exists, if it does, just wait and try again
+        while (FileUtil.exists(profileHomeDir)) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                //ignored - unlikely to happen
+            }
+            profileId = String.valueOf(System.currentTimeMillis());
+            profileHomeDir = config.getProfilesDir().resolve(profileId);
+        }
+        return profileId;
     }
 
     private void createProfileBinarySigFile(final SignatureFileInfo binarySigFile, final ProfileInstance profile, final Path profileHomeDir) {
@@ -391,7 +408,7 @@ public class ProfileManagerImpl implements ProfileManager {
 
             profile.setLoadedFrom(source);
             profile.setName(FilenameUtils.getBaseName(FileUtil.fileName(source)));
-            profile.setUuid(String.valueOf(System.currentTimeMillis()));
+            profile.setUuid(getUniqueProfileId());
             profile.onLoad();
 
             String profileId = profile.getUuid();
