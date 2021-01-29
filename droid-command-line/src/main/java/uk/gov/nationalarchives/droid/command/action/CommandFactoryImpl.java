@@ -195,12 +195,9 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public DroidCommand getProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
-        final String[] resources = cli.getOptionValues(CommandLineParam.RUN_PROFILE.toString());
-        if (resources.length == 0) {
-            throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
-        }
-
+        String[] resources = getResources(cli);
         PropertiesConfiguration overrides = getOverrideProperties(cli);
+
         final String destination;
         // Determine if destination is to a database profile, or to a csv file output:
         if (cli.hasOption(CommandLineParam.PROFILES.getLongName())) {
@@ -224,6 +221,16 @@ public class CommandFactoryImpl implements CommandFactory {
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
         command.setProperties(overrides);
         return command;
+    }
+
+    private String[] getResources(final CommandLine cli) throws CommandLineSyntaxException {
+        String[] resources = cli.getOptionValues(CommandLineParam.RUN_PROFILE.toString());
+        if (resources == null || resources.length == 0) {
+            resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
+            if (resources == null || resources.length == 0)
+                throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+        }
+        return resources;
     }
 
     private PropertiesConfiguration getOverrideProperties(CommandLine cli) throws CommandLineSyntaxException {

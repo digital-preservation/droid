@@ -142,14 +142,11 @@ public final class DroidCommandLine implements AutoCloseable {
 
         try {
             cli = parser.parse(CommandLineParam.options(), args);
+            CommandLineParam option = findTopLevelOption();
 
-            CommandLineParam option = null;
-            for (Option opt : cli.getOptions()) {
-                option = CommandLineParam.TOP_LEVEL_COMMANDS.get(opt.getOpt());
-                if (option != null) {
-                    break;
-
-                }
+            // If we don't find any top level option, but we have unbound arguments, interpret them as adding files to a profile:
+            if (option == null && cli.getArgs().length > 0) {
+                option = CommandLineParam.RUN_PROFILE;
             }
 
             if (option != null) {
@@ -165,6 +162,17 @@ public final class DroidCommandLine implements AutoCloseable {
         // finally {
         // log.info("Closing DROID.");
         // }
+    }
+
+    private CommandLineParam findTopLevelOption() {
+        CommandLineParam result = null;
+        for (Option opt : cli.getOptions()) {
+            result = CommandLineParam.TOP_LEVEL_COMMANDS.get(opt.getOpt());
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
     }
 
     /**
