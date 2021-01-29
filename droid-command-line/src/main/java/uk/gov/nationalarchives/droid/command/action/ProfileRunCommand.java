@@ -60,12 +60,11 @@ public class ProfileRunCommand implements DroidCommand {
     private String destination;
     private String[] resources;
     private boolean recursive;
-    
     private ProfileManager profileManager;
     private SignatureManager signatureManager;
     private LocationResolver locationResolver;
-
     private PropertiesConfiguration propertyOverrides;
+
     /**
      * {@inheritDoc}
      */
@@ -91,11 +90,7 @@ public class ProfileRunCommand implements DroidCommand {
 
             Thread.sleep(SLEEP_TIME);
 
-            // Saves the profile to the destination, if we aren't outputting to a CSV file already:
-            if (propertyOverrides == null || !propertyOverrides.containsKey("profile.outputFilePath")) {
-                profileManager.save(profile.getUuid(), Paths.get(destination), progressCallback);
-            }
-
+            profileManager.save(profile.getUuid(), Paths.get(destination), progressCallback);
             profileManager.closeProfile(profile.getUuid());
         } catch (ProfileManagerException e) {
             throw new CommandExecutionException(e);

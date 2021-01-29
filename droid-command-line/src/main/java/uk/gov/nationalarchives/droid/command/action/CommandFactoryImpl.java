@@ -201,7 +201,7 @@ public class CommandFactoryImpl implements CommandFactory {
         }
 
         PropertiesConfiguration overrides = getOverrideProperties(cli);
-        String destination = "";
+        final String destination;
         // Determine if destination is to a database profile, or to a csv file output:
         if (cli.hasOption(CommandLineParam.PROFILES.getLongName())) {
             final String[] destinations = cli.getOptionValues(CommandLineParam.PROFILES.toString());
@@ -210,12 +210,12 @@ public class CommandFactoryImpl implements CommandFactory {
             }
             destination = destinations[0];
         } else { // output to a file, or the console if not specified.
-            final String outputFile = cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())?
-                    cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
+            destination = cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())?
+                          cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
             if (overrides == null) {
                 overrides = new PropertiesConfiguration();
             }
-            overrides.setProperty("profile.outputFilePath", outputFile);
+            overrides.setProperty("profile.outputFilePath", destination);
         }
 
         final ProfileRunCommand command = context.getProfileRunCommand();

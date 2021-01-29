@@ -338,26 +338,30 @@ public class ProfileManagerImpl implements ProfileManager {
     @Override
     public ProfileInstance save(final String profileId, final Path destination,
             final ProgressObserver callback) throws IOException {
+        final ProfileInstance profile = profileContextLocator.getProfileInstance(profileId);
+        final String outputFilePath = profile.getOutputFilePath();
+        if (outputFilePath == null || outputFilePath.isEmpty()) {
+            log.info("Saving profile: " + profileId + " to " + destination.toAbsolutePath().toString());
+            // freeze the database so that we can safely zip it up.
+            profileContextLocator.freezeDatabase(profileId);
+            ProfileState oldState = profile.getState();
+            profile.changeState(ProfileState.SAVING);
 
-        log.info("Saving profile: " + profileId + " to " + destination.toAbsolutePath().toString());
-        // freeze the database so that we can safely zip it up.
-        profileContextLocator.freezeDatabase(profileId);
-        ProfileInstance profile = profileContextLocator.getProfileInstance(profileId);
-        ProfileState oldState = profile.getState();
-        profile.changeState(ProfileState.SAVING);
+            try {
+                final Path output = destination != null ? destination : profile.getLoadedFrom();
 
-        try {
-            final Path output = destination != null ? destination : profile.getLoadedFrom();
+                profileSpecDao.saveProfile(profile, getProfileHomeDir(profile));
 
-            profileSpecDao.saveProfile(profile, getProfileHomeDir(profile));
-
-            profileSaver.saveProfile(getProfileHomeDir(profile), output, callback);
-            profile.setLoadedFrom(output);
-            profile.setName(FilenameUtils.getBaseName(FileUtil.fileName(output)));
-            profile.onSave();
-        } finally {
-            profileContextLocator.thawDatabase(profileId);
-            profile.changeState(oldState);
+                profileSaver.saveProfile(getProfileHomeDir(profile), output, callback);
+                profile.setLoadedFrom(output);
+                profile.setName(FilenameUtils.getBaseName(FileUtil.fileName(output)));
+                profile.onSave();
+            } finally {
+                profileContextLocator.thawDatabase(profileId);
+                profile.changeState(oldState);
+            }
+        } else {
+            log.info("Profile: " + profileId + " written as CSV to " + outputFilePath);
         }
         return profile;
     }
