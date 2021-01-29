@@ -91,7 +91,6 @@ public interface CommandFactory {
      */
     DroidCommand getProfileCommand(CommandLine cli) throws CommandLineSyntaxException;
 
-
     /**
      * @param cli the command line;
      * @return a new {@link DroidCommand}

@@ -90,9 +90,13 @@ public class ProfileRunCommand implements DroidCommand {
             };
 
             Thread.sleep(SLEEP_TIME);
-            profileManager.save(profile.getUuid(), Paths.get(destination), progressCallback);
-            profileManager.closeProfile(profile.getUuid());
 
+            // Saves the profile to the destination, if we aren't outputting to a CSV file already:
+            if (!propertyOverrides.containsKey("profile.outputFilePath")) {
+                profileManager.save(profile.getUuid(), Paths.get(destination), progressCallback);
+            }
+
+            profileManager.closeProfile(profile.getUuid());
         } catch (ProfileManagerException e) {
             throw new CommandExecutionException(e);
         } catch (InterruptedException e) {

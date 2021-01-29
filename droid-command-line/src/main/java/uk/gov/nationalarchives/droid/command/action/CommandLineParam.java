@@ -188,7 +188,19 @@ public enum CommandLineParam {
         }
     },
 
-    /** Runs without a profile and with the specified resources. */
+    OUTPUT_FILE("o", "output-file", true, 1, I18N.OUTPUT_FILE_HELP, "output-file") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+
+    /** Runs without a profile and with the specified resources.
+     * @deprecated The goal is to replace this custom processing with the csv profile.  The command line project will
+     * then be in line with the GUI project, using the same signature, container and archival format processing code.
+     * Ultimately, this command will still exist but will alias to a csv profile with only two columns and no quoting,
+     * for backwards compatibility purposes - the equivalent output of this current command.
+     * */
     RUN_NO_PROFILE("Nr", "no-profile-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "folder") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
@@ -423,6 +435,7 @@ public enum CommandLineParam {
         }
 
         options.addOption(PROFILES.newOption());
+        options.addOption(OUTPUT_FILE.newOption());
         options.addOption(PROFILE_PROPERTY.newOption());
         options.addOption(PROPERTY_FILE.newOption());
         options.addOption(REPORT_NAME.newOption());
@@ -479,7 +492,7 @@ public enum CommandLineParam {
 
         options.addOption(SIGNATURE_FILE.newOption());
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
-        options.addOption(EXTENSION_LIST.newOption());
+        options.addOption(EXTENSION_LIST.newOption()); //TODO: allow overriding these for profile.
         options.addOption(ARCHIVES.newOption());
         options.addOption(ARCHIVE_TYPES.newOption());
         options.addOption(WEB_ARCHIVES.newOption());
@@ -499,6 +512,7 @@ public enum CommandLineParam {
         Options options = new Options();
 
         options.addOption(PROFILES.newOption());
+        options.addOption(OUTPUT_FILE.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
 

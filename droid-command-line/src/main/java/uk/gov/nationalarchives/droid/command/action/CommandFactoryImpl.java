@@ -200,16 +200,33 @@ public class CommandFactoryImpl implements CommandFactory {
             throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
         }
 
-        final String[] destination = cli.getOptionValues(CommandLineParam.PROFILES.toString());
-        if (destination == null || destination.length > 1) {
-            throw new CommandLineSyntaxException("Must specify exactly one profile.");
+        PropertiesConfiguration overrides = getOverrideProperties(cli);
+
+        // Determine if destination is to a database profile, or to a csv file output:
+        final String[] destination;
+        if (cli.hasOption(CommandLineParam.PROFILES.getLongName())) {
+            destination = cli.getOptionValues(CommandLineParam.PROFILES.toString());
+            if (destination == null || destination.length > 1) {
+                throw new CommandLineSyntaxException("Must specify exactly one profile.");
+            }
+        } else if (cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())) {
+            destination = cli.getOptionValues(CommandLineParam.OUTPUT_FILE.toString());
+            if (destination == null) {
+                throw new CommandLineSyntaxException("Must specify an output file path, or stdout as a parameter.");
+            }
+            if (overrides == null) {
+                overrides = new PropertiesConfiguration();
+            }
+            overrides.setProperty("profile.outputFilePath", destination);
+        } else {
+            throw new CommandLineSyntaxException("Must specify either a profile -p or an output file -o to write results to.");
         }
 
         final ProfileRunCommand command = context.getProfileRunCommand();
         command.setDestination(destination[0]);
         command.setResources(resources);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
-        command.setProperties(getOverrideProperties(cli));
+        command.setProperties(overrides);
         return command;
     }
 

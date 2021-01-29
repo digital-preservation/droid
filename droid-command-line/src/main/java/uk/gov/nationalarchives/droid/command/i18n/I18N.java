@@ -58,6 +58,8 @@ public final class I18N {
     /** Profiles description. */
     public static final String PROFILES_HELP = "profiles.help";
 
+    public static final String OUTPUT_FILE_HELP = "profile.outputfile.help";
+
     /**
      * Override default properties from the command line.
      */
@@ -93,7 +95,10 @@ public final class I18N {
     
     /** Run without a profile. */
     public static final String RUN_NO_PROFILE_HELP = "no_profile.run.help";
-    
+
+    /** Run a profile outputting to a csv file or console. */
+    public static final String RUN_FILE_PROFILE_HELP = "profile.run.file.help";
+
     /** Help for signature file. */
     public static final String SIGNATURE_FILE_HELP = "signature_file.help";
     
