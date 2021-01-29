@@ -201,30 +201,26 @@ public class CommandFactoryImpl implements CommandFactory {
         }
 
         PropertiesConfiguration overrides = getOverrideProperties(cli);
-
+        String destination = "";
         // Determine if destination is to a database profile, or to a csv file output:
-        final String[] destination;
         if (cli.hasOption(CommandLineParam.PROFILES.getLongName())) {
-            destination = cli.getOptionValues(CommandLineParam.PROFILES.toString());
-            if (destination == null || destination.length > 1) {
+            final String[] destinations = cli.getOptionValues(CommandLineParam.PROFILES.toString());
+            if (destinations == null || destinations.length > 1) {
                 throw new CommandLineSyntaxException("Must specify exactly one profile.");
             }
-        } else if (cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())) {
-            destination = cli.getOptionValues(CommandLineParam.OUTPUT_FILE.toString());
-            if (destination == null) {
-                throw new CommandLineSyntaxException("Must specify an output file path, or stdout as a parameter.");
-            }
+            destination = destinations[0];
+        } else { // output to a file, or the console if not specified.
+            final String outputFile = cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())?
+                    cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
             if (overrides == null) {
                 overrides = new PropertiesConfiguration();
             }
-            overrides.setProperty("profile.outputFilePath", destination);
-        } else {
-            throw new CommandLineSyntaxException("Must specify either a profile -p or an output file -o to write results to.");
+            overrides.setProperty("profile.outputFilePath", outputFile);
         }
 
         final ProfileRunCommand command = context.getProfileRunCommand();
-        command.setDestination(destination[0]);
         command.setResources(resources);
+        command.setDestination(destination);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
         command.setProperties(overrides);
         return command;
