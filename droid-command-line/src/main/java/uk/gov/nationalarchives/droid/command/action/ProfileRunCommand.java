@@ -92,7 +92,7 @@ public class ProfileRunCommand implements DroidCommand {
             Thread.sleep(SLEEP_TIME);
 
             // Saves the profile to the destination, if we aren't outputting to a CSV file already:
-            if (!propertyOverrides.containsKey("profile.outputFilePath")) {
+            if (propertyOverrides == null || !propertyOverrides.containsKey("profile.outputFilePath")) {
                 profileManager.save(profile.getUuid(), Paths.get(destination), progressCallback);
             }
 
