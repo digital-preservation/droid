@@ -416,13 +416,14 @@ public class DroidCommandLineTest {
     }
 
     @Test
+    @Ignore("New code allows not supplying a profile name now (goes to console as CSV instead).  Write test for that?")
     public void testRunAndSaveProfileWithNoProfileName() throws CommandLineException {
-        String[] args = new String[] {
-            "-a",
-            "file1.txt",
-            "file/number/2.txt"
+        String[] args = new String[]{
+                "-a",
+                "file1.txt",
+                "file/number/2.txt"
         };
-        
+
         DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
         verify(printWriter).println("Incorrect command line syntax: Must specify exactly one profile.");
