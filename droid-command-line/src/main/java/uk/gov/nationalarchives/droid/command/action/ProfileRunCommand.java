@@ -64,6 +64,8 @@ public class ProfileRunCommand implements DroidCommand {
     private SignatureManager signatureManager;
     private LocationResolver locationResolver;
     private PropertiesConfiguration propertyOverrides;
+    private String binarySignaturesFileName;
+    private String containerSignaturesFileName;
 
     /**
      * {@inheritDoc}
@@ -71,7 +73,7 @@ public class ProfileRunCommand implements DroidCommand {
     @Override
     public void execute() throws CommandExecutionException {
         try {
-            Map<SignatureType, SignatureFileInfo> sigs = signatureManager.getDefaultSignatures();
+            Map<SignatureType, SignatureFileInfo> sigs = getSignatureFiles();
             ProfileInstance profile = profileManager.createProfile(sigs, propertyOverrides);
             profile.changeState(ProfileState.VIRGIN);
 
@@ -104,6 +106,21 @@ public class ProfileRunCommand implements DroidCommand {
             throw new CommandExecutionException(e);
         }
         
+    }
+
+    private Map<SignatureType, SignatureFileInfo> getSignatureFiles() throws SignatureFileException {
+        Map<SignatureType, SignatureFileInfo> sigs = signatureManager.getDefaultSignatures();
+        if (binarySignaturesFileName != null) {
+            SignatureFileInfo binInfo = new SignatureFileInfo(0, false, SignatureType.BINARY);
+            binInfo.setFile(Paths.get(binarySignaturesFileName));
+            sigs.put(SignatureType.BINARY, binInfo);
+        }
+        if (containerSignaturesFileName != null && !containerSignaturesFileName.isEmpty()) {
+            SignatureFileInfo contInfo = new SignatureFileInfo(0, false, SignatureType.CONTAINER);
+            contInfo.setFile(Paths.get(containerSignaturesFileName));
+            sigs.put(SignatureType.CONTAINER, contInfo);
+        }
+        return sigs;
     }
 
     /**
@@ -153,5 +170,23 @@ public class ProfileRunCommand implements DroidCommand {
      */
     public void setProperties(PropertiesConfiguration properties) {
         this.propertyOverrides = properties;
+    }
+
+    /**
+     * Set the signature file.
+     *
+     * @param signatureFile The signature file
+     */
+    public void setSignatureFile(final String signatureFile) {
+        this.binarySignaturesFileName = signatureFile;
+    }
+
+    /**
+     * Set the container signature file.
+     *
+     * @param containerSignatureFile The Container Signature file
+     */
+    public void setContainerSignatureFile(final String containerSignatureFile) {
+        this.containerSignaturesFileName = containerSignatureFile;
     }
 }
