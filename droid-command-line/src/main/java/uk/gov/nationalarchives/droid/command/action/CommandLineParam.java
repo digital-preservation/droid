@@ -489,7 +489,6 @@ public enum CommandLineParam {
      */
     public static Options noProfileRunSubOptions() {
         Options options = new Options();
-
         options.addOption(SIGNATURE_FILE.newOption());
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption()); //TODO: allow overriding these for profile.
@@ -499,7 +498,6 @@ public enum CommandLineParam {
         options.addOption(WEB_ARCHIVE_TYPES.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
-
         return options;
     }
 
@@ -510,12 +508,16 @@ public enum CommandLineParam {
      */
     public static Options profileRunSubOptions() {
         Options options = new Options();
-
         options.addOption(PROFILES.newOption());
-        options.addOption(OUTPUT_FILE.newOption());
+        options.addOption(OUTPUT_FILE.newOption()); //TODO: do we want BOM option here too?
         options.addOption(RECURSIVE.newOption());
-        options.addOption(QUIET.newOption());
-
+        options.addOption(SIGNATURE_FILE.newOption());
+        options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
+        options.addOption(ARCHIVES.newOption());
+        options.addOption(ARCHIVE_TYPES.newOption());
+        options.addOption(WEB_ARCHIVES.newOption());
+        options.addOption(WEB_ARCHIVE_TYPES.newOption());
+        options.addOption(QUIET.newOption()); //TODO: does this do anything in profiles?
         return options;
     }
 
@@ -526,12 +528,10 @@ public enum CommandLineParam {
      */
     public static Options exportSubOptions() {
         Options options = new Options();
-
         options.addOption(PROFILES.newOption());
         options.addOption(ANY_FILTER.newOption());
         options.addOption(ALL_FILTER.newOption());
         options.addOption(BOM.newOption());
-
         return options;
     }
 
