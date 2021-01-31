@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
+import java.util.Locale;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.configuration.CombinedConfiguration;
@@ -220,6 +221,8 @@ public class CommandFactoryImpl implements CommandFactory {
         command.setDestination(destination);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
         command.setProperties(overrides);
+        command.setContainerSignatureFile(cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString()));
+        command.setSignatureFile(cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString()));
         return command;
     }
 
@@ -262,7 +265,53 @@ public class CommandFactoryImpl implements CommandFactory {
                 overrideProperties = merged;
             }
         }
+
+        // Special command line flags for archive processing which override all the others:
+        if (cli.hasOption(CommandLineParam.ARCHIVES.toString())) { // Turn on all archives:
+            setAllArchivesExpand(overrideProperties,true);
+        } else if (cli.hasOption(CommandLineParam.ARCHIVE_TYPES.toString())) {
+            setExpandArchiveTypes(overrideProperties, cli.getOptionValues(CommandLineParam.ARCHIVE_TYPES.toString()));
+        }
+
+        if (cli.hasOption(CommandLineParam.WEB_ARCHIVES.toString())) { // Turn on all web archives:
+            setAllWebArchivesExpand(overrideProperties, true);
+        } else if (cli.hasOption(CommandLineParam.WEB_ARCHIVE_TYPES.toString())) {
+            setExpandWebArchiveTypes(overrideProperties, cli.getOptionValues(CommandLineParam.WEB_ARCHIVE_TYPES.toString()));
+        }
         return overrideProperties;
+    }
+
+    private void setAllArchivesExpand(PropertiesConfiguration overrideProperties, boolean onOrOff) {
+        overrideProperties.setProperty("profile.processTar", onOrOff);
+        overrideProperties.setProperty("profile.processZip", onOrOff);
+        overrideProperties.setProperty("profile.processGzip", onOrOff);
+        overrideProperties.setProperty("profile.processRar", onOrOff);
+        overrideProperties.setProperty("profile.process7zip", onOrOff);
+        overrideProperties.setProperty("profile.processIso", onOrOff);
+        overrideProperties.setProperty("profile.processBzip2", onOrOff);
+    }
+
+    private void setAllWebArchivesExpand(PropertiesConfiguration overrideProperties, boolean OnOrOff) {
+        overrideProperties.setProperty("profile.processArc", OnOrOff);
+        overrideProperties.setProperty("profile.processWarc", OnOrOff);
+    }
+
+    private void setExpandArchiveTypes(PropertiesConfiguration overrideProperties, String[] archiveTypes) {
+        setAllArchivesExpand(overrideProperties, false);
+        for (String archiveType : archiveTypes) {
+            overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+        }
+    }
+
+    private void setExpandWebArchiveTypes(PropertiesConfiguration overrideProperties, String[] webArchiveTypes) {
+        setAllWebArchivesExpand(overrideProperties, false);
+        for (String archiveType : webArchiveTypes) {
+            overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+        }
+    }
+
+    private String getArchivePropertyName(String archiveType) {
+        return "profile.process" + archiveType.substring(0, 1).toUpperCase(Locale.ROOT) + archiveType.substring(1).toLowerCase(Locale.ROOT);
     }
 
     @Override
