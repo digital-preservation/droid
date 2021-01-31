@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -38,9 +38,10 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
- * Determines if a ProfileResourceNode meets filter criterion.
+ * Determines if a ProfileResourceNode meets filter criteria.
  */
 public class ProfileResourceNodeFilter {
 
@@ -149,7 +150,7 @@ public class ProfileResourceNodeFilter {
                 break;
             }
             case FILE_EXTENSION: {
-                result = compareStrings(node.getMetaData().getExtension(), operator, criterionValue);
+                result = compareCaseInsensitiveStrings(node.getMetaData().getExtension(), operator, criterionValue);
                 break;
             }
             case IDENTIFICATION_COUNT: {
@@ -222,11 +223,23 @@ public class ProfileResourceNodeFilter {
 
     private boolean compareFormats(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
-        String value = (String) criterionValue;
-        for (Format format : formatIdentifications) {
-            if (compareStrings(format.getName(), operator, value)) {
-                result = true;
-                break;
+        String value = ((String) criterionValue).toLowerCase(Locale.ROOT); //TODO: bug - inverted operators have different criteria for lists.
+        if (isOperatorInverted(operator)) {
+            int foundCount = 0;
+            for (Format format : formatIdentifications) {
+                String formatName = format.getName().toLowerCase(Locale.ROOT);
+                if (compareStrings(formatName, operator, value)) {
+                    foundCount++;
+                }
+            }
+            result = foundCount == formatIdentifications.size();
+        } else {
+            for (Format format : formatIdentifications) {
+                String formatName = format.getName().toLowerCase(Locale.ROOT);
+                if (compareStrings(formatName, operator, value)) {
+                    result = true;
+                    break;
+                }
             }
         }
         return result;
@@ -242,6 +255,7 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
+    //TODO: should PUID values be case sensitive?
     private boolean compareNoneOfPuids(List<Format> formatIdentifications, Object criterionValue) {
         boolean result = false;
         Object[] values = (Object[]) criterionValue;
@@ -261,6 +275,7 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
+    //TODO: should PUID values be case sensitive?
     private boolean compareAnyOfPuids(List<Format> formatIdentifications, Object criterionValue) {
         boolean result = false;
         Object[] values = (Object[]) criterionValue;
@@ -275,7 +290,6 @@ public class ProfileResourceNodeFilter {
         }
         return result;
     }
-
 
     private boolean compareBooleans(Boolean nodeValue, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
@@ -410,7 +424,51 @@ public class ProfileResourceNodeFilter {
 
     private boolean compareStrings(String nodeValue, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
-        String compareValue = (String) criterionValue;
+        if (criterionValue instanceof String) {
+            result = compareString(nodeValue, operator, (String) criterionValue);
+        } else if (criterionValue instanceof Object[]) {
+            Object[] values = (Object[]) criterionValue;
+            int foundCount = 0;
+            for (Object value : values) {
+                if (compareString(nodeValue, operator, (String) value)) {
+                    foundCount++;
+                }
+            }
+            result = isOperatorInverted(operator)? foundCount == values.length : foundCount > 0;
+        }
+        return result;
+    }
+
+    private boolean isOperatorInverted(CriterionOperator operator) {
+        return (operator == CriterionOperator.NE ||
+                operator == CriterionOperator.NONE_OF ||
+                operator == CriterionOperator.NOT_STARTS_WITH ||
+                operator == CriterionOperator.NOT_ENDS_WITH ||
+                operator == CriterionOperator.NOT_CONTAINS);
+    }
+
+    private boolean compareCaseInsensitiveStrings(String nodeValue, CriterionOperator operator, Object criterionValue) {
+        boolean result = false;
+        String nodeValueLower = nodeValue.toLowerCase(Locale.ROOT);
+        if (criterionValue instanceof String) {
+            String criterionValueLower = ((String) criterionValue).toLowerCase(Locale.ROOT);
+            result = compareString(nodeValueLower, operator, criterionValueLower);
+        } else if (criterionValue instanceof Object[]) {
+            Object[] values = (Object[]) criterionValue;
+            int foundCount = 0;
+            for (Object value : values) {
+                String criterionValueLower = ((String) value).toLowerCase(Locale.ROOT);
+                if (compareString(nodeValueLower, operator, (String) criterionValueLower)) {
+                    foundCount++;
+                }
+            }
+            result = isOperatorInverted(operator)? foundCount == values.length : foundCount > 0;
+        }
+        return result;
+    }
+
+    private boolean compareString(String nodeValue, CriterionOperator operator, String compareValue) {
+        boolean result = false;
         switch (operator) {
             case LT: {
                 result = nodeValue.compareTo(compareValue) < 0;
