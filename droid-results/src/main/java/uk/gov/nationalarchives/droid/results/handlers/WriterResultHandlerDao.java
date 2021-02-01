@@ -43,8 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceNodeFilter;
 
 
 /**
@@ -70,6 +72,7 @@ public class WriterResultHandlerDao extends JDBCBatchResultHandlerDao {
     private ItemWriter itemWriter;
     private Writer writer;
     private long nodeId = 1L;
+    private ProfileResourceNodeFilter filter = new ProfileResourceNodeFilter();
 
     /**
      * Empty bean constructor.  You still need to set the Itemwriter and DataSource,
@@ -115,13 +118,25 @@ public class WriterResultHandlerDao extends JDBCBatchResultHandlerDao {
 
     @Override
     public synchronized void save(ProfileResourceNode node, ResourceId parentId) {
-        node.setId(nodeId++);
-        if (parentId != null) {
-            node.setParentId(parentId.getId());
+        //TODO: If we filter out a folder from being saved, it will have no id..  should we always assign ids to
+        //      a node even if we don't save them, in order that children will have a correct parent id....?
+        //      Was thinking that the absence of an id means that we don't go on to process archive children, for example.
+        //      Maybe we should return a true/false if the item was saved or not, but still assign an id...?  Investigate.
+
+        if (!filter.isFiltered(node)) { // only write the result if if it's being filtered.
+            node.setId(nodeId++);
+            if (parentId != null) {
+                node.setParentId(parentId.getId());
+            }
+            items.clear(); //TODO: we just output each result in a list of one - any value in batching them for output?
+            items.add(node);
+            itemWriter.write(items);
         }
-        items.clear(); //TODO: we just output each result in a list of one - any value in batching them for output?
-        items.add(node);
-        itemWriter.write(items);
+    }
+
+    @Override
+    public synchronized void setFilter(Filter filter) {
+        this.filter = new ProfileResourceNodeFilter(filter);
     }
 
     @Override

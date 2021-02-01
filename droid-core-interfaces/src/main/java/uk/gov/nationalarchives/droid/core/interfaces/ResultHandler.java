@@ -32,9 +32,7 @@
 package uk.gov.nationalarchives.droid.core.interfaces;
 
 
-
-
-
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 
 /**
  * Handles identification results.
@@ -83,5 +81,11 @@ public interface ResultHandler {
      * Ensures that the result handler is initialised properly.
      */
     void init();
+
+    /**
+     * Sets a filter on a result handler to determine whether to save a result or not.
+     * @param filter The filter to set, or null if no filter is required.
+     */
+    void setFilter(Filter filter);
 
 }

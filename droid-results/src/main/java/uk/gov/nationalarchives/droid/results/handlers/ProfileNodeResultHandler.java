@@ -47,10 +47,12 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceNodeFilter;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**
@@ -191,6 +193,13 @@ public class ProfileNodeResultHandler implements ResultHandler {
      */
     public void setProgressMonitor(ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
+    }
+
+    /**
+     * @param filter a filter to determine whether to save a ProfileResourceNode
+     */
+    public void setFilter(Filter filter) {
+        this.resultHandlerDao.setFilter(filter);
     }
 
     @Override

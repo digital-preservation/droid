@@ -318,7 +318,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="process7zip" value="#{${process7zip} == null?false : ${process7zip}}"/>
         <property name="processIso" value="#{${processIso} == null?false : ${processIso}}"/>
         <property name="processBzip2" value="#{${processBzip2} == null?false : ${processBzip2}}"/>
-
+        <!-- processFAT? -->
         <property name="processArc" value="#{${processArc} == null?false : ${processArc}}"/>
         <property name="processWarc" value="#{${processWarc} == null?false : ${processWarc}}"/>
 

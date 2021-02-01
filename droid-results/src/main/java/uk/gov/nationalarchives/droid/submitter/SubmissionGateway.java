@@ -62,7 +62,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFacto
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceNodeFilter;
 
 /**
  * Acts as a DroidCore proxy by keeping track of in-flight identification
@@ -386,6 +388,13 @@ public class SubmissionGateway implements AsynchDroid {
     @Override
     public void awaitFinished() throws InterruptedException {
         jobCounter.awaitFinished();
+    }
+
+    /**
+     * @param filter a filter to use on the results handler to determine whether to save results or not.
+     */
+    public void setFilter(Filter filter) {
+        resultHandler.setFilter(filter);
     }
 
     /**
