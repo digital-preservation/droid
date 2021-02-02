@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 
 /**
  * Base class for a profile.
@@ -105,7 +106,6 @@ public class ProfileInstance {
     @XmlElement(name = "EndDate")
     private Date profileEndDate;
 
-    
     @XmlElement(name = "StartDate")
     private Date profileStartDate;
     
@@ -151,6 +151,9 @@ public class ProfileInstance {
     private String outputFilePath;
 
     @XmlTransient
+    private Filter resultsFilter; // A filter which dynamically removes output when writing to a file.
+
+    @XmlTransient
     private Set<ProfileEventListener> eventListeners = new HashSet<ProfileEventListener>();
 
     /**
@@ -187,6 +190,21 @@ public class ProfileInstance {
      */
     public void setFilter(FilterImpl filter) {
         this.filter = filter;
+    }
+
+    /**
+     * Sets a filter which removes results from being written, when writing to a CSV file.
+     * @param filter The filter to use, or null if no filter required.
+     */
+    public void setResultsFilter(Filter filter) {
+        this.resultsFilter = filter;
+    }
+
+    /**
+     * @return The filter used to filter out results written to a file, or null if no filter is set.
+     */
+    public Filter getResultsFilter() {
+        return resultsFilter;
     }
 
     /**

@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
+import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
 import uk.gov.nationalarchives.droid.core.interfaces.control.ThreadWaitingHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -90,6 +91,7 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
     private ReferenceDataService referenceDataService;
 
     private ProfileInstance profileInstance;
+    private ResultHandler resultHandler;
 
     private ProfileSpecWalker specWalker;
     private Future<?> task;
@@ -228,6 +230,9 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             
             inError = false;
             walkState = profileWalkerDao.load();
+
+            // Set any result filter:
+            resultHandler.setResultsFilter(profileInstance.getResultsFilter());
 
             // replay any queued requests
             submissionGateway.replay();
@@ -528,6 +533,14 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
     @Override
     public ProgressMonitor getProgressMonitor() {
         return specWalker.getProgressMonitor();
+    }
+
+    /**
+     * Sets the result handler for the profile.
+     * @param resultHandler the result handler.
+     */
+    public void setResultHandler(ResultHandler resultHandler) {
+        this.resultHandler = resultHandler;
     }
 
 }

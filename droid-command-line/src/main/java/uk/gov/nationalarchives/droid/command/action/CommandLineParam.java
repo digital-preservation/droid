@@ -119,7 +119,7 @@ public enum CommandLineParam {
         }
     },
 
-    /** Narrow filter. */
+    /** Widen filter. */
     ANY_FILTER("F", "filter-any", true, -1, I18N.ANY_FILTER, filters()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
@@ -469,7 +469,6 @@ public enum CommandLineParam {
      */
     public static Options singleOptions() {
         Options options = new Options();
-
         options.addOption(CHECK_SIGNATURE_UPDATE.newOption());
         options.addOption(DOWNLOAD_SIGNATURE_UPDATE.newOption());
         options.addOption(HELP.newOption());
@@ -478,7 +477,6 @@ public enum CommandLineParam {
         options.addOption(VERSION.newOption());
         options.addOption(DEFAULT_SIGNATURE_VERSION.newOption());
         options.addOption(LIST_SIGNATURE_VERSIONS.newOption());
-
         return options;
     }
 
@@ -517,6 +515,9 @@ public enum CommandLineParam {
         options.addOption(ARCHIVE_TYPES.newOption());
         options.addOption(WEB_ARCHIVES.newOption());
         options.addOption(WEB_ARCHIVE_TYPES.newOption());
+        options.addOption(EXTENSION_LIST.newOption()); //TODO: ADD this functionality via filters.
+        options.addOption(ANY_FILTER.newOption());
+        options.addOption(ALL_FILTER.newOption());
         options.addOption(QUIET.newOption()); //TODO: does this do anything in profiles?
         return options;
     }
@@ -542,11 +543,11 @@ public enum CommandLineParam {
      */
     public static Options reportSubOptions() {
         Options options = new Options();
-
         options.addOption(PROFILES.newOption());
         options.addOption(REPORT_NAME.newOption());
         options.addOption(REPORT_OUTPUT_TYPE.newOption());
-
+        options.addOption(ANY_FILTER.newOption()); //TODO: test report filters.
+        options.addOption(ALL_FILTER.newOption());
         return options;
     }
 

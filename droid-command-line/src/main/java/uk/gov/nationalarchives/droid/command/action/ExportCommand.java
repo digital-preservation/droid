@@ -40,7 +40,7 @@ import java.util.concurrent.Future;
 
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
-import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
@@ -58,7 +58,7 @@ public class ExportCommand implements DroidCommand {
     private ProfileManager profileManager;
     private DqlFilterParser dqlFilterParser;
     private String destination;
-    private CommandLineFilter cliFilter;
+    private Filter filter;
     private ExportOptions options;
     private boolean bom;
     
@@ -68,16 +68,7 @@ public class ExportCommand implements DroidCommand {
     @Override
     public void execute() throws CommandExecutionException {
         List<String> profileIds = new ArrayList<String>();
-        
-        SimpleFilter filter = null;
-        if (cliFilter != null) {
-            filter = new SimpleFilter(cliFilter.getFilterType());
-            
-            for (String dql : cliFilter.getFilters()) {
-                filter.add(dqlFilterParser.parse(dql));
-            }
-        }
-        
+
         // load each profile
         for (String profileLocation : profiles) {
             ProfileInstance profile;
@@ -174,17 +165,10 @@ public class ExportCommand implements DroidCommand {
      * Sets the filter.
      * @param filter the filter to set
      */
-    public void setFilter(CommandLineFilter filter) {
-        this.cliFilter = filter;
+    public void setFilter(Filter filter) {
+        this.filter = filter;
     }
     
-    /**
-     * @param dqlFilterParser the dqlFilterParser to set
-     */
-    public void setDqlFilterParser(DqlFilterParser dqlFilterParser) {
-        this.dqlFilterParser = dqlFilterParser;
-    }
-
     /**
      *
      * @return status of bom.

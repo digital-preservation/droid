@@ -51,13 +51,17 @@ import uk.gov.nationalarchives.droid.command.archive.ArchiveContainerTestHelper;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
+import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 
 import java.io.PrintWriter;
+import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -223,18 +227,25 @@ public class DroidCommandLineTest {
             "tmp/profile-3.droid"
         });
         
-        ArgumentCaptor<CommandLineFilter> filterCaptor = ArgumentCaptor.forClass(CommandLineFilter.class);
+        ArgumentCaptor<SimpleFilter> filterCaptor = ArgumentCaptor.forClass(SimpleFilter.class);
         verify(command).setFilter(filterCaptor.capture());
         verify(command).execute();
         
-        CommandLineFilter filter = filterCaptor.getValue();
-        assertArrayEquals(new String[] {
-            "file_size = 720",
-            "puid = 'fmt/101'"
-        }, filter.getFilters());
-        
-        assertEquals(FilterType.ALL, filter.getFilterType());
-        
+        SimpleFilter filter = filterCaptor.getValue();
+        assertTrue(filter.isNarrowed());
+
+        List<FilterCriterion> list = filter.getCriteria();
+        assertEquals(2, list.size());
+
+        FilterCriterion first = list.get(0);
+        assertEquals(CriterionFieldEnum.FILE_SIZE, first.getField());
+        assertEquals(CriterionOperator.EQ, first.getOperator());
+        assertEquals(720L, first.getValue());
+
+        FilterCriterion second = list.get(1);
+        assertEquals(CriterionFieldEnum.PUID, second.getField());
+        assertEquals(CriterionOperator.EQ, second.getOperator());
+        assertEquals("fmt/101", second.getValue());
     }
 
     @Test
@@ -267,18 +278,26 @@ public class DroidCommandLineTest {
             "tmp/profile-3.droid"
         });
         
-        ArgumentCaptor<CommandLineFilter> filterCaptor = ArgumentCaptor.forClass(CommandLineFilter.class);
+        ArgumentCaptor<SimpleFilter> filterCaptor = ArgumentCaptor.forClass(SimpleFilter.class);
         verify(command).setFilter(filterCaptor.capture());
         verify(command).execute();
         
-        CommandLineFilter filter = filterCaptor.getValue();
-        assertArrayEquals(new String[] {
-            "file_size = 720",
-            "puid = 'fmt/101'"
-        }, filter.getFilters());
-        
-        assertEquals(FilterType.ANY, filter.getFilterType());
-        
+        SimpleFilter filter = filterCaptor.getValue();
+        assertFalse(filter.isNarrowed());
+
+        List<FilterCriterion> list = filter.getCriteria();
+        assertEquals(2, list.size());
+
+        FilterCriterion first = list.get(0);
+        assertEquals(CriterionFieldEnum.FILE_SIZE, first.getField());
+        assertEquals(CriterionOperator.EQ, first.getOperator());
+        assertEquals(720L, first.getValue());
+
+        FilterCriterion second = list.get(1);
+        assertEquals(CriterionFieldEnum.PUID, second.getField());
+        assertEquals(CriterionOperator.EQ, second.getOperator());
+        assertEquals("fmt/101", second.getValue());
+
     }
 
     @Test

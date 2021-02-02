@@ -241,6 +241,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="referenceDataService" ref="referenceDataService"/>
         <property name="pauseControl" ref="pauseControl"/>
         <property name="submissionGateway" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
         <property name="specWalker" ref="profileSpecWalker"/>
         <property name="reportDao" ref="reportDao"/>
         <property name="profileWalkerDao" ref="profileWalkerDao"/>

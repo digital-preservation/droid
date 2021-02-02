@@ -86,6 +86,6 @@ public interface ResultHandler {
      * Sets a filter on a result handler to determine whether to save a result or not.
      * @param filter The filter to set, or null if no filter is required.
      */
-    void setFilter(Filter filter);
+    void setResultsFilter(Filter filter);
 
 }

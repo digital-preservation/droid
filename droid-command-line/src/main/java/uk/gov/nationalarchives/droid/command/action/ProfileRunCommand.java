@@ -39,6 +39,10 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
+import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
+import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
@@ -66,6 +70,7 @@ public class ProfileRunCommand implements DroidCommand {
     private PropertiesConfiguration propertyOverrides;
     private String binarySignaturesFileName;
     private String containerSignaturesFileName;
+    private Filter resultsFilter;
 
     /**
      * {@inheritDoc}
@@ -75,6 +80,7 @@ public class ProfileRunCommand implements DroidCommand {
         try {
             Map<SignatureType, SignatureFileInfo> sigs = getSignatureFiles();
             ProfileInstance profile = profileManager.createProfile(sigs, propertyOverrides);
+            profile.setResultsFilter(resultsFilter);
             profile.changeState(ProfileState.VIRGIN);
 
             for (String resource : resources) {
@@ -182,6 +188,14 @@ public class ProfileRunCommand implements DroidCommand {
     }
 
     /**
+     * Sets a filter to use to filter out results from CSV output.
+     * @param filter the filter, or null if no filter required.
+     */
+    public void setResultsFilter(final Filter filter) {
+        this.resultsFilter = filter;
+    }
+
+      /**
      * Set the container signature file.
      *
      * @param containerSignatureFile The Container Signature file
@@ -189,4 +203,7 @@ public class ProfileRunCommand implements DroidCommand {
     public void setContainerSignatureFile(final String containerSignatureFile) {
         this.containerSignaturesFileName = containerSignatureFile;
     }
+
+
+
 }

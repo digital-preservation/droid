@@ -198,7 +198,7 @@ public class ProfileNodeResultHandler implements ResultHandler {
     /**
      * @param filter a filter to determine whether to save a ProfileResourceNode
      */
-    public void setFilter(Filter filter) {
+    public void setResultsFilter(Filter filter) {
         this.resultHandlerDao.setFilter(filter);
     }
 

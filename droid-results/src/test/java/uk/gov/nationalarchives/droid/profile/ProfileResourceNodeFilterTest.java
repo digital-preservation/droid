@@ -13,7 +13,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,255 +27,255 @@ public class ProfileResourceNodeFilterTest {
     public void testNullFilterNotFiltered() {
         ProfileResourceNode node = new ProfileResourceNode();
         ProfileResourceNodeFilter nodeFilter = new ProfileResourceNodeFilter(null);
-        assertFalse(nodeFilter.isFiltered(node));
+        assertFalse(nodeFilter.passesFilter(node));
     }
 
     @Test
     public void testEmptyConstructorNotFiltered() {
         ProfileResourceNode node = new ProfileResourceNode();
         ProfileResourceNodeFilter nodeFilter = new ProfileResourceNodeFilter();
-        assertFalse(nodeFilter.isFiltered(node));
+        assertFalse(nodeFilter.passesFilter(node));
     }
 
     @Test
     public void testEmptyCriteriaNotFiltered() {
         ProfileResourceNode node = new ProfileResourceNode();
         ProfileResourceNodeFilter nodeFilter = new ProfileResourceNodeFilter(new FilterImpl());
-        assertFalse(nodeFilter.isFiltered(node));
+        assertFalse(nodeFilter.passesFilter(node));
     }
 
     @Test
     public void testSizeFilterLessThan() {
         ProfileResourceNode sizeNode = createSizeNode(100000);
         ProfileResourceNodeFilter sizeFilter = createSizeFilter(CriterionOperator.LT,100);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(99);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(100);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
     }
 
     @Test
     public void testSizeFilterLessThanEqual() {
         ProfileResourceNode sizeNode = createSizeNode(100000);
         ProfileResourceNodeFilter sizeFilter = createSizeFilter(CriterionOperator.LTE,100);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(99);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(100);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
     }
 
     @Test
     public void testSizeFilterEqual() {
         ProfileResourceNode sizeNode = createSizeNode(100000);
         ProfileResourceNodeFilter sizeFilter = createSizeFilter(CriterionOperator.EQ,100);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(99);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(100);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(101);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
     }
 
     @Test
     public void testSizeFilterNotEqual() {
         ProfileResourceNode sizeNode = createSizeNode(100000);
         ProfileResourceNodeFilter sizeFilter = createSizeFilter(CriterionOperator.NE,100);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(99);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(100);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(101);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
     }
 
     @Test
     public void testSizeFilterGreaterThan() {
         ProfileResourceNode sizeNode = createSizeNode(100000);
         ProfileResourceNodeFilter sizeFilter = createSizeFilter(CriterionOperator.GT,100);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(100);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(101);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
     }
 
     @Test
     public void testSizeFilterGreaterThanEqual() {
         ProfileResourceNode sizeNode = createSizeNode(100000);
         ProfileResourceNodeFilter sizeFilter = createSizeFilter(CriterionOperator.GTE,100);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(100);
-        assertTrue(sizeFilter.isFiltered(sizeNode));
+        assertTrue(sizeFilter.passesFilter(sizeNode));
         sizeNode = createSizeNode(99);
-        assertFalse(sizeFilter.isFiltered(sizeNode));
+        assertFalse(sizeFilter.passesFilter(sizeNode));
     }
 
     @Test
     public void testFilenameLessThan() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.LT,"ABCDEF");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameLessThanEqual() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.LTE,"ABCDE");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("ABC");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameEqual() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.EQ,"ABCDE");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameNotEqual() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.NE,"ABCDE");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameGreaterThan() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.GT,"ABCDEF");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameGreaterThanEqual() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.GTE,"ABCDE");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("ABC");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameStartsWith() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.STARTS_WITH,"AB");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("ABC");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameNotStartsWith() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.NOT_STARTS_WITH,"AB");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("ABC");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameEndsWith() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.ENDS_WITH,"DE");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("ABCDDFFFDDE");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameNotEndsWith() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.NOT_ENDS_WITH,"DE");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("ABCDDFFFDDE");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameContains() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.CONTAINS,"CD");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("ABCDDFFFDDE");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testFilenameNotContains() {
         ProfileResourceNode nameNode = createNameNode("ABCDE");
         ProfileResourceNodeFilter nameFilter = createNameFilter(CriterionOperator.NOT_CONTAINS,"CD");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("abcde");
-        assertTrue(nameFilter.isFiltered(nameNode));
+        assertTrue(nameFilter.passesFilter(nameNode));
         nameNode = createNameNode("ABCDDFFFDDE");
-        assertFalse(nameFilter.isFiltered(nameNode));
+        assertFalse(nameFilter.passesFilter(nameNode));
     }
 
     @Test
     public void testLastModifiedLessThan() {
         ProfileResourceNode lastModNode = createDateNode(new Date(10000));
         ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.LT, new Date(9999));
-        assertFalse(lastModFilter.isFiltered(lastModNode));
+        assertFalse(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9998));
-        assertTrue(lastModFilter.isFiltered(lastModNode));
+        assertTrue(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9999));
-        assertFalse(lastModFilter.isFiltered(lastModNode));
+        assertFalse(lastModFilter.passesFilter(lastModNode));
     }
 
     @Test
     public void testLastModifiedLessThanEqual() {
         ProfileResourceNode lastModNode = createDateNode(new Date(10000));
         ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.LTE, new Date(9999));
-        assertFalse(lastModFilter.isFiltered(lastModNode));
+        assertFalse(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9998));
-        assertTrue(lastModFilter.isFiltered(lastModNode));
+        assertTrue(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9999));
-        assertTrue(lastModFilter.isFiltered(lastModNode));
+        assertTrue(lastModFilter.passesFilter(lastModNode));
     }
 
     @Test
     public void testLastModifiedEqual() {
         ProfileResourceNode lastModNode = createDateNode(new Date(10000));
         ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.EQ, new Date(9999));
-        assertFalse(lastModFilter.isFiltered(lastModNode));
+        assertFalse(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9999));
-        assertTrue(lastModFilter.isFiltered(lastModNode));
+        assertTrue(lastModFilter.passesFilter(lastModNode));
     }
 
     @Test
     public void testLastModifiedNotEqual() {
         ProfileResourceNode lastModNode = createDateNode(new Date(10000));
         ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.NE, new Date(9999));
-        assertTrue(lastModFilter.isFiltered(lastModNode));
+        assertTrue(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9999));
-        assertFalse(lastModFilter.isFiltered(lastModNode));
+        assertFalse(lastModFilter.passesFilter(lastModNode));
     }
 
 
@@ -284,31 +283,31 @@ public class ProfileResourceNodeFilterTest {
     public void testLastModifiedGreaterThan() {
         ProfileResourceNode lastModNode = createDateNode(new Date(10000));
         ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.GT, new Date(9999));
-        assertTrue(lastModFilter.isFiltered(lastModNode));
+        assertTrue(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9998));
-        assertFalse(lastModFilter.isFiltered(lastModNode));
+        assertFalse(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9999));
-        assertFalse(lastModFilter.isFiltered(lastModNode));
+        assertFalse(lastModFilter.passesFilter(lastModNode));
     }
 
     @Test
     public void testLastModifiedGreaterThanEqual() {
         ProfileResourceNode lastModNode = createDateNode(new Date(10000));
         ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.GTE, new Date(9999));
-        assertTrue(lastModFilter.isFiltered(lastModNode));
+        assertTrue(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9998));
-        assertFalse(lastModFilter.isFiltered(lastModNode));
+        assertFalse(lastModFilter.passesFilter(lastModNode));
         lastModNode = createDateNode(new Date(9999));
-        assertTrue(lastModFilter.isFiltered(lastModNode));
+        assertTrue(lastModFilter.passesFilter(lastModNode));
     }
 
     @Test
     public void testResourceTypeAnyOf() {
         ProfileResourceNode resTypeNode = createResourceTypeNode(ResourceType.CONTAINER);
         ProfileResourceNodeFilter resTypeFilter = createResourceTypeFilter(CriterionOperator.ANY_OF, ResourceType.FILE, ResourceType.CONTAINER);
-        assertTrue(resTypeFilter.isFiltered(resTypeNode));
+        assertTrue(resTypeFilter.passesFilter(resTypeNode));
         resTypeNode = createResourceTypeNode(ResourceType.FOLDER);
-        assertFalse(resTypeFilter.isFiltered(resTypeNode));
+        assertFalse(resTypeFilter.passesFilter(resTypeNode));
     }
 
 
@@ -316,420 +315,420 @@ public class ProfileResourceNodeFilterTest {
     public void testResourceTypeNoneOf() {
         ProfileResourceNode resTypeNode = createResourceTypeNode(ResourceType.CONTAINER);
         ProfileResourceNodeFilter resTypeFilter = createResourceTypeFilter(CriterionOperator.NONE_OF, ResourceType.FILE, ResourceType.CONTAINER);
-        assertFalse(resTypeFilter.isFiltered(resTypeNode));
+        assertFalse(resTypeFilter.passesFilter(resTypeNode));
         resTypeNode = createResourceTypeNode(ResourceType.FOLDER);
-        assertTrue(resTypeFilter.isFiltered(resTypeNode));
+        assertTrue(resTypeFilter.passesFilter(resTypeNode));
     }
 
     @Test
     public void testIdMethodTypeAnyOf() {
         ProfileResourceNode resTypeNode = createIdMethodNode(IdentificationMethod.BINARY_SIGNATURE);
         ProfileResourceNodeFilter resTypeFilter = createIdMethodFilter(CriterionOperator.ANY_OF, IdentificationMethod.CONTAINER, IdentificationMethod.BINARY_SIGNATURE);
-        assertTrue(resTypeFilter.isFiltered(resTypeNode));
+        assertTrue(resTypeFilter.passesFilter(resTypeNode));
         resTypeNode = createIdMethodNode(IdentificationMethod.EXTENSION);
-        assertFalse(resTypeFilter.isFiltered(resTypeNode));
+        assertFalse(resTypeFilter.passesFilter(resTypeNode));
     }
 
     @Test
     public void testIdMethodTypeNoneOf() {
         ProfileResourceNode resTypeNode = createIdMethodNode(IdentificationMethod.BINARY_SIGNATURE);
         ProfileResourceNodeFilter resTypeFilter = createIdMethodFilter(CriterionOperator.NONE_OF, IdentificationMethod.CONTAINER, IdentificationMethod.BINARY_SIGNATURE);
-        assertFalse(resTypeFilter.isFiltered(resTypeNode));
+        assertFalse(resTypeFilter.passesFilter(resTypeNode));
         resTypeNode = createIdMethodNode(IdentificationMethod.EXTENSION);
-        assertTrue(resTypeFilter.isFiltered(resTypeNode));
+        assertTrue(resTypeFilter.passesFilter(resTypeNode));
     }
 
     @Test
     public void testJobStatusAnyOf() {
         ProfileResourceNode node = createNodeStatusNode(NodeStatus.DONE);
         ProfileResourceNodeFilter filter = createNodeStatusFilter(CriterionOperator.ANY_OF, NodeStatus.DONE, NodeStatus.ERROR);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createNodeStatusNode(NodeStatus.ACCESS_DENIED);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testJobStatusNoneOf() {
         ProfileResourceNode node = createNodeStatusNode(NodeStatus.DONE);
         ProfileResourceNodeFilter filter = createNodeStatusFilter(CriterionOperator.NONE_OF, NodeStatus.DONE, NodeStatus.ERROR);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createNodeStatusNode(NodeStatus.ACCESS_DENIED);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testSingleExtensionEqualTo() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.EQ, "bmp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("BMP");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         filter = createExtensionFilter(CriterionOperator.EQ, "BMP");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testMultiExtensionEqualTo() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.EQ, "bmp", "jpg");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("JPG");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("BMP");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("PDF");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         filter = createExtensionFilter(CriterionOperator.EQ, "bmp", "jpg", "pdf");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         filter = createExtensionFilter(CriterionOperator.EQ, "BMP", "jpg", "PDF");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("bMp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testSingleExtensionNotEqualTo() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NE, "bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("BMP");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         filter = createExtensionFilter(CriterionOperator.NE, "BMP");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testMultiExtensionNotEqualTo() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NE, "bmp", "jpg");
-        System.out.println(filter.isFiltered(node));
-        assertFalse(filter.isFiltered(node));
+        System.out.println(filter.passesFilter(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("JPG");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("BMP");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("PDF");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         filter = createExtensionFilter(CriterionOperator.NE, "bmp", "jpg", "pdf");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         filter = createExtensionFilter(CriterionOperator.NE, "BMP", "jpg", "PDF");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bMp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testExtensionStartsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.STARTS_WITH, "b");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("Bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testExtensionNotStartsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_STARTS_WITH, "b");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("Bmp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testMultiExtensionStartsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.STARTS_WITH, "b", "jp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("Bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("JPg");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("pdf");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testMultiExtensionNotStartsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_STARTS_WITH, "b", "jp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("Bmp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("JPg");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("pdf");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testExtensionEndsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.ENDS_WITH, "p");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("Bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testExtensionNotEndsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_ENDS_WITH, "g");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("JPG");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("Bmp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testMultiExtensionEndsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.ENDS_WITH, "z", "pg");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("xyz");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("jpG");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("JPg");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("pdf");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testMultiExtensionNotEndsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_ENDS_WITH, "b", "pg");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("xyz");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("jpG");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("JPg");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("pdf");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testExtensionContains() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.CONTAINS, "pg");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithpginthemiddle");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithPGinthemiddle");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("bmgp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testExtensionNotContains() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_CONTAINS, "pg");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithpginthemiddle");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithPGinthemiddle");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmgp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testMultiExtensionContains() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.CONTAINS, "pg", "mp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithpginthemiddle");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithMpinthemiddle");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithmpinthemiddle");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionNode("bmgp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testMultiExtensionNotContains() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_CONTAINS, "pg", "mp");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithpginthemiddle");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithMpinthemiddle");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithmpinthemiddle");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmgp");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testIdCountLessThan() {
         ProfileResourceNode node = createIdCountNode(1);
         ProfileResourceNodeFilter filter = createIdCountFilter(CriterionOperator.LT, 2);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createIdCountNode(2);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createIdCountNode(3);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testIdCountLessThanEqual() {
         ProfileResourceNode node = createIdCountNode(1);
         ProfileResourceNodeFilter filter = createIdCountFilter(CriterionOperator.LTE, 2);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createIdCountNode(2);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createIdCountNode(3);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testIdCountEqual() {
         ProfileResourceNode node = createIdCountNode(1);
         ProfileResourceNodeFilter filter = createIdCountFilter(CriterionOperator.EQ, 2);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createIdCountNode(2);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createIdCountNode(3);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testIdCountNotEqual() {
         ProfileResourceNode node = createIdCountNode(1);
         ProfileResourceNodeFilter filter = createIdCountFilter(CriterionOperator.NE, 2);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createIdCountNode(2);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createIdCountNode(3);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testIdCountGreaterThan() {
         ProfileResourceNode node = createIdCountNode(1);
         ProfileResourceNodeFilter filter = createIdCountFilter(CriterionOperator.GT, 2);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createIdCountNode(2);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createIdCountNode(3);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testIdCountGreaterThanEqual() {
         ProfileResourceNode node = createIdCountNode(1);
         ProfileResourceNodeFilter filter = createIdCountFilter(CriterionOperator.GTE, 2);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createIdCountNode(2);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createIdCountNode(3);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testExtensionMismatchEqual() {
         ProfileResourceNode node = createExtensionMismatchNode(true);
         ProfileResourceNodeFilter filter = createExtensionMismatchFilter(CriterionOperator.EQ, true);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionMismatchNode(false);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
 
         filter = createExtensionMismatchFilter(CriterionOperator.EQ, false);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createExtensionMismatchNode(true);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testExtensionMismatchNotEqual() {
         ProfileResourceNode node = createExtensionMismatchNode(true);
         ProfileResourceNodeFilter filter = createExtensionMismatchFilter(CriterionOperator.NE, true);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionMismatchNode(false);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
 
         filter = createExtensionMismatchFilter(CriterionOperator.NE, false);
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createExtensionMismatchNode(true);
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testPuidAnyOf() {
         ProfileResourceNode node = createFormatNode("fmt/2");
         ProfileResourceNodeFilter filter = createPuidNodeFilter(CriterionOperator.ANY_OF, "fmt/1", "fmt/2", "fmt/3");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createFormatNode("fmt/2", "fmt/4");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createFormatNode("fmt/4");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createFormatNode("fmt/4", "fmt/5", "fmt/0");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test
     public void testPuidNoneOf() {
         ProfileResourceNode node = createFormatNode("fmt/2");
         ProfileResourceNodeFilter filter = createPuidNodeFilter(CriterionOperator.NONE_OF, "fmt/1", "fmt/2", "fmt/3");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createFormatNode("fmt/2", "fmt/4");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createFormatNode("fmt/4");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createFormatNode("fmt/4", "fmt/5", "fmt/0");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testFormatNameEquals() {
         ProfileResourceNode node = createFormatNode("microsoft word");
         ProfileResourceNodeFilter filter = createFormatFilter(CriterionOperator.EQ, "Microsoft Word");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
         node = createFormatNode("Microsoft Wor");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
 
         node = createFormatNode("Microsoft Wor", "micrOsoFT worD");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
     }
 
     @Test
     public void testFormatNameNotEquals() {
         ProfileResourceNode node = createFormatNode("microsoft word");
         ProfileResourceNodeFilter filter = createFormatFilter(CriterionOperator.NE, "Microsoft Word");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
         node = createFormatNode("Microsoft Wor");
-        assertTrue(filter.isFiltered(node));
+        assertTrue(filter.passesFilter(node));
 
         node = createFormatNode("Microsoft Wor", "micrOsoFT worD");
-        assertFalse(filter.isFiltered(node));
+        assertFalse(filter.passesFilter(node));
     }
 
     @Test

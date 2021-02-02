@@ -118,16 +118,11 @@ public class WriterResultHandlerDao extends JDBCBatchResultHandlerDao {
 
     @Override
     public synchronized void save(ProfileResourceNode node, ResourceId parentId) {
-        //TODO: If we filter out a folder from being saved, it will have no id..  should we always assign ids to
-        //      a node even if we don't save them, in order that children will have a correct parent id....?
-        //      Was thinking that the absence of an id means that we don't go on to process archive children, for example.
-        //      Maybe we should return a true/false if the item was saved or not, but still assign an id...?  Investigate.
-
-        if (!filter.isFiltered(node)) { // only write the result if if it's being filtered.
-            node.setId(nodeId++);
-            if (parentId != null) {
-                node.setParentId(parentId.getId());
-            }
+        node.setId(nodeId++);
+        if (parentId != null) {
+            node.setParentId(parentId.getId());
+        }
+        if (filter.passesFilter(node)) { // only write the result if it passes the filter.
             items.clear(); //TODO: we just output each result in a list of one - any value in batching them for output?
             items.add(node);
             itemWriter.write(items);

@@ -68,7 +68,7 @@ public class ProfileResourceNodeFilter {
      * @param node The node to test.
      * @return true if the node meets the filter criteria.
      */
-    public boolean isFiltered(final ProfileResourceNode node) {
+    public boolean passesFilter(final ProfileResourceNode node) {
         if (filter != null) { // If no filter supplied, it will not filter anything.
             List<FilterCriterion> criteria = filter.getCriteria();
             if (criteria.size() > 0) { // a filter with no criteria will not filter anything.
@@ -179,176 +179,29 @@ public class ProfileResourceNodeFilter {
 
     private boolean compareMimeTypes(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
-        if (operator == CriterionOperator.ANY_OF) {
-            result = compareAnyOfMimeType(formatIdentifications, criterionValue);
-        } else if (operator == CriterionOperator.NONE_OF) {
-            result = compareNoneOfMimeType(formatIdentifications, criterionValue);
+        if (formatIdentifications != null) {
+            if (operator == CriterionOperator.ANY_OF) {
+                result = compareAnyOfMimeType(formatIdentifications, criterionValue);
+            } else if (operator == CriterionOperator.NONE_OF) {
+                result = compareNoneOfMimeType(formatIdentifications, criterionValue);
+            }
         }
         return result;
     }
 
     private boolean compareNoneOfMimeType(List<Format> formatIdentifications, Object criterionValue) {
         boolean result = false;
-        Object[] values = (Object[]) criterionValue;
-        boolean foundValue = false;
-        SEARCH: for (Format format : formatIdentifications) {
-            String mimeType = format.getMimeType();
-            for (Object value : values) {
-                if (mimeType.equals(value)) {
-                    foundValue = true;
-                    break SEARCH;
-                }
-            }
-        }
-        if (!foundValue) {
-            result = true;
-        }
-        return result;
-    }
-
-    private boolean compareAnyOfMimeType(List<Format> formatIdentifications, Object criterionValue) {
-        boolean result = false;
-        Object[] values = (Object[]) criterionValue;
-        SEARCH: for (Format format : formatIdentifications) {
-            String mimeType = format.getMimeType();
-            for (Object value : values) {
-                if (mimeType.equals(value)) {
-                    result = true;
-                    break SEARCH;
-                }
-            }
-        }
-        return result;
-    }
-
-    private boolean compareFormats(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
-        boolean result = false;
-        String value = ((String) criterionValue).toLowerCase(Locale.ROOT); //TODO: bug - inverted operators have different criteria for lists.
-        if (isOperatorInverted(operator)) {
-            int foundCount = 0;
-            for (Format format : formatIdentifications) {
-                String formatName = format.getName().toLowerCase(Locale.ROOT);
-                if (compareStrings(formatName, operator, value)) {
-                    foundCount++;
-                }
-            }
-            result = foundCount == formatIdentifications.size();
-        } else {
-            for (Format format : formatIdentifications) {
-                String formatName = format.getName().toLowerCase(Locale.ROOT);
-                if (compareStrings(formatName, operator, value)) {
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    private boolean comparePuids(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
-        boolean result = false;
-        if (operator == CriterionOperator.ANY_OF) {
-            result = compareAnyOfPuids(formatIdentifications, criterionValue);
-        } else if (operator == CriterionOperator.NONE_OF) {
-            result = compareNoneOfPuids(formatIdentifications, criterionValue);
-        }
-        return result;
-    }
-
-    //TODO: should PUID values be case sensitive?
-    private boolean compareNoneOfPuids(List<Format> formatIdentifications, Object criterionValue) {
-        boolean result = false;
-        Object[] values = (Object[]) criterionValue;
-        boolean foundValue = false;
-        SEARCH: for (Format format : formatIdentifications) {
-            String puid = format.getPuid();
-            for (Object value : values) {
-                if (puid.equals(value)) {
-                    foundValue = true;
-                    break SEARCH;
-                }
-            }
-        }
-        if (!foundValue) {
-            result = true;
-        }
-        return result;
-    }
-
-    //TODO: should PUID values be case sensitive?
-    private boolean compareAnyOfPuids(List<Format> formatIdentifications, Object criterionValue) {
-        boolean result = false;
-        Object[] values = (Object[]) criterionValue;
-        SEARCH: for (Format format : formatIdentifications) {
-            String puid = format.getPuid();
-            for (Object value : values) {
-                if (puid.equals(value)) {
-                    result = true;
-                    break SEARCH;
-                }
-            }
-        }
-        return result;
-    }
-
-    private boolean compareBooleans(Boolean nodeValue, CriterionOperator operator, Object criterionValue) {
-        boolean result = false;
-        if (operator == CriterionOperator.EQ) {
-            result = nodeValue.equals(criterionValue);
-        } else if (operator == CriterionOperator.NE) {
-            result = !nodeValue.equals(criterionValue);
-        }
-        return result;
-    }
-
-    private boolean compareIntegers(int nodeValue, CriterionOperator operator, Object criterionValue) {
-        boolean result = false;
-        int compareValue = (Integer) criterionValue;
-        switch (operator) {
-            case LT: {
-                result = nodeValue < compareValue;
-                break;
-            }
-            case LTE: {
-                result = nodeValue <= compareValue;
-                break;
-            }
-            case EQ: {
-                result = nodeValue == compareValue;
-                break;
-            }
-            case NE: {
-                result = nodeValue != compareValue;
-                break;
-            }
-            case GT: {
-                result = nodeValue > compareValue;
-                break;
-            }
-            case GTE: {
-                result = nodeValue >= compareValue;
-                break;
-            }
-        }
-        return result;
-    }
-
-    private boolean compareEnums(Enum<?> nodeValue, CriterionOperator operator, Object criterionValue) {
-        boolean result = false;
-        Object[] compareValues = (Object[]) criterionValue;
-        if (operator == CriterionOperator.ANY_OF) {
-            for (Object compareValue : compareValues) {
-                if (nodeValue.equals(compareValue)) {
-                    result = true;
-                    break;
-                }
-            }
-        } else if (operator == CriterionOperator.NONE_OF) {
+        if (formatIdentifications != null) {
+            Object[] values = (Object[]) criterionValue;
             boolean foundValue = false;
-            for (Object compareValue : compareValues) {
-                if (nodeValue.equals(compareValue)) {
-                    foundValue = true;
-                    break;
+            SEARCH:
+            for (Format format : formatIdentifications) {
+                String mimeType = format.getMimeType();
+                for (Object value : values) {
+                    if (mimeType.equals(value)) {
+                        foundValue = true;
+                        break SEARCH;
+                    }
                 }
             }
             if (!foundValue) {
@@ -358,65 +211,240 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
-    private boolean compareDates(Date nodeValue, CriterionOperator operator, Object criterionValue) {
+    private boolean compareAnyOfMimeType(List<Format> formatIdentifications, Object criterionValue) {
         boolean result = false;
-        Date compareValue = (Date) criterionValue;
-        switch (operator) {
-            case LT: {
-                result = nodeValue.before(compareValue);
-                break;
-            }
-            case LTE: {
-                result = nodeValue.before(compareValue) || nodeValue.equals(compareValue);
-                break;
-            }
-            case EQ: {
-                result = nodeValue.equals(compareValue);
-                break;
-            }
-            case NE: {
-                result = !nodeValue.equals(compareValue);
-                break;
-            }
-            case GT: {
-                result = nodeValue.after(compareValue);
-                break;
-            }
-            case GTE: {
-                result = nodeValue.after(compareValue) || nodeValue.equals(compareValue);
-                break;
+        if (formatIdentifications != null) {
+            Object[] values = (Object[]) criterionValue;
+            SEARCH:
+            for (Format format : formatIdentifications) {
+                String mimeType = format.getMimeType();
+                for (Object value : values) {
+                    if (mimeType.equals(value)) {
+                        result = true;
+                        break SEARCH;
+                    }
+                }
             }
         }
         return result;
     }
 
-    private boolean compareLongs(long nodeValue, CriterionOperator operator, Object criterionValue) {
+    private boolean compareFormats(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
-        long compareValue = (Long) criterionValue;
-        switch (operator) {
-            case LT: {
-                result = nodeValue < compareValue;
-                break;
+        if (formatIdentifications != null) {
+            String value = ((String) criterionValue).toLowerCase(Locale.ROOT); //TODO: bug - inverted operators have different criteria for lists.
+            if (isOperatorInverted(operator)) {
+                int foundCount = 0;
+                for (Format format : formatIdentifications) {
+                    String formatName = format.getName().toLowerCase(Locale.ROOT);
+                    if (compareStrings(formatName, operator, value)) {
+                        foundCount++;
+                    }
+                }
+                result = foundCount == formatIdentifications.size();
+            } else {
+                for (Format format : formatIdentifications) {
+                    String formatName = format.getName().toLowerCase(Locale.ROOT);
+                    if (compareStrings(formatName, operator, value)) {
+                        result = true;
+                        break;
+                    }
+                }
             }
-            case LTE: {
-                result = nodeValue <= compareValue;
-                break;
+        }
+        return result;
+    }
+
+    private boolean comparePuids(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
+        boolean result = false;
+        if (formatIdentifications != null) {
+            if (operator == CriterionOperator.ANY_OF) {
+                result = compareAnyOfPuids(formatIdentifications, criterionValue);
+            } else if (operator == CriterionOperator.NONE_OF) {
+                result = compareNoneOfPuids(formatIdentifications, criterionValue);
             }
-            case EQ: {
-                result = nodeValue == compareValue;
-                break;
+        }
+        return result;
+    }
+
+    //TODO: should PUID values be case sensitive?
+    private boolean compareNoneOfPuids(List<Format> formatIdentifications, Object criterionValue) {
+        boolean result = false;
+        if (formatIdentifications != null) {
+            Object[] values = (Object[]) criterionValue;
+            boolean foundValue = false;
+            SEARCH:
+            for (Format format : formatIdentifications) {
+                String puid = format.getPuid();
+                for (Object value : values) {
+                    if (puid.equals(value)) {
+                        foundValue = true;
+                        break SEARCH;
+                    }
+                }
             }
-            case NE: {
-                result = nodeValue != compareValue;
-                break;
+            if (!foundValue) {
+                result = true;
             }
-            case GT: {
-                result = nodeValue > compareValue;
-                break;
+        }
+        return result;
+    }
+
+    //TODO: should PUID values be case sensitive?
+    private boolean compareAnyOfPuids(List<Format> formatIdentifications, Object criterionValue) {
+        boolean result = false;
+        if (formatIdentifications != null) {
+            Object[] values = (Object[]) criterionValue;
+            SEARCH:
+            for (Format format : formatIdentifications) {
+                String puid = format.getPuid();
+                for (Object value : values) {
+                    if (puid.equals(value)) {
+                        result = true;
+                        break SEARCH;
+                    }
+                }
             }
-            case GTE: {
-                result = nodeValue >= compareValue;
-                break;
+        }
+        return result;
+    }
+
+    private boolean compareBooleans(Boolean nodeValue, CriterionOperator operator, Object criterionValue) {
+        boolean result = false;
+        if(nodeValue != null) {
+            if (operator == CriterionOperator.EQ) {
+                result = nodeValue.equals(criterionValue);
+            } else if (operator == CriterionOperator.NE) {
+                result = !nodeValue.equals(criterionValue);
+            }
+        }
+        return result;
+    }
+
+    private boolean compareIntegers(Integer nodeValue, CriterionOperator operator, Object criterionValue) {
+        boolean result = false;
+        if (nodeValue != null) {
+            int compareValue = (Integer) criterionValue;
+            switch (operator) {
+                case LT: {
+                    result = nodeValue.compareTo(compareValue) < 0;
+                    break;
+                }
+                case LTE: {
+                    result = nodeValue.compareTo(compareValue) <= 0;
+                    break;
+                }
+                case EQ: {
+                    result = nodeValue.compareTo(compareValue) == 0;
+                    break;
+                }
+                case NE: {
+                    result = nodeValue.compareTo(compareValue) != 0;
+                    break;
+                }
+                case GT: {
+                    result = nodeValue.compareTo(compareValue) > 0;
+                    break;
+                }
+                case GTE: {
+                    result = nodeValue.compareTo(compareValue) >= 0;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean compareEnums(Enum<?> nodeValue, CriterionOperator operator, Object criterionValue) {
+        boolean result = false;
+        if (nodeValue != null) {
+            Object[] compareValues = (Object[]) criterionValue;
+            if (operator == CriterionOperator.ANY_OF) {
+                for (Object compareValue : compareValues) {
+                    if (nodeValue.equals(compareValue)) {
+                        result = true;
+                        break;
+                    }
+                }
+            } else if (operator == CriterionOperator.NONE_OF) {
+                boolean foundValue = false;
+                for (Object compareValue : compareValues) {
+                    if (nodeValue.equals(compareValue)) {
+                        foundValue = true;
+                        break;
+                    }
+                }
+                if (!foundValue) {
+                    result = true;
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean compareDates(Date nodeValue, CriterionOperator operator, Object criterionValue) {
+        boolean result = false;
+        if (nodeValue != null) {
+            Date compareValue = (Date) criterionValue;
+            switch (operator) {
+                case LT: {
+                    result = nodeValue.before(compareValue);
+                    break;
+                }
+                case LTE: {
+                    result = nodeValue.before(compareValue) || nodeValue.equals(compareValue);
+                    break;
+                }
+                case EQ: {
+                    result = nodeValue.equals(compareValue);
+                    break;
+                }
+                case NE: {
+                    result = !nodeValue.equals(compareValue);
+                    break;
+                }
+                case GT: {
+                    result = nodeValue.after(compareValue);
+                    break;
+                }
+                case GTE: {
+                    result = nodeValue.after(compareValue) || nodeValue.equals(compareValue);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean compareLongs(Long nodeValue, CriterionOperator operator, Object criterionValue) {
+        boolean result = false;
+        if (nodeValue != null) {
+            long compareValue = (Long) criterionValue;
+            switch (operator) {
+                case LT: {
+                    result = nodeValue.compareTo(compareValue) < 0;
+                    break;
+                }
+                case LTE: {
+                    result = nodeValue.compareTo(compareValue) <= 0;
+                    break;
+                }
+                case EQ: {
+                    result = nodeValue.compareTo(compareValue) == 0;
+                    break;
+                }
+                case NE: {
+                    result = nodeValue.compareTo(compareValue) != 0;
+                    break;
+                }
+                case GT: {
+                    result = nodeValue.compareTo(compareValue) > 0;
+                    break;
+                }
+                case GTE: {
+                    result = nodeValue.compareTo(compareValue) >= 0;
+                    break;
+                }
             }
         }
         return result;
@@ -424,17 +452,19 @@ public class ProfileResourceNodeFilter {
 
     private boolean compareStrings(String nodeValue, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
-        if (criterionValue instanceof String) {
-            result = compareString(nodeValue, operator, (String) criterionValue);
-        } else if (criterionValue instanceof Object[]) {
-            Object[] values = (Object[]) criterionValue;
-            int foundCount = 0;
-            for (Object value : values) {
-                if (compareString(nodeValue, operator, (String) value)) {
-                    foundCount++;
+        if (nodeValue != null) {
+            if (criterionValue instanceof String) {
+                result = compareString(nodeValue, operator, (String) criterionValue);
+            } else if (criterionValue instanceof Object[]) {
+                Object[] values = (Object[]) criterionValue;
+                int foundCount = 0;
+                for (Object value : values) {
+                    if (compareString(nodeValue, operator, (String) value)) {
+                        foundCount++;
+                    }
                 }
+                result = isOperatorInverted(operator) ? foundCount == values.length : foundCount > 0;
             }
-            result = isOperatorInverted(operator)? foundCount == values.length : foundCount > 0;
         }
         return result;
     }
@@ -449,74 +479,78 @@ public class ProfileResourceNodeFilter {
 
     private boolean compareCaseInsensitiveStrings(String nodeValue, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
-        String nodeValueLower = nodeValue.toLowerCase(Locale.ROOT);
-        if (criterionValue instanceof String) {
-            String criterionValueLower = ((String) criterionValue).toLowerCase(Locale.ROOT);
-            result = compareString(nodeValueLower, operator, criterionValueLower);
-        } else if (criterionValue instanceof Object[]) {
-            Object[] values = (Object[]) criterionValue;
-            int foundCount = 0;
-            for (Object value : values) {
-                String criterionValueLower = ((String) value).toLowerCase(Locale.ROOT);
-                if (compareString(nodeValueLower, operator, (String) criterionValueLower)) {
-                    foundCount++;
+        if (nodeValue != null) {
+            String nodeValueLower = nodeValue.toLowerCase(Locale.ROOT);
+            if (criterionValue instanceof String) {
+                String criterionValueLower = ((String) criterionValue).toLowerCase(Locale.ROOT);
+                result = compareString(nodeValueLower, operator, criterionValueLower);
+            } else if (criterionValue instanceof Object[]) {
+                Object[] values = (Object[]) criterionValue;
+                int foundCount = 0;
+                for (Object value : values) {
+                    String criterionValueLower = ((String) value).toLowerCase(Locale.ROOT);
+                    if (compareString(nodeValueLower, operator, (String) criterionValueLower)) {
+                        foundCount++;
+                    }
                 }
+                result = isOperatorInverted(operator) ? foundCount == values.length : foundCount > 0;
             }
-            result = isOperatorInverted(operator)? foundCount == values.length : foundCount > 0;
         }
         return result;
     }
 
     private boolean compareString(String nodeValue, CriterionOperator operator, String compareValue) {
         boolean result = false;
-        switch (operator) {
-            case LT: {
-                result = nodeValue.compareTo(compareValue) < 0;
-                break;
-            }
-            case LTE: {
-                result = nodeValue.compareTo(compareValue) <= 0;
-                break;
-            }
-            case EQ: {
-                result = nodeValue.compareTo(compareValue) == 0;
-                break;
-            }
-            case NE: {
-                result = !(nodeValue.compareTo(compareValue) == 0);
-                break;
-            }
-            case GT: {
-                result = nodeValue.compareTo(compareValue) > 0;
-                break;
-            }
-            case GTE: {
-                result = nodeValue.compareTo(compareValue) >= 0;
-                break;
-            }
-            case STARTS_WITH: {
-                result = nodeValue.startsWith(compareValue);
-                break;
-            }
-            case NOT_STARTS_WITH: {
-                result = !nodeValue.startsWith(compareValue);
-                break;
-            }
-            case ENDS_WITH: {
-                result = nodeValue.endsWith(compareValue);
-                break;
-            }
-            case NOT_ENDS_WITH: {
-                result = !nodeValue.endsWith(compareValue);
-                break;
-            }
-            case CONTAINS: {
-                result = nodeValue.contains(compareValue);
-                break;
-            }
-            case NOT_CONTAINS: {
-                result = !nodeValue.contains(compareValue);
-                break;
+        if (nodeValue != null) {
+            switch (operator) {
+                case LT: {
+                    result = nodeValue.compareTo(compareValue) < 0;
+                    break;
+                }
+                case LTE: {
+                    result = nodeValue.compareTo(compareValue) <= 0;
+                    break;
+                }
+                case EQ: {
+                    result = nodeValue.compareTo(compareValue) == 0;
+                    break;
+                }
+                case NE: {
+                    result = !(nodeValue.compareTo(compareValue) == 0);
+                    break;
+                }
+                case GT: {
+                    result = nodeValue.compareTo(compareValue) > 0;
+                    break;
+                }
+                case GTE: {
+                    result = nodeValue.compareTo(compareValue) >= 0;
+                    break;
+                }
+                case STARTS_WITH: {
+                    result = nodeValue.startsWith(compareValue);
+                    break;
+                }
+                case NOT_STARTS_WITH: {
+                    result = !nodeValue.startsWith(compareValue);
+                    break;
+                }
+                case ENDS_WITH: {
+                    result = nodeValue.endsWith(compareValue);
+                    break;
+                }
+                case NOT_ENDS_WITH: {
+                    result = !nodeValue.endsWith(compareValue);
+                    break;
+                }
+                case CONTAINS: {
+                    result = nodeValue.contains(compareValue);
+                    break;
+                }
+                case NOT_CONTAINS: {
+                    result = !nodeValue.contains(compareValue);
+                    break;
+                }
             }
         }
         return result;

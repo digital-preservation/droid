@@ -391,13 +391,6 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     /**
-     * @param filter a filter to use on the results handler to determine whether to save results or not.
-     */
-    public void setFilter(Filter filter) {
-        resultHandler.setFilter(filter);
-    }
-
-    /**
      * @param archiveFormatResolver the archiveFormatResolver to set
      */
     public void setArchiveFormatResolver(ArchiveFormatResolver archiveFormatResolver) {
