@@ -101,7 +101,6 @@ public class WriterResultHandlerDao extends JDBCBatchResultHandlerDao {
         setItemWriter(itemWriter);
         setWriter(writer);
         setDatasource(datasource);
-        init();
     }
 
     @Override
