@@ -87,10 +87,6 @@ public class ProfileInstance {
     @XmlTransient
     private boolean dirty = true;
 
-    //FIXME: by making profiles dependent on a particular
-    // implementation of filter, it causes problems for other
-    // parts of the code which want to use different filter
-    // implementations.  
     @XmlElement(name = "Filter", required = true)
     private FilterImpl filter;
     
