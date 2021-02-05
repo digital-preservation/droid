@@ -145,12 +145,14 @@ public class ProfileManagerImpl implements ProfileManager {
         String profileId = String.valueOf(System.currentTimeMillis());
         Path profileHomeDir = config.getProfilesDir().resolve(profileId);
 
-        //to avoid folder collision, check if the folder already exists, if it does, just wait and try again
-        while (FileUtil.exists(profileHomeDir)) {
+        int retryCount = 0;
+
+        //to avoid folder collision, check if the folder already exists, if it does, just wait and try upto 5 times
+        while (retryCount++ <= 5 && FileUtil.exists(profileHomeDir)) {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException ex) {
-                //ignored - unlikely to happen
+                Thread.currentThread().interrupt();
             }
             profileId = String.valueOf(System.currentTimeMillis());
             profileHomeDir = config.getProfilesDir().resolve(profileId);
