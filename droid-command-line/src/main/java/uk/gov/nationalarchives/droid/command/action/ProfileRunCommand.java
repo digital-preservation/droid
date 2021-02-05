@@ -71,6 +71,7 @@ public class ProfileRunCommand implements DroidCommand {
     private String binarySignaturesFileName;
     private String containerSignaturesFileName;
     private Filter resultsFilter;
+    private Filter identificationFilter;
 
     /**
      * {@inheritDoc}
@@ -80,7 +81,8 @@ public class ProfileRunCommand implements DroidCommand {
         try {
             Map<SignatureType, SignatureFileInfo> sigs = getSignatureFiles();
             ProfileInstance profile = profileManager.createProfile(sigs, propertyOverrides);
-            profile.setResultsFilter(resultsFilter);
+            //profile.setResultsFilter(resultsFilter);
+            //profile.setIdentificationFilter(identificationFilter);
             profile.changeState(ProfileState.VIRGIN);
 
             for (String resource : resources) {
@@ -193,6 +195,14 @@ public class ProfileRunCommand implements DroidCommand {
      */
     public void setResultsFilter(final Filter filter) {
         this.resultsFilter = filter;
+    }
+
+    /**
+     * Sets a filter to use to filter out results submitted for identification.
+     * @param filter the filter, or null if no filter required.
+     */
+    public void setIdentificationFilter(final Filter filter) {
+        this.identificationFilter = filter;
     }
 
       /**

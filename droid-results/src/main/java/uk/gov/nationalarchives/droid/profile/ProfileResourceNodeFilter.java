@@ -56,7 +56,7 @@ public class ProfileResourceNodeFilter {
     }
 
     /**
-     * Constructs a ProfileResourceNode given a Filter.
+     * Constructs a ProfileResourceNodeFilter given a Filter.
      * @param filter The filter to construct with.
      */
     public ProfileResourceNodeFilter(final Filter filter) {

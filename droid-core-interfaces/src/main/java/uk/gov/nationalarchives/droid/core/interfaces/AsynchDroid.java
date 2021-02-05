@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
+
 import java.io.IOException;
 import java.util.concurrent.Future;
 
@@ -81,7 +83,28 @@ public interface AsynchDroid {
      * or negative, meaning unlimited.
      */
     void setMaxBytesToScan(long maxBytes);
-    
+
+    /**
+     * Sets a filter which filters out results from being written out after all identification is complete.
+     *
+     * @param filter The filter which defines what results should be filtered.
+     */
+    void setResultsFilter(Filter filter);
+
+    /**
+     * Sets a filter which filters out resources from being submitted for identification.
+     * A submit filter can only filter on basic file metadata: filename, file extension, last modified date and file size.
+     * All other metadata is not available until identification has been performed.
+     * @param filter The filter which defines what resources should be identified.
+     */
+    void setSubmitFilter(Filter filter);
+
+    /**
+     * Returns true if a resource should be submitted for identification.
+     * @param request The identification request to filter.
+     * @return true if a resource should be submitted for identification.
+     */
+    boolean passesSubmitFilter(IdentificationRequest request);
     
     /** 
      * 

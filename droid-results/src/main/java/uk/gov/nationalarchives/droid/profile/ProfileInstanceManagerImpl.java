@@ -91,7 +91,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
     private ReferenceDataService referenceDataService;
 
     private ProfileInstance profileInstance;
-    private ResultHandler resultHandler;
 
     private ProfileSpecWalker specWalker;
     private Future<?> task;
@@ -231,16 +230,15 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             inError = false;
             walkState = profileWalkerDao.load();
 
-            // Set any result filter:
-            resultHandler.setResultsFilter(profileInstance.getResultsFilter());
+            // Set any results filter set on the profile on the submission gateway (which will set it on the results handler and archive handlers).
+            submissionGateway.setResultsFilter(profileInstance.getResultsFilter());
 
             // replay any queued requests
             submissionGateway.replay();
 
             // start walking the profile spec
             profileInstance.start();
-            // start a thread to estimate the number of jobs, and
-            // update the progress monitor when it's done.
+
             final ProfileSpecJobCounter counter = new ProfileSpecJobCounter(profileInstance.getProfileSpec());
             final FutureTask<Long> countFuture = new FutureTask<Long>(counter) {
                 @Override
@@ -257,17 +255,20 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
                 }
             };
 
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(countFuture);
+            // If we're not outputting to a CSV file, then run a thread estimating the progress:
+            //if (profileInstance.getOutputFilePath() != null && !profileInstance.getOutputFilePath().isEmpty()) {
+                // start a thread to estimate the number of jobs, and update the progress monitor when it's done.
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.submit(countFuture);
+            //}
 
             ExecutorService mainSubmitter = Executors.newSingleThreadExecutor();
-
             Runnable walk = new WalkerTask(countFuture, counter);
             task = mainSubmitter.submit(walk);
             mainSubmitter.shutdown();
+
         }
         return task;
-
     }
     
     private final class WalkerTask implements Runnable {
@@ -533,14 +534,6 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
     @Override
     public ProgressMonitor getProgressMonitor() {
         return specWalker.getProgressMonitor();
-    }
-
-    /**
-     * Sets the result handler for the profile.
-     * @param resultHandler the result handler.
-     */
-    public void setResultHandler(ResultHandler resultHandler) {
-        this.resultHandler = resultHandler;
     }
 
 }
