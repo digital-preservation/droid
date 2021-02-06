@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.commons.cli.CommandLine;
@@ -41,15 +42,16 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.tree.OverrideCombiner;
 import org.apache.commons.lang.StringUtils;
 
-import sun.java2d.pipe.SpanShapeRenderer;
 import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
+import uk.gov.nationalarchives.droid.command.filter.DqlCriterionFactory;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 
 /**
@@ -244,13 +246,17 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     private Filter getResultsFilter(CommandLine cli) {
-        Filter result = null;
+        SimpleFilter result = null;
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
             result = createFilter(new CommandLineFilter(cli.getOptionValues(
                     CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
         } else if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
             result = createFilter(new CommandLineFilter(cli.getOptionValues(
                     CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
+        }
+        if (cli.hasOption(CommandLineParam.EXTENSION_LIST.toString())) {
+            result = createExtensionFilter(result, cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString()));
+
         }
         return result;
     }
@@ -446,7 +452,7 @@ public class CommandFactoryImpl implements CommandFactory {
         }
     }
 
-    private Filter createFilter(CommandLineFilter commandLineFilter) {
+    private SimpleFilter createFilter(CommandLineFilter commandLineFilter) {
         SimpleFilter filter = null;
         if (commandLineFilter != null) {
             DqlFilterParser dqlFilterParser = new SimpleDqlFilterParser();
@@ -456,5 +462,12 @@ public class CommandFactoryImpl implements CommandFactory {
             }
         }
         return filter;
+    }
+
+    private SimpleFilter createExtensionFilter(SimpleFilter existingFilter, String[] optionValues) {
+        SimpleFilter result = existingFilter == null? new SimpleFilter(FilterType.ALL) : existingFilter;
+        FilterCriterion criterion = DqlCriterionFactory.newCriterion("file_ext", "none", Arrays.asList(optionValues));
+        result.add(criterion);
+        return result;
     }
 }
