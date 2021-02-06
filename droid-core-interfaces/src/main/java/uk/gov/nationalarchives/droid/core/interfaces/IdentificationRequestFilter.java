@@ -77,17 +77,14 @@ public class IdentificationRequestFilter {
      * @return true if the node meets the filter criteria.
      */
     public boolean passesFilter(final IdentificationRequest<?> request) {
-        if (filter != null) { // If no filter supplied, it will not filter anything.
+        boolean result = true; // default to passing filter unless something fails it:
+        if (filter != null) {
             List<FilterCriterion> criteria = filter.getCriteria();
             if (criteria.size() > 0) { // a filter with no criteria will not filter anything.
-                if (filter.isNarrowed()) {
-                    return isFilteredNarrowed(request, criteria);
-                } else {
-                    return isFilteredWidened(request, criteria);
-                }
+                result = filter.isNarrowed()? isFilteredNarrowed(request, criteria) : isFilteredWidened(request, criteria);
             }
         }
-        return false;
+        return result;
     }
 
     /**
