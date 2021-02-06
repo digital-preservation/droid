@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -130,8 +129,8 @@ public class IdentificationRequestFilter {
         CriterionOperator operator = criterion.getOperator();
         Object criterionValue = criterion.getValue();
         switch (criterion.getField()) {
-            case FILE_NAME: { //TODO: should be case insensitive?
-                result = compareStrings(request.getRequestMetaData().getName(), operator, criterionValue);
+            case FILE_NAME: {
+                result = compareCaseInsensitiveStrings(request.getRequestMetaData().getName(), operator, criterionValue);
                 break;
             }
             case FILE_SIZE: {
@@ -223,25 +222,6 @@ public class IdentificationRequestFilter {
         return result;
     }
 
-    private boolean compareStrings(String nodeValue, CriterionOperator operator, Object criterionValue) {
-        boolean result = false;
-        if (nodeValue != null) {
-            if (criterionValue instanceof String) {
-                result = compareString(nodeValue, operator, (String) criterionValue);
-            } else if (criterionValue instanceof Object[]) {
-                Object[] values = (Object[]) criterionValue;
-                int foundCount = 0;
-                for (Object value : values) {
-                    if (compareString(nodeValue, operator, (String) value)) {
-                        foundCount++;
-                    }
-                }
-                result = isOperatorInverted(operator) ? foundCount == values.length : foundCount > 0;
-            }
-        }
-        return result;
-    }
-
     private boolean isOperatorInverted(CriterionOperator operator) {
         return (operator == CriterionOperator.NE ||
                 operator == CriterionOperator.NONE_OF ||
@@ -257,12 +237,12 @@ public class IdentificationRequestFilter {
             if (criterionValue instanceof String) {
                 String criterionValueLower = ((String) criterionValue).toLowerCase(Locale.ROOT);
                 result = compareString(nodeValueLower, operator, criterionValueLower);
-            } else if (criterionValue instanceof Object[]) {
+            } else if (criterionValue instanceof Object[]) { // list of values = compare equality of list items.
                 Object[] values = (Object[]) criterionValue;
                 int foundCount = 0;
                 for (Object value : values) {
                     String criterionValueLower = ((String) value).toLowerCase(Locale.ROOT);
-                    if (compareString(nodeValueLower, operator, (String) criterionValueLower)) {
+                    if (compareString(nodeValueLower, CriterionOperator.EQ, criterionValueLower)) {
                         foundCount++;
                     }
                 }
