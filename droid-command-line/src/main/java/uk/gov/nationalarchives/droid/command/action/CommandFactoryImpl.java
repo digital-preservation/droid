@@ -466,7 +466,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private SimpleFilter createExtensionFilter(SimpleFilter existingFilter, String[] optionValues) {
         SimpleFilter result = existingFilter == null? new SimpleFilter(FilterType.ANY) : existingFilter;
-        FilterCriterion criterion = DqlCriterionFactory.newCriterion("file_ext", "any", Arrays.asList(optionValues));
+        FilterCriterion criterion = DqlCriterionFactory.newCriterion("file_ext", "=", Arrays.asList(optionValues));
         result.add(criterion);
         return result;
     }
