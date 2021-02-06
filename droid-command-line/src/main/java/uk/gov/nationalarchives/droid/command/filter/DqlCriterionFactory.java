@@ -84,20 +84,20 @@ public final class DqlCriterionFactory {
      * @param dqlOperator the operator.
      * @return a new criterion.
      */
-    static FilterCriterion newCriterion(String dqlField, String dqlOperator, String dqlValue) {
+    public static FilterCriterion newCriterion(String dqlField, String dqlOperator, String dqlValue) {
         CriterionFieldEnum field = DqlCriterionMapper.forField(dqlField);
         CriterionOperator op = DqlCriterionMapper.forOperator(dqlOperator);
         return factories.get(field).newCriterion(field, op, dqlValue);
     }
     
     /**
-     * Create a new citerion.
+     * Create a new criterion.
      * @param dqlValues the dql values
      * @param dqlField the field
      * @param dqlOperator the operator.
      * @return a new criterion.
      */
-    static FilterCriterion newCriterion(String dqlField, String dqlOperator, Collection<String> dqlValues) {
+    public static FilterCriterion newCriterion(String dqlField, String dqlOperator, Collection<String> dqlValues) {
         CriterionFieldEnum field = DqlCriterionMapper.forField(dqlField);
         CriterionOperator op = DqlCriterionMapper.forOperator(dqlOperator);
         return factories.get(field).newCriterion(field, op, dqlValues);
