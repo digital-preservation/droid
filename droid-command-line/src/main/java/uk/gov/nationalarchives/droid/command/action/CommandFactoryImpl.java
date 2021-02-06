@@ -234,13 +234,17 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     private Filter getIdentificationFilter(CommandLine cli) {
-        Filter result = null;
+        SimpleFilter result = null;
         if (cli.hasOption(CommandLineParam.ALL_FILTER_FILE.toString())) {
             result = createFilter(new CommandLineFilter(cli.getOptionValues(
                     CommandLineParam.ALL_FILTER_FILE.toString()), FilterType.ALL));
         } else if (cli.hasOption(CommandLineParam.ANY_FILTER_FILE.toString())) {
             result = createFilter(new CommandLineFilter(cli.getOptionValues(
                     CommandLineParam.ANY_FILTER_FILE.toString()), FilterType.ANY));
+        }
+        if (cli.hasOption(CommandLineParam.EXTENSION_LIST.toString())) {
+            result = createExtensionFilter(result, cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString()));
+
         }
         return result;
     }
@@ -253,10 +257,6 @@ public class CommandFactoryImpl implements CommandFactory {
         } else if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
             result = createFilter(new CommandLineFilter(cli.getOptionValues(
                     CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
-        }
-        if (cli.hasOption(CommandLineParam.EXTENSION_LIST.toString())) {
-            result = createExtensionFilter(result, cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString()));
-
         }
         return result;
     }
@@ -465,8 +465,8 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     private SimpleFilter createExtensionFilter(SimpleFilter existingFilter, String[] optionValues) {
-        SimpleFilter result = existingFilter == null? new SimpleFilter(FilterType.ALL) : existingFilter;
-        FilterCriterion criterion = DqlCriterionFactory.newCriterion("file_ext", "none", Arrays.asList(optionValues));
+        SimpleFilter result = existingFilter == null? new SimpleFilter(FilterType.ANY) : existingFilter;
+        FilterCriterion criterion = DqlCriterionFactory.newCriterion("file_ext", "any", Arrays.asList(optionValues));
         result.add(criterion);
         return result;
     }
