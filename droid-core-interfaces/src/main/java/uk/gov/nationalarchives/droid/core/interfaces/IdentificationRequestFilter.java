@@ -242,7 +242,7 @@ public class IdentificationRequestFilter {
                 int foundCount = 0;
                 for (Object value : values) {
                     String criterionValueLower = ((String) value).toLowerCase(Locale.ROOT);
-                    if (compareString(nodeValueLower, CriterionOperator.EQ, criterionValueLower)) {
+                    if (compareString(nodeValueLower, operator, criterionValueLower)) {
                         foundCount++;
                     }
                 }
