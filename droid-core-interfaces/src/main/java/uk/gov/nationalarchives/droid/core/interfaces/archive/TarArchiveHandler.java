@@ -158,8 +158,10 @@ public class TarArchiveHandler implements ArchiveHandler {
         identifier.setAncestorId(originatorNodeId);
         identifier.setParentResourceId(correlationId);
         IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
-        request.open(in);
-        droidCore.submit(request);
+        if (droidCore.passesSubmitFilter(request)) {
+            request.open(in);
+            droidCore.submit(request);
+        } // Tar archive input stream should not be closed - it exists for entire archive, but behaves as if it contains bytes for each entry.
     }
     
     /**

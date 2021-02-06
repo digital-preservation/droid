@@ -69,17 +69,17 @@ public class CommandFactoryImpl implements CommandFactory {
      * @param printWriter a print writer
      */
     public CommandFactoryImpl(final GlobalContext context,
-        final PrintWriter printWriter) {
-        
+                              final PrintWriter printWriter) {
+
         this.context = context;
         this.printWriter = printWriter;
     }
 
-   /**
-    * @param cli the command line
-    * @throws CommandLineSyntaxException command parse exception.
-    * @return an export command
-    */
+    /**
+     * @param cli the command line
+     * @throws CommandLineSyntaxException command parse exception.
+     * @return an export command
+     */
     @Override
     public DroidCommand getExportFileCommand(final CommandLine cli) throws CommandLineSyntaxException {
 
@@ -104,7 +104,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
         if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
             cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
+                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
         }
 
         return cmd;
@@ -133,12 +133,12 @@ public class CommandFactoryImpl implements CommandFactory {
 
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
             cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                CommandLineParam.ALL_FILTER.toString()), FilterType.ALL)));
+                    CommandLineParam.ALL_FILTER.toString()), FilterType.ALL)));
         }
 
         if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
             cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
+                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
         }
 
         return cmd;
@@ -154,7 +154,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
         if (!cli.hasOption(CommandLineParam.PROFILES.toString())) {
             throw new CommandLineSyntaxException(
-                "No profiles specified for report.");
+                    "No profiles specified for report.");
         }
         if (!cli.hasOption(CommandLineParam.REPORT_NAME.toString())) {
             throw new CommandLineSyntaxException("No name specified for report.");
@@ -173,12 +173,12 @@ public class CommandFactoryImpl implements CommandFactory {
 
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
             cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                CommandLineParam.ALL_FILTER.toString()), FilterType.ALL)));
+                    CommandLineParam.ALL_FILTER.toString()), FilterType.ALL)));
         }
 
         if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
             cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
+                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
         }
 
         return cmd;
@@ -201,9 +201,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public DroidCommand getProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
-        String[] resources = getResources(cli);
         PropertiesConfiguration overrides = getOverrideProperties(cli);
-
         final String destination;
         // Determine if destination is to a database profile, or to a csv file output:
         if (cli.hasOption(CommandLineParam.PROFILES.getLongName())) {
@@ -214,32 +212,46 @@ public class CommandFactoryImpl implements CommandFactory {
             destination = destinations[0];
         } else { // output to a file, or the console if not specified.
             destination = cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())?
-                          cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
+                    cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
             if (overrides == null) {
                 overrides = new PropertiesConfiguration();
             }
             overrides.setProperty("profile.outputFilePath", destination);
         }
-
         final ProfileRunCommand command = context.getProfileRunCommand();
-        command.setResources(resources);
+        command.setResources(getResources(cli));
         command.setDestination(destination);
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
         command.setProperties(overrides);
         command.setContainerSignatureFile(cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString()));
         command.setSignatureFile(cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString()));
-
-        if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
-            command.setResultsFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ALL_FILTER.toString()), FilterType.ALL)));
-        }
-
-        if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
-            command.setResultsFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
-        }
-
+        command.setResultsFilter(getResultsFilter(cli));
+        command.setIdentificationFilter(getIdentificationFilter(cli));
         return command;
+    }
+
+    private Filter getIdentificationFilter(CommandLine cli) {
+        Filter result = null;
+        if (cli.hasOption(CommandLineParam.ALL_FILTER_FILE.toString())) {
+            result = createFilter(new CommandLineFilter(cli.getOptionValues(
+                    CommandLineParam.ALL_FILTER_FILE.toString()), FilterType.ALL));
+        } else if (cli.hasOption(CommandLineParam.ANY_FILTER_FILE.toString())) {
+            result = createFilter(new CommandLineFilter(cli.getOptionValues(
+                    CommandLineParam.ANY_FILTER_FILE.toString()), FilterType.ANY));
+        }
+        return result;
+    }
+
+    private Filter getResultsFilter(CommandLine cli) {
+        Filter result = null;
+        if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
+            result = createFilter(new CommandLineFilter(cli.getOptionValues(
+                    CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
+        } else if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
+            result = createFilter(new CommandLineFilter(cli.getOptionValues(
+                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
+        }
+        return result;
     }
 
     private String[] getResources(final CommandLine cli) throws CommandLineSyntaxException {
@@ -342,7 +354,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
         final String signatureFile = cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString());
         final String containerSignatureFile =
-            cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString());        
+                cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString());
         final String[] extensions = cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString());
 
         final NoProfileRunCommand command = context.getNoProfileRunCommand();
@@ -376,8 +388,8 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public DroidCommand getDisplayDefaultSignatureVersionCommand() {
-        final DisplayDefaultSignatureFileVersionCommand command = 
-            context.getDisplayDefaultSignatureFileVersionCommand();
+        final DisplayDefaultSignatureFileVersionCommand command =
+                context.getDisplayDefaultSignatureFileVersionCommand();
         command.setPrintWriter(printWriter);
         return command;
     }
@@ -391,7 +403,7 @@ public class CommandFactoryImpl implements CommandFactory {
     public DroidCommand getConfigureDefaultSignatureVersionCommand(final CommandLine cli) throws CommandLineException {
         final String newVersion = cli.getOptionValue(CommandLineParam.CONFIGURE_DEFAULT_SIGNATURE_VERSION.toString());
         final ConfigureDefaultSignatureFileVersionCommand command =
-               context.getConfigureDefaultSignatureFileVersionCommand();
+                context.getConfigureDefaultSignatureFileVersionCommand();
         command.setPrintWriter(printWriter);
         try {
             command.setSignatureFileVersion(Integer.parseInt(StringUtils.trimToEmpty(newVersion)));

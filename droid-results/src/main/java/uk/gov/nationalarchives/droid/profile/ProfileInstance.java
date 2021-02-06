@@ -154,6 +154,9 @@ public class ProfileInstance {
     private Filter resultsFilter; // A filter which dynamically removes output when writing to a file.
 
     @XmlTransient
+    private Filter identificationFilter; // A filter which removes files from being identified if they don't pass the filter.
+
+    @XmlTransient
     private Set<ProfileEventListener> eventListeners = new HashSet<ProfileEventListener>();
 
     /**
@@ -198,6 +201,14 @@ public class ProfileInstance {
      */
     public void setResultsFilter(Filter filter) {
         this.resultsFilter = filter;
+    }
+
+    /**
+     * Sets a filter which prevents files from being identified if they don't pass the filter.
+     * @param filter The filter to use, or null if no filter required.
+     */
+    public void setIdentificationFilter(Filter filter) {
+        this.identificationFilter = filter;
     }
 
     /**

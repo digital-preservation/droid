@@ -75,6 +75,7 @@ public class BZipArchiveHandler implements ArchiveHandler {
     public final void handle(IdentificationRequest request) throws IOException {
         IdentificationRequest<InputStream> archiveRequest = null;
         InputStream in = request.getSourceInputStream();
+        boolean submitRequest;
         try {
             URI parent = request.getIdentifier().getUri();
             long correlationId = request.getIdentifier().getNodeId();
@@ -89,12 +90,15 @@ public class BZipArchiveHandler implements ArchiveHandler {
             identifier.setParentId(correlationId);
 
             archiveRequest = factory.newRequest(metaData, identifier);
-            final InputStream bzin = new BZip2CompressorInputStream(in);
-            try {
-                archiveRequest.open(bzin);
-            } finally {
-                if (bzin != null) {
-                    bzin.close();
+            submitRequest = droidCore.passesSubmitFilter(archiveRequest);
+            if (submitRequest) {
+                final InputStream bzin = new BZip2CompressorInputStream(in);
+                try {
+                    archiveRequest.open(bzin);
+                } finally {
+                    if (bzin != null) {
+                        bzin.close();
+                    }
                 }
             }
         } finally {
@@ -102,7 +106,7 @@ public class BZipArchiveHandler implements ArchiveHandler {
                 in.close();
             }
         }
-        if (archiveRequest != null) {
+        if (submitRequest && archiveRequest != null) {
             droidCore.submit(archiveRequest);
         }
     }

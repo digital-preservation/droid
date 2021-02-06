@@ -81,8 +81,15 @@ public final class I18N {
     
     /** Narrowing filter. */
     public static final String ALL_FILTER = "all.filter.help";
+
     /** Any filter (widening). */
     public static final String ANY_FILTER = "any.filter.help";
+
+    /** Narrowing filter for file filtering. */
+    public static final String ALL_FILTER_FILE = "all.filter.file.help";
+
+    /** Any filter (widening) for file filtering. */
+    public static final String ANY_FILTER_FILE = "any.filter.file.help";
     
     /** List filter fields. */
     public static final String LIST_FILTER_FIELD = "filter.field.help";

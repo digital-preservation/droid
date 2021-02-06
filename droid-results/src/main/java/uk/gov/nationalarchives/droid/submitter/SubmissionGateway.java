@@ -51,6 +51,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationErrorType;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequestFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -113,6 +114,7 @@ public class SubmissionGateway implements AsynchDroid {
     private SubmissionQueue submissionQueue;
     private ReplaySubmitter replaySubmitter;
     private PauseAspect pauseControl;
+    private IdentificationRequestFilter submitFilter; // A filter to decide whether a resource should be submitted for identification.
 
     private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
@@ -180,7 +182,7 @@ public class SubmissionGateway implements AsynchDroid {
         Callable<IdentificationResultCollection> callable = new Callable<IdentificationResultCollection>() {
             @Override
             public IdentificationResultCollection call() throws IOException {
-                droidCore.setMaxBytesToScan(maxBytesToScan);
+                droidCore.setMaxBytesToScan(maxBytesToScan); //TODO: why are we setting max bytes to scan with its own private member?
                 IdentificationResultCollection results = droidCore.matchBinarySignatures(request);
                 return results;
             }
@@ -571,6 +573,22 @@ public class SubmissionGateway implements AsynchDroid {
     @Override
     public void setMaxBytesToScan(long maxBytesToScan) {
         this.maxBytesToScan = maxBytesToScan;
+    }
+
+    @Override
+    public void setResultsFilter(Filter filter) {
+        resultHandler.setResultsFilter(filter);
+
+    }
+
+    @Override
+    public void setSubmitFilter(Filter filter) {
+        submitFilter = new IdentificationRequestFilter(filter);
+    }
+
+    @Override
+    public boolean passesSubmitFilter(IdentificationRequest request) {
+        return submitFilter == null || submitFilter.passesFilter(request);
     }
 
     /**

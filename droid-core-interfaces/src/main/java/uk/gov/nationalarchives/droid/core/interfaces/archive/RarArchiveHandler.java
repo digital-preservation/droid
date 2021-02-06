@@ -199,22 +199,28 @@ public final class RarArchiveHandler implements ArchiveHandler {
             if (correlationId == null) {
                 correlationId = submitDirectory(path, entry.getMTime());
             }
+            InputStream entryInputStream = null;
+            try {
+                entryInputStream = archive.getInputStream(entry);
 
-            InputStream entryInputStream = archive.getInputStream(entry);
+                RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toRarUri(parentURI, path + name));
+                identifier.setAncestorId(originatorNodeId);
+                identifier.setParentResourceId(correlationId);
 
-            RequestIdentifier identifier = new RequestIdentifier(ArchiveFileUtils.toRarUri(parentURI, path + name));
-            identifier.setAncestorId(originatorNodeId);
-            identifier.setParentResourceId(correlationId);
+                RequestMetaData metaData = new RequestMetaData(entry.getUnpSize(),
+                        entry.getMTime().getTime(), name);
 
-            RequestMetaData metaData = new RequestMetaData(entry.getUnpSize(),
-                    entry.getMTime().getTime(), name);
-
-            IdentificationRequest<InputStream> request = identificationRequestFactory.newRequest(metaData, identifier);
-            request.open(entryInputStream);
-
-            droid.submit(request);
+                IdentificationRequest<InputStream> request = identificationRequestFactory.newRequest(metaData, identifier);
+                if (droid.passesSubmitFilter(request)) {
+                    request.open(entryInputStream);
+                    droid.submit(request);
+                }
+            } finally {
+                if (entryInputStream != null) {
+                    entryInputStream.close();
+                }
+            }
         }
-
 
         private void saveDirToCache(String path, ResourceId resourceId) {
             if (path.endsWith(UNIX_PATH_SPLITTER) || path.endsWith(WINDOWS_PATH_SPLITTER)) {
