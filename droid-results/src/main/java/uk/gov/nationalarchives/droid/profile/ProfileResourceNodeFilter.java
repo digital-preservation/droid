@@ -123,7 +123,7 @@ public class ProfileResourceNodeFilter {
         Object criterionValue = criterion.getValue();
         switch (criterion.getField()) {
             case FILE_NAME: {
-                result = compareStrings(node.getMetaData().getName(), operator, criterionValue);
+                result = compareCaseInsensitiveStrings(node.getMetaData().getName(), operator, criterionValue);
                 break;
             }
             case FILE_SIZE: {
@@ -226,6 +226,7 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
+    //TODO: are format comparisions case insensitive?
     private boolean compareFormats(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
         if (formatIdentifications != null) {
@@ -456,7 +457,7 @@ public class ProfileResourceNodeFilter {
                 Object[] values = (Object[]) criterionValue;
                 int foundCount = 0;
                 for (Object value : values) {
-                    if (compareString(nodeValue, operator, (String) value)) {
+                    if (compareString(nodeValue, CriterionOperator.EQ, (String) value)) {
                         foundCount++;
                     }
                 }
@@ -486,7 +487,7 @@ public class ProfileResourceNodeFilter {
                 int foundCount = 0;
                 for (Object value : values) {
                     String criterionValueLower = ((String) value).toLowerCase(Locale.ROOT);
-                    if (compareString(nodeValueLower, operator, (String) criterionValueLower)) {
+                    if (compareString(nodeValueLower, operator, criterionValueLower)) {
                         foundCount++;
                     }
                 }
