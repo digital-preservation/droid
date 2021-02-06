@@ -69,17 +69,14 @@ public class ProfileResourceNodeFilter {
      * @return true if the node meets the filter criteria.
      */
     public boolean passesFilter(final ProfileResourceNode node) {
+        boolean result = true; // default to passing filter, unless something fails it.
         if (filter != null) { // If no filter supplied, it will not filter anything.
-            List<FilterCriterion> criteria = filter.getCriteria();
+            final List<FilterCriterion> criteria = filter.getCriteria();
             if (criteria.size() > 0) { // a filter with no criteria will not filter anything.
-                if (filter.isNarrowed()) {
-                    return isFilteredNarrowed(node, criteria);
-                } else {
-                    return isFilteredWidened(node, criteria);
-                }
+                result = filter.isNarrowed()? isFilteredNarrowed(node, criteria) : isFilteredWidened(node, criteria);
             }
         }
-        return false;
+        return result;
     }
 
     /**
