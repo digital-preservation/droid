@@ -232,6 +232,7 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
 
             // Set any results filter set on the profile on the submission gateway (which will set it on the results handler and archive handlers).
             submissionGateway.setResultsFilter(profileInstance.getResultsFilter());
+            submissionGateway.setIdentificationFilter(profileInstance.getIdentificationFilter());
 
             // replay any queued requests
             submissionGateway.replay();

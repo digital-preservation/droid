@@ -211,7 +211,7 @@ public final class RarArchiveHandler implements ArchiveHandler {
                         entry.getMTime().getTime(), name);
 
                 IdentificationRequest<InputStream> request = identificationRequestFactory.newRequest(metaData, identifier);
-                if (droid.passesSubmitFilter(request)) {
+                if (droid.passesIdentificationFilter(request)) {
                     request.open(entryInputStream);
                     droid.submit(request);
                 }

@@ -97,14 +97,14 @@ public interface AsynchDroid {
      * All other metadata is not available until identification has been performed.
      * @param filter The filter which defines what resources should be identified.
      */
-    void setSubmitFilter(Filter filter);
+    void setIdentificationFilter(Filter filter);
 
     /**
      * Returns true if a resource should be submitted for identification.
      * @param request The identification request to filter.
      * @return true if a resource should be submitted for identification.
      */
-    boolean passesSubmitFilter(IdentificationRequest request);
+    boolean passesIdentificationFilter(IdentificationRequest request);
     
     /** 
      * 

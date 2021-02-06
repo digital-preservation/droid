@@ -149,7 +149,7 @@ public final class FatArchiveHandler implements ArchiveHandler {
                     new RequestMetaData(file.getLength(), entry.getCreated(), entry.getName());
 
             IdentificationRequest<InputStream> req = factory.newRequest(requestMetaData, identifier);
-            if (droid.passesSubmitFilter(req)) {
+            if (droid.passesIdentificationFilter(req)) {
                 Path tempFile = ArchiveFileUtils.writeFsFileToTemp(entry, ((FatFileIdentificationRequest) req).getTempDir());
                 InputStream is = new FileInputStream(tempFile.toFile()); //TODO: why not new a file reader rather than in inputstream reader here?
                 req.open(is);

@@ -90,7 +90,7 @@ public class BZipArchiveHandler implements ArchiveHandler {
             identifier.setParentId(correlationId);
 
             archiveRequest = factory.newRequest(metaData, identifier);
-            submitRequest = droidCore.passesSubmitFilter(archiveRequest);
+            submitRequest = droidCore.passesIdentificationFilter(archiveRequest);
             if (submitRequest) {
                 final InputStream bzin = new BZip2CompressorInputStream(in);
                 try {

@@ -207,7 +207,7 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
                 identifier.setParentPrefix(null);
             }
             IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
-            if (droid.passesSubmitFilter(request)) {
+            if (droid.passesIdentificationFilter(request)) {
                 request.open(info.stream);
                 droid.submit(request);
             } // Seven zip entry stream should not be closed whether opened or not - see SevenZipIteratorAdapter class.

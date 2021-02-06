@@ -144,7 +144,7 @@ public abstract class WebArchiveHandler {
         identifier.setAncestorId(originatorNodeId);
         identifier.setParentResourceId(correlationId);
         IdentificationRequest request = factory.newRequest(metaData, identifier);
-        if (droidCore.passesSubmitFilter(request)) {
+        if (droidCore.passesIdentificationFilter(request)) {
             request.open(payload); // get the inputstream back from the record, and write it out to file
             droidCore.submit(request);
         } // don;t close payload on each entry - it exists for entire archive.

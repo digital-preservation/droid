@@ -88,7 +88,7 @@ public class GZipArchiveHandler implements ArchiveHandler {
             identifier.setParentId(correlationId);
 
             archiveRequest = factory.newRequest(metaData, identifier);
-            submitRequest = droid.passesSubmitFilter(archiveRequest);
+            submitRequest = droid.passesIdentificationFilter(archiveRequest);
             if (submitRequest) {
                 final InputStream gzin = new GZIPInputStream(in);
                 try {

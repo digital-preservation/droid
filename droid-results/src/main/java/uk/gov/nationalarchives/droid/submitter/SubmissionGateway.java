@@ -65,7 +65,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier
 import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceNodeFilter;
 
 /**
  * Acts as a DroidCore proxy by keeping track of in-flight identification
@@ -114,7 +113,7 @@ public class SubmissionGateway implements AsynchDroid {
     private SubmissionQueue submissionQueue;
     private ReplaySubmitter replaySubmitter;
     private PauseAspect pauseControl;
-    private IdentificationRequestFilter submitFilter; // A filter to decide whether a resource should be submitted for identification.
+    private IdentificationRequestFilter identificationFilter; // A filter to decide whether a resource should be submitted for identification.
 
     private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
@@ -582,13 +581,13 @@ public class SubmissionGateway implements AsynchDroid {
     }
 
     @Override
-    public void setSubmitFilter(Filter filter) {
-        submitFilter = new IdentificationRequestFilter(filter);
+    public void setIdentificationFilter(Filter filter) {
+        identificationFilter = new IdentificationRequestFilter(filter);
     }
 
     @Override
-    public boolean passesSubmitFilter(IdentificationRequest request) {
-        return submitFilter == null || submitFilter.passesFilter(request);
+    public boolean passesIdentificationFilter(IdentificationRequest request) {
+        return identificationFilter == null || identificationFilter.passesFilter(request);
     }
 
     /**

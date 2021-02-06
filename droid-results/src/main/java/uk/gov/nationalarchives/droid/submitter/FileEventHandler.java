@@ -122,7 +122,7 @@ public class FileEventHandler {
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
         IdentificationRequest<Path> request = requestFactory.newRequest(metaData, identifier);
-        if (droidCore.passesSubmitFilter(request)) {
+        if (droidCore.passesIdentificationFilter(request)) {
             try {
                 request.open(file);
                 droidCore.submit(request);

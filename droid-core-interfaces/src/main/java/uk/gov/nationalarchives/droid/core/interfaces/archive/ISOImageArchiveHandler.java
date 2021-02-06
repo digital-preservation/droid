@@ -176,7 +176,7 @@ public class ISOImageArchiveHandler implements ArchiveHandler {
                         entry.getLastModifiedTime(), name);
 
                 IdentificationRequest<InputStream> request = factory.newRequest(metaData, identifier);
-                if (droid.passesSubmitFilter(request)) {
+                if (droid.passesIdentificationFilter(request)) {
                     request.open(entryInputStream);
                     droid.submit(request);
                 }

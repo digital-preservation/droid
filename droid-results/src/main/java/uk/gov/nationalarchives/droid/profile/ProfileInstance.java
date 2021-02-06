@@ -219,6 +219,13 @@ public class ProfileInstance {
     }
 
     /**
+     * @return The filter used to filter out files to submit for identification.
+     */
+    public Filter getIdentificationFilter() {
+        return identificationFilter;
+    }
+
+    /**
      * Setter.
      * 
      * @param dateCreated
