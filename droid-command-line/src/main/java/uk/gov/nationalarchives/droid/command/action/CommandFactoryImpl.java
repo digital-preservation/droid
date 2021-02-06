@@ -201,7 +201,20 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public DroidCommand getProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
+        final ProfileRunCommand command = context.getProfileRunCommand();
         PropertiesConfiguration overrides = getOverrideProperties(cli);
+        command.setResources(getResources(cli));
+        command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
+        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+        command.setProperties(overrides); // must be called after we set destination.
+        command.setContainerSignatureFile(cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString()));
+        command.setSignatureFile(cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString()));
+        command.setResultsFilter(getResultsFilter(cli));
+        command.setIdentificationFilter(getIdentificationFilter(cli));
+        return command;
+    }
+
+    private String getDestination(CommandLine cli, PropertiesConfiguration overrideProperties) throws CommandLineSyntaxException {
         final String destination;
         // Determine if destination is to a database profile, or to a csv file output:
         if (cli.hasOption(CommandLineParam.PROFILES.getLongName())) {
@@ -213,21 +226,9 @@ public class CommandFactoryImpl implements CommandFactory {
         } else { // output to a file, or the console if not specified.
             destination = cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())?
                     cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
-            if (overrides == null) {
-                overrides = new PropertiesConfiguration();
-            }
-            overrides.setProperty("profile.outputFilePath", destination);
+            overrideProperties.setProperty("profile.outputFilePath", destination);
         }
-        final ProfileRunCommand command = context.getProfileRunCommand();
-        command.setResources(getResources(cli));
-        command.setDestination(destination);
-        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
-        command.setProperties(overrides);
-        command.setContainerSignatureFile(cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString()));
-        command.setSignatureFile(cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString()));
-        command.setResultsFilter(getResultsFilter(cli));
-        command.setIdentificationFilter(getIdentificationFilter(cli));
-        return command;
+        return destination;
     }
 
     private Filter getIdentificationFilter(CommandLine cli) {
@@ -266,7 +267,6 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private PropertiesConfiguration getOverrideProperties(CommandLine cli) throws CommandLineSyntaxException {
         PropertiesConfiguration overrideProperties = null;
-
         // Get properties from a file:
         final String propertyFile = cli.getOptionValue(CommandLineParam.PROPERTY_FILE.toString());
         if (propertyFile != null && !propertyFile.isEmpty()) {
@@ -292,6 +292,8 @@ public class CommandFactoryImpl implements CommandFactory {
                 merged.append(combined);
                 overrideProperties = merged;
             }
+        } else {
+            overrideProperties = new PropertiesConfiguration(); //
         }
 
         // Special command line flags for archive processing which override all the others:
