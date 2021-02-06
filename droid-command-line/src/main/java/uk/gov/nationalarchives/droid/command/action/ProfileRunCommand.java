@@ -81,8 +81,8 @@ public class ProfileRunCommand implements DroidCommand {
         try {
             Map<SignatureType, SignatureFileInfo> sigs = getSignatureFiles();
             ProfileInstance profile = profileManager.createProfile(sigs, propertyOverrides);
-            //profile.setResultsFilter(resultsFilter);
-            //profile.setIdentificationFilter(identificationFilter);
+            profile.setResultsFilter(resultsFilter);
+            profile.setIdentificationFilter(identificationFilter);
             profile.changeState(ProfileState.VIRGIN);
 
             for (String resource : resources) {
