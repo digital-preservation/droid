@@ -31,14 +31,14 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Determines if a ProfileResourceNode meets filter criteria.
@@ -73,7 +73,7 @@ public class ProfileResourceNodeFilter {
         if (filter != null) { // If no filter supplied, it will not filter anything.
             final List<FilterCriterion> criteria = filter.getCriteria();
             if (criteria.size() > 0) { // a filter with no criteria will not filter anything.
-                result = filter.isNarrowed()? isFilteredNarrowed(node, criteria) : isFilteredWidened(node, criteria);
+                result = filter.isNarrowed() ? isFilteredNarrowed(node, criteria) : isFilteredWidened(node, criteria);
             }
         }
         return result;
@@ -117,6 +117,7 @@ public class ProfileResourceNodeFilter {
        return true;
     }
 
+    //CHECKSTYLE:OFF - cyclomatic complexity too high?  this is just a basic switch statement...
     private boolean meetsCriterion(final ProfileResourceNode node, final FilterCriterion criterion) {
         boolean result = false;
         CriterionOperator operator = criterion.getOperator();
@@ -173,6 +174,7 @@ public class ProfileResourceNodeFilter {
         }
         return result;
     }
+    //CHECKSTYLE:ON
 
     private boolean compareMimeTypes(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
@@ -309,7 +311,7 @@ public class ProfileResourceNodeFilter {
 
     private boolean compareBooleans(Boolean nodeValue, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
-        if(nodeValue != null) {
+        if (nodeValue != null) {
             if (operator == CriterionOperator.EQ) {
                 result = nodeValue.equals(criterionValue);
             } else if (operator == CriterionOperator.NE) {
@@ -346,6 +348,10 @@ public class ProfileResourceNodeFilter {
                 }
                 case GTE: {
                     result = nodeValue.compareTo(compareValue) >= 0;
+                    break;
+                }
+                default: { // If the operator isn't supported, we won't filter out.
+                    result = true;
                     break;
                 }
             }
@@ -409,6 +415,10 @@ public class ProfileResourceNodeFilter {
                     result = nodeValue.after(compareValue) || nodeValue.equals(compareValue);
                     break;
                 }
+                default: { // If the operator isn't supported, we won't filter out.
+                    result = true;
+                    break;
+                }
             }
         }
         return result;
@@ -443,6 +453,10 @@ public class ProfileResourceNodeFilter {
                     result = nodeValue.compareTo(compareValue) >= 0;
                     break;
                 }
+                default: { // If the operator isn't supported, we won't filter out.
+                    result = true;
+                    break;
+                }
             }
         }
         return result;
@@ -467,13 +481,15 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
+    //CHECKSTYLE:OFF - too many boolean operators?  It is what it is...
     private boolean isOperatorInverted(CriterionOperator operator) {
-        return (operator == CriterionOperator.NE ||
-                operator == CriterionOperator.NONE_OF ||
-                operator == CriterionOperator.NOT_STARTS_WITH ||
-                operator == CriterionOperator.NOT_ENDS_WITH ||
-                operator == CriterionOperator.NOT_CONTAINS);
+        return operator == CriterionOperator.NE
+               || operator == CriterionOperator.NONE_OF
+               || operator == CriterionOperator.NOT_STARTS_WITH
+               || operator == CriterionOperator.NOT_ENDS_WITH
+               || operator == CriterionOperator.NOT_CONTAINS;
     }
+    //CHECKSTYLE:ON
 
     private boolean compareCaseInsensitiveStrings(String nodeValue, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
@@ -497,6 +513,7 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
+    //CHECKSTYLE:OFF - cyclomatic complexity too high - this is just the obvious way to write this switch statement.
     private boolean compareString(String nodeValue, CriterionOperator operator, String compareValue) {
         boolean result = false;
         if (nodeValue != null) {
@@ -553,5 +570,6 @@ public class ProfileResourceNodeFilter {
         }
         return result;
     }
+    //CHECKSTYLE:ON
 
 }

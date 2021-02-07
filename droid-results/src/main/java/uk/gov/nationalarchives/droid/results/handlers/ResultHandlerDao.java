@@ -37,7 +37,6 @@ import java.util.Map;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceNodeFilter;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**

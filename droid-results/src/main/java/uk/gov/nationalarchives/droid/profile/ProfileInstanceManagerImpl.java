@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
-import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
 import uk.gov.nationalarchives.droid.core.interfaces.control.ThreadWaitingHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;

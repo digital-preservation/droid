@@ -52,7 +52,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceNodeFilter;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**

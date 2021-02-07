@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 
 /**
@@ -197,18 +198,18 @@ public class ProfileInstance {
 
     /**
      * Sets a filter which removes results from being written, when writing to a CSV file.
-     * @param filter The filter to use, or null if no filter required.
+     * @param resultsFilter The filter to use, or null if no filter required.
      */
-    public void setResultsFilter(Filter filter) {
-        this.resultsFilter = filter;
+    public void setResultsFilter(Filter resultsFilter) {
+        this.resultsFilter = resultsFilter;
     }
 
     /**
      * Sets a filter which prevents files from being identified if they don't pass the filter.
-     * @param filter The filter to use, or null if no filter required.
+     * @param identificationFilter The filter to use, or null if no filter required.
      */
-    public void setIdentificationFilter(Filter filter) {
-        this.identificationFilter = filter;
+    public void setIdentificationFilter(Filter identificationFilter) {
+        this.identificationFilter = identificationFilter;
     }
 
     /**
