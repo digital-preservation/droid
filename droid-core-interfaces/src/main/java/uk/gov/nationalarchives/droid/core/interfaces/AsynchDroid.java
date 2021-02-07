@@ -31,10 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
-import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
-
 import java.io.IOException;
 import java.util.concurrent.Future;
+
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 
 
 /**

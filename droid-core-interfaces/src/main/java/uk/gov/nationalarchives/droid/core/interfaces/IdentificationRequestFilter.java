@@ -31,15 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+
 
 /**
  * Determines if an IdentificationRequest meets filter criteria.
@@ -80,7 +82,7 @@ public class IdentificationRequestFilter {
         if (filter != null) {
             List<FilterCriterion> criteria = filter.getCriteria();
             if (criteria.size() > 0) { // a filter with no criteria will not filter anything.
-                result = filter.isNarrowed()? isFilteredNarrowed(request, criteria) : isFilteredWidened(request, criteria);
+                result = filter.isNarrowed() ? isFilteredNarrowed(request, criteria) : isFilteredWidened(request, criteria);
             }
         }
         return result;
@@ -183,6 +185,10 @@ public class IdentificationRequestFilter {
                     result = requestTime >= compareValue;
                     break;
                 }
+                default : {
+                    result = true; // unsupported comparison - default to passing.
+                    break;
+                }
             }
         }
         return result;
@@ -217,18 +223,24 @@ public class IdentificationRequestFilter {
                     result = nodeValue.compareTo(compareValue) >= 0;
                     break;
                 }
+                default : {
+                    result = true; // unsupported comparison - default to passing.
+                    break;
+                }
             }
         }
         return result;
     }
 
+    //CHECKSTYLE:OFF - can't have more than 4 boolean expressions... weird rule, this is the clearest way to express.
     private boolean isOperatorInverted(CriterionOperator operator) {
-        return (operator == CriterionOperator.NE ||
-                operator == CriterionOperator.NONE_OF ||
-                operator == CriterionOperator.NOT_STARTS_WITH ||
-                operator == CriterionOperator.NOT_ENDS_WITH ||
-                operator == CriterionOperator.NOT_CONTAINS);
+        return (operator == CriterionOperator.NE
+                || operator == CriterionOperator.NONE_OF
+                || operator == CriterionOperator.NOT_STARTS_WITH
+                || operator == CriterionOperator.NOT_ENDS_WITH
+                || operator == CriterionOperator.NOT_CONTAINS);
     }
+    //CHECKSTYLE:ON
 
     private boolean compareCaseInsensitiveStrings(String nodeValue, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
@@ -252,6 +264,7 @@ public class IdentificationRequestFilter {
         return result;
     }
 
+    //CHECKSTYLE:OFF - cyclomatic complexity too high???   Is there a better way to process a switch statement????
     private boolean compareString(String nodeValue, CriterionOperator operator, String compareValue) {
         boolean result = false;
         if (nodeValue != null) {
@@ -304,21 +317,26 @@ public class IdentificationRequestFilter {
                     result = !nodeValue.contains(compareValue);
                     break;
                 }
+                default : {
+                    result = true; // unsupported comparison - default to passing.
+                    break;
+                }
             }
         }
         return result;
     }
+    //CHECKSTYLE:ON
 
     /**
      * Removes any criteria that relate to subsequent identification activity.
      * Only criteria that can be tested BEFORE any identification occurs can be applied.
-     * @param filter The filter to analyze
+     * @param identificationFilter The filter to analyze
      * @return A filter which only contains criteria which can be tested before identification.
      */
-    private Filter createBeforeIdentificationFilter(Filter filter) {
+    private Filter createBeforeIdentificationFilter(Filter identificationFilter) {
         Filter result = null;
-        if (filter != null) {
-            List<FilterCriterion> criteria = filter.getCriteria();
+        if (identificationFilter != null) {
+            List<FilterCriterion> criteria = identificationFilter.getCriteria();
             List<FilterCriterion> newCriteria = new ArrayList<>();
             for (FilterCriterion criterion : criteria) {
                 switch (criterion.getField()) {
@@ -333,7 +351,7 @@ public class IdentificationRequestFilter {
                 }
             }
             if (newCriteria.size() > 0) {
-                result = new BasicFilter(newCriteria, filter.isNarrowed());
+                result = new BasicFilter(newCriteria, identificationFilter.isNarrowed());
             }
         }
         return result;
