@@ -181,7 +181,7 @@ public class SubmissionGateway implements AsynchDroid {
         Callable<IdentificationResultCollection> callable = new Callable<IdentificationResultCollection>() {
             @Override
             public IdentificationResultCollection call() throws IOException {
-                droidCore.setMaxBytesToScan(maxBytesToScan); //TODO: why are we setting max bytes to scan with its own private member?
+                droidCore.setMaxBytesToScan(maxBytesToScan);
                 IdentificationResultCollection results = droidCore.matchBinarySignatures(request);
                 return results;
             }
