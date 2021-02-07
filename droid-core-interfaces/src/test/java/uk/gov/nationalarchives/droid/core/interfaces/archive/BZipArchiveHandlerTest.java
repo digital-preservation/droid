@@ -38,9 +38,7 @@ import java.nio.file.Paths;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.junit.Test;
@@ -81,6 +79,7 @@ public class BZipArchiveHandlerTest  {
 
         AsynchDroid droidCore = mock(AsynchDroid.class);
 
+
         BZipArchiveHandler handler = new BZipArchiveHandler();
         handler.setFactory(factory);
         handler.setDroidCore(droidCore);
@@ -88,9 +87,10 @@ public class BZipArchiveHandlerTest  {
         IdentificationRequest originalRequest = mock(IdentificationRequest.class);
         when(originalRequest.getIdentifier()).thenReturn(identifier);
         when(originalRequest.getSourceInputStream()).thenReturn(Files.newInputStream(file));
+        when(droidCore.passesIdentificationFilter(request)).thenReturn(true);
 
         handler.handle(originalRequest);
-
+        verify(droidCore).passesIdentificationFilter(request);
         verify(droidCore).submit(request);
     }
 

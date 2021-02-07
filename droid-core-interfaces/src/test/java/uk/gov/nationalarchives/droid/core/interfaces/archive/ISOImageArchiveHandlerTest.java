@@ -107,6 +107,8 @@ public class ISOImageArchiveHandlerTest {
     @Test
     public void testWithOneFile() throws Exception {
         AsynchDroid droid = mock(AsynchDroid.class);
+        when(droid.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
+
         IdentificationRequestFactory<InputStream> factory = mock(IdentificationRequestFactory.class);
         when(factory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class))).thenReturn(mock(IdentificationRequest.class));
 
@@ -152,6 +154,8 @@ public class ISOImageArchiveHandlerTest {
     @Test
     public void testWithOneFileWithWrongOrder() throws Exception {
         AsynchDroid droid = mock(AsynchDroid.class);
+        when(droid.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
+
         IdentificationRequestFactory<InputStream> factory = mock(IdentificationRequestFactory.class);
         when(factory.newRequest(any(RequestMetaData.class), any(RequestIdentifier.class))).thenReturn(mock(IdentificationRequest.class));
 
@@ -201,6 +205,7 @@ public class ISOImageArchiveHandlerTest {
         IdentificationRequestFactory<InputStream> factory = new ISOEntryRequestFactory();
 
         AsynchDroid droid = mock(AsynchDroid.class);
+        when(droid.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
 
         ResultHandler resultHandler = mock(ResultHandler.class);
         when(resultHandler.handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean())).thenReturn(mock(ResourceId.class));
