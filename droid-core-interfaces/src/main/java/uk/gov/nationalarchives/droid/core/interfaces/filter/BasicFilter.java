@@ -4,18 +4,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A basic implementation of Filter.
+ */
 public class BasicFilter implements Filter {
 
     private List<FilterCriterion> criteria;
     private boolean enabled;
     private boolean narrowed;
 
+    /**
+     * Constructs a filter given a list of criterion, and whether it is narrowed.  Enabled by default.
+     * @param criteria the filter criteria to use.
+     * @param isNarrowed whether the filter is narrowed (true) or widened (false).
+     */
     public BasicFilter(List<FilterCriterion> criteria, boolean isNarrowed) {
         this(criteria, isNarrowed, true);
     }
 
+    /**
+     * Constructs a filter given a list of criterion, whether it is narrowed, whether it is enabled.
+     * @param criteria the filter criteria to use.
+     * @param isNarrowed whether the filter is narrowed (true) or widened (false).
+     * @param isEnabled whether the filter is enabled.
+     */
     public BasicFilter(List<FilterCriterion> criteria, boolean isNarrowed, boolean isEnabled) {
-        this.criteria = criteria == null? Collections.EMPTY_LIST : criteria;
+        this.criteria = criteria == null ? Collections.EMPTY_LIST : criteria;
         this.narrowed = narrowed;
         this.enabled = enabled;
     }
@@ -70,4 +84,5 @@ public class BasicFilter implements Filter {
     public Filter clone() {
         return new BasicFilter(new ArrayList<>(criteria), narrowed, enabled);
     }
+
 }
