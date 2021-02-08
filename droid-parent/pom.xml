@@ -92,7 +92,7 @@
         <spring.version>5.3.3</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
-        <cxf.version>3.3.6</cxf.version>
+        <cxf.version>3.4.2</cxf.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.20</flying-saucer.version>
@@ -655,7 +655,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version>2.12.0</version>
+                <version>2.12.1</version>
             </dependency>
             <dependency>
                 <groupId>xml-apis</groupId>
@@ -750,7 +750,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.9</version>
+                <version>2.10.10</version>
             </dependency>
             <dependency>
                 <groupId>org.jwat</groupId>
