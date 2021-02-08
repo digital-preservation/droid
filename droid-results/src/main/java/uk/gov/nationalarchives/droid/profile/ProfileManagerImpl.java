@@ -63,6 +63,10 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
  */
 public class ProfileManagerImpl implements ProfileManager {
 
+    /**
+     * Maximum number of retries to find a unique profile id before giving up
+     */
+    static final int MAX_RETRIES = 5;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ProfileContextLocator profileContextLocator;
@@ -71,6 +75,8 @@ public class ProfileManagerImpl implements ProfileManager {
     private ProfileDiskAction profileSaver;
     private SignatureManager signatureManager;
     private DroidGlobalConfig config;
+
+
 
     /**
      * Empty bean constructor.
@@ -148,7 +154,7 @@ public class ProfileManagerImpl implements ProfileManager {
         int retryCount = 0;
 
         //to avoid folder collision, check if the folder already exists, if it does, just wait and try upto 5 times
-        while (retryCount++ <= 5 && FileUtil.exists(profileHomeDir)) {
+        while (retryCount++ <= MAX_RETRIES && FileUtil.exists(profileHomeDir)) {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException ex) {
