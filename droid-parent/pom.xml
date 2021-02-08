@@ -93,7 +93,7 @@
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
         <cxf.version>3.4.2</cxf.version>
-        <java.iso-tools.version>2.0.1</java.iso-tools.version>
+        <java.iso-tools.version>2.1.0</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.20</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
