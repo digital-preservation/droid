@@ -196,10 +196,12 @@ public class ProfileResourceNodeFilter {
             SEARCH:
             for (Format format : formatIdentifications) {
                 String mimeType = format.getMimeType();
-                for (Object value : values) {
-                    if (mimeType.equals(value)) {
-                        foundValue = true;
-                        break SEARCH;
+                if (mimeType != null) {
+                    for (Object value : values) {
+                        if (mimeType.equals(value)) {
+                            foundValue = true;
+                            break SEARCH;
+                        }
                     }
                 }
             }
@@ -217,10 +219,12 @@ public class ProfileResourceNodeFilter {
             SEARCH:
             for (Format format : formatIdentifications) {
                 String mimeType = format.getMimeType();
-                for (Object value : values) {
-                    if (mimeType.equals(value)) {
-                        result = true;
-                        break SEARCH;
+                if (mimeType != null) {
+                    for (Object value : values) {
+                        if (mimeType.equals(value)) {
+                            result = true;
+                            break SEARCH;
+                        }
                     }
                 }
             }
@@ -228,7 +232,6 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
-    //TODO: are format comparisions case insensitive?
     private boolean compareFormats(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
         if (formatIdentifications != null) {
@@ -236,18 +239,22 @@ public class ProfileResourceNodeFilter {
             if (isOperatorInverted(operator)) {
                 int foundCount = 0;
                 for (Format format : formatIdentifications) {
-                    String formatName = format.getName().toLowerCase(Locale.ROOT);
-                    if (compareStrings(formatName, operator, value)) {
-                        foundCount++;
+                    String formatName = format.getName();
+                    if (formatName != null) {
+                        if (compareStrings(formatName.toLowerCase(Locale.ROOT), operator, value)) {
+                            foundCount++;
+                        }
                     }
                 }
                 result = foundCount == formatIdentifications.size();
             } else {
                 for (Format format : formatIdentifications) {
-                    String formatName = format.getName().toLowerCase(Locale.ROOT);
-                    if (compareStrings(formatName, operator, value)) {
-                        result = true;
-                        break;
+                    String formatName = format.getName();
+                    if (formatName != null) {
+                        if (compareStrings(formatName.toLowerCase(Locale.ROOT), operator, value)) {
+                            result = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -267,7 +274,6 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
-    //TODO: should PUID values be case sensitive?
     private boolean compareNoneOfPuids(List<Format> formatIdentifications, Object criterionValue) {
         boolean result = false;
         if (formatIdentifications != null) {
@@ -277,7 +283,7 @@ public class ProfileResourceNodeFilter {
             for (Format format : formatIdentifications) {
                 String puid = format.getPuid();
                 for (Object value : values) {
-                    if (puid.equals(value)) {
+                    if (puid != null && puid.equals(value)) {
                         foundValue = true;
                         break SEARCH;
                     }
@@ -290,7 +296,6 @@ public class ProfileResourceNodeFilter {
         return result;
     }
 
-    //TODO: should PUID values be case sensitive?
     private boolean compareAnyOfPuids(List<Format> formatIdentifications, Object criterionValue) {
         boolean result = false;
         if (formatIdentifications != null) {
@@ -299,7 +304,7 @@ public class ProfileResourceNodeFilter {
             for (Format format : formatIdentifications) {
                 String puid = format.getPuid();
                 for (Object value : values) {
-                    if (puid.equals(value)) {
+                    if (puid != null && puid.equals(value)) {
                         result = true;
                         break SEARCH;
                     }
