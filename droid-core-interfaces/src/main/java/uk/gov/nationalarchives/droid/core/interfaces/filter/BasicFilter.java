@@ -61,8 +61,8 @@ public class BasicFilter implements Filter {
      */
     public BasicFilter(List<FilterCriterion> criteria, boolean isNarrowed, boolean isEnabled) {
         this.criteria = criteria == null ? Collections.EMPTY_LIST : criteria;
-        this.narrowed = narrowed;
-        this.enabled = enabled;
+        this.narrowed = isNarrowed;
+        this.enabled = isEnabled;
     }
 
     @Override
