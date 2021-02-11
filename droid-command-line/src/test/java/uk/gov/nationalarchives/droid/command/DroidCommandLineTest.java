@@ -49,12 +49,11 @@ import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.command.archive.ArchiveContainerTestHelper;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
-import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 
@@ -227,11 +226,11 @@ public class DroidCommandLineTest {
             "tmp/profile-3.droid"
         });
         
-        ArgumentCaptor<SimpleFilter> filterCaptor = ArgumentCaptor.forClass(SimpleFilter.class);
+        ArgumentCaptor<Filter> filterCaptor = ArgumentCaptor.forClass(BasicFilter.class);
         verify(command).setFilter(filterCaptor.capture());
         verify(command).execute();
         
-        SimpleFilter filter = filterCaptor.getValue();
+        Filter filter = filterCaptor.getValue();
         assertTrue(filter.isNarrowed());
 
         List<FilterCriterion> list = filter.getCriteria();
@@ -278,11 +277,11 @@ public class DroidCommandLineTest {
             "tmp/profile-3.droid"
         });
         
-        ArgumentCaptor<SimpleFilter> filterCaptor = ArgumentCaptor.forClass(SimpleFilter.class);
+        ArgumentCaptor<Filter> filterCaptor = ArgumentCaptor.forClass(BasicFilter.class);
         verify(command).setFilter(filterCaptor.capture());
         verify(command).execute();
         
-        SimpleFilter filter = filterCaptor.getValue();
+        Filter filter = filterCaptor.getValue();
         assertFalse(filter.isNarrowed());
 
         List<FilterCriterion> list = filter.getCriteria();
