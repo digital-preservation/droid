@@ -1,23 +1,52 @@
+/**
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ *  * Neither the name of the The National Archives nor the
+ *    names of its contributors may be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package uk.gov.nationalarchives.droid.core.interfaces;
 
 import net.byteseek.io.reader.WindowReader;
 import org.junit.Test;
 
-import uk.gov.nationalarchives.droid.core.interfaces.filter.AbstractFilterCriterion;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilterCriterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -40,7 +69,7 @@ public class IdentificationRequestFilterTest {
     @Test
     public void testEmptyCriteriaNotFiltered() {
         IdentificationRequest request = new TestIdentificationRequest("test.bmp", 1000L, 0L);
-        IdentificationRequestFilter requestFilter = new IdentificationRequestFilter(new FilterTest());
+        IdentificationRequestFilter requestFilter = new IdentificationRequestFilter(new BasicFilter());
         assertTrue(requestFilter.passesFilter(request));
     }
 
@@ -668,12 +697,12 @@ public class IdentificationRequestFilterTest {
     public void testWidenFiltering() {
         IdentificationRequest request = new TestIdentificationRequest("test.bmp", 1000L, 0L);
 
-        FilterCriterion extBmp = new FilterCriterionTest(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "bmp");
-        FilterCriterion extJpg = new FilterCriterionTest(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "jpg");
+        FilterCriterion extBmp = new BasicFilterCriterion(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "bmp");
+        FilterCriterion extJpg = new BasicFilterCriterion(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "jpg");
 
-        FilterCriterion sizeCritGTE = new FilterCriterionTest(CriterionFieldEnum.FILE_SIZE, CriterionOperator.GTE, 1000L);
-        FilterCriterion sizeCritLT = new FilterCriterionTest(CriterionFieldEnum.FILE_SIZE, CriterionOperator.LT, 1000L);
-        FilterCriterion sizeCritEQ = new FilterCriterionTest(CriterionFieldEnum.FILE_SIZE, CriterionOperator.EQ,1000L);
+        FilterCriterion sizeCritGTE = new BasicFilterCriterion(CriterionFieldEnum.FILE_SIZE, CriterionOperator.GTE, 1000L);
+        FilterCriterion sizeCritLT = new BasicFilterCriterion(CriterionFieldEnum.FILE_SIZE, CriterionOperator.LT, 1000L);
+        FilterCriterion sizeCritEQ = new BasicFilterCriterion(CriterionFieldEnum.FILE_SIZE, CriterionOperator.EQ,1000L);
 
         IdentificationRequestFilter filter = createMultiFilter(false, extBmp, sizeCritGTE);
         assertTrue(filter.passesFilter(request));
@@ -695,12 +724,12 @@ public class IdentificationRequestFilterTest {
     public void testNarrowFiltering() {
         IdentificationRequest request = new TestIdentificationRequest("test.bmp", 1000L, 0L);
 
-        FilterCriterion extBmp = new FilterCriterionTest(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "bmp");
-        FilterCriterion extJpg = new FilterCriterionTest(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "jpg");
+        FilterCriterion extBmp = new BasicFilterCriterion(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "bmp");
+        FilterCriterion extJpg = new BasicFilterCriterion(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "jpg");
 
-        FilterCriterion sizeCritGTE = new FilterCriterionTest(CriterionFieldEnum.FILE_SIZE, CriterionOperator.GTE, 1000L);
-        FilterCriterion sizeCritLT = new FilterCriterionTest(CriterionFieldEnum.FILE_SIZE, CriterionOperator.LT, 1000L);
-        FilterCriterion sizeCritEQ = new FilterCriterionTest(CriterionFieldEnum.FILE_SIZE, CriterionOperator.EQ,1000L);
+        FilterCriterion sizeCritGTE = new BasicFilterCriterion(CriterionFieldEnum.FILE_SIZE, CriterionOperator.GTE, 1000L);
+        FilterCriterion sizeCritLT = new BasicFilterCriterion(CriterionFieldEnum.FILE_SIZE, CriterionOperator.LT, 1000L);
+        FilterCriterion sizeCritEQ = new BasicFilterCriterion(CriterionFieldEnum.FILE_SIZE, CriterionOperator.EQ,1000L);
 
         IdentificationRequestFilter filter = createMultiFilter(true, extBmp, sizeCritGTE);
         assertTrue(filter.passesFilter(request));
@@ -726,86 +755,86 @@ public class IdentificationRequestFilterTest {
      */
 
     private IdentificationRequestFilter createMultiFilter(boolean narrowed, FilterCriterion... criteria) {
-        FilterTest filter = new FilterTest(Arrays.asList(criteria), narrowed);
+        Filter filter = new BasicFilter(Arrays.asList(criteria), narrowed);
         return new IdentificationRequestFilter(filter);
     }
     
 
     private IdentificationRequestFilter createMimeTypeFilter(CriterionOperator operator, String... values) {
-        final FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.MIME_TYPE, operator, convertStringArray(values));
-        FilterTest filter = new FilterTest(criterion);
+        final BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.MIME_TYPE, operator, convertStringArray(values));
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createFormatFilter(CriterionOperator operator, String value) {
-        final FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.FILE_FORMAT, operator, value);
-        FilterTest filter = new FilterTest(criterion);
+        final BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.FILE_FORMAT, operator, value);
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createPuidrequestFilter(CriterionOperator operator, String... values) {
 
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.PUID, operator, convertStringArray(values));
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.PUID, operator, convertStringArray(values));
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createExtensionMismatchFilter(CriterionOperator operator, boolean value) {
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.EXTENSION_MISMATCH, operator, value);
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.EXTENSION_MISMATCH, operator, value);
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createIdCountFilter(CriterionOperator operator, int count) {
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.IDENTIFICATION_COUNT, operator, count);
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.IDENTIFICATION_COUNT, operator, count);
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createExtensionFilter(CriterionOperator operator, String... values) {
-        final FilterCriterionTest criterion;
+        final BasicFilterCriterion criterion;
         if (values.length == 1) {
-            criterion = new FilterCriterionTest(CriterionFieldEnum.FILE_EXTENSION, operator, values[0]);
+            criterion = new BasicFilterCriterion(CriterionFieldEnum.FILE_EXTENSION, operator, values[0]);
         } else {
-            criterion = new FilterCriterionTest(CriterionFieldEnum.FILE_EXTENSION, operator, convertStringArray(values));
+            criterion = new BasicFilterCriterion(CriterionFieldEnum.FILE_EXTENSION, operator, convertStringArray(values));
         }
-        FilterTest filter = new FilterTest(criterion);
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createNodeStatusFilter(CriterionOperator operator, NodeStatus... statuses) {
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.JOB_STATUS, operator, convertObjectArray(statuses));
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.JOB_STATUS, operator, convertObjectArray(statuses));
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createResourceTypeFilter(CriterionOperator operator, ResourceType... resourceTypes) {
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.RESOURCE_TYPE, operator, convertObjectArray(resourceTypes));
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.RESOURCE_TYPE, operator, convertObjectArray(resourceTypes));
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createIdMethodFilter(CriterionOperator operator, IdentificationMethod... methods) {
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.IDENTIFICATION_METHOD, operator, convertObjectArray(methods));
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.IDENTIFICATION_METHOD, operator, convertObjectArray(methods));
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createDateFilter(CriterionOperator operator, Date date) {
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.LAST_MODIFIED_DATE, operator, date);
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.LAST_MODIFIED_DATE, operator, date);
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createNameFilter(CriterionOperator operator, String name) {
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.FILE_NAME, operator, name);
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.FILE_NAME, operator, name);
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
     private IdentificationRequestFilter createSizeFilter(CriterionOperator operator, long size) {
-        FilterCriterionTest criterion = new FilterCriterionTest(CriterionFieldEnum.FILE_SIZE, operator, size);
-        FilterTest filter = new FilterTest(criterion);
+        BasicFilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.FILE_SIZE, operator, size);
+        Filter filter = new BasicFilter(criterion);
         return new IdentificationRequestFilter(filter);
     }
 
@@ -830,107 +859,9 @@ public class IdentificationRequestFilterTest {
     }
 
     /*
-     *  Test implementations of Filter and FilterCriterion.
+     *  Test implementations of IdentificationRequest.
      */
 
-    private static class FilterCriterionTest extends AbstractFilterCriterion<Object> {
-
-        private Object value;
-
-        public FilterCriterionTest(CriterionFieldEnum field, CriterionOperator operator, Object value) {
-            super(field, operator);
-            this.value = value;
-        }
-
-        @Override
-        protected CriterionOperator[] operators() {
-            return new CriterionOperator[0];
-        }
-
-        @Override
-        public Object getValue() {
-            return value;
-        }
-    }
-
-    private static class FilterTest implements Filter {
-
-        private List<FilterCriterion> criteria = new ArrayList<>();
-        private boolean isNarrowed;
-
-        public FilterTest() {
-        }
-        
-        public FilterTest(FilterCriterion criteria) {
-            this.criteria.add(criteria);
-        }
-
-        public FilterTest(FilterCriterion criteria, boolean isNarrowed) {
-            this.criteria.add(criteria);
-            this.isNarrowed = isNarrowed;
-        }
-
-        public FilterTest(List<FilterCriterion> criteria) {
-            this.criteria = criteria;
-        }
-
-        public FilterTest(List<FilterCriterion> criteria, boolean isNarrowed) {
-            this.criteria = criteria;
-            this.isNarrowed = isNarrowed;
-        }
-
-
-        @Override
-        public List<FilterCriterion> getCriteria() {
-            return criteria;
-        }
-
-
-        public FilterTest addCriterion(FilterCriterion criterion) {
-            criteria.add(criterion);
-            return this;
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-
-        @Override
-        public void setEnabled(boolean enabled) {
-            //nothing to do.
-        }
-
-        @Override
-        public boolean isNarrowed() {
-            return isNarrowed;
-        }
-
-        @Override
-        public boolean hasCriteria() {
-            return criteria.size() > 0;
-        }
-
-        @Override
-        public void setNarrowed(boolean isNarrowed) {
-            this.isNarrowed = isNarrowed;
-        }
-
-        @Override
-        public FilterCriterion getFilterCriterion(int index) {
-            return criteria.get(index);
-        }
-
-        @Override
-        public int getNumberOfFilterCriterion() {
-            return criteria.size();
-        }
-
-        @Override
-        public Filter clone() throws CloneNotSupportedException {
-            throw new CloneNotSupportedException();
-        }
-    }
 
     private static class TestIdentificationRequest implements IdentificationRequest {
 
