@@ -74,7 +74,7 @@
         <property name="config" ref="globalConfig"/>
     </bean>
 
-    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.export.CsvItemWriter"/>
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.profile.CsvItemWriter"/>
         
     <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileManagerImpl">
         <property name="profileContextLocator" ref="profileContextLocator"/>
