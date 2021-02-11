@@ -32,7 +32,9 @@
 package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.cli.CommandLine;
@@ -49,7 +51,7 @@ import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType
 import uk.gov.nationalarchives.droid.command.filter.DqlCriterionFactory;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
-import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
@@ -58,7 +60,9 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
  * @author rflitcroft, Alok Kumar Dash
  *
  */
+//CHECKSTYLE:OFF - ClassDataAbstractionCoupling and ClassFanOutComplexity just over limit.
 public class CommandFactoryImpl implements CommandFactory {
+//CHECKSTYLE:ON
 
     private static final String NO_RESOURCES_SPECIFIED = "No resources specified.";
     private static final String NO_PROFILES_SPECIFIED_FOR_EXPORT = "No profiles specified for export.";
@@ -226,15 +230,15 @@ public class CommandFactoryImpl implements CommandFactory {
             }
             destination = destinations[0];
         } else { // output to a file, or the console if not specified.
-            destination = cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())?
-                    cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
+            destination = cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())
+                    ? cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
             overrideProperties.setProperty("profile.outputFilePath", destination);
         }
         return destination;
     }
 
     private Filter getIdentificationFilter(CommandLine cli) {
-        SimpleFilter result = null;
+        Filter result = null;
         if (cli.hasOption(CommandLineParam.ALL_FILTER_FILE.toString())) {
             result = createFilter(new CommandLineFilter(cli.getOptionValues(
                     CommandLineParam.ALL_FILTER_FILE.toString()), FilterType.ALL));
@@ -244,13 +248,12 @@ public class CommandFactoryImpl implements CommandFactory {
         }
         if (cli.hasOption(CommandLineParam.EXTENSION_LIST.toString())) {
             result = createExtensionFilter(result, cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString()));
-
         }
         return result;
     }
 
     private Filter getResultsFilter(CommandLine cli) {
-        SimpleFilter result = null;
+        Filter result = null;
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
             result = createFilter(new CommandLineFilter(cli.getOptionValues(
                     CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
@@ -265,8 +268,9 @@ public class CommandFactoryImpl implements CommandFactory {
         String[] resources = cli.getOptionValues(CommandLineParam.RUN_PROFILE.toString());
         if (resources == null || resources.length == 0) {
             resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
-            if (resources == null || resources.length == 0)
+            if (resources == null || resources.length == 0) {
                 throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+            }
         }
         return resources;
     }
@@ -302,9 +306,14 @@ public class CommandFactoryImpl implements CommandFactory {
             overrideProperties = new PropertiesConfiguration(); //
         }
 
+        processCommandLineArchiveFlags(cli, overrideProperties);
+        return overrideProperties;
+    }
+
+    private void processCommandLineArchiveFlags(CommandLine cli, PropertiesConfiguration overrideProperties) {
         // Special command line flags for archive processing which override all the others:
         if (cli.hasOption(CommandLineParam.ARCHIVES.toString())) { // Turn on all archives:
-            setAllArchivesExpand(overrideProperties,true);
+            setAllArchivesExpand(overrideProperties, true);
         } else if (cli.hasOption(CommandLineParam.ARCHIVE_TYPES.toString())) {
             setExpandArchiveTypes(overrideProperties, cli.getOptionValues(CommandLineParam.ARCHIVE_TYPES.toString()));
         }
@@ -314,22 +323,21 @@ public class CommandFactoryImpl implements CommandFactory {
         } else if (cli.hasOption(CommandLineParam.WEB_ARCHIVE_TYPES.toString())) {
             setExpandWebArchiveTypes(overrideProperties, cli.getOptionValues(CommandLineParam.WEB_ARCHIVE_TYPES.toString()));
         }
-        return overrideProperties;
     }
 
-    private void setAllArchivesExpand(PropertiesConfiguration overrideProperties, boolean onOrOff) {
-        overrideProperties.setProperty("profile.processTar", onOrOff);
-        overrideProperties.setProperty("profile.processZip", onOrOff);
-        overrideProperties.setProperty("profile.processGzip", onOrOff);
-        overrideProperties.setProperty("profile.processRar", onOrOff);
-        overrideProperties.setProperty("profile.process7zip", onOrOff);
-        overrideProperties.setProperty("profile.processIso", onOrOff);
-        overrideProperties.setProperty("profile.processBzip2", onOrOff);
+    private void setAllArchivesExpand(PropertiesConfiguration overrideProperties, boolean isOn) {
+        overrideProperties.setProperty("profile.processTar", isOn);
+        overrideProperties.setProperty("profile.processZip", isOn);
+        overrideProperties.setProperty("profile.processGzip", isOn);
+        overrideProperties.setProperty("profile.processRar", isOn);
+        overrideProperties.setProperty("profile.process7zip", isOn);
+        overrideProperties.setProperty("profile.processIso", isOn);
+        overrideProperties.setProperty("profile.processBzip2", isOn);
     }
 
-    private void setAllWebArchivesExpand(PropertiesConfiguration overrideProperties, boolean OnOrOff) {
-        overrideProperties.setProperty("profile.processArc", OnOrOff);
-        overrideProperties.setProperty("profile.processWarc", OnOrOff);
+    private void setAllWebArchivesExpand(PropertiesConfiguration overrideProperties, boolean isOn) {
+        overrideProperties.setProperty("profile.processArc", isOn);
+        overrideProperties.setProperty("profile.processWarc", isOn);
     }
 
     private void setExpandArchiveTypes(PropertiesConfiguration overrideProperties, String[] archiveTypes) {
@@ -452,22 +460,31 @@ public class CommandFactoryImpl implements CommandFactory {
         }
     }
 
-    private SimpleFilter createFilter(CommandLineFilter commandLineFilter) {
-        SimpleFilter filter = null;
+    private Filter createFilter(CommandLineFilter commandLineFilter) {
+        Filter filter = null;
         if (commandLineFilter != null) {
             DqlFilterParser dqlFilterParser = new SimpleDqlFilterParser();
-            filter = new SimpleFilter(commandLineFilter.getFilterType());
+            List<FilterCriterion> criteria = new ArrayList<>();
             for (String dql : commandLineFilter.getFilters()) {
-                filter.add(dqlFilterParser.parse(dql));
+                criteria.add(dqlFilterParser.parse(dql));
             }
+            filter = new BasicFilter(criteria, commandLineFilter.getFilterType() == FilterType.ALL);
         }
         return filter;
     }
 
-    private SimpleFilter createExtensionFilter(SimpleFilter existingFilter, String[] optionValues) {
-        SimpleFilter result = existingFilter == null? new SimpleFilter(FilterType.ANY) : existingFilter;
+    private Filter createExtensionFilter(Filter existingFilter, String[] optionValues) {
         FilterCriterion criterion = DqlCriterionFactory.newCriterion("file_ext", "=", Arrays.asList(optionValues));
-        result.add(criterion);
-        return result;
+        final List<FilterCriterion> criteria;
+        final boolean isNarrowed;
+        if (existingFilter == null) {
+            criteria = new ArrayList<>();
+            isNarrowed = true;
+        } else {
+            criteria = existingFilter.getCriteria();
+            isNarrowed = existingFilter.isNarrowed();
+        }
+        criteria.add(criterion);
+        return new BasicFilter(criteria, isNarrowed);
     }
 }
