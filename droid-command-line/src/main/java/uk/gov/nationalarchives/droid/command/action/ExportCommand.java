@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
-import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
@@ -56,7 +54,6 @@ public class ExportCommand implements DroidCommand {
     private String[] profiles;
     private ExportManager exportManager;
     private ProfileManager profileManager;
-    private DqlFilterParser dqlFilterParser;
     private String destination;
     private Filter filter;
     private ExportOptions options;
