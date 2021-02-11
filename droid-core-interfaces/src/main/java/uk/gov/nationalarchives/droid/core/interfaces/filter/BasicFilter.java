@@ -32,17 +32,34 @@
 package uk.gov.nationalarchives.droid.core.interfaces.filter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * A basic implementation of Filter.
  */
-public class BasicFilter implements Filter {
+public final class BasicFilter implements Filter {
 
-    private List<FilterCriterion> criteria;
+    private final List<FilterCriterion> criteria;
     private boolean enabled;
     private boolean narrowed;
+
+    /**
+     * Constructs a null filter that never filters anything.
+     */
+    public BasicFilter() {
+        this(null, true);
+    }
+
+    /**
+     * Constructs a filter with a single filter criterion.
+     *
+     * @param criterion The filter criterion to use.
+     */
+    public BasicFilter(FilterCriterion criterion) {
+        this(Arrays.asList(criterion), true);
+    }
 
     /**
      * Constructs a filter given a list of criterion, and whether it is narrowed.  Enabled by default.
