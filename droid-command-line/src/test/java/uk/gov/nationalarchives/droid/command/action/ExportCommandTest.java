@@ -39,7 +39,7 @@ import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
-import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -51,6 +51,7 @@ import uk.gov.nationalarchives.droid.profile.ProfileManager;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -168,13 +169,14 @@ public class ExportCommandTest {
     }
 
     private Filter createFilter(CommandLineFilter commandLineFilter) {
-        SimpleFilter filter = null;
+        Filter filter = null;
         if (commandLineFilter != null) {
             DqlFilterParser dqlFilterParser = new SimpleDqlFilterParser();
-            filter = new SimpleFilter(commandLineFilter.getFilterType());
+            List<FilterCriterion> criteria = new ArrayList<>();
             for (String dql : commandLineFilter.getFilters()) {
-                filter.add(dqlFilterParser.parse(dql));
+                criteria.add(dqlFilterParser.parse(dql));
             }
+            filter = new BasicFilter(criteria, commandLineFilter.getFilterType() == FilterType.ALL);
         }
         return filter;
     }
