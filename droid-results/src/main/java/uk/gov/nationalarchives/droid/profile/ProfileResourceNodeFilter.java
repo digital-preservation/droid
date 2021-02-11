@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -235,7 +235,7 @@ public class ProfileResourceNodeFilter {
     private boolean compareFormats(List<Format> formatIdentifications, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
         if (formatIdentifications != null) {
-            String value = ((String) criterionValue).toLowerCase(Locale.ROOT); //TODO: bug - inverted operators have different criteria for lists.
+            String value = ((String) criterionValue).toLowerCase(Locale.ROOT);
             if (isOperatorInverted(operator)) {
                 int foundCount = 0;
                 for (Format format : formatIdentifications) {
