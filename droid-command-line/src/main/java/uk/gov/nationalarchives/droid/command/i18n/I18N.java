@@ -58,6 +58,7 @@ public final class I18N {
     /** Profiles description. */
     public static final String PROFILES_HELP = "profiles.help";
 
+    /** Profile file to write CSV output to. */
     public static final String OUTPUT_FILE_HELP = "profile.outputfile.help";
 
     /**
