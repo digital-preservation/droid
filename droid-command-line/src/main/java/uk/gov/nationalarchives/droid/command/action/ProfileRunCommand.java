@@ -86,7 +86,7 @@ public class ProfileRunCommand implements DroidCommand {
             for (String resource : resources) {
                 profile.addResource(locationResolver.getResource(resource, recursive));
             }
-            profileManager.setProgressObserver(profile.getUuid(),null);
+            profileManager.setProgressObserver(profile.getUuid(), null);
             Future<?> future = profileManager.start(profile.getUuid());
             future.get();
             
