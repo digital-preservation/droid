@@ -241,7 +241,7 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
 
             final Runnable walk;
             ProgressMonitor progressMonitor = specWalker.getProgressMonitor();
-            if (progressMonitor.isMonitoring()) {
+            if (progressMonitor != null && progressMonitor.isMonitoring()) {
                 final ProfileSpecJobCounter counter = new ProfileSpecJobCounter(profileInstance.getProfileSpec());
                 final FutureTask<Long> countFuture = new FutureTask<Long>(counter) {
                     @Override
