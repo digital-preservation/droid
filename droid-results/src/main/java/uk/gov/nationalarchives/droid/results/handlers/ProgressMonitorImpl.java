@@ -166,8 +166,8 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     }
 
     @Override
-    public void setMonitoring(boolean isMonitoring) {
-        this.isMonitoring = isMonitoring;
+    public void setMonitoring(boolean monitor) {
+        this.isMonitoring = monitor;
     }
 
     /**
