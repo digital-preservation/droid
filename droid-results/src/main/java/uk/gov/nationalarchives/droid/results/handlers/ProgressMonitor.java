@@ -42,11 +42,6 @@ import uk.gov.nationalarchives.droid.profile.ProfileResultObserver;
  */
 public interface ProgressMonitor {
 
-    /**
-     * A static progress monitor that does no monitoring.
-     */
-    ProgressMonitor NO_MONITORING = new ProgressMonitor() {
-    };
 
     /** value for indeterminate answer. */
     int INDETERMINATE_PROGRESS = -1;
@@ -57,8 +52,7 @@ public interface ProgressMonitor {
      * @param count
      *            the maximum count to set
      */
-    default void setTargetCount(long count) {
-    }
+    void setTargetCount(long count);
 
     /**
      * Gets the progress percentage: -1 indicates indeterminate progress.
@@ -66,67 +60,64 @@ public interface ProgressMonitor {
      * @return the progress as a percentage.
      * 
      */
-    default int getProgressPercentage() {
-        return 0;
-    }
+    int getProgressPercentage();
 
     /**
      * @return the maximum count.
      */
-    default long getProfileSize() {
-        return 0;
-    }
+    long getProfileSize();
 
     /**
      * 
      * @return the number of identifications made.
      */
-    default long getIdentificationCount() {
-        return 0;
-    }
-
+    long getIdentificationCount();
     /**
      * Sets an observer to fired whenever the progress percentage increments.
      * 
      * @param observer
      *            the observer to set
      */
-    default void setPercentIncrementObserver(ProgressObserver observer) {
-    }
+    void setPercentIncrementObserver(ProgressObserver observer);
 
     /**
      * @param uri
      *            the URI of the job.
      */
-    default void startJob(URI uri) {
-    }
+    void startJob(URI uri);
 
     /**
      * @param uri
      *            the URI of the job
      */
-    default void stopJob(ProfileResourceNode uri) {
-    }
+    void stopJob(ProfileResourceNode uri);
 
     /**
      * @param resultObserver ResultObserver.
      */
-    default void setResultObserver(ProfileResultObserver resultObserver) {
-    }
+    void setResultObserver(ProfileResultObserver resultObserver);
 
     /**
      * Initialised the progress monitor to some initial state.
      * @param targetCount the target count
      * @param currentCount the actual count
      */
-    default void initialise(long targetCount, long currentCount) {
-    }
+    void initialise(long targetCount, long currentCount);
 
     /**
      * @return the target number of identifications (100%)
      */
-    default long getTargetCount() {
-        return 0;
-    }
-    
+    long getTargetCount();
+
+    /**
+     * @return whether the progress monitor monitors progress.
+     */
+    boolean isMonitoring();
+
+    /**
+     * Set whether progress should be monitored.
+     * @param monitor true if progress should be monitoring.
+     */
+    void setMonitoring(boolean monitor);
+
 }

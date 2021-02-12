@@ -67,20 +67,6 @@ public class ProfileNodeResultHandler implements ResultHandler {
     private Map<String, Format> formats;
 
     /**
-     * Empty bean constructor.
-     */
-    public ProfileNodeResultHandler() {
-    }
-
-    /**
-     * Parameterized constructor which will not monitor progress.
-     * @param resultHandlerDao  The resulthandlerdao to use.
-     */
-    public ProfileNodeResultHandler(ResultHandlerDao resultHandlerDao) {
-        this(resultHandlerDao, ProgressMonitor.NO_MONITORING);
-    }
-
-    /**
      * Parameterized constructor.
      * @param resultHandlerDao The resulthandlerdao to use.
      * @param progressMonitor The progress monitor to use.

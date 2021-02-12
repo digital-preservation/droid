@@ -53,6 +53,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import uk.gov.nationalarchives.droid.profile.referencedata.ReferenceData;
+import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
@@ -175,9 +176,6 @@ public class ProfileManagerImpl implements ProfileManager {
         }    
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void closeProfile(String profileName) {
         log.info("Closing profile: " + profileName);
@@ -237,9 +235,6 @@ public class ProfileManagerImpl implements ProfileManager {
         return profileInstanceManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Future<?> start(String profileId) throws IOException {
         log.info("Starting profile: " + profileId);
@@ -247,9 +242,6 @@ public class ProfileManagerImpl implements ProfileManager {
         return profileInstanceManager.start();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<ProfileResourceNode> findProfileResourceNodeAndImmediateChildren(
             String profileId, Long parentId) {
@@ -262,24 +254,18 @@ public class ProfileManagerImpl implements ProfileManager {
         return profileInstanceManager.findAllProfileResourceNodes(parentId);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<ProfileResourceNode> findRootNodes(String profileId) {
         ProfileInstanceManager profileInstanceManager = getProfileInstanceManager(profileId);
         return profileInstanceManager.findRootProfileResourceNodes();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void setProgressObserver(String profileId,
-            ProgressObserver progressObserver) {
+    public void setProgressObserver(String profileId, ProgressObserver progressObserver) {
         ProfileInstanceManager profileInstanceManager = getProfileInstanceManager(profileId);
-        profileInstanceManager.getProgressMonitor()
-                .setPercentIncrementObserver(progressObserver);
+        ProgressMonitor progressMonitor = profileInstanceManager.getProgressMonitor();
+        progressMonitor.setPercentIncrementObserver(progressObserver);
+        progressMonitor.setMonitoring(progressObserver != null);
     }
 
     /**
@@ -299,9 +285,6 @@ public class ProfileManagerImpl implements ProfileManager {
         this.profileContextLocator = profileContextLocator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setResultsObserver(String profileUuid,
             ProfileResultObserver observer) {
@@ -310,9 +293,6 @@ public class ProfileManagerImpl implements ProfileManager {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateProfileSpec(String profileId, ProfileSpec profileSpec) {
         ProfileInstance profile = profileContextLocator
@@ -422,17 +402,11 @@ public class ProfileManagerImpl implements ProfileManager {
         return getProfileInstanceManager(profileId).getAllFormats();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ReferenceData getReferenceData(String profileId) {
         return getProfileInstanceManager(profileId).getReferenceData();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setThrottleValue(String uuid, int value) {
         getProfileInstanceManager(uuid).setThrottleValue(value);

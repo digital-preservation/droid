@@ -56,6 +56,7 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     private Set<URI> jobsInProgress = Collections.synchronizedSet(new HashSet<>());
     private ProgressObserver observer;
     private ProfileResultObserver resultObserver;
+    private boolean isMonitoring = true;
 
     /**
      * Empty bean constructor.
@@ -133,17 +134,21 @@ public class ProgressMonitorImpl implements ProgressMonitor {
 
     @Override
     public void startJob(URI uri) {
-        jobsInProgress.add(uri);
+        if (isMonitoring) {
+            jobsInProgress.add(uri);
+        }
     }
 
     @Override
     public void stopJob(ProfileResourceNode node) {
-        if (jobsInProgress.remove(node.getUri())) {
-            increment();
-        }
-        
-        if (resultObserver != null) {
-            resultObserver.onResult(node);
+        if (isMonitoring) {
+            if (jobsInProgress.remove(node.getUri())) {
+                increment();
+            }
+
+            if (resultObserver != null) {
+                resultObserver.onResult(node);
+            }
         }
     }
 
@@ -154,7 +159,17 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     public void setResultObserver(ProfileResultObserver resultObserver) {
         this.resultObserver = resultObserver;
     }
-    
+
+    @Override
+    public boolean isMonitoring() {
+        return isMonitoring;
+    }
+
+    @Override
+    public void setMonitoring(boolean isMonitoring) {
+        this.isMonitoring = isMonitoring;
+    }
+
     /**
      * Initialised the progress monitor to some initial state.
      * @param targetCount the target count

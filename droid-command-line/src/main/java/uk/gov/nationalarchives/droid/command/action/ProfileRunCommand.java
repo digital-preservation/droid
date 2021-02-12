@@ -78,6 +78,7 @@ public class ProfileRunCommand implements DroidCommand {
         try {
             Map<SignatureType, SignatureFileInfo> sigs = getSignatureFiles();
             ProfileInstance profile = profileManager.createProfile(sigs, propertyOverrides);
+
             profile.setResultsFilter(resultsFilter);
             profile.setIdentificationFilter(identificationFilter);
             profile.changeState(ProfileState.VIRGIN);
@@ -85,7 +86,7 @@ public class ProfileRunCommand implements DroidCommand {
             for (String resource : resources) {
                 profile.addResource(locationResolver.getResource(resource, recursive));
             }
-            
+            profileManager.setProgressObserver(profile.getUuid(),null);
             Future<?> future = profileManager.start(profile.getUuid());
             future.get();
             

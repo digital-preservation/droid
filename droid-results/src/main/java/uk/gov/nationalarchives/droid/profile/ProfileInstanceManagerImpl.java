@@ -239,34 +239,34 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             // start walking the profile spec
             profileInstance.start();
 
-            final ProfileSpecJobCounter counter = new ProfileSpecJobCounter(profileInstance.getProfileSpec());
-            final FutureTask<Long> countFuture = new FutureTask<Long>(counter) {
-                @Override
-                protected void done() {
-                    if (!isCancelled()) {
-                        try {
-                            specWalker.getProgressMonitor().setTargetCount(get());
-                        } catch (InterruptedException e) {
-                            log.debug(e.getMessage(), e);
-                        } catch (ExecutionException e) {
-                            log.error(e.getMessage(), e);
+            final Runnable walk;
+            ProgressMonitor progressMonitor = specWalker.getProgressMonitor();
+            if (progressMonitor.isMonitoring()) {
+                final ProfileSpecJobCounter counter = new ProfileSpecJobCounter(profileInstance.getProfileSpec());
+                final FutureTask<Long> countFuture = new FutureTask<Long>(counter) {
+                    @Override
+                    protected void done() {
+                        if (!isCancelled()) {
+                            try {
+                                specWalker.getProgressMonitor().setTargetCount(get());
+                            } catch (InterruptedException e) {
+                                log.debug(e.getMessage(), e);
+                            } catch (ExecutionException e) {
+                                log.error(e.getMessage(), e);
+                            }
                         }
                     }
-                }
-            };
-
-            // If we're not outputting to a CSV file, then run a thread estimating the progress:
-            //if (profileInstance.getOutputFilePath() != null && !profileInstance.getOutputFilePath().isEmpty()) {
-                // start a thread to estimate the number of jobs, and update the progress monitor when it's done.
+                };
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.submit(countFuture);
-            //}
+                walk = new WalkerTask(countFuture, counter);
+            } else {
+                walk = new WalkerTask(null, null);
+            }
 
             ExecutorService mainSubmitter = Executors.newSingleThreadExecutor();
-            Runnable walk = new WalkerTask(countFuture, counter);
             task = mainSubmitter.submit(walk);
             mainSubmitter.shutdown();
-
         }
         return task;
     }
@@ -294,8 +294,12 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
                 throw new ProfileException(e);
             } finally {
                 postWalk();
-                counter.cancel();
-                countFuture.cancel(false);
+                if (counter != null) {
+                    counter.cancel();
+                }
+                if (countFuture != null) {
+                    countFuture.cancel(false);
+                }
                 if (!inError) {
                     profileInstance.finish();
                 }
