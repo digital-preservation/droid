@@ -313,7 +313,7 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             submitterPermits.acquire();
             ProgressMonitor progressMonitor = specWalker.getProgressMonitor();
             final ProgressState progress = profileInstance.getProgress();
-            if (progress != null) {
+            if (progress != null && progressMonitor != null) {
                 progressMonitor.initialise(progress.getTarget(), progress.getCount());
             }
         }
@@ -421,7 +421,10 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
 
     @Override
     public void setResultsObserver(ProfileResultObserver observer) {
-        specWalker.getProgressMonitor().setResultObserver(observer);
+        ProgressMonitor progressMonitor = specWalker.getProgressMonitor();
+        if (progressMonitor != null) {
+            progressMonitor.setResultObserver(observer);
+        }
     }
 
     @Override
