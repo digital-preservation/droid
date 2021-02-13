@@ -62,10 +62,12 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
  */
 //CHECKSTYLE:OFF - ClassDataAbstractionCoupling and ClassFanOutComplexity just over limit.
 public class CommandFactoryImpl implements CommandFactory {
-//CHECKSTYLE:ON
+    //CHECKSTYLE:ON
 
     private static final String NO_RESOURCES_SPECIFIED = "No resources specified.";
     private static final String NO_PROFILES_SPECIFIED_FOR_EXPORT = "No profiles specified for export.";
+    private static final String PROFILE_PREFIX = "profile.";
+
     private GlobalContext context;
     private PrintWriter printWriter;
 
@@ -455,10 +457,7 @@ public class CommandFactoryImpl implements CommandFactory {
     private PropertiesConfiguration createProperties(String[] properties) {
         PropertiesConfiguration result = new PropertiesConfiguration();
         for (String property : properties) {
-            if (!property.startsWith("profile.")) {
-                property = "profile." + property;
-            }
-            addProperty(property, result);
+            addProperty(property.startsWith(PROFILE_PREFIX) ? property : PROFILE_PREFIX + property, result);
         }
         return result;
     }
