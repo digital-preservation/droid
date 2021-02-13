@@ -40,7 +40,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import uk.gov.nationalarchives.droid.command.i18n.I18N;
 
-
 import uk.gov.nationalarchives.droid.report.interfaces.ReportManager;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
 
@@ -54,9 +53,6 @@ public class ListReportsCommand implements DroidCommand {
     private PrintWriter printWriter;
     private ReportManager reportManager;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void execute() throws CommandExecutionException {
         List<ReportSpec> reports = reportManager.listReportSpecs();
@@ -65,15 +61,14 @@ public class ListReportsCommand implements DroidCommand {
         } else {
             StringBuilder builder = new StringBuilder();
             for (ReportSpec report : reports) {
-                String reportDescription = String.format("\nReport:\t'%s'\n\tFormats:", report.getName());
-                builder.append(reportDescription);
+                builder.append(report.getName());
                 List<String> outputFormats = getReportOutputFormats(report);
                 for (String format : outputFormats) {
                     builder.append("\t'");
                     builder.append(format);
                     builder.append("'");
                 }
-                builder.append("\t'Pdf'\t'DROID Report XML'");
+                builder.append("\t'Pdf'\t'DROID Report XML'\n");
             }
             printWriter.println(builder.toString());
         }
