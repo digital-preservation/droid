@@ -74,8 +74,8 @@ public class ListReportsCommand implements DroidCommand {
                     builder.append("'");
                 }
                 builder.append("\t'Pdf'\t'DROID Report XML'");
-                printWriter.println(builder.toString());
             }
+            printWriter.println(builder.toString());
         }
     }
     
