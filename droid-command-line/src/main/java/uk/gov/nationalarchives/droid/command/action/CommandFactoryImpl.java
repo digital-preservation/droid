@@ -354,6 +354,15 @@ public class CommandFactoryImpl implements CommandFactory {
         }
     }
 
+    /*
+     * NOTE: this relies on all archive type properties following a common pattern of:
+     * 1. "profile.process"
+     * 2. Uppercase letter of archive type name.
+     * 3. Lower case for the remainder of the archive type name.
+     *
+     * For example, for ZIP archives, the property must be profile.processZip.
+     * Might be more robust to maintain a mapping of property to archive type...?
+     */
     private String getArchivePropertyName(String archiveType) {
         return "profile.process" + archiveType.substring(0, 1).toUpperCase(Locale.ROOT) + archiveType.substring(1).toLowerCase(Locale.ROOT);
     }
@@ -446,6 +455,9 @@ public class CommandFactoryImpl implements CommandFactory {
     private PropertiesConfiguration createProperties(String[] properties) {
         PropertiesConfiguration result = new PropertiesConfiguration();
         for (String property : properties) {
+            if (!property.startsWith("profile.")) {
+                property = "profile." + property;
+            }
             addProperty(property, result);
         }
         return result;
