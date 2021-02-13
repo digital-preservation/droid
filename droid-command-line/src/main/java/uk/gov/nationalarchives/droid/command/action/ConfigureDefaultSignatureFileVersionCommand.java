@@ -93,14 +93,17 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
     }
 
     private boolean updated(Map<String, SignatureFileInfo> sigInfo, SignatureType type) throws CommandExecutionException {
-        for (Map.Entry<String, SignatureFileInfo> entry : sigInfo.entrySet()) {
-            String key = entry.getKey();
-            SignatureFileInfo info = entry.getValue();
-            if (info.getVersion() == signatureFileVersion) {
-                updateDefaultVersion(key, type);
-                return true;
+        if (sigInfo != null) {
+            for (Map.Entry<String, SignatureFileInfo> entry : sigInfo.entrySet()) {
+                String key = entry.getKey();
+                SignatureFileInfo info = entry.getValue();
+                if (info.getVersion() == signatureFileVersion) {
+                    updateDefaultVersion(key, type);
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
