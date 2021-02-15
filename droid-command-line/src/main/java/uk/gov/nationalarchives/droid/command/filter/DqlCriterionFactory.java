@@ -60,9 +60,9 @@ public final class DqlCriterionFactory {
     static {
         factories.put(CriterionFieldEnum.FILE_EXTENSION, new StringCriterionFactory());
         factories.put(CriterionFieldEnum.LAST_MODIFIED_DATE, new DateCriterionFactory());
-        factories.put(CriterionFieldEnum.FILE_EXTENSION, new StringCriterionFactory());
         factories.put(CriterionFieldEnum.FILE_FORMAT, new StringCriterionFactory());
         factories.put(CriterionFieldEnum.FILE_NAME, new StringCriterionFactory());
+        factories.put(CriterionFieldEnum.IDENTIFICATION_COUNT, new IntegerCriterionFactory());
         factories.put(CriterionFieldEnum.FILE_SIZE, new LongCriterionFactory());
         factories.put(CriterionFieldEnum.MIME_TYPE, new StringCriterionFactory());
         factories.put(CriterionFieldEnum.PUID, new StringCriterionFactory());
@@ -134,6 +134,24 @@ public final class DqlCriterionFactory {
         public FilterCriterion newCriterion(CriterionFieldEnum field,
                 CriterionOperator operator, String dqlValue) {
             LongCriterion criterion = new LongCriterion(field, operator);
+            criterion.setValue(dqlValue);
+            return criterion;
+        }
+    }
+
+    private static final class IntegerCriterionFactory implements CriterionFactory {
+        @Override
+        public FilterCriterion newCriterion(CriterionFieldEnum field,
+                                            CriterionOperator operator, Collection<String> dqlValues) {
+            IntegerCriterion criterion = new IntegerCriterion(field, operator);
+            criterion.setValue(dqlValues);
+            return criterion;
+        };
+
+        @Override
+        public FilterCriterion newCriterion(CriterionFieldEnum field,
+                                            CriterionOperator operator, String dqlValue) {
+            IntegerCriterion criterion = new IntegerCriterion(field, operator);
             criterion.setValue(dqlValue);
             return criterion;
         }
@@ -237,6 +255,18 @@ public final class DqlCriterionFactory {
         @Override
         protected Long toTypedValue(String s) {
             return Long.valueOf(s);
+        }
+    }
+
+    private static class IntegerCriterion extends AbstractFilterCriterion<Integer> {
+
+        public IntegerCriterion(CriterionFieldEnum field, CriterionOperator operator) {
+            super(field, operator);
+        }
+
+        @Override
+        protected Integer toTypedValue(String s) {
+            return Integer.valueOf(s);
         }
     }
 
