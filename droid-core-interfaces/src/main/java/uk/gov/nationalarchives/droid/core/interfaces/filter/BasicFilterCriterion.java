@@ -67,4 +67,9 @@ public final class BasicFilterCriterion implements FilterCriterion {
     public Object getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + '(' + field.getName() + ' ' + operator.toString() + ' ' + value + ')';
+    }
 }

@@ -133,4 +133,9 @@ public final class BasicFilter implements Filter {
         return new BasicFilter(new ArrayList<>(criteria), narrowed, enabled);
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(narrowed: " + narrowed + " enabled: " + enabled + "criteria: " + criteria + ')';
+    }
+
 }
