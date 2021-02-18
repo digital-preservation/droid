@@ -36,6 +36,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -53,6 +56,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
  * This should be set on any handler that processes identification requests - files, but also archive content handlers.
  */
 public class IdentificationRequestFilter {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private Filter filter;
 
@@ -159,30 +164,31 @@ public class IdentificationRequestFilter {
     private boolean compareDates(Long requestTime, CriterionOperator operator, Object criterionValue) {
         boolean result = false;
         if (requestTime != null) {
-            long compareValue = ((Date) criterionValue).getTime();
+            Date requestDate = new LocalDate(requestTime.longValue()).toDate(); // strip any time - just get the date part.
+            Date criteriaDate = (Date) criterionValue;
             switch (operator) {
                 case LT: {
-                    result = requestTime < compareValue;
+                    result = requestDate.before(criteriaDate);
                     break;
                 }
                 case LTE: {
-                    result = requestTime <= compareValue;
+                    result = requestDate.before(criteriaDate) || requestDate.equals(criteriaDate);
                     break;
                 }
                 case EQ: {
-                    result = requestTime == compareValue;
+                    result = requestDate.equals(criteriaDate);
                     break;
                 }
                 case NE: {
-                    result = requestTime != compareValue;
+                    result = !requestDate.equals(criteriaDate);
                     break;
                 }
                 case GT: {
-                    result = requestTime > compareValue;
+                    result = requestDate.after(criteriaDate);
                     break;
                 }
                 case GTE: {
-                    result = requestTime >= compareValue;
+                    result = requestDate.after(criteriaDate)  || requestDate.equals(criteriaDate);
                     break;
                 }
                 default : {
@@ -347,11 +353,15 @@ public class IdentificationRequestFilter {
                         newCriteria.add(criterion);
                         break;
                     }
-                    default : break; // don't add.
+                    default : {
+                        break; // don't add.
+                    }
                 }
             }
             if (newCriteria.size() > 0) {
                 result = new BasicFilter(newCriteria, identificationFilter.isNarrowed());
+            } else {
+                log.warn("No viable file metadata criteria defined - no filtering will be performed.");
             }
         }
         return result;

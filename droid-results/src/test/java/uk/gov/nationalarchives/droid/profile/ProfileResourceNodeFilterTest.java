@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
@@ -378,66 +379,186 @@ public class ProfileResourceNodeFilterTest {
         assertFalse(filter.passesFilter(node));
     }
 
+
+
+    //TODO: using timestamp to test dates is artificial.
+    //      resolution of filter is day-month-year, but timestampe is down to milliseconds.
+    //      So filter on equals 1st Jan 2021 should include everything from midnight to midnight the next day.
+    //      Has to be a composite test, also not equals.  Greater than, greater than equals also.
+
+
     @Test
     public void testLastModifiedLessThan() {
-        ProfileResourceNode lastModNode = createDateNode(new Date(10000));
-        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.LT, new Date(9999));
-        assertFalse(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9998));
-        assertTrue(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9999));
-        assertFalse(lastModFilter.passesFilter(lastModNode));
+        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.LT, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time.
+        ProfileResourceNode lastDateNode = createDateNode(getDate(2001, 2, 1, 0));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // Day before - is less than.
+        lastDateNode = createDateNode(getDate(2021, 1, 31, 11));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // same day and time - should fail.
+        lastDateNode = createDateNode(getDate(2021, 2, 1));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // later in the same day - should fail.
+        lastDateNode = createDateNode(getDate(2021, 2,1, 12));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // next day - should fail
+        lastDateNode = createDateNode(getDate(2021, 2, 2, 11));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // Nearly the 22nd century - should fail.
+        lastDateNode = createDateNode(getDate(2099, 12, 31, 23));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
     }
 
     @Test
     public void testLastModifiedLessThanEqual() {
-        ProfileResourceNode lastModNode = createDateNode(new Date(10000));
-        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.LTE, new Date(9999));
-        assertFalse(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9998));
-        assertTrue(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9999));
-        assertTrue(lastModFilter.passesFilter(lastModNode));
+        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.LTE, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - pass
+        ProfileResourceNode lastDateNode = createDateNode(getDate(2001, 2, 1, 0));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // Day before - pass
+        lastDateNode = createDateNode(getDate(2021, 1, 31, 11));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // same day and time - pass.
+        lastDateNode = createDateNode(getDate(2021, 2, 1));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // later on the same day - should pass (day is still equal)
+        lastDateNode = createDateNode(getDate(2021, 2,1, 12));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // next day - fail
+        lastDateNode = createDateNode(getDate(2021, 2, 2, 11));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // Nearly the 22nd century - should fail.
+        lastDateNode = createDateNode(getDate(2099, 12, 31, 23));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
     }
 
     @Test
     public void testLastModifiedEqual() {
-        ProfileResourceNode lastModNode = createDateNode(new Date(10000));
-        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.EQ, new Date(9999));
-        assertFalse(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9999));
-        assertTrue(lastModFilter.passesFilter(lastModNode));
+        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.EQ, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - fail
+        ProfileResourceNode lastDateNode = createDateNode(getDate(2001, 2, 1, 0));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // Day before - fail
+        lastDateNode = createDateNode(getDate(2021, 1, 31, 11));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // same day and time - pass.
+        lastDateNode = createDateNode(getDate(2021, 2, 1));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // later on the same day - should pass (day is still equal)
+        lastDateNode = createDateNode(getDate(2021, 2,1, 12));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // next day - fail
+        lastDateNode = createDateNode(getDate(2021, 2, 2, 11));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // Nearly the 22nd century - should fail.
+        lastDateNode = createDateNode(getDate(2099, 12, 31, 23));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
     }
 
     @Test
     public void testLastModifiedNotEqual() {
-        ProfileResourceNode lastModNode = createDateNode(new Date(10000));
-        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.NE, new Date(9999));
-        assertTrue(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9999));
-        assertFalse(lastModFilter.passesFilter(lastModNode));
+        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.NE, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - pass
+        ProfileResourceNode lastDateNode = createDateNode(getDate(2001, 2, 1, 0));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // Day before - pass
+        lastDateNode = createDateNode(getDate(2021, 1, 31, 11));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // same day and time - fail.
+        lastDateNode = createDateNode(getDate(2021, 2, 1));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // later on the same day - fail (day is still equal)
+        lastDateNode = createDateNode(getDate(2021, 2,1, 12));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // next day - pass
+        lastDateNode = createDateNode(getDate(2021, 2, 2, 11));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // Nearly the 22nd century - pass.
+        lastDateNode = createDateNode(getDate(2099, 12, 31, 23));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
     }
 
     @Test
     public void testLastModifiedGreaterThan() {
-        ProfileResourceNode lastModNode = createDateNode(new Date(10000));
-        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.GT, new Date(9999));
-        assertTrue(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9998));
-        assertFalse(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9999));
-        assertFalse(lastModFilter.passesFilter(lastModNode));
+        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.GT, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - fail
+        ProfileResourceNode lastDateNode = createDateNode(getDate(2001, 2, 1, 0));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // Day before - fail
+        lastDateNode = createDateNode(getDate(2021, 1, 31, 11));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // same day and time - fail.
+        lastDateNode = createDateNode(getDate(2021, 2, 1));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // later on the same day - fail (day is still equal)
+        lastDateNode = createDateNode(getDate(2021, 2,1, 12));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // next day - pass
+        lastDateNode = createDateNode(getDate(2021, 2, 2, 11));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // Nearly the 22nd century - pass.
+        lastDateNode = createDateNode(getDate(2099, 12, 31, 23));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
     }
 
     @Test
     public void testLastModifiedGreaterThanEqual() {
-        ProfileResourceNode lastModNode = createDateNode(new Date(10000));
-        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.GTE, new Date(9999));
-        assertTrue(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9998));
-        assertFalse(lastModFilter.passesFilter(lastModNode));
-        lastModNode = createDateNode(new Date(9999));
-        assertTrue(lastModFilter.passesFilter(lastModNode));
+        ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.GTE, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - fail
+        ProfileResourceNode lastDateNode = createDateNode(getDate(2001, 2, 1, 0));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // Day before - fail
+        lastDateNode = createDateNode(getDate(2021, 1, 31, 11));
+        assertFalse(lastModFilter.passesFilter(lastDateNode));
+
+        // same day and time - pass.
+        lastDateNode = createDateNode(getDate(2021, 2, 1));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // later on the same day - pass (day is still equal)
+        lastDateNode = createDateNode(getDate(2021, 2,1, 12));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // next day - pass
+        lastDateNode = createDateNode(getDate(2021, 2, 2, 11));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
+
+        // Nearly the 22nd century - pass.
+        lastDateNode = createDateNode(getDate(2099, 12, 31, 23));
+        assertTrue(lastModFilter.passesFilter(lastDateNode));
     }
 
     @Test
@@ -1435,6 +1556,13 @@ public class ProfileResourceNodeFilterTest {
         }
         return result;
     }
+    
+    private Date getDate(int year, int month, int day, int hour) {
+        return new LocalDateTime(year, month, day, hour, 0).toDate();
+    }
 
+    private Date getDate(int year, int month, int day) {
+        return new LocalDateTime(year, month, day, 0, 0).toDate();
+    }
 
 }

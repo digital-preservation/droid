@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.joda.time.LocalDate;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
@@ -395,29 +396,30 @@ public class ProfileResourceNodeFilter {
         boolean result = false;
         if (nodeValue != null) {
             Date compareValue = (Date) criterionValue;
+            Date nodeValueDay = new LocalDate(nodeValue.getTime()).toDate();
             switch (operator) {
                 case LT: {
-                    result = nodeValue.before(compareValue);
+                    result = nodeValueDay.before(compareValue);
                     break;
                 }
                 case LTE: {
-                    result = nodeValue.before(compareValue) || nodeValue.equals(compareValue);
+                    result = nodeValueDay.before(compareValue) || nodeValueDay.equals(compareValue);
                     break;
                 }
                 case EQ: {
-                    result = nodeValue.equals(compareValue);
+                    result = nodeValueDay.equals(compareValue);
                     break;
                 }
                 case NE: {
-                    result = !nodeValue.equals(compareValue);
+                    result = !nodeValueDay.equals(compareValue);
                     break;
                 }
                 case GT: {
-                    result = nodeValue.after(compareValue);
+                    result = nodeValueDay.after(compareValue);
                     break;
                 }
                 case GTE: {
-                    result = nodeValue.after(compareValue) || nodeValue.equals(compareValue);
+                    result = nodeValueDay.after(compareValue) || nodeValueDay.equals(compareValue);
                     break;
                 }
                 default: { // If the operator isn't supported, we won't filter out.

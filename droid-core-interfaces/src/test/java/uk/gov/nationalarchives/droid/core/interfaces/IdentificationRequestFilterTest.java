@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.core.interfaces;
 
 import net.byteseek.io.reader.WindowReader;
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
@@ -379,65 +380,179 @@ public class IdentificationRequestFilterTest {
         assertFalse(filter.passesFilter(request));
     }
 
+    //TODO: check - is SQL filtering working on midnight 00:00 for year/month/day?
+
     @Test
     public void testLastModifiedLessThan() {
-        IdentificationRequest lastModrequest = createDaterequest(new Date(10000));
-        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.LT, new Date(9999));
-        assertFalse(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9998));
+        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.LT, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time.
+        IdentificationRequest lastModrequest = createDaterequest(getDate(2001, 2, 1, 0));
         assertTrue(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9999));
+
+        // Day before - is less than.
+        lastModrequest = createDaterequest(getDate(2021, 1, 31, 11));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // same day and time - should fail.
+        lastModrequest = createDaterequest(getDate(2021, 2, 1));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // later in the same day - should fail.
+         lastModrequest = createDaterequest(getDate(2021, 2,1, 12));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // next day - should fail
+        lastModrequest = createDaterequest(getDate(2021, 2, 2, 11));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // Nearly the 22nd century - should fail.
+        lastModrequest = createDaterequest(getDate(2099, 12, 31, 23));
         assertFalse(lastModFilter.passesFilter(lastModrequest));
     }
 
     @Test
     public void testLastModifiedLessThanEqual() {
-        IdentificationRequest lastModrequest = createDaterequest(new Date(10000));
-        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.LTE, new Date(9999));
+        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.LTE, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - pass
+        IdentificationRequest lastModrequest = createDaterequest(getDate(2001, 2, 1, 0));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // Day before - pass
+        lastModrequest = createDaterequest(getDate(2021, 1, 31, 11));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // same day and time - pass.
+        lastModrequest = createDaterequest(getDate(2021, 2, 1));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // later on the same day - should pass (day is still equal)
+        lastModrequest = createDaterequest(getDate(2021, 2,1, 12));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // next day - fail
+        lastModrequest = createDaterequest(getDate(2021, 2, 2, 11));
         assertFalse(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9998));
-        assertTrue(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9999));
-        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // Nearly the 22nd century - should fail.
+        lastModrequest = createDaterequest(getDate(2099, 12, 31, 23));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
     }
 
     @Test
     public void testLastModifiedEqual() {
-        IdentificationRequest lastModrequest = createDaterequest(new Date(10000));
-        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.EQ, new Date(9999));
+        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.EQ, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - fail
+        IdentificationRequest lastModrequest = createDaterequest(getDate(2001, 2, 1, 0));
         assertFalse(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9999));
+
+        // Day before - fail
+        lastModrequest = createDaterequest(getDate(2021, 1, 31, 11));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // same day and time - pass.
+        lastModrequest = createDaterequest(getDate(2021, 2, 1));
         assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // later on the same day - should pass (day is still equal)
+        lastModrequest = createDaterequest(getDate(2021, 2,1, 12));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // next day - fail
+        lastModrequest = createDaterequest(getDate(2021, 2, 2, 11));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // Nearly the 22nd century - should fail.
+        lastModrequest = createDaterequest(getDate(2099, 12, 31, 23));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
     }
 
     @Test
     public void testLastModifiedNotEqual() {
-        IdentificationRequest lastModrequest = createDaterequest(new Date(10000));
-        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.NE, new Date(9999));
+        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.NE, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - pass
+        IdentificationRequest lastModrequest = createDaterequest(getDate(2001, 2, 1, 0));
         assertTrue(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9999));
+
+        // Day before - pass
+        lastModrequest = createDaterequest(getDate(2021, 1, 31, 11));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // same day and time - fail.
+        lastModrequest = createDaterequest(getDate(2021, 2, 1));
         assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // later on the same day - fail (day is still equal)
+        lastModrequest = createDaterequest(getDate(2021, 2,1, 12));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // next day - pass
+        lastModrequest = createDaterequest(getDate(2021, 2, 2, 11));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // Nearly the 22nd century - pass.
+        lastModrequest = createDaterequest(getDate(2099, 12, 31, 23));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
     }
 
     @Test
     public void testLastModifiedGreaterThan() {
-        IdentificationRequest lastModrequest = createDaterequest(new Date(10000));
-        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.GT, new Date(9999));
+        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.GT, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - fail
+        IdentificationRequest lastModrequest = createDaterequest(getDate(2001, 2, 1, 0));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // Day before - fail
+        lastModrequest = createDaterequest(getDate(2021, 1, 31, 11));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // same day and time - fail.
+        lastModrequest = createDaterequest(getDate(2021, 2, 1));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // later on the same day - fail (day is still equal)
+        lastModrequest = createDaterequest(getDate(2021, 2,1, 12));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // next day - pass
+        lastModrequest = createDaterequest(getDate(2021, 2, 2, 11));
         assertTrue(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9998));
-        assertFalse(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9999));
-        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // Nearly the 22nd century - pass.
+        lastModrequest = createDaterequest(getDate(2099, 12, 31, 23));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
     }
 
     @Test
     public void testLastModifiedGreaterThanEqual() {
-        IdentificationRequest lastModrequest = createDaterequest(new Date(10000));
-        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.GTE, new Date(9999));
-        assertTrue(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9998));
+        IdentificationRequestFilter lastModFilter = createDateFilter(CriterionOperator.GTE, getDate(2021, 2, 1));
+
+        // Several years before is less than, but with same month day and time - fail
+        IdentificationRequest lastModrequest = createDaterequest(getDate(2001, 2, 1, 0));
         assertFalse(lastModFilter.passesFilter(lastModrequest));
-        lastModrequest = createDaterequest(new Date(9999));
+
+        // Day before - fail
+        lastModrequest = createDaterequest(getDate(2021, 1, 31, 11));
+        assertFalse(lastModFilter.passesFilter(lastModrequest));
+
+        // same day and time - pass.
+        lastModrequest = createDaterequest(getDate(2021, 2, 1));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // later on the same day - pass (day is still equal)
+        lastModrequest = createDaterequest(getDate(2021, 2,1, 12));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // next day - pass
+        lastModrequest = createDaterequest(getDate(2021, 2, 2, 11));
+        assertTrue(lastModFilter.passesFilter(lastModrequest));
+
+        // Nearly the 22nd century - pass.
+        lastModrequest = createDaterequest(getDate(2099, 12, 31, 23));
         assertTrue(lastModFilter.passesFilter(lastModrequest));
     }
 
@@ -856,6 +971,14 @@ public class IdentificationRequestFilterTest {
             result[i] = values[i];
         }
         return result;
+    }
+
+    private Date getDate(int year, int month, int day, int hour) {
+        return new LocalDateTime(year, month, day, hour, 0).toDate();
+    }
+
+    private Date getDate(int year, int month, int day) {
+        return new LocalDateTime(year, month, day, 0, 0).toDate();
     }
 
     /*
