@@ -53,6 +53,7 @@ import uk.gov.nationalarchives.droid.command.action.CommandLineParam;
 import uk.gov.nationalarchives.droid.command.action.CommandLineSyntaxException;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.context.SpringUiContext;
+import uk.gov.nationalarchives.droid.command.filter.DqlParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 
 /**
@@ -69,7 +70,7 @@ public final class DroidCommandLine implements AutoCloseable {
     /**
      * Message about incorrect syntax.
      */
-    public static final String CLI_SYNTAX_INCORRECT = "Incorrect command line syntax: %s";
+    public static final String CLI_SYNTAX_INCORRECT = "Incorrect command line syntax:\n%s";
     /** Wrap width. */
     public static final int WRAP_WIDTH = 120;
 
@@ -155,13 +156,9 @@ public final class DroidCommandLine implements AutoCloseable {
                 throw new CommandLineSyntaxException(
                         "No command line options specified (use -h to see all available options)");
             }
-        } catch (ParseException pe) {
-            throw new CommandLineSyntaxException(pe);
+        } catch (ParseException | DqlParseException pe) {
+            throw new CommandLineSyntaxException(pe.getMessage());
         }
-
-        // finally {
-        // log.info("Closing DROID.");
-        // }
     }
 
     private CommandLineParam findTopLevelOption() {
