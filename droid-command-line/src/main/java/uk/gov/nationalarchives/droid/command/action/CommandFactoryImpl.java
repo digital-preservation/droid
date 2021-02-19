@@ -51,6 +51,7 @@ import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType
 import uk.gov.nationalarchives.droid.command.filter.DqlCriterionFactory;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
+import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
@@ -234,7 +235,7 @@ public class CommandFactoryImpl implements CommandFactory {
         } else { // output to a file, or the console if not specified.
             destination = cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())
                     ? cli.getOptionValue(CommandLineParam.OUTPUT_FILE.toString()) : "stdout";
-            overrideProperties.setProperty("profile.outputFilePath", destination);
+            overrideProperties.setProperty(DroidGlobalProperty.OUTPUT_FILE_PATH.getName(), destination);
         }
         return destination;
     }
@@ -309,7 +310,24 @@ public class CommandFactoryImpl implements CommandFactory {
         }
 
         processCommandLineArchiveFlags(cli, overrideProperties);
+        processCommandLineCSVOptions(cli, overrideProperties);
+
         return overrideProperties;
+    }
+
+    private void processCommandLineCSVOptions(CommandLine cli, PropertiesConfiguration overrideProperties) {
+        if (cli.hasOption(CommandLineParam.COLUMNS_TO_WRITE.getLongName())) {
+            overrideProperties.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(),
+                    String.join(" ", cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName())));
+        }
+        if (cli.hasOption(CommandLineParam.QUOTE_COMMAS.getLongName())) {
+            overrideProperties.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
+        }
+        if (cli.hasOption(CommandLineParam.ROW_PER_FORMAT.getLongName())) {
+            overrideProperties.setProperty(DroidGlobalProperty.EXPORT_OPTIONS.getName(), ExportOptions.ONE_ROW_PER_FORMAT.name());
+        } else {
+            overrideProperties.setProperty(DroidGlobalProperty.EXPORT_OPTIONS.getName(), ExportOptions.ONE_ROW_PER_FILE.name());
+        }
     }
 
     private void processCommandLineArchiveFlags(CommandLine cli, PropertiesConfiguration overrideProperties) {
@@ -328,18 +346,18 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     private void setAllArchivesExpand(PropertiesConfiguration overrideProperties, boolean isOn) {
-        overrideProperties.setProperty("profile.processTar", isOn);
-        overrideProperties.setProperty("profile.processZip", isOn);
-        overrideProperties.setProperty("profile.processGzip", isOn);
-        overrideProperties.setProperty("profile.processRar", isOn);
-        overrideProperties.setProperty("profile.process7zip", isOn);
-        overrideProperties.setProperty("profile.processIso", isOn);
-        overrideProperties.setProperty("profile.processBzip2", isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_TAR.getName(), isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_ZIP.getName(), isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_GZIP.getName(), isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_RAR.getName(), isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_7ZIP.getName(), isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_ISO.getName(), isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_BZIP2.getName(), isOn);
     }
 
     private void setAllWebArchivesExpand(PropertiesConfiguration overrideProperties, boolean isOn) {
-        overrideProperties.setProperty("profile.processArc", isOn);
-        overrideProperties.setProperty("profile.processWarc", isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_ARC.getName(), isOn);
+        overrideProperties.setProperty(DroidGlobalProperty.PROCESS_WARC.getName(), isOn);
     }
 
     private void setExpandArchiveTypes(PropertiesConfiguration overrideProperties, String[] archiveTypes) {
