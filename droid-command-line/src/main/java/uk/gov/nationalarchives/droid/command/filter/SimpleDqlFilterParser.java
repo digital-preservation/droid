@@ -31,198 +31,166 @@
  */
 package uk.gov.nationalarchives.droid.command.filter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
-import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 
 /**
- * @author boreilly
+ * @author mpalmer
  * Parses a command line filter condition, throwing exceptions for various invalid filter patterns.
- * Uses Java code without relying on Antlr (see AntlrDqlParser) which may have dependency issues with particular 
- * Java versions and environments.
  */
-//CHECKSTYLE:OFF  Too complex and some don't agree with all the suggestions.  But layout issues all OK!
 public class SimpleDqlFilterParser implements DqlFilterParser {
 
-    private static final String INVALID_ARGUMENT_COUNT = "The filter condition \"%s\" is invalid, since it has only %d arguments - at least 3 are required (are you missing an operator, or a space?)";
-    private static final String INVALID_ARGUMENT_COUNT_FOR_STRING_OPERATOR = "The filter condition \"%s\" is invalid, since it has  %d arguments.  String based filter conditions must supply one string value enclosed in single quotes for the final argument";
-    private static final String INVALID_USE_OF_NOT = "The filter condition \"%s\" is invalid. The \"not\" operator can only be used with string operators \"starts\", \"ends\" and \"contains\"";
-    private static final String MISSING_SINGLE_QUOTES = "The filter condition \"%s\" is invalid. Queries with \"starts\", \"ends\" and \"contains\" must be followed by a  value enclosed in single quotes after the operator.";
-    private static final String INVALID_COMPARISON_FILTER = "The filter condition \"%s\" is invalid.  Filters using a comparison operator must supply a single integer numeric operand, or (for the \"=\" operator only) a string surrounded by single quotes. Dates must use the format yyyy-mm-dd, e.g. 2010-01-23 for 23rd Jan 2010";
+    private static final Pattern FIELD_PATTERN = Pattern.compile("[a-zA-Z_]+");
+    private static final Pattern OPERATOR_PATTERN = Pattern.compile("( *)(<(?!=|>)|<=|<>|=|>(?!=)|>=|starts|ends|contains|not starts|not ends|not contains|any|none)( *)", Pattern.CASE_INSENSITIVE);
+    private static final char SINGLE_QUOTE_CHAR ='\'';
+    private static final char SPACE_CHAR =' ';
     private static final String SINGLE_QUOTE = "'";
-    private static final int MIMIMUM_FILTER_COMPONENTS = 3;
-    private static final int VALUES_START_INDEX_WITH_NOT_OPERATOR = 3;
-    private static final int VALUES_START_INDEX_SANS_NOT_OPERATOR = 2;
-    
+    private static final String ANY_OPERATOR = "ANY";
+    private static final String NONE_OPERATOR = "NONE";
+    private static final String COULD_NOT_FIND_A_VALUE_FOR_THE_FILTER_CRITERIA = "Could not find a value for the filter criteria: ";
+    private static final String COULD_NOT_FIND_A_VALID_OPERATOR_IN_THE_FILTER_CRITERIA = "Could not find a valid operator in the filter criteria: ";
+    private static final String COULD_NOT_FIND_A_FIELD_IN_THE_FILTER_CRITERIA = "Could not find a field in the filter criteria: ";
+    private static final String NO_CLOSING_QUOTE_FOR_OPENING_QUOTE = "No closing quote for opening quote at position %d in filter criteria: %s";
+
+    /**
+     * Parse a filter criterion string to split into the field, operator and value and returns a FilterCriterion.
+     * Could be done more simply with a single regular expression, but would not let us throw
+     * such useful parse error messages by doing it all in one.  We can identify which bit is
+     * a problem by breaking it down into three matches, which gives better feedback to users.
+     * <p>
+     * Parsing is tolerant of additional whitespace where it can be, and will remove any
+     * enclosing single quotes on the value component.  Single quotes are useful to define
+     * string values if you have leading or trailing whitespace as part of the value.
+     *
+     * @param dql The filter criteria string to parse.
+     * @return A FilterCriterion from parsing the string.
+     * @throws DqlParseException if there was a problem parsing the string.
+     */
     @Override
     public FilterCriterion parse(String dql) {
+        final String dqlToParse = dql.strip();
+
+        final String fieldName;
+        Matcher fieldMatcher = FIELD_PATTERN.matcher(dqlToParse);
+        if (fieldMatcher.find()) {
+            fieldName = fieldMatcher.group();
+        } else {
+            throw new DqlParseException(COULD_NOT_FIND_A_FIELD_IN_THE_FILTER_CRITERIA + dql);
+        }
+
+        final String operator;
+        String remainingDql = dqlToParse.substring(fieldMatcher.end());
+        Matcher operatorMatcher = OPERATOR_PATTERN.matcher(remainingDql);
+        if (operatorMatcher.find()) {
+            operator = operatorMatcher.group(2); // ignore any whitespace in the first or last group:
+        } else {
+            throw new DqlParseException(COULD_NOT_FIND_A_VALID_OPERATOR_IN_THE_FILTER_CRITERIA + dql);
+        }
+
+        final String value = remainingDql.substring(operatorMatcher.end());
+
+        return createFilterCriterion(dql, fieldName, operator, value);
+    }
+
+    /**
+     * Creates a filter criterion for a field, operator and value.
+     * @param dql The full string to parse (in case of error to produce good error messages)
+     * @param fieldName The field name
+     * @param operator The operator
+     * @param value The value
+     * @return A FilterCriterion for the field, operator and value.
+     * @throws DqlParseException if there's a problem creating a filter criterion from those values.
+     */
+    private FilterCriterion createFilterCriterion(String dql, String fieldName, String operator, String value) {
         try {
-            Pattern p = Pattern.compile("(?<!(\\\\'|\"|'[a-zA-Z0-9\"]{1,1000})) (?!(\\\\|\").*)");
-            String[] filterComponents = dql.split(p.pattern());
-          
-            String dqlOperator = null;
-            String value = null;
-            int valuesStartIndex = 0;
-            FilterCriterion criterion = null;
-             
-            //We must always have at least 3 components i.e. field, operator and one operand 
-            //E.g. "file_name contains 'london'"
-            if (filterComponents.length < MIMIMUM_FILTER_COMPONENTS) {
-                throw new DqlParseException(String.format(INVALID_ARGUMENT_COUNT , dql, filterComponents.length));
-            }
+            return isListOperator(operator)
+                    ? DqlCriterionFactory.newCriterion(fieldName, operator, parseListValues(dql, value))
+                    : DqlCriterionFactory.newCriterion(fieldName, operator, parseSingleValue(dql, value));
+        } catch (IllegalArgumentException ex) {
+            throw new DqlParseException(ex);
+        }
+    }
 
-            String dqlField = filterComponents[0];
+    /**
+     * Parses a single value, stripping any single quotes that surround it.
+     * @param dql The full string to parse.
+     * @param value The value to parse.
+     * @return A single value, stripping any single surrounding quotes.
+     * @throws DqlParseException if there is no value.
+     */
+    private String parseSingleValue(String dql, String value) {
+        if (value.startsWith(SINGLE_QUOTE) && value.endsWith((SINGLE_QUOTE))) {
+            value = value.substring(1, value.length() - 1);
+        }
+        if (value.isEmpty()) {
+            throw new DqlParseException(COULD_NOT_FIND_A_VALUE_FOR_THE_FILTER_CRITERIA + dql);
+        }
+        return value;
+    }
 
-            // Currently the operator is always a single token, unless preceded by "not" 
-            //e.g. in "file_name not contains 'london'", the operator is "not contains"
-            boolean operatorIsTwoPart = filterComponents[1].toLowerCase().equals("not") ? true : false;
+    /**
+     * Parses a list of values in a string which are space separated, unless they are enclosed in single quotes.
+     * For example:  one two three four five gives the list [one, two, three, four, five] with 5 members.
+     *               'one two' three 'four five' gives the list [one two, three, four five] with 3 members.
+     * @param dql The full string to parse.
+     * @param value The value to parse containing a space separated list of (possibly single quoted) entries.
+     * @return A list of strings
+     * @throws DqlParseException if the list of values is empty.
+     */
+    private List<String> parseListValues(String dql, String value) {
+        List<String> values = new ArrayList<>();
+        int charPos = 0;
+        while (charPos < value.length()) {
+            switch (value.charAt(charPos)) {
 
-            if (operatorIsTwoPart) {
-                String[] operators = Arrays.copyOfRange(filterComponents, 1, VALUES_START_INDEX_WITH_NOT_OPERATOR);
-                dqlOperator = operators[0] + " " + operators[1];
-                //dqlOperator =  String.join(" ", operators); -- Only works with Java 8 - we have to support 7!!
-                valuesStartIndex = VALUES_START_INDEX_WITH_NOT_OPERATOR;
-            } else {
-                dqlOperator = filterComponents[1];
-                valuesStartIndex = VALUES_START_INDEX_SANS_NOT_OPERATOR;
-            }
-
-            if (isStringOperator(dqlOperator)) {
-                // Check that we have the right number of arguments, with "starts", "ends" or "contains", we should
-                // only have a single value, So there should be 3 arguments, or 4 if preceded by "not"
-                if ((operatorIsTwoPart && filterComponents.length != (MIMIMUM_FILTER_COMPONENTS + 1)) || ((!operatorIsTwoPart) && filterComponents.length != MIMIMUM_FILTER_COMPONENTS)) {
-                    throw new DqlParseException(String.format(INVALID_ARGUMENT_COUNT_FOR_STRING_OPERATOR,  dql , filterComponents.length));
-                }
-                // We have the correct number of arguments - check that the value is enclosed in quotes - this is required  
-                // with the string operators i.e. "starts", "ends" or "contains"
-                value = filterComponents[valuesStartIndex];
-                if (!(value.startsWith(SINGLE_QUOTE) && value.endsWith(SINGLE_QUOTE))) {
-                    throw new DqlParseException(String.format(MISSING_SINGLE_QUOTES, dql));
-                }
-                criterion = DqlCriterionFactory.newCriterion(dqlField, dqlOperator, fromDqlString(value));
-            } else {
-                if (operatorIsTwoPart) {
-                    // The "not" prefix is only valid with string operators - so throw an exception if we reach here.
-                    throw new DqlParseException(String.format(INVALID_USE_OF_NOT, dql));
+                // ignore spaces, just move on.
+                case SPACE_CHAR : {
+                    charPos++;
+                    break;
                 }
 
-                if (isComparisonOperator(dqlOperator)) {
-                    // With a comparison operator, we should have only one operand which should be either 
-                    // a long integer or a string which can be converted to a Boolean
-                    if (filterComponents.length != MIMIMUM_FILTER_COMPONENTS) {
-                        throw new DqlParseException(String.format(INVALID_COMPARISON_FILTER, dql));
+                // opening quote - find the closing quote and add an entry.
+                case SINGLE_QUOTE_CHAR: {
+                    int closingQuoteIndex = value.indexOf(SINGLE_QUOTE_CHAR, charPos + 1);
+                    if (closingQuoteIndex < 0) {
+                        throw new DqlParseException(String.format(NO_CLOSING_QUOTE_FOR_OPENING_QUOTE, charPos, dql));
                     }
-
-                    value = filterComponents[valuesStartIndex];
-                    if (!isLongInteger(value) && !isBoolean(value) &&  !isDateValue(value) && (!(isQuotedString(value) && isEqualsOperator(dqlOperator)))) {
-                        throw new DqlParseException(String.format(INVALID_COMPARISON_FILTER, dql));
+                    String entry = value.substring(charPos + 1, closingQuoteIndex);
+                    if (!entry.isEmpty()) {
+                        values.add(entry);
                     }
-                    criterion = DqlCriterionFactory.newCriterion(dqlField, dqlOperator, fromDqlString(value));
-                } else {
-                    //We're using the "any" or "none" operator with a list of values, which may or may not be quoted...
-                    Collection<String> dqlValues = new ArrayList<String>();
+                    charPos = closingQuoteIndex + 1;
+                    break;
+                }
 
-                    for (int i = valuesStartIndex; i < filterComponents.length; i++) {
-                        // Strip the single quotes when using "any" or "none" (previously this would fail if  
-                        // quotes were used as these are not handled in the Criterion code).
-                        dqlValues.add(fromDqlString(filterComponents[i]));
+                // an unquoted entry, find the next space or end of string and add an entry.
+                default: {
+                    int endOfEntry = value.indexOf(SPACE_CHAR, charPos + 1);
+                    if (endOfEntry < 0) { // if no further spaces, we go to the end of the value.
+                        endOfEntry = value.length();
                     }
-                    criterion = DqlCriterionFactory.newCriterion(dqlField, dqlOperator, dqlValues);
+                    String entry = value.substring(charPos, endOfEntry);
+                    if (!entry.isEmpty()) {
+                        values.add(entry);
+                    }
+                    charPos = endOfEntry + 1;
+                    break;
                 }
             }
-
-            return criterion;
-        } catch (IllegalArgumentException e) {
-            throw new DqlParseException(e);
-        } catch (DqlParseException e) {
-            throw (DqlParseException) e;
-        }
-    }
-
-    private static String fromDqlString(String dqlString) {
-        return StringUtils.strip(dqlString, SINGLE_QUOTE).replace("\\'", SINGLE_QUOTE);
-    }
-    
-    private static boolean isStringOperator(String operator) {
-
-        CriterionOperator criterionOperator = DqlCriterionMapper.forOperator(operator);
-        if (criterionOperator == CriterionOperator.STARTS_WITH  
-                || criterionOperator == CriterionOperator.NOT_STARTS_WITH 
-                || criterionOperator == CriterionOperator.ENDS_WITH  
-                || criterionOperator == CriterionOperator.NOT_ENDS_WITH 
-                || criterionOperator == CriterionOperator.CONTAINS 
-                || criterionOperator == CriterionOperator.NOT_CONTAINS) {
-            return true;
-        }
-        return false;
-    }
-    
-    private static boolean isComparisonOperator(String operator) {
-
-        CriterionOperator criterionOperator = DqlCriterionMapper.forOperator(operator);
-        if (criterionOperator == CriterionOperator.EQ
-                || criterionOperator == CriterionOperator.GT
-                || criterionOperator == CriterionOperator.GTE
-                || criterionOperator == CriterionOperator.LT
-                || criterionOperator == CriterionOperator.LTE
-                || criterionOperator == CriterionOperator.NE
-        ) {
-            return true;
-        }
-        return false;
-    }
-    
-    private static boolean isEqualsOperator(String operator) {
-        CriterionOperator criterionOperator = DqlCriterionMapper.forOperator(operator);
-        return criterionOperator  == CriterionOperator.EQ;
-    }
-    
-    private static boolean isQuotedString(String value) {
-        return value.startsWith(SINGLE_QUOTE) && value.endsWith(SINGLE_QUOTE);
-    }
-    
-    private static boolean isLongInteger(String str) {  
-        try {  
-            Long.parseLong(str);  
-        } catch (NumberFormatException nfe) {  
-            return false;  
-        }  
-        return true;  
-    }
-    
-    private static boolean isDateValue(String value) {
-
-        Date date = null;
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-        try {
-            date = sdf.parse(value);
-        } catch (ParseException e) {
-
         }
 
-        return (date != null);
+        if (values.isEmpty()) {
+            throw new DqlParseException(COULD_NOT_FIND_A_VALUE_FOR_THE_FILTER_CRITERIA + ' ' + value);
+        }
+        return values;
     }
-    
-    private static boolean isBoolean(String value) {  
-        try {  
-            if (fromDqlString(value).equalsIgnoreCase("true") || fromDqlString(value).equalsIgnoreCase("false")) {
-                return true;   
-            } else {
-                return false;
-            }
-        } catch (NumberFormatException nfe) {  
-            return false;  
-        }  
+
+    private boolean isListOperator(String operator) {
+        return ANY_OPERATOR.equalsIgnoreCase(operator) || NONE_OPERATOR.equalsIgnoreCase(operator);
     }
+
 }

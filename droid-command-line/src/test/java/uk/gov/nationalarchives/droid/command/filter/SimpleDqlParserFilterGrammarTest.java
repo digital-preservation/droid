@@ -35,12 +35,13 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.joda.time.DateMidnight;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
+
+import java.util.Locale;
 
 /**
  * @author rflitcroft/boreilly
@@ -48,12 +49,23 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
  */
 public class SimpleDqlParserFilterGrammarTest {
 
+    private SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
+
+    @Test(expected=DqlParseException.class)
+    public void testParseEmptyString() {
+        parser.parse("");
+    }
+
+    @Test(expected=DqlParseException.class)
+    public void testInvalidFieldName() {
+        parser.parse("1234 > 1000");
+    }
+
     @Test
     public void testFilterOnEqualFileName() {
         
         String dql = "file_name = 'foo bar'";
         
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
@@ -67,32 +79,17 @@ public class SimpleDqlParserFilterGrammarTest {
         
         String dql = "file_name = 'foo \" bar'";
         
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
         assertEquals(CriterionOperator.EQ, criterion.getOperator());
         assertEquals("foo \" bar".toUpperCase(), criterion.getValue());
-        
-    }
 
-    @Test
-    public void testFilterOnEqualFileNameWithEscapedSingleQuote() {
-        
-        String dql = "file_name = 'foo \\' bar'";
-        
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
-        FilterCriterion criterion = parser.parse(dql);
-        
-        assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
-        assertEquals(CriterionOperator.EQ, criterion.getOperator());
-        assertEquals("foo ' bar".toUpperCase(), criterion.getValue());
-        
     }
 
     @Test
     public void testFilterOnDate() {
-        
+
         String dql = "last_modified = 2010-01-23";
         
         SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
@@ -109,27 +106,11 @@ public class SimpleDqlParserFilterGrammarTest {
         
         String dql = "last_modified = '2010-01-23'";
         
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.LAST_MODIFIED_DATE, criterion.getField());
         assertEquals(CriterionOperator.EQ, criterion.getOperator());
         assertEquals(new DateMidnight(2010, 01, 23).toDate(), criterion.getValue());
-        
-    }
-    
-    @Test
-    @Ignore("are we supporting years like this?")
-    public void testFilterOnYear() {
-        
-        String dql = "last_modified = 2010";
-        
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
-        FilterCriterion criterion = parser.parse(dql);
-        
-        assertEquals(CriterionFieldEnum.LAST_MODIFIED_DATE, criterion.getField());
-        assertEquals(CriterionOperator.EQ, criterion.getOperator());
-        assertEquals(2010L, criterion.getValue());
         
     }
 
@@ -138,7 +119,6 @@ public class SimpleDqlParserFilterGrammarTest {
         
         String dql = "puid ANY a b c d";
         
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.PUID, criterion.getField());
@@ -149,13 +129,10 @@ public class SimpleDqlParserFilterGrammarTest {
     }
 
     @Test
-    //@Ignore
-    //Nice to have.... 
     public void testFilterOnAnySetWithWithSingleQuotes() {
         
         String dql = "puid ANY 'x-fmt/10' 'fmt/10' 'fmt/44' 'x-fmt/238'";
         
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.PUID, criterion.getField());
@@ -164,12 +141,12 @@ public class SimpleDqlParserFilterGrammarTest {
             "x-fmt/10", "fmt/10", "fmt/44", "x-fmt/238",     
         }, (Object[]) criterion.getValue());
     }
+
     @Test
     public void testFilterOnNoneSet() {
         
         String dql = "puid NONE a b c d";
         
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
 
         assertEquals(CriterionFieldEnum.PUID, criterion.getField());
@@ -184,7 +161,6 @@ public class SimpleDqlParserFilterGrammarTest {
         
         String dql = "puid NONE 'a' 'b' 'c' 'd'";
         
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
 
         assertEquals(CriterionFieldEnum.PUID, criterion.getField());
@@ -199,28 +175,70 @@ public class SimpleDqlParserFilterGrammarTest {
         
         String dql = "size IN a b c d";
         
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         parser.parse(dql);
         
     }
-    
-    
-    @Test(expected = DqlParseException.class)
-    public void testContainsMultiValues() {
+
+    @Test
+    public void testValidOperators() {
+        testNumOperator("<", CriterionOperator.LT);
+        testNumOperator("<=", CriterionOperator.LTE);
+        testNumOperator("=", CriterionOperator.EQ);
+        testNumOperator("<>", CriterionOperator.NE);
+        testNumOperator(">", CriterionOperator.GT);
+        testNumOperator(">=", CriterionOperator.GTE);
+        testStringOperator("starts", CriterionOperator.STARTS_WITH);
+        testStringOperator("ends", CriterionOperator.ENDS_WITH);
+        testStringOperator("contains", CriterionOperator.CONTAINS);
+        testStringOperator("not starts", CriterionOperator.NOT_STARTS_WITH);
+        testStringOperator("not ends", CriterionOperator.NOT_ENDS_WITH);
+        testStringOperator("not contains", CriterionOperator.NOT_CONTAINS);
+        testListOperator("any", CriterionOperator.ANY_OF);
+        testListOperator("none", CriterionOperator.NONE_OF);
+    }
+
+    private void testNumOperator(String dqlOperator, CriterionOperator operatorType) {
+        // test without spaces between field/operator/value for numeric operators:
+        FilterCriterion crit = parser.parse("file_size" + dqlOperator + "1000");
+        assertEquals(operatorType, crit.getOperator());
+
+        // test with spaces
+        crit = parser.parse("  file_size   " + dqlOperator + "   1000  ");
+        assertEquals(operatorType, crit.getOperator());
+    }
+
+    private void testStringOperator(String dqlOperator, CriterionOperator operatorType) {
+        FilterCriterion crit = parser.parse("file_name " + dqlOperator + " invoice");
+        assertEquals(operatorType, crit.getOperator());
+    }
+
+    private void testListOperator(String dqlOperator, CriterionOperator operatorType) {
+        FilterCriterion crit = parser.parse("puid " + dqlOperator + " fmt/1 fmt2 fmt/3");
+        assertEquals(operatorType, crit.getOperator());
+    }
+
+    /**
+     * It looks like the user is passing in a list of different items, but "contains" is
+     * looking for a single value.  So the parser should interpret this as a single
+     * value with quotes at the start and end, not a list of items.  This would probably
+     * be a mistake by a user - but the parser still needs to parse it correctly, not throw
+     * an error or "helpfully" interpret it as a list (which can't be filtered by the contains operator).
+     * It's still possible that this is a valid thing to look for.
+     */
+    @Test
+    public void testContainsQuotedStringNotAListOfItems() {
         String dql = "file_name  contains 'abc' 'def' 'ghi'";
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
-        assertEquals(CriterionOperator.NOT_CONTAINS, criterion.getOperator());
-        assertEquals("foo", criterion.getValue());
+        assertEquals(CriterionOperator.CONTAINS, criterion.getOperator());
+        assertEquals("abc' 'def' 'ghi".toUpperCase(), criterion.getValue());
         
     }
     
     @Test
     public void testNotContains() {
         String dql = "file_name not contains 'foo'";
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
@@ -232,7 +250,6 @@ public class SimpleDqlParserFilterGrammarTest {
     @Test
     public void testNotStartsWith() {
         String dql = "file_name not starts 'foo'";
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
@@ -243,7 +260,6 @@ public class SimpleDqlParserFilterGrammarTest {
     @Test
     public void testNotEndsWith() {
         String dql = "file_name not ends 'foo'";
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.FILE_NAME, criterion.getField());
