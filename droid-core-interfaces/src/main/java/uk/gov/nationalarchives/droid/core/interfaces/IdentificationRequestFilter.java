@@ -44,6 +44,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 
+import static uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator.ANY_OF;
 
 
 /**
@@ -252,19 +253,26 @@ public class IdentificationRequestFilter {
         boolean result = false;
         if (nodeValue != null) {
             String nodeValueLower = nodeValue.toLowerCase(Locale.ROOT);
-            if (criterionValue instanceof String) {
-                String criterionValueLower = ((String) criterionValue).toLowerCase(Locale.ROOT);
-                result = compareString(nodeValueLower, operator, criterionValueLower);
-            } else if (criterionValue instanceof Object[]) { // list of values = compare equality of list items.
-                Object[] values = (Object[]) criterionValue;
-                int foundCount = 0;
-                for (Object value : values) {
-                    String criterionValueLower = ((String) value).toLowerCase(Locale.ROOT);
-                    if (compareString(nodeValueLower, operator, criterionValueLower)) {
-                        foundCount++;
+            switch (operator) {
+                case ANY_OF:
+                case NONE_OF: {
+                    Object[] values = (Object[]) criterionValue;
+                    boolean matched = false;
+                    for (Object value : values) {
+                        String criterionValueLower = ((String) value).toLowerCase(Locale.ROOT);
+                        if (nodeValueLower.equals(criterionValueLower)) {
+                            matched = true;
+                            break;
+                        }
                     }
+                    result = operator == ANY_OF ? matched : !matched;
+                    break;
                 }
-                result = isOperatorInverted(operator) ? foundCount == values.length : foundCount > 0;
+                default : {
+                    String criterionValueLower = ((String) criterionValue).toLowerCase(Locale.ROOT);
+                    result = compareString(nodeValueLower, operator, criterionValueLower);
+                    break;
+                }
             }
         }
         return result;

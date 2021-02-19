@@ -379,14 +379,6 @@ public class ProfileResourceNodeFilterTest {
         assertFalse(filter.passesFilter(node));
     }
 
-
-
-    //TODO: using timestamp to test dates is artificial.
-    //      resolution of filter is day-month-year, but timestampe is down to milliseconds.
-    //      So filter on equals 1st Jan 2021 should include everything from midnight to midnight the next day.
-    //      Has to be a composite test, also not equals.  Greater than, greater than equals also.
-
-
     @Test
     public void testLastModifiedLessThan() {
         ProfileResourceNodeFilter lastModFilter = createDateFilter(CriterionOperator.LT, getDate(2021, 2, 1));
@@ -681,7 +673,7 @@ public class ProfileResourceNodeFilterTest {
     @Test
     public void testMultiExtensionEqualTo() {
         ProfileResourceNode node = createExtensionNode("jpg");
-        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.EQ, "bmp", "jpg");
+        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.ANY_OF, "bmp", "jpg");
         assertTrue(filter.passesFilter(node));
         node = createExtensionNode("JPG");
         assertTrue(filter.passesFilter(node));
@@ -689,9 +681,9 @@ public class ProfileResourceNodeFilterTest {
         assertTrue(filter.passesFilter(node));
         node = createExtensionNode("PDF");
         assertFalse(filter.passesFilter(node));
-        filter = createExtensionFilter(CriterionOperator.EQ, "bmp", "jpg", "pdf");
+        filter = createExtensionFilter(CriterionOperator.ANY_OF, "bmp", "jpg", "pdf");
         assertTrue(filter.passesFilter(node));
-        filter = createExtensionFilter(CriterionOperator.EQ, "BMP", "jpg", "PDF");
+        filter = createExtensionFilter(CriterionOperator.ANY_OF, "BMP", "jpg", "PDF");
         assertTrue(filter.passesFilter(node));
         node = createExtensionNode("bMp");
         assertTrue(filter.passesFilter(node));
@@ -715,7 +707,7 @@ public class ProfileResourceNodeFilterTest {
     @Test
     public void testMultiExtensionNotEqualTo() {
         ProfileResourceNode node = createExtensionNode("jpg");
-        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NE, "bmp", "jpg");
+        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NONE_OF, "bmp", "jpg");
         System.out.println(filter.passesFilter(node));
         assertFalse(filter.passesFilter(node));
         node = createExtensionNode("JPG");
@@ -724,9 +716,9 @@ public class ProfileResourceNodeFilterTest {
         assertFalse(filter.passesFilter(node));
         node = createExtensionNode("PDF");
         assertTrue(filter.passesFilter(node));
-        filter = createExtensionFilter(CriterionOperator.NE, "bmp", "jpg", "pdf");
+        filter = createExtensionFilter(CriterionOperator.NONE_OF, "bmp", "jpg", "pdf");
         assertFalse(filter.passesFilter(node));
-        filter = createExtensionFilter(CriterionOperator.NE, "BMP", "jpg", "PDF");
+        filter = createExtensionFilter(CriterionOperator.NONE_OF, "BMP", "jpg", "PDF");
         assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bMp");
         assertFalse(filter.passesFilter(node));
@@ -755,36 +747,6 @@ public class ProfileResourceNodeFilterTest {
     }
 
     @Test
-    public void testMultiExtensionStartsWith() {
-        ProfileResourceNode node = createExtensionNode("jpg");
-        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.STARTS_WITH, "b", "jp");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("bmp");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("Bmp");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("JPg");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("pdf");
-        assertFalse(filter.passesFilter(node));
-    }
-
-    @Test
-    public void testMultiExtensionNotStartsWith() {
-        ProfileResourceNode node = createExtensionNode("jpg");
-        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_STARTS_WITH, "b", "jp");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("bmp");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("Bmp");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("JPg");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("pdf");
-        assertTrue(filter.passesFilter(node));
-    }
-
-    @Test
     public void testExtensionEndsWith() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.ENDS_WITH, "p");
@@ -808,37 +770,7 @@ public class ProfileResourceNodeFilterTest {
         assertTrue(filter.passesFilter(node));
     }
 
-    @Test
-    public void testMultiExtensionEndsWith() {
-        ProfileResourceNode node = createExtensionNode("jpg");
-        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.ENDS_WITH, "z", "pg");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("xyz");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("jpG");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("JPg");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("pdf");
-        assertFalse(filter.passesFilter(node));
-    }
-
-    @Test
-    public void testMultiExtensionNotEndsWith() {
-        ProfileResourceNode node = createExtensionNode("jpg");
-        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_ENDS_WITH, "b", "pg");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("xyz");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("jpG");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("JPg");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("pdf");
-        assertTrue(filter.passesFilter(node));
-    }
-
-    @Test
+        @Test
     public void testExtensionContains() {
         ProfileResourceNode node = createExtensionNode("jpg");
         ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.CONTAINS, "pg");
@@ -859,36 +791,6 @@ public class ProfileResourceNodeFilterTest {
         node = createExtensionNode("abiggerwithpginthemiddle");
         assertFalse(filter.passesFilter(node));
         node = createExtensionNode("abiggerwithPGinthemiddle");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("bmgp");
-        assertTrue(filter.passesFilter(node));
-    }
-
-    @Test
-    public void testMultiExtensionContains() {
-        ProfileResourceNode node = createExtensionNode("jpg");
-        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.CONTAINS, "pg", "mp");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("abiggerwithpginthemiddle");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("abiggerwithMpinthemiddle");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("abiggerwithmpinthemiddle");
-        assertTrue(filter.passesFilter(node));
-        node = createExtensionNode("bmgp");
-        assertFalse(filter.passesFilter(node));
-    }
-
-    @Test
-    public void testMultiExtensionNotContains() {
-        ProfileResourceNode node = createExtensionNode("jpg");
-        ProfileResourceNodeFilter filter = createExtensionFilter(CriterionOperator.NOT_CONTAINS, "pg", "mp");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("abiggerwithpginthemiddle");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("abiggerwithMpinthemiddle");
-        assertFalse(filter.passesFilter(node));
-        node = createExtensionNode("abiggerwithmpinthemiddle");
         assertFalse(filter.passesFilter(node));
         node = createExtensionNode("bmgp");
         assertTrue(filter.passesFilter(node));
@@ -1005,7 +907,7 @@ public class ProfileResourceNodeFilterTest {
         ProfileResourceNodeFilter filter = createPuidNodeFilter(CriterionOperator.ANY_OF, "fmt/1", "fmt/2", "fmt/3");
         assertFalse(filter.passesFilter(node));
 
-        /**
+        /*
          * In the case of puids, if we ask for none of them and we have a null value, then it passes (as null isn't one of them).
          */
         filter = createPuidNodeFilter(CriterionOperator.NONE_OF, "fmt/1", "fmt/2", "fmt/3");
@@ -1199,7 +1101,7 @@ public class ProfileResourceNodeFilterTest {
         ProfileResourceNodeFilter filter = createMimeTypeFilter(CriterionOperator.ANY_OF, "text/plain");
         assertFalse(filter.passesFilter(node));
 
-        /**
+        /*
          * In the case of mime types, if we have a null value and we're looking at none of them, it passes as null isn't one of them.
          */
         filter = createMimeTypeFilter(CriterionOperator.NONE_OF, "text/plain");

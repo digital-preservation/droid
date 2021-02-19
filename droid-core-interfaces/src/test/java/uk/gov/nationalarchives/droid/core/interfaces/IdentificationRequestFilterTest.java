@@ -595,7 +595,7 @@ public class IdentificationRequestFilterTest {
     @Test
     public void testMultiExtensionEqualTo() {
         IdentificationRequest request = new TestIdentificationRequest("test.jpg");
-        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.EQ, "bmp", "jpg");
+        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.ANY_OF, "bmp", "jpg");
         assertTrue(filter.passesFilter(request));
         request = new TestIdentificationRequest("test.JPG");
         assertTrue(filter.passesFilter(request));
@@ -603,9 +603,9 @@ public class IdentificationRequestFilterTest {
         assertTrue(filter.passesFilter(request));
         request = new TestIdentificationRequest("test.PDF");
         assertFalse(filter.passesFilter(request));
-        filter = createExtensionFilter(CriterionOperator.EQ, "bmp", "jpg", "pdf");
+        filter = createExtensionFilter(CriterionOperator.ANY_OF, "bmp", "jpg", "pdf");
         assertTrue(filter.passesFilter(request));
-        filter = createExtensionFilter(CriterionOperator.EQ, "BMP", "jpg", "PDF");
+        filter = createExtensionFilter(CriterionOperator.ANY_OF, "BMP", "jpg", "PDF");
         assertTrue(filter.passesFilter(request));
         request = new TestIdentificationRequest("test.bMp");
         assertTrue(filter.passesFilter(request));
@@ -629,7 +629,7 @@ public class IdentificationRequestFilterTest {
     @Test
     public void testMultiExtensionNotEqualTo() {
         IdentificationRequest request = new TestIdentificationRequest("test.jpg");
-        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.NE, "bmp", "jpg");
+        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.NONE_OF, "bmp", "jpg");
         System.out.println(filter.passesFilter(request));
         assertFalse(filter.passesFilter(request));
         request = new TestIdentificationRequest("test.JPG");
@@ -638,9 +638,9 @@ public class IdentificationRequestFilterTest {
         assertFalse(filter.passesFilter(request));
         request = new TestIdentificationRequest("test.PDF");
         assertTrue(filter.passesFilter(request));
-        filter = createExtensionFilter(CriterionOperator.NE, "bmp", "jpg", "pdf");
+        filter = createExtensionFilter(CriterionOperator.NONE_OF, "bmp", "jpg", "pdf");
         assertFalse(filter.passesFilter(request));
-        filter = createExtensionFilter(CriterionOperator.NE, "BMP", "jpg", "PDF");
+        filter = createExtensionFilter(CriterionOperator.NONE_OF, "BMP", "jpg", "PDF");
         assertFalse(filter.passesFilter(request));
         request = new TestIdentificationRequest("test.bMp");
         assertFalse(filter.passesFilter(request));
@@ -669,36 +669,6 @@ public class IdentificationRequestFilterTest {
     }
 
     @Test
-    public void testMultiExtensionStartsWith() {
-        IdentificationRequest request = new TestIdentificationRequest("test.jpg");
-        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.STARTS_WITH, "b", "jp");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.bmp");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.Bmp");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.JPg");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.pdf");
-        assertFalse(filter.passesFilter(request));
-    }
-
-    @Test
-    public void testMultiExtensionNotStartsWith() {
-        IdentificationRequest request = new TestIdentificationRequest("test.jpg");
-        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.NOT_STARTS_WITH, "b", "jp");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.bmp");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.Bmp");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.JPg");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.pdf");
-        assertTrue(filter.passesFilter(request));
-    }
-
-    @Test
     public void testExtensionEndsWith() {
         IdentificationRequest request = new TestIdentificationRequest("test.jpg");
         IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.ENDS_WITH, "p");
@@ -723,36 +693,6 @@ public class IdentificationRequestFilterTest {
     }
 
     @Test
-    public void testMultiExtensionEndsWith() {
-        IdentificationRequest request = new TestIdentificationRequest("test.jpg");
-        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.ENDS_WITH, "z", "pg");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.xyz");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.jpG");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.JPg");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.pdf");
-        assertFalse(filter.passesFilter(request));
-    }
-
-    @Test
-    public void testMultiExtensionNotEndsWith() {
-        IdentificationRequest request = new TestIdentificationRequest("test.jpg");
-        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.NOT_ENDS_WITH, "b", "pg");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.xyz");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.jpG");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.JPg");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.pdf");
-        assertTrue(filter.passesFilter(request));
-    }
-
-    @Test
     public void testExtensionContains() {
         IdentificationRequest request = new TestIdentificationRequest("test.jpg");
         IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.CONTAINS, "pg");
@@ -773,36 +713,6 @@ public class IdentificationRequestFilterTest {
         request = new TestIdentificationRequest("test.abiggerwithpginthemiddle");
         assertFalse(filter.passesFilter(request));
         request = new TestIdentificationRequest("test.abiggerwithPGinthemiddle");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.bmgp");
-        assertTrue(filter.passesFilter(request));
-    }
-
-    @Test
-    public void testMultiExtensionContains() {
-        IdentificationRequest request = new TestIdentificationRequest("test.jpg");
-        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.CONTAINS, "pg", "mp");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.abiggerwithpginthemiddle");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.abiggerwithMpinthemiddle");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.abiggerwithmpinthemiddle");
-        assertTrue(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.bmgp");
-        assertFalse(filter.passesFilter(request));
-    }
-
-    @Test
-    public void testMultiExtensionNotContains() {
-        IdentificationRequest request = new TestIdentificationRequest("test.jpg");
-        IdentificationRequestFilter filter = createExtensionFilter(CriterionOperator.NOT_CONTAINS, "pg", "mp");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.abiggerwithpginthemiddle");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.abiggerwithMpinthemiddle");
-        assertFalse(filter.passesFilter(request));
-        request = new TestIdentificationRequest("test.abiggerwithmpinthemiddle");
         assertFalse(filter.passesFilter(request));
         request = new TestIdentificationRequest("test.bmgp");
         assertTrue(filter.passesFilter(request));

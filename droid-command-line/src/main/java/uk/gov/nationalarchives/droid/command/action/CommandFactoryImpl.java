@@ -68,6 +68,8 @@ public class CommandFactoryImpl implements CommandFactory {
     private static final String NO_RESOURCES_SPECIFIED = "No resources specified.";
     private static final String NO_PROFILES_SPECIFIED_FOR_EXPORT = "No profiles specified for export.";
     private static final String PROFILE_PREFIX = "profile.";
+    private static final String FILE_EXT_FIELD = "file_ext";
+    private static final String ANY_OPERATOR = "any";
 
     private GlobalContext context;
     private PrintWriter printWriter;
@@ -503,7 +505,7 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     private Filter createExtensionFilter(Filter existingFilter, String[] optionValues) {
-        FilterCriterion criterion = DqlCriterionFactory.newCriterion("file_ext", "=", Arrays.asList(optionValues));
+        FilterCriterion criterion = DqlCriterionFactory.newCriterion(FILE_EXT_FIELD, ANY_OPERATOR, Arrays.asList(optionValues));
         final List<FilterCriterion> criteria;
         final boolean isNarrowed;
         if (existingFilter == null) {
