@@ -108,7 +108,7 @@ public class CsvItemWriterTest {
             when(jobOptions.getParameter("location")).thenReturn("test.csv");
 
             // String hashAlgorithm = config.getProperties().getProperty("HASH_ALGORITHM").toString();
-            when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+            //when(config.getBooleanProperty(DroidGlobalProperty\.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
             final String expectedString = toCsvLine(CsvItemWriter.HEADERS);

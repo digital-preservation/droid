@@ -62,6 +62,21 @@ public final class I18N {
     public static final String OUTPUT_FILE_HELP = "profile.outputfile.help";
 
     /**
+     * Sets CSV output to only quote fields that have a comma in them.
+     */
+    public static final String QUOTE_COMMAS_HELP = "profile.quoteCommasOnly.help";
+
+    /**
+     * Sets the columns to write in CSV output, as a space separated string of column names.
+     */
+    public static final String COLUMNS_TO_WRITE_HELP = "profile.columnsToWrite.help";
+
+    /**
+     * Sets CSV output to write a row per format (rather than a row per file which is the default)
+     */
+    public static final String ROW_PER_IDENTIFICATION = "profile.rowsPerFormat.help";
+
+    /**
      * Override default properties from the command line.
      */
     public static final String PROFILE_PROPERTY_HELP = "profile.property.help";

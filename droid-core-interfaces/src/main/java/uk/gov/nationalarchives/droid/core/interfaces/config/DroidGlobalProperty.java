@@ -42,7 +42,6 @@ import org.apache.commons.configuration.Configuration;
  *
  */
 public enum DroidGlobalProperty {
-    
 
     /** Default throttle. */
     DEFAULT_THROTTLE("profile.defaultThrottle", PropertyType.INTEGER, true),
@@ -125,7 +124,7 @@ public enum DroidGlobalProperty {
 
     /** CSV Export one row per format. */
     CSV_EXPORT_ROW_PER_FORMAT("export.rowPerFormat", PropertyType.BOOLEAN, true),
-    
+
     /** The max number of bytes to scan from the beginning or
      * end of a file, or negative, meaning unlimited scanning.
      */
@@ -136,7 +135,22 @@ public enum DroidGlobalProperty {
      * If it is set, then the results will be written to the file, but not the profile database.
      */
     OUTPUT_FILE_PATH("profile.outputFilePath", PropertyType.TEXT, true),
-    
+
+    /**
+     * Whether writing to CSV quotes all the fields, or just those that contain commas.
+     */
+    QUOTE_ALL_FIELDS("profile.quoteAllFields", PropertyType.BOOLEAN, true),
+
+    /**
+     * A space separated list of columns to write to CSV.
+     */
+    COLUMNS_TO_WRITE("profile.columnsToWrite", PropertyType.TEXT, true),
+
+    /**
+     * The export options to use when writing CSV - one row per file or one row per format.
+     */
+    EXPORT_OPTIONS("profile.exportOptions", PropertyType.TEXT, true),
+
     /** Whether to match all extensions, or just ones without another signature attached. */
     EXTENSION_ALL("profile.matchAllExtensions", PropertyType.BOOLEAN, true),
     

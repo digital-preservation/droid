@@ -218,6 +218,39 @@ public enum CommandLineParam {
         }
     },
 
+    /**
+     * Sets CSV to only quote fields which have commas in them (the default is to quote all fields)
+     */
+    QUOTE_COMMAS("qc", "quote-commas", I18N.QUOTE_COMMAS_HELP) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                                       CommandLine cli) throws CommandLineException {
+            return null;
+        }
+    },
+
+    /**
+     * Specifies which columns should be written out in a CSV file or console output.
+     */
+    COLUMNS_TO_WRITE("co", "columns", true, -1, I18N.COLUMNS_TO_WRITE_HELP, "columns") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                                       CommandLine cli) throws CommandLineException {
+            return null;
+        }
+    },
+
+    /**
+     * Specifies that a row per identification should be written out in a CSV file or console output.
+     */
+    ROW_PER_FORMAT("ri", "row-per-id", I18N.ROW_PER_IDENTIFICATION) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                CommandLine cli) throws CommandLineException {
+            return null;
+        }
+    },
+
     /** Runs without a profile and with the specified resources. */
     RUN_NO_PROFILE("Nr", "no-profile-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "folder") {
         @Override
@@ -468,6 +501,9 @@ public enum CommandLineParam {
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
         options.addOption(BOM.newOption());
+        options.addOption(COLUMNS_TO_WRITE.newOption());
+        options.addOption(QUOTE_COMMAS.newOption());
+        options.addOption(ROW_PER_FORMAT.newOption());
 
         OptionGroup filterOptions = new OptionGroup();
         filterOptions.addOption(ALL_FILTER.newOption());
@@ -479,6 +515,7 @@ public enum CommandLineParam {
 
         options.addOptionGroup(filterOptions);
         options.addOptionGroup(filterFileOptions);
+
         options.addOptionGroup(topGroup);
 
         return options;
@@ -530,7 +567,7 @@ public enum CommandLineParam {
     public static Options profileRunSubOptions() {
         Options options = new Options();
         options.addOption(PROFILES.newOption());
-        options.addOption(OUTPUT_FILE.newOption()); //TODO: do we want BOM option here too?
+        options.addOption(OUTPUT_FILE.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(SIGNATURE_FILE.newOption());
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
@@ -538,12 +575,17 @@ public enum CommandLineParam {
         options.addOption(ARCHIVE_TYPES.newOption());
         options.addOption(WEB_ARCHIVES.newOption());
         options.addOption(WEB_ARCHIVE_TYPES.newOption());
-        options.addOption(EXTENSION_LIST.newOption()); //TODO: ADD this functionality via file filters.
+        options.addOption(EXTENSION_LIST.newOption());
         options.addOption(ANY_FILTER.newOption());
         options.addOption(ALL_FILTER.newOption());
         options.addOption(ANY_FILTER_FILE.newOption());
         options.addOption(ALL_FILTER_FILE.newOption());
         options.addOption(QUIET.newOption());
+        options.addOption(QUOTE_COMMAS.newOption());
+        options.addOption(COLUMNS_TO_WRITE.newOption());
+        options.addOption(ROW_PER_FORMAT.newOption());
+        options.addOption(PROFILE_PROPERTY.newOption());
+        options.addOption(PROPERTY_FILE.newOption());
         return options;
     }
 
@@ -558,6 +600,8 @@ public enum CommandLineParam {
         options.addOption(ANY_FILTER.newOption());
         options.addOption(ALL_FILTER.newOption());
         options.addOption(BOM.newOption());
+        options.addOption(QUOTE_COMMAS.newOption());
+        options.addOption(COLUMNS_TO_WRITE.newOption());
         return options;
     }
 
