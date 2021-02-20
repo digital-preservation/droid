@@ -90,7 +90,7 @@ public class DroidCommandLineTest {
         
         //a return code of 1 denotes a failure
         Assert.assertEquals(1, droidCommandLine.processExecution());
-        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.UnrecognizedOptionException: Unrecognized option: --zzzzzz");
+        verify(printWriter).println("Incorrect command line syntax: Unrecognized option: --zzzzzz");
         
     }
     
@@ -312,8 +312,8 @@ public class DroidCommandLineTest {
         droidCommandLine.setContext(context);
 
         droidCommandLine.processExecution();
-        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.AlreadySelectedException: The option 'v' was specified but an" +
-                System.getProperty("line.separator") + "option from this group has already been selected: 'h'");
+        verify(printWriter).println("Incorrect command line syntax: The option 'v' was specified but an " +
+                "option from this group has already been selected: 'h'");
     }
     
     @Test
@@ -457,7 +457,7 @@ public class DroidCommandLineTest {
         
         DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.MissingArgumentException: Missing argument for option: a");
+        verify(printWriter).println("Incorrect command line syntax: Missing argument for option: a");
     }
 
     
@@ -584,7 +584,7 @@ public class DroidCommandLineTest {
         
         DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-        verify(printWriter).println("Incorrect command line syntax: org.apache.commons.cli.MissingArgumentException: Missing argument for option: s");
+        verify(printWriter).println("Incorrect command line syntax: Missing argument for option: s");
     }
     
     /**

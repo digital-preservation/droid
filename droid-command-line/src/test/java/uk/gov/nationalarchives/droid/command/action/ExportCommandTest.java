@@ -112,7 +112,7 @@ public class ExportCommandTest {
             "profile1", "profile2", "profile3",
         };
         
-        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8", false, true, eq(null));
+        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8", false, true, null);
     }
 
     @Test

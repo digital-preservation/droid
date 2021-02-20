@@ -70,7 +70,7 @@ public final class DroidCommandLine implements AutoCloseable {
     /**
      * Message about incorrect syntax.
      */
-    public static final String CLI_SYNTAX_INCORRECT = "Incorrect command line syntax:\n%s";
+    public static final String CLI_SYNTAX_INCORRECT = "Incorrect command line syntax: %s";
     /** Wrap width. */
     public static final int WRAP_WIDTH = 120;
 
