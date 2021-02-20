@@ -43,10 +43,13 @@ import java.util.List;
  */
 public final class StringListParser {
 
+    /**
+     * A static instance of the String list parser - there is no state, so there is no need to instantiate new ones.
+     */
+    public static final StringListParser STRING_LIST_PARSER = new StringListParser();
+
     private static final char SINGLE_QUOTE_CHAR = '\'';
     private static final char SPACE_CHAR = ' ';
-
-    public static final StringListParser STRING_LIST_PARSER = new StringListParser();
 
     /**
      * Parses a list of values in a string which are space separated, unless they are enclosed in single quotes.

@@ -75,7 +75,10 @@ public class ExportManagerImpl implements ExportManager {
 
     @Override
     public Future<?> exportProfiles(final List<String> profileIds, final String destination, 
-        final Filter filter, final ExportOptions options, final String outputEncoding, final boolean bom) {
+        final Filter filter, final ExportOptions options, final String outputEncoding, final boolean bom,
+                                    final boolean quoteAllFields, String columnsToWrite) {
+        itemWriter.setQuoteAllFields(quoteAllFields);
+        itemWriter.setColumnsToWrite(columnsToWrite);
         final ExportTask exportTask = new ExportTask(destination,
                 profileIds, filter, options, outputEncoding, bom, itemWriter, profileContextLocator);
         final FutureTask<?> task = new FutureTask<Object>(exportTask, null) {

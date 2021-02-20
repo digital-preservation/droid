@@ -36,12 +36,11 @@ import java.util.List;
 import java.util.Locale;
 
 import org.joda.time.LocalDate;
+
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
-
-import static uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator.ANY_OF;
 
 /**
  * Determines if a ProfileResourceNode meets filter criteria.
@@ -516,7 +515,7 @@ public class ProfileResourceNodeFilter {
                             break;
                         }
                     }
-                    result = operator == ANY_OF ? matched : !matched;
+                    result = operator == CriterionOperator.ANY_OF ? matched : !matched;
                     break;
                 }
                 default : {

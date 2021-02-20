@@ -58,6 +58,8 @@ public class ExportCommand implements DroidCommand {
     private Filter filter;
     private ExportOptions options;
     private boolean bom;
+    private boolean quoteAllFields = true;
+    private String columnsToWrite;
     
     /**
      * {@inheritDoc}
@@ -86,7 +88,7 @@ public class ExportCommand implements DroidCommand {
             //default to UTF-8
             final String outputEncoding = "UTF-8"; //TODO set encoding from command line option
             final Future<?> fProfiles = exportManager.exportProfiles(profileIds, destination, filter,
-                    options, outputEncoding, bom);
+                    options, outputEncoding, bom, quoteAllFields, columnsToWrite);
             fProfiles.get();
         } catch (InterruptedException e) {
             throw new CommandExecutionException(e);
@@ -180,5 +182,16 @@ public class ExportCommand implements DroidCommand {
      */
     public void setBom(boolean bom) {
         this.bom = bom;
+    }
+
+    /**
+      * @param quoteAllFields whether all fields should be quoted when exporting.
+     */
+    public void setQuoteAllFields(boolean quoteAllFields) {
+        this.quoteAllFields = quoteAllFields;
+    }
+
+    public void setColumnsToWrite(String columnNames) {
+        this.columnsToWrite = columnNames;
     }
 }

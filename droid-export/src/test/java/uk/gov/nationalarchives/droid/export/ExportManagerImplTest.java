@@ -126,7 +126,7 @@ public class ExportManagerImplTest {
         List<String> profileIdList = new ArrayList<String>();
         profileIdList.add("profile1");
         
-        exportManager.exportProfiles(profileIdList, "destination", null, ExportOptions.ONE_ROW_PER_FILE, null, false).get();
+        exportManager.exportProfiles(profileIdList, "destination", null, ExportOptions.ONE_ROW_PER_FILE, null, false, true, "").get();
 
         verify(writer).open(any(Writer.class));
         verify(writer).write(fis);

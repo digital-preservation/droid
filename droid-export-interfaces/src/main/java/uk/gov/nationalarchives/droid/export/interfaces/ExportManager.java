@@ -65,9 +65,12 @@ public interface ExportManager {
      * @param options the options for export.
      * @param outputEncoding The character encoding to use in the output, null to use default encoding
      * @param bom BOM flag.
+     * @param quoteAllFields - whether to quote all fields, or just those that contain commas.
+     * @param columnsToWrite a space separated list of column names to write.  If null or empty, all columns are written.
      * @return future for cancelling the task. 
      */
     Future<?> exportProfiles(List<String> profileIds, String destination,
-            Filter filter, ExportOptions options, String outputEncoding, boolean bom);
+            Filter filter, ExportOptions options, String outputEncoding,
+                             boolean bom, boolean quoteAllFields, String columnsToWrite);
 
 }

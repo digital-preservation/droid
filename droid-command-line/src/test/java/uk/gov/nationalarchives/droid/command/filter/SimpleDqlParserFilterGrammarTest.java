@@ -51,6 +51,8 @@ public class SimpleDqlParserFilterGrammarTest {
 
     private SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
 
+    //TODO: add more comprehensive tests of filter grammar.
+
     @Test(expected=DqlParseException.class)
     public void testParseEmptyString() {
         parser.parse("");
