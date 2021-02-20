@@ -191,6 +191,9 @@ public class ExportCommand implements DroidCommand {
         this.quoteAllFields = quoteAllFields;
     }
 
+    /**
+     * @param columnNames A space delimited list of columns to write for export, or null or empty for all columns.
+     */
     public void setColumnsToWrite(String columnNames) {
         this.columnsToWrite = columnNames;
     }

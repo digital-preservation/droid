@@ -31,12 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.command.filter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.xerces.xs.StringList;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.StringListParser;
 
@@ -47,7 +45,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.StringListParser;
 public class SimpleDqlFilterParser implements DqlFilterParser {
 
     private static final Pattern FIELD_PATTERN = Pattern.compile("[a-zA-Z_]+");
-    private static final Pattern OPERATOR_PATTERN = Pattern.compile("( *)(<(?![=>])|<=|<>|=|>(?!=)|>=|starts|ends|contains|not starts|not ends|not contains|any|none)( *)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern OPERATOR_PATTERN =
+            Pattern.compile("( *)(<(?![=>])|<=|<>|=|>(?!=)|>=|starts|ends|contains|not starts|not ends|not contains|any|none)( *)",
+                    Pattern.CASE_INSENSITIVE);
     private static final String SINGLE_QUOTE = "'";
     private static final String ANY_OPERATOR = "ANY";
     private static final String NONE_OPERATOR = "NONE";
@@ -122,13 +122,14 @@ public class SimpleDqlFilterParser implements DqlFilterParser {
      * @throws DqlParseException if there is no value.
      */
     private String parseSingleValue(String dql, String value) {
-        if (value.startsWith(SINGLE_QUOTE) && value.endsWith((SINGLE_QUOTE))) {
-            value = value.substring(1, value.length() - 1);
+        String result = value;
+        if (result.startsWith(SINGLE_QUOTE) && result.endsWith(SINGLE_QUOTE)) {
+            result = result.substring(1, result.length() - 1);
         }
-        if (value.isEmpty()) {
+        if (result.isEmpty()) {
             throw new DqlParseException(COULD_NOT_FIND_A_VALUE_FOR_THE_FILTER_CRITERIA + dql);
         }
-        return value;
+        return result;
     }
 
     /**

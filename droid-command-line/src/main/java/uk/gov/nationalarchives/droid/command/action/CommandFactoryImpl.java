@@ -70,6 +70,7 @@ public class CommandFactoryImpl implements CommandFactory {
     private static final String PROFILE_PREFIX = "profile.";
     private static final String FILE_EXT_FIELD = "file_ext";
     private static final String ANY_OPERATOR = "any";
+    private static final String SPACE = " ";
 
     private GlobalContext context;
     private PrintWriter printWriter;
@@ -110,7 +111,7 @@ public class CommandFactoryImpl implements CommandFactory {
         cmd.setQuoteAllFields(!cli.hasOption(CommandLineParam.QUOTE_COMMAS.getLongName()));
 
         if (cli.hasOption(CommandLineParam.COLUMNS_TO_WRITE.getLongName())) {
-            String columns = String.join(" ", cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName()));
+            String columns = String.join(SPACE, cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName()));
             cmd.setColumnsToWrite(columns);
         }
 
@@ -150,7 +151,7 @@ public class CommandFactoryImpl implements CommandFactory {
         cmd.setQuoteAllFields(!cli.hasOption(CommandLineParam.QUOTE_COMMAS.getLongName()));
 
         if (cli.hasOption(CommandLineParam.COLUMNS_TO_WRITE.getLongName())) {
-            String columns = String.join(" ", cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName()));
+            String columns = String.join(SPACE, cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName()));
             cmd.setColumnsToWrite(columns);
         }
 
@@ -332,7 +333,7 @@ public class CommandFactoryImpl implements CommandFactory {
     private void processCommandLineCSVOptions(CommandLine cli, PropertiesConfiguration overrideProperties) {
         if (cli.hasOption(CommandLineParam.COLUMNS_TO_WRITE.getLongName())) {
             overrideProperties.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(),
-                    String.join(" ", cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName())));
+                    String.join(SPACE, cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName())));
         }
         if (cli.hasOption(CommandLineParam.QUOTE_COMMAS.getLongName())) {
             overrideProperties.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);

@@ -219,7 +219,7 @@ public enum CommandLineParam {
     },
 
     /**
-     * Sets CSV to only quote fields which have commas in them (the default is to quote all fields)
+     * Sets CSV to only quote fields which have commas in them (the default is to quote all fields).
      */
     QUOTE_COMMAS("qc", "quote-commas", I18N.QUOTE_COMMAS_HELP) {
         @Override
@@ -232,7 +232,7 @@ public enum CommandLineParam {
     /**
      * Specifies which columns should be written out in a CSV file or console output.
      */
-    COLUMNS_TO_WRITE("co", "columns", true, -1, I18N.COLUMNS_TO_WRITE_HELP, "columns") {
+    COLUMNS_TO_WRITE("co", "columns", true, -1, I18N.COLUMNS_TO_WRITE_HELP, "columns-to-write") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
                                        CommandLine cli) throws CommandLineException {
@@ -505,21 +505,26 @@ public enum CommandLineParam {
         options.addOption(QUOTE_COMMAS.newOption());
         options.addOption(ROW_PER_FORMAT.newOption());
 
-        OptionGroup filterOptions = new OptionGroup();
-        filterOptions.addOption(ALL_FILTER.newOption());
-        filterOptions.addOption(ANY_FILTER.newOption());
-
-        OptionGroup filterFileOptions = new OptionGroup();
-        filterFileOptions.addOption(ALL_FILTER_FILE.newOption());
-        filterFileOptions.addOption(ANY_FILTER_FILE.newOption());
-
-        options.addOptionGroup(filterOptions);
-        options.addOptionGroup(filterFileOptions);
-
+        options.addOptionGroup(getFilterOptionGroup());
+        options.addOptionGroup(getFileFilterOptionGroup());
         options.addOptionGroup(topGroup);
 
         return options;
 
+    }
+
+    private static OptionGroup getFileFilterOptionGroup() {
+        OptionGroup filterFileOptions = new OptionGroup();
+        filterFileOptions.addOption(ALL_FILTER_FILE.newOption());
+        filterFileOptions.addOption(ANY_FILTER_FILE.newOption());
+        return filterFileOptions;
+    }
+
+    private static OptionGroup getFilterOptionGroup() {
+        OptionGroup filterOptions = new OptionGroup();
+        filterOptions.addOption(ALL_FILTER.newOption());
+        filterOptions.addOption(ANY_FILTER.newOption());
+        return filterOptions;
     }
 
     /**
