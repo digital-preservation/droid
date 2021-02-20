@@ -38,6 +38,8 @@ import java.util.List;
  * Parses a list of values in a string which are space separated, unless they are enclosed in single quotes.
  * For example:  one two three four five gives the list [one, two, three, four, five] with 5 members.
  *               'one two' three 'four five' gives the list [one two, three, four five] with 3 members.
+ * Since there is no escaping of quotes, you cannot put a quote inside a quoted string (or it will think the
+ * quote "inside" is the closing quote of the string.  You can put quotes inside a space separated string.
  */
 public final class StringListParser {
 
