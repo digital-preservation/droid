@@ -36,7 +36,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.xerces.xs.StringList;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.StringListParser;
 
 /**
  * @author mpalmer
@@ -45,16 +47,13 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 public class SimpleDqlFilterParser implements DqlFilterParser {
 
     private static final Pattern FIELD_PATTERN = Pattern.compile("[a-zA-Z_]+");
-    private static final Pattern OPERATOR_PATTERN = Pattern.compile("( *)(<(?!=|>)|<=|<>|=|>(?!=)|>=|starts|ends|contains|not starts|not ends|not contains|any|none)( *)", Pattern.CASE_INSENSITIVE);
-    private static final char SINGLE_QUOTE_CHAR ='\'';
-    private static final char SPACE_CHAR =' ';
+    private static final Pattern OPERATOR_PATTERN = Pattern.compile("( *)(<(?![=>])|<=|<>|=|>(?!=)|>=|starts|ends|contains|not starts|not ends|not contains|any|none)( *)", Pattern.CASE_INSENSITIVE);
     private static final String SINGLE_QUOTE = "'";
     private static final String ANY_OPERATOR = "ANY";
     private static final String NONE_OPERATOR = "NONE";
-    private static final String COULD_NOT_FIND_A_VALUE_FOR_THE_FILTER_CRITERIA = "Could not find a value for the filter criteria: ";
+    private static final String COULD_NOT_FIND_A_VALUE_FOR_THE_FILTER_CRITERIA = "Could not find a value for the filter criteria %s in %s";
     private static final String COULD_NOT_FIND_A_VALID_OPERATOR_IN_THE_FILTER_CRITERIA = "Could not find a valid operator in the filter criteria: ";
     private static final String COULD_NOT_FIND_A_FIELD_IN_THE_FILTER_CRITERIA = "Could not find a field in the filter criteria: ";
-    private static final String NO_CLOSING_QUOTE_FOR_OPENING_QUOTE = "No closing quote for opening quote at position %d in filter criteria: %s";
 
     /**
      * Parse a filter criterion string to split into the field, operator and value and returns a FilterCriterion.
@@ -142,49 +141,9 @@ public class SimpleDqlFilterParser implements DqlFilterParser {
      * @throws DqlParseException if the list of values is empty.
      */
     private List<String> parseListValues(String dql, String value) {
-        List<String> values = new ArrayList<>();
-        int charPos = 0;
-        while (charPos < value.length()) {
-            switch (value.charAt(charPos)) {
-
-                // ignore spaces, just move on.
-                case SPACE_CHAR : {
-                    charPos++;
-                    break;
-                }
-
-                // opening quote - find the closing quote and add an entry.
-                case SINGLE_QUOTE_CHAR: {
-                    int closingQuoteIndex = value.indexOf(SINGLE_QUOTE_CHAR, charPos + 1);
-                    if (closingQuoteIndex < 0) {
-                        throw new DqlParseException(String.format(NO_CLOSING_QUOTE_FOR_OPENING_QUOTE, charPos, dql));
-                    }
-                    String entry = value.substring(charPos + 1, closingQuoteIndex);
-                    if (!entry.isEmpty()) {
-                        values.add(entry);
-                    }
-                    charPos = closingQuoteIndex + 1;
-                    break;
-                }
-
-                // an unquoted entry, find the next space or end of string and add an entry.
-                default: {
-                    int endOfEntry = value.indexOf(SPACE_CHAR, charPos + 1);
-                    if (endOfEntry < 0) { // if no further spaces, we go to the end of the value.
-                        endOfEntry = value.length();
-                    }
-                    String entry = value.substring(charPos, endOfEntry);
-                    if (!entry.isEmpty()) {
-                        values.add(entry);
-                    }
-                    charPos = endOfEntry + 1;
-                    break;
-                }
-            }
-        }
-
+        List<String> values = StringListParser.STRING_LIST_PARSER.parseListValues(value);
         if (values.isEmpty()) {
-            throw new DqlParseException(COULD_NOT_FIND_A_VALUE_FOR_THE_FILTER_CRITERIA + ' ' + value);
+            throw new DqlParseException(String.format(COULD_NOT_FIND_A_VALUE_FOR_THE_FILTER_CRITERIA, value, dql));
         }
         return values;
     }
