@@ -201,7 +201,9 @@ public class ProfileContextLocator {
 
         String columnsToWrite = profile.getColumnsToWrite() == null? "" : profile.getColumnsToWrite();
         props.setProperty("columnsToWrite", columnsToWrite);
-        props.setProperty("exportOptions", profile.getExportOptions().name());
+
+        ExportOptions options = profile.getExportOptions() == null? ExportOptions.ONE_ROW_PER_FILE : profile.getExportOptions();
+        props.setProperty("exportOptions", options.name());
 
         String createUrl = globalConfig.getProperties().getString("database.createUrl");
         if (createUrl == null || createUrl.isEmpty()) {
