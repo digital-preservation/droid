@@ -49,6 +49,8 @@ import uk.gov.nationalarchives.droid.profile.FilterCriterionImpl;
 public class ValuesDialog extends JDialog {
 
     private static final long serialVersionUID = -6126734059735497128L;
+    private static final char LIST_QUOTE_CHAR = '\''; // use single quote for list parameters - consistent with command line.
+    private static final char SPACE_CHAR = ' ';
 
     private FilterCriterionImpl filterCriteria;
 
@@ -378,7 +380,7 @@ public class ValuesDialog extends JDialog {
         filterCriteria.setSelectedValues(tempSelectedValues);
         if (tempSelectedValues != null) {
             for(int i =0; i<tempSelectedValues.size(); i++){
-                selectedString = selectedString + "\"" +(tempSelectedValues.get(i)).getDescription() + "\" "; 
+                selectedString = selectedString + LIST_QUOTE_CHAR + (tempSelectedValues.get(i)).getDescription() + LIST_QUOTE_CHAR + SPACE_CHAR;
             }
         }
     	this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
@@ -389,7 +391,7 @@ public class ValuesDialog extends JDialog {
     	filterCriteria.setSelectedValues(new ArrayList<FilterValue>());
     	for(int i =0; i<selectedListModel.getSize(); i++){
     		filterCriteria.addSelectedValue((FilterValue)selectedListModel.get(i));
-    		selectedString = selectedString + "\"" +((FilterValue)selectedListModel.get(i)).getDescription() + "\" "; 
+    		selectedString = selectedString + LIST_QUOTE_CHAR + ((FilterValue)selectedListModel.get(i)).getDescription() + LIST_QUOTE_CHAR + SPACE_CHAR;
     	}
     	this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));  
     	
