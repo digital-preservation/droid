@@ -201,5 +201,7 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     /**
      * @param quoteAllFields whether to quote all fields or just those that contain commas.
      */
-    public void setQuoteAllFields(boolean quoteAllFields) {this.quoteAllFields = quoteAllFields; }
+    public void setQuoteAllFields(boolean quoteAllFields) {
+        this.quoteAllFields = quoteAllFields;
+    }
 }
