@@ -216,7 +216,9 @@ public class ProfileForm extends JPanel {
         nodeColumn0 = (ETableColumn) columnModel.getColumn(0);
         int modelIndex = nodeColumn0.getModelIndex();
         resultsOutline.setColumnSorted(modelIndex, true, 1);
-        
+
+        // Make the resource name column a bit wider by default - it's always too small to see anything.
+        nodeColumn0.setPreferredWidth(256);
 
         //((DefaultTreeModel) treeModel).reload();
 
