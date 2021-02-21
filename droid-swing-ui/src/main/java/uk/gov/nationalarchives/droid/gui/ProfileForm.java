@@ -787,7 +787,15 @@ public class ProfileForm extends JPanel {
     public JPanel getProgressPanel() {
         return progressPanel;
     }
-    
+
+
+    /**
+     * @return the footer panel where progress bars and throttle controls live.
+     */
+    public JPanel getFooterPanel() {
+        return jPanel3;
+    }
+
     /**
      * 
      * @return the throttlePanel.
