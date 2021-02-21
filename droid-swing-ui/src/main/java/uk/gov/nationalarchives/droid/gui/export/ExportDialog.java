@@ -71,8 +71,9 @@ import uk.gov.nationalarchives.droid.gui.ProfileForm;
  * @author rflitcroft
  */
 public class ExportDialog extends JDialog {
-    
+
     private static final long serialVersionUID = -4598078880004073202L;
+    private static final int CAPACITY = 128;
 
     private DroidMainFrame droidMain;
     private DefaultTableModel tableModel;
@@ -205,7 +206,7 @@ public class ExportDialog extends JDialog {
      * @return A space separated string containing all column names to export.
      */
     public String getColumnsToExport() {
-        StringBuilder builder = new StringBuilder(128);
+        StringBuilder builder = new StringBuilder(CAPACITY);
         addColumn("ID", jCheckBoxId.isSelected(), builder);
         addColumn("PARENT_ID", jCheckBoxParentId.isSelected(), builder);
         addColumn("URI", jCheckBoxURI.isSelected(), builder);

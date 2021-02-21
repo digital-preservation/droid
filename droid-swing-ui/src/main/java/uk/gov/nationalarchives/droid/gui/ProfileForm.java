@@ -111,6 +111,7 @@ public class ProfileForm extends JPanel {
     private static final int MAX_LEVELS_TO_EXPAND = 3;
 
     private static final long serialVersionUID = 1671584434169040994L;
+    private static final int PREFERRED_WIDTH = 256;
 
     private DefaultTreeModel treeModel;
     private OutlineModel mdl;
@@ -218,7 +219,7 @@ public class ProfileForm extends JPanel {
         resultsOutline.setColumnSorted(modelIndex, true, 1);
 
         // Make the resource name column a bit wider by default - it's always too small to see anything.
-        nodeColumn0.setPreferredWidth(256);
+        nodeColumn0.setPreferredWidth(PREFERRED_WIDTH);
 
         //((DefaultTreeModel) treeModel).reload();
 
