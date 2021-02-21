@@ -60,6 +60,7 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     private String outputEncoding;
     private boolean bom;
     private boolean quoteAllFields;
+    private String columnsToWrite;
     private List<String> profileIds;
     private ActionDoneCallback<ExportAction> callback;
     
@@ -79,10 +80,11 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      * @param outputEncoding The output encoding.
      * @param bom use the bom flag in the output.
      * @param quoteAllFields whether to quote all fields in export, or just those that contain commas.
+     * @param columnsToWrite A space separated list of columns to write, or null or empty for all columns.
      * @param profileIds The ids of the profiles to export.
      */
     public ExportAction(ExportManager exportManager, File destination, ExportOptions options, String outputEncoding,
-                        boolean bom, boolean quoteAllFields, List<String> profileIds) {
+                        boolean bom, boolean quoteAllFields, String columnsToWrite, List<String> profileIds) {
         setExportManager(exportManager);
         setDestination(destination);
         setExportOptions(options);
@@ -121,7 +123,7 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     protected Void doInBackground() {
         //TODO: configure columns to write in UI.
         exportTask = exportManager.exportProfiles(profileIds, destination.getPath(), null, options,
-                outputEncoding, bom, quoteAllFields, null);
+                outputEncoding, bom, quoteAllFields, columnsToWrite);
         try {
             exportTask.get();
         } catch (InterruptedException e) {
@@ -203,5 +205,12 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      */
     public void setQuoteAllFields(boolean quoteAllFields) {
         this.quoteAllFields = quoteAllFields;
+    }
+
+    /**
+     * @param columnsToWrite A space separated list of columns to export, null or empty for all columns.
+     */
+    public void setColumnsToWrite(String columnsToWrite) {
+        this.columnsToWrite = columnsToWrite;
     }
 }

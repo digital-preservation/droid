@@ -79,7 +79,6 @@ public class ExportDialog extends JDialog {
     private List<ProfileWrapper> profilesRowData;
     private boolean approved;
     
-    
     /** 
      * Creates new form ReportDialog.
      * @param parent the dialog's parent
@@ -194,7 +193,46 @@ public class ExportDialog extends JDialog {
         
         return selectedProfiles;
     }
-    
+
+    /**
+     * @return Whether all columns should be quoted.
+     */
+    public boolean getQuoteAllColumns() {
+        return jCheckBoxQuoteAll.isSelected();
+    }
+
+    /**
+     * @return A space separated string containing all column names to export.
+     */
+    public String getColumnsToExport() {
+        StringBuilder builder = new StringBuilder(128);
+        addColumn("ID", jCheckBoxId.isSelected(), builder);
+        addColumn("PARENT_ID", jCheckBoxParentId.isSelected(), builder);
+        addColumn("URI", jCheckBoxURI.isSelected(), builder);
+        addColumn("FILE_PATH", jCheckBoxFilePath.isSelected(), builder);
+        addColumn("NAME", jCheckBoxFileName.isSelected(), builder);
+        addColumn("METHOD", jCheckBoxIdMethod.isSelected(), builder);
+        addColumn("STATUS", jCheckBoxStatus.isSelected(), builder);
+        addColumn("SIZE", jCheckBoxFileSize.isSelected(), builder);
+        addColumn("TYPE", jCheckBoxResourceType.isSelected(), builder);
+        addColumn("EXT", jCheckBoxExtension.isSelected(), builder);
+        addColumn("LAST_MODIFIED", jCheckBoxLastModified.isSelected(), builder);
+        addColumn("EXTENSION_MISMATCH", jCheckBoxExtMismatch.isSelected(), builder);
+        addColumn("HASH", jCheckBoxFileHash.isSelected(), builder);
+        addColumn("FORMAT_COUNT", jCheckBoxIdCount.isSelected(), builder);
+        addColumn("PUID", jCheckBoxPUID.isSelected(), builder);
+        addColumn("MIME_TYPE", jCheckBoxMIMEtype.isSelected(), builder);
+        addColumn("FORMAT_NAME", jCheckBoxFormatName.isSelected(), builder);
+        addColumn("FORMAT_VERSION", jCheckBoxFormatVersion.isSelected(), builder);
+        return builder.toString().strip();
+    }
+
+    private void addColumn(String columnName, boolean selected, StringBuilder builder) {
+        if (selected) {
+            builder.append(columnName).append(' ');
+        }
+    }
+
     private void cancelButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         
         setVisible(false);
@@ -221,6 +259,29 @@ public class ExportDialog extends JDialog {
         RadioOneRowPerIdentification = new JRadioButton();
         cmdEncoding = new JComboBox();
         jLabel1 = new JLabel();
+        jCheckBoxQuoteAll = new JCheckBox();
+        toggleColumnButton = new JButton();
+        jButtonSetAllColumns = new JButton();
+        jPanel2 = new JPanel();
+        profileSelectLabel1 = new JLabel();
+        jCheckBoxId = new JCheckBox();
+        jCheckBoxParentId = new JCheckBox();
+        jCheckBoxURI = new JCheckBox();
+        jCheckBoxFilePath = new JCheckBox();
+        jCheckBoxFileName = new JCheckBox();
+        jCheckBoxFileSize = new JCheckBox();
+        jCheckBoxLastModified = new JCheckBox();
+        jCheckBoxExtension = new JCheckBox();
+        jCheckBoxResourceType = new JCheckBox();
+        jCheckBoxIdMethod = new JCheckBox();
+        jCheckBoxStatus = new JCheckBox();
+        jCheckBoxIdCount = new JCheckBox();
+        jCheckBoxPUID = new JCheckBox();
+        jCheckBoxFormatName = new JCheckBox();
+        jCheckBoxMIMEtype = new JCheckBox();
+        jCheckBoxFormatVersion = new JCheckBox();
+        jCheckBoxExtMismatch = new JCheckBox();
+        jCheckBoxFileHash = new JCheckBox();
 
         setTitle(NbBundle.getMessage(ExportDialog.class, "ExportDialog.title_1")); // NOI18N
         setAlwaysOnTop(true);
@@ -270,8 +331,34 @@ public class ExportDialog extends JDialog {
         RadioOneRowPerIdentification.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerIdentification.toolTipText")); // NOI18N
 
         cmdEncoding.setModel(getOutputEncodings());
+        cmdEncoding.setEditor(null);
 
         jLabel1.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jLabel1.text_1")); // NOI18N
+
+        jCheckBoxQuoteAll.setSelected(true);
+        jCheckBoxQuoteAll.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxQuoteAll.text")); // NOI18N
+        jCheckBoxQuoteAll.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxQuoteAll.toolTipText")); // NOI18N
+        jCheckBoxQuoteAll.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jCheckBoxQuoteAllActionPerformed(evt);
+            }
+        });
+
+        toggleColumnButton.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.toggleColumnButton.text")); // NOI18N
+        toggleColumnButton.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.toggleColumnButton.toolTipText")); // NOI18N
+        toggleColumnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                toggleColumnButtonActionPerformed(evt);
+            }
+        });
+
+        jButtonSetAllColumns.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jButtonSetAllColumns.text")); // NOI18N
+        jButtonSetAllColumns.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jButtonSetAllColumns.toolTipText")); // NOI18N
+        jButtonSetAllColumns.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButtonSetAllColumnsActionPerformed(evt);
+            }
+        });
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -285,17 +372,28 @@ public class ExportDialog extends JDialog {
                         .addComponent(cmdEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(exportButton)
-                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addPreferredGap(ComponentPlacement.UNRELATED)
                         .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(RadioOneRowPerFile)
-                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(RadioOneRowPerIdentification)
-                        .addGap(0, 145, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jCheckBoxQuoteAll)
+                        .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonSetAllColumns)
+                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addComponent(toggleColumnButton)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(toggleColumnButton)
+                    .addComponent(jCheckBoxQuoteAll)
+                    .addComponent(jButtonSetAllColumns))
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(RadioOneRowPerFile)
                     .addComponent(RadioOneRowPerIdentification))
@@ -308,6 +406,153 @@ public class ExportDialog extends JDialog {
                 .addContainerGap())
         );
 
+        profileSelectLabel1.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.profileSelectLabel1.text")); // NOI18N
+
+        jCheckBoxId.setSelected(true);
+        jCheckBoxId.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxId.text")); // NOI18N
+        jCheckBoxId.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jCheckBoxIdActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxParentId.setSelected(true);
+        jCheckBoxParentId.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxParentId.text")); // NOI18N
+
+        jCheckBoxURI.setSelected(true);
+        jCheckBoxURI.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxURI.text")); // NOI18N
+
+        jCheckBoxFilePath.setSelected(true);
+        jCheckBoxFilePath.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxFilePath.text")); // NOI18N
+
+        jCheckBoxFileName.setSelected(true);
+        jCheckBoxFileName.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxFileName.text")); // NOI18N
+
+        jCheckBoxFileSize.setSelected(true);
+        jCheckBoxFileSize.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxFileSize.text")); // NOI18N
+
+        jCheckBoxLastModified.setSelected(true);
+        jCheckBoxLastModified.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxLastModified.text")); // NOI18N
+        jCheckBoxLastModified.setActionCommand(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxLastModified.actionCommand")); // NOI18N
+
+        jCheckBoxExtension.setSelected(true);
+        jCheckBoxExtension.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxExtension.text")); // NOI18N
+        jCheckBoxExtension.setActionCommand(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxExtension.actionCommand")); // NOI18N
+
+        jCheckBoxResourceType.setSelected(true);
+        jCheckBoxResourceType.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxResourceType.text")); // NOI18N
+
+        jCheckBoxIdMethod.setSelected(true);
+        jCheckBoxIdMethod.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxIdMethod.text")); // NOI18N
+
+        jCheckBoxStatus.setSelected(true);
+        jCheckBoxStatus.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxStatus.text")); // NOI18N
+
+        jCheckBoxIdCount.setSelected(true);
+        jCheckBoxIdCount.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxIdCount.text")); // NOI18N
+        jCheckBoxIdCount.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jCheckBoxIdCountActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxPUID.setSelected(true);
+        jCheckBoxPUID.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxPUID.text")); // NOI18N
+
+        jCheckBoxFormatName.setSelected(true);
+        jCheckBoxFormatName.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxFormatName.text")); // NOI18N
+        jCheckBoxFormatName.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jCheckBoxFormatNameActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxMIMEtype.setSelected(true);
+        jCheckBoxMIMEtype.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxMIMEtype.text")); // NOI18N
+
+        jCheckBoxFormatVersion.setSelected(true);
+        jCheckBoxFormatVersion.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxFormatVersion.text")); // NOI18N
+
+        jCheckBoxExtMismatch.setSelected(true);
+        jCheckBoxExtMismatch.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxExtMismatch.text")); // NOI18N
+        jCheckBoxExtMismatch.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxExtMismatch.toolTipText")); // NOI18N
+
+        jCheckBoxFileHash.setSelected(true);
+        jCheckBoxFileHash.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxFileHash.text")); // NOI18N
+
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jCheckBoxId)
+                    .addComponent(profileSelectLabel1)
+                    .addComponent(jCheckBoxParentId)
+                    .addComponent(jCheckBoxURI)
+                    .addComponent(jCheckBoxFilePath)
+                    .addComponent(jCheckBoxFileName)
+                    .addComponent(jCheckBoxFileSize)
+                    .addComponent(jCheckBoxLastModified)
+                    .addComponent(jCheckBoxExtension)
+                    .addComponent(jCheckBoxExtMismatch))
+                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jCheckBoxFileHash)
+                    .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(jCheckBoxIdCount, Alignment.TRAILING)
+                        .addComponent(jCheckBoxMIMEtype))
+                    .addComponent(jCheckBoxFormatName)
+                    .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(Alignment.TRAILING, jPanel2Layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(jCheckBoxIdMethod)
+                            .addComponent(jCheckBoxStatus)
+                            .addComponent(jCheckBoxFormatVersion))
+                        .addComponent(jCheckBoxPUID))
+                    .addComponent(jCheckBoxResourceType))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(profileSelectLabel1)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxId)
+                    .addComponent(jCheckBoxPUID))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxParentId)
+                    .addComponent(jCheckBoxFormatName))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxURI)
+                    .addComponent(jCheckBoxFormatVersion))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxFilePath)
+                    .addComponent(jCheckBoxMIMEtype))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxFileName)
+                    .addComponent(jCheckBoxIdCount))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxFileSize, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBoxIdMethod))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxLastModified)
+                    .addComponent(jCheckBoxStatus))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxExtension)
+                    .addComponent(jCheckBoxResourceType))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jCheckBoxExtMismatch)
+                    .addComponent(jCheckBoxFileHash))
+                .addGap(0, 9, Short.MAX_VALUE))
+        );
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
@@ -315,26 +560,90 @@ public class ExportDialog extends JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(profileSelectLabel))
+                    .addComponent(profileSelectLabel)
+                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(profileSelectLabel)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(profileSelectLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jCheckBoxQuoteAllActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jCheckBoxQuoteAllActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxQuoteAllActionPerformed
+
+    private void jCheckBoxFormatNameActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jCheckBoxFormatNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxFormatNameActionPerformed
+
+    private void jCheckBoxIdCountActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jCheckBoxIdCountActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxIdCountActionPerformed
+
+    private void jCheckBoxIdActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jCheckBoxIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxIdActionPerformed
+
+    private void toggleColumnButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_toggleColumnButtonActionPerformed
+        jCheckBoxId.setSelected(!jCheckBoxId.isSelected());
+        jCheckBoxParentId.setSelected(!jCheckBoxParentId.isSelected());
+        jCheckBoxURI.setSelected(!jCheckBoxURI.isSelected());
+        jCheckBoxFilePath.setSelected(!jCheckBoxFilePath.isSelected());
+        jCheckBoxFileName.setSelected(!jCheckBoxFileName.isSelected());
+        jCheckBoxFileSize.setSelected(!jCheckBoxFileSize.isSelected());
+        jCheckBoxLastModified.setSelected(!jCheckBoxLastModified.isSelected());
+        jCheckBoxExtension.setSelected(!jCheckBoxExtension.isSelected());
+        jCheckBoxExtMismatch.setSelected(!jCheckBoxExtMismatch.isSelected());
+        jCheckBoxPUID.setSelected(!jCheckBoxPUID.isSelected());
+        jCheckBoxFormatName.setSelected(!jCheckBoxFormatName.isSelected());
+        jCheckBoxFormatVersion.setSelected(!jCheckBoxFormatVersion.isSelected());
+        jCheckBoxMIMEtype.setSelected(!jCheckBoxMIMEtype.isSelected());
+        jCheckBoxIdCount.setSelected(!jCheckBoxIdCount.isSelected());
+        jCheckBoxIdMethod.setSelected(!jCheckBoxIdMethod.isSelected());
+        jCheckBoxStatus.setSelected(!jCheckBoxStatus.isSelected());
+        jCheckBoxResourceType.setSelected(!jCheckBoxResourceType.isSelected());
+        jCheckBoxFileHash.setSelected(!jCheckBoxFileHash.isSelected());
+    }//GEN-LAST:event_toggleColumnButtonActionPerformed
+
+    private void jButtonSetAllColumnsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButtonSetAllColumnsActionPerformed
+       jCheckBoxId.setSelected(true);
+        jCheckBoxParentId.setSelected(true);
+        jCheckBoxURI.setSelected(true);
+        jCheckBoxFilePath.setSelected(true);
+        jCheckBoxFileName.setSelected(true);
+        jCheckBoxFileSize.setSelected(true);
+        jCheckBoxLastModified.setSelected(true);
+        jCheckBoxExtension.setSelected(true);
+        jCheckBoxExtMismatch.setSelected(true);
+        jCheckBoxPUID.setSelected(true);
+        jCheckBoxFormatName.setSelected(true);
+        jCheckBoxFormatVersion.setSelected(true);
+        jCheckBoxMIMEtype.setSelected(true);
+        jCheckBoxIdCount.setSelected(true);
+        jCheckBoxIdMethod.setSelected(true);
+        jCheckBoxStatus.setSelected(true);
+        jCheckBoxResourceType.setSelected(true);
+        jCheckBoxFileHash.setSelected(true);
+    }//GEN-LAST:event_jButtonSetAllColumnsActionPerformed
 
     /**
      * @param evt The event that triggers the action.
      */
     protected void exportButtonActionPerformed(ActionEvent evt) {
         // TODO Auto-generated method stub
+
         approved = true;
         setVisible(false);
     }
@@ -347,11 +656,34 @@ public class ExportDialog extends JDialog {
     private JButton cancelButton;
     private JComboBox cmdEncoding;
     private JButton exportButton;
+    private JButton jButtonSetAllColumns;
+    private JCheckBox jCheckBoxExtMismatch;
+    private JCheckBox jCheckBoxExtension;
+    private JCheckBox jCheckBoxFileHash;
+    private JCheckBox jCheckBoxFileName;
+    private JCheckBox jCheckBoxFilePath;
+    private JCheckBox jCheckBoxFileSize;
+    private JCheckBox jCheckBoxFormatName;
+    private JCheckBox jCheckBoxFormatVersion;
+    private JCheckBox jCheckBoxId;
+    private JCheckBox jCheckBoxIdCount;
+    private JCheckBox jCheckBoxIdMethod;
+    private JCheckBox jCheckBoxLastModified;
+    private JCheckBox jCheckBoxMIMEtype;
+    private JCheckBox jCheckBoxPUID;
+    private JCheckBox jCheckBoxParentId;
+    private JCheckBox jCheckBoxQuoteAll;
+    private JCheckBox jCheckBoxResourceType;
+    private JCheckBox jCheckBoxStatus;
+    private JCheckBox jCheckBoxURI;
     private JLabel jLabel1;
     private JPanel jPanel1;
+    private JPanel jPanel2;
     private JScrollPane jScrollPane1;
     private JLabel profileSelectLabel;
+    private JLabel profileSelectLabel1;
     private JTable profileSelectTable;
+    private JButton toggleColumnButton;
     // End of variables declaration//GEN-END:variables
 
     private void enableGenerateButton() {
@@ -512,6 +844,7 @@ public class ExportDialog extends JDialog {
         
         ProfileWrapper(ProfileForm profile) {
             this.profile = profile;
+            selected = profile.getProfile().getState().isReportable(); // select exportable profiles by default.
         }
         
         /**
