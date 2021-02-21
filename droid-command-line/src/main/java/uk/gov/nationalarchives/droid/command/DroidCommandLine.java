@@ -73,6 +73,8 @@ public final class DroidCommandLine implements AutoCloseable {
     public static final String CLI_SYNTAX_INCORRECT = "Incorrect command line syntax: %s";
     /** Wrap width. */
     public static final int WRAP_WIDTH = 120;
+    private static final String LONG_NAME_FLAG = "--";
+    private static final String SHORT_NAME_FLAG = "-";
 
     //CHECKSTYLE:OFF
     /**
@@ -183,8 +185,12 @@ public final class DroidCommandLine implements AutoCloseable {
     public static void main(final String[] args) throws CommandLineException {
 
         // we process --quiet parameter manually first before we initialize the spring context, to set the tna logger level.
+        // Also disable log output for no profile mode, since this never used profiles which generated log messages.
         final List<String> argsList = Arrays.asList(args);
-        if (argsList.contains("-" + CommandLineParam.QUIET.toString()) || argsList.contains("--" + CommandLineParam.QUIET.getLongName())) {
+        if (argsList.contains(SHORT_NAME_FLAG + CommandLineParam.QUIET.toString())
+                || argsList.contains(LONG_NAME_FLAG + CommandLineParam.QUIET.getLongName())
+                || argsList.contains(SHORT_NAME_FLAG + CommandLineParam.RUN_NO_PROFILE.toString())
+                || argsList.contains(LONG_NAME_FLAG + CommandLineParam.RUN_NO_PROFILE.getLongName())) {
             System.setProperty("consoleLogThreshold", "ERROR");
         }
 
