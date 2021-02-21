@@ -51,8 +51,12 @@ import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType
 import uk.gov.nationalarchives.droid.command.filter.DqlCriterionFactory;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
 import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilterCriterion;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
@@ -238,6 +242,31 @@ public class CommandFactoryImpl implements CommandFactory {
         return command;
     }
 
+    @Override
+    public DroidCommand getNoProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
+        final ProfileRunCommand command = context.getProfileRunCommand();
+        PropertiesConfiguration overrides = getOverrideProperties(cli);
+        overrides.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
+        overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "NAME PUID");
+        command.setResources(getNoProfileResources(cli));
+        command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
+        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+        command.setProperties(overrides); // must be called after we set destination.
+        command.setContainerSignatureFile(cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString()));
+        command.setSignatureFile(cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString()));
+        command.setResultsFilter(getFileOnlyResultsFilter());
+        command.setIdentificationFilter(getIdentificationFilter(cli));
+        return command;
+    }
+
+    private Filter getFileOnlyResultsFilter() {
+        Object[] filterValue = new Object[]{ResourceType.FOLDER};
+        FilterCriterion criterion = new BasicFilterCriterion(CriterionFieldEnum.RESOURCE_TYPE, CriterionOperator.NONE_OF, filterValue);
+        return new BasicFilter(criterion);
+    }
+
+
+
     private String getDestination(CommandLine cli, PropertiesConfiguration overrideProperties) throws CommandLineSyntaxException {
         final String destination;
         // Determine if destination is to a database profile, or to a csv file output:
@@ -284,6 +313,17 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private String[] getResources(final CommandLine cli) throws CommandLineSyntaxException {
         String[] resources = cli.getOptionValues(CommandLineParam.RUN_PROFILE.toString());
+        if (resources == null || resources.length == 0) {
+            resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
+            if (resources == null || resources.length == 0) {
+                throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+            }
+        }
+        return resources;
+    }
+
+    private String[] getNoProfileResources(CommandLine cli) throws CommandLineSyntaxException {
+        String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
         if (resources == null || resources.length == 0) {
             resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
             if (resources == null || resources.length == 0) {
@@ -400,36 +440,6 @@ public class CommandFactoryImpl implements CommandFactory {
      */
     private String getArchivePropertyName(String archiveType) {
         return "profile.process" + archiveType.substring(0, 1).toUpperCase(Locale.ROOT) + archiveType.substring(1).toLowerCase(Locale.ROOT);
-    }
-
-    @Override
-    public DroidCommand getNoProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
-        final String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
-        if (resources.length == 0) {
-            throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
-        }
-        if (!cli.hasOption(CommandLineParam.SIGNATURE_FILE.toString())) {
-            throw new CommandLineSyntaxException("No signature file specified.");
-        }
-
-        final String signatureFile = cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString());
-        final String containerSignatureFile =
-                cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString());
-        final String[] extensions = cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString());
-
-        final NoProfileRunCommand command = context.getNoProfileRunCommand();
-        command.setResources(resources);
-        command.setSignatureFile(signatureFile);
-        command.setContainerSignatureFile(containerSignatureFile);
-        command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
-        command.setExpandAllArchives(cli.hasOption(CommandLineParam.ARCHIVES.toString()));
-        command.setExpandArchiveTypes(cli.getOptionValues(CommandLineParam.ARCHIVE_TYPES.toString()));
-        command.setExpandAllWebArchives(cli.hasOption(CommandLineParam.WEB_ARCHIVES.toString()));
-        command.setExpandWebArchiveTypes(cli.getOptionValues(CommandLineParam.WEB_ARCHIVE_TYPES.toString()));
-        command.setExtensionFilter(extensions);
-        command.setQuiet(cli.hasOption(CommandLineParam.QUIET.toString()));
-
-        return command;
     }
 
     @Override
