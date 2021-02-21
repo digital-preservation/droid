@@ -41,7 +41,6 @@ import uk.gov.nationalarchives.droid.command.action.DownloadSignatureUpdateComma
 import uk.gov.nationalarchives.droid.command.action.ExportCommand;
 import uk.gov.nationalarchives.droid.command.action.ListAllSignatureFilesCommand;
 import uk.gov.nationalarchives.droid.command.action.ListReportsCommand;
-import uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
@@ -82,11 +81,6 @@ public final class SpringUiContext implements GlobalContext {
     @Override
     public ProfileRunCommand getProfileRunCommand() {
         return context.getBean("profileRunCommand", ProfileRunCommand.class);
-    }
-
-    @Override
-    public NoProfileRunCommand getNoProfileRunCommand() {
-        return context.getBean("noProfileRunCommand", NoProfileRunCommand.class);
     }
 
     @Override

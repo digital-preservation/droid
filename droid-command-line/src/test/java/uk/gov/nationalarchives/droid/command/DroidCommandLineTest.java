@@ -44,12 +44,9 @@ import uk.gov.nationalarchives.droid.command.action.DisplayDefaultSignatureFileV
 import uk.gov.nationalarchives.droid.command.action.DownloadSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.ExportCommand;
 import uk.gov.nationalarchives.droid.command.action.ListAllSignatureFilesCommand;
-import uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
-import uk.gov.nationalarchives.droid.command.archive.ArchiveContainerTestHelper;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
-import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
@@ -586,75 +583,5 @@ public class DroidCommandLineTest {
         commandLine.processExecution();
         verify(printWriter).println("Incorrect command line syntax: Missing argument for option: s");
     }
-    
-    /**
-     * This has been added by Riz Rahman to test the -Nr(noProfile) with -q (quiet), -R (recursive) with 
-     * file --extension-list (file extensions) functionality
-     * TODO: Signature file version needs to be updated every time a new one is released, or we need to leave the old one in. Ideally
-     * this would somehow be read from configuration!
-     * @throws CommandLineException
-     */
-    @Test(timeout = 20000) //BNO added the timeout as getting "Not started" in Intellij but it doesn't seem to make any difference!!
-    public void runRecursiveNoProfileWithFileExts() throws CommandLineException {
-        String[] args = new String[] {
-            "-q",
-            "-R",
-            "-Nr",
-            "src",
-            "-Ns",
-            new ArchiveContainerTestHelper().getBinarySignatureFileLocation(),
-            "--extension-list",
-            "xml", "txt", "jp2", "jpg"
-        };
 
-        //NB: BNO - added this call as otherwise an error occurs when trying instantiate the log
-        // when we call new NoProfileRunCommand();  However, this does mean that configureRuntimeEnvironment
-        // is called twice as it's also called in ommandLine.processExecution();  This only affects tests
-        // not live (in live the Main method in DroidCommandLine handles this but this isn't called in the tests)
-        RuntimeConfig.configureRuntimeEnvironment();
-
-        NoProfileRunCommand noProfileRunCmd = new NoProfileRunCommand();
-		when(context.getNoProfileRunCommand()).thenReturn(noProfileRunCmd);
-     
-        DroidCommandLine commandLine = new DroidCommandLine(args);
-        commandLine.setContext(context);
-        
-        commandLine.processExecution();
-        
-        verify(context).getNoProfileRunCommand();
-    }
-    
-    /**
-     * This has been added by Riz Rahman to test the -Nr(noProfile) with -q (quiet), -R (recursive) no file extensions functionality
-     * @throws CommandLineException
-     */
-    @Test(timeout=20000)  //BNO added the timeout as getting "Not started" in Intellij but it doesn't seem to make any difference!!
-    //@Ignore
-    public void runRecursiveNoProfileWithoutFileExts() throws CommandLineException {
-        String[] args = new String[] {
-            "-q",
-            "-R",
-            "-Nr",
-            "src",
-            "-Ns",
-            new ArchiveContainerTestHelper().getBinarySignatureFileLocation()
-        };
-
-        //NB: BNO - added this call as otherwise an error occurs when trying instantiate the log
-        // when we call new NoProfileRunCommand();  However, this does mean that configureRuntimeEnvironment
-        // is called twice as it's also called in commandLine.processExecution();  This only affects tests
-        // not live (in live the Main method in DroidCommandLine handles this but this isn't called in the tests)
-        RuntimeConfig.configureRuntimeEnvironment();
-
-
-        NoProfileRunCommand noProfileRunCmd = new NoProfileRunCommand();
-		when(context.getNoProfileRunCommand()).thenReturn(noProfileRunCmd);
-     
-        DroidCommandLine commandLine = new DroidCommandLine(args);
-        commandLine.setContext(context);
-        
-        commandLine.processExecution();
-        
-        verify(context).getNoProfileRunCommand();
-    }
 }
