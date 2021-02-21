@@ -43,10 +43,12 @@ import uk.gov.nationalarchives.droid.command.action.ConfigureDefaultSignatureFil
 import uk.gov.nationalarchives.droid.command.action.DisplayDefaultSignatureFileVersionCommand;
 import uk.gov.nationalarchives.droid.command.action.DownloadSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.ExportCommand;
+import uk.gov.nationalarchives.droid.command.action.FilterFieldCommand;
 import uk.gov.nationalarchives.droid.command.action.ListAllSignatureFilesCommand;
 import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
@@ -75,6 +77,7 @@ public class DroidCommandLineTest {
     public void setup() {
         printWriter = mock(PrintWriter.class);
         context = mock(GlobalContext.class);
+        RuntimeConfig.configureRuntimeEnvironment();
     }
     
     @Test
@@ -88,7 +91,6 @@ public class DroidCommandLineTest {
         //a return code of 1 denotes a failure
         Assert.assertEquals(1, droidCommandLine.processExecution());
         verify(printWriter).println("Incorrect command line syntax: Unrecognized option: --zzzzzz");
-        
     }
     
     @Ignore

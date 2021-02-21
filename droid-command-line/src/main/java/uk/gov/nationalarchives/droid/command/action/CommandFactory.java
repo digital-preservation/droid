@@ -33,8 +33,6 @@ package uk.gov.nationalarchives.droid.command.action;
 
 import org.apache.commons.cli.CommandLine;
 
-import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
-
 /**
  * @author rflitcroft, Alok Kumar Dash
  *

@@ -44,7 +44,6 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.tree.OverrideCombiner;
 import org.apache.commons.lang.StringUtils;
 
-import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
 import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
