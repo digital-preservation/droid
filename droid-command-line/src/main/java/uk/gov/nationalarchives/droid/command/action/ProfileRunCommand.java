@@ -51,7 +51,9 @@ import uk.gov.nationalarchives.droid.profile.ProfileState;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
 /**
- * @author rflitcroft
+ * A command which identifies files and either stores them in a database, or writes them out to a file or the console.
+ *
+ * @author rflitcroft, mpalmer
  *
  */
 public class ProfileRunCommand implements DroidCommand {
@@ -70,9 +72,6 @@ public class ProfileRunCommand implements DroidCommand {
     private Filter resultsFilter;
     private Filter identificationFilter;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void execute() throws CommandExecutionException {
         try {
@@ -114,6 +113,10 @@ public class ProfileRunCommand implements DroidCommand {
         
     }
 
+    /**
+     * @return The default binary and container signatures, but will override with different ones if provided.
+     * @throws SignatureFileException if there's a problem obtaining the signature files.
+     */
     private Map<SignatureType, SignatureFileInfo> getSignatureFiles() throws SignatureFileException {
         Map<SignatureType, SignatureFileInfo> sigs = signatureManager.getDefaultSignatures();
         if (binarySignaturesFileName != null) {
@@ -211,7 +214,5 @@ public class ProfileRunCommand implements DroidCommand {
     public void setContainerSignatureFile(final String containerSignatureFile) {
         this.containerSignaturesFileName = containerSignatureFile;
     }
-
-
 
 }
