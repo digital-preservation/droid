@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.command;
 
 import junit.framework.Assert;
+import net.bytebuddy.asm.Advice;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -161,15 +162,21 @@ public class DroidCommandLineTest {
         
         ExportCommand command = mock(ExportCommand.class);
         when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
-        
+
         DroidCommandLine droidCommandLine = new DroidCommandLine(args);
         droidCommandLine.setContext(context);
-        
-        
         droidCommandLine.processExecution();
-        
+
+        // Validate that the profiles were set correctly.
+        ArgumentCaptor<String[]> profileCaptor = ArgumentCaptor.forClass(String[].class);
+        verify(command).setProfiles(profileCaptor.capture());
+        String[] setProfiles = profileCaptor.getValue();
+        assertEquals("tmp/profile 1.droid", setProfiles[0]);
+        assertEquals("tmp/profile-2.droid", setProfiles[1]);
+        assertEquals("tmp/profile-3.droid", setProfiles[2]);
+
+        // Validate that the export command was executed.
         verify(command).execute();
-        
     }
 
     @Test
@@ -190,9 +197,16 @@ public class DroidCommandLineTest {
         droidCommandLine.setContext(context);
         
         droidCommandLine.processExecution();
-        
+
+        // Validate that the profiles were set correctly.
+        ArgumentCaptor<String[]> profileCaptor = ArgumentCaptor.forClass(String[].class);
+        verify(command).setProfiles(profileCaptor.capture());
+        String[] setProfiles = profileCaptor.getValue();
+        assertEquals("tmp/profile 1.droid", setProfiles[0]);
+        assertEquals("tmp/profile-2.droid", setProfiles[1]);
+        assertEquals("tmp/profile-3.droid", setProfiles[2]);
+
         verify(command).execute();
-        
     }
 
     @Test
@@ -334,12 +348,14 @@ public class DroidCommandLineTest {
         droidCommandLine.setContext(context);
         
         droidCommandLine.processExecution();
-        
+
+        verify(command).setProfiles(new String[] {"profile1.droid"});
+        verify(command).setReportType("planets");
+        verify(command).setDestination("out.xml");
         verify(command).execute();
     }
     
     @Test
-    //@Ignore //BNO
     public void testFilterFieldNames() throws Exception {
         String[] args = new String[] {
             "-k"
@@ -348,14 +364,13 @@ public class DroidCommandLineTest {
         FilterFieldCommand command = mock(FilterFieldCommand.class);
         CommandFactory factory = mock(CommandFactory.class);
         when(factory.getFilterFieldCommand()).thenReturn(command);
+
         DroidCommandLine droidCommandLine = new DroidCommandLine(args);
-        
+        droidCommandLine.setCommandFactory(factory);
         droidCommandLine.setContext(context);
-        
         droidCommandLine.processExecution();
         
-        //verify(command).execute();
-        
+        verify(command).execute();
     }
     
     @Test

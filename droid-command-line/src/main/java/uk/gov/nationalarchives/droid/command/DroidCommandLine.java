@@ -215,10 +215,10 @@ public final class DroidCommandLine implements AutoCloseable {
     public int processExecution() throws CommandLineException {
 
         PrintWriter out = new PrintWriter(System.out);
-        
-        final CommandFactoryImpl localCommandFactory = new CommandFactoryImpl(context, out);
-        
-        this.setCommandFactory(localCommandFactory);
+
+        if (commandFactory == null) {
+            this.setCommandFactory(new CommandFactoryImpl(context, out));
+        }
 
         int returnCode = 0;
 
