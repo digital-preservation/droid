@@ -46,6 +46,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceFactory;
 import uk.gov.nationalarchives.droid.profile.ProfileManagerException;
 import uk.gov.nationalarchives.droid.profile.ProfileState;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
@@ -65,7 +66,7 @@ public class ProfileRunCommand implements DroidCommand {
     private boolean recursive;
     private ProfileManager profileManager;
     private SignatureManager signatureManager;
-    private LocationResolver locationResolver;
+    private ProfileResourceFactory profileResourceFactory;
     private PropertiesConfiguration propertyOverrides;
     private String binarySignaturesFileName;
     private String containerSignaturesFileName;
@@ -83,7 +84,7 @@ public class ProfileRunCommand implements DroidCommand {
             profile.changeState(ProfileState.VIRGIN);
 
             for (String resource : resources) {
-                profile.addResource(locationResolver.getResource(resource, recursive));
+                profile.addResource(getProfileResourceFactory().getResource(resource, recursive));
             }
             profileManager.setProgressObserver(profile.getUuid(), null);
             Future<?> future = profileManager.start(profile.getUuid());
@@ -168,10 +169,10 @@ public class ProfileRunCommand implements DroidCommand {
     }
     
     /**
-     * @param locationResolver the locationResolver to set
+     * @param profileResourceFactory the profileResourceFactory to set
      */
-    public void setLocationResolver(LocationResolver locationResolver) {
-        this.locationResolver = locationResolver;
+    public void setProfileResourceFactory(ProfileResourceFactory profileResourceFactory) {
+        this.profileResourceFactory = profileResourceFactory;
     }
 
     /**
@@ -213,6 +214,13 @@ public class ProfileRunCommand implements DroidCommand {
      */
     public void setContainerSignatureFile(final String containerSignatureFile) {
         this.containerSignaturesFileName = containerSignatureFile;
+    }
+
+    private ProfileResourceFactory getProfileResourceFactory() {
+        if (profileResourceFactory == null) {
+            profileResourceFactory = new ProfileResourceFactory();
+        }
+        return profileResourceFactory;
     }
 
 }
