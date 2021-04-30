@@ -69,6 +69,16 @@
     Command line control allows DROID to be scripted into batch processes or automated work-flows, or used
     interactively to quickly explore file type identifications.
 </p>
+<table cellpadding="8" border="0" cellspacing="0">
+    <tr>
+        <td>To obtain a list of help for command line options, run:</td>
+        <td><font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid <b>-h</b>&nbsp;</font></td>
+    </tr>
+    <tr>
+        <td>To obtain the version of DROID, run:</td>
+        <td><font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid <b>-v</b>&nbsp;</font></td>
+    </tr>
+</table>
 <ul>
     <li>
         <a href="#Format identification">Format identification</a>
@@ -85,6 +95,9 @@
         </li>
         <li>
             <a href="#FilteringResults">Filtering results once identified</a>
+        </li>
+        <li>
+            <a href="FilteringOptions">List filtering options</a>
         </li>
         <li>
             <a href="#SignatureFilesToUse">Specifying the signature files to use</a>
@@ -164,24 +177,6 @@
 </ul>
 
 <p>
-    To obtain a list of help for command line options, run:
-<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
-    <tr>
-        <td>
-            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid <b>-h</b>&nbsp;</font>
-        </td>
-    </tr>
-</table>
-<p>
-    To obtain the version of DROID, run:
-<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0" >
-    <tr>
-        <td>
-            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid <b>-v</b>&nbsp;</font>
-        </td>
-    </tr>
-</table>
-<p>
 
 <h2><a id="FormatIdentification" name="Identification">Format identification</a></h2>
 To identify files from the command line, run droid with a list of files or folders to process:
@@ -259,7 +254,7 @@ option:
     </tr>
 </table>
 <p>
-
+If you want to keep exploring the results of identifying files, saving the results to a database is the most flexible, as you can run different queries on it.
 <h3><a id="FilteringFiles" name="FilteringFiles">Filtering files to identify</a></h3>
 If there are files you don't want to identify, then you can filter them out of identification, based on basic file metadata: file name,
 file size, file extension or the last modified date.  Use the <b>-ff</b> (must meet all criteria) or <b>-FF</b> (must meet any criteria) options.
@@ -316,6 +311,12 @@ Results can be filtered out on all available metadata, not just basic file metad
     </tr>
 </table>
 <p>
+    <i>Note: </i> Specifying this option if writing to a database with the -p option will have no effect, as the database requires all identifications made to be written out.
+    This is because the database can be in an inconsistent state otherwise, if folders or archive files are filtered out, but the
+    children in them are still present.  You can still filter a database after it has been saved using these options, but not during the file identification process itself.
+    See <a href="#FilteringProfiles">Filtering Exports</a> for more details.
+<p>
+<h3><a id="FilteringOptions" name="FilteringOptions">List filtering options</a></h3>
     To obtain a full list of the available filtering fields and operators, use the <b>-k</b> option, or see the <a href="#FilteringParameters">Filtering Parameters Table</a>:
 <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
     <tr>
@@ -327,12 +328,6 @@ Results can be filtered out on all available metadata, not just basic file metad
     </tr>
 </table>
 <p>
-    <i>Note: </i> Specifying this option if writing to a database with the -p option will have no effect, as the database requires all identifications made to be written out.
-    This is because the database can be in an inconsistent state otherwise, if folders or archive files are filtered out, but the
-    children in them are still present.  You can still filter a database after it has been saved using these options, but not during the file identification process itself.
-    See <a href="#FilteringProfiles">Filtering Exports</a> for more details.
-<p>
-
 <h3><a id="SignatureFilesToUse" name="SignatureFilesToUse">Specifying the signature files to use</a></h3>
 DROID will use the default binary and container signature files (normally the last ones downloaded) to identify file formats.
 If you want to specify a different binary signature file, use the <b>-Ns</b> option, the <b>-Nc</b> option to specify
