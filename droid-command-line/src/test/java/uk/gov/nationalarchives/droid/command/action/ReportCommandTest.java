@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.command;
+package uk.gov.nationalarchives.droid.command.action;
 
 import java.io.Writer;
 import java.nio.file.Files;
@@ -87,6 +87,22 @@ public class ReportCommandTest {
         
         reportCommand.setProfileManager(profileManager);
         reportCommand.setReportManager(reportManager);
+    }
+
+    @Test
+    public void testSetGetProfiles() {
+        ReportCommand command = new ReportCommand();
+        String[] profiles = new String[] { "profile 1.droid", "profile 2.droid"};
+        command.setProfiles(profiles);
+        assertEquals(profiles, command.getProfiles());
+    }
+
+    @Test
+    public void testSetSetDestination() {
+        ReportCommand command = new ReportCommand();
+        String destination = "/home/user/destination";
+        command.setDestination(destination);
+        assertEquals(destination, command.getDestination());
     }
 
     @Test
