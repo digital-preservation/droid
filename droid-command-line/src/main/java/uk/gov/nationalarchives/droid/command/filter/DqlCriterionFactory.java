@@ -53,9 +53,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
  */
 public final class DqlCriterionFactory {
 
-    
-    private static Map<CriterionFieldEnum, CriterionFactory> factories =
-        new EnumMap<CriterionFieldEnum, CriterionFactory>(CriterionFieldEnum.class);
+    private static final Map<CriterionFieldEnum, CriterionFactory> factories =
+        new EnumMap<>(CriterionFieldEnum.class);
     
     static {
         factories.put(CriterionFieldEnum.FILE_EXTENSION, new StringCriterionFactory());
@@ -67,11 +66,11 @@ public final class DqlCriterionFactory {
         factories.put(CriterionFieldEnum.MIME_TYPE, new StringCriterionFactory());
         factories.put(CriterionFieldEnum.PUID, new StringCriterionFactory());
         factories.put(CriterionFieldEnum.IDENTIFICATION_METHOD, 
-                new EnumCriterionFactory<IdentificationMethod>(IdentificationMethod.class));
+                new EnumCriterionFactory<>(IdentificationMethod.class));
         factories.put(CriterionFieldEnum.JOB_STATUS, 
-                new EnumCriterionFactory<NodeStatus>(NodeStatus.class));
+                new EnumCriterionFactory<>(NodeStatus.class));
         factories.put(CriterionFieldEnum.RESOURCE_TYPE, 
-                new EnumCriterionFactory<ResourceType>(ResourceType.class));
+                new EnumCriterionFactory<>(ResourceType.class));
         factories.put(CriterionFieldEnum.EXTENSION_MISMATCH , new BooleanCriterionFactory());
     }
     
@@ -110,7 +109,7 @@ public final class DqlCriterionFactory {
             StringCriterion criterion = new StringCriterion(field, operator);
             criterion.setValue(dqlValues);
             return criterion;
-        };
+        }
         
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
@@ -128,7 +127,7 @@ public final class DqlCriterionFactory {
             LongCriterion criterion = new LongCriterion(field, operator);
             criterion.setValue(dqlValues);
             return criterion;
-        };
+        }
         
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
@@ -146,7 +145,7 @@ public final class DqlCriterionFactory {
             IntegerCriterion criterion = new IntegerCriterion(field, operator);
             criterion.setValue(dqlValues);
             return criterion;
-        };
+        }
 
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
@@ -164,7 +163,7 @@ public final class DqlCriterionFactory {
             DateCriterion criterion = new DateCriterion(field, operator);
             criterion.setValue(dqlValues);
             return criterion;
-        };
+        }
         
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
@@ -182,7 +181,7 @@ public final class DqlCriterionFactory {
             BooleanCriterion criterion = new BooleanCriterion(field, operator);
             criterion.setValue(dqlValues);
             return criterion;
-        };
+        }
 
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
@@ -196,7 +195,7 @@ public final class DqlCriterionFactory {
 
     private static final class EnumCriterionFactory<T extends Enum<T>> implements CriterionFactory {
 
-        private Class<T> type;
+        private final Class<T> type;
         
         public EnumCriterionFactory(Class<T> type) {
             this.type = type;
@@ -205,10 +204,10 @@ public final class DqlCriterionFactory {
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field, 
                 CriterionOperator operator, Collection<String> dqlValues) {
-            EnumCriterion<T> criterion = new EnumCriterion<T>(field, operator, type);
+            EnumCriterion<T> criterion = new EnumCriterion<>(field, operator, type);
             criterion.setValue(dqlValues);
             return criterion;
-        };
+        }
         
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
@@ -235,9 +234,9 @@ public final class DqlCriterionFactory {
 
             CriterionFieldEnum cfe = this.getField();
 
-            if (cfe != null && (cfe == CriterionFieldEnum.FILE_FORMAT
+            if (cfe == CriterionFieldEnum.FILE_FORMAT
                     || cfe == CriterionFieldEnum.FILE_NAME
-                    || cfe == CriterionFieldEnum.FILE_EXTENSION)) {
+                    || cfe == CriterionFieldEnum.FILE_EXTENSION) {
                 super.setValue(toTypedValue(value).toUpperCase());
             } else {
                 super.setValue(toTypedValue(value));
@@ -284,7 +283,7 @@ public final class DqlCriterionFactory {
 
     private static class EnumCriterion<T extends Enum<T>> extends AbstractFilterCriterion<T> {
 
-        private Class<T> type;
+        private final Class<T> type;
         
         public EnumCriterion(CriterionFieldEnum field, CriterionOperator operator, Class<T> type) {
             super(field, operator);
