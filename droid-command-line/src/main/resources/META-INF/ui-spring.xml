@@ -112,8 +112,8 @@
     <bean id="profileRunCommand" class="uk.gov.nationalarchives.droid.command.action.ProfileRunCommand" scope="prototype">
         <property name="signatureManager" ref="signatureManager"/>
         <property name="profileManager" ref="profileManager"/>
-	<property name="locationResolver">
-    	    <bean class="uk.gov.nationalarchives.droid.command.action.LocationResolver"/>
+	<property name="profileResourceFactory">
+    	    <bean class="uk.gov.nationalarchives.droid.profile.ProfileResourceFactory"/>
 	</property>
     </bean>
     
