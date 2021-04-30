@@ -54,6 +54,26 @@ public class SimpleDqlParserFilterGrammarTest {
     //TODO: add more comprehensive tests of filter grammar.
 
     @Test(expected=DqlParseException.class)
+    public void testMissingSingleFilterValue() {
+        parser.parse("file_name = ");
+    }
+
+    @Test(expected=DqlParseException.class)
+    public void testMissingListValues() {
+        parser.parse("puid any ");
+    }
+
+    @Test(expected=DqlParseException.class)
+    public void testInvalidFieldSingleValue() {
+        parser.parse("xxx1 = ");
+    }
+
+    @Test(expected=DqlParseException.class)
+    public void testInvalidFieldListValues() {
+        parser.parse("xxx1 any ");
+    }
+
+    @Test(expected=DqlParseException.class)
     public void testParseEmptyString() {
         parser.parse("");
     }
