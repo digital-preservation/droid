@@ -102,7 +102,7 @@ public final class SpringUiContext implements GlobalContext {
     
     @Override
     public DownloadSignatureUpdateCommand getDownloadSignatureUpdateCommand() {
-        return (DownloadSignatureUpdateCommand) context.getBean("downloadSignatureUpdateCommand", DownloadSignatureUpdateCommand.class);
+        return context.getBean("downloadSignatureUpdateCommand", DownloadSignatureUpdateCommand.class);
     }
     
     @Override
