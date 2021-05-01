@@ -83,6 +83,16 @@ public class SimpleDqlParserFilterGrammarTest {
         parser.parse("1234 > 1000");
     }
 
+    @Test(expected=DqlParseException.class)
+    public void testInvalidNumberValues() {
+        parser.parse("file_size > notnumber");
+    }
+
+    @Test(expected=DqlParseException.class)
+    public void testInvalidEnumValues() {
+        parser.parse("method any invalidEnum enum2 enum3");
+    }
+
     @Test
     public void testFilterOnEqualFileName() {
         
