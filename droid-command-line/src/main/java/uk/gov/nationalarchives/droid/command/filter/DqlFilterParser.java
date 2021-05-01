@@ -38,8 +38,6 @@ import java.util.regex.Pattern;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.StringListParser;
 
-//TODO: make exception handling consistent for parse errors - write tests for invalid values.
-
 /**
  * @author mpalmer
  * Parses a command line filter condition, throwing exceptions for various invalid filter patterns.
