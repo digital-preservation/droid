@@ -45,11 +45,8 @@ import org.apache.commons.configuration.tree.OverrideCombiner;
 import org.apache.commons.lang.StringUtils;
 
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
 import uk.gov.nationalarchives.droid.command.filter.DqlCriterionFactory;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
-import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
@@ -75,8 +72,8 @@ public class CommandFactoryImpl implements CommandFactory {
     private static final String ANY_OPERATOR = "any";
     private static final String SPACE = " ";
 
-    private GlobalContext context;
-    private PrintWriter printWriter;
+    private final GlobalContext context;
+    private final PrintWriter printWriter;
 
     /**
      *
@@ -119,13 +116,11 @@ public class CommandFactoryImpl implements CommandFactory {
         }
 
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
-            cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ALL_FILTER.toString()), FilterType.ALL)));
+            cmd.setFilter(createFilter(cli.getOptionValues(CommandLineParam.ALL_FILTER.toString()), true));
         }
 
         if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
-            cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
+            cmd.setFilter(createFilter(cli.getOptionValues(CommandLineParam.ANY_FILTER.toString()), false));
         }
 
         return cmd;
@@ -159,13 +154,11 @@ public class CommandFactoryImpl implements CommandFactory {
         }
 
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
-            cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ALL_FILTER.toString()), FilterType.ALL)));
+            cmd.setFilter(createFilter(cli.getOptionValues(CommandLineParam.ALL_FILTER.toString()), true));
         }
 
         if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
-            cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
+            cmd.setFilter(createFilter(cli.getOptionValues(CommandLineParam.ANY_FILTER.toString()), false));
         }
 
         return cmd;
@@ -199,13 +192,11 @@ public class CommandFactoryImpl implements CommandFactory {
         cmd.setReportOutputType(reportOutputType);
 
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
-            cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ALL_FILTER.toString()), FilterType.ALL)));
+            cmd.setFilter(createFilter(cli.getOptionValues(CommandLineParam.ALL_FILTER.toString()), true));
         }
 
         if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
-            cmd.setFilter(createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY)));
+            cmd.setFilter(createFilter(cli.getOptionValues(CommandLineParam.ANY_FILTER.toString()), false));
         }
 
         return cmd;
@@ -286,11 +277,9 @@ public class CommandFactoryImpl implements CommandFactory {
     private Filter getIdentificationFilter(CommandLine cli) {
         Filter result = null;
         if (cli.hasOption(CommandLineParam.ALL_FILTER_FILE.toString())) {
-            result = createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ALL_FILTER_FILE.toString()), FilterType.ALL));
+            result = createFilter(cli.getOptionValues(CommandLineParam.ALL_FILTER_FILE.toString()), true);
         } else if (cli.hasOption(CommandLineParam.ANY_FILTER_FILE.toString())) {
-            result = createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ANY_FILTER_FILE.toString()), FilterType.ANY));
+            result = createFilter(cli.getOptionValues(CommandLineParam.ANY_FILTER_FILE.toString()), false);
         }
         if (cli.hasOption(CommandLineParam.EXTENSION_LIST.toString())) {
             result = createExtensionFilter(result, cli.getOptionValues(CommandLineParam.EXTENSION_LIST.toString()));
@@ -301,11 +290,9 @@ public class CommandFactoryImpl implements CommandFactory {
     private Filter getResultsFilter(CommandLine cli) {
         Filter result = null;
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
-            result = createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ALL_FILTER.toString()), FilterType.ALL));
+            result = createFilter(cli.getOptionValues(CommandLineParam.ALL_FILTER.toString()), true);
         } else if (cli.hasOption(CommandLineParam.ANY_FILTER.toString())) {
-            result = createFilter(new CommandLineFilter(cli.getOptionValues(
-                    CommandLineParam.ANY_FILTER.toString()), FilterType.ANY));
+            result = createFilter(cli.getOptionValues(CommandLineParam.ANY_FILTER.toString()), false);
         }
         return result;
     }
@@ -513,17 +500,12 @@ public class CommandFactoryImpl implements CommandFactory {
         }
     }
 
-    private Filter createFilter(CommandLineFilter commandLineFilter) {
-        Filter filter = null;
-        if (commandLineFilter != null) {
-            DqlFilterParser dqlFilterParser = new SimpleDqlFilterParser();
-            List<FilterCriterion> criteria = new ArrayList<>();
-            for (String dql : commandLineFilter.getFilters()) {
-                criteria.add(dqlFilterParser.parse(dql));
-            }
-            filter = new BasicFilter(criteria, commandLineFilter.getFilterType() == FilterType.ALL);
+    private Filter createFilter(String[] filters, boolean isNarrowed) {
+        List<FilterCriterion> criteria = new ArrayList<>();
+        for (String dql : filters) {
+            criteria.add(DqlFilterParser.parseDql(dql));
         }
-        return filter;
+        return new BasicFilter(criteria, isNarrowed);
     }
 
     private Filter createExtensionFilter(Filter existingFilter, String[] optionValues) {

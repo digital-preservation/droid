@@ -35,10 +35,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
 import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
-import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
@@ -137,11 +134,11 @@ public class ExportCommandTest {
         command.setProfileManager(profileManager);
         command.setDestination("destination");
         command.setExportOptions(ExportOptions.ONE_ROW_PER_FORMAT);
-        command.setFilter(createFilter(new CommandLineFilter(
+        command.setFilter(createFilter(
                 new String[] {
                         "file_size = 720",
                         "puid any fmt/101 fmt/666",
-                }, FilterType.ALL)));
+                }, true));
         command.execute();
 
         String[] expectedExportedProfiles = new String[] {
@@ -168,16 +165,12 @@ public class ExportCommandTest {
         assertArrayEquals(new Object[] {"fmt/101", "fmt/666"}, (Object[]) puidCriterion.getValue());
     }
 
-    private Filter createFilter(CommandLineFilter commandLineFilter) {
-        Filter filter = null;
-        if (commandLineFilter != null) {
-            DqlFilterParser dqlFilterParser = new SimpleDqlFilterParser();
+    private Filter createFilter(String[] filters, boolean isNarrowed) {
             List<FilterCriterion> criteria = new ArrayList<>();
-            for (String dql : commandLineFilter.getFilters()) {
-                criteria.add(dqlFilterParser.parse(dql));
+            for (String dql : filters) {
+                criteria.add(DqlFilterParser.parseDql(dql));
             }
-            filter = new BasicFilter(criteria, commandLineFilter.getFilterType() == FilterType.ALL);
-        }
-        return filter;
+            return new BasicFilter(criteria, isNarrowed);
+
     }
 }
