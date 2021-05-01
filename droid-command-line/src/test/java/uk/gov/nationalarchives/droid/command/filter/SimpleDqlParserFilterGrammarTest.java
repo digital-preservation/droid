@@ -49,7 +49,7 @@ import java.util.Locale;
  */
 public class SimpleDqlParserFilterGrammarTest {
 
-    private SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
+    private DqlFilterParser parser = new DqlFilterParser();
 
     //TODO: add more comprehensive tests of filter grammar.
 
@@ -113,8 +113,8 @@ public class SimpleDqlParserFilterGrammarTest {
     public void testFilterOnDate() {
 
         String dql = "last_modified = 2010-01-23";
-        
-        SimpleDqlFilterParser parser = new SimpleDqlFilterParser();
+
+        DqlFilterParser parser = new DqlFilterParser();
         FilterCriterion criterion = parser.parse(dql);
         
         assertEquals(CriterionFieldEnum.LAST_MODIFIED_DATE, criterion.getField());
