@@ -31,9 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.results.handlers;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.*;
 
 import javax.sql.DataSource;
 
@@ -160,10 +158,15 @@ public class ResultHandlerDaoFactory implements FactoryBean<ResultHandlerDao> {
             if (CONSOLE.equals(outputFilePath.toLowerCase())) {
                 writer = new PrintWriter(System.out);
             } else {
+                File outputFile = new File(outputFilePath);
                 try {
-                    writer = new PrintWriter(outputFilePath);
-                } catch (FileNotFoundException e) {
-                    LOG.error(e.getMessage(), e);
+                    writer = new FileWriter(outputFile, false);
+                } catch (IOException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(e.getMessage(), e);
+                    } else {
+                        LOG.error(e.getMessage());
+                    }
                 }
             }
         }
