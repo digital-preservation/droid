@@ -287,14 +287,15 @@ public final class DroidCommandLine implements AutoCloseable {
     }
 
     /**
-     *  We output to console if the command is a profile and there either isn't an output file, or it's to stdout.
+     *  We output to console if the command is a no profile, or a profile and there either isn't an output file, or it's to stdout.
      *  The export, report and database profiles always write to a file or database.
      * @return true if the command will write its output to the console rather than to a file.
      */
     private boolean isOutputtingToConsole()  {
-        return mainCommand == CommandLineParam.RUN_PROFILE
+        return mainCommand == CommandLineParam.RUN_NO_PROFILE
+            || (mainCommand == CommandLineParam.RUN_PROFILE
                 && (!cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())
-                  || cli.getOptionValue(CommandLineParam.OUTPUT_FILE.getLongName()).trim().equals(STDOUT));
+                  || cli.getOptionValue(CommandLineParam.OUTPUT_FILE.getLongName()).trim().equals(STDOUT)));
     }
 
     private void outputErrorMessage(String message) {
