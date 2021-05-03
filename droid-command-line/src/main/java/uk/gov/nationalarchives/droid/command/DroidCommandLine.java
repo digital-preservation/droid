@@ -225,7 +225,7 @@ public final class DroidCommandLine implements AutoCloseable {
         parseCommandLine();
         configureQuietLogging();
         RuntimeConfig.configureRuntimeEnvironment();
-        if (log == null) {
+        if (log == null) { // don't want to instantiate logger until all logging configuration is done.
             log = LoggerFactory.getLogger(this.getClass());
         }
         log.info("Starting DROID.");
