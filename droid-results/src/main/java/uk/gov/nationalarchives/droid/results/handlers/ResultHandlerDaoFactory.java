@@ -31,7 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.results.handlers;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 import javax.sql.DataSource;
 
