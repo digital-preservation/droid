@@ -139,12 +139,26 @@ public class ProfileRunCommand implements DroidCommand {
     public void setDestination(String destination) {
         this.destination = destination;
     }
-    
+
+    /**
+     * @return The destination file of the profile (either a profile or a csv file or blank/stdout for console).
+     */
+    public String getDestination() {
+        return destination;
+    }
+
     /**
      * @param resources the resources to set
      */
     public void setResources(String[] resources) {
         this.resources = resources;
+    }
+
+    /**
+     * @return The resources to profile.
+     */
+    public String[] getResources() {
+        return resources;
     }
     
     /**
@@ -167,7 +181,14 @@ public class ProfileRunCommand implements DroidCommand {
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
     }
-    
+
+    /**
+     * @return whether the profile recursively looks inside sub folders.
+     */
+    public boolean getRecursive() {
+        return recursive;
+    }
+
     /**
      * @param profileResourceFactory the profileResourceFactory to set
      */
@@ -180,6 +201,13 @@ public class ProfileRunCommand implements DroidCommand {
      */
     public void setProperties(PropertiesConfiguration properties) {
         this.propertyOverrides = properties;
+    }
+
+    /**
+     * @return properties used to override profile defaults.
+     */
+    public PropertiesConfiguration getProperties() {
+        return propertyOverrides;
     }
 
     /**
@@ -200,11 +228,25 @@ public class ProfileRunCommand implements DroidCommand {
     }
 
     /**
+     * @return A filter for results, or null if not set.
+     */
+    public Filter getResultsFilter() {
+        return resultsFilter;
+    }
+
+    /**
      * Sets a filter to use to filter out results submitted for identification.
      * @param filter the filter, or null if no filter required.
      */
     public void setIdentificationFilter(final Filter filter) {
         this.identificationFilter = filter;
+    }
+
+    /**
+     * @return A filter that precedes identification of format, or null if not set.
+     */
+    public Filter getIdentificationFilter() {
+        return identificationFilter;
     }
 
       /**
