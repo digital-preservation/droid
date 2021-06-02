@@ -205,13 +205,6 @@ public final class DroidCommandLine implements AutoCloseable {
         return context;
     }
 
-    /**
-     * @return the command line
-     */
-    public CommandLine getCommandLine() throws CommandLineException {
-        return cli;
-    }
-
     /*
      * Private functions
      */
