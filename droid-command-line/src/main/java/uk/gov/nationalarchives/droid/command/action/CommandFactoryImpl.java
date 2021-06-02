@@ -58,8 +58,9 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 
 /**
- * @author rflitcroft, Alok Kumar Dash
+ * Creates command objects from the cli.
  *
+ * @author rflitcroft, Alok Kumar Dash, mpalmer
  */
 //CHECKSTYLE:OFF - ClassDataAbstractionCoupling and ClassFanOutComplexity just over limit.
 public class CommandFactoryImpl implements CommandFactory {
@@ -255,8 +256,6 @@ public class CommandFactoryImpl implements CommandFactory {
         return new BasicFilter(criterion);
     }
 
-
-
     private String getDestination(CommandLine cli, PropertiesConfiguration overrideProperties) throws CommandLineSyntaxException {
         final String destination;
         // Determine if destination is to a database profile, or to a csv file output:
@@ -346,8 +345,10 @@ public class CommandFactoryImpl implements CommandFactory {
                 merged.append(combined);
                 overrideProperties = merged;
             }
-        } else {
-            overrideProperties = new PropertiesConfiguration(); //
+        }
+
+        if (overrideProperties == null) {
+            overrideProperties = new PropertiesConfiguration();
         }
 
         processCommandLineArchiveFlags(cli, overrideProperties);
