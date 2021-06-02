@@ -43,10 +43,9 @@ import uk.gov.nationalarchives.droid.command.i18n.I18N;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportManager;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
 
-
 /**
- * @author a-mpalmer
- *
+ * Lists all available reports registered with DROID and outputs the list to a PrintWriter.
+ * @author mpalmer
  */
 public class ListReportsCommand implements DroidCommand {
 
@@ -89,15 +88,21 @@ public class ListReportsCommand implements DroidCommand {
     }
     
     /**
-     * @param printWriter the printWriter to set
+     * @param printWriter the printWriter to output the report list to.
      */
     public void setPrintWriter(PrintWriter printWriter) {
         this.printWriter = printWriter;
-    }    
-    
+    }
+
     /**
-     * @param reportManager
-     *            the reportManager to set
+     * @return the printwriter to output the report list to.
+     */
+    public PrintWriter getPrintWriter() {
+        return printWriter;
+    }
+
+    /**
+     * @param reportManager the reportManager to set
      */
     public void setReportManager(ReportManager reportManager) {
         this.reportManager = reportManager;
