@@ -167,7 +167,14 @@ public class ExportCommand implements DroidCommand {
     public void setFilter(Filter filter) {
         this.filter = filter;
     }
-    
+
+    /**
+     * @return the filter used for the export, or null if no filter.
+     */
+    public Filter getFilter() {
+        return filter;
+    }
+
     /**
      *
      * @return status of bom.
@@ -192,9 +199,23 @@ public class ExportCommand implements DroidCommand {
     }
 
     /**
+     * @return whether all fields are quoted, or just those that contain field separators (commas).
+     */
+    public boolean getQuoteAllFields() {
+        return quoteAllFields;
+    }
+
+    /**
      * @param columnNames A space delimited list of columns to write for export, or null or empty for all columns.
      */
     public void setColumnsToWrite(String columnNames) {
         this.columnsToWrite = columnNames;
+    }
+
+    /**
+     * @return A list of the columns to write, or null if all columns.
+     */
+    public String getColumnsToWrite() {
+        return columnsToWrite;
     }
 }
