@@ -31,7 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.command.filter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.joda.time.format.ISODateTimeFormat;
@@ -52,22 +55,22 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
  */
 public final class DqlCriterionFactory {
 
-    private static final Map<CriterionFieldEnum, CriterionFactory> factories =
+    private static final Map<CriterionFieldEnum, CriterionFactory> FACTORIES =
         new EnumMap<>(CriterionFieldEnum.class);
     
     static {
-        factories.put(CriterionFieldEnum.FILE_EXTENSION, new UppercaseStringCriterionFactory());
-        factories.put(CriterionFieldEnum.LAST_MODIFIED_DATE, new DateCriterionFactory());
-        factories.put(CriterionFieldEnum.FILE_FORMAT, new UppercaseStringCriterionFactory());
-        factories.put(CriterionFieldEnum.FILE_NAME, new UppercaseStringCriterionFactory());
-        factories.put(CriterionFieldEnum.IDENTIFICATION_COUNT, new IntegerCriterionFactory());
-        factories.put(CriterionFieldEnum.FILE_SIZE, new LongCriterionFactory());
-        factories.put(CriterionFieldEnum.MIME_TYPE, new StringCriterionFactory());
-        factories.put(CriterionFieldEnum.PUID, new StringCriterionFactory());
-        factories.put(CriterionFieldEnum.IDENTIFICATION_METHOD, new EnumCriterionFactory<>(IdentificationMethod.class));
-        factories.put(CriterionFieldEnum.JOB_STATUS, new EnumCriterionFactory<>(NodeStatus.class));
-        factories.put(CriterionFieldEnum.RESOURCE_TYPE, new EnumCriterionFactory<>(ResourceType.class));
-        factories.put(CriterionFieldEnum.EXTENSION_MISMATCH , new BooleanCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.FILE_EXTENSION, new UppercaseStringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.LAST_MODIFIED_DATE, new DateCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.FILE_FORMAT, new UppercaseStringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.FILE_NAME, new UppercaseStringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.IDENTIFICATION_COUNT, new IntegerCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.FILE_SIZE, new LongCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.MIME_TYPE, new StringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.PUID, new StringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.IDENTIFICATION_METHOD, new EnumCriterionFactory<>(IdentificationMethod.class));
+        FACTORIES.put(CriterionFieldEnum.JOB_STATUS, new EnumCriterionFactory<>(NodeStatus.class));
+        FACTORIES.put(CriterionFieldEnum.RESOURCE_TYPE, new EnumCriterionFactory<>(ResourceType.class));
+        FACTORIES.put(CriterionFieldEnum.EXTENSION_MISMATCH , new BooleanCriterionFactory());
     }
 
     private static final String VALUE_CANNOT_BE_NULL_OR_EMPTY = "The value provided cannot be null or empty.";
@@ -85,7 +88,7 @@ public final class DqlCriterionFactory {
     public static FilterCriterion newCriterion(String dqlField, String dqlOperator, String dqlValue) {
         CriterionFieldEnum field = DqlCriterionMapper.forField(dqlField);
         CriterionOperator op = DqlCriterionMapper.forOperator(dqlOperator);
-        return factories.get(field).newCriterion(field, op, dqlValue);
+        return FACTORIES.get(field).newCriterion(field, op, dqlValue);
     }
     
     /**
@@ -98,7 +101,7 @@ public final class DqlCriterionFactory {
     public static FilterCriterion newCriterion(String dqlField, String dqlOperator, Collection<String> dqlValues) {
         CriterionFieldEnum field = DqlCriterionMapper.forField(dqlField);
         CriterionOperator op = DqlCriterionMapper.forOperator(dqlOperator);
-        return factories.get(field).newCriterion(field, op, dqlValues);
+        return FACTORIES.get(field).newCriterion(field, op, dqlValues);
     }
 
 
@@ -117,7 +120,7 @@ public final class DqlCriterionFactory {
         FilterCriterion newCriterion(CriterionFieldEnum field, CriterionOperator operator, Collection<String> dqlValues);
     }
 
-    private static abstract class BasicCriterionFactory implements CriterionFactory {
+    private abstract static class BasicCriterionFactory implements CriterionFactory {
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
                                             CriterionOperator operator, Collection<String> dqlValues) {
@@ -188,8 +191,8 @@ public final class DqlCriterionFactory {
     }
 
     private static final class BooleanCriterionFactory extends BasicCriterionFactory {
-        private static final String INVALID_BOOLEAN =  "The supplied value %s cannot be converted to a Boolean value.\n" +
-                "Valid (case insensitive) values are true or yes, or false or no.";
+        private static final String INVALID_BOOLEAN =  "The supplied value %s cannot be converted to a Boolean value.\n"
+                + "Valid (case insensitive) values are true or yes, or false or no.";
         private static final Pattern BOOLEAN_TRUE_STR_REGEX = Pattern.compile("true|yes", Pattern.CASE_INSENSITIVE);
         private static final Pattern BOOLEAN_FALSE_STR_REGEX = Pattern.compile("false|no", Pattern.CASE_INSENSITIVE);
         @Override

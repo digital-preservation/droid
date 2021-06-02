@@ -58,7 +58,7 @@ public class DqlFilterParser {
     private static final String COULD_NOT_FIND_A_FIELD_IN_THE_FILTER_CRITERIA = "Could not find a field in the filter criteria: ";
 
     /**
-     * Creates a FilterCriterion given a DROID query language string: field operator value(s)
+     * Creates a FilterCriterion given a DROID query language string: field operator value(s).
      * @param dql A DROID query language filter string
      * @return A FilterCriterion for the DQL string passed in.
      */

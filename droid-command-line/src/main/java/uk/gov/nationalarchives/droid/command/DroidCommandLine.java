@@ -124,6 +124,7 @@ public final class DroidCommandLine implements AutoCloseable {
      *
      * @return a status code 0 success otherwise 1
      */
+    //CHECKSTYLE:OFF - illegal to catch Exception... but we want to here.
     public int processExecution() {
         int returnCode = 0;
         try {
@@ -143,6 +144,7 @@ public final class DroidCommandLine implements AutoCloseable {
         }
         return returnCode;
     }
+    //CHECKSTYLE:ON
 
     @Override
     public void close() {
@@ -184,7 +186,7 @@ public final class DroidCommandLine implements AutoCloseable {
     }
 
     /**
-     * Sets the print writer for commands to write output
+     * Sets the print writer for commands to write output.
      * @param writer The print writer to write command output to.
      */
     public void setPrintWriter(PrintWriter writer) {
