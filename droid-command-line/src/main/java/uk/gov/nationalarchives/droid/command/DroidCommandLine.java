@@ -236,7 +236,7 @@ public final class DroidCommandLine implements AutoCloseable {
     }
 
     private void configureQuietLogging() {
-        if (isQuiet() || isOutputtingToConsole()) {
+        if (isQuiet() || hasConsoleOutput()) { // isOutputtingToConsole()) {
             System.setProperty("consoleLogThreshold", "ERROR");
         }
     }
@@ -282,15 +282,34 @@ public final class DroidCommandLine implements AutoCloseable {
     }
 
     /**
-     *  We output to console if the command is a no profile, or a profile and there either isn't an output file, or it's to stdout.
-     *  The export, report and database profiles always write to a file or database.
-     * @return true if the command will write its output to the console rather than to a file.
+     * Most commands output to the console.  The only ones that don't are those that export, report or a profile.
+     * @return true if the main command outputs to console.
      */
-    private boolean isOutputtingToConsole()  {
-        return mainCommand == CommandLineParam.RUN_NO_PROFILE
-            || (mainCommand == CommandLineParam.RUN_PROFILE
-                && (!cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())
-                  || cli.getOptionValue(CommandLineParam.OUTPUT_FILE.getLongName()).trim().equals(STDOUT)));
+    private boolean hasConsoleOutput() {
+        return !hasNoConsoleOutput();
+    }
+
+    /**
+     * Commands that don't output to the console either write to a report, export file or to a profile database or file.
+     * @return true if the main command does not write to the console.
+     */
+    private boolean hasNoConsoleOutput() {
+        return isExportCommand() || isReportCommand() || isProfileToFileOrDatabase();
+    }
+
+    private boolean isExportCommand() {
+        return mainCommand == CommandLineParam.EXPORT_ONE_ROW_PER_FILE
+                || mainCommand == CommandLineParam.EXPORT_ONE_ROW_PER_FORMAT;
+    }
+
+    private boolean isReportCommand() {
+        return mainCommand == CommandLineParam.REPORT;
+    }
+
+    private boolean isProfileToFileOrDatabase() {
+        return mainCommand == CommandLineParam.RUN_PROFILE
+                && (!cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())  // no output file - going to a profile database.
+                || !cli.getOptionValue(CommandLineParam.OUTPUT_FILE.getLongName()).equals(STDOUT)); // or if it does, it's not the console.
     }
 
     private void outputErrorMessage(String message) {
