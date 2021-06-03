@@ -108,6 +108,9 @@
         <li>
             <a href="#ProfileProperties">Specifying profile properties</a>
         </li>
+        <li>
+            <a href="#NoProfileMode">No Profile Mode</a>
+        </li>
     </ul>
     <li>
         <a href="#ConfigureOutput">Configuring CSV output</a>
@@ -424,6 +427,35 @@ For full control over the profile properties used when identifying files, you ca
     A complete list of profile properties can be found in the <a href="#ProfilePropertyTable">profile property table</a>.
 <p>
 
+<h3><a id="NoProfileMode" name="NoProfileMode">No Profile Mode</a></h3>
+This version of DROID allows identification results to be written directly to a CSV file or the console, not only a profile database.
+In prior versions, "No Profile Mode" gave a more limited capability that wrote only the name and PUID
+of identifications straight to the console.  It did not identify files in exactly the same way as the other identification modes and had various other limitations.
+<p>
+This mode is retained in DROID for backwards compatibility, but it is now re-implemented to use standard
+identification code.  The output will not be completely identical to the previous mode, but will
+be more accurate and in-line with all other identification modes. Differences include:
+<p>
+<ul>
+    <li>If a file name contains a comma, it will be quoted with double quotes.</li>
+    <li>Extension filtering with -Nx will also work inside archive files, not only on files in the file system.</li>
+    <li>You do not have to specify signature files - it will use the normal defaults if you do not.</li>
+</ul>
+It can be run using the <b>-Nr</b> option:
+<p>
+<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
+<tr>
+    <td>
+        <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid <b>-Nr</b> “C:\Files\A Folder” "C:\Files\A File” -R -Ns "C:\Signatures\binarysig.xml" -Nc "C:\Signatures\containersig.xml"</font>
+        <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
+        <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
+    </td>
+</tr>
+</table>
+<p>
+In general, there is little reason to use this mode unless it is required for backwards compatibility with existing scripts.
+The standard identification mode writing to the console or file gives much greater control over the output and configuration.
+<p>
 <h2><a id="ConfigureOutput" name="ConfigureOutput">Configuring CSV output</a></h2>
 You can configure how DROID will output Comma Separated Values (CSV) to either the console or a file.
 These options will work either when outputting CSV during format identification, or when exporting a saved profile.
