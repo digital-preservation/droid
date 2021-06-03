@@ -204,7 +204,7 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     @Override
-    public FilterFieldCommand getFilterFieldCommand() {
+    public DroidCommand getFilterFieldCommand() {
         return new FilterFieldCommand(printWriter);
     }
 
