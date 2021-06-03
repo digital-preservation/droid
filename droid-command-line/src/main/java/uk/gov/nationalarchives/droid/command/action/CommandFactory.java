@@ -67,7 +67,7 @@ public interface CommandFactory {
     /**
      * @return a new {@link FilterFieldCommand}
      */
-    FilterFieldCommand getFilterFieldCommand();
+    DroidCommand getFilterFieldCommand();
 
 
     /**
