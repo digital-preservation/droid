@@ -236,7 +236,7 @@ public final class DroidCommandLine implements AutoCloseable {
     }
 
     private void configureQuietLogging() {
-        if (isQuiet() || hasConsoleOutput()) { // isOutputtingToConsole()) {
+        if (isQuiet() || hasConsoleOutput()) {
             System.setProperty("consoleLogThreshold", "ERROR");
         }
     }
