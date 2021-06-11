@@ -1207,7 +1207,7 @@ public class CommandFactoryTest {
         listReportsCommand.setReportManager(rm);
         DroidCommand com = factory.getListReportCommand();
         com.execute();
-        verify(printWriter).println("Report1	'Text'	'Pdf'	'DROID Report XML'\n");
+        verify(printWriter).println("\nReport:\t'Report1'\n\tFormats:\t'Text'\t'Pdf'\t'DROID Report XML'");
     }
 
     private List<ReportSpec> buildTestReportSpecs() {
