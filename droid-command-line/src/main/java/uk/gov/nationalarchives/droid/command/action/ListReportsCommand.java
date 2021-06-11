@@ -60,14 +60,15 @@ public class ListReportsCommand implements DroidCommand {
         } else {
             StringBuilder builder = new StringBuilder();
             for (ReportSpec report : reports) {
-                builder.append(report.getName());
+                String reportDescription = String.format("\nReport:\t'%s'\n\tFormats:", report.getName());
+                builder.append(reportDescription);
                 List<String> outputFormats = getReportOutputFormats(report);
                 for (String format : outputFormats) {
                     builder.append("\t'");
                     builder.append(format);
                     builder.append("'");
                 }
-                builder.append("\t'Pdf'\t'DROID Report XML'\n");
+                builder.append("\t'Pdf'\t'DROID Report XML'");
             }
             printWriter.println(builder.toString());
         }
