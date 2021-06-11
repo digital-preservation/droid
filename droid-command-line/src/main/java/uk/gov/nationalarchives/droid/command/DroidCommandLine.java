@@ -308,8 +308,9 @@ public final class DroidCommandLine implements AutoCloseable {
 
     private boolean isProfileToFileOrDatabase() {
         return mainCommand == CommandLineParam.RUN_PROFILE
-                && (!cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())  // no output file - going to a profile database.
-                || !cli.getOptionValue(CommandLineParam.OUTPUT_FILE.getLongName()).equals(STDOUT)); // or if it does, it's not the console.
+                && (cli.hasOption(CommandLineParam.PROFILES.getLongName())
+                  || (cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())
+                     && !cli.getOptionValue(CommandLineParam.OUTPUT_FILE.getLongName()).equals(STDOUT)));
     }
 
     private void outputErrorMessage(String message) {
