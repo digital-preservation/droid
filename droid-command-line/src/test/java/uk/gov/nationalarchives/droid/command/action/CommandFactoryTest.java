@@ -1298,6 +1298,11 @@ public class CommandFactoryTest {
             }
 
             @Override
+            public Iterator<Path> iterator() {
+                return null;
+            }
+
+            @Override
             public int compareTo(Path path) {
                 return 0;
             }
