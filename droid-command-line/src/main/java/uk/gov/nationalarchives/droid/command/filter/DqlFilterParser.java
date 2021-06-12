@@ -81,7 +81,7 @@ public class DqlFilterParser {
      * @throws DqlParseException if there was a problem parsing the string.
      */
     public FilterCriterion parse(String dql) {
-        final String dqlToParse = dql.strip();
+        final String dqlToParse = dql.trim();
 
         final String fieldName;
         Matcher fieldMatcher = FIELD_PATTERN.matcher(dqlToParse);
