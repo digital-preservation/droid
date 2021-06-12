@@ -225,7 +225,7 @@ public class ExportDialog extends JDialog {
         addColumn("MIME_TYPE", jCheckBoxMIMEtype.isSelected(), builder);
         addColumn("FORMAT_NAME", jCheckBoxFormatName.isSelected(), builder);
         addColumn("FORMAT_VERSION", jCheckBoxFormatVersion.isSelected(), builder);
-        return builder.toString().strip();
+        return builder.toString().trim();
     }
 
     private void addColumn(String columnName, boolean selected, StringBuilder builder) {
