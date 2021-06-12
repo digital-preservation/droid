@@ -53,7 +53,7 @@
                         <exclude>LICENSE</exclude>
                         <exclude>appveyor.yml</exclude>
                         <exclude>.gitattributes</exclude>
-                        <exclude>.github/dependabot.yml</exclude>
+                        <exclude>.github/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>

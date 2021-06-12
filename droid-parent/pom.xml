@@ -328,7 +328,7 @@
                     <excludes>
                         <exclude>**/resources/**</exclude>
                         <exclude>**/bin/</exclude>
-                        <exclude>.travis.yml</exclude>
+                        <exclude>**/.github/**</exclude>
                         <exclude>pom.xml</exclude>
                         <exclude>**/pom.xml</exclude>
                         <exclude>header.txt</exclude>
