@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -1216,22 +1217,27 @@ public class CommandFactoryTest {
         spec.setName("Report1");
         List<Path> xslNames = new ArrayList<>();
         Path fakePath = new Path() {
+
             @Override
             public FileSystem getFileSystem() {
                 return null;
             }
+
             @Override
             public boolean isAbsolute() {
                 return false;
             }
+
             @Override
             public Path getRoot() {
                 return null;
             }
+
             @Override
             public Path getFileName() {
                 return this;
             }
+
             @Override
             public Path getParent() {
                 return null;
@@ -1258,8 +1264,18 @@ public class CommandFactoryTest {
             }
 
             @Override
+            public boolean startsWith(String other) {
+                return Path.super.startsWith(other);
+            }
+
+            @Override
             public boolean endsWith(Path path) {
                 return false;
+            }
+
+            @Override
+            public boolean endsWith(String other) {
+                return Path.super.endsWith(other);
             }
 
             @Override
@@ -1270,6 +1286,21 @@ public class CommandFactoryTest {
             @Override
             public Path resolve(Path path) {
                 return null;
+            }
+
+            @Override
+            public Path resolve(String other) {
+                return Path.super.resolve(other);
+            }
+
+            @Override
+            public Path resolveSibling(Path other) {
+                return Path.super.resolveSibling(other);
+            }
+
+            @Override
+            public Path resolveSibling(String other) {
+                return Path.super.resolveSibling(other);
             }
 
             @Override
@@ -1293,13 +1324,23 @@ public class CommandFactoryTest {
             }
 
             @Override
+            public File toFile() {
+                return Path.super.toFile();
+            }
+
+            @Override
             public WatchKey register(WatchService watchService, WatchEvent.Kind<?>[] kinds, WatchEvent.Modifier... modifiers) throws IOException {
                 return null;
             }
 
             @Override
+            public WatchKey register(WatchService watcher, WatchEvent.Kind<?>... events) throws IOException {
+                return Path.super.register(watcher, events);
+            }
+
+            @Override
             public Iterator<Path> iterator() {
-                return null;
+                return Path.super.iterator();
             }
 
             @Override
@@ -1307,11 +1348,13 @@ public class CommandFactoryTest {
                 return 0;
             }
 
+
             @Override
             public String toString() {
                 return "Text.txt.xsl";
             }
         };
+
         xslNames.add(fakePath);
         spec.setXslTransforms(xslNames);
         specList.add(spec);
