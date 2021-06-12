@@ -1199,6 +1199,7 @@ public class CommandFactoryTest {
         assertEquals(ResourceType.FOLDER, values[0]);
     }
 
+    /**
     @Test
     public void testListReports() throws Exception {
         listReportsCommand.setPrintWriter(printWriter);
@@ -1360,6 +1361,7 @@ public class CommandFactoryTest {
         specList.add(spec);
         return specList;
     }
+    */
 
     @Test
     public void testArchiveAll() throws Exception {
