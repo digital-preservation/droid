@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -51,7 +51,7 @@ public class ListReportsCommand implements DroidCommand {
 
     private PrintWriter printWriter;
     private ReportManager reportManager;
-    
+
     @Override
     public void execute() throws CommandExecutionException {
         List<ReportSpec> reports = reportManager.listReportSpecs();
