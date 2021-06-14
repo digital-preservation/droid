@@ -448,7 +448,10 @@ public class DroidCommandLineTest {
         DroidCommandLine droidCommandLine = new DroidCommandLine(args, printWriter);
         droidCommandLine.setContext(context);
         droidCommandLine.processExecution();
-        verify(printWriter).println("Incorrect command line syntax: No actionable command line options specified (use -h to see all available options): -p\ntest");
+        ArgumentCaptor<String> argCaptor = ArgumentCaptor.forClass(String.class);
+        verify(printWriter).println(argCaptor.capture());
+        String value = argCaptor.getValue();
+        assertTrue(value.startsWith("Incorrect command line syntax: No actionable command line options specified (use -h to see all available options): -p"));
     }
     
     @Test
