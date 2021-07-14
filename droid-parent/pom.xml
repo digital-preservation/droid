@@ -91,7 +91,7 @@
 
         <spring.version>5.3.8</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
-        <derby.version>10.13.1.1</derby.version>
+        <derby.version>10.15.2.0</derby.version>
         <cxf.version>3.4.4</cxf.version>
         <java.iso-tools.version>2.0.1</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
