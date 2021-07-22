@@ -254,7 +254,7 @@ public class ButtonManager implements ProfileEventListener {
             setEnabled(filterEnabledAction, isFilterEnabled(profileForm)); // filter enabled
             setEnabled(reportAction, atLeastOneProfileReportable(context.allProfiles())); // report - N
             profileForm.getProgressPanel().setVisible(true);
-            
+            profileForm.getFooterPanel().setVisible(true);
         }
     }
 
@@ -285,6 +285,7 @@ public class ButtonManager implements ProfileEventListener {
                                                                                     // -
                                                                                     // N
             profileForm.getProgressPanel().setVisible(true);
+            profileForm.getFooterPanel().setVisible(true);
         }
     }
 
@@ -315,6 +316,7 @@ public class ButtonManager implements ProfileEventListener {
             setEnabled(reportAction, atLeastOneProfileReportable(context.allProfiles())); // report
             profileForm.getProgressPanel().setVisible(false);
             profileForm.getThrottlePanel().setVisible(false);
+            profileForm.getFooterPanel().setVisible(false);
         }
     }
 
@@ -335,6 +337,7 @@ public class ButtonManager implements ProfileEventListener {
             setEnabled(filterEnabledAction, false); // filter enabled
             setEnabled(reportAction, false); // report - N
             profileForm.getProgressPanel().setVisible(true);
+            profileForm.getFooterPanel().setVisible(true);
         }
     }
 
@@ -356,6 +359,7 @@ public class ButtonManager implements ProfileEventListener {
             setEnabled(reportAction, false); // report - N
             profileForm.getProgressPanel().setVisible(false);
             profileForm.getThrottlePanel().setVisible(false);
+            profileForm.getFooterPanel().setVisible(true);
         }
     }
 
@@ -395,6 +399,7 @@ public class ButtonManager implements ProfileEventListener {
             setEnabled(filterEnabledAction, false); // filter enabled - N
             setEnabled(reportAction, false); // report - N
             profileForm.getProgressPanel().setVisible(false);
+            profileForm.getFooterPanel().setVisible(true);
         }
     }
 

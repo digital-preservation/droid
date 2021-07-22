@@ -56,16 +56,6 @@ public class FileExtensionMetadata extends GenericMetadata {
     /** */
     public FileExtensionMetadata() {
         super(CriterionFieldEnum.FILE_EXTENSION);
-       
-        int i = 0;
-        //addPossibleValue(new Values(i++, EXE, EXE));
-        //addPossibleValue(new Values(i++, BAT, BAT));
-        //addPossibleValue(new Values(i++, DRD, DRD));
-        //addPossibleValue(new Values(i++, DOC, DOC));
-        //addPossibleValue(new Values(i++, PDF, PDF));
-        //addPossibleValue(new Values(i++, JAVA, JAVA));
-        //addPossibleValue(new Values(i++, CLASS, CLASS));
-        
         addOperation(CriterionOperator.EQ);
         addOperation(CriterionOperator.STARTS_WITH);
         addOperation(CriterionOperator.NE);
@@ -74,7 +64,8 @@ public class FileExtensionMetadata extends GenericMetadata {
         addOperation(CriterionOperator.NOT_STARTS_WITH);
         addOperation(CriterionOperator.NOT_ENDS_WITH);
         addOperation(CriterionOperator.NOT_CONTAINS);
-        
+        addOperation(CriterionOperator.ANY_OF);
+        addOperation(CriterionOperator.NONE_OF);
     }
 
     @Override

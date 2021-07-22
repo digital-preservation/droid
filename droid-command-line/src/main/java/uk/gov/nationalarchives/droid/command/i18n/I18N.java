@@ -58,6 +58,24 @@ public final class I18N {
     /** Profiles description. */
     public static final String PROFILES_HELP = "profiles.help";
 
+    /** Profile file to write CSV output to. */
+    public static final String OUTPUT_FILE_HELP = "profile.outputfile.help";
+
+    /**
+     * Sets CSV output to only quote fields that have a comma in them.
+     */
+    public static final String QUOTE_COMMAS_HELP = "profile.quoteCommasOnly.help";
+
+    /**
+     * Sets the columns to write in CSV output, as a space separated string of column names.
+     */
+    public static final String COLUMNS_TO_WRITE_HELP = "profile.columnsToWrite.help";
+
+    /**
+     * Sets CSV output to write a row per format (rather than a row per file which is the default).
+     */
+    public static final String ROW_PER_IDENTIFICATION = "profile.rowsPerFormat.help";
+
     /**
      * Override default properties from the command line.
      */
@@ -79,8 +97,15 @@ public final class I18N {
     
     /** Narrowing filter. */
     public static final String ALL_FILTER = "all.filter.help";
+
     /** Any filter (widening). */
     public static final String ANY_FILTER = "any.filter.help";
+
+    /** Narrowing filter for file filtering. */
+    public static final String ALL_FILTER_FILE = "all.filter.file.help";
+
+    /** Any filter (widening) for file filtering. */
+    public static final String ANY_FILTER_FILE = "any.filter.file.help";
     
     /** List filter fields. */
     public static final String LIST_FILTER_FIELD = "filter.field.help";
@@ -93,7 +118,10 @@ public final class I18N {
     
     /** Run without a profile. */
     public static final String RUN_NO_PROFILE_HELP = "no_profile.run.help";
-    
+
+    /** Run a profile outputting to a csv file or console. */
+    public static final String RUN_FILE_PROFILE_HELP = "profile.run.file.help";
+
     /** Help for signature file. */
     public static final String SIGNATURE_FILE_HELP = "signature_file.help";
     

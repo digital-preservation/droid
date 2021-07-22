@@ -36,45 +36,46 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import org.joda.time.format.ISODateTimeFormat;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilterCriterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 
 /**
- * @author rflitcroft
+ * A static class providing two factory functions to create FilterCriterion objects from a String representation
+ * of fields, operators and values, or collections of values.
  *
+ * @author rflitcroft, mpalmer
  */
 public final class DqlCriterionFactory {
 
-    
-    private static Map<CriterionFieldEnum, CriterionFactory> factories =
-        new EnumMap<CriterionFieldEnum, CriterionFactory>(CriterionFieldEnum.class);
+    private static final Map<CriterionFieldEnum, CriterionFactory> FACTORIES =
+        new EnumMap<>(CriterionFieldEnum.class);
     
     static {
-        factories.put(CriterionFieldEnum.FILE_EXTENSION, new StringCriterionFactory());
-        factories.put(CriterionFieldEnum.LAST_MODIFIED_DATE, new DateCriterionFactory());
-        factories.put(CriterionFieldEnum.FILE_EXTENSION, new StringCriterionFactory());
-        factories.put(CriterionFieldEnum.FILE_FORMAT, new StringCriterionFactory());
-        factories.put(CriterionFieldEnum.FILE_NAME, new StringCriterionFactory());
-        factories.put(CriterionFieldEnum.FILE_SIZE, new LongCriterionFactory());
-        factories.put(CriterionFieldEnum.MIME_TYPE, new StringCriterionFactory());
-        factories.put(CriterionFieldEnum.PUID, new StringCriterionFactory());
-        factories.put(CriterionFieldEnum.IDENTIFICATION_METHOD, 
-                new EnumCriterionFactory<IdentificationMethod>(IdentificationMethod.class));
-        factories.put(CriterionFieldEnum.JOB_STATUS, 
-                new EnumCriterionFactory<NodeStatus>(NodeStatus.class));
-        factories.put(CriterionFieldEnum.RESOURCE_TYPE, 
-                new EnumCriterionFactory<ResourceType>(ResourceType.class));
-        factories.put(CriterionFieldEnum.EXTENSION_MISMATCH , new BooleanCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.FILE_EXTENSION, new UppercaseStringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.LAST_MODIFIED_DATE, new DateCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.FILE_FORMAT, new UppercaseStringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.FILE_NAME, new UppercaseStringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.IDENTIFICATION_COUNT, new IntegerCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.FILE_SIZE, new LongCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.MIME_TYPE, new StringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.PUID, new StringCriterionFactory());
+        FACTORIES.put(CriterionFieldEnum.IDENTIFICATION_METHOD, new EnumCriterionFactory<>(IdentificationMethod.class));
+        FACTORIES.put(CriterionFieldEnum.JOB_STATUS, new EnumCriterionFactory<>(NodeStatus.class));
+        FACTORIES.put(CriterionFieldEnum.RESOURCE_TYPE, new EnumCriterionFactory<>(ResourceType.class));
+        FACTORIES.put(CriterionFieldEnum.EXTENSION_MISMATCH , new BooleanCriterionFactory());
     }
-    
+
+    private static final String VALUE_CANNOT_BE_NULL_OR_EMPTY = "The value provided cannot be null or empty.";
+    private static final String FIELD_OPERATOR_VALUE_ERROR = "Error parsing values for filter field '%s' with operator '%s': %s";
+
     private DqlCriterionFactory() { }
 
     /**
@@ -84,227 +85,141 @@ public final class DqlCriterionFactory {
      * @param dqlOperator the operator.
      * @return a new criterion.
      */
-    static FilterCriterion newCriterion(String dqlField, String dqlOperator, String dqlValue) {
+    public static FilterCriterion newCriterion(String dqlField, String dqlOperator, String dqlValue) {
         CriterionFieldEnum field = DqlCriterionMapper.forField(dqlField);
         CriterionOperator op = DqlCriterionMapper.forOperator(dqlOperator);
-        return factories.get(field).newCriterion(field, op, dqlValue);
+        return FACTORIES.get(field).newCriterion(field, op, dqlValue);
     }
     
     /**
-     * Create a new citerion.
+     * Create a new criterion.
      * @param dqlValues the dql values
      * @param dqlField the field
      * @param dqlOperator the operator.
      * @return a new criterion.
      */
-    static FilterCriterion newCriterion(String dqlField, String dqlOperator, Collection<String> dqlValues) {
+    public static FilterCriterion newCriterion(String dqlField, String dqlOperator, Collection<String> dqlValues) {
         CriterionFieldEnum field = DqlCriterionMapper.forField(dqlField);
         CriterionOperator op = DqlCriterionMapper.forOperator(dqlOperator);
-        return factories.get(field).newCriterion(field, op, dqlValues);
+        return FACTORIES.get(field).newCriterion(field, op, dqlValues);
     }
 
-    private static final class StringCriterionFactory implements CriterionFactory {
-        @Override
-        public FilterCriterion newCriterion(CriterionFieldEnum field, 
-                CriterionOperator operator, Collection<String> dqlValues) {
-            StringCriterion criterion = new StringCriterion(field, operator);
-            criterion.setValue(dqlValues);
-            return criterion;
-        };
-        
-        @Override
-        public FilterCriterion newCriterion(CriterionFieldEnum field,
-                CriterionOperator operator, String dqlValue) {
-            StringCriterion criterion = new StringCriterion(field, operator);
-            criterion.setValue(dqlValue);
-            return criterion;
-        }
-    }
-   
-    private static final class LongCriterionFactory implements CriterionFactory {
-        @Override
-        public FilterCriterion newCriterion(CriterionFieldEnum field, 
-                CriterionOperator operator, Collection<String> dqlValues) {
-            LongCriterion criterion = new LongCriterion(field, operator);
-            criterion.setValue(dqlValues);
-            return criterion;
-        };
-        
-        @Override
-        public FilterCriterion newCriterion(CriterionFieldEnum field,
-                CriterionOperator operator, String dqlValue) {
-            LongCriterion criterion = new LongCriterion(field, operator);
-            criterion.setValue(dqlValue);
-            return criterion;
+
+    /*
+     * Private implementation
+     */
+
+    private static void errorOnNullOrEmpty(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(VALUE_CANNOT_BE_NULL_OR_EMPTY);
         }
     }
 
-    private static final class DateCriterionFactory implements CriterionFactory {
-        @Override
-        public FilterCriterion newCriterion(CriterionFieldEnum field, 
-                CriterionOperator operator, Collection<String> dqlValues) {
-            DateCriterion criterion = new DateCriterion(field, operator);
-            criterion.setValue(dqlValues);
-            return criterion;
-        };
-        
-        @Override
-        public FilterCriterion newCriterion(CriterionFieldEnum field,
-                CriterionOperator operator, String dqlValue) {
-            DateCriterion criterion = new DateCriterion(field, operator);
-            criterion.setValue(dqlValue);
-            return criterion;
-        }
+    private interface CriterionFactory {
+        FilterCriterion newCriterion(CriterionFieldEnum field, CriterionOperator operator, String dqlValue);
+        FilterCriterion newCriterion(CriterionFieldEnum field, CriterionOperator operator, Collection<String> dqlValues);
     }
 
-    private static final class BooleanCriterionFactory implements CriterionFactory {
+    private abstract static class BasicCriterionFactory implements CriterionFactory {
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
                                             CriterionOperator operator, Collection<String> dqlValues) {
-            BooleanCriterion criterion = new BooleanCriterion(field, operator);
-            criterion.setValue(dqlValues);
-            return criterion;
-        };
+            try {
+                return new BasicFilterCriterion(field, operator, toArray(dqlValues));
+            } catch (IllegalArgumentException ia) {
+                throw new IllegalArgumentException(String.format(FIELD_OPERATOR_VALUE_ERROR, field, operator, ia.getMessage(), ia));
+            }
+        }
 
         @Override
         public FilterCriterion newCriterion(CriterionFieldEnum field,
                                             CriterionOperator operator, String dqlValue) {
-            BooleanCriterion criterion = new BooleanCriterion(field, operator);
-            criterion.setValue(dqlValue);
-            return criterion;
+            try {
+                return new BasicFilterCriterion(field, operator, parseValue(dqlValue));
+            } catch (IllegalArgumentException ia) {
+                throw new IllegalArgumentException(String.format(FIELD_OPERATOR_VALUE_ERROR, field, operator, ia.getMessage(), ia));
+            }
+        }
+
+        private Object[] toArray(Collection<String> values) {
+            Object[] result = new Object[values.size()];
+            int numResults = 0;
+            for (String value : values) {
+                result[numResults++] = parseValue(value);
+            }
+            return result;
+        }
+
+        protected abstract Object parseValue(String value);
+    }
+
+    private static final class StringCriterionFactory extends BasicCriterionFactory {
+        @Override
+        protected String parseValue(String value) {
+            errorOnNullOrEmpty(value);
+            return value;
         }
     }
 
+    private static final class UppercaseStringCriterionFactory extends BasicCriterionFactory {
+        @Override
+        protected String parseValue(String value) {
+            errorOnNullOrEmpty(value);
+            return value.toUpperCase();
+        }
+    }
 
-    private static final class EnumCriterionFactory<T extends Enum<T>> implements CriterionFactory {
+    private static final class LongCriterionFactory extends BasicCriterionFactory {
+        @Override
+        protected Long parseValue(String value) {
+            return Long.valueOf(value);
+        }
+    }
 
-        private Class<T> type;
-        
+    private static final class IntegerCriterionFactory extends BasicCriterionFactory {
+        @Override
+        protected Integer parseValue(String value) {
+            return Integer.valueOf(value);
+        }
+    }
+
+    private static final class DateCriterionFactory extends BasicCriterionFactory {
+        @Override
+        protected Date parseValue(String value) {
+            return ISODateTimeFormat.date().parseDateTime(value).toDate();
+        }
+    }
+
+    private static final class BooleanCriterionFactory extends BasicCriterionFactory {
+        private static final String INVALID_BOOLEAN =  "The supplied value %s cannot be converted to a Boolean value.\n"
+                + "Valid (case insensitive) values are true or yes, or false or no.";
+        private static final Pattern BOOLEAN_TRUE_STR_REGEX = Pattern.compile("true|yes", Pattern.CASE_INSENSITIVE);
+        private static final Pattern BOOLEAN_FALSE_STR_REGEX = Pattern.compile("false|no", Pattern.CASE_INSENSITIVE);
+        @Override
+        protected Boolean parseValue(String value) {
+            if (BOOLEAN_TRUE_STR_REGEX.matcher(value).matches()) {
+                return Boolean.TRUE;
+            }
+            if (BOOLEAN_FALSE_STR_REGEX.matcher(value).matches()) {
+                return Boolean.FALSE;
+            }
+            throw new IllegalArgumentException(String.format(INVALID_BOOLEAN, value));
+        }
+    }
+
+    private static final class EnumCriterionFactory<T extends Enum<T>> extends BasicCriterionFactory {
+        private final Class<T> type;
         public EnumCriterionFactory(Class<T> type) {
             this.type = type;
         }
-        
-        @Override
-        public FilterCriterion newCriterion(CriterionFieldEnum field, 
-                CriterionOperator operator, Collection<String> dqlValues) {
-            EnumCriterion<T> criterion = new EnumCriterion<T>(field, operator, type);
-            criterion.setValue(dqlValues);
-            return criterion;
-        };
-        
-        @Override
-        public FilterCriterion newCriterion(CriterionFieldEnum field,
-                CriterionOperator operator, String dqlValue) {
-            StringCriterion criterion = new StringCriterion(field, operator);
-            criterion.setValue(dqlValue);
-            return criterion;
-        }
-    }
-
-    private static class StringCriterion extends AbstractFilterCriterion<String> {
-
-        public StringCriterion(CriterionFieldEnum field, CriterionOperator operator) {
-            super(field, operator);
-        }
-        
-        @Override
-        protected String toTypedValue(String s) {
-            return s;
-        }
 
         @Override
-        public void setValue(String value) {
-
-            CriterionFieldEnum cfe = this.getField();
-
-            if (cfe != null && (cfe == CriterionFieldEnum.FILE_FORMAT
-                    || cfe == CriterionFieldEnum.FILE_NAME
-                    || cfe == CriterionFieldEnum.FILE_EXTENSION)) {
-                super.setValue(toTypedValue(value).toUpperCase());
-            } else {
-                super.setValue(toTypedValue(value));
-            }
+        protected T parseValue(String value) {
+            return Enum.valueOf(type, value);
         }
 
     }
 
-    private static class LongCriterion extends AbstractFilterCriterion<Long> {
 
-        public LongCriterion(CriterionFieldEnum field, CriterionOperator operator) {
-            super(field, operator);
-        }
-        
-        @Override
-        protected Long toTypedValue(String s) {
-            return Long.valueOf(s);
-        }
-    }
 
-    private static class DateCriterion extends AbstractFilterCriterion<Date> {
-
-        public DateCriterion(CriterionFieldEnum field, CriterionOperator operator) {
-            super(field, operator);
-        }
-        
-        @Override
-        protected Date toTypedValue(String s) {
-            return ISODateTimeFormat.date().parseDateTime(s).toDate();
-        }
-    }
-
-    private static class EnumCriterion<T extends Enum<T>> extends AbstractFilterCriterion<T> {
-
-        private Class<T> type;
-        
-        public EnumCriterion(CriterionFieldEnum field, CriterionOperator operator, Class<T> type) {
-            super(field, operator);
-            this.type = type;
-        }
-        
-        @Override
-        protected T toTypedValue(String s) {
-            return Enum.valueOf(type, s);
-        }
-    }
-
-    /**
-    * @author Brian O'Reilly
-    * @date 14 March 2014
-    */
-    private static class BooleanCriterion extends AbstractFilterCriterion<Boolean> {
-
-        public  static final String INVALID_BOOLEAN =  "The supplied value %s cannot be converted to a Boolean value";
-        private static final Pattern BOOLEAN_TRUE_STR_REGEX = Pattern.compile("true|yes", Pattern.CASE_INSENSITIVE);
-        private static final Pattern BOOLEAN_FALSE_STR_REGEX = Pattern.compile("false|no", Pattern.CASE_INSENSITIVE);
-        private static final Matcher BOOLEAN_TRUE_MATCHER = BOOLEAN_TRUE_STR_REGEX.matcher("");
-        private static final Matcher BOOLEAN_FALSE_MATCHER = BOOLEAN_FALSE_STR_REGEX.matcher("");
-     
-        public BooleanCriterion(CriterionFieldEnum field, CriterionOperator operator) {
-             super(field, operator);
-        }
-      
-        /**
-        * Convert String input of [true|yes|false|no]i to Boolean
-        * @param inputString textual value (may be user entered from CLI)
-        * @return boolean
-        * @throws IllegalArgumentException on unrecognised string
-        */
-        @Override
-        protected Boolean toTypedValue(String inputString) {
-
-            BOOLEAN_TRUE_MATCHER.reset(inputString);
-            if (BOOLEAN_TRUE_MATCHER.matches()) {
-                return Boolean.TRUE;
-            }
-            BOOLEAN_FALSE_MATCHER.reset(inputString);
-            if (BOOLEAN_FALSE_MATCHER.matches()) {
-                return Boolean.FALSE;
-            }
-            
-            throw new IllegalArgumentException(String.format(INVALID_BOOLEAN, inputString));
-
-        }
-
-    
-    }
 }

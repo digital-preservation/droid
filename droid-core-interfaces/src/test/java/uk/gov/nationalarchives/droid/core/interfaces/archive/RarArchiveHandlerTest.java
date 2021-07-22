@@ -83,6 +83,8 @@ public class RarArchiveHandlerTest {
         IdentificationRequestFactory<InputStream> factory = new RarEntryRequestFactory();
 
         AsynchDroid droid = mock(AsynchDroid.class);
+        when(droid.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
+
         ResultHandler resultHandler = mock(ResultHandler.class);
         when(resultHandler.handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean())).thenReturn(mock(ResourceId.class));
 

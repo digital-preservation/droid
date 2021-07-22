@@ -72,6 +72,7 @@ public class FatArchiveHandlerTest {
         FatEntryRequestFactory factory = mock(FatEntryRequestFactory.class);
 
         AsynchDroid droid = mock(AsynchDroid.class);
+        when(droid.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
 
         ResultHandler resultHandler = mock(ResultHandler.class);
         when(resultHandler.handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean())).thenReturn(mock(ResourceId.class));
@@ -101,6 +102,8 @@ public class FatArchiveHandlerTest {
 
         req.open(Paths.get("./src/test/resources/fat12.img"));
         fatArchiveHandler.handle(req);
+
+
 
         verify(droid, times(7)).submit(any(IdentificationRequest.class));
 

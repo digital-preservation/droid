@@ -35,9 +35,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter.FilterType;
-import uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser;
+import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
@@ -49,6 +48,7 @@ import uk.gov.nationalarchives.droid.profile.ProfileManager;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -92,7 +92,7 @@ public class ExportCommandTest {
         when(profileManager.open(eq(Paths.get("foo3")), any(ProgressObserver.class))).thenReturn(profile3);
         
         Future future = mock(Future.class);
-        when(exportManager.exportProfiles(any(List.class), eq(destination), (Filter) isNull(), eq(ExportOptions.ONE_ROW_PER_FORMAT), eq("UTF-8"), eq(false))).thenReturn(future);
+        when(exportManager.exportProfiles(any(List.class), eq(destination), (Filter) isNull(), eq(ExportOptions.ONE_ROW_PER_FORMAT), eq("UTF-8"), eq(false), eq(true), eq(null))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
         
@@ -109,7 +109,7 @@ public class ExportCommandTest {
             "profile1", "profile2", "profile3",
         };
         
-        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8", false);
+        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8", false, true, null);
     }
 
     @Test
@@ -124,26 +124,21 @@ public class ExportCommandTest {
         when(profileManager.open(eq(Paths.get("foo1")), any(ProgressObserver.class))).thenReturn(profile1);
         
         Future future = mock(Future.class);
-        when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false))).thenReturn(future);
+        when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false), eq(true), eq(null))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
-        //command.setDqlFilterParser(new AntlrDqlParser());
-        command.setDqlFilterParser(new SimpleDqlFilterParser());
-        
+
         String[] profileList = new String[] {"foo1"};
         command.setProfiles(profileList);
         command.setExportManager(exportManager);
         command.setProfileManager(profileManager);
         command.setDestination("destination");
         command.setExportOptions(ExportOptions.ONE_ROW_PER_FORMAT);
-        
-        CommandLineFilter cliFilter = new CommandLineFilter(
+        command.setFilter(createFilter(
                 new String[] {
-                    "file_size = 720",
-                    "puid any fmt/101 fmt/666",
-                }, FilterType.ALL);
-        
-        command.setFilter(cliFilter);
+                        "file_size = 720",
+                        "puid any fmt/101 fmt/666",
+                }, true));
         command.execute();
 
         String[] expectedExportedProfiles = new String[] {
@@ -152,7 +147,7 @@ public class ExportCommandTest {
         
         ArgumentCaptor<Filter> filterCaptor = ArgumentCaptor.forClass(Filter.class);
         verify(exportManager).exportProfiles(eq(Arrays.asList(expectedExportedProfiles)), 
-                eq("destination"), filterCaptor.capture(), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false));
+                eq("destination"), filterCaptor.capture(), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false), eq(true), eq(null));
 
         Filter filter = filterCaptor.getValue();
         final List<FilterCriterion> criteria = filter.getCriteria();
@@ -168,5 +163,14 @@ public class ExportCommandTest {
         assertEquals(CriterionOperator.ANY_OF, puidCriterion.getOperator());
         assertEquals(CriterionFieldEnum.PUID, puidCriterion.getField());
         assertArrayEquals(new Object[] {"fmt/101", "fmt/666"}, (Object[]) puidCriterion.getValue());
+    }
+
+    private Filter createFilter(String[] filters, boolean isNarrowed) {
+            List<FilterCriterion> criteria = new ArrayList<>();
+            for (String dql : filters) {
+                criteria.add(DqlFilterParser.parseDql(dql));
+            }
+            return new BasicFilter(criteria, isNarrowed);
+
     }
 }

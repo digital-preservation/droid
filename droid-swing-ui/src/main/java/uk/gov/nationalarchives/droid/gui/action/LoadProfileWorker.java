@@ -134,6 +134,7 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
         JProgressBar progressBar = profilePanel.getProfileProgressBar();
         progressBar.setValue(0);
         profilePanel.getProgressPanel().setVisible(false);
+        profilePanel.getFooterPanel().setVisible(true);
     }
 
     @Override

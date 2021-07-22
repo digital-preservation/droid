@@ -220,9 +220,16 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="datasource" ref="dataSource"/>
     </bean>
 
-    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao"
-          init-method="init" destroy-method="cleanup">
+    <bean id="resultsDao" class="uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDaoFactory">
         <property name="datasource" ref="dataSource"/>
+        <property name="itemWriter" ref="itemWriter"/>
+        <property name="outputFilePath" value="${outputFilePath}"/>
+    </bean>
+
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.profile.CsvItemWriter">
+        <property name="quoteAllFields" value="${quoteAllFields}"/>
+        <property name="columnsToWrite" value="${columnsToWrite}"/>
+        <property name="options" value="${exportOptions}"/>
     </bean>
 
     <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl">
@@ -291,7 +298,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     </bean>
 
 
-    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.JDBCResultHandler"
+    <bean id="databaseResultHandler" class="uk.gov.nationalarchives.droid.results.handlers.ProfileNodeResultHandler"
           init-method="init">
         <property name="resultHandlerDao" ref="resultsDao"/>
         <property name="progressMonitor" ref="progressMonitor"/>
@@ -315,7 +322,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="process7zip" value="#{${process7zip} == null?false : ${process7zip}}"/>
         <property name="processIso" value="#{${processIso} == null?false : ${processIso}}"/>
         <property name="processBzip2" value="#{${processBzip2} == null?false : ${processBzip2}}"/>
-
+        <!-- processFAT? -->
         <property name="processArc" value="#{${processArc} == null?false : ${processArc}}"/>
         <property name="processWarc" value="#{${processWarc} == null?false : ${processWarc}}"/>
 

@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,22 +50,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
-import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemReader;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemReaderCallback;
 import uk.gov.nationalarchives.droid.export.interfaces.JobCancellationException;
 import uk.gov.nationalarchives.droid.profile.JDBCProfileDao;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
-import uk.gov.nationalarchives.droid.profile.SqlUtils;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceNodeFilter;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 
 /**
  * @author Brian O'Reilly (based on SQLItemReader).
- * @param <T> The type of the item to read.
  */
-public class JDBCSqlItemReader<T> implements ItemReader<T> {
+public class JDBCSqlItemReader implements ItemReader<ProfileResourceNode> {
 
     private static final String PUID = "PUID";
     private static final String NODE_ID = "NODE_ID";
@@ -86,30 +83,15 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
     private static final String SELECT_PROFILE_ALL_FIELDS = "select p.*, ";
 
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     private ResultSet cursor;
     private PreparedStatement profileStatement;
     private int fetchSize;
     private int chunkSize;
-
     private DataSource datasource;
-
     private JDBCBatchResultHandlerDao resultHandlerDao;
     private IdentificationReader identificationReader;
-
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
-    private final Class<T> typeParameterClass;
-
-    private Filter filter;
-
-    //For use in determining filter parameter types so we can set these to the correct SQL type.
-    private  enum ClassName {
-        String,
-        Date,
-        Long,
-        Integer,
-        Boolean
-    }
 
     /**
      * Default constructor.
@@ -117,15 +99,6 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      * result in an error if the type parameter is not assignable to ProfileResourceNode
      */
     public JDBCSqlItemReader() {
-        this.typeParameterClass = (Class<T>) ProfileResourceNode.class;
-    }
-
-    /**
-     *
-     * @param typeParameterClass The class to use for the type parameter - see comment in read().
-     */
-    public JDBCSqlItemReader(Class<T>  typeParameterClass) {
-        this.typeParameterClass = typeParameterClass;
     }
 
     /**
@@ -133,7 +106,6 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      * @param resultHandlerDao Sets the resulthandlerdao to use.
      */
     public JDBCSqlItemReader(JDBCBatchResultHandlerDao resultHandlerDao) {
-        this.typeParameterClass = (Class<T>) ProfileResourceNode.class;
         setResultHandlerDao(resultHandlerDao);
     }
 
@@ -158,19 +130,11 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      * Reads the next profileResourceNode from the cursor.
      * @return The ProfileResourceNode to read, or null if there are no further nodes.
      */
-    //CHECKSTYLE:OFF  One statement too many ...
-    @SuppressWarnings("unchecked")
-    private ProfileResourceNode readNode() {
-
+     private ProfileResourceNode readNode() {
         try {
             if (cursor.next()) {
-
                 ProfileResourceNode profileResourceNode;
-                if (filter != null && filter.isEnabled()) {
-                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(cursor, 0); //We don't filter for export with filter column like in GUI.
-                }else {
-                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER.mapRow(cursor, 0);
-                }
+                profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER.mapRow(cursor, 0);
                 NodeMetaData metaData = profileResourceNode.getMetaData();
 
                 int numberOfIdentifications =  cursor.getInt("id_count");
@@ -204,20 +168,14 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
         return null;
     }
-    //CHECKSTYLE:ON
+
     /**
      *
      * @return The item read from the  cursor (which must be a ProfileResourceNode or subclass thereof
      * BNO: Not particularly elegant, but one way of working around the limitations of Java generics...
      */
-    public T read() {
-
-        if (this.typeParameterClass.isAssignableFrom(ProfileResourceNode.class)) {
-            ProfileResourceNode node = readNode();
-            return (T) node;
-        } else {
-            throw new NotImplementedException("Unsupported generic type for JDBCSqlItemReader!");
-        }
+    public ProfileResourceNode read() {
+        return readNode();
     }
 
     /**
@@ -226,26 +184,29 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      * @param itemFilter an optional filter
      * @throws JobCancellationException If the caller cancels the operation
      */
-    public void readAll(ItemReaderCallback<T> callback, Filter itemFilter) throws JobCancellationException {
+    public void readAll(ItemReaderCallback<ProfileResourceNode> callback, Filter itemFilter) throws JobCancellationException {
         open(itemFilter);
 
         this.identificationReader = new IdentificationReader();
-
+        boolean filterExists = itemFilter != null && itemFilter.isEnabled();
+        ProfileResourceNodeFilter nodeFilter = new ProfileResourceNodeFilter(filterExists ? itemFilter : null);
         try {
-            List<T> chunk = new ArrayList<T>();
+            List<ProfileResourceNode> chunk = new ArrayList<>();
 
-            T item;
+            ProfileResourceNode item;
             while ((item = read()) != null) {
-                chunk.add(item);
-                if (chunk.size() == chunkSize) {
-                    callback.onItem(chunk);
-                    chunk = new ArrayList<T>();
+                if (nodeFilter.passesFilter(item)) {
+                    chunk.add(item);
+                    if (chunk.size() == chunkSize) {
+                        callback.onItem(chunk);
+                        chunk = new ArrayList<>();
+                    }
                 }
             }
 
             if (!chunk.isEmpty()) {
                 callback.onItem(chunk);
-                chunk = new ArrayList<T>();
+                chunk = new ArrayList<>();
             }
         } finally {
             close();
@@ -260,8 +221,7 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
      */
     //@Override
     public void open(Filter itemFilter) {
-        this.filter = itemFilter;
-        this.cursor = getProfileCursor(itemFilter);
+        this.cursor = getProfileCursor();
     }
 
     /**
@@ -284,95 +244,25 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
     /**
      * Get a cursor over all of the results, with the forward-only flag set.
-     * 
+     *
      * @return a forward-only {@link ResultSet}
      */
-    //CHECKSTYLE:OFF Too mant statements and a few other minor issues, revisit when time allows..
-    private ResultSet getProfileCursor(Filter filter)  {
-
+    private ResultSet getProfileCursor()  {
         ResultSet profileResultSet = null;
-
         try {
             final Connection conn = datasource.getConnection();
-
-            String queryString = "";
-            boolean filterExists = filter != null && filter.isEnabled();
-            if (filterExists) {
-                QueryBuilder queryBuilder = SqlUtils.getQueryBuilder(filter);
-                String ejbFragment = queryBuilder.toEjbQl();
-                boolean formatCriteriaExist = ejbFragment.contains("format.");
-                String sqlFilter = SqlUtils.transformEJBtoSQLFields(ejbFragment, "p", "f");
-                queryString = SELECT_PROFILE_ALL_FIELDS;
-
-                queryString += "(select count('x') from identification i1 where i1.node_id = p.node_id) AS id_count, i.PUID ";
-
-                queryString += "from profile_resource_node p inner join identification i on p.node_id = i.node_id ";
-
-                if (formatCriteriaExist) {
-                    queryString += " inner join format f on f.puid = i.puid ";
-                }
-
-                //(1) To get only rows including the filter value e.g. if there are multiple PUIDs but only one is
-                // listed in the filter, only the matching one will be returned:
-                // queryString += "where " + sqlFilter;
-
-                //(2) TO get all identifications where any of the identifications matches a filter condition.
-                // E.g. if there are 2 PUIDs but only one is listed in the filter, both will be returned.
-                // This is the current behaviour with DROID 6.1.5
-                queryString += "where p.node_id IN (SELECT p2.node_id FROM profile_resource_node p2 ";
-                queryString += " INNER JOIN identification i2 ON p2.node_id = i2.node_id ";
-                queryString += "INNER JOIN format f2 on i2.puid = f2.puid ";
-                queryString += "WHERE " + sqlFilter.replace("f.", "f2.") + ") order by p.uri,p.node_id";
-
-                int i = 0;
-
-                this.profileStatement = conn.prepareStatement(queryString);
-
-                for (Object value : queryBuilder.getValues()) {
-                    Object value2 = SqlUtils.transformParameterToSQLValue(value);
-
-                    String className = value2.getClass().getSimpleName();
-
-                    //Java 6 doesn't support switch on string!!
-                    switch(ClassName.valueOf(className)) {
-                        case String:
-                            this.profileStatement.setString(++i, (String) value2);
-                            break;
-                        case Date:
-                            java.util.Date d = (java.util.Date) value2;
-                            this.profileStatement.setDate(++i, new java.sql.Date(d.getTime()));
-                            break;
-                        case Long:
-                            this.profileStatement.setLong(++i, (Long) value2);
-                            break;
-                        case Integer:
-                            this.profileStatement.setInt(++i, (Integer) value2);
-                            break;
-                        case Boolean:
-                            this.profileStatement.setBoolean(++i, (Boolean) value2);
-                            break;
-                        default:
-                            log.error("Invalid filter parameter type in JDBCSQLItemReader");
-                            break;
-                    }
-                }
-            } else {
-                queryString = SELECT_PROFILE_ALL_FIELDS;
-                queryString += EMPTY_FOLTER_SUBSELECT;
-                queryString += "(select count('x') from identification i1 where i1.node_id = p.node_id) AS id_count, i.PUID ";
-                queryString += "from profile_resource_node p  inner join identification i on p.node_id = i.node_id order by p.uri,p.node_id";
-                profileStatement = conn.prepareStatement(queryString);
-            }
+            String queryString = SELECT_PROFILE_ALL_FIELDS;
+            queryString += EMPTY_FOLTER_SUBSELECT;
+            queryString += "(select count('x') from identification i1 where i1.node_id = p.node_id) AS id_count, i.PUID ";
+            queryString += "from profile_resource_node p  inner join identification i on p.node_id = i.node_id order by p.uri,p.node_id";
+            profileStatement = conn.prepareStatement(queryString);
             profileResultSet = profileStatement.executeQuery();
-
         } catch (SQLException ex) {
             log.error("A database exception occurred retrieving nodes ", ex);
         }
-
         return profileResultSet;
-
     }
-    //CHECKSTYLE:ON
+
     /**
      * Set the cursor fetch size.
      * @param fetchSize  The number of records to fetch each time.
@@ -390,7 +280,6 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
     }
 
     private class IdentificationReader {
-
 
         private static final String FORMAT_QUERY_RANGE = "SELECT T1.NODE_ID, T1.PUID, T2.MIME_TYPE, T2.NAME, T2.VERSION "
                 + "FROM IDENTIFICATION AS T1 INNER JOIN FORMAT AS T2 ON T1.PUID = T2.PUID "
@@ -423,7 +312,6 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
             // special handling for null format key
             theformats.putAll(formatsFromDatabase.stream().filter(format -> format.getPuid() == null).collect(
                     Collectors.toMap(x -> "", x -> x)));
-
 
             return theformats;
         }

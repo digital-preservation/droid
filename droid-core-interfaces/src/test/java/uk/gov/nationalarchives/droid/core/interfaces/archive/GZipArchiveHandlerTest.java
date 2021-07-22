@@ -88,9 +88,10 @@ public class GZipArchiveHandlerTest {
         IdentificationRequest originalRequest = mock(IdentificationRequest.class);
         when(originalRequest.getIdentifier()).thenReturn(identifier);
         when(originalRequest.getSourceInputStream()).thenReturn(Files.newInputStream(file));
-        
+        when(droidCore.passesIdentificationFilter(request)).thenReturn(true);
+
         handler.handle(originalRequest);
-        
+        verify(droidCore).passesIdentificationFilter(request);
         verify(droidCore).submit(request);
     }
     

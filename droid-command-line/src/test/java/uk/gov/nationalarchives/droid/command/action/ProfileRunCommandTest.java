@@ -49,6 +49,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.profile.FileProfileResource;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceFactory;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
@@ -62,17 +63,17 @@ public class ProfileRunCommandTest {
     private ProfileRunCommand command;
     private ProfileManager profileManager;
     private SignatureManager signatureManager;
-    private LocationResolver locationResolver;
+    private ProfileResourceFactory profileResourceFactory;
     
     @Before
     public void setup() {
         profileManager = mock(ProfileManager.class);
         signatureManager = mock(SignatureManager.class);
-        locationResolver = mock(LocationResolver.class);
+        profileResourceFactory = mock(ProfileResourceFactory.class);
         command = new ProfileRunCommand();
         command.setProfileManager(profileManager);
         command.setSignatureManager(signatureManager);
-        command.setLocationResolver(locationResolver);
+        command.setProfileResourceFactory(profileResourceFactory);
     }
     
     @Test
@@ -101,8 +102,8 @@ public class ProfileRunCommandTest {
         FileProfileResource resource1 = new FileProfileResource(Paths.get("test1.txt"));
         FileProfileResource resource2 = new FileProfileResource(Paths.get("test2.txt"));
         
-        when(locationResolver.getResource("test1.txt", false)).thenReturn(resource1);
-        when(locationResolver.getResource("test2.txt", false)).thenReturn(resource2);
+        when(profileResourceFactory.getResource("test1.txt", false)).thenReturn(resource1);
+        when(profileResourceFactory.getResource("test2.txt", false)).thenReturn(resource2);
         
         command.execute();
         

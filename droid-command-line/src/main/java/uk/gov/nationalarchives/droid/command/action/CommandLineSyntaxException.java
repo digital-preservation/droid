@@ -52,4 +52,12 @@ public class CommandLineSyntaxException extends CommandLineException {
     public CommandLineSyntaxException(Throwable cause) {
         super(cause);
     }
+
+    /**
+     * @param message the message
+     * @param cause the cause
+     */
+    public CommandLineSyntaxException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

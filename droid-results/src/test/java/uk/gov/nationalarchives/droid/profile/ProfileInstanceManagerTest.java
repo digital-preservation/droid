@@ -56,6 +56,8 @@ import org.mockito.stubbing.Answer;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 import uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataServiceImpl;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
+import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
+import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitorImpl;
 import uk.gov.nationalarchives.droid.submitter.FileEventHandler;
 import uk.gov.nationalarchives.droid.submitter.ProfileSpecWalker;
 import uk.gov.nationalarchives.droid.submitter.ProfileSpecWalkerImpl;
@@ -188,7 +190,9 @@ public class ProfileInstanceManagerTest {
             }
             
         }).when(specWalker).walk(eq(profileSpec), nullable(ProfileWalkState.class));
-        
+
+        ProgressMonitor monitor = mock(ProgressMonitorImpl.class);
+        when(specWalker.getProgressMonitor()).thenReturn(monitor);
         profileInstanceManager.setSpecWalker(specWalker);
         
         

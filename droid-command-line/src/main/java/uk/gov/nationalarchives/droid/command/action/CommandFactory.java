@@ -33,8 +33,6 @@ package uk.gov.nationalarchives.droid.command.action;
 
 import org.apache.commons.cli.CommandLine;
 
-import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
-
 /**
  * @author rflitcroft, Alok Kumar Dash
  *
@@ -69,7 +67,7 @@ public interface CommandFactory {
     /**
      * @return a new {@link FilterFieldCommand}
      */
-    FilterFieldCommand getFilterFieldCommand();
+    DroidCommand getFilterFieldCommand();
 
 
     /**
@@ -90,7 +88,6 @@ public interface CommandFactory {
      * @throws CommandLineSyntaxException if the command line args were invalid
      */
     DroidCommand getProfileCommand(CommandLine cli) throws CommandLineSyntaxException;
-
 
     /**
      * @param cli the command line;

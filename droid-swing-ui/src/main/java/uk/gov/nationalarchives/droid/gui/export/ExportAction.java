@@ -59,6 +59,8 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     private ExportOptions options;
     private String outputEncoding;
     private boolean bom;
+    private boolean quoteAllFields;
+    private String columnsToWrite;
     private List<String> profileIds;
     private ActionDoneCallback<ExportAction> callback;
     
@@ -77,16 +79,19 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      * @param options The output options.
      * @param outputEncoding The output encoding.
      * @param bom use the bom flag in the output.
+     * @param quoteAllFields whether to quote all fields in export, or just those that contain commas.
+     * @param columnsToWrite A space separated list of columns to write, or null or empty for all columns.
      * @param profileIds The ids of the profiles to export.
      */
     public ExportAction(ExportManager exportManager, File destination, ExportOptions options, String outputEncoding,
-                        boolean bom, List<String> profileIds) {
+                        boolean bom, boolean quoteAllFields, String columnsToWrite, List<String> profileIds) {
         setExportManager(exportManager);
         setDestination(destination);
         setExportOptions(options);
         setOutputEncoding(outputEncoding);
         setBom(bom);
         setProfileIds(profileIds);
+        setQuoteAllFields(quoteAllFields);
     }
 
     /**
@@ -116,8 +121,9 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      */
     @Override
     protected Void doInBackground() {
+        //TODO: configure columns to write in UI.
         exportTask = exportManager.exportProfiles(profileIds, destination.getPath(), null, options,
-                outputEncoding, bom);
+                outputEncoding, bom, quoteAllFields, columnsToWrite);
         try {
             exportTask.get();
         } catch (InterruptedException e) {
@@ -192,5 +198,19 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      */
     public void setBom(boolean bom) {
         this.bom = bom;
+    }
+
+    /**
+     * @param quoteAllFields whether to quote all fields or just those that contain commas.
+     */
+    public void setQuoteAllFields(boolean quoteAllFields) {
+        this.quoteAllFields = quoteAllFields;
+    }
+
+    /**
+     * @param columnsToWrite A space separated list of columns to export, null or empty for all columns.
+     */
+    public void setColumnsToWrite(String columnsToWrite) {
+        this.columnsToWrite = columnsToWrite;
     }
 }

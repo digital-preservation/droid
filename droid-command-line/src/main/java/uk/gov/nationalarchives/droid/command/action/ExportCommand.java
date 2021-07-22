@@ -38,9 +38,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
-import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
-import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
@@ -56,11 +54,12 @@ public class ExportCommand implements DroidCommand {
     private String[] profiles;
     private ExportManager exportManager;
     private ProfileManager profileManager;
-    private DqlFilterParser dqlFilterParser;
     private String destination;
-    private CommandLineFilter cliFilter;
+    private Filter filter;
     private ExportOptions options;
     private boolean bom;
+    private boolean quoteAllFields = true;
+    private String columnsToWrite;
     
     /**
      * {@inheritDoc}
@@ -68,16 +67,7 @@ public class ExportCommand implements DroidCommand {
     @Override
     public void execute() throws CommandExecutionException {
         List<String> profileIds = new ArrayList<String>();
-        
-        SimpleFilter filter = null;
-        if (cliFilter != null) {
-            filter = new SimpleFilter(cliFilter.getFilterType());
-            
-            for (String dql : cliFilter.getFilters()) {
-                filter.add(dqlFilterParser.parse(dql));
-            }
-        }
-        
+
         // load each profile
         for (String profileLocation : profiles) {
             ProfileInstance profile;
@@ -98,7 +88,7 @@ public class ExportCommand implements DroidCommand {
             //default to UTF-8
             final String outputEncoding = "UTF-8"; //TODO set encoding from command line option
             final Future<?> fProfiles = exportManager.exportProfiles(profileIds, destination, filter,
-                    options, outputEncoding, bom);
+                    options, outputEncoding, bom, quoteAllFields, columnsToWrite);
             fProfiles.get();
         } catch (InterruptedException e) {
             throw new CommandExecutionException(e);
@@ -174,15 +164,15 @@ public class ExportCommand implements DroidCommand {
      * Sets the filter.
      * @param filter the filter to set
      */
-    public void setFilter(CommandLineFilter filter) {
-        this.cliFilter = filter;
+    public void setFilter(Filter filter) {
+        this.filter = filter;
     }
-    
+
     /**
-     * @param dqlFilterParser the dqlFilterParser to set
+     * @return the filter used for the export, or null if no filter.
      */
-    public void setDqlFilterParser(DqlFilterParser dqlFilterParser) {
-        this.dqlFilterParser = dqlFilterParser;
+    public Filter getFilter() {
+        return filter;
     }
 
     /**
@@ -199,5 +189,33 @@ public class ExportCommand implements DroidCommand {
      */
     public void setBom(boolean bom) {
         this.bom = bom;
+    }
+
+    /**
+      * @param quoteAllFields whether all fields should be quoted when exporting.
+     */
+    public void setQuoteAllFields(boolean quoteAllFields) {
+        this.quoteAllFields = quoteAllFields;
+    }
+
+    /**
+     * @return whether all fields are quoted, or just those that contain field separators (commas).
+     */
+    public boolean getQuoteAllFields() {
+        return quoteAllFields;
+    }
+
+    /**
+     * @param columnNames A space delimited list of columns to write for export, or null or empty for all columns.
+     */
+    public void setColumnsToWrite(String columnNames) {
+        this.columnsToWrite = columnNames;
+    }
+
+    /**
+     * @return A list of the columns to write, or null if all columns.
+     */
+    public String getColumnsToWrite() {
+        return columnsToWrite;
     }
 }

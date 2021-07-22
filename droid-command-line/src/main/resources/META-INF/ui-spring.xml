@@ -62,7 +62,7 @@
         <property name="profileContextLocator" ref="profileContextLocator"/>
         <property name="itemWriter" ref="itemWriter"/>
     </bean>
-    
+
     <bean id="signatureManager" class="uk.gov.nationalarchives.droid.signature.SignatureManagerImpl" init-method="init">
         <property name="signatureUpdateServices">
             <map>
@@ -74,8 +74,8 @@
         <property name="config" ref="globalConfig"/>
     </bean>
 
-    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.export.CsvItemWriter"/>
-        
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.profile.CsvItemWriter"/>
+
     <bean id="profileManager" class="uk.gov.nationalarchives.droid.profile.ProfileManagerImpl">
         <property name="profileContextLocator" ref="profileContextLocator"/>
         <property name="profileSpecDao" ref="profileSpecDao"/>
@@ -83,50 +83,40 @@
         <property name="signatureManager" ref="signatureManager"/>
         <property name="config" ref="globalConfig"/>
     </bean>
-    
+
     <bean id="profileSpecDao" class="uk.gov.nationalarchives.droid.profile.JaxbProfileSpecDao"/>
-    
+
     <bean id="uuidGenerator" class="uk.gov.nationalarchives.droid.profile.ProfileUuidGeneratorImpl"/>
-    
+
     <bean id="profileInstanceFactory" class="uk.gov.nationalarchives.droid.profile.SpringProfileInstanceFactory"/>
-    
+
     <bean id="profileContextLocator" class="uk.gov.nationalarchives.droid.profile.ProfileContextLocator">
         <property name="profileInstanceLocator" ref="profileInstanceFactory"/>
         <property name="globalConfig" ref="globalConfig"/>
     </bean>
-    
+
     <bean id="profileDiskAction" class="uk.gov.nationalarchives.droid.profile.ProfileDiskAction"/>
-    
+
     <bean id="exportCommand" class="uk.gov.nationalarchives.droid.command.action.ExportCommand" scope="prototype">
         <property name="exportManager" ref="exportManager"/>
         <property name="profileManager" ref="profileManager"/>
-        <property name="dqlFilterParser" ref="dqlFilterParser"/>
     </bean>
     
-      <!--<bean id="dqlFilterParser" class="uk.gov.nationalarchives.droid.command.filter.AntlrDqlParser"/>  -->
-       <bean id="dqlFilterParser" class="uk.gov.nationalarchives.droid.command.filter.SimpleDqlFilterParser"/>
-
     <bean id="reportCommand" class="uk.gov.nationalarchives.droid.command.action.ReportCommand" scope="prototype">
         <property name="reportManager" ref="reportManager"/>
         <property name="profileManager" ref="profileManager"/>
         <property name="reportXmlWriter" ref="reportXmlWriter"/>
         <property name="config" ref="globalConfig"/>
-        <property name="dqlFilterParser" ref="dqlFilterParser"/>        
     </bean>
 
     <bean id="profileRunCommand" class="uk.gov.nationalarchives.droid.command.action.ProfileRunCommand" scope="prototype">
         <property name="signatureManager" ref="signatureManager"/>
         <property name="profileManager" ref="profileManager"/>
-	<property name="locationResolver">
-    	    <bean class="uk.gov.nationalarchives.droid.command.action.LocationResolver"/>
+	<property name="profileResourceFactory">
+    	    <bean class="uk.gov.nationalarchives.droid.profile.ProfileResourceFactory"/>
 	</property>
     </bean>
     
-    <bean id="noProfileRunCommand" class="uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand" scope="prototype">
-        <!-- <property name="containerContentIdentifierFactory" ref="containerContentIdentifierFactory"/>
-        <property name="archiveFormatResolver" ref="archivePuidResolver"/> -->
-    </bean>
-
     <bean id="abstractSignatureCommand" abstract="true" scope="prototype" >
         <property name="signatureManager" ref="signatureManager"/>
     </bean>
@@ -156,91 +146,4 @@
         <property name="reportManager" ref="reportManager"/>        
     </bean>
 
-    <!-- container identifiers for command line only! -->
-    <!-- <bean id="containerContentIdentifierFactory" class="uk.gov.nationalarchives.droid.command.container.ContainerContentIdentifierFactory">
-        <!- - define available identifiers - ->
-        <property name="containerContentIdentifiers">
-            <map>
-                <entry key="OLE2" value-ref="ole2ContainerContentIdentifier"/>
-                <entry key="ZIP" value-ref="zipContainerContentIdentifier"/>
-            </map>
-	</property>
-    </bean> -->
-    
-    <!-- <bean id="ole2ContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.Ole2ContainerContentIdentifier">
-        <property name="identifierEngine" ref="ole2IdentifierEngine"/>
-    </bean> -->
-
-    <!-- <bean id="zipContainerContentIdentifier" class="uk.gov.nationalarchives.droid.command.container.ZipContainerContentIdentifier">
-        <property name="identifierEngine" ref="zipIdentifierEngine"/>
-    </bean> -->
-
-    <!-- <bean id="containerFileIdentificationRequestFactory" class="uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory">
-        <!- - property name="tempDirLocation" value="${tempDirLocation}"/ - ->
-    </bean> -->
-
-    <bean id="zipIdentifierEngine" class="uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine">
-        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
-    </bean>
-    
-    <bean id="ole2IdentifierEngine" class="uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine">
-        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
-    </bean>
-
-    <bean id="archivePuidResolver" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolverImpl">
-        <property name="puids">
-            <map>
-                <entry key="ZIP" value="${archive.zip}"/>
-                <entry key="TAR" value="${archive.tar}"/>
-                <entry key="GZ" value="${archive.gz}"/>
-                <entry key="ARC" value="${archive.arc}"/>
-                <entry key="WARC" value="${archive.warc}"/>
-                <entry key="BZ" value="${archive.bz}"/>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="archiveHandlerLocator" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactoryImpl">
-        <property name="handlers">
-            <map>
-                <entry key="ZIP" value-ref="zipHandler"/>
-                <entry key="TAR" value-ref="tarHandler"/>
-                <entry key="GZ" value-ref="gzHandler"/>
-                <entry key="ARC" value-ref="arcHandler"/>
-                <entry key="WARC" value-ref="warcHandler"/>
-                <entry key="BZ" value-ref="bzipHandler"/>
-            </map>
-        </property>
-    </bean>
-<!--    
-    <bean id="archiveRequestFactory" abstract="true">
-        <property name="tempDirLocation" value="${tempDirLocation}"/>
-    </bean>
--->
-    <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler">
-        <property name="factory">
-            <!-- <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory" parent="archiveRequestFactory"> -->
-            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory">
-            </bean>
-        </property>
-        <!-- <property name="droidCore" ref="submissionGateway"/>
-        <property name="resultHandler" ref="databaseResultHandler"/> -->
-    </bean>
-     
-    <bean id="tarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarArchiveHandler">
-        <property name="factory">
-            <!-- <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarEntryRequestFactory" parent="archiveRequestFactory"/> -->
-            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarEntryRequestFactory"/>
-        </property>
-        <!-- <property name="droidCore" ref="submissionGateway"/>
-        <property name="resultHandler" ref="databaseResultHandler"/> -->
-    </bean>
-
-    <bean id="gzHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipArchiveHandler">
-        <property name="factory">
-            <!-- <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipRequestFactory" parent="archiveRequestFactory"/> -->
-            <bean class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipRequestFactory"/>
-        </property>
-        <!-- <property name="droidCore" ref="submissionGateway"/> -->
-    </bean>
 </beans>

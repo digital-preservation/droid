@@ -70,4 +70,22 @@ public interface ItemWriter<T> {
      * @param headersToSet - Map of headers to customise and values to set.
      */
     void setHeaders(Map<String, String> headersToSet);
+
+    /**
+     * Sets whether all fields should be quoted, or just those that contain a comma separator.
+     * @param quoteAll Whether all fields should be quoted.
+     */
+    void setQuoteAllFields(boolean quoteAll);
+
+    /**
+     * Sets which columns should be written, as a space separated list of column headers.
+     * If the string is null or empty, all columns will be written out.
+     * <p> Valid column names are:
+     * ID, PARENT_ID, URI, FILE_PATH, NAME, METHOD, STATUS, SIZE, TYPE, EXT, LAST_MODIFIED,
+     * EXTENSION_MISMATCH, HASH, FORMAT_COUNT, PUID, MIME_TYPE, FORMAT_NAME, FORMAT_VERSION.
+     *
+     * @param columnNames A space separated list of column headers, or null or empty if all columns should be written.
+     */
+    void setColumnsToWrite(String columnNames);
+
 }

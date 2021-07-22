@@ -1538,47 +1538,55 @@ public class DroidMainFrame extends JFrame {
         }
         exportOptions.showDialog();
         if (exportOptions.isApproved()) {
-            int response = exportFileChooser.showSaveDialog(this);
-            if (response == JFileChooser.APPROVE_OPTION) {
-                List<String> profileIds = new ArrayList<String>();
-                profileIds.addAll(exportOptions.getSelectedProfileIds());
-                //for (ProfileForm profileForm : droidContext.allProfiles()) {
-                //    profileIds.add(profileForm.getProfile().getUuid());
-                // }
-                
-                final ExportAction exportAction = globalContext.getActionFactory().newExportAction();
+            String columnNames = exportOptions.getColumnsToExport();
+            if (columnNames.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No columns for export were selected.",
+                        "Export warning", JOptionPane.WARNING_MESSAGE);
+            } else {
+                int response = exportFileChooser.showSaveDialog(this);
+                if (response == JFileChooser.APPROVE_OPTION) {
+                    List<String> profileIds = new ArrayList<String>();
+                    profileIds.addAll(exportOptions.getSelectedProfileIds());
+                    //for (ProfileForm profileForm : droidContext.allProfiles()) {
+                    //    profileIds.add(profileForm.getProfile().getUuid());
+                    // }
 
-                final ExportProgressDialog exportDialog = new ExportProgressDialog(this, exportAction);
+                    final ExportAction exportAction = globalContext.getActionFactory().newExportAction();
 
-                exportAction.setDestination(exportFileChooser.getSelectedFile());
-                exportAction.setProfileIds(profileIds);
-                exportAction.setExportOptions(exportOptions.getExportOptions());
-                exportAction.setOutputEncoding(exportOptions.getOutputEncoding());
-                exportAction.setBom(exportOptions.isBom());
-                
-                exportAction.setCallback(new ActionDoneCallback<ExportAction>() {
-                    @Override
-                    public void done(ExportAction action) {
-                        try {
-                            exportDialog.setVisible(false);
-                            exportDialog.dispose();
-                            action.get();
-                            JOptionPane.showMessageDialog(DroidMainFrame.this, "Export Complete.", "Export Complete",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                        } catch (ExecutionException e) {
-                            DialogUtils.showGeneralErrorDialog(DroidMainFrame.this, "Export Error", e.getCause()
-                                    .getMessage());
-                        } catch (InterruptedException e) {
-                            DialogUtils.showGeneralErrorDialog(DroidMainFrame.this, "Export Interrupted", e.getCause()
-                                    .getMessage());
-                        } catch (CancellationException e) {
-                            log.info("Export cancelled");
+                    final ExportProgressDialog exportDialog = new ExportProgressDialog(this, exportAction);
+
+                    exportAction.setDestination(exportFileChooser.getSelectedFile());
+                    exportAction.setProfileIds(profileIds);
+                    exportAction.setExportOptions(exportOptions.getExportOptions());
+                    exportAction.setOutputEncoding(exportOptions.getOutputEncoding());
+                    exportAction.setBom(exportOptions.isBom());
+                    exportAction.setQuoteAllFields(exportOptions.getQuoteAllColumns());
+                    exportAction.setColumnsToWrite(columnNames);
+
+                    exportAction.setCallback(new ActionDoneCallback<ExportAction>() {
+                        @Override
+                        public void done(ExportAction action) {
+                            try {
+                                exportDialog.setVisible(false);
+                                exportDialog.dispose();
+                                action.get();
+                                JOptionPane.showMessageDialog(DroidMainFrame.this, "Export Complete.", "Export Complete",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            } catch (ExecutionException e) {
+                                DialogUtils.showGeneralErrorDialog(DroidMainFrame.this, "Export Error", e.getCause()
+                                        .getMessage());
+                            } catch (InterruptedException e) {
+                                DialogUtils.showGeneralErrorDialog(DroidMainFrame.this, "Export Interrupted", e.getCause()
+                                        .getMessage());
+                            } catch (CancellationException e) {
+                                log.info("Export cancelled");
+                            }
                         }
-                    }
-                });
+                    });
 
-                exportAction.execute();
-                exportDialog.setVisible(true);
+                    exportAction.execute();
+                    exportDialog.setVisible(true);
+                }
             }
         }
     }

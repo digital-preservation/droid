@@ -122,21 +122,23 @@ public class FileEventHandler {
         identifier.setParentResourceId(parentId);
         identifier.setResourceId(nodeId);
         IdentificationRequest<Path> request = requestFactory.newRequest(metaData, identifier);
-        try {
-            request.open(file);
-            droidCore.submit(request);
-            submissionThrottle.apply();
-        } catch (IOException e) {
-            IdentificationErrorType error = Files.exists(file) ? IdentificationErrorType.ACCESS_DENIED
-                    : IdentificationErrorType.FILE_NOT_FOUND;
-            if (error.equals(IdentificationErrorType.ACCESS_DENIED)) {
-                log.warn(String.format("Access was denied to the file: [%s]", file.toAbsolutePath().toString()));
-            } else {
-                log.warn(String.format("File not found: [%s]", file.toAbsolutePath().toString()));
+        if (droidCore.passesIdentificationFilter(request)) {
+            try {
+                request.open(file);
+                droidCore.submit(request);
+                submissionThrottle.apply();
+            } catch (IOException e) {
+                IdentificationErrorType error = Files.exists(file) ? IdentificationErrorType.ACCESS_DENIED
+                        : IdentificationErrorType.FILE_NOT_FOUND;
+                if (error.equals(IdentificationErrorType.ACCESS_DENIED)) {
+                    log.warn(String.format("Access was denied to the file: [%s]", file.toAbsolutePath().toString()));
+                } else {
+                    log.warn(String.format("File not found: [%s]", file.toAbsolutePath().toString()));
+                }
+                resultHandler.handleError(new IdentificationException(request, error, e));
+            } catch (InterruptedException e) {
+                log.debug("Interrupted while throttle active.", e);
             }
-            resultHandler.handleError(new IdentificationException(request, error, e));
-        } catch (InterruptedException e) {
-            log.debug("Interrupted while throttle active.", e);
         }
     }
 

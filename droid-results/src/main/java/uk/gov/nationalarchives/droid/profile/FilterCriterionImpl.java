@@ -47,6 +47,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.StringListParser;
 
 /**
  * @author Alok  Kumar Dash
@@ -207,21 +208,29 @@ public class FilterCriterionImpl implements FilterCriterion {
             Object[] value = new Object[selectedValues.size()];
             int i = 0;
             for (FilterValue v : selectedValues) {
-                value[i++] = convert(fieldName, v.getQueryParameter());
+                value[i++] = convert(v.getQueryParameter());
             }
             obj = value;
         } else if (valueFreeText != null) {
-            obj = convert(fieldName, valueFreeText);
+            obj = convert(valueFreeText);
         }
         return obj;
     }
     
     // CHECKSTYLE:OFF
-    private static Object convert(CriterionFieldEnum fieldType, String s) {
+    private Object convert(String s) {
         // CHECKSTYLE:ON
         Object o;
-        switch (fieldType) {
-            case FILE_EXTENSION:
+        switch (fieldName) {
+            case FILE_EXTENSION: {
+                if (operator == CriterionOperator.ANY_OF || operator == CriterionOperator.NONE_OF) {
+                   List<String> listValues = StringListParser.STRING_LIST_PARSER.parseListValues(s);
+                   o = convertToObjectArray(listValues);
+                } else {
+                    o = s.toUpperCase();
+                }
+                break;
+            }
             case FILE_NAME:
             case FILE_FORMAT:
                 o = s.toUpperCase();
@@ -253,9 +262,18 @@ public class FilterCriterionImpl implements FilterCriterion {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        String.format("Invalid argument [%s]", fieldType));
+                        String.format("Invalid argument [%s]", fieldName));
         }
         
         return o;
+    }
+
+    private Object[] convertToObjectArray(List<String> listValues) {
+        Object[] result = new Object[listValues.size()];
+        int arrayIndex = 0;
+        for (String value : listValues) {
+            result[arrayIndex++] = value.toUpperCase();
+        }
+        return result;
     }
 }

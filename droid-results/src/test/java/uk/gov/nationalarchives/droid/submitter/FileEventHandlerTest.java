@@ -80,6 +80,7 @@ public class FileEventHandlerTest {
     @Before
     public void setup() throws IOException {
         identificationEngine = mock(AsynchDroid.class);
+        when(identificationEngine.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
         requestFactory = mock(IdentificationRequestFactory.class);
         request = mock(IdentificationRequest.class);
         fileEventHandler = new FileEventHandler(identificationEngine);
@@ -108,11 +109,10 @@ public class FileEventHandlerTest {
         
         ProfileResourceNode node = mock(ProfileResourceNode.class);
         when(node.getUri()).thenReturn(uri);
-        
+
         ArgumentCaptor<IdentificationRequest> requestCaptor = ArgumentCaptor.forClass(IdentificationRequest.class);
 
         fileEventHandler.onEvent(file, new ResourceId(1L, ""), null);
-        
         verify(identificationEngine).submit(requestCaptor.capture());
     }
     

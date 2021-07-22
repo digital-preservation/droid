@@ -51,6 +51,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationErrorType;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequestFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -62,6 +63,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFacto
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifierFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.hash.HashGenerator;
 
 /**
@@ -111,6 +113,7 @@ public class SubmissionGateway implements AsynchDroid {
     private SubmissionQueue submissionQueue;
     private ReplaySubmitter replaySubmitter;
     private PauseAspect pauseControl;
+    private IdentificationRequestFilter identificationFilter; // A filter to decide whether a resource should be submitted for identification.
 
     private Set<IdentificationRequest> requests = Collections.synchronizedSet(new HashSet<IdentificationRequest>());
 
@@ -569,6 +572,22 @@ public class SubmissionGateway implements AsynchDroid {
     @Override
     public void setMaxBytesToScan(long maxBytesToScan) {
         this.maxBytesToScan = maxBytesToScan;
+    }
+
+    @Override
+    public void setResultsFilter(Filter filter) {
+        resultHandler.setResultsFilter(filter);
+
+    }
+
+    @Override
+    public void setIdentificationFilter(Filter filter) {
+        identificationFilter = new IdentificationRequestFilter(filter);
+    }
+
+    @Override
+    public boolean passesIdentificationFilter(IdentificationRequest request) {
+        return identificationFilter == null || identificationFilter.passesFilter(request);
     }
 
     /**

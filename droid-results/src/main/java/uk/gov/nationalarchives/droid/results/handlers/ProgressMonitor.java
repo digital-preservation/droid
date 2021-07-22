@@ -42,6 +42,7 @@ import uk.gov.nationalarchives.droid.profile.ProfileResultObserver;
  */
 public interface ProgressMonitor {
 
+
     /** value for indeterminate answer. */
     int INDETERMINATE_PROGRESS = -1;
 
@@ -71,7 +72,6 @@ public interface ProgressMonitor {
      * @return the number of identifications made.
      */
     long getIdentificationCount();
-
     /**
      * Sets an observer to fired whenever the progress percentage increments.
      * 
@@ -108,5 +108,16 @@ public interface ProgressMonitor {
      * @return the target number of identifications (100%)
      */
     long getTargetCount();
-    
+
+    /**
+     * @return whether the progress monitor monitors progress.
+     */
+    boolean isMonitoring();
+
+    /**
+     * Set whether progress should be monitored.
+     * @param monitor true if progress should be monitoring.
+     */
+    void setMonitoring(boolean monitor);
+
 }

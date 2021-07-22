@@ -64,7 +64,7 @@
         <property name="itemWriter" ref="itemWriter"/>
     </bean>
     
-    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.export.CsvItemWriter">
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.profile.CsvItemWriter">
         <property name="config" ref="globalConfig"/>
     </bean>
     

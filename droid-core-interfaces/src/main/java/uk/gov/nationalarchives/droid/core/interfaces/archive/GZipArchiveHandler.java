@@ -72,7 +72,8 @@ public class GZipArchiveHandler implements ArchiveHandler {
     @Override
     public final void handle(IdentificationRequest request) throws IOException {
         IdentificationRequest<InputStream> archiveRequest = null;
-        InputStream in = request.getSourceInputStream(); 
+        InputStream in = request.getSourceInputStream();
+        boolean submitRequest;
         try {
             URI parent = request.getIdentifier().getUri(); 
             long correlationId = request.getIdentifier().getNodeId();
@@ -87,12 +88,15 @@ public class GZipArchiveHandler implements ArchiveHandler {
             identifier.setParentId(correlationId);
 
             archiveRequest = factory.newRequest(metaData, identifier);
-            final InputStream gzin = new GZIPInputStream(in);
-            try {
-                archiveRequest.open(gzin);
-            } finally {
-                if (gzin != null) {
-                    gzin.close();
+            submitRequest = droid.passesIdentificationFilter(archiveRequest);
+            if (submitRequest) {
+                final InputStream gzin = new GZIPInputStream(in);
+                try {
+                    archiveRequest.open(gzin);
+                } finally {
+                    if (gzin != null) {
+                        gzin.close();
+                    }
                 }
             }
         } finally {
@@ -100,7 +104,7 @@ public class GZipArchiveHandler implements ArchiveHandler {
                 in.close();
             }
         }
-        if (archiveRequest != null) {
+        if (submitRequest && archiveRequest != null) {
             droid.submit(archiveRequest);
         }
     }
