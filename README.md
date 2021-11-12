@@ -7,7 +7,7 @@ The latest binary file can be downloaded from [The National Archives website](ht
 [![Coverage Status](https://coveralls.io/repos/github/digital-preservation/droid/badge.svg?branch=master)](https://coveralls.io/github/digital-preservation/droid?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives/droid/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives)
 
-More information can be found on the DROID github pages here: http://digital-preservation.github.com/droid/
+More information can be found on the DROID github pages here: https://digital-preservation.github.io/droid/
 
 ## General Information
 
