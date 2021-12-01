@@ -174,7 +174,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-swing-outline</artifactId>
-            <version>RELEASE122</version>
+            <version>RELEASE126</version>
         </dependency>
         <dependency>
             <groupId>org.jdesktop</groupId>
