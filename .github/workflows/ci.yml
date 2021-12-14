@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - droid-6.5.1-patch
   pull_request:
 
 jobs:
