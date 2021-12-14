@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    name: Build and Test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        jdk: [8, 9, 11, 15]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.jdk }}
+          distribution: zulu
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Maven Build
+        run: mvn -V -B -DskipTests=true install
+      - name: Maven Test
+        run: mvn -B verify
+#      - name: Maven Code Coverage
+#        if: ${{ github.ref == 'refs/heads/main' && matrix.jdk == '8' && matrix.os == 'ubuntu-latest' }}
+#        run: mvn -B jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }}
