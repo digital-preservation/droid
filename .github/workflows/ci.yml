@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches:
-      - master
       - droid-6.5.1-patch
   pull_request:
 
@@ -33,6 +32,13 @@ jobs:
         run: mvn -V -B -DskipTests=true install
       - name: Maven Test
         run: mvn -B verify
+      - name: Upload Artifacts
+        uses: actions/upload-artifacts@v2
+        with:
+          name: droid-binary
+          path: ./droid-binary/target/*.zip
+          if-no-files-found: error
+          retention-days: 90
 #      - name: Maven Code Coverage
 #        if: ${{ github.ref == 'refs/heads/main' && matrix.jdk == '8' && matrix.os == 'ubuntu-latest' }}
 #        run: mvn -B jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }}
