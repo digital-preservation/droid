@@ -54,9 +54,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import com.itextpdf.text.DocumentException;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.util.FileUtil;
@@ -163,12 +162,12 @@ public class ReportTransformerImpl implements ReportTransformer {
 
             try (final Writer buffer = Files.newBufferedWriter(tmpXhtml, UTF_8))  {
                 transformUsingXsl(in, transformLocation, buffer);
-                
-                final ITextRenderer renderer = new ITextRenderer();
-                renderer.setDocument(tmpXhtml.toFile());
-                renderer.layout();
-                renderer.createPDF(out);
-            } catch (TransformerException | DocumentException e) {
+
+                final PdfRendererBuilder renderer = new PdfRendererBuilder();
+                renderer.withFile(tmpXhtml.toFile());
+                renderer.toStream(out);
+                renderer.run();
+            } catch (TransformerException | IOException e) {
                 throw new ReportTransformException(e);
             } finally {
                 FileUtil.deleteQuietly(tmpXhtml);
