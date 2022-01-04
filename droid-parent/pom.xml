@@ -740,16 +740,16 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.xhtmlrenderer</groupId>
-                <artifactId>flying-saucer-core</artifactId>
-                <version>${flying-saucer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xhtmlrenderer</groupId>
-                <artifactId>flying-saucer-pdf-itext5</artifactId>
-                <version>${flying-saucer.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.xhtmlrenderer</groupId>-->
+<!--                <artifactId>flying-saucer-core</artifactId>-->
+<!--                <version>${flying-saucer.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.xhtmlrenderer</groupId>-->
+<!--                <artifactId>flying-saucer-pdf-itext5</artifactId>-->
+<!--                <version>${flying-saucer.version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>

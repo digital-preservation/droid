@@ -209,10 +209,10 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>flying-saucer-core</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.xhtmlrenderer</groupId>-->
+<!--            <artifactId>flying-saucer-core</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>javax.help</groupId>
             <artifactId>javahelp</artifactId>
