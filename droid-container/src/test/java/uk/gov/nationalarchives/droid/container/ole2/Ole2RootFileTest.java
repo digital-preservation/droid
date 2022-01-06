@@ -260,7 +260,7 @@ public class Ole2RootFileTest {
     @Test
     public void testInitialiseRegistersOle2ContainerIdentifierWithContainerIdentifierResolver() throws Exception {
         
-        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20200121.xml");
+        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20211216.xml");
         final Path path = Paths.get(containerSignatureUrl.toURI());
 
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
@@ -288,7 +288,7 @@ public class Ole2RootFileTest {
     @Test
     public void testInitialiseRegistersOle2ContainerFormatsAgainstOoxmlPuid() throws Exception {
         
-        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20200121.xml");
+        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20211216.xml");
         final Path path = Paths.get(containerSignatureUrl.toURI());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
@@ -311,7 +311,7 @@ public class Ole2RootFileTest {
     @Test
     public void testInitialiseDeregistersOle2BinarySignaturesFromDroid() throws Exception {
         
-        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20200121.xml");
+        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20211216.xml");
         final Path path = Paths.get(containerSignatureUrl.toURI());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);

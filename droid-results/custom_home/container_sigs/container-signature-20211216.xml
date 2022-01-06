@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 
-<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="25">
+<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="27">
   <ContainerSignatures>
     <ContainerSignature Id="1000" ContainerType="OLE2">
       <Description>Microsoft Word 6.0/95 OLE2</Description>
@@ -874,6 +874,53 @@
         </File>
       </Files>
     </ContainerSignature>
+
+<ContainerSignature Id="3120" ContainerType="OLE2">
+    <Description>Microsoft Powerpoint 95 OLE2</Description>
+    <Files>
+        <File>
+            <Path>Header</Path>
+            <BinarySignatures>
+                <InternalSignatureCollection>
+                    <InternalSignature ID="3120">
+                        <ByteSequence Reference="BOFoffset">
+                            <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                <Sequence>'Microsoft (R) PowerPoint (R) Windows  ' 00 07 (00|01) 00 00 f0 03 00 00 5f</Sequence>
+                            </SubSequence>
+                        </ByteSequence>
+                    </InternalSignature>
+                </InternalSignatureCollection>
+            </BinarySignatures>
+        </File>
+        <File>
+            <Path>PersistentStorage Directory</Path>
+            <BinarySignatures>
+                <InternalSignatureCollection>
+                    <InternalSignature ID="3121">
+                        <ByteSequence Reference="BOFoffset">
+                            <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                <Sequence>'PowerPoint Document'</Sequence>
+                            </SubSequence>
+                        </ByteSequence>
+                    </InternalSignature>
+                </InternalSignatureCollection>
+            </BinarySignatures>
+        </File>
+        <File>
+            <Path>PowerPoint Document</Path>
+        </File>
+    </Files>
+</ContainerSignature>
+
+<ContainerSignature Id="3130" ContainerType="OLE2">
+    <Description>Microsoft Powerpoint 4 OLE2</Description>
+    <Files>
+        <File>
+            <Path>PP40</Path>
+        </File>
+    </Files>
+</ContainerSignature>
+
         <ContainerSignature Id="4000" ContainerType="OLE2">
       <Description>Microsoft Project 4.0 OLE2</Description>
       <Files>
@@ -885,7 +932,7 @@
                 <ByteSequence Reference="BOFoffset">
                   <SubSequence Position="1" SubSeqMinOffset="40"
                     SubSeqMaxOffset="1024">
-                    <Sequence>14 00 00 00 'MSProject.Docfile.4' 00</Sequence>
+                    <Sequence>14 00 00 00 'MSProject.DocFile.4' 00</Sequence>
                   </SubSequence>
                 </ByteSequence>
               </InternalSignature>
@@ -1015,77 +1062,355 @@
       </Files>
     </ContainerSignature>
 
-    <ContainerSignature Id="5000" ContainerType="OLE2">
-      <Description>Microsoft Publisher 1.0 OLE2</Description>
-      <Files>
-        <File>
-          <Path>Contents</Path>
-        </File>
-        <File>
-          <Path>CompObj</Path>
-          <BinarySignatures>
-            <InternalSignatureCollection>
-              <InternalSignature ID="314">
-                <ByteSequence Reference="BOFoffset">
-                  <SubSequence Position="1" SubSeqMinOffset="40"
-                    SubSeqMaxOffset="1024">
-                    <Sequence>0E 00 00 00 'MSPublisher.1' 00</Sequence>
-                  </SubSequence>
-                </ByteSequence>
-              </InternalSignature>
-            </InternalSignatureCollection>
-          </BinarySignatures>
-        </File>
-      </Files>
-    </ContainerSignature>
+        <ContainerSignature Id="4090" ContainerType="OLE2">
+            <Description>Microsoft Project 95 OLE2</Description>
+            <Files>
+		<File>
+		<Path>CompObj</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="4090">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>14 00 00 00 'MSProject.DocFile.4' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="2" SubSeqMinOffset="40" SubSeqMaxOffset="1024">
+	                                    <Sequence>16 00 00 00 'MSProject.Project.4_1' 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
 
-    <ContainerSignature Id="5010" ContainerType="OLE2">
-      <Description>Microsoft Publisher 2.0/95 OLE2</Description>
-      <Files>
-        <File>
-          <Path>Contents</Path>
-        </File>
-        <File>
-          <Path>CompObj</Path>
-          <BinarySignatures>
-            <InternalSignatureCollection>
-              <InternalSignature ID="315">
-                <ByteSequence Reference="BOFoffset">
-                  <SubSequence Position="1" SubSeqMinOffset="40"
-                    SubSeqMaxOffset="1024">
-                    <Sequence>0E 00 00 00 'MSPublisher.2' 00</Sequence>
-                  </SubSequence>
-                </ByteSequence>
-              </InternalSignature>
-            </InternalSignatureCollection>
-          </BinarySignatures>
-        </File>
-      </Files>
-    </ContainerSignature>
+        <ContainerSignature Id="5000" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2.0</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5000">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 22 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="12" SubSeqMaxOffset="24">
+                                        <Sequence>C0 02</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5010" ContainerType="OLE2">
+            <Description>Microsoft Publisher 95</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5010">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 22 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="12" SubSeqMaxOffset="24">
+                                        <Sequence>7D 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5011" ContainerType="OLE2">
+            <Description>Microsoft Publisher 97</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5011">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 22 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="12" SubSeqMaxOffset="24">
+                                        <Sequence>88 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5012" ContainerType="OLE2">
+            <Description>Microsoft Publisher 98</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5012">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 22 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="12" SubSeqMaxOffset="24">
+                                        <Sequence>68 02</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5013" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2000</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5013">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 22 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="12" SubSeqMaxOffset="24">
+                                        <Sequence>CD 02</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5020" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2002</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5020">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 2C 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="12" SubSeqMaxOffset="24">
+                                        <Sequence>0E 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5021" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2003</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5021">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 2C 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>DocumentSummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5022">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence MinFragLength="0" Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>03 00 00 00</Sequence>
+                                        <RightFragment MaxOffset="2" MinOffset="2" Position="1">0B</RightFragment>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
 
-    <ContainerSignature Id="5020" ContainerType="OLE2">
-      <Description>Microsoft Publisher 97-2007 OLE2</Description>
-      <Files>
-        <File>
-          <Path>Contents</Path>
-        </File>
-        <File>
-          <Path>CompObj</Path>
-          <BinarySignatures>
-            <InternalSignatureCollection>
-              <InternalSignature ID="316">
-                <ByteSequence Reference="BOFoffset">
-                  <SubSequence Position="1" SubSeqMinOffset="40"
-                    SubSeqMaxOffset="1024">
-                    <Sequence>0E 00 00 00 'MSPublisher.3' 00</Sequence>
-                  </SubSequence>
-                </ByteSequence>
-              </InternalSignature>
-            </InternalSignatureCollection>
-          </BinarySignatures>
-        </File>
-      </Files>
-    </ContainerSignature>
+        <ContainerSignature Id="5024" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2007</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5024">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 2C 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>DocumentSummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5025">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence MinFragLength="0" Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>03 00 00 00</Sequence>
+                                        <RightFragment MaxOffset="2" MinOffset="2" Position="1">0C</RightFragment>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5026" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2010</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5026">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 2C 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>DocumentSummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5027">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence MinFragLength="0" Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>03 00 00 00</Sequence>
+                                        <RightFragment MaxOffset="2" MinOffset="2" Position="1">0E</RightFragment>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5030" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2013</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5030">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 2C 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>DocumentSummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5031">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence MinFragLength="0" Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>03 00 00 00</Sequence>
+                                        <RightFragment MaxOffset="2" MinOffset="2" Position="1">0F</RightFragment>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="5035" ContainerType="OLE2">
+            <Description>Microsoft Publisher 2016-2019</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5035">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>E8 AC 2C 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+                <File>
+                    <Path>DocumentSummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="5036">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence MinFragLength="0" Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>03 00 00 00</Sequence>
+                                        <RightFragment MaxOffset="2" MinOffset="2" Position="1">10</RightFragment>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
 
     <ContainerSignature Id="5500" ContainerType="OLE2">
       <Description>Microsoft Office Binder File for Windows 97-2000</Description>
@@ -1716,7 +2041,7 @@
     </ContainerSignature>
 
     <ContainerSignature Id="13010" ContainerType="OLE2">
-      <Description>Microsoft Visio Document 2000</Description>
+      <Description>Microsoft Visio Document 2000-2002</Description>
       <Files>
         <File>
           <Path>VisioDocument</Path>
@@ -1884,6 +2209,69 @@
         </File>
       </Files>
     </ContainerSignature>
+
+        <ContainerSignature Id="13090" ContainerType="OLE2">
+            <Description>Microsoft Visio Document 3</Description>
+            <Files>
+                <File>
+                    <Path>VisioDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="13090" Specificity="Specific">
+				 <ByteSequence Reference="BOFoffset">
+					 <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                                    <Sequence>'Visio (TM) Drawing'0D0A</Sequence>
+                                    <RightFragment MaxOffset="6" MinOffset="6" Position="1">03</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="13100" ContainerType="OLE2">
+            <Description>Microsoft Visio Document 4</Description>
+            <Files>
+                <File>
+                    <Path>VisioDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="13100" Specificity="Specific">
+				 <ByteSequence Reference="BOFoffset">
+					 <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                                    <Sequence>'Visio (TM) Drawing'0D0A</Sequence>
+                                    <RightFragment MaxOffset="6" MinOffset="6" Position="1">04</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="13110" ContainerType="OLE2">
+            <Description>Microsoft Visio Document 5</Description>
+            <Files>
+                <File>
+                    <Path>VisioDocument</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="13110" Specificity="Specific">
+				 <ByteSequence Reference="BOFoffset">
+					 <SubSequence MinFragLength="0" Position="1" SubSeqMaxOffset="0" SubSeqMinOffset="0">
+                                    <Sequence>'Visio (TM) Drawing'0D0A</Sequence>
+                                    <RightFragment MaxOffset="6" MinOffset="6" Position="1">05</RightFragment>
+                                </SubSequence>
+                            </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
 
     <ContainerSignature Id="14000" ContainerType="ZIP">
       <Description>Apple iBook Format</Description>
@@ -2398,7 +2786,7 @@
     </ContainerSignature>
 
     <ContainerSignature Id="21010" ContainerType="ZIP">
-      <Description>iWork13</Description>
+      <Description>Apple iWorks Template 13</Description>
       <Files>
         <File>
           <Path>Metadata/BuildVersionHistory.plist</Path>
@@ -2425,6 +2813,72 @@
         </File>
       </Files>
     </ContainerSignature>
+        
+        <ContainerSignature Id="21020" ContainerType="ZIP">
+            <Description>Apple iWorks Numbers 09</Description>
+            <Files>
+                <File>
+                    <Path>index.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="21020">
+                                <ByteSequence>
+                                    <SubSequence Position="1" SubSeqMinOffset="0"
+                                        SubSeqMaxOffset="200">
+                                        <Sequence>'xmlns:ls="http://developer.apple.com/namespaces/ls" ls:version="92008102400"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="21030" ContainerType="ZIP">
+            <Description>Apple iWorks Pages 09</Description>
+            <Files>
+                <File>
+                    <Path>index.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="21030">
+                                <ByteSequence>
+                                    <SubSequence Position="1" SubSeqMinOffset="0"
+                                        SubSeqMaxOffset="200">
+                                        <Sequence>'xmlns:sl="http://developer.apple.com/namespaces/sl" sl:version="92008102400"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="21040" ContainerType="ZIP">
+            <Description>Apple iWorks Document 14</Description>
+            <Files>
+                <File>
+                    <Path>Metadata/Properties.plist</Path>
+                </File>
+                <File>
+                    <Path>Index/Document.iwa</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+                            <InternalSignature ID="21040">
+                                <ByteSequence>
+                                    <SubSequence Position="1" SubSeqMinOffset="0"
+                                        SubSeqMaxOffset="200">
+                                        <Sequence>12 03 01 00 05 18</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>
+            </Files>
+        </ContainerSignature>
 
     <ContainerSignature Id="22040" ContainerType="OLE2">
       <Description>Serif PagePlus Publication 4</Description>
@@ -2636,6 +3090,202 @@
       </Files>
     </ContainerSignature>
 
+        <ContainerSignature Id="22130" ContainerType="ZIP">
+            <Description>Serif PagePlus Publication X3</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22130">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif PagePlus 13'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22140" ContainerType="ZIP">
+            <Description>Serif PagePlus Publication X4</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22140">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif PagePlus 14'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22150" ContainerType="ZIP">
+            <Description>Serif PagePlus Publication X5</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22150">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif PagePlus 15'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22160" ContainerType="ZIP">
+            <Description>Serif PagePlus Publication X6</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22160">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif PagePlus 16'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22170" ContainerType="ZIP">
+            <Description>Serif PagePlus Publication X7</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22170">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif PagePlus 17'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22180" ContainerType="ZIP">
+            <Description>Serif PagePlus Publication X8</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22180">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif PagePlus 18'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22190" ContainerType="ZIP">
+            <Description>Serif PagePlus Publication X9</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22190">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif PagePlus 19'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
     <ContainerSignature Id="22200" ContainerType="OLE2">
       <Description>Serif PagePlus Publication Home Office</Description>
       <Files>
@@ -2656,6 +3306,48 @@
         </File>
       </Files>
     </ContainerSignature>
+
+        <ContainerSignature Id="22210" ContainerType="OLE2">
+            <Description>Serif PagePlus Publication SE</Description>
+            <Files>
+                <File>
+                    <Path>SummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22210">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0"
+                                        SubSeqMaxOffset="1024">
+                                        <Sequence>'Serif PagePlus SE'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="22220" ContainerType="OLE2">
+            <Description>Serif PagePlus Publication Generic</Description>
+            <Files>
+                <File>
+                    <Path>FileInfo</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22220">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0"
+                                        SubSeqMaxOffset="0">
+                                        <Sequence>CE 19 CE 19</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
 
     <ContainerSignature Id="22500" ContainerType="OLE2">
       <Description>Serif DrawPlus Drawing 3</Description>
@@ -2687,8 +3379,7 @@
             <InternalSignatureCollection>
               <InternalSignature ID="22510">
                 <ByteSequence Reference="BOFoffset">
-                  <SubSequence Position="1" SubSeqMinOffset="0"
-                    SubSeqMaxOffset="1024">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
                     <Sequence>'Serif DrawPlus 4'</Sequence>
                   </SubSequence>
                 </ByteSequence>
@@ -2708,8 +3399,7 @@
             <InternalSignatureCollection>
               <InternalSignature ID="22520">
                 <ByteSequence Reference="BOFoffset">
-                  <SubSequence Position="1" SubSeqMinOffset="0"
-                    SubSeqMaxOffset="1024">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
                     <Sequence>'Serif DrawPlus 5'</Sequence>
                   </SubSequence>
                 </ByteSequence>
@@ -2719,6 +3409,296 @@
         </File>
       </Files>
     </ContainerSignature>
+
+        <ContainerSignature Id="22530" ContainerType="OLE2">
+            <Description>Serif DrawPlus Drawing 6</Description>
+            <Files>
+                <File>
+                    <Path>SummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22530">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>'DrawPlus 6'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22540" ContainerType="OLE2">
+            <Description>Serif DrawPlus Drawing 7</Description>
+            <Files>
+                <File>
+                    <Path>SummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22540">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>'DrawPlus 7'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22550" ContainerType="OLE2">
+            <Description>Serif DrawPlus Drawing 8</Description>
+            <Files>
+                <File>
+                    <Path>SummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22550">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>'DrawPlus 8'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22560" ContainerType="OLE2">
+            <Description>Serif DrawPlus Drawing X2</Description>
+            <Files>
+                <File>
+                    <Path>SummaryInformation</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22560">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                                        <Sequence>'DrawPlus 9'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22570" ContainerType="ZIP">
+            <Description>Serif DrawPlus Drawing X3</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22570">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif DrawPlus 10'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22580" ContainerType="ZIP">
+            <Description>Serif DrawPlus Drawing X4</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22580">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif DrawPlus 11'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22590" ContainerType="ZIP">
+            <Description>Serif DrawPlus Drawing X5</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22590">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif DrawPlus 12'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22600" ContainerType="ZIP">
+            <Description>Serif DrawPlus Drawing X6</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22600">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif DrawPlus 13'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22610" ContainerType="ZIP">
+            <Description>Serif DrawPlus Drawing X8</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>summary.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22610">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                                        <Sequence>'Serif DrawPlus 14'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="22620" ContainerType="OLE2">
+            <Description>Serif DrawPlus Drawing Generic</Description>
+            <Files>
+                <File>
+                    <Path>DocInfo</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22620">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0"
+                                        SubSeqMaxOffset="24">
+                                        <Sequence>'CompressionFile'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="22800" ContainerType="OLE2">
+            <Description>Serif PhotoPlus Image 5-X2</Description>
+            <Files>
+                <File>
+                    <Path>SCFFPreview</Path>
+                </File>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22800">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="24">
+                                        <Sequence>'CompressionFile'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="22810" ContainerType="ZIP">
+            <Description>Serif PhotoPlus Image X3 Onwards</Description>
+            <Files>
+                <File>
+                    <Path>Root.xml</Path>
+                </File>
+                <File>
+                    <Path>document.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="22810">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'SerifXML version="1.0"'</Sequence>
+                                    </SubSequence>
+                                    <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="64">
+                                        <Sequence>'DocSize='</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
 
     <ContainerSignature Id="23000" ContainerType="OLE2">
       <Description>StarOffice Writer 3.x OLE2</Description>
@@ -3908,7 +4888,7 @@
         </ContainerSignature>
 
         <ContainerSignature Id="39600" ContainerType="ZIP">
-            <Description>ASICS</Description>
+            <Description>Associated Signature Container Simple (ASiC-S)</Description>
             <Files>
 		<File>
 		  <Path>mimetype</Path>
@@ -4184,7 +5164,7 @@
 		     <Path>GENERAL.DB</Path>
                     <BinarySignatures>
                         <InternalSignatureCollection>                    
-	                        <InternalSignature ID="300">
+	                        <InternalSignature ID="44000">
 	                            <ByteSequence Reference="BOFoffset">
 	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
 	                                    <Sequence>00 00 00 00 [01-04]</Sequence>
@@ -4210,7 +5190,7 @@
                     <Path>GENERAL.DB</Path>
                     <BinarySignatures>
                         <InternalSignatureCollection>                    
-                            <InternalSignature ID="300">
+                            <InternalSignature ID="44010">
                                 <ByteSequence Reference="BOFoffset">
                                     <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
                                         <Sequence>00 00 00 00 [05-0F]</Sequence>
@@ -4225,7 +5205,711 @@
                 </File>              
             </Files>
         </ContainerSignature>
+        <ContainerSignature Id="45000" ContainerType="OLE2">
+            <Description>Picture Publisher Bitmap Version 6-10</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="45000">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>50 50 55 42 49 49</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="46000" ContainerType="OLE2">
+            <Description>Microsoft MapPoint Document</Description>
+            <Files>
+                <File>
+					<Path>Highlights</Path>
+				</File>
+				<File>
+                    <Path>Journey</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="46000">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>58 02 00 00 4D 41 53 4D</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        <ContainerSignature Id="47000" ContainerType="OLE2">
+            <Description>ESRI Published Map Format</Description>
+            <Files>
+				<File>
+                    <Path>Supplemental Stream</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="47000">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence SubSeqMinOffset="0" SubSeqMaxOffset="55">
+                                        <Sequence>4D 00 61 00 70 00 20 00 50 00 72 00 6F 00 64 00 75 00 63 00 65 00 64 00 20 00 77 00 69 00 74 00 68 00 20 00 41 00 72 00 63 00 47 00 49 00 53 00 20 00 62 00 79 00 20 00 45 00 53 00 52 00 49</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
 
+        <ContainerSignature Id="48000" ContainerType="OLE2">
+            <Description>Omnipage 10 Document</Description>
+            <Files>
+                <File>
+                    <Path>PageManager/page1</Path>
+                </File>
+                <File>
+                    <Path>Version/Data</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="48000">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>04 01 00 00 65 00 00 00 43 61 65 72 65 20 4F 6D 6E 69 70 61 67 65 20 4F 50 44 20 31 30 2E 30</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>       
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="48010" ContainerType="OLE2">
+            <Description>Omnipage 12 Document</Description>
+            <Files>
+                <File>
+                    <Path>PageManager/page1</Path>
+                </File>
+		 <File>
+		    <Path>Version/Data</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="48010">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>04 01 00 00</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="48020" ContainerType="OLE2">
+            <Description>Omnipage 18 Document</Description>
+            <Files>
+                <File>
+                    <Path>Document/Page1</Path>
+                </File>
+                <File>
+                    <Path>Document/Data</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="48020">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>52 4F 53 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="49000" ContainerType="OLE2">
+            <Description>Muvee AutoProducer Project File</Description>
+            <Files>
+		 <File>
+		     <Path>Muveon</Path>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="49010" ContainerType="OLE2">
+            <Description>Muvee AutoProducer Project File</Description>
+            <Files>
+                <File>
+                    <Path>Muveonv60</Path>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="50000" ContainerType="OLE2">
+            <Description>Faro Laser Scan File</Description>
+            <Files>
+		<File>
+                    <Path>Main</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="50000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="5" SubSeqMaxOffset="0">
+	                                    <Sequence>'iQscene: Scan Data'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="50010" ContainerType="OLE2">
+            <Description>Faro WorkSpace File</Description>
+            <Files>
+                <File>
+                    <Path>FrontEnd</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="50010">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="5" SubSeqMaxOffset="0">
+                                        <Sequence>'iQscene: Front End'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="51000" ContainerType="OLE2">
+            <Description>Ichitaro Document 8</Description>
+            <Files>
+                <File>
+                    <Path>JSRV_SummaryInformation</Path>
+                </File>
+		<File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="51000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>53 73 6D 67 56 2E 30 31</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>           
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="52000" ContainerType="OLE2">
+            <Description>GST Publisher</Description>
+            <Files>
+		<File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="52000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>44 54 50 49</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                            <ByteSequence Reference="EOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="16">
+	                                    <Sequence>45 4F 44 46</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="53000" ContainerType="OLE2">
+            <Description>Corel PrintHouse Document 1</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53000">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 01 00 00 06</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53001" ContainerType="OLE2">
+            <Description>Corel PrintHouse Document 1</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53001">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 01 01 00 06</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53010" ContainerType="OLE2">
+            <Description>Corel PrintHouse Document 2</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53010">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 02 00 00 06</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53011" ContainerType="OLE2">
+            <Description>Corel PrintHouse Document 2</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53011">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 02 01 00 06</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53020" ContainerType="OLE2">
+            <Description>Corel PrintHouse/Office Document 3</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53020">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 03 00 00 07</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53021" ContainerType="OLE2">
+            <Description>Corel PrintHouse/Office Document 3</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53021">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 03 01 00 07</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53030" ContainerType="OLE2">
+            <Description>Corel PrintHouse/Office Document 4</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53030">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 04 00 00 08</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53031" ContainerType="OLE2">
+            <Description>Corel PrintHouse/Office Document 4</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53031">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 04 01 00 08</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53040" ContainerType="OLE2">
+            <Description>Corel PrintHouse/Office Document 5</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53040">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 05 00 00 08</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="53041" ContainerType="OLE2">
+            <Description>Corel PrintHouse/Office Document 5</Description>
+            <Files>
+                <File>
+                    <Path>Contents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53041">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>01 05 01 00 08</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="53050" ContainerType="OLE2">
+            <Description>Corel PhotoHouse Image</Description>
+            <Files>
+                <File>
+                    <Path>CGOContents</Path>
+                </File>
+                <File>
+                    <Path>Header</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="53050">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>09 03 00 00 08 0A</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>          
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="54000" ContainerType="OLE2">
+            <Description>Minitab Worksheet 12</Description>
+            <Files>
+		 <File>
+		    <Path>Worksheet</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="54000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="16" SubSeqMaxOffset="0">
+	                                    <Sequence>'MTB12'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>           
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="54010" ContainerType="OLE2">
+            <Description>Minitab Worksheet 13</Description>
+            <Files>
+                <File>
+                    <Path>Worksheet</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="54010">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="16" SubSeqMaxOffset="0">
+                                        <Sequence>'MTB13'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>           
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="54020" ContainerType="OLE2">
+            <Description>Minitab Project 12-13</Description>
+            <Files>
+                <File>
+                    <Path>Index</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="54020">
+                                <ByteSequence Reference="EOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="512">
+                                        <Sequence>'MINITAB'</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>           
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="54030" ContainerType="OLE2">
+            <Description>Minitab Worksheet 14</Description>
+            <Files>
+                <File>
+                    <Path>WorksheetInfo</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="54030">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>3B 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>           
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="54040" ContainerType="OLE2">
+            <Description>Minitab Project 14</Description>
+            <Files>
+                <File>
+                    <Path>ProjectInfo</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="54040">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>3B 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>           
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="54050" ContainerType="OLE2">
+            <Description>Minitab Worksheet 15+</Description>
+            <Files>
+                    <File>
+                        <Path>WorksheetInfo</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="54050">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>5F 00 00 00 00 00 00 00 02 00 00 00 01 00 00 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>           
+            </Files>
+        </ContainerSignature>
+        
+        <ContainerSignature Id="54060" ContainerType="OLE2">
+            <Description>Minitab Project 15+</Description>
+            <Files>
+                <File>
+                    <Path>ProjectInfo</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+                            <InternalSignature ID="54060">
+                                <ByteSequence Reference="BOFoffset">
+                                    <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+                                        <Sequence>5F 00 00 00 00 00 00 00 02 00 00 00 01 00 00 00</Sequence>
+                                    </SubSequence>
+                                </ByteSequence>
+                            </InternalSignature>
+                        </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>           
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="55000" ContainerType="OLE2">
+            <Description>HGW Presentation</Description>
+            <Files>
+		 <File>
+		    <Path>HgwPrsData</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="55000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+	                                    <Sequence>DC FE</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>               
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="56000" ContainerType="OLE2">
+            <Description>NTI JewelCase Maker File</Description>
+            <Files>
+		 <File>
+		    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="56000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="2">
+	                                    <Sequence>4E 54 49 4A 43 4D 4B 52</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="57000" ContainerType="ZIP">
+            <Description>Agisoft Project Archive</Description>
+            <Files>
+		 <File>
+                    <Path>doc.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="57000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'document version='</Sequence>
+	                                </SubSequence>
+	                                <SubSequence Position="2" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+	                                    <Sequence>'chunk'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>            
+            </Files>
+        </ContainerSignature>
+
+        <ContainerSignature Id="58000" ContainerType="ZIP">
+            <Description>ISDOCX Information System Document (version 6.0.1)</Description>
+            <Files>
+		<File>
+		  <Path>manifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>
+	                        <InternalSignature ID="1">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="50" SubSeqMaxOffset="100">
+						<Sequence>'isdoc.cz/namespace/2013/manifest'</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+        </File>
+             </Files>
+        </ContainerSignature>
   </ContainerSignatures>
 
   <FileFormatMappings>
@@ -4303,6 +5987,10 @@
     <FileFormatMapping signatureId="3100" Puid="fmt/633"/>
     <!--  Microsoft PowerPoint Macro-enabled slide (ZIP)-->
     <FileFormatMapping signatureId="3110" Puid="fmt/636"/>
+    <!--  Microsoft PowerPoint 95 (OLE2)-->
+    <FileFormatMapping signatureId="3120" Puid="fmt/125"/>
+    <!--  Microsoft PowerPoint 4.0 (OLE2)-->
+    <FileFormatMapping signatureId="3130" Puid="x-fmt/88"/>
 
     <!-- Microsoft Project 4.0 (OLE2)-->
     <FileFormatMapping signatureId="4000" Puid="x-fmt/243"/>
@@ -4322,13 +6010,31 @@
     <FileFormatMapping signatureId="4070" Puid="fmt/725"/>
     <!-- Microsoft Project 2010 (OLE2)-->
     <FileFormatMapping signatureId="4080" Puid="fmt/725"/>
+    <!-- Microsoft Project 95 (OLE2)-->
+    <FileFormatMapping signatureId="4090" Puid="x-fmt/244"/>
 
-    <!-- Microsoft Publisher 1.0 (OLE2)-->
+    <!-- Microsoft Publisher 2.0 (OLE2)-->
     <FileFormatMapping signatureId="5000" Puid="x-fmt/252"/>
-    <!-- Microsoft Publisher 2.0/95 (OLE2)-->
+    <!-- Microsoft Publisher 95 (OLE2)-->
     <FileFormatMapping signatureId="5010" Puid="x-fmt/253"/>
-    <!-- Microsoft Publisher 97-2007 (OLE2)-->
+    <!-- Microsoft Publisher 97 (OLE2)-->
+    <FileFormatMapping signatureId="5011" Puid="x-fmt/254"/>
+    <!-- Microsoft Publisher 98 (OLE2)-->
+    <FileFormatMapping signatureId="5012" Puid="x-fmt/255"/>
+    <!-- Microsoft Publisher 2000 (OLE2)-->
+    <FileFormatMapping signatureId="5013" Puid="x-fmt/256"/>
+    <!-- Microsoft Publisher 2002 (OLE2)-->
     <FileFormatMapping signatureId="5020" Puid="x-fmt/257"/>
+    <!-- Microsoft Publisher 2003 (OLE2)-->
+    <FileFormatMapping signatureId="5021" Puid="fmt/1512"/>
+    <!-- Microsoft Publisher 2007 (OLE2)-->
+    <FileFormatMapping signatureId="5024" Puid="fmt/1513"/>
+    <!-- Microsoft Publisher 2010 (OLE2)-->
+    <FileFormatMapping signatureId="5026" Puid="fmt/1514"/>
+    <!-- Microsoft Publisher 2013 (OLE2)-->
+    <FileFormatMapping signatureId="5030" Puid="fmt/1515"/>
+    <!-- Microsoft Publisher 2016-2019 (OLE2)-->
+    <FileFormatMapping signatureId="5035" Puid="fmt/1516"/>
 
     <!-- Microsoft Office Binder File for Windows 97-2000 (OLE2)-->
     <FileFormatMapping signatureId="5500" Puid="fmt/240"/>
@@ -4371,9 +6077,11 @@
     <!-- Microsoft Outlook Email Message (OLE2) -->
     <FileFormatMapping signatureId="12000" Puid="x-fmt/430"/>
 
-    <!-- Microsoft Visio Document generic, 2000, 2003-2010 (OLE2) -->
+    <!-- Microsoft Visio Document generic (OLE2) -->
     <FileFormatMapping signatureId="13000" Puid="fmt/442"/>
+    <!-- Microsoft Visio Document 2000-2002 (OLE2) -->
     <FileFormatMapping signatureId="13010" Puid="x-fmt/258"/>
+    <!-- Microsoft Visio Document 2003-2010 (OLE2) -->
     <FileFormatMapping signatureId="13020" Puid="fmt/443"/>
     <!-- Microsoft Visio Document 2013 (ZIP) -->
     <FileFormatMapping signatureId="13030" Puid="fmt/924"/>
@@ -4387,6 +6095,12 @@
     <FileFormatMapping signatureId="13070" Puid="fmt/928"/>
     <!-- Microsoft Visio Macro-Enabled Template 2013 (ZIP) -->
     <FileFormatMapping signatureId="13080" Puid="fmt/929"/>
+    <!-- Microsoft Visio Document 3 (OLE2) -->
+    <FileFormatMapping signatureId="13090" Puid="fmt/1509"/>
+    <!-- Microsoft Visio Document 4 (OLE2) -->
+    <FileFormatMapping signatureId="13100" Puid="fmt/1510"/>
+    <!-- Microsoft Visio Document 5 (OLE2) -->
+    <FileFormatMapping signatureId="13110" Puid="x-fmt/113"/>
 
     <!-- Apple iBooks format (ZIP)-->
     <FileFormatMapping signatureId="14000" Puid="fmt/482"/>
@@ -4446,10 +6160,16 @@
     <!--  Open XML Paper Specification (ZIP)-->
     <FileFormatMapping signatureId="20000" Puid="fmt/657"/>
 
-    <!--  Apple iWorks Keynote 09 (ZIP)-->
+    <!--  Apple iWork Keynote 09 (ZIP)-->
     <FileFormatMapping signatureId="21000" Puid="fmt/646"/>
-    <!--  iWork13 (ZIP)-->
+    <!--  Apple iWork Template 13 (ZIP)-->
     <FileFormatMapping signatureId="21010" Puid="fmt/1187"/>
+    <!--  Apple iWork Numbers 09 (ZIP)-->
+    <FileFormatMapping signatureId="21020" Puid="fmt/1440"/>
+    <!--  Apple iWork Pages 09 (ZIP)-->
+    <FileFormatMapping signatureId="21030" Puid="fmt/1439"/>
+    <!--  Apple iWork Document 14 (ZIP)-->
+    <FileFormatMapping signatureId="21040" Puid="fmt/1441"/>
 
     <!--  Serif PagePlus Publication 4(OLE2)-->
     <FileFormatMapping signatureId="22040" Puid="fmt/672"/>
@@ -4471,8 +6191,27 @@
     <FileFormatMapping signatureId="22110" Puid="fmt/679"/>
     <!--  Serif PagePlus Publication 12(OLE2)-->
     <FileFormatMapping signatureId="22120" Puid="fmt/680"/>
+    <!--  Serif PagePlus Publication X3 (ZIP)-->
+    <FileFormatMapping signatureId="22130" Puid="fmt/1529"/>
+    <!--  Serif PagePlus Publication X4 (ZIP)-->
+    <FileFormatMapping signatureId="22140" Puid="fmt/1530"/>
+    <!--  Serif PagePlus Publication X5 (ZIP)-->
+    <FileFormatMapping signatureId="22150" Puid="fmt/1531"/>
+    <!--  Serif PagePlus Publication X6 (ZIP)-->
+    <FileFormatMapping signatureId="22160" Puid="fmt/1532"/>
+    <!--  Serif PagePlus Publication X7 (ZIP)-->
+    <FileFormatMapping signatureId="22170" Puid="fmt/1533"/>
+    <!--  Serif PagePlus Publication X8 (ZIP)-->
+    <FileFormatMapping signatureId="22180" Puid="fmt/1534"/>
+    <!--  Serif PagePlus Publication X9 (ZIP)-->
+    <FileFormatMapping signatureId="22190" Puid="fmt/1535"/>
+
     <!--  Serif PagePlus Publication Home Office (OLE2)-->
-    <FileFormatMapping signatureId="22200" Puid="fmt/681"/>
+    <FileFormatMapping signatureId="22200" Puid="fmt/681"/>     
+    <!--  Serif PagePlus Publication SE (OLE)-->
+    <FileFormatMapping signatureId="22210" Puid="fmt/1536"/>
+    <!--  Serif PagePlus Publication Generic (OLE2)-->
+    <FileFormatMapping signatureId="22220" Puid="fmt/671"/>
 
     <!--  Serif DrawPlus Drawing 3 (OLE2)-->
     <FileFormatMapping signatureId="22500" Puid="fmt/827"/>
@@ -4480,6 +6219,31 @@
     <FileFormatMapping signatureId="22510" Puid="fmt/852"/>
     <!--  Serif DrawPlus Drawing 5 (OLE2)-->
     <FileFormatMapping signatureId="22520" Puid="fmt/853"/>
+    <!--  Serif DrawPlus Drawing 6 (OLE)-->
+    <FileFormatMapping signatureId="22530" Puid="fmt/1519"/>
+    <!--  Serif DrawPlus Drawing 7 (OLE)-->
+    <FileFormatMapping signatureId="22540" Puid="fmt/1520"/>
+    <!--  Serif DrawPlus Drawing 8 (OLE)-->
+    <FileFormatMapping signatureId="22550" Puid="fmt/1521"/>
+    <!--  Serif DrawPlus Drawing X2 (OLE)-->
+    <FileFormatMapping signatureId="22560" Puid="fmt/1522"/>
+    <!--  Serif DrawPlus Drawing X3 (ZIP)-->
+    <FileFormatMapping signatureId="22570" Puid="fmt/1523"/>
+    <!--  Serif DrawPlus Drawing X4 (ZIP)-->
+    <FileFormatMapping signatureId="22580" Puid="fmt/1524"/>
+    <!--  Serif DrawPlus Drawing X5 (ZIP)-->
+    <FileFormatMapping signatureId="22590" Puid="fmt/1525"/>
+    <!--  Serif DrawPlus Drawing X6 (ZIP)-->
+    <FileFormatMapping signatureId="22600" Puid="fmt/1526"/>
+    <!--  Serif DrawPlus Drawing X8 (ZIP)-->
+    <FileFormatMapping signatureId="22610" Puid="fmt/1527"/>
+    <!--  Serif DrawPlus Drawing Generic(OLE2)-->
+    <FileFormatMapping signatureId="22620" Puid="fmt/1528"/>
+
+    <!--  Serif PhotoPlus Image 5-X2 (ZIP)-->
+    <FileFormatMapping signatureId="22800" Puid="fmt/1517"/>
+    <!--  Serif PhotoPlus Image X3 Onwards (OLE)-->
+    <FileFormatMapping signatureId="22810" Puid="fmt/1518"/>
 
     <!--  StarOffice Writer 3.x (OLE2)-->
     <FileFormatMapping signatureId="23000" Puid="fmt/812"/>
@@ -4605,7 +6369,7 @@
     <FileFormatMapping signatureId="39510" Puid="fmt/1342"/>
     <!-- BDOC 2.x (ZIP)-->
     <FileFormatMapping signatureId="39515" Puid="fmt/1342"/>
-    <!-- ASICS (ZIP)-->
+    <!-- Associated Signature Container Simple (ASiC-S) (ZIP)-->
     <FileFormatMapping signatureId="39600" Puid="fmt/1341"/>
 
     <!-- ZFO (Form) File (ZIP)-->
@@ -4632,11 +6396,92 @@
     <!-- Autodesk Revit Family File 2019 (OLE2)-->
     <FileFormatMapping signatureId="43050" Puid="fmt/1351"/>
 
-
     <!-- FamilyTree Maker Database 1-4 (OLE2)-->
     <FileFormatMapping signatureId="44000" Puid="fmt/1352"/>
     <!-- FamilyTree Maker Database 5-16 (OLE2)-->
     <FileFormatMapping signatureId="44010" Puid="fmt/1353"/>
+
+    <!-- Picture Publisher Bitmap 6-10 (OLE2)-->
+    <FileFormatMapping signatureId="45000" Puid="fmt/1360"/>
+
+    <!-- Microsoft MapPoint Document (OLE2)-->
+    <FileFormatMapping signatureId="46000" Puid="fmt/1362"/>
+
+    <!-- ESRI Published Map Format (OLE2)-->
+    <FileFormatMapping signatureId="47000" Puid="fmt/1366"/>
+
+    <!-- Omnipage Document 10 (OLE2)-->
+    <FileFormatMapping signatureId="48000" Puid="fmt/1371"/>
+    <!-- Omnipage Document 12 (OLE2)-->
+    <FileFormatMapping signatureId="48010" Puid="fmt/1372"/>
+    <!-- Omnipage Document 18 (OLE2)-->
+    <FileFormatMapping signatureId="48020" Puid="fmt/1373"/>
+
+    <!-- Muvee autoProducer 1-5 (OLE2)-->
+    <FileFormatMapping signatureId="49000" Puid="fmt/1386"/>
+    <!-- Muvee autoProducer 6 (OLE2)-->
+    <FileFormatMapping signatureId="49010" Puid="fmt/1387"/>
+
+    <!-- Faro Laser Scan File (OLE2)-->
+    <FileFormatMapping signatureId="50000" Puid="fmt/1397"/>
+    <!-- Faro Workspace File (OLE2)-->
+    <FileFormatMapping signatureId="50010" Puid="fmt/1398"/>
+
+    <!-- Ichitaro Document 8 (OLE2)-->
+    <FileFormatMapping signatureId="51000" Puid="fmt/1400"/>
+
+    <!-- GST Publisher 2 (OLE2)-->
+    <FileFormatMapping signatureId="52000" Puid="fmt/1416"/>
+
+    <!-- Corel Print House 1 (OLE2)-->
+    <FileFormatMapping signatureId="53000" Puid="fmt/1417"/>
+    <!-- Corel Print House 1 (OLE2)-->
+    <FileFormatMapping signatureId="53001" Puid="fmt/1417"/>
+    <!-- Corel Print House 2 (OLE2)-->
+    <FileFormatMapping signatureId="53010" Puid="fmt/1418"/>
+    <!-- Corel Print House 2 (OLE2)-->
+    <FileFormatMapping signatureId="53011" Puid="fmt/1418"/>
+    <!-- Corel Print House/Print Office 3 (OLE2)-->
+    <FileFormatMapping signatureId="53020" Puid="fmt/1419"/>
+    <!-- Corel Print House/Print Office 3 (OLE2)-->
+    <FileFormatMapping signatureId="53021" Puid="fmt/1419"/>
+    <!-- Corel Print House/Print Office 4 (OLE2)-->
+    <FileFormatMapping signatureId="53030" Puid="fmt/1420"/>
+    <!-- Corel Print House/Print Office 4 (OLE2)-->
+    <FileFormatMapping signatureId="53031" Puid="fmt/1420"/>
+    <!-- Corel Print House/Print Office 5 (OLE2)-->
+    <FileFormatMapping signatureId="53040" Puid="fmt/1421"/>
+    <!-- Corel Print House/Print Office 5 (OLE2)-->
+    <FileFormatMapping signatureId="53041" Puid="fmt/1421"/>
+    <!-- Corel Photo House 1 (OLE2)-->
+    <FileFormatMapping signatureId="53050" Puid="fmt/1422"/>
+
+    <!-- Minitab Worksheet 12 (OLE2)-->
+    <FileFormatMapping signatureId="54000" Puid="fmt/1432"/>
+    <!-- Minitab Worksheet 13 (OLE2)-->
+    <FileFormatMapping signatureId="54010" Puid="fmt/1433"/>
+    <!-- Minitab Project 12-13 (OLE2)-->
+    <FileFormatMapping signatureId="54020" Puid="fmt/1434"/>
+    <!-- Minitab Worksheet 14 (OLE2)-->
+    <FileFormatMapping signatureId="54030" Puid="fmt/1435"/>
+    <!-- Minitab Project 14 (OLE2)-->
+    <FileFormatMapping signatureId="54040" Puid="fmt/1436"/>
+    <!-- Minitab Worksheet 15+ (OLE2)-->
+    <FileFormatMapping signatureId="54050" Puid="fmt/1437"/>
+    <!-- Minitab Project 15+ (OLE2)-->
+    <FileFormatMapping signatureId="54060" Puid="fmt/1438"/>
+
+    <!-- Harvard Graphics Presentation 4 (OLE2)-->
+    <FileFormatMapping signatureId="55000" Puid="fmt/1492"/>
+
+    <!--  JWC Container File (OLE2)-->
+    <FileFormatMapping signatureId="56000" Puid="fmt/1493"/>
+
+    <!--  Agisoft Project Archive (ZIP)-->
+    <FileFormatMapping signatureId="57000" Puid="fmt/1502"/>
+
+    <!--  ISDOCX Information System Document (version 6.0.1) (ZIP)-->
+    <FileFormatMapping signatureId="58000" Puid="fmt/1571"/>
 
   </FileFormatMappings>
 
