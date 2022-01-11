@@ -1,6 +1,6 @@
 DROID (Digital Record Object Identification) 
 =====
-The latest binary file can be downloaded from [The National Archives website](http://www.nationalarchives.gov.uk/information-management/projects-and-work/droid.htm "The National Archives website").
+The latest binary file can be downloaded from [The National Archives website](https://www.nationalarchives.gov.uk/information-management/manage-information/preserving-digital-records/droid/ "The National Archives website").
 
 [![CI](https://github.com/digital-preservation/droid/workflows/CI/badge.svg)](https://github.com/digital-preservation/droid/actions?query=workflow%3ACI)
 [![Build status](https://ci.appveyor.com/api/projects/status/hrr6c3ckbghjvd7h/branch/master?svg=true)](https://ci.appveyor.com/project/dpreservation/droid/branch/master)
