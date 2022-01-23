@@ -44,9 +44,15 @@
 <module name="Checker">
   <property name="severity" value="error"/>
   <metadata name="com.atlas-sw.eclipse" value="I like Sydney"/>
+
+  <module name="LineLength">
+    <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
+    <property name="max" value="160"/>
+    <property name="tabWidth" value="4"/>
+  </module>
+
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
-    <module name="FileContentsHolder"/>
     <module name="AvoidStarImport"/>
     <module name="ConstantName"/>
     <module name="EmptyBlock"/>
@@ -62,11 +68,7 @@
     <module name="JavadocType">
       <property name="scope" value="package"/>
     </module>
-    <module name="JavadocMethod">
-      <property name="scope" value="package"/>
-      <property name="allowUndeclaredRTE" value="true"/>
-      <property name="allowThrowsTagsForSubclasses" value="true"/>
-    </module>
+    <module name="JavadocMethod"/>
     <module name="JavadocVariable">
       <property name="scope" value="package"/>
     </module>
@@ -81,11 +83,6 @@
     <!--</module>-->
 
     <module name="OuterTypeNumber"/>
-    <module name="LineLength">
-      <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
-      <property name="max" value="160"/>
-      <property name="tabWidth" value="4"/>
-    </module>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
     <module name="MemberName"/>
@@ -222,13 +219,26 @@
     <module name="CovariantEquals"/>
     <module name="ModifiedControlVariable"/>
     <module name="PackageDeclaration"/>
+
+    <module name="SuppressionCommentFilter">
+      <property name="offCommentFormat" value="GEN-BEGIN|GEN-FIRST|CHECKSTYLE\:OFF"/>
+      <property name="onCommentFormat" value="GEN-END|GEN-LAST|CHECKSTYLE\:ON"/>
+    </module>
+    <module name="SuppressWithNearbyCommentFilter">
+      <property name="commentFormat" value="GEN-"/>
+      <property name="influenceFormat" value="-3"/>
+    </module>
+
   </module>
+
   <module name="JavadocPackage">
     <property name="severity" value="ignore"/>
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
   </module>
+
   <module name="FileTabCharacter"/>
   <module name="FileLength"/>
+
   <module name="RegexpSingleline">
     <property name="severity" value="ignore"/>
     <property name="format" value="\s+$"/>
@@ -237,16 +247,7 @@
 
   <module name="NewlineAtEndOfFile">
     <property name="fileExtensions" value="java, xml"/>
-    <property name="lineSeparator" value="lf"/>  <!-- we always expect Unix like EOF -->
-  </module>
-
-  <module name="SuppressionCommentFilter">
-    <property name="offCommentFormat" value="GEN-BEGIN|GEN-FIRST|CHECKSTYLE\:OFF"/>
-    <property name="onCommentFormat" value="GEN-END|GEN-LAST|CHECKSTYLE\:ON"/>
-  </module>
-  <module name="SuppressWithNearbyCommentFilter">
-    <property name="commentFormat" value="GEN-"/>
-    <property name="influenceFormat" value="-3"/>
+    <!-- property name="lineSeparator" value="lf"/ -->  <!-- we always expect Unix like EOF -->
   </module>
   
   <!-- now managed by the maven licence plugin -->
@@ -257,4 +258,5 @@
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.suppressions.file}"/>
   </module>
+
 </module>

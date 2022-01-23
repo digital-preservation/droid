@@ -66,7 +66,7 @@
     <suppress checks="MagicNumber|ClassFanOutComplexity|Javadoc|IllegalThrows|MultipleStringLiterals|ExecutableStatementCount|EmptyBlock"
               files=".*Test\.java$"/>
 
-    <suppress checks="JavaNCSS|CyclomaticComplexityCheck" files="ByteSequenceParser.java|DroidSubSequenceParser.java"/>
+    <suppress checks="JavaNCSS|CyclomaticComplexityCheck|NPathComplexity" files="ByteSequenceParser.java|DroidSubSequenceParser.java"/>
 
     <!--
     The SAXModelBuilder instantiates all the objects needed by signature files.
