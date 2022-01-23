@@ -246,6 +246,6 @@ public class ISOImageArchiveHandlerTest {
 
         isoImageArchiveHandler.handle(request);
 
-        verifyZeroInteractions(factory, droid, resultHandler);
+        verifyNoMoreInteractions(factory, droid, resultHandler);
     }
 }
