@@ -158,7 +158,7 @@ public class PlanetsXMLGenerator {
 
     /**
      * @param objFactory
-     * @return
+     * @return the processed path
      * @throws InterruptedException
      */
     private PathsProcessedType getPathProcessed(ObjectFactory objFactory)
@@ -224,7 +224,7 @@ public class PlanetsXMLGenerator {
 
     /**
      * @param objFactory
-     * @return
+     * @return the group
      * @throws InterruptedException
      */
     private ByFormatType getGroupByPuid(ObjectFactory objFactory)
@@ -251,7 +251,7 @@ public class PlanetsXMLGenerator {
 
     /**
      * @param objFactory
-     * @return
+     * @return the group
      * @throws DatatypeConfigurationException
      * @throws InterruptedException
      */

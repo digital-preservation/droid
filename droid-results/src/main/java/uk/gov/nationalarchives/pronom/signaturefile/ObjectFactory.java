@@ -52,14 +52,14 @@ import javax.xml.bind.annotation.XmlRegistry;
 public class ObjectFactory {
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: uk.gov.nationalarchives.pronom.signaturefile
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: uk.gov.nationalarchives.pronom.signaturefile.
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link XmlFragment }
+     * Create an instance of {@link XmlFragment}.
      * @return XmlFragment
      */
     public XmlFragment createXmlFragment() {

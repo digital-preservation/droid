@@ -46,7 +46,7 @@ public interface AsynchDroid {
      * @param request the request to submit
      * @return future task
      */
-    Future<IdentificationResultCollection> submit(final IdentificationRequest request);
+    Future<IdentificationResultCollection> submit(IdentificationRequest request);
 
     /**
      * Waits until in-flight jobs have finished.

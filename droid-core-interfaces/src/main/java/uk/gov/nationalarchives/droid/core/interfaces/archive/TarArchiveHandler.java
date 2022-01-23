@@ -92,7 +92,7 @@ public class TarArchiveHandler implements ArchiveHandler {
             try {                
                 Iterable<TarArchiveEntry> iterable = new Iterable<TarArchiveEntry>() {
                     @Override
-                    public final Iterator<TarArchiveEntry> iterator() {
+                    public Iterator<TarArchiveEntry> iterator() {
                         return new TarArchiveEntryIterator(in);
                     }
                 };
@@ -167,7 +167,7 @@ public class TarArchiveHandler implements ArchiveHandler {
      * @param entry
      * @param entryName
      * @param correlationId
-     * @return
+     * @return the resource id
      */
     private ResourceId submitDirectory(final URI parentName,
             TarArchiveEntry entry, String entryName, ResourceId correlationId) {
@@ -294,6 +294,7 @@ public class TarArchiveHandler implements ArchiveHandler {
          * Finds the longest path which has been seen before (if any),
          * and adds all the subsequent folders which haven't been seen.
          * @param path the path of
+         * @return the resource id
          */
         private ResourceId processAncestorFolders(String path) {
             // Split the path string into a list of ancestor paths:

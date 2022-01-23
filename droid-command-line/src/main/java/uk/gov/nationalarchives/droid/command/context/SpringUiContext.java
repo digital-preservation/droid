@@ -58,6 +58,8 @@ public final class SpringUiContext implements GlobalContext {
     
     /**
      * private constructor.
+     *
+     * @param context
      */
     private SpringUiContext(AbstractXmlApplicationContext context) {
         this.context = context;

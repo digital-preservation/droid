@@ -161,7 +161,8 @@ public class ResultPrinter {
                 if (!container) {
                     switch (puid){
                         case GZIP_ARCHIVE:
-                            if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("GZIP", archiveConfiguration.getExpandArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllArchives()
+                                    || containsCaseInsensitive("GZIP", archiveConfiguration.getExpandArchiveTypes()))) {
                                 GZipArchiveContentIdentifier gzipArchiveIdentifier =
                                         new GZipArchiveContentIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
@@ -169,7 +170,8 @@ public class ResultPrinter {
                             }
                             break;
                         case TAR_ARCHIVE:
-                            if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("TAR", archiveConfiguration.getExpandArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllArchives()
+                                    || containsCaseInsensitive("TAR", archiveConfiguration.getExpandArchiveTypes()))) {
                                 TarArchiveContentIdentifier tarArchiveIdentifier =
                                         new TarArchiveContentIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
@@ -177,7 +179,8 @@ public class ResultPrinter {
                             }
                             break;
                         case ZIP_ARCHIVE:
-                            if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive(ZIP, archiveConfiguration.getExpandArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllArchives()
+                                    || containsCaseInsensitive(ZIP, archiveConfiguration.getExpandArchiveTypes()))) {
                                 ZipArchiveContentIdentifier zipArchiveIdentifier =
                                         new ZipArchiveContentIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
@@ -185,7 +188,8 @@ public class ResultPrinter {
                             }
                             break;
                         case ISO_9660:
-                            if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("ISO", archiveConfiguration.getExpandArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllArchives()
+                                    || containsCaseInsensitive("ISO", archiveConfiguration.getExpandArchiveTypes()))) {
                                 IsoArchiveContainerIdentifier isoArchiveContainerIdentifier =
                                         new IsoArchiveContainerIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
@@ -193,7 +197,8 @@ public class ResultPrinter {
                             }
                             break;
                         case SEVEN_ZIP:
-                            if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("7ZIP", archiveConfiguration.getExpandArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllArchives()
+                                    || containsCaseInsensitive("7ZIP", archiveConfiguration.getExpandArchiveTypes()))) {
                                 SevenZipArchiveContainerIdentifier sevenZipArchiveContainerIdentifier =
                                         new SevenZipArchiveContainerIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
@@ -202,7 +207,8 @@ public class ResultPrinter {
                             break;
                         case BZIP2_ARCHIVE:
                         case BZIP2_ARCHIVE_OTHER:
-                            if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("BZIP2", archiveConfiguration.getExpandArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllArchives()
+                                    || containsCaseInsensitive("BZIP2", archiveConfiguration.getExpandArchiveTypes()))) {
                                 Bzip2ArchiveContentIdentifier bzip2ArchiveContentIdentifier =
                                         new Bzip2ArchiveContentIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
@@ -211,7 +217,8 @@ public class ResultPrinter {
                             break;
                         case RAR_ARCHIVE:
                         case RAR_ARCHIVE_OTHER:
-                            if ((archiveConfiguration.getExpandAllArchives() || containsCaseInsensitive("RAR", archiveConfiguration.getExpandArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllArchives()
+                                    || containsCaseInsensitive("RAR", archiveConfiguration.getExpandArchiveTypes()))) {
                                 RarArchiveContainerIdentifier rarArchiveContentIdentifier =
                                         new RarArchiveContainerIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
@@ -221,7 +228,8 @@ public class ResultPrinter {
 
                         case ARC_ARCHIVE:
                         case ARC_ARCHIVE_OTHER:
-                            if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("ARC", archiveConfiguration.getExpandWebArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllWebArchives()
+                                    || containsCaseInsensitive("ARC", archiveConfiguration.getExpandWebArchiveTypes()))) {
                                 ArcArchiveContentIdentifier arcArchiveIdentifier =
                                         new ArcArchiveContentIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);
@@ -231,7 +239,8 @@ public class ResultPrinter {
                         case WARC_ARCHIVE:
                         case WARC_ARCHIVE_1_0:
                         case WARC_ARCHIVE_1_1:
-                            if ((archiveConfiguration.getExpandAllWebArchives() || containsCaseInsensitive("WARC", archiveConfiguration.getExpandWebArchiveTypes()))) {
+                            if ((archiveConfiguration.getExpandAllWebArchives()
+                                    || containsCaseInsensitive("WARC", archiveConfiguration.getExpandWebArchiveTypes()))) {
                                 WarcArchiveContentIdentifier warcArchiveIdentifier =
                                         new WarcArchiveContentIdentifier(binarySignatureIdentifier,
                                                 containerSignatureDefinitions, path, slash, slash1, archiveConfiguration);

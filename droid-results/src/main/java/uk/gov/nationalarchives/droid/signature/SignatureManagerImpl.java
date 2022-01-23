@@ -143,7 +143,7 @@ public class SignatureManagerImpl implements SignatureManager {
         final DirectoryStream.Filter<Path> xmlExtensionFilter = new DirectoryStream.Filter<Path>() {
             @Override
             public boolean accept(final Path path) {
-                return (!Files.isDirectory(path)) && FileUtil.fileName(path).endsWith(".xml");
+                return !Files.isDirectory(path) && FileUtil.fileName(path).endsWith(".xml");
             }
         };
         

@@ -31,10 +31,11 @@
  */
 package uk.gov.nationalarchives.droid.gui.action;
 
-
 /**
  * Callback for when actions have been done.
+ *
  * @author rflitcroft
+ *
  * @param <T> the action type
  */
 public interface ActionDoneCallback<T> {

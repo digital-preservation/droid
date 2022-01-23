@@ -106,7 +106,6 @@ public class NoProfileRunCommand implements DroidCommand {
         
         //BNO This is why only the first file or folder specified is processed, and any additional ones are ignored..
         final Path targetDirectoryOrFile = Paths.get(resources[0]);
-    	
         if (!this.quietFlag) {
             this.outputRuntimeInformation(targetDirectoryOrFile);
         }
@@ -123,10 +122,10 @@ public class NoProfileRunCommand implements DroidCommand {
             }
 
         } else  if (Files.isRegularFile(targetDirectoryOrFile)) {
-        	matchedFiles = new ArrayList<>();
-        	matchedFiles.add(targetDirectoryOrFile);
+            matchedFiles = new ArrayList<>();
+            matchedFiles.add(targetDirectoryOrFile);
         } else {
-            throw new CommandExecutionException(String.format("The specified input %s was not found", targetDirectoryOrFile));       	
+            throw new CommandExecutionException(String.format("The specified input %s was not found", targetDirectoryOrFile));
         }
 
         BinarySignatureIdentifier binarySignatureIdentifier = new BinarySignatureIdentifier();
@@ -181,8 +180,8 @@ public class NoProfileRunCommand implements DroidCommand {
                 
                 resultPrinter.print(results, request);
             } catch (FileNotFoundException fnfe) {
-            	log.error("error processing files", fnfe);
-            	throw new CommandExecutionException(fnfe);
+                log.error("error processing files", fnfe);
+                throw new CommandExecutionException(fnfe);
             } catch (IOException e) {
                 throw new CommandExecutionException(e);
             }
@@ -190,16 +189,15 @@ public class NoProfileRunCommand implements DroidCommand {
     }
 
     private void outputRuntimeInformation(final Path targetDirectoryOrFile) {
-    	
-    	// BNO: updated the parameter sanitisation and output messages to account for the fact that the input
-    	// can now be either a folder or a single file.
-    	
-    	// BNO Currently if the user specifies more than one folder/file with the -Nr switch, only the first 
-    	// item is processed, but no message is output. Therefore added code to inform the user accordingly.
-    	if (resources.length > 1) {
-    		System.out.println(String.format(MULTIPLE_RESOURCES_SPECIFIED, targetDirectoryOrFile));
-    	}
-    	
+        // BNO: updated the parameter sanitisation and output messages to account for the fact that the input
+        // can now be either a folder or a single file.
+
+        // BNO Currently if the user specifies more than one folder/file with the -Nr switch, only the first
+        // item is processed, but no message is output. Therefore added code to inform the user accordingly.
+        if (resources.length > 1) {
+            System.out.println(String.format(MULTIPLE_RESOURCES_SPECIFIED, targetDirectoryOrFile));
+        }
+
         String versionString = ResourceBundle.getBundle("options").getString("version_no");
         System.out.println("DROID " + versionString + " No Profile mode: Runtime Information");
         System.out.println("Selected folder or file: " + this.resources[0]);

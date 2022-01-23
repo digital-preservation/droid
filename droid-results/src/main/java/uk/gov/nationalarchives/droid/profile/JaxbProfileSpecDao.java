@@ -37,7 +37,6 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.bind.JAXBContext;

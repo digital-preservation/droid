@@ -37,7 +37,6 @@ import java.nio.file.Path;
 
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.ReaderInputStream;
-
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 

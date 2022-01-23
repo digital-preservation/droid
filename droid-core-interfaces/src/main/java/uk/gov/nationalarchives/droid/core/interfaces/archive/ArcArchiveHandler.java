@@ -44,7 +44,6 @@ import org.jwat.arc.ArcReader;
 import org.jwat.arc.ArcReaderFactory;
 import org.jwat.arc.ArcRecord;
 import org.jwat.arc.ArcRecordBase;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +78,7 @@ public class ArcArchiveHandler extends WebArchiveHandler implements ArchiveHandl
 
             Iterable<ArcRecordBase> iterable = new Iterable<ArcRecordBase>() {
                 @Override
-                public final Iterator<ArcRecordBase> iterator() {
+                public Iterator<ArcRecordBase> iterator() {
                     return new ArcArchiveEntryIterator(arcIn);
                 }
             };

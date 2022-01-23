@@ -51,12 +51,10 @@ import net.byteseek.parser.tree.ParseTree;
 import net.byteseek.parser.tree.ParseTreeType;
 import net.byteseek.parser.tree.node.ByteNode;
 import net.byteseek.parser.tree.node.ChildrenNode;
-
 import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
 import uk.gov.nationalarchives.droid.core.signature.xml.XmlUtils;
-
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.BINARY;
 import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType.CONTAINER;
 
@@ -299,7 +297,8 @@ public final class ByteSequenceSerializer {
     }
 
     //CHECKSTYLE:OFF - cyclomatic complexity too high.
-    private void toPRONOMExpression(final ParseTree tree, final StringBuilder builder, SignatureType sigType, boolean spaceElements, final boolean inSet, final boolean inAlternatives) throws ParseException {
+    private void toPRONOMExpression(final ParseTree tree, final StringBuilder builder, SignatureType sigType,
+            boolean spaceElements, final boolean inSet, final boolean inAlternatives) throws ParseException {
         switch (tree.getParseTreeType()) {
             case BYTE: {
                 builder.append(String.format(HEXDIGITS, tree.getByteValue() & 0xFF).toUpperCase());

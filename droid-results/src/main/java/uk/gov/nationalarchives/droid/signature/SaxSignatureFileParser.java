@@ -98,6 +98,7 @@ public class SaxSignatureFileParser implements SignatureParser {
      * @param filePath
      *            the file location (relative or absolute) of the signature file
      *            to parse.
+     * @return the signature file
      * @throws SignatureFileException
      *             if the path specified was not a valid signature file.
      */

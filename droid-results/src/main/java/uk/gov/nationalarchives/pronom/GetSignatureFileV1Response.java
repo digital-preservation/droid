@@ -60,21 +60,18 @@ import uk.gov.nationalarchives.pronom.signaturefile.XmlFragment;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "signatureFile"
-})
+@XmlType(name = "", propOrder = "signatureFile")
 @XmlRootElement(name = "getSignatureFileV1Response")
 public class GetSignatureFileV1Response {
 
     @XmlElement(name = "SignatureFile", required = true)
-    protected XmlFragment signatureFile;
+    private XmlFragment signatureFile;
 
     /**
      * Gets the value of the signatureFile property.
      * 
      * @return
      *     possible object is XmlFragment
-     *     
      */
     public XmlFragment getSignatureFile() {
         return signatureFile;
@@ -85,7 +82,6 @@ public class GetSignatureFileV1Response {
      * 
      * @param value
      *     allowed object is XmlFragment
-     *     
      */
     public void setSignatureFile(XmlFragment value) {
         this.signatureFile = value;

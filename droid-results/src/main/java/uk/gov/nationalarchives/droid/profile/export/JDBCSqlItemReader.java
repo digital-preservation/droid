@@ -46,7 +46,6 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
@@ -167,9 +166,10 @@ public class JDBCSqlItemReader<T> implements ItemReader<T> {
 
                 ProfileResourceNode profileResourceNode;
                 if (filter != null && filter.isEnabled()) {
-                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(cursor, 0); //We don't filter for export with filter column like in GUI.
-                }else {
-                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER.mapRow(cursor, 0);
+                    //We don't filter for export with filter column like in GUI.
+                    profileResourceNode = JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER.mapRow(cursor, 0);
+                } else {
+                    profileResourceNode =JDBCProfileDao.PROFILE_RESOURCE_NODE_ROW_MAPPER_WITH_EMPTY_FOLDER.mapRow(cursor, 0);
                 }
                 NodeMetaData metaData = profileResourceNode.getMetaData();
 
