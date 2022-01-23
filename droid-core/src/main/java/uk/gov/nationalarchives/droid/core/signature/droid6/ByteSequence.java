@@ -91,7 +91,6 @@ import org.slf4j.LoggerFactory;
 
 import net.byteseek.compiler.CompileException;
 import net.byteseek.io.reader.WindowReader;
-
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler;
@@ -458,7 +457,7 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * as an offset according to the endianness of the byte sequence.
      *
      * @param targetFile
-     * @return
+     * @return the offset
      */
     private int getIndirectOffset(final ByteReader targetFile) throws IOException {
         int offset = 0;

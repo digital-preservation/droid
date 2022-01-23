@@ -62,16 +62,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBui
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.ResultHandlerDao;
-
-
-
-
 import static uk.gov.nationalarchives.droid.profile.SqlUtils.getNullableTimestamp;
 import static uk.gov.nationalarchives.droid.profile.SqlUtils.getNullableString;
 import static uk.gov.nationalarchives.droid.profile.SqlUtils.getNullableInteger;
 import static uk.gov.nationalarchives.droid.profile.SqlUtils.getNullableLong;
-
-//import static uk.gov.nationalarchives.droid.profile.SqlUtils.;
 
 /**
  * Created by Matt Palmer on 19/06/15.

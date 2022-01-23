@@ -67,9 +67,9 @@ import javax.xml.bind.annotation.XmlType;
 public class GetSignatureFileVersionV1Response {
 
     @XmlElement(name = "Version", required = true)
-    protected Version version;
+    private Version version;
     @XmlElement(name = "Deprecated")
-    protected boolean deprecated;
+    private boolean deprecated;
 
     /**
      * Gets the value of the version property.

@@ -65,6 +65,8 @@
     <suppress checks="MagicNumber|ClassFanOutComplexity|Javadoc|IllegalThrows|MultipleStringLiterals|ExecutableStatementCount|EmptyBlock"
               files=".*Test\.java$"/>
 
+    <suppress checks="ClassFanOutComplexity" files="CommandFactoryImpl.java"/>
+
     <suppress checks="CyclomaticComplexityCheck|MemberName|ClassDataAbstractionCoupling" files="ResultPrinter.java|NoProfileRunCommand.java"/>
     <suppress checks="CyclomaticComplexityCheck" files="NoProfileRunCommand.java"/>
     <!--

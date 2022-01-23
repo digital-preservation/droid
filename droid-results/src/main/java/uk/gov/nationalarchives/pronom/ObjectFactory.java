@@ -51,16 +51,15 @@ import javax.xml.bind.annotation.XmlRegistry;
 @XmlRegistry
 public class ObjectFactory {
 
-
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: uk.gov.nationalarchives.pronom
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: uk.gov.nationalarchives.pronom.
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link GetSignatureFileVersionV1Response }
+     * Create an instance of {@link GetSignatureFileVersionV1Response}.
      * @return SignatureFileVersionV1Response 
      */
     public GetSignatureFileVersionV1Response createGetSignatureFileVersionV1Response() {
@@ -68,7 +67,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Version }
+     * Create an instance of {@link Version}.
      *
      * @return Version
      * 
@@ -78,7 +77,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSignatureFileV1 }
+     * Create an instance of {@link GetSignatureFileV1}.
      * 
      * @return GetSignatureFileV1
      */
@@ -87,7 +86,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSignatureFileVersionV1 }
+     * Create an instance of {@link GetSignatureFileVersionV1}.
      * 
      * @return GetSignatureFileVersionV1
      */
@@ -96,7 +95,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSignatureFileV1Response }
+     * Create an instance of {@link GetSignatureFileV1Response}.
      * 
      * @return GetSignatureFileV1Response
      */

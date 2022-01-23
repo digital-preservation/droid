@@ -513,17 +513,21 @@ public class FilterDialog extends JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel4,
+                        javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel5,
+                        javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(108, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel4,
+                            javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5,
+                            javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -600,10 +604,14 @@ public class FilterDialog extends JDialog {
             }
         ));
         jScrollPane1.setViewportView(filterTable);
-            filterTable.getColumnModel().getColumn(0).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title0")); // NOI18N
-            filterTable.getColumnModel().getColumn(1).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title1")); // NOI18N
-            filterTable.getColumnModel().getColumn(2).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title2")); // NOI18N
-            filterTable.getColumnModel().getColumn(3).setHeaderValue(org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title3")); // NOI18N
+            filterTable.getColumnModel().getColumn(0).setHeaderValue(
+                    org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title0")); // NOI18N
+            filterTable.getColumnModel().getColumn(1).setHeaderValue(
+                    org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title1")); // NOI18N
+            filterTable.getColumnModel().getColumn(2).setHeaderValue(
+                    org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title2")); // NOI18N
+            filterTable.getColumnModel().getColumn(3).setHeaderValue(
+                    org.openide.util.NbBundle.getMessage(FilterDialog.class, "FilterDialog.jTable1.columnModel.title3")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

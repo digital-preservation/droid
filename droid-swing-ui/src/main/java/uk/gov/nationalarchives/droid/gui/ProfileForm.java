@@ -315,8 +315,10 @@ public class ProfileForm extends JPanel {
             }
         });
 
-        PopupAddFilesAndFolders.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Add small.png"))); // NOI18N
-        PopupAddFilesAndFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupAddFilesAndFolders.text")); // NOI18N
+        PopupAddFilesAndFolders.setIcon(
+                new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Add small.png"))); // NOI18N
+        PopupAddFilesAndFolders.setText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupAddFilesAndFolders.text")); // NOI18N
         PopupAddFilesAndFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PopupAddFilesAndFoldersActionPerformed(evt);
@@ -324,8 +326,10 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupAddFilesAndFolders);
 
-        PopupRemoveFilesOrFolders.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Remove small.png"))); // NOI18N
-        PopupRemoveFilesOrFolders.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupRemoveFilesOrFolders.text")); // NOI18N
+        PopupRemoveFilesOrFolders.setIcon(
+                new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Remove small.png"))); // NOI18N
+        PopupRemoveFilesOrFolders.setText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupRemoveFilesOrFolders.text")); // NOI18N
         PopupRemoveFilesOrFolders.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PopupRemoveFilesOrFoldersActionPerformed(evt);
@@ -334,8 +338,10 @@ public class ProfileForm extends JPanel {
         jPopupMenu1.add(PopupRemoveFilesOrFolders);
         jPopupMenu1.add(PopupSeparator1);
 
-        PopupOpenContainingFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/icons/Icon_External_Link.png"))); // NOI18N
-        PopupOpenContainingFolder.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupOpenContainingFolder.text")); // NOI18N
+        PopupOpenContainingFolder.setIcon(
+                new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/icons/Icon_External_Link.png"))); // NOI18N
+        PopupOpenContainingFolder.setText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupOpenContainingFolder.text")); // NOI18N
         PopupOpenContainingFolder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PopupOpenContainingFolderActionPerformed(evt);
@@ -343,8 +349,10 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupOpenContainingFolder);
 
-        PopupMenuCopyToClipboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Clipboard small.png"))); // NOI18N
-        PopupMenuCopyToClipboard.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuCopyToClipboard.text")); // NOI18N
+        PopupMenuCopyToClipboard.setIcon(
+                new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Clipboard small.png"))); // NOI18N
+        PopupMenuCopyToClipboard.setText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuCopyToClipboard.text")); // NOI18N
         PopupMenuCopyToClipboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PopupMenuCopyToClipboardActionPerformed(evt);
@@ -353,7 +361,8 @@ public class ProfileForm extends JPanel {
         jPopupMenu1.add(PopupMenuCopyToClipboard);
         jPopupMenu1.add(jSeparator1);
 
-        PopupMenuExpandChildren.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuExpandChildren.text")); // NOI18N
+        PopupMenuExpandChildren.setText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuExpandChildren.text")); // NOI18N
         PopupMenuExpandChildren.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PopupMenuExpandChildrenActionPerformed(evt);
@@ -361,7 +370,8 @@ public class ProfileForm extends JPanel {
         });
         jPopupMenu1.add(PopupMenuExpandChildren);
 
-        PopupMenuExpandNextThree.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuExpandNextThree.text")); // NOI18N
+        PopupMenuExpandNextThree.setText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.PopupMenuExpandNextThree.text")); // NOI18N
         PopupMenuExpandNextThree.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PopupMenuExpandNextThreeActionPerformed(evt);
@@ -371,11 +381,13 @@ public class ProfileForm extends JPanel {
 
         resultsOutline.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         resultsOutline.setFillsViewportHeight(true);
-        resultsOutline.setSelectVisibleColumnsLabel(org.openide.util.NbBundle.getMessage(ProfileForm.class, "results.columns.select")); // NOI18N
+        resultsOutline.setSelectVisibleColumnsLabel(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "results.columns.select")); // NOI18N
         jScrollPane1.setViewportView(resultsOutline);
 
         statusLabel.setLabelFor(statusProgressBar);
-        statusLabel.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.statusLabel.text")); // NOI18N
+        statusLabel.setText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.statusLabel.text")); // NOI18N
 
         javax.swing.GroupLayout statusProgressPanelLayout = new javax.swing.GroupLayout(statusProgressPanel);
         statusProgressPanel.setLayout(statusProgressPanelLayout);
@@ -405,14 +417,16 @@ public class ProfileForm extends JPanel {
         throttleSlider.setMinorTickSpacing(100);
         throttleSlider.setPaintLabels(true);
         throttleSlider.setPaintTicks(true);
-        throttleSlider.setToolTipText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.throttleSlider.toolTipText")); // NOI18N
+        throttleSlider.setToolTipText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.throttleSlider.toolTipText")); // NOI18N
         throttleSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 throttleSliderStateChanged(evt);
             }
         });
 
-        throttleLabel.setText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.throttleLabel.text")); // NOI18N
+        throttleLabel.setText(
+                org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.throttleLabel.text")); // NOI18N
 
         javax.swing.GroupLayout throttlePanelLayout = new javax.swing.GroupLayout(throttlePanel);
         throttlePanel.setLayout(throttlePanelLayout);
@@ -428,7 +442,8 @@ public class ProfileForm extends JPanel {
             throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(throttlePanelLayout.createSequentialGroup()
                 .addGroup(throttlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(throttleSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(throttleSlider,
+                            javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(throttlePanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(throttleLabel)))
@@ -445,13 +460,15 @@ public class ProfileForm extends JPanel {
             progressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(progressPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(profileProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE))
+                .addComponent(profileProgressBar,
+                        javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE))
         );
         progressPanelLayout.setVerticalGroup(
             progressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(progressPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(profileProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(profileProgressBar,
+                        javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -459,19 +476,25 @@ public class ProfileForm extends JPanel {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(progressPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(progressPanel,
+                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(statusProgressPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(statusProgressPanel,
+                        javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(throttlePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(throttlePanel,
+                        javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(throttlePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(progressPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(statusProgressPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(throttlePanel,
+                            javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(progressPanel,
+                            javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(statusProgressPanel,
+                            javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -479,15 +502,19 @@ public class ProfileForm extends JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 868, Short.MAX_VALUE)
+            .addComponent(jPanel3,
+                    javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1,
+                    javax.swing.GroupLayout.DEFAULT_SIZE, 868, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
+                .addComponent(jScrollPane1,
+                        javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel3,
+                        javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

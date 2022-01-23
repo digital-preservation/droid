@@ -36,7 +36,6 @@ import java.io.PrintWriter;
 import org.apache.commons.cli.HelpFormatter;
 
 import static uk.gov.nationalarchives.droid.command.i18n.I18N.getResource;
-
 import uk.gov.nationalarchives.droid.command.i18n.I18N;
 
 /**

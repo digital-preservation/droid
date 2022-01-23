@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.parsers.ParserConfigurationException;

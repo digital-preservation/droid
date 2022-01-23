@@ -47,12 +47,10 @@ import net.byteseek.parser.tree.ParseTreeType;
 import net.byteseek.parser.tree.ParseTreeUtils;
 import net.byteseek.parser.tree.node.BaseNode;
 import net.byteseek.parser.tree.node.ChildrenNode;
-
 import net.byteseek.utils.ByteUtils;
 import uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment;
 import uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence;
-
 import static uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor.EOFOffset;
 
 /**
@@ -292,7 +290,8 @@ public final class ByteSequenceCompiler {
      * @return A list of ParseTrees ready for further compilation.
      * @throws CompileException If there was a problem processing the sequence.
      */
-    private List<ParseTree> preprocessSequence(final ParseTree sequenceNodes, final boolean anchoredToEnd, final CompileType compileType) throws CompileException {
+    private List<ParseTree> preprocessSequence(final ParseTree sequenceNodes, final boolean anchoredToEnd, final CompileType compileType)
+            throws CompileException {
         // Iterate across the nodes in the SEQUENCE ParseTree type.
         // If the sequence is anchored to the end, we process the nodes in reverse order.
         final int numNodes = sequenceNodes.getNumChildren();

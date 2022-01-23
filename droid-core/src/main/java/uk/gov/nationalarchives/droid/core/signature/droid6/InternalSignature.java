@@ -75,7 +75,6 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
 
 import java.io.IOException;
 import java.io.Writer;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

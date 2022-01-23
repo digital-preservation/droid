@@ -39,7 +39,6 @@ import java.util.Iterator;
 import org.jwat.arc.ArcReaderFactory;
 import org.jwat.arc.ArcRecord;
 import org.jwat.arc.ArcRecordBase;
-
 import org.jwat.common.Uri;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;

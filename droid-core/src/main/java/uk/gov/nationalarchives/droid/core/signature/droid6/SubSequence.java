@@ -125,7 +125,6 @@ import net.byteseek.searcher.Searcher;
 import net.byteseek.searcher.SearchResult;
 import net.byteseek.searcher.sequence.horspool.HorspoolFinalFlagSearcher;
 import net.byteseek.matcher.sequence.SequenceMatcher;
-
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 
@@ -506,7 +505,7 @@ public class SubSequence extends SimpleElement {
     }
 
     /**
-     * Processes the left fragment XML list into a List<List<SideFragment>>
+     * Processes the left fragment XML list into a {@code List<List<SideFragment>>}
      */
     private void buildOrderedLeftFragments() {
         int numPositions = 0;
@@ -532,7 +531,7 @@ public class SubSequence extends SimpleElement {
     }
 
     /**
-     * Processes the right fragment XML list into a List<List<SideFragment>>
+     * Processes the right fragment XML list into a {@code List<List<SideFragment>>}
      */
     private void buildOrderedRightFragments() {
     /* Right fragments */
@@ -563,6 +562,8 @@ public class SubSequence extends SimpleElement {
      * Optimise alternative sequences of single bytes into a byte-class,
      * instead of being a set of alternatives.  This is more efficient to match
      * using byteseek.
+     *
+     * @param fragments
      */
     private void optimiseSingleByteAlternatives(List<List<SideFragment>> fragments) {
         for (int fragPos = 0; fragPos < fragments.size(); fragPos++) { // loop through all offsetPositions:
@@ -1152,8 +1153,10 @@ public class SubSequence extends SimpleElement {
                             boolean leftMostFragmentPositionInvalid = true;
 
                             if (matchFound) {
-                                long currentNearestBOFLeftmostFragmentPosition = leftFragmentPositions[leftFragmentPositions.length -1];
-                                long currentFurthestBOFLeftmostFragmentPosition = leftFragmentPositions.length > 1 ? leftFragmentPositions[0] :currentNearestBOFLeftmostFragmentPosition;
+                                long currentNearestBOFLeftmostFragmentPosition =
+                                        leftFragmentPositions[leftFragmentPositions.length -1];
+                                long currentFurthestBOFLeftmostFragmentPosition =
+                                        leftFragmentPositions.length > 1 ? leftFragmentPositions[0] :currentNearestBOFLeftmostFragmentPosition;
 
                                 // BNO: If the fragment found is beyond the minimum offset, we already know its offset
                                 // is invalid.  If it is greater than the maximum offset however, we need to check for
@@ -1290,7 +1293,7 @@ public class SubSequence extends SimpleElement {
                 && finalOffsetFoundPositions.getFirstPositionInFile() != -1;
 
         for (int iFragPos = posLoopStart;
-             (!seqNotFound) && (iFragPos <= numFragPos) && (iFragPos >= 1);
+             !seqNotFound && iFragPos <= numFragPos && iFragPos >= 1;
              iFragPos += searchDirection) {
             final List<SideFragment> fragmentsAtPosition = fragments.get(iFragPos - 1);
             final int numAltFrags = fragmentsAtPosition.size();
@@ -1537,10 +1540,10 @@ public class SubSequence extends SimpleElement {
         final int numBytes = fragment.getNumBytes();
         final int byteOffset = (searchDirection == 1) ? 0 : numBytes - 1;
 
-        if (leftFrag && (searchDirection == -1)) {
+        if (leftFrag && searchDirection == -1) {
             minOffset = fragment.getMinOffset();
             maxOffset = fragment.getMaxOffset();
-        } else if (!leftFrag && (searchDirection == 1)) {
+        } else if (!leftFrag && searchDirection == 1) {
             minOffset = fragment.getMinOffset();
             maxOffset = fragment.getMaxOffset();
         } else if (fragPos < this.getNumFragmentPositions(leftFrag)) {
@@ -1655,7 +1658,7 @@ public class SubSequence extends SimpleElement {
         boolean recheckingFinalFragmentOption = finalOffsetFoundPositions != null
                 && finalOffsetFoundPositions.getFirstPositionInFile() != -1;
 
-        for (int iFragPos = posLoopStart; (!seqNotFound) && (iFragPos <= numFragPos) && (iFragPos >= 1);
+        for (int iFragPos = posLoopStart; !seqNotFound && iFragPos <= numFragPos && iFragPos >= 1;
              // so for r-l left search i.e. -1, this is effectively iFragPos++...
              iFragPos -= searchDirection) {
             final List<SideFragment> fragmentsAtPosition = fragments.get(iFragPos - 1);
@@ -1980,7 +1983,7 @@ public class SubSequence extends SimpleElement {
          *                                   hit relates.
          *                       This is 1 based and  correlates with the "Position" attribute in the RightFragment or
          *                       LeftFragment element in the signature file.
-         * @param alternativeFragmentNumber The zero-base index of the fragment within the List<SideFragment> in which
+         * @param alternativeFragmentNumber The zero-base index of the fragment within the {@code List<SideFragment>} in which
          *                       it resides, in other words the index for the fragment option for a given fragment
          *                       position. Usually 0 since mostly there is only one alternative fragment at any given
          *                       position.
@@ -2035,7 +2038,7 @@ public class SubSequence extends SimpleElement {
 
     /**
      * Helper class to store information about fragments found in a byte stream. The class is used to store
-     * information for a given List<SideFragment> - which may contain one or more SideFragments for a
+     * information for a given {@code List<SideFragment>} - which may contain one or more SideFragments for a
      * given fragment position in a binary signature.  The data stored comprises the offsets and file positions
      * at which SideFragments within the list have been found in the byte stream.
      *
@@ -2065,8 +2068,8 @@ public class SubSequence extends SimpleElement {
 
         /**
          * Records data about a fragment hit
-         * @param altPos The index for the fragment within the originating List<SideFragment> passed to the constructor
-         *               A List<SideFragment> is a list of possible alternative fragments that may be found at a given
+         * @param altPos The index for the fragment within the originating {@code List<SideFragment>} passed to the constructor
+         *               A {@code List<SideFragment>} is a list of possible alternative fragments that may be found at a given
          *               fragment position (in most cases, there will be only one option so this will be zero)
          * @param offsetPos The offset at which the fragment was found, relative to the previous fragment
          *                  (or main sequence)
@@ -2082,7 +2085,7 @@ public class SubSequence extends SimpleElement {
 
         /**
          * Returns the offset at which a given fragment has been found
-         * @param altPos The index of the fragment in the List<SideFragment> passed to the constructor
+         * @param altPos The index of the fragment in the {@code List<SideFragment>} passed to the constructor
          * @return The offset at which the fragment was found relative to the previous fragment (or main sequence)
          */
         public long getOffsetPosition(int altPos) {
@@ -2091,7 +2094,7 @@ public class SubSequence extends SimpleElement {
 
         /**
          * Returns the position within the byte stream at which a given fragment was found
-         * @param altPos   The index of the fragment in the List<SideFragment> passed to the constructor
+         * @param altPos   The index of the fragment in the {@code List<SideFragment>} passed to the constructor
          * @return  The position within the byte stream where the fragment was found. i.e for a left fragment
          * the offset of the first byte in the fragment from BOF, and for a right fragment, the offset of the
          * last byte in the fragment from BOF.

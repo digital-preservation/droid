@@ -46,14 +46,12 @@ import java.util.Enumeration;
 
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.lang.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.schlichtherle.truezip.zip.ZipFile;
 import de.schlichtherle.truezip.zip.ZipEntry;
 import de.schlichtherle.truezip.zip.ZipOutputStream;
-
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
@@ -137,7 +135,9 @@ public class ProfileDiskAction {
         private long bytesProcessed;
 
         /**
-         *
+         * @param source
+         * @param destination
+         * @param callback
          */
         public ProfileWalker(final Path source, final Path destination,
                 final ProgressObserver callback) {

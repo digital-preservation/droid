@@ -322,7 +322,8 @@ public class ValuesDialog extends JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel2,
+                                javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
@@ -334,44 +335,41 @@ public class ValuesDialog extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSelectActionPerformed
+        int[] listOfSelectedIndices = jListPossibleValues.getSelectedIndices();
+        //if some thing selected.
+        if (listOfSelectedIndices.length > 0) {
+            //cache total number of selected indices.
+            int looplength = listOfSelectedIndices.length;
+            //initialise selected values.
+            if(filterCriteria.getSelectedValues() == null){
+                filterCriteria.setSelectedValues(new ArrayList<FilterValue>());
+            }
 
-    	int[] listOfSelectedIndices =   jListPossibleValues.getSelectedIndices();
-    	//if some thing selected.
-    	if (listOfSelectedIndices.length >0){
-    		//cache total number of selected indices.
-    		int looplength = listOfSelectedIndices.length;
-    		//initialise selected values.
-			if(filterCriteria.getSelectedValues() == null){
-				filterCriteria.setSelectedValues(new ArrayList<FilterValue>());
-			}
+            for(int i=0; i< looplength ; i++){
+                selectedListModel.addElement(possibleListModel.get(listOfSelectedIndices[i]));
+            }
 
-    		for(int i=0; i< looplength ; i++){
-    			selectedListModel.addElement(possibleListModel.get(listOfSelectedIndices[i]));    			
-    		}
-			
-    		for(int i=0; i< looplength ; i++){
-    			possibleListModel.remove(listOfSelectedIndices[0]);
-    			listOfSelectedIndices =   jListPossibleValues.getSelectedIndices();
-    		}
-    	}
-    	
-
+            for(int i=0; i< looplength ; i++){
+                possibleListModel.remove(listOfSelectedIndices[0]);
+                listOfSelectedIndices =   jListPossibleValues.getSelectedIndices();
+            }
+        }
     }//GEN-LAST:event_jButtonSelectActionPerformed
 
     private void jButtonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoveActionPerformed
 
-    	int[] listOfSelectedIndices =   jListSelectedValues.getSelectedIndices();
+        int[] listOfSelectedIndices =   jListSelectedValues.getSelectedIndices();
 
-    	if (listOfSelectedIndices.length >0){
-    		int looplength = listOfSelectedIndices.length;
-    		for(int i=0; i< looplength ; i++){
-    			possibleListModel.addElement(selectedListModel.get(listOfSelectedIndices[i]));
-    		}
-    		for(int i=0; i< looplength ; i++){
-    			selectedListModel.remove(listOfSelectedIndices[0]);
-    			listOfSelectedIndices =   jListSelectedValues.getSelectedIndices();
-    		}
-    	}    		
+        if (listOfSelectedIndices.length >0){
+            int looplength = listOfSelectedIndices.length;
+            for(int i=0; i< looplength ; i++){
+                possibleListModel.addElement(selectedListModel.get(listOfSelectedIndices[i]));
+            }
+            for(int i=0; i< looplength ; i++){
+                selectedListModel.remove(listOfSelectedIndices[0]);
+                listOfSelectedIndices =   jListSelectedValues.getSelectedIndices();
+            }
+        }
     }//GEN-LAST:event_jButtonRemoveActionPerformed
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
@@ -381,19 +379,16 @@ public class ValuesDialog extends JDialog {
                 selectedString = selectedString + "\"" +(tempSelectedValues.get(i)).getDescription() + "\" "; 
             }
         }
-    	this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-    	
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
-    	filterCriteria.setSelectedValues(new ArrayList<FilterValue>());
-    	for(int i =0; i<selectedListModel.getSize(); i++){
-    		filterCriteria.addSelectedValue((FilterValue)selectedListModel.get(i));
-    		selectedString = selectedString + "\"" +((FilterValue)selectedListModel.get(i)).getDescription() + "\" "; 
-    	}
-    	this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));  
-    	
-    	
+        filterCriteria.setSelectedValues(new ArrayList<FilterValue>());
+        for(int i =0; i<selectedListModel.getSize(); i++){
+            filterCriteria.addSelectedValue((FilterValue)selectedListModel.get(i));
+            selectedString = selectedString + "\"" +((FilterValue)selectedListModel.get(i)).getDescription() + "\" ";
+        }
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_jButtonOkActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

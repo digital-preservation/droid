@@ -53,11 +53,17 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 //CHECKSTYLE:OFF  Too complex and some don't agree with all the suggestions.  But layout issues all OK!
 public class SimpleDqlFilterParser implements DqlFilterParser {
 
-    private static final String INVALID_ARGUMENT_COUNT = "The filter condition \"%s\" is invalid, since it has only %d arguments - at least 3 are required (are you missing an operator, or a space?)";
-    private static final String INVALID_ARGUMENT_COUNT_FOR_STRING_OPERATOR = "The filter condition \"%s\" is invalid, since it has  %d arguments.  String based filter conditions must supply one string value enclosed in single quotes for the final argument";
-    private static final String INVALID_USE_OF_NOT = "The filter condition \"%s\" is invalid. The \"not\" operator can only be used with string operators \"starts\", \"ends\" and \"contains\"";
-    private static final String MISSING_SINGLE_QUOTES = "The filter condition \"%s\" is invalid. Queries with \"starts\", \"ends\" and \"contains\" must be followed by a  value enclosed in single quotes after the operator.";
-    private static final String INVALID_COMPARISON_FILTER = "The filter condition \"%s\" is invalid.  Filters using a comparison operator must supply a single integer numeric operand, or (for the \"=\" operator only) a string surrounded by single quotes. Dates must use the format yyyy-mm-dd, e.g. 2010-01-23 for 23rd Jan 2010";
+    private static final String INVALID_ARGUMENT_COUNT = "The filter condition \"%s\" is invalid, since it has only %d arguments - " +
+            "at least 3 are required (are you missing an operator, or a space?)";
+    private static final String INVALID_ARGUMENT_COUNT_FOR_STRING_OPERATOR = "The filter condition \"%s\" is invalid, since it has  %d arguments. " +
+            "String based filter conditions must supply one string value enclosed in single quotes for the final argument";
+    private static final String INVALID_USE_OF_NOT = "The filter condition \"%s\" is invalid. The \"not\" operator can only be used with " +
+            "string operators \"starts\", \"ends\" and \"contains\"";
+    private static final String MISSING_SINGLE_QUOTES = "The filter condition \"%s\" is invalid. Queries with \"starts\", \"ends\" and \"contains\" must " +
+            "be followed by a  value enclosed in single quotes after the operator.";
+    private static final String INVALID_COMPARISON_FILTER = "The filter condition \"%s\" is invalid.  Filters using a comparison operator must supply " +
+            "a single integer numeric operand, or (for the \"=\" operator only) a string surrounded by single quotes. Dates must use the format " +
+            "yyyy-mm-dd, e.g. 2010-01-23 for 23rd Jan 2010";
     private static final String SINGLE_QUOTE = "'";
     private static final int MIMIMUM_FILTER_COMPONENTS = 3;
     private static final int VALUES_START_INDEX_WITH_NOT_OPERATOR = 3;
@@ -99,7 +105,8 @@ public class SimpleDqlFilterParser implements DqlFilterParser {
             if (isStringOperator(dqlOperator)) {
                 // Check that we have the right number of arguments, with "starts", "ends" or "contains", we should
                 // only have a single value, So there should be 3 arguments, or 4 if preceded by "not"
-                if ((operatorIsTwoPart && filterComponents.length != (MIMIMUM_FILTER_COMPONENTS + 1)) || ((!operatorIsTwoPart) && filterComponents.length != MIMIMUM_FILTER_COMPONENTS)) {
+                if ((operatorIsTwoPart && filterComponents.length != (MIMIMUM_FILTER_COMPONENTS + 1))
+                        || ((!operatorIsTwoPart) && filterComponents.length != MIMIMUM_FILTER_COMPONENTS)) {
                     throw new DqlParseException(String.format(INVALID_ARGUMENT_COUNT_FOR_STRING_OPERATOR,  dql , filterComponents.length));
                 }
                 // We have the correct number of arguments - check that the value is enclosed in quotes - this is required  

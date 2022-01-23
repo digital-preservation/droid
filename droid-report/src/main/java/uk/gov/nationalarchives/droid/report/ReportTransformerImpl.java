@@ -41,7 +41,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.transform.Result;

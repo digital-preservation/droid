@@ -51,5 +51,5 @@ public interface FileWalkerHandler {
      * @return the ID assigned to the handled file or directory
      * @throws IOException if the file IO failed.
      */
-    ResourceId handle(final Path file, int depth, ProgressEntry parent) throws IOException;
+    ResourceId handle(Path file, int depth, ProgressEntry parent) throws IOException;
 }

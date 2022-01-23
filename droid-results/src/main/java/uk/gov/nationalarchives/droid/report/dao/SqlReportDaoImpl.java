@@ -239,7 +239,7 @@ public class SqlReportDaoImpl implements ReportDao {
     /**
      *
      * @param queryString
-     * @return
+     * @return true if filtering, false otherwise
      */
     private boolean filterOnFormatMetadata(final String queryString) {
         return queryString.contains("formatfilter.name") || queryString.contains("formatfilter.mime_type");
