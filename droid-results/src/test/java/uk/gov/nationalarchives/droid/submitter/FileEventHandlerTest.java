@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -40,7 +40,7 @@ import java.nio.file.Paths;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;

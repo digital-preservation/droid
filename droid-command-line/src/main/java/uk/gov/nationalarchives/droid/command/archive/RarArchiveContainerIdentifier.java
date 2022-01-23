@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
-import com.github.junrar.impl.FileVolumeManager;
+import com.github.junrar.volume.FileVolumeManager;
 import com.github.junrar.rarfile.FileHeader;
 
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
@@ -94,7 +94,7 @@ public class RarArchiveContainerIdentifier extends ArchiveContentIdentifier {
             FileVolumeManager fileVolumeManager = new FileVolumeManager(req.getFile().toFile());
 
             try {
-                try (Archive archive = new Archive(fileVolumeManager)) {
+                try (Archive archive = new Archive(fileVolumeManager, null, null)) {
                     if (archive.isEncrypted()) {
                         log.info("encrypted rar");
                     } else {

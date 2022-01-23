@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -43,7 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;

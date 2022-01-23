@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -34,8 +34,8 @@ package uk.gov.nationalarchives.droid.gui.action;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;

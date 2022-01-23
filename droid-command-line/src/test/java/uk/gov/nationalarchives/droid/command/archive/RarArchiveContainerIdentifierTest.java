@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -35,15 +35,12 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureDefinitions;
-import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
-import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -45,7 +45,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.junrar.VolumeManager;
+import com.github.junrar.volume.VolumeManager;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
@@ -100,7 +100,7 @@ public final class RarArchiveHandler implements ArchiveHandler {
     public void handle(IdentificationRequest request) throws IOException {
         VolumeManager readerVolume = new RarReader(request.getWindowReader());
         try {
-            try (Archive archive = new Archive(readerVolume)) {
+            try (Archive archive = new Archive(readerVolume, null, null)) {
                 if (archive.isEncrypted()) {
                     throw new RuntimeException("Encrypted archive");
                 }

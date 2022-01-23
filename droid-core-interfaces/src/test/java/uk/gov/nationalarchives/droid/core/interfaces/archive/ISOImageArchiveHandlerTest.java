@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -246,6 +246,6 @@ public class ISOImageArchiveHandlerTest {
 
         isoImageArchiveHandler.handle(request);
 
-        verifyZeroInteractions(factory, droid, resultHandler);
+        verifyNoMoreInteractions(factory, droid, resultHandler);
     }
 }

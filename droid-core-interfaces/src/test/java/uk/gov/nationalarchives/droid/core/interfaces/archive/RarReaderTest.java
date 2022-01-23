@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
  *
@@ -32,8 +32,8 @@
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import com.github.junrar.Archive;
-import com.github.junrar.Volume;
-import com.github.junrar.io.IReadOnlyAccess;
+import com.github.junrar.volume.Volume;
+import com.github.junrar.io.SeekableReadOnlyByteChannel;
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.WindowReader;
 import org.junit.After;
@@ -54,15 +54,15 @@ public class RarReaderTest {
     private RarReader rar;
     private Archive archive;
     private Volume vol;
-    private IReadOnlyAccess access;
+    private SeekableReadOnlyByteChannel access;
 
     @Before
     public void setup() throws Exception {
         reader = getFileReader(RESOURCE_NAME);
         rar = new RarReader(reader);
-        archive = new Archive(rar);
-        vol = rar.nextArchive(archive, null);
-        access = vol.getReadOnlyAccess();
+        archive = new Archive(rar, null, null);
+        vol = rar.nextVolume(archive, null);
+        access = vol.getChannel();
     }
 
     @After
