@@ -35,16 +35,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.byteseek.io.reader.WindowReader;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
-
-//BNO-BS2
-import net.byteseek.io.reader.WindowReader;
 
 /**
  * Adapts an IdentificationRequest to the ByteReader interface.

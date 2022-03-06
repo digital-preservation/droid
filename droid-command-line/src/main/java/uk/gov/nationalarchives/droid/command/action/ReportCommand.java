@@ -40,13 +40,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

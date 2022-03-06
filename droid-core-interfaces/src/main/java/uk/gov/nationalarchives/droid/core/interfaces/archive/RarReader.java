@@ -38,9 +38,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.junrar.Archive;
-import com.github.junrar.Volume;
-import com.github.junrar.VolumeManager;
-import com.github.junrar.io.IReadOnlyAccess;
+import com.github.junrar.io.SeekableReadOnlyByteChannel;
+import com.github.junrar.volume.Volume;
+import com.github.junrar.volume.VolumeManager;
 
 import net.byteseek.io.reader.WindowReader;
 
@@ -64,7 +64,7 @@ public class RarReader implements VolumeManager {
     }
 
     @Override
-    public Volume nextArchive(Archive archive, Volume lastVolume) throws IOException {
+    public Volume nextVolume(Archive archive, Volume lastVolume) throws IOException {
         // If the last volume is null, return a new volume.
         // If we already have a volume, since we don't support multi-volume rar's, just return null.
         return lastVolume == null ? new ReaderVolume(archive) : null;
@@ -85,7 +85,7 @@ public class RarReader implements VolumeManager {
         }
 
         @Override
-        public IReadOnlyAccess getReadOnlyAccess() throws IOException {
+        public SeekableReadOnlyByteChannel getChannel() throws IOException {
             return new ReaderReadOnlyAccess();
         }
 
@@ -105,9 +105,9 @@ public class RarReader implements VolumeManager {
         }
 
         /**
-         * A class that adapts the WindowReader to the IReadOnlyAccess interface.
+         * A class that adapts the WindowReader to the SeekableReadOnlyByteChannel interface.
          */
-        private class ReaderReadOnlyAccess implements IReadOnlyAccess {
+        private class ReaderReadOnlyAccess implements SeekableReadOnlyByteChannel {
 
             private long position;
 

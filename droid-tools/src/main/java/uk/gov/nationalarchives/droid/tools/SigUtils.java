@@ -54,7 +54,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import net.byteseek.compiler.CompileException;
-
 import uk.gov.nationalarchives.droid.container.BinarySignatureXMLParser;
 import uk.gov.nationalarchives.droid.container.ContainerFile;
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequest;

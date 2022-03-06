@@ -151,19 +151,29 @@ public class UpdateProxyConfigDialog extends JDialog {
         setTitle(NbBundle.getMessage(UpdateProxyConfigDialog.class, "UpdateProxyConfigDialog.title")); // NOI18N
         setModal(true);
 
-        proxySettingsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Tahoma", 0, 11), UIManager.getDefaults().getColor("windowText")), NbBundle.getMessage(UpdateProxyConfigDialog.class, "UpdateProxyConfigDialog.proxySettingsPanel.border.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Tahoma", 0, 11), UIManager.getDefaults().getColor("textText"))); // NOI18N
+        proxySettingsPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Tahoma", 0, 11),
+                        UIManager.getDefaults().getColor("windowText")),
+                NbBundle.getMessage(UpdateProxyConfigDialog.class, "UpdateProxyConfigDialog.proxySettingsPanel.border.title"),
+                TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION,
+                new Font("Tahoma", 0, 11),
+                UIManager.getDefaults().getColor("textText")
+        )); // NOI18N
         proxySettingsPanel.setEnabled(false);
 
 
         jLabel8.setText(NbBundle.getMessage(UpdateProxyConfigDialog.class, "UpdateProxyConfigDialog.jLabel8.text")); // NOI18N
-        Binding binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${properties[\"update.proxy.host\"]}"), proxyHostTextBox, BeanProperty.create("text_ON_ACTION_OR_FOCUS_LOST"));
+        Binding binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${properties[\"update.proxy.host\"]}"),
+                proxyHostTextBox, BeanProperty.create("text_ON_ACTION_OR_FOCUS_LOST"));
         bindingGroup.addBinding(binding);
 
 
         jLabel9.setText(NbBundle.getMessage(UpdateProxyConfigDialog.class, "UpdateProxyConfigDialog.jLabel9.text")); // NOI18N
         proxyPortTextBox.setFormatterFactory(new IntegerFormatterFactory());
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${properties[\"update.proxy.port\"]}"), proxyPortTextBox, BeanProperty.create("value"));
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${properties[\"update.proxy.port\"]}"),
+                proxyPortTextBox, BeanProperty.create("value"));
         bindingGroup.addBinding(binding);
 
         GroupLayout proxySettingsPanelLayout = new GroupLayout(proxySettingsPanel);
@@ -197,7 +207,9 @@ public class UpdateProxyConfigDialog extends JDialog {
         );
 
         useProxyCheckbox.setText(NbBundle.getMessage(UpdateProxyConfigDialog.class, "UpdateProxyConfigDialog.useProxyCheckbox.text")); // NOI18N
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${properties[\"update.proxy\"]}"), useProxyCheckbox, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${properties[\"update.proxy\"]}"),
+                        useProxyCheckbox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         useProxyCheckbox.addItemListener(new ItemListener() {

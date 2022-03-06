@@ -148,7 +148,7 @@ public class PlanetXMLProgressDialog extends javax.swing.JDialog {
                                                                                                         .addComponent(
                                                                                                                 jLabel1)
                                                                                                         .addPreferredGap(
-                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                                          javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                                                                         .addComponent(
                                                                                                                 planetXMLFileName,
                                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,

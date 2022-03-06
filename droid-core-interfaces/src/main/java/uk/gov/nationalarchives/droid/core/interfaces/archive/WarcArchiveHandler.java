@@ -44,7 +44,6 @@ import org.jwat.warc.WarcHeader;
 import org.jwat.warc.WarcReader;
 import org.jwat.warc.WarcReaderFactory;
 import org.jwat.warc.WarcRecord;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +77,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
 
             Iterable<WarcRecord> iterable = new Iterable<WarcRecord>() {
                 @Override
-                public final Iterator<WarcRecord> iterator() {
+                public Iterator<WarcRecord> iterator() {
                     return new WarcArchiveEntryIterator(arcIn);
                 }
             };
@@ -126,7 +125,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                 while (record != null
                         && (!"response".equals(record.header.warcTypeStr)
                         ||  record.getHttpHeader() == null
-                        || (HTTP_ACCEPTED != record.getHttpHeader().statusCode))) {
+                        || HTTP_ACCEPTED != record.getHttpHeader().statusCode)) {
                     if (this.iterator.hasNext()) {
                         record = this.iterator.next();
                     } else {

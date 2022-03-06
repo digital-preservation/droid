@@ -32,7 +32,6 @@
 package uk.gov.nationalarchives.droid.gui.report;
 
 import java.awt.Window;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +42,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.swing.JFileChooser;
@@ -51,7 +49,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FilenameUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

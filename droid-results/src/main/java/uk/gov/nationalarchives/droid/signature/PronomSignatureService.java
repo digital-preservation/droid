@@ -35,14 +35,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.apache.commons.configuration.event.ConfigurationEvent;
-
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduit;

@@ -268,7 +268,9 @@ public class ConfigDialog extends JDialog {
 
         defaultThrottleTextBox1.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(new DecimalFormat("#0"))));
 
-        Binding binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultThrottle\"]}"), defaultThrottleTextBox1, BeanProperty.create("value"));
+        Binding binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this,
+                        ELProperty.create("${globalConfig[\"profile.defaultThrottle\"]}"), defaultThrottleTextBox1, BeanProperty.create("value"));
         bindingGroup.addBinding(binding);
 
         jLabel4.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel2.text")); // NOI18N
@@ -277,15 +279,20 @@ public class ConfigDialog extends JDialog {
         jLabel11.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel10.text")); // NOI18N
 
         ELProperty eLProperty = ELProperty.create("${allBinarySigFiles}");
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, defaultSigFileComboBox1);
+        JComboBoxBinding jComboBoxBinding =
+                SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, defaultSigFileComboBox1);
         bindingGroup.addBinding(jComboBoxBinding);
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultBinarySigFileVersion\"]}"), defaultSigFileComboBox1, BeanProperty.create("selectedItem"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultBinarySigFileVersion\"]}"),
+                        defaultSigFileComboBox1, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
 
         generateHashCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.generateHashCheckBox.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.generateHash\"]}"), generateHashCheckBox, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.generateHash\"]}"),
+                        generateHashCheckBox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         generateHashCheckBox.addActionListener(new ActionListener() {
@@ -297,7 +304,9 @@ public class ConfigDialog extends JDialog {
         eLProperty = ELProperty.create("${allContainerSigFiles}");
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, containerSigCombo);
         bindingGroup.addBinding(jComboBoxBinding);
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultContainerSigFileVersion\"]}"), containerSigCombo, BeanProperty.create("selectedItem"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.defaultContainerSigFileVersion\"]}"),
+                        containerSigCombo, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
         containerSigCombo.addActionListener(new ActionListener() {
@@ -311,7 +320,9 @@ public class ConfigDialog extends JDialog {
 
         jTextField2.setHorizontalAlignment(JTextField.RIGHT);
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.maxBytesToScan\"]}"), jTextField2, BeanProperty.create("text"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.maxBytesToScan\"]}"),
+                        jTextField2, BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
         jLabel9.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel9.text")); // NOI18N
@@ -319,19 +330,25 @@ public class ConfigDialog extends JDialog {
         buttonGroupExtension.add(rowPerFileButton2);
         rowPerFileButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton2.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"profile.matchAllExtensions\"]}"), rowPerFileButton2, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"profile.matchAllExtensions\"]}"),
+                        rowPerFileButton2, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         buttonGroupExtension.add(rowPerFormatButton2);
         rowPerFormatButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFormatButton2.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.matchAllExtensions\"]}"), rowPerFormatButton2, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.matchAllExtensions\"]}"),
+                        rowPerFormatButton2, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         eLProperty = ELProperty.create("${allHashAlgorithms}");
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, hashAlgorithmCombo);
         bindingGroup.addBinding(jComboBoxBinding);
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.hashAlgorithm\"]}"), hashAlgorithmCombo, BeanProperty.create("selectedItem"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.hashAlgorithm\"]}"),
+                        hashAlgorithmCombo, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
         hashAlgorithmCombo.addActionListener(new ActionListener() {
@@ -349,7 +366,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processZip\"]}"), processZipCheckBox, BeanProperty.create("selected"), "zipBinding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processZip\"]}"),
+                        processZipCheckBox, BeanProperty.create("selected"), "zipBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -361,7 +380,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processTar\"]}"), processTarCheckBox, BeanProperty.create("selected"), "tarBinding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processTar\"]}"),
+                        processTarCheckBox, BeanProperty.create("selected"), "tarBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -374,7 +395,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processGzip\"]}"), processGzipCheckBox, BeanProperty.create("selected"), "gzipBinding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processGzip\"]}"),
+                        processGzipCheckBox, BeanProperty.create("selected"), "gzipBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -386,7 +409,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processRar\"]}"), processRarCheckBox, BeanProperty.create("selected"), "rarBinding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processRar\"]}"),
+                        processRarCheckBox, BeanProperty.create("selected"), "rarBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -398,7 +423,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.process7zip\"]}"), process7zipCheckBox, BeanProperty.create("selected"), "7zipBinding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.process7zip\"]}"),
+                        process7zipCheckBox, BeanProperty.create("selected"), "7zipBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -410,7 +437,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processIso\"]}"), processIsoCheckBox, BeanProperty.create("selected"), "isoBinding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processIso\"]}"),
+                        processIsoCheckBox, BeanProperty.create("selected"), "isoBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -422,7 +451,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processBzip2\"]}"), processBzip2CheckBox, BeanProperty.create("selected"), "bzip2Binding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processBzip2\"]}"),
+                        processBzip2CheckBox, BeanProperty.create("selected"), "bzip2Binding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -491,7 +522,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processArc\"]}"), processArcCheckBox, BeanProperty.create("selected"), "arcBinding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processArc\"]}"),
+                        processArcCheckBox, BeanProperty.create("selected"), "arcBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -503,7 +536,9 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processWarc\"]}"), processWarcCheckBox, BeanProperty.create("selected"), "warcBinding");
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processWarc\"]}"),
+                        processWarcCheckBox, BeanProperty.create("selected"), "warcBinding");
         binding.setSourceNullValue(false);
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
@@ -630,13 +665,17 @@ public class ConfigDialog extends JDialog {
         csvExportButtonGroup.add(rowPerFileButton1);
         rowPerFileButton1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton1.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"export.rowPerFormat\"]}"), rowPerFileButton1, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"export.rowPerFormat\"]}"),
+                        rowPerFileButton1, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         csvExportButtonGroup.add(rowPerFormatButton1);
         rowPerFormatButton1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFormatButton1.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"export.rowPerFormat\"]}"), rowPerFormatButton1, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"export.rowPerFormat\"]}"),
+                        rowPerFormatButton1, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         rowPerFormatButton1.addActionListener(new ActionListener() {
@@ -690,7 +729,9 @@ public class ConfigDialog extends JDialog {
 
         updateUrlTextBox.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.updateUrlTextBox.toolTipText")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"pronom.update.url\"]}"), updateUrlTextBox, BeanProperty.create("text"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"pronom.update.url\"]}"),
+                        updateUrlTextBox, BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
         updateUrlTextBox.addActionListener(new ActionListener() {
@@ -699,12 +740,17 @@ public class ConfigDialog extends JDialog {
             }
         });
 
-        autoUpdatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createTitledBorder(""), NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoUpdatePanel.border.title"))); // NOI18N
+        autoUpdatePanel.setBorder(
+                BorderFactory.createTitledBorder(BorderFactory.createTitledBorder(""),
+                        NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoUpdatePanel.border.title"))); // NOI18N
         autoUpdatePanel.setEnabled(false);
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.frequency.days\"]}"), updateFrequencyTextBox, BeanProperty.create("value"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.frequency.days\"]}"),
+                        updateFrequencyTextBox, BeanProperty.create("value"));
         bindingGroup.addBinding(binding);
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ, updateScheduleRadioButton, ELProperty.create("${selected}"), updateFrequencyTextBox, BeanProperty.create("enabled"));
+        binding = Bindings.createAutoBinding(UpdateStrategy.READ, updateScheduleRadioButton, ELProperty.create("${selected}"),
+                updateFrequencyTextBox, BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
         jLabel6.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel4.text")); // NOI18N
@@ -712,7 +758,9 @@ public class ConfigDialog extends JDialog {
         updateFrequencyButtonGroup.add(updateOnStartupRadioButton);
         updateOnStartupRadioButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.updateOnStartupRadioButton.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.frequency.startup\"]}"), updateOnStartupRadioButton, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.frequency.startup\"]}"),
+                        updateOnStartupRadioButton, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         updateOnStartupRadioButton.addActionListener(new ActionListener() {
@@ -724,7 +772,9 @@ public class ConfigDialog extends JDialog {
         updateFrequencyButtonGroup.add(updateScheduleRadioButton);
         updateScheduleRadioButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.updateScheduleRadioButton.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_ONCE, this, ELProperty.create("${!globalConfig[\"update.frequency.startup\"]}"), updateScheduleRadioButton, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_ONCE, this, ELProperty.create("${!globalConfig[\"update.frequency.startup\"]}"),
+                        updateScheduleRadioButton, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         GroupLayout autoUpdatePanelLayout = new GroupLayout(autoUpdatePanel);
@@ -755,7 +805,9 @@ public class ConfigDialog extends JDialog {
 
         autoUpdateCheckbox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoUpdateCheckbox.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.autoCheck\"]}"), autoUpdateCheckbox, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.autoCheck\"]}"),
+                        autoUpdateCheckbox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         autoUpdateCheckbox.addItemListener(new ItemListener() {
@@ -775,7 +827,9 @@ public class ConfigDialog extends JDialog {
 
         containerSigUrl.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.containerSigUrl.toolTipText")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"container.update.url\"]}"), containerSigUrl, BeanProperty.create("text"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"container.update.url\"]}"),
+                        containerSigUrl, BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
         jLabel2.setLabelFor(containerSigUrl);
@@ -787,17 +841,23 @@ public class ConfigDialog extends JDialog {
 
         jTextField1.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel1.toolTipText")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"puid.urlPattern\"]}"), jTextField1, BeanProperty.create("text_ON_ACTION_OR_FOCUS_LOST"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"puid.urlPattern\"]}"),
+                        jTextField1, BeanProperty.create("text_ON_ACTION_OR_FOCUS_LOST"));
         bindingGroup.addBinding(binding);
 
         askToDownloadCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.askToDownloadCheckBox.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.downloadPrompt\"]}"), askToDownloadCheckBox, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.downloadPrompt\"]}"),
+                        askToDownloadCheckBox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         autoSetDefaultSignatureFileCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.autoSetDefaultSignatureFileCheckBox.text")); // NOI18N
 
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.autoSetDefault\"]}"), autoSetDefaultSignatureFileCheckBox, BeanProperty.create("selected"));
+        binding =
+                Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"update.autoSetDefault\"]}"),
+                        autoSetDefaultSignatureFileCheckBox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
         autoSetDefaultSignatureFileCheckBox.addActionListener(new ActionListener() {

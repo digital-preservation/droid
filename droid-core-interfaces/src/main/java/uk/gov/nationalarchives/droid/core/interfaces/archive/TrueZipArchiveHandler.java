@@ -44,7 +44,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import de.schlichtherle.truezip.zip.ZipEntry;
 import de.schlichtherle.truezip.zip.ZipFile;
-
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -88,7 +87,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         try {
             Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
                 @Override
-                public final Iterator<ZipEntry> iterator() {
+                public Iterator<ZipEntry> iterator() {
                     return new ZipFileIterator(zipFile);
                 }
             };
@@ -107,7 +106,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      * @param entry
      * @param entryName
      * @param correlationId
-     * @return
+     * @return the resource id
      */
     private ResourceId submitDirectory(final URI parentName,
             ZipEntry entry, String entryName, ResourceId correlationId) {
@@ -220,8 +219,6 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-        
-       
     }
     
     /**
@@ -249,6 +246,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
          * Finds the longest path which has been seen before (if any),
          * and adds all the subsequent folders which haven't been seen.
          * @param path the path of
+         * @return the resource id
          */
         private ResourceId processAncestorFolders(String path) {
             // Split the path string into a list of ancestor paths:

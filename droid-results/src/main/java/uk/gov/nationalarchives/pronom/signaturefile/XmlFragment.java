@@ -44,11 +44,11 @@ import org.w3c.dom.Element;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "xml-fragment", propOrder = {"element"})
+@XmlType(name = "xml-fragment", propOrder = "element")
 public class XmlFragment {
 
     @XmlAnyElement
-    protected Element element;
+    private Element element;
 
     /**
      * @return the element

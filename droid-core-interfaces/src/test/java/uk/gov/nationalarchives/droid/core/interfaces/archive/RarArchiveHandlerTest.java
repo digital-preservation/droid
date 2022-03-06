@@ -33,7 +33,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
-import com.github.junrar.impl.FileVolumeManager;
+import com.github.junrar.volume.FileVolumeManager;
 import com.github.junrar.rarfile.FileHeader;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
@@ -69,7 +69,7 @@ public class RarArchiveHandlerTest {
     public void simpleTest() throws IOException, RarException {
 
         FileVolumeManager manager = new FileVolumeManager(Paths.get("./src/test/resources/sample.rar").toFile());
-        Archive archive = new Archive(manager);
+        Archive archive = new Archive(manager, null, null);
         List<FileHeader> headers = archive.getFileHeaders();
         assertEquals(9, headers.size());
         InputStream a = archive.getInputStream(headers.get(0));

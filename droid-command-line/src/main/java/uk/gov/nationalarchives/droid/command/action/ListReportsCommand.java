@@ -39,7 +39,6 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 
 import uk.gov.nationalarchives.droid.command.i18n.I18N;
-
 import uk.gov.nationalarchives.droid.report.interfaces.ReportManager;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
 

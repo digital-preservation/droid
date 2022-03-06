@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.channels.SeekableByteChannel;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -253,7 +252,8 @@ public class SevenZipArchiveHandler implements ArchiveHandler {
      * @param entry
      * @param entryName
      * @param correlationId
-     * @return
+     * @param resultHandler
+     * @return the resource id
      */
     private static ResourceId submitDirectory(final URI parentName,
                                               SevenZArchiveEntry entry, String entryName, ResourceId correlationId, ResultHandler resultHandler) {

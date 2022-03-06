@@ -134,7 +134,10 @@ public class FormatCountRenderer implements TableCellRenderer {
     }
     
     /** 
-     * Returns an ImageIcon for the count given. 
+     * Returns an ImageIcon for the count given.
+     *
+     * @param count
+     * @return the image icon
      */
     private ImageIcon createImageIcon(Integer count) {
         String iconSuffix;

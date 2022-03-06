@@ -57,13 +57,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Version", propOrder = {
-    "version"
-})
+@XmlType(name = "Version", propOrder = "version")
 public class Version {
 
     @XmlElement(name = "Version")
-    protected int version;
+    private int version;
 
     /**
      * Gets the value of the version property.

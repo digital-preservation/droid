@@ -38,7 +38,6 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

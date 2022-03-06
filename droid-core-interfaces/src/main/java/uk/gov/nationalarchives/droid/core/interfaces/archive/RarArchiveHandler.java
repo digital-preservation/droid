@@ -34,7 +34,6 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -45,7 +44,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.junrar.VolumeManager;
+import com.github.junrar.volume.VolumeManager;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
@@ -100,7 +99,7 @@ public final class RarArchiveHandler implements ArchiveHandler {
     public void handle(IdentificationRequest request) throws IOException {
         VolumeManager readerVolume = new RarReader(request.getWindowReader());
         try {
-            try (Archive archive = new Archive(readerVolume)) {
+            try (Archive archive = new Archive(readerVolume, null, null)) {
                 if (archive.isEncrypted()) {
                     throw new RuntimeException("Encrypted archive");
                 }

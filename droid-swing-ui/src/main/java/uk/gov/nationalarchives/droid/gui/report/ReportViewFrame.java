@@ -46,7 +46,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.swing.GroupLayout;

@@ -44,7 +44,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
-
 import static uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator.ANY_OF;
 
 

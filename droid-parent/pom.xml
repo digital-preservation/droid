@@ -89,18 +89,19 @@
 
         <project.email>pronom@nationalarchives.gov.uk</project.email>
 
-        <spring.version>5.3.8</spring.version>
+        <spring.version>5.3.15</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
-        <cxf.version>3.4.4</cxf.version>
-        <java.iso-tools.version>2.0.1</java.iso-tools.version>
+        <cxf.version>3.5.0</cxf.version>
+        <java.iso-tools.version>2.1.0</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.22</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
         <jwat.version>1.1.1</jwat.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <slf4j.version>1.7.30</slf4j.version>
-        <log4j2.version>2.14.1</log4j2.version>
+        <slf4j.version>1.7.35</slf4j.version>
+        <log4j2.version>2.17.1</log4j2.version>
+        <checkstyle.version>9.2.1</checkstyle.version>
     </properties>
   
     <build>
@@ -131,7 +132,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -141,7 +142,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.17</version>
+                    <version>3.1.2</version>
                 </plugin>
                 <plugin>
                     <groupId>com.code54.mojo</groupId>
@@ -151,7 +152,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.9.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -171,7 +172,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -182,7 +183,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                 </plugin>
 
                 <plugin>
@@ -193,19 +194,19 @@
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
                             <artifactId>maven-scm-provider-gitexe</artifactId>
-                            <version>1.11.2</version>
+                            <version>1.12.2</version>
                         </dependency>
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
                             <artifactId>maven-scm-api</artifactId>
-                            <version>1.11.2</version>
+                            <version>1.12.2</version>
                         </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
+                    <version>3.0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -243,7 +244,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.9.1</version>
+                    <version>3.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -291,7 +292,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.2.2</version>
+                <version>6.5.3</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                 </configuration>
@@ -634,7 +635,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-ri</artifactId>
-                <version>3.0.1</version>
+                <version>3.0.2</version>
                 <type>pom</type>
             </dependency>
             <dependency>
@@ -690,7 +691,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                <groupId>commons-io</groupId>
                <artifactId>commons-io</artifactId>
-               <version>2.9.0</version>
+               <version>2.11.0</version>
             </dependency>
             <dependency>
                <groupId>commons-lang</groupId>
@@ -715,7 +716,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.20</version>
+                <version>1.21</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -750,7 +751,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.10</version>
+                <version>2.10.13</version>
             </dependency>
             <dependency>
                 <groupId>org.jwat</groupId>
@@ -790,7 +791,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.11.1</version>
+                <version>4.3.1</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
@@ -800,7 +801,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
-                <version>2.7.0</version>
+                <version>2.7.2</version>
             </dependency>
             <dependency>
                 <groupId>com.github.stephenc.java-iso-tools</groupId>
@@ -815,7 +816,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>com.github.junrar</groupId>
                 <artifactId>junrar</artifactId>
-                <version>6.0.1</version>
+                <version>7.4.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>

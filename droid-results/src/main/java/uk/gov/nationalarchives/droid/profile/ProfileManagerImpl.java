@@ -64,6 +64,10 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
  */
 public class ProfileManagerImpl implements ProfileManager {
 
+    /**
+     * Maximum number of retries to find a unique profile id before giving up
+     */
+    static final int MAX_RETRIES = 5;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ProfileContextLocator profileContextLocator;
@@ -72,6 +76,8 @@ public class ProfileManagerImpl implements ProfileManager {
     private ProfileDiskAction profileSaver;
     private SignatureManager signatureManager;
     private DroidGlobalConfig config;
+
+
 
     /**
      * Empty bean constructor.
@@ -115,13 +121,13 @@ public class ProfileManagerImpl implements ProfileManager {
                 throw new ProfileManagerException(e.getMessage());
             }
         }
-        
-        String profileId = String.valueOf(System.currentTimeMillis());
+
+        String profileId = getUniqueProfileId();
+        Path profileHomeDir = config.getProfilesDir().resolve(profileId);
+        FileUtil.mkdirsQuietly(profileHomeDir);
+
         log.info("Creating profile: " + profileId);
         ProfileInstance profile = profileContextLocator.getProfileInstance(profileId, propertyOverrides);
-        
-        final Path profileHomeDir = config.getProfilesDir().resolve(profile.getUuid());
-        FileUtil.mkdirsQuietly(profileHomeDir);
 
         createProfileBinarySigFile(signatures.get(SignatureType.BINARY), profile, profileHomeDir);
         createProfileContainerSigFile(signatures.get(SignatureType.CONTAINER), profile, profileHomeDir);
@@ -140,6 +146,25 @@ public class ProfileManagerImpl implements ProfileManager {
             
         profileContextLocator.addProfileContext(profile);
         return profile;
+    }
+
+    private String getUniqueProfileId() {
+        String profileId = String.valueOf(System.currentTimeMillis());
+        Path profileHomeDir = config.getProfilesDir().resolve(profileId);
+
+        int retryCount = 0;
+
+        //to avoid folder collision, check if the folder already exists, if it does, just wait and try upto 5 times
+        while (retryCount++ <= MAX_RETRIES && FileUtil.exists(profileHomeDir)) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+            profileId = String.valueOf(System.currentTimeMillis());
+            profileHomeDir = config.getProfilesDir().resolve(profileId);
+        }
+        return profileId;
     }
 
     private void createProfileBinarySigFile(final SignatureFileInfo binarySigFile, final ProfileInstance profile, final Path profileHomeDir) {
@@ -375,7 +400,7 @@ public class ProfileManagerImpl implements ProfileManager {
 
             profile.setLoadedFrom(source);
             profile.setName(FilenameUtils.getBaseName(FileUtil.fileName(source)));
-            profile.setUuid(String.valueOf(System.currentTimeMillis()));
+            profile.setUuid(getUniqueProfileId());
             profile.onLoad();
 
             String profileId = profile.getUuid();

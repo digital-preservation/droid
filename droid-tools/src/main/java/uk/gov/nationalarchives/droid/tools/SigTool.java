@@ -45,16 +45,14 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.byteseek.compiler.CompileException;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor;
 import uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler;
 import uk.gov.nationalarchives.droid.core.signature.compiler.SignatureType;
-
-import net.byteseek.compiler.CompileException;
 
 /**
  * A simple command line utility that can parse PRONOM / Container syntax signatures, and either output

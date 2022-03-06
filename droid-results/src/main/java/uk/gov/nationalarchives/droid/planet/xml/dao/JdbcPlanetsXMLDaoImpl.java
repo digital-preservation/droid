@@ -554,6 +554,8 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
     /**
      * Load all the formats.
+     *
+     * @return the list of formats
      */
     private List<Format> loadAllFormats() throws SQLException {
         //CHECKSTYLE:OFF

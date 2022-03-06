@@ -45,7 +45,6 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;

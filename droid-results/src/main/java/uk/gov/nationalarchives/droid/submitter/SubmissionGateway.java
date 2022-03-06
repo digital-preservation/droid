@@ -251,7 +251,7 @@ public class SubmissionGateway implements AsynchDroid {
     /**
      * @param request  The archive request to handle.
      * @param results The previous identification results for the archive format.
-     * @return
+     * @param archiveFormat
      */
     private void handleArchive(IdentificationRequest request,
                                IdentificationResultCollection results, String archiveFormat) {

@@ -108,6 +108,8 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
     }
 
     /**
+     * @param key
+     * @param type
      * @throws CommandExecutionException
      */
     private void updateDefaultVersion(String key, SignatureType type) throws CommandExecutionException {

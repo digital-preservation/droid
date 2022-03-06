@@ -93,7 +93,6 @@ package uk.gov.nationalarchives.droid.core.signature.droid6;
 
 import java.io.IOException;
 import java.io.Writer;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -101,7 +100,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;

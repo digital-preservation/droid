@@ -109,7 +109,7 @@ public abstract class WebArchiveHandler {
      * @param resourceName
      * @param entryName
      * @param correlationId
-     * @return
+     * @return the resource id
      */
     private ResourceId submitDirectory(final String webArchiveType, final URI parentName,
                                        String resourceName, String entryName, ResourceId correlationId) {
