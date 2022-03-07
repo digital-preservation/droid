@@ -16,3 +16,6 @@ updates:
   - dependency-name: org.mockito:mockito-core
     versions:
     - 3.8.0
+  - dependency-name: org.apache.derby:derby
+    versions:
+      - ">= 10.14"
