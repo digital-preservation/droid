@@ -183,7 +183,7 @@ public class ProfileInstanceManagerTest {
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                Thread.sleep(200);
+                Thread.sleep(500);
                 return null;
             }
             
