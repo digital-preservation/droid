@@ -31,28 +31,28 @@
  */
 package uk.gov.nationalarchives.droid.container.httpservice;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.apache.commons.io.FileUtils;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-
 import org.junit.rules.TemporaryFolder;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author rflitcroft
@@ -65,14 +65,22 @@ public class ContainerSignatureHttpServiceTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
-    
+
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
+
     @Before
-    public void setup() {
+    public void setup() throws IOException {
+        stubFor(get(urlEqualTo("/pronom/container-signature.xml"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "text/xml")
+                        .withHeader("Last-Modified", "Wed, 21 Jan 2022 07:28:00 GMT")
+                        .withBody(IOUtils.resourceToString("/container-signature-20220311.xml", StandardCharsets.UTF_8))
+                ));
+
+
         httpService = new ContainerSignatureHttpService();
-        //BNO: 25-April-2014 - Updated to reflect the new location following website reorganisation
-        // (changed from www~ to app~).  TODO: Ideally settings like this would be managed centrally somewhere!!
-        // fEB 2016 ... AND BACK TO WWW...
-        httpService.setEndpointUrl("http://www.nationalarchives.gov.uk/pronom/container-signature.xml");
+        httpService.setEndpointUrl(wireMockRule.url("pronom/container-signature.xml"));
         proxySettings = mock(ProxySettings.class);
     }
     
@@ -83,8 +91,7 @@ public class ContainerSignatureHttpServiceTest {
 
         SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
         assertNull(sigFileInfo.getFile());
-        assertTrue(sigFileInfo.getVersion() > 20110114);
-        //assertEquals(20110114, sigFileInfo.getVersion());
+        assertThat(sigFileInfo.getVersion(), greaterThan(20110114));
         assertEquals(false, sigFileInfo.isDeprecated());
     }
     
@@ -99,8 +106,7 @@ public class ContainerSignatureHttpServiceTest {
         
         SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
         assertNull(sigFileInfo.getFile());
-        assertTrue(sigFileInfo.getVersion() > 20110114);
-        //assertEquals(20110114, sigFileInfo.getVersion());
+        assertThat(sigFileInfo.getVersion(), greaterThan(20110114));
         assertEquals(false, sigFileInfo.isDeprecated());
     }
 
@@ -116,8 +122,7 @@ public class ContainerSignatureHttpServiceTest {
         try {
             sigFileInfo = httpService.importSignatureFile(tmpDir.toPath());
             assertEquals(false, sigFileInfo.isDeprecated());
-            //assertEquals(20110114, sigFileInfo.getVersion());
-            assertTrue(sigFileInfo.getVersion() > 20110114);
+            assertThat(sigFileInfo.getVersion(), greaterThan(20110114));
         } catch (SignatureServiceException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -143,8 +148,7 @@ public class ContainerSignatureHttpServiceTest {
         try {
             sigFileInfo = httpService.importSignatureFile(tmpDir.toPath());
             assertEquals(false, sigFileInfo.isDeprecated());
-            //assertEquals(20110114, sigFileInfo.getVersion());
-            assertTrue(sigFileInfo.getVersion() > 20110114);
+            assertThat(sigFileInfo.getVersion(), greaterThan(20110114));
         } catch (SignatureServiceException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

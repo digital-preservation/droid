@@ -32,23 +32,29 @@
 package uk.gov.nationalarchives.droid.signature;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.io.FileUtils;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
@@ -64,30 +70,43 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
 @ContextConfiguration(locations = "classpath*:META-INF/spring-signature.xml")
 public class PronomSignatureServiceTest {
 
-    private static final String ENDPOINT_URL = "http://www.nationalarchives.gov.uk/pronom/service.asmx";
-//    private static final String ENDPOINT_URL = "http://localhost:6666/pronom/service.asmx";
-    
     private static final int PROXY_PORT = 8080;
-//    private static final String PROXY_HOST = "localhost";
     private static final String PROXY_HOST = "wb-cacheclst1.web.local";
-
-    private static final int CURRENT_VER = 52;    
     
     @Autowired
     private PronomSignatureService importer;
     
     private Path sigFileDir;
-    
 
-    
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
+
+    private String formatEndpointUrl() {
+        return String.format("http://localhost:%d/pronom/service.asmx", wireMockRule.port());
+    }
+
     @Before
     public void setup() throws Exception {
+        stubFor(any(urlEqualTo("/pronom/service.asmx"))
+                .withRequestBody(matchingXPath("//getSignatureFileVersionV1"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><getSignatureFileVersionV1Response xmlns=\"http://pronom.nationalarchives.gov.uk\"><Version><Version>104</Version></Version><Deprecated>false</Deprecated></getSignatureFileVersionV1Response></soap:Body></soap:Envelope>")));
+
+
+
+        stubFor(any(urlEqualTo("/pronom/service.asmx"))
+                .withRequestBody(matchingXPath("//getSignatureFileV1"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody(IOUtils.resourceToString("/uk/gov/nationalarchives/droid/signature/getSignatureFileResponse.xml", StandardCharsets.UTF_8))
+                ));
 
         sigFileDir = Paths.get("target/tmp_sig_files");
         FileUtil.deleteQuietly(sigFileDir);
         FileUtil.mkdirsQuietly(sigFileDir);
         Files.deleteIfExists(Paths.get("target/tmp_sig_files/DROID_SignatureFile_V26.xml"));
-        importer.setEndpointUrl(ENDPOINT_URL);
+        importer.setEndpointUrl(formatEndpointUrl());
         ProxySettings proxySettings = new ProxySettings();
         proxySettings.setEnabled(false);
         importer.onProxyChange(proxySettings);
