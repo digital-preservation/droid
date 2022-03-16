@@ -39,8 +39,6 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.lang.SystemUtils;
 
-import sun.awt.shell.ShellFolder;
-
 /**
  * Validator to validate that all selected files are profilable.
  */
@@ -56,17 +54,15 @@ public class FileSystemSelectionValidator {
      */
     public FileSystemSelectionValidator(List<File> files) {
         boolean valid = true; //valid until proven otherwise
-        //Note: We are importing ShellFolder from a restricted set. You can see a corresponding
-        //suppression of a checkstyle validation. This is acceptable here as we are using it
-        //specifically with Windows OS only.
         if (SystemUtils.IS_OS_WINDOWS) {
+            FileSystemView fileSystemView = FileSystemView.getFileSystemView();
             List<File> nonFSFiles = files.stream().filter(item ->
-                    !FileSystemView.getFileSystemView().isFileSystem(item)).collect(Collectors.toList());
+                    !fileSystemView.isFileSystem(item)).collect(Collectors.toList());
             if (nonFSFiles.size() == 0) {
                 valid = true;
             } else {
                 errorMessage = errorTemplate + nonFSFiles.stream().map(
-                        item -> ((ShellFolder) item).getDisplayName()).collect(Collectors.joining(","));
+                        item -> fileSystemView.getSystemDisplayName(item)).collect(Collectors.joining(","));
                 valid = false;
             }
         }

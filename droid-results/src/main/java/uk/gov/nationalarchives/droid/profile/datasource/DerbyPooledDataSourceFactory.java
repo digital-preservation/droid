@@ -83,7 +83,7 @@ public class DerbyPooledDataSourceFactory implements FactoryBean<DerbyPooledData
 
     @Override
     public DerbyPooledDataSource getObject() throws Exception {
-        String droidLogDir = System.getProperty(RuntimeConfig.LOG_DIR);
+        String droidLogDir = System.getProperty(RuntimeConfig.LOG_DIR, "");
         System.setProperty("derby.stream.error.file",
                 Paths.get(droidLogDir, "derby.log").toAbsolutePath().toString());
         //setPoolPreparedStatements(true);
