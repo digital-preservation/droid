@@ -90,6 +90,7 @@ public class SevenZArchiveHandlerTest {
         }
         
         AsynchDroid droidCore = mock(AsynchDroid.class);
+        when(droidCore.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
 
         SevenZipArchiveHandler handler = new SevenZipArchiveHandler();
         handler.setFactory(factory);

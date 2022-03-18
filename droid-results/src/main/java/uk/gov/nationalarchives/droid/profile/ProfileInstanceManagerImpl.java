@@ -229,40 +229,46 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             inError = false;
             walkState = profileWalkerDao.load();
 
+            // Set any results filter set on the profile on the submission gateway (which will set it on the results handler and archive handlers).
+            submissionGateway.setResultsFilter(profileInstance.getResultsFilter());
+            submissionGateway.setIdentificationFilter(profileInstance.getIdentificationFilter());
+
             // replay any queued requests
             submissionGateway.replay();
 
             // start walking the profile spec
             profileInstance.start();
-            // start a thread to estimate the number of jobs, and
-            // update the progress monitor when it's done.
-            final ProfileSpecJobCounter counter = new ProfileSpecJobCounter(profileInstance.getProfileSpec());
-            final FutureTask<Long> countFuture = new FutureTask<Long>(counter) {
-                @Override
-                protected void done() {
-                    if (!isCancelled()) {
-                        try {
-                            specWalker.getProgressMonitor().setTargetCount(get());
-                        } catch (InterruptedException e) {
-                            log.debug(e.getMessage(), e);
-                        } catch (ExecutionException e) {
-                            log.error(e.getMessage(), e);
+
+            final Runnable walk;
+            ProgressMonitor progressMonitor = specWalker.getProgressMonitor();
+            if (progressMonitor != null && progressMonitor.isMonitoring()) {
+                final ProfileSpecJobCounter counter = new ProfileSpecJobCounter(profileInstance.getProfileSpec());
+                final FutureTask<Long> countFuture = new FutureTask<Long>(counter) {
+                    @Override
+                    protected void done() {
+                        if (!isCancelled()) {
+                            try {
+                                specWalker.getProgressMonitor().setTargetCount(get());
+                            } catch (InterruptedException e) {
+                                log.debug(e.getMessage(), e);
+                            } catch (ExecutionException e) {
+                                log.error(e.getMessage(), e);
+                            }
                         }
                     }
-                }
-            };
-
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(countFuture);
+                };
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.submit(countFuture);
+                walk = new WalkerTask(countFuture, counter);
+            } else {
+                walk = new WalkerTask(null, null);
+            }
 
             ExecutorService mainSubmitter = Executors.newSingleThreadExecutor();
-
-            Runnable walk = new WalkerTask(countFuture, counter);
             task = mainSubmitter.submit(walk);
             mainSubmitter.shutdown();
         }
         return task;
-
     }
     
     private final class WalkerTask implements Runnable {
@@ -288,8 +294,12 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
                 throw new ProfileException(e);
             } finally {
                 postWalk();
-                counter.cancel();
-                countFuture.cancel(false);
+                if (counter != null) {
+                    counter.cancel();
+                }
+                if (countFuture != null) {
+                    countFuture.cancel(false);
+                }
                 if (!inError) {
                     profileInstance.finish();
                 }
@@ -303,7 +313,7 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
             submitterPermits.acquire();
             ProgressMonitor progressMonitor = specWalker.getProgressMonitor();
             final ProgressState progress = profileInstance.getProgress();
-            if (progress != null) {
+            if (progress != null && progressMonitor != null) {
                 progressMonitor.initialise(progress.getTarget(), progress.getCount());
             }
         }
@@ -411,7 +421,10 @@ public class ProfileInstanceManagerImpl implements ProfileInstanceManager {
 
     @Override
     public void setResultsObserver(ProfileResultObserver observer) {
-        specWalker.getProgressMonitor().setResultObserver(observer);
+        ProgressMonitor progressMonitor = specWalker.getProgressMonitor();
+        if (progressMonitor != null) {
+            progressMonitor.setResultObserver(observer);
+        }
     }
 
     @Override

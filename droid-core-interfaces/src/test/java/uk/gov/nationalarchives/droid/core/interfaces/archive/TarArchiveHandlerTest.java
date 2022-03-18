@@ -101,6 +101,7 @@ public class TarArchiveHandlerTest {
             }
 
             AsynchDroid droidCore = mock(AsynchDroid.class);
+            when(droidCore.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
 
             TarArchiveHandler handler = new TarArchiveHandler();
             handler.setFactory(factory);
@@ -142,7 +143,9 @@ public class TarArchiveHandlerTest {
         TarArchiveHandler handler = new TarArchiveHandler();
         handler.setFactory(new TarEntryRequestFactory());
         
-        AsynchDroid droidCore = mock(AsynchDroid.class); 
+        AsynchDroid droidCore = mock(AsynchDroid.class);
+        when(droidCore.passesIdentificationFilter(any(IdentificationRequest.class))).thenReturn(true);
+
         handler.setDroidCore(droidCore);
         
         IdentificationRequest originalRequest = mock(IdentificationRequest.class);

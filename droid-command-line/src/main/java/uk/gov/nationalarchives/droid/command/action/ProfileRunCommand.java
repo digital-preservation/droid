@@ -39,18 +39,22 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceFactory;
 import uk.gov.nationalarchives.droid.profile.ProfileManagerException;
 import uk.gov.nationalarchives.droid.profile.ProfileState;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
 /**
- * @author rflitcroft
+ * A command which identifies files and either stores them in a database, or writes them out to a file or the console.
+ *
+ * @author rflitcroft, mpalmer
  *
  */
 public class ProfileRunCommand implements DroidCommand {
@@ -60,26 +64,29 @@ public class ProfileRunCommand implements DroidCommand {
     private String destination;
     private String[] resources;
     private boolean recursive;
-    
     private ProfileManager profileManager;
     private SignatureManager signatureManager;
-    private LocationResolver locationResolver;
-
+    private ProfileResourceFactory profileResourceFactory;
     private PropertiesConfiguration propertyOverrides;
-    /**
-     * {@inheritDoc}
-     */
+    private String binarySignaturesFileName;
+    private String containerSignaturesFileName;
+    private Filter resultsFilter;
+    private Filter identificationFilter;
+
     @Override
     public void execute() throws CommandExecutionException {
         try {
-            Map<SignatureType, SignatureFileInfo> sigs = signatureManager.getDefaultSignatures();
+            Map<SignatureType, SignatureFileInfo> sigs = getSignatureFiles();
             ProfileInstance profile = profileManager.createProfile(sigs, propertyOverrides);
+
+            profile.setResultsFilter(resultsFilter);
+            profile.setIdentificationFilter(identificationFilter);
             profile.changeState(ProfileState.VIRGIN);
 
             for (String resource : resources) {
-                profile.addResource(locationResolver.getResource(resource, recursive));
+                profile.addResource(getProfileResourceFactory().getResource(resource, recursive));
             }
-            
+            profileManager.setProgressObserver(profile.getUuid(), null);
             Future<?> future = profileManager.start(profile.getUuid());
             future.get();
             
@@ -90,9 +97,9 @@ public class ProfileRunCommand implements DroidCommand {
             };
 
             Thread.sleep(SLEEP_TIME);
+
             profileManager.save(profile.getUuid(), Paths.get(destination), progressCallback);
             profileManager.closeProfile(profile.getUuid());
-
         } catch (ProfileManagerException e) {
             throw new CommandExecutionException(e);
         } catch (InterruptedException e) {
@@ -108,17 +115,50 @@ public class ProfileRunCommand implements DroidCommand {
     }
 
     /**
+     * @return The default binary and container signatures, but will override with different ones if provided.
+     * @throws SignatureFileException if there's a problem obtaining the signature files.
+     */
+    private Map<SignatureType, SignatureFileInfo> getSignatureFiles() throws SignatureFileException {
+        Map<SignatureType, SignatureFileInfo> sigs = signatureManager.getDefaultSignatures();
+        if (binarySignaturesFileName != null) {
+            SignatureFileInfo binInfo = new SignatureFileInfo(0, false, SignatureType.BINARY);
+            binInfo.setFile(Paths.get(binarySignaturesFileName));
+            sigs.put(SignatureType.BINARY, binInfo);
+        }
+        if (containerSignaturesFileName != null && !containerSignaturesFileName.isEmpty()) {
+            SignatureFileInfo contInfo = new SignatureFileInfo(0, false, SignatureType.CONTAINER);
+            contInfo.setFile(Paths.get(containerSignaturesFileName));
+            sigs.put(SignatureType.CONTAINER, contInfo);
+        }
+        return sigs;
+    }
+
+    /**
      * @param destination the destination to set
      */
     public void setDestination(String destination) {
         this.destination = destination;
     }
-    
+
+    /**
+     * @return The destination file of the profile (either a profile or a csv file or blank/stdout for console).
+     */
+    public String getDestination() {
+        return destination;
+    }
+
     /**
      * @param resources the resources to set
      */
     public void setResources(String[] resources) {
         this.resources = resources;
+    }
+
+    /**
+     * @return The resources to profile.
+     */
+    public String[] getResources() {
+        return resources;
     }
     
     /**
@@ -141,12 +181,19 @@ public class ProfileRunCommand implements DroidCommand {
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
     }
-    
+
     /**
-     * @param locationResolver the locationResolver to set
+     * @return whether the profile recursively looks inside sub folders.
      */
-    public void setLocationResolver(LocationResolver locationResolver) {
-        this.locationResolver = locationResolver;
+    public boolean getRecursive() {
+        return recursive;
+    }
+
+    /**
+     * @param profileResourceFactory the profileResourceFactory to set
+     */
+    public void setProfileResourceFactory(ProfileResourceFactory profileResourceFactory) {
+        this.profileResourceFactory = profileResourceFactory;
     }
 
     /**
@@ -155,4 +202,67 @@ public class ProfileRunCommand implements DroidCommand {
     public void setProperties(PropertiesConfiguration properties) {
         this.propertyOverrides = properties;
     }
+
+    /**
+     * @return properties used to override profile defaults.
+     */
+    public PropertiesConfiguration getProperties() {
+        return propertyOverrides;
+    }
+
+    /**
+     * Set the signature file.
+     *
+     * @param signatureFile The signature file
+     */
+    public void setSignatureFile(final String signatureFile) {
+        this.binarySignaturesFileName = signatureFile;
+    }
+
+    /**
+     * Sets a filter to use to filter out results from CSV output.
+     * @param filter the filter, or null if no filter required.
+     */
+    public void setResultsFilter(final Filter filter) {
+        this.resultsFilter = filter;
+    }
+
+    /**
+     * @return A filter for results, or null if not set.
+     */
+    public Filter getResultsFilter() {
+        return resultsFilter;
+    }
+
+    /**
+     * Sets a filter to use to filter out results submitted for identification.
+     * @param filter the filter, or null if no filter required.
+     */
+    public void setIdentificationFilter(final Filter filter) {
+        this.identificationFilter = filter;
+    }
+
+    /**
+     * @return A filter that precedes identification of format, or null if not set.
+     */
+    public Filter getIdentificationFilter() {
+        return identificationFilter;
+    }
+
+      /**
+     * Set the container signature file.
+     *
+     * @param containerSignatureFile The Container Signature file
+     */
+    public void setContainerSignatureFile(final String containerSignatureFile) {
+        this.containerSignaturesFileName = containerSignatureFile;
+    }
+
+    private ProfileResourceFactory getProfileResourceFactory() {
+        if (profileResourceFactory == null) {
+            profileResourceFactory = new ProfileResourceFactory();
+        }
+        return profileResourceFactory;
+    }
+
 }

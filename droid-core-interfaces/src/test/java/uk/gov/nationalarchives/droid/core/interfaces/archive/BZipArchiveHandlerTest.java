@@ -81,6 +81,7 @@ public class BZipArchiveHandlerTest  {
 
         AsynchDroid droidCore = mock(AsynchDroid.class);
 
+
         BZipArchiveHandler handler = new BZipArchiveHandler();
         handler.setFactory(factory);
         handler.setDroidCore(droidCore);
@@ -88,9 +89,10 @@ public class BZipArchiveHandlerTest  {
         IdentificationRequest originalRequest = mock(IdentificationRequest.class);
         when(originalRequest.getIdentifier()).thenReturn(identifier);
         when(originalRequest.getSourceInputStream()).thenReturn(Files.newInputStream(file));
+        when(droidCore.passesIdentificationFilter(request)).thenReturn(true);
 
         handler.handle(originalRequest);
-
+        verify(droidCore).passesIdentificationFilter(request);
         verify(droidCore).submit(request);
     }
 

@@ -92,6 +92,16 @@ public class DqlCriterionMapperTest {
         
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testBadFieldName() {
+        DqlCriterionMapper.forField("bad field");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testBadOperator() {
+        DqlCriterionMapper.forOperator("bad operator");
+    }
+
     @Test
     public void testAllOperationMappings() {
 

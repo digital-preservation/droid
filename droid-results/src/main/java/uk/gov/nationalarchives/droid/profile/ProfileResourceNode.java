@@ -191,8 +191,7 @@ public class ProfileResourceNode {
      */
     @Override
     public String toString() {
-        //return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append(uri).toString();
-        return java.net.URLDecoder.decode(uri.toString());
+        return uri == null ? "[URI not set]" : java.net.URLDecoder.decode(uri.toString());
     }
 
     /**

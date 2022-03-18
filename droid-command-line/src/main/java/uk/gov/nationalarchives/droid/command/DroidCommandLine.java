@@ -32,11 +32,8 @@
 package uk.gov.nationalarchives.droid.command;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -44,7 +41,6 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.gov.nationalarchives.droid.command.action.CommandExecutionException;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
 import uk.gov.nationalarchives.droid.command.action.CommandFactoryImpl;
 import uk.gov.nationalarchives.droid.command.action.CommandLineException;
@@ -52,6 +48,7 @@ import uk.gov.nationalarchives.droid.command.action.CommandLineParam;
 import uk.gov.nationalarchives.droid.command.action.CommandLineSyntaxException;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.context.SpringUiContext;
+import uk.gov.nationalarchives.droid.command.filter.DqlParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 
 /**
@@ -62,43 +59,36 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
  */
 public final class DroidCommandLine implements AutoCloseable {
 
-    /** Options message. */
-    public static final String USAGE = "droid [options]";
-
-    /**
-     * Message about incorrect syntax.
-     */
-    public static final String CLI_SYNTAX_INCORRECT = "Incorrect command line syntax: %s";
-    /** Wrap width. */
-    public static final int WRAP_WIDTH = 120;
-
     //CHECKSTYLE:OFF
     /**
      * For testing. @see{uk.gov.nationalarchives.droid.command.TestContexCleanup}
      */
     public static boolean systemExit = true;
-    private PrintWriter errorPrintWriterForTests = null;
     //CHECKSTYLE:ON
 
+    private static final String CLI_SYNTAX_INCORRECT = "Incorrect command line syntax: %s";
+    private static final String UNKNOWN_ERROR = "An unknown error occurred: %s";
+    private static final String INVALID_COMMAND_LINE = "No actionable command line options specified (use -h to see all available options): %s";
+    private static final int WRAP_WIDTH = 120;
+    private static final String STDOUT = "stdout";
+
     /**Logger slf4j.*/
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-
     private final String[] args;
-    private GlobalContext context = SpringUiContext.getInstance();
-    
+    private final PrintWriter errorPrintWriter;
 
-
-    
+    private Logger log;
     private CommandFactory commandFactory;
     private CommandLine cli;
-    
+    private GlobalContext context;
+    private CommandLineParam mainCommand;
+    private PrintWriter printWriter;
+
     /**
      * Default constructor.
      * 
-     * @param args
-     *            the command line arguments
+     * @param args the command line arguments
      */
-    DroidCommandLine(final String[] args) {
+    public DroidCommandLine(final String[] args)  {
         this(args, null);
     }
 
@@ -106,145 +96,68 @@ public final class DroidCommandLine implements AutoCloseable {
      * Additional constructor, used only for unit tests involving exception.
      *
      * @param args the command line arguments
-     * @param errorPrintWriter print writer for error messages (used by unit tests only)
+     * @param errorPrintWriter print writer for error messages
      */
-    protected DroidCommandLine(final String[] args, PrintWriter errorPrintWriter) {
+    public DroidCommandLine(final String[] args, PrintWriter errorPrintWriter) {
+        this.errorPrintWriter = errorPrintWriter == null ? new PrintWriter(System.err) : errorPrintWriter;
         this.args = args;
-        this.errorPrintWriterForTests = errorPrintWriter;
-    }
-    
-    /**
-     * 
-     * @return GlobalContext object
-     */
-    public GlobalContext getContext() {
-        return context;
     }
 
     /**
+     * Main method for command line.  Returns 0 for success and 1 for failure.
      * 
-     * @param context object
+     * @param args the command line arguments
      */
-    public void setContext(GlobalContext context) {
-        this.context = context;
-    }
-    
-    /**
-     * Runs the command line interface.
-     * 
-     * @throws CommandLineException
-     *             if the command line failed for any reason
-     */
-    public void run() throws CommandLineException {
-        log.info("Starting DROID.");
-        CommandLineParser parser = new GnuParser();
-
-        try {
-            cli = parser.parse(CommandLineParam.options(), args);
-
-            CommandLineParam option = null;
-            for (Option opt : cli.getOptions()) {
-                option = CommandLineParam.TOP_LEVEL_COMMANDS.get(opt.getOpt());
-                if (option != null) {
-                    break;
-
-                }
-            }
-
-            if (option != null) {
-                option.getCommand(commandFactory, cli).execute();
-            } else {
-                throw new CommandLineSyntaxException(
-                        "No command line options specified (use -h to see all available options)");
-            }
-        } catch (ParseException pe) {
-            throw new CommandLineSyntaxException(pe);
-        }
-
-        // finally {
-        // log.info("Closing DROID.");
-        // }
-    }
-
-    /**
-     * Main method for command line.
-     * 
-     * @param args
-     *            the command line arguments
-     * @throws CommandLineException if bad command
-     * @throws CommandExecutionException if cannot execute command
-     */
-    public static void main(final String[] args) throws CommandLineException {
-
-        // we process --quiet parameter manually first before we initialize the spring context, to set the tna logger level.
-        final List<String> argsList = Arrays.asList(args);
-        if (argsList.contains("-" + CommandLineParam.QUIET.toString()) || argsList.contains("--" + CommandLineParam.QUIET.getLongName())) {
-            System.setProperty("consoleLogThreshold", "ERROR");
-        }
-
-        RuntimeConfig.configureRuntimeEnvironment();
-
-        int returnCode = 0;
-
+    public static void main(final String[] args)  {
+        int returnCode;
         try (DroidCommandLine commandLine = new DroidCommandLine(args)) {
             returnCode = commandLine.processExecution();
         }
-
         if (systemExit) {
             System.exit(returnCode);
         }
     }
 
     /**
-     * 
+     * Instantiates any context or command factories, then executes the top level command found when parsing.
+     *
      * @return a status code 0 success otherwise 1
-     * @throws CommandLineException on bad command
      */
-    public int processExecution() throws CommandLineException {
-
-        PrintWriter out = new PrintWriter(System.out);
-        
-        final CommandFactoryImpl localCommandFactory = new CommandFactoryImpl(context, out);
-        
-        this.setCommandFactory(localCommandFactory);
-
+    //CHECKSTYLE:OFF - illegal to catch Exception... but we want to here.
+    public int processExecution() {
         int returnCode = 0;
-
         try {
-
-            run();
-            
-            out.flush(); //Only flush. Never close System.out
-            context.close();
-
+            init();
+            mainCommand.getCommand(commandFactory, cli).execute();
         } catch (CommandLineSyntaxException clsx) {
             returnCode = 1;
-            PrintWriter err = errorPrintWriterForTests == null ? new PrintWriter(System.err) : errorPrintWriterForTests;
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printWrapped(err, WRAP_WIDTH, String.format(CLI_SYNTAX_INCORRECT, clsx.getMessage()));
-            err.flush(); //Only flush. Never close System.err
-            //log.error("Droid CommandLineException", clex);
-            return returnCode;
-        } catch (CommandExecutionException ceex) {
+            outputErrorMessage(String.format(CLI_SYNTAX_INCORRECT, clsx.getMessage()));
+        } catch (CommandLineException ceex) {
             returnCode = 1;
-            PrintWriter err = new PrintWriter(System.err);
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printWrapped(err, WRAP_WIDTH, ceex.getMessage());
-            err.flush(); //Only flush. Never close System.err
-            //log.error("Droid Execution Error", ceex);
-            throw ceex;
-
-        } catch (CommandLineException clex) {
+            outputErrorMessage(ceex.getMessage());
+        } catch (Exception ex) {
             returnCode = 1;
-            PrintWriter err = new PrintWriter(System.err);
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printWrapped(err, WRAP_WIDTH, clex.getMessage());
-            err.flush(); //Only flush. Never close System.err
-            //log.error("Droid CommandLineException", clex);
-            throw clex;
+            outputErrorMessage(String.format(UNKNOWN_ERROR, ex.getMessage()));
+        } finally {
+            close();
         }
-
         return returnCode;
+    }
+    //CHECKSTYLE:ON
+
+    @Override
+    public void close() {
+        if (printWriter != null) {
+            printWriter.flush();  //Only flush. Never close System.out
+        }
+        if (context != null) {
+            try {
+                context.close();
+            } finally {
+                context = null;
+                commandFactory = null;
+            }
+        }
     }
 
     /**
@@ -264,15 +177,147 @@ public final class DroidCommandLine implements AutoCloseable {
     }
 
     /**
-     * 
-     * @return the command line
+     * Sets the global context used to generate the beans by the command factory.
+     * @param context the global context.
      */
-    public CommandLine getCommandLine() {
-        return cli;
+    public void setContext(GlobalContext context) {
+        this.context = context;
     }
 
-    @Override
-    public void close() {
-        this.getContext().close();
+    /**
+     * Sets the print writer for commands to write output.
+     * @param writer The print writer to write command output to.
+     */
+    public void setPrintWriter(PrintWriter writer) {
+        printWriter = writer;
     }
+
+    /**
+     * @return The PrintWriter used to output messages from the commands.
+     */
+    public PrintWriter getPrintWriter() {
+        return printWriter;
+    }
+
+    /**
+     * @return The global context used to generate the beans by the command factory.
+     */
+    public GlobalContext getContext() {
+        return context;
+    }
+
+    /*
+     * Private functions
+     */
+
+    /**
+     * Initialises all the objects needed to start processing the main command.
+     *
+     * @throws CommandLineException if there's a problem parsing the command line.
+     */
+    private void init() throws CommandLineException {
+        parseCommandLine();
+        configureQuietLogging();
+        RuntimeConfig.configureRuntimeEnvironment();
+        if (log == null) { // don't want to instantiate logger until all logging configuration is done.
+            log = LoggerFactory.getLogger(this.getClass());
+        }
+        log.info("Starting DROID.");
+        if (context == null) {
+            setContext(SpringUiContext.getInstance());
+        }
+        if (printWriter == null) {
+            setPrintWriter(new PrintWriter(System.out));
+        }
+        if (commandFactory == null) {
+            setCommandFactory(new CommandFactoryImpl(context, printWriter));
+        }
+    }
+
+    private void configureQuietLogging() {
+        if (isQuiet() || hasConsoleOutput()) {
+            System.setProperty("consoleLogThreshold", "ERROR");
+        }
+    }
+
+    private void parseCommandLine() throws CommandLineException {
+        try {
+            try {
+                cli = new GnuParser().parse(CommandLineParam.options(), args);
+                mainCommand = findTopLevelOption();
+
+                // If we don't find any top level option, but we have unbound arguments, interpret them as adding files to a profile:
+                if (mainCommand == null) {
+                    if (cli.getArgs().length > 0) {
+                        mainCommand = CommandLineParam.RUN_PROFILE;
+                    } else { // no top level option, and no unbound arguments...  error.
+                        throw new CommandLineSyntaxException(String.format(INVALID_COMMAND_LINE, String.join(" ", args)));
+                    }
+                }
+            } catch (DqlParseException pe) {
+                throw new CommandLineSyntaxException(pe.getMessage(), pe);
+            }
+        } catch (ParseException pe) {
+            throw new CommandLineSyntaxException(pe.getMessage(), pe);
+        }
+    }
+
+    private CommandLineParam findTopLevelOption() {
+        CommandLineParam result = null;
+        for (Option opt : cli.getOptions()) {
+            result = CommandLineParam.TOP_LEVEL_COMMANDS.get(opt.getOpt());
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @return true if the quiet flag is set on the command line.
+     */
+    private boolean isQuiet() {
+        return cli.hasOption(CommandLineParam.QUIET.toString());
+    }
+
+    /**
+     * Most commands output to the console.  The only ones that don't are those that export, report or a profile.
+     * @return true if the main command outputs to console.
+     */
+    private boolean hasConsoleOutput() {
+        return !hasNoConsoleOutput();
+    }
+
+    /**
+     * Commands that don't output to the console either write to a report, export file or to a profile database or file.
+     * @return true if the main command does not write to the console.
+     */
+    private boolean hasNoConsoleOutput() {
+        return isExportCommand() || isReportCommand() || isProfileToFileOrDatabase();
+    }
+
+    private boolean isExportCommand() {
+        return mainCommand == CommandLineParam.EXPORT_ONE_ROW_PER_FILE
+                || mainCommand == CommandLineParam.EXPORT_ONE_ROW_PER_FORMAT;
+    }
+
+    private boolean isReportCommand() {
+        return mainCommand == CommandLineParam.REPORT;
+    }
+
+    private boolean isProfileToFileOrDatabase() {
+        return mainCommand == CommandLineParam.RUN_PROFILE
+                && (cli.hasOption(CommandLineParam.PROFILES.getLongName())
+                  || (cli.hasOption(CommandLineParam.OUTPUT_FILE.getLongName())
+                     && !cli.getOptionValue(CommandLineParam.OUTPUT_FILE.getLongName()).equals(STDOUT)));
+    }
+
+    private void outputErrorMessage(String message) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printWrapped(errorPrintWriter, WRAP_WIDTH, message);
+        errorPrintWriter.flush(); //Only flush. Never close System.err
+        //log.error("Droid CommandLineException", clex);
+    }
+
 }
+

@@ -47,7 +47,7 @@
 
   <module name="LineLength">
     <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
-    <property name="max" value="160"/>
+    <property name="max" value="1000"/>
     <property name="tabWidth" value="4"/>
   </module>
 
@@ -177,7 +177,7 @@
       <property name="max" value="9"/>
     </module>
     <module name="ClassFanOutComplexity">
-      <property name="max" value="25"/>
+      <property name="max" value="27"/>
     </module>
     <module name="BooleanExpressionComplexity"/>
     <module name="NPathComplexity"/>
@@ -196,7 +196,7 @@
     
     <module name="ReturnCount"/>
     <module name="StringLiteralEquality"/>
-    <module name="UnnecessaryParentheses"/>
+    <!--<module name="UnnecessaryParentheses"/>-->
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
     <module name="MutableException"/>

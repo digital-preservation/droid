@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
@@ -57,6 +58,12 @@ public interface ResultHandlerDao {
      * @param parentId the node's parent ID
      */
     void save(ProfileResourceNode node, ResourceId parentId);
+
+    /**
+     * Sets a filter to use to determine whether to save a result or not.
+     * @param filter the filter to use, or null if no filter is required (defaults to null).
+     */
+    void setFilter(Filter filter);
 
     /**
      * Ensure that all results so far are committed.

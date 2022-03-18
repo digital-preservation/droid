@@ -100,7 +100,7 @@ public class ReportManagerImpl implements ReportManager {
      */
     public ReportManagerImpl(ProfileContextLocator contextLocator, ReportSpecDao reportSpecDao,
                              ProgressObserver observer, DroidGlobalConfig config) {
-        this.profileContextLocator = profileContextLocator;
+        this.profileContextLocator = contextLocator;
         this.reportSpecDao = reportSpecDao;
         this.observer = observer;
         this.config = config;

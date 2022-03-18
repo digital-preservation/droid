@@ -54,6 +54,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
@@ -450,6 +451,13 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
         } catch (InterruptedException e) {
             log.debug("Saving was interrupted while putting a new node into the queue.", e);
         }
+    }
+
+    @Override
+    public void setFilter(Filter filter) {
+        // We don't filter resources saved to the database currently - this is only for writing to CSV files.
+        // If we did filter resources saved to a database, we might encounter issues if the filter prohibits saving a folder,
+        // but the children of the folder would still be processed, and would then have no parent in the database.
     }
 
     @Override

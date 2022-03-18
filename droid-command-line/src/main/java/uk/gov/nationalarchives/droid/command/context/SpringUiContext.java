@@ -41,7 +41,6 @@ import uk.gov.nationalarchives.droid.command.action.DownloadSignatureUpdateComma
 import uk.gov.nationalarchives.droid.command.action.ExportCommand;
 import uk.gov.nationalarchives.droid.command.action.ListAllSignatureFilesCommand;
 import uk.gov.nationalarchives.droid.command.action.ListReportsCommand;
-import uk.gov.nationalarchives.droid.command.action.NoProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
@@ -76,99 +75,58 @@ public final class SpringUiContext implements GlobalContext {
         return new SpringUiContext(context);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DroidGlobalConfig getGlobalConfig() {
         return context.getBean("globalConfig", DroidGlobalConfig.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ProfileRunCommand getProfileRunCommand() {
         return context.getBean("profileRunCommand", ProfileRunCommand.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NoProfileRunCommand getNoProfileRunCommand() {
-        return context.getBean("noProfileRunCommand", NoProfileRunCommand.class);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ExportCommand getExportCommand(ExportOptions opt) {
         ExportCommand command = context.getBean("exportCommand", ExportCommand.class);
         command.setExportOptions(opt);
         return command;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public ReportCommand getReportCommand() {
         return context.getBean("reportCommand", ReportCommand.class);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public CheckSignatureUpdateCommand getCheckSignatureUpdateCommand() {
         return context.getBean("checkSignatureUpdateCommand", CheckSignatureUpdateCommand.class);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DownloadSignatureUpdateCommand getDownloadSignatureUpdateCommand() {
-        return (DownloadSignatureUpdateCommand) context.getBean("downloadSignatureUpdateCommand", DownloadSignatureUpdateCommand.class);
+        return context.getBean("downloadSignatureUpdateCommand", DownloadSignatureUpdateCommand.class);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DisplayDefaultSignatureFileVersionCommand getDisplayDefaultSignatureFileVersionCommand() {
         return context.getBean("displayDefaultSignatureVersion", DisplayDefaultSignatureFileVersionCommand.class);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ConfigureDefaultSignatureFileVersionCommand getConfigureDefaultSignatureFileVersionCommand() {
         return context.getBean("configureDefaultSignatureVersion", ConfigureDefaultSignatureFileVersionCommand.class);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ListAllSignatureFilesCommand getListAllSignatureFilesCommand() {
         return context.getBean("listAllSignatureFilesCommand", ListAllSignatureFilesCommand.class);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void close() {
         context.close();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ListReportsCommand getListReportsCommand() {
         return context.getBean("listReportsCommand", ListReportsCommand.class);

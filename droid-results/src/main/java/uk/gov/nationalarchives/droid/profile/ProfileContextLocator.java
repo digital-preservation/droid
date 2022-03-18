@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 import uk.gov.nationalarchives.droid.util.FileUtil;
@@ -64,7 +65,9 @@ public class ProfileContextLocator {
     private static final String HIBERNATE_CREATE = "hibernate.hbm2ddl.auto";
     private static final String BLANK_PROFILE = "profile.template";
     private static final String SIG_PROFILE = "profile\\.\\d+\\.template";
-    
+    private static final String DEFAULT_HASH_ALGORITH = "md5";
+    private static final int DEFAULT_MAX_BYTES_TO_SCAN = 65536;
+
     private final Logger log = LoggerFactory.getLogger(getClass());
     private DroidGlobalConfig globalConfig;
     
@@ -168,7 +171,6 @@ public class ProfileContextLocator {
         props.setProperty("submissionQueueFile", submissionQueueFile.toAbsolutePath().toString());
         props.setProperty("tempDirLocation", globalConfig.getTempDir().toAbsolutePath().toString());
         props.setProperty("profileHome", profileHome.toAbsolutePath().toString());
-        
         props.setProperty("containerSigPath", containerSignatureFile.toAbsolutePath().toString());
 
         props.setProperty("processTar", String.valueOf(profile.getProcessTarFiles()));
@@ -186,7 +188,22 @@ public class ProfileContextLocator {
         props.setProperty("hashAlgorithm", String.valueOf(profile.getHashAlgorithm()));
         props.setProperty("maxBytesToScan", String.valueOf(profile.getMaxBytesToScan()));
         props.setProperty("matchAllExtensions", String.valueOf(profile.getMatchAllExtensions()));
- 
+
+        String outputFilePath = profile.getOutputFilePath();
+        if (outputFilePath != null && !outputFilePath.isEmpty()) {
+            props.setProperty("outputFilePath", outputFilePath);
+        } else {
+            props.setProperty("outputFilePath", "");
+        }
+
+        props.setProperty("quoteAllFields", String.valueOf(profile.getQuoteAllFields()));
+
+        String columnsToWrite = profile.getColumnsToWrite() == null? "" : profile.getColumnsToWrite();
+        props.setProperty("columnsToWrite", columnsToWrite);
+
+        ExportOptions options = profile.getExportOptions() == null? ExportOptions.ONE_ROW_PER_FILE : profile.getExportOptions();
+        props.setProperty("exportOptions", options.name());
+
         String createUrl = globalConfig.getProperties().getString("database.createUrl");
         if (createUrl == null || createUrl.isEmpty()) {
             createUrl = "{none}";
@@ -391,20 +408,25 @@ public class ProfileContextLocator {
         PropertiesConfiguration mergedConfig = mergeConfigurations(globalConfig.getProperties(), propertiesOverride);
         ProfileInstance profileInstance = new ProfileInstance(ProfileState.INITIALISING);
         profileInstance.setUuid(id);
-        profileInstance.setThrottle(mergedConfig.getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName()));
-        profileInstance.setHashAlgorithm(mergedConfig.getString(DroidGlobalProperty.HASH_ALGORITHM.getName()));
-        profileInstance.setGenerateHash(mergedConfig.getBoolean(DroidGlobalProperty.GENERATE_HASH.getName()));
-        profileInstance.setProcessTarFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_TAR.getName()));
-        profileInstance.setProcessZipFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_ZIP.getName()));
-        profileInstance.setProcessGzipFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_GZIP.getName()));
-        profileInstance.setProcessRarFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_RAR.getName()));
-        profileInstance.setProcess7zipFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_7ZIP.getName()));
-        profileInstance.setProcessIsoFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_ISO.getName()));
-        profileInstance.setProcessBzip2Files(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_BZIP2.getName()));
-        profileInstance.setProcessArcFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_ARC.getName()));
-        profileInstance.setProcessWarcFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_WARC.getName()));
-        profileInstance.setMaxBytesToScan(mergedConfig.getLong(DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName()));
-        profileInstance.setMatchAllExtensions(mergedConfig.getBoolean(DroidGlobalProperty.EXTENSION_ALL.getName()));
+        profileInstance.setThrottle(mergedConfig.getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName(), 0));
+        profileInstance.setHashAlgorithm(mergedConfig.getString(DroidGlobalProperty.HASH_ALGORITHM.getName(), DEFAULT_HASH_ALGORITH));
+        profileInstance.setGenerateHash(mergedConfig.getBoolean(DroidGlobalProperty.GENERATE_HASH.getName(), false));
+        profileInstance.setProcessTarFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_TAR.getName(), true));
+        profileInstance.setProcessZipFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_ZIP.getName(), true));
+        profileInstance.setProcessGzipFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_GZIP.getName(), true));
+        profileInstance.setProcessRarFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_RAR.getName(), true));
+        profileInstance.setProcess7zipFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_7ZIP.getName(), true));
+        profileInstance.setProcessIsoFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_ISO.getName(), true));
+        profileInstance.setProcessBzip2Files(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_BZIP2.getName(), true));
+        profileInstance.setProcessArcFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_ARC.getName(), true));
+        profileInstance.setProcessWarcFiles(mergedConfig.getBoolean(DroidGlobalProperty.PROCESS_WARC.getName(), true));
+        profileInstance.setMaxBytesToScan(mergedConfig.getLong(DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName(), DEFAULT_MAX_BYTES_TO_SCAN));
+        profileInstance.setMatchAllExtensions(mergedConfig.getBoolean(DroidGlobalProperty.EXTENSION_ALL.getName(), false));
+        profileInstance.setOutputFilePath(mergedConfig.getString(DroidGlobalProperty.OUTPUT_FILE_PATH.getName(), ""));
+        profileInstance.setQuoteAllFields(mergedConfig.getBoolean(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), true));
+        profileInstance.setColumnsToWrite(mergedConfig.getString(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), ""));
+        profileInstance.setExportOptions(ExportOptions.valueOf(mergedConfig.getString(DroidGlobalProperty.EXPORT_OPTIONS.getName(),
+                ExportOptions.ONE_ROW_PER_FILE.name())));
         addProfileContext(profileInstance);
         return profileInstance;
     }

@@ -72,11 +72,10 @@ public class ListReportsCommandTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(mockWriter, times(1)).println(captor.capture());
 
-        assertEquals("\n" +
-                "Report:\t'Report name for spec 1'\n" +
-                "\tFormats:\t\t'Pdf'\t'DROID Report XML'\n" +
-                "\n" +
-                "Report:\t'Report name for spec 2'\n" +
-                "\tFormats:\t\t'Pdf'\t'DROID Report XML'\n", captor.getValue());
+        String expected = "\nReport:\t'Report name for spec 1'\n\tFormats:\t'Pdf'\t'DROID Report XML'" +
+                          "\nReport:\t'Report name for spec 2'\n\tFormats:\t'Pdf'\t'DROID Report XML'";
+        String actual = captor.getValue();
+
+        assertEquals(expected, actual);
     }
 }

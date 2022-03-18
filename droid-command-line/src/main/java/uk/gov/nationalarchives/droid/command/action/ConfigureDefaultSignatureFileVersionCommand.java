@@ -65,8 +65,7 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
     private DroidGlobalConfig globalConfig;
     
     private int signatureFileVersion;
-    private SignatureType type;
-    
+
     /**
      * 
      * {@inheritDoc}
@@ -78,14 +77,10 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
         Map<SignatureType, SortedMap<String, SignatureFileInfo>> sigFileInfos = 
             signatureManager.getAvailableSignatureFiles();
         
-        Map<String, SignatureFileInfo> sigFileInfoForType = sigFileInfos.get(type);
-        
-        for (Map.Entry<String, SignatureFileInfo> entry : sigFileInfoForType.entrySet()) {
-            String key = entry.getKey();
-            SignatureFileInfo info = entry.getValue();
-            if (info.getVersion() == signatureFileVersion) {
-                validVersion = true;
-                updateDefaultVersion(key);
+        for (SignatureType sigType : SignatureType.values()) {
+            Map<String, SignatureFileInfo> sigFileInfoForType = sigFileInfos.get(sigType);
+            validVersion = updated(sigFileInfoForType, sigType);
+            if (validVersion) {
                 break;
             }
         }
@@ -97,25 +92,42 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
         }
     }
 
+    private boolean updated(Map<String, SignatureFileInfo> sigInfo, SignatureType type) throws CommandExecutionException {
+        if (sigInfo != null) {
+            for (Map.Entry<String, SignatureFileInfo> entry : sigInfo.entrySet()) {
+                String key = entry.getKey();
+                SignatureFileInfo info = entry.getValue();
+                if (info.getVersion() == signatureFileVersion) {
+                    updateDefaultVersion(key, type);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param key
+     * @param type
      * @throws CommandExecutionException
      */
-    private void updateDefaultVersion(String key) throws CommandExecutionException {
+    private void updateDefaultVersion(String key, SignatureType type) throws CommandExecutionException {
         final PropertiesConfiguration properties = globalConfig.getProperties();
         properties.setProperty(mapping.get(type).getName(), key);
         try {
             properties.save();
             SignatureFileInfo sigFileInfo = signatureManager.getDefaultSignatures().get(type);
+            String version = Integer.toString(sigFileInfo.getVersion());
             printWriter.println(I18N.getResource(I18N.CONFIGURE_SIGNATURE_FILE_VERSION_SUCCESS,
-                    sigFileInfo.getVersion(), sigFileInfo.getFile().getFileName().toString()));
+                    version, sigFileInfo.getFile().getFileName().toString()));
                     
         } catch (ConfigurationException e) {
             throw new CommandExecutionException(e);
         } catch (SignatureFileException e) {
             throw new CommandExecutionException(e);
         }
-    };
+    }
     
     /**
      * @param printWriter the printWriter to set
@@ -149,6 +161,6 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
      * @param type the type to set
      */
     public void setType(SignatureType type) {
-        this.type = type;
+        // don't set type - we now test all of them.
     }
 }

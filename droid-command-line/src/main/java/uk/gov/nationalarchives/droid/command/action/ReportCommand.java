@@ -48,9 +48,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.gov.nationalarchives.droid.command.filter.CommandLineFilter;
-import uk.gov.nationalarchives.droid.command.filter.DqlFilterParser;
-import uk.gov.nationalarchives.droid.command.filter.SimpleFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
@@ -87,8 +84,7 @@ public class ReportCommand implements DroidCommand {
     private DroidGlobalConfig config;
     private String reportOutputType = "pdf";
 
-    private DqlFilterParser dqlFilterParser;    
-    private CommandLineFilter cliFilter;    
+    private Filter filter;
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
@@ -99,15 +95,6 @@ public class ReportCommand implements DroidCommand {
     public void execute() throws CommandExecutionException {
         List<String> profileIds = new ArrayList<String>();
 
-        SimpleFilter filter = null;
-        if (cliFilter != null) {
-            filter = new SimpleFilter(cliFilter.getFilterType());
-            
-            for (String dql : cliFilter.getFilters()) {
-                filter.add(dqlFilterParser.parse(dql));
-            }
-        }
-        
         // load each profile
         for (String profileLocation : profiles) {
             ProfileInstance profile;
@@ -212,8 +199,7 @@ public class ReportCommand implements DroidCommand {
     }
     
     /**
-     * @param profileList
-     *            the list of profiles to export.
+     * @param profileList the list of profiles to export.
      */
     public void setProfiles(String[] profileList) {
         this.profiles = profileList;
@@ -227,16 +213,14 @@ public class ReportCommand implements DroidCommand {
     }
 
     /**
-     * @param profileManager
-     *            the profileManager to set
+     * @param profileManager the profileManager to set
      */
     public void setProfileManager(ProfileManager profileManager) {
         this.profileManager = profileManager;
     }
 
     /**
-     * @param destination
-     *            the destination to set
+     * @param destination the destination to set
      */
     public void setDestination(String destination) {
         this.destination = destination;
@@ -250,20 +234,24 @@ public class ReportCommand implements DroidCommand {
     }
 
     /**
-     * @param reportManager
-     *            the reportManager to set
+     * @param reportManager  the reportManager to set
      */
     public void setReportManager(ReportManager reportManager) {
         this.reportManager = reportManager;
     }
-    
-    
+
     /**
-     * @param reportType
-     *            the reportType to set
+     * @param reportType the reportType to set
      */
     public void setReportType(String reportType) {
         this.reportType = reportType;
+    }
+
+    /**
+     * @return The report type
+     */
+    public String getReportType() {
+        return reportType;
     }
 
     /**
@@ -273,7 +261,14 @@ public class ReportCommand implements DroidCommand {
     public void setReportOutputType(String reportOutputType) {
         this.reportOutputType = reportOutputType;
     }
-    
+
+    /**
+     * @return The report output type.
+     */
+    public String getReportOutputType() {
+        return reportOutputType;
+    }
+
     /**
      * @param reportXmlWriter the reportXmlWriter to set
      */
@@ -285,17 +280,17 @@ public class ReportCommand implements DroidCommand {
      * Sets the filter.
      * @param filter the filter to set
      */
-    public void setFilter(CommandLineFilter filter) {
-        this.cliFilter = filter;
+    public void setFilter(Filter filter) {
+        this.filter = filter;
     }
-    
+
     /**
-     * @param dqlFilterParser the dqlFilterParser to set
+     * @return The filter for the reports, or null if not set.
      */
-    public void setDqlFilterParser(DqlFilterParser dqlFilterParser) {
-        this.dqlFilterParser = dqlFilterParser;
-    }    
-    
+    public Filter getFilter() {
+        return filter;
+    }
+
     /**
      * 
      * @return The global config used in this report command.

@@ -35,7 +35,6 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -43,24 +42,15 @@ import uk.gov.nationalarchives.droid.command.i18n.I18N;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportManager;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
 
-
 /**
- * @author a-mpalmer
- *
+ * Lists all available reports registered with DROID and outputs the list to a PrintWriter.
+ * @author mpalmer
  */
 public class ListReportsCommand implements DroidCommand {
 
-    /**
-     * SINGLE QUOTE string to be used in messages.
-     */
-    public static final String SINGLE_QUOTE = "'";
-
     private PrintWriter printWriter;
     private ReportManager reportManager;
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void execute() throws CommandExecutionException {
         List<ReportSpec> reports = reportManager.listReportSpecs();
@@ -69,16 +59,15 @@ public class ListReportsCommand implements DroidCommand {
         } else {
             StringBuilder builder = new StringBuilder();
             for (ReportSpec report : reports) {
-                String reportDescription = String.format("\nReport:\t'%s'\n\tFormats:\t", report.getName());
+                String reportDescription = String.format("\nReport:\t'%s'\n\tFormats:", report.getName());
                 builder.append(reportDescription);
-
                 List<String> outputFormats = getReportOutputFormats(report);
-                if (outputFormats != null) {
-                    builder.append(outputFormats.stream().map(s -> SINGLE_QUOTE + s + SINGLE_QUOTE).collect(Collectors.joining("\t")));
+                for (String format : outputFormats) {
+                    builder.append("\t'");
+                    builder.append(format);
+                    builder.append("'");
                 }
-
                 builder.append("\t'Pdf'\t'DROID Report XML'");
-                builder.append("\n");
             }
             printWriter.println(builder.toString());
         }
@@ -99,15 +88,21 @@ public class ListReportsCommand implements DroidCommand {
     }
     
     /**
-     * @param printWriter the printWriter to set
+     * @param printWriter the printWriter to output the report list to.
      */
     public void setPrintWriter(PrintWriter printWriter) {
         this.printWriter = printWriter;
-    }    
-    
+    }
+
     /**
-     * @param reportManager
-     *            the reportManager to set
+     * @return the printwriter to output the report list to.
+     */
+    public PrintWriter getPrintWriter() {
+        return printWriter;
+    }
+
+    /**
+     * @param reportManager the reportManager to set
      */
     public void setReportManager(ReportManager reportManager) {
         this.reportManager = reportManager;

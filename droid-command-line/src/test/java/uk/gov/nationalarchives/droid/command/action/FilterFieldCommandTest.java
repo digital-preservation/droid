@@ -46,8 +46,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import uk.gov.nationalarchives.droid.command.FilterFieldCommand;
-
 /**
  * @author rflitcroft
  *

@@ -155,16 +155,18 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         identifier.setParentResourceId(correlationId);
 
         IdentificationRequest request = factory.newRequest(metaData, identifier);
-        InputStream in = null;
-        try {
-            in = file.getInputStream(entry);
-            request.open(in);
-        } finally {
-            if (in != null) {
-                in.close();
+        if (droidCore.passesIdentificationFilter(request)) {
+            InputStream in = null;
+            try {
+                in = file.getInputStream(entry);
+                request.open(in);
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
             }
+            droidCore.submit(request);
         }
-        droidCore.submit(request);
     }
     
     /**

@@ -46,7 +46,7 @@ import uk.gov.nationalarchives.droid.command.i18n.I18N;
  *
  */
 public enum CommandLineParam {
-    
+
     /** help. */
     HELP("h", "help", I18N.HELP_HELP) {
         @Override
@@ -67,7 +67,7 @@ public enum CommandLineParam {
     EXPORT_ONE_ROW_PER_FILE("e", "export-file", false, 1, I18N.EXPORT_FILE_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-            throws CommandLineSyntaxException {
+                throws CommandLineSyntaxException {
             return commandFactory.getExportFileCommand(cli);
         }
     },
@@ -76,11 +76,10 @@ public enum CommandLineParam {
     EXPORT_ONE_ROW_PER_FORMAT("E", "export-format", false, 1, I18N.EXPORT_FORMAT_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-            throws CommandLineSyntaxException {
+                throws CommandLineSyntaxException {
             return commandFactory.getExportFormatCommand(cli);
         }
     },
-
 
     /** List of profiles to be worked on. */
     PROFILES("p", "profile(s)", true, -1, I18N.PROFILES_HELP, "filename(s)") {
@@ -114,16 +113,38 @@ public enum CommandLineParam {
     ALL_FILTER("f", "filter-all", true, -1, I18N.ALL_FILTER, filters()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
-                CommandLine cli) {
+                                       CommandLine cli) {
             return null;
         }
     },
 
-    /** Narrow filter. */
+    /** Widen filter. */
     ANY_FILTER("F", "filter-any", true, -1, I18N.ANY_FILTER, filters()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
-                CommandLine cli) {
+                                       CommandLine cli) {
+            return null;
+        }
+    },
+
+    /** Narrow filter that filters files from being submitted for identification.
+     * Only works on basic file metadata: filename, filesize, last modified date, extensions
+     */
+    ALL_FILTER_FILE("ff", "filter-all-file", true, -1, I18N.ALL_FILTER_FILE, filters()) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                                       CommandLine cli) {
+            return null;
+        }
+    },
+
+    /** Widen filter that filters files from being submitted for identification.
+     * Only works on basic file metadata: filename, filesize, last modified date, extensions
+     */
+    ANY_FILTER_FILE("FF", "filter-any-file", true, -1, I18N.ANY_FILTER_FILE, filters()) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                                       CommandLine cli) {
             return null;
         }
     },
@@ -132,7 +153,7 @@ public enum CommandLineParam {
     BOM("B", "bom", I18N.EXPORT_WITH_BOM) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
-                CommandLine cli) throws CommandLineException {
+                                       CommandLine cli) throws CommandLineException {
             return null;
         }
     },
@@ -141,10 +162,11 @@ public enum CommandLineParam {
     REPORT("r", "report", true, 1, I18N.REPORT_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-            throws CommandLineSyntaxException {
+                throws CommandLineSyntaxException {
             return commandFactory.getReportCommand(cli);
         }
     },
+
     /** List of  report to be worked on. */
     REPORT_NAME("n", "report-name", true, 1, I18N.REPORT_NAME_HELP, "report name") {
         @Override
@@ -165,7 +187,7 @@ public enum CommandLineParam {
     LIST_REPORTS("l", "list-reports", I18N.LIST_REPORTS_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
-                CommandLine cli) {
+                                       CommandLine cli) {
             return commandFactory.getListReportCommand();
         }
     },
@@ -174,7 +196,7 @@ public enum CommandLineParam {
     LIST_FILTER_FIELD("k", "filter-fields", I18N.LIST_FILTER_FIELD) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
-                CommandLine cli) {
+                                       CommandLine cli) {
             return commandFactory.getFilterFieldCommand();
         }
     },
@@ -183,8 +205,49 @@ public enum CommandLineParam {
     RUN_PROFILE("a", "profile-resources", true, -1, I18N.RUN_PROFILE_HELP, "resources") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-            throws CommandLineSyntaxException {
+                throws CommandLineSyntaxException {
             return commandFactory.getProfileCommand(cli);
+        }
+    },
+
+    /** Specifies the file to write CSV output to, or stdout to write to console. */
+    OUTPUT_FILE("o", "output-file", true, 1, I18N.OUTPUT_FILE_HELP, "output") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+
+    /**
+     * Sets CSV to only quote fields which have commas in them (the default is to quote all fields).
+     */
+    QUOTE_COMMAS("qc", "quote-commas", I18N.QUOTE_COMMAS_HELP) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                                       CommandLine cli) throws CommandLineException {
+            return null;
+        }
+    },
+
+    /**
+     * Specifies which columns should be written out in a CSV file or console output.
+     */
+    COLUMNS_TO_WRITE("co", "columns", true, -1, I18N.COLUMNS_TO_WRITE_HELP, "columns-to-write") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                                       CommandLine cli) throws CommandLineException {
+            return null;
+        }
+    },
+
+    /**
+     * Specifies that a row per identification should be written out in a CSV file or console output.
+     */
+    ROW_PER_FORMAT("ri", "row-per-id", I18N.ROW_PER_IDENTIFICATION) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory,
+                CommandLine cli) throws CommandLineException {
+            return null;
         }
     },
 
@@ -192,7 +255,7 @@ public enum CommandLineParam {
     RUN_NO_PROFILE("Nr", "no-profile-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "folder") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-            throws CommandLineSyntaxException {
+                throws CommandLineSyntaxException {
             return commandFactory.getNoProfileCommand(cli);
         }
     },
@@ -259,7 +322,7 @@ public enum CommandLineParam {
         }
     },
 
-        /** Quiet operation flag. */
+    /** Quiet operation flag. */
     QUIET("q", "quiet", I18N.QUIET_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -305,7 +368,7 @@ public enum CommandLineParam {
             I18N.CONFIGURE_DEFAULT_SIGNATURE_VERSION_HELP, I18N.getResource(I18N.VERSION)) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-            throws CommandLineException {
+                throws CommandLineException {
             return commandFactory.getConfigureDefaultSignatureVersionCommand(cli);
         }
     };
@@ -349,7 +412,7 @@ public enum CommandLineParam {
     }
 
     private CommandLineParam(String shortName, String longName, boolean argsRequired,
-            int maxArgs, String resourceKey, String argName) {
+                             int maxArgs, String resourceKey, String argName) {
         this(shortName, longName, resourceKey);
         this.maxArgs = maxArgs;
         this.argName = argName;
@@ -372,7 +435,7 @@ public enum CommandLineParam {
      * @return a droid command.
      */
     public abstract DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-        throws CommandLineException;
+            throws CommandLineException;
 
     /**
      * {@inheritDoc}
@@ -423,6 +486,7 @@ public enum CommandLineParam {
         }
 
         options.addOption(PROFILES.newOption());
+        options.addOption(OUTPUT_FILE.newOption());
         options.addOption(PROFILE_PROPERTY.newOption());
         options.addOption(PROPERTY_FILE.newOption());
         options.addOption(REPORT_NAME.newOption());
@@ -437,16 +501,30 @@ public enum CommandLineParam {
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
         options.addOption(BOM.newOption());
+        options.addOption(COLUMNS_TO_WRITE.newOption());
+        options.addOption(QUOTE_COMMAS.newOption());
+        options.addOption(ROW_PER_FORMAT.newOption());
 
-        OptionGroup filterOptions = new OptionGroup();
-        filterOptions.addOption(ALL_FILTER.newOption());
-        filterOptions.addOption(ANY_FILTER.newOption());
-
-        options.addOptionGroup(filterOptions);
+        options.addOptionGroup(getFilterOptionGroup());
+        options.addOptionGroup(getFileFilterOptionGroup());
         options.addOptionGroup(topGroup);
 
         return options;
 
+    }
+
+    private static OptionGroup getFileFilterOptionGroup() {
+        OptionGroup filterFileOptions = new OptionGroup();
+        filterFileOptions.addOption(ALL_FILTER_FILE.newOption());
+        filterFileOptions.addOption(ANY_FILTER_FILE.newOption());
+        return filterFileOptions;
+    }
+
+    private static OptionGroup getFilterOptionGroup() {
+        OptionGroup filterOptions = new OptionGroup();
+        filterOptions.addOption(ALL_FILTER.newOption());
+        filterOptions.addOption(ANY_FILTER.newOption());
+        return filterOptions;
     }
 
     /**
@@ -456,7 +534,6 @@ public enum CommandLineParam {
      */
     public static Options singleOptions() {
         Options options = new Options();
-
         options.addOption(CHECK_SIGNATURE_UPDATE.newOption());
         options.addOption(DOWNLOAD_SIGNATURE_UPDATE.newOption());
         options.addOption(HELP.newOption());
@@ -465,7 +542,6 @@ public enum CommandLineParam {
         options.addOption(VERSION.newOption());
         options.addOption(DEFAULT_SIGNATURE_VERSION.newOption());
         options.addOption(LIST_SIGNATURE_VERSIONS.newOption());
-
         return options;
     }
 
@@ -476,7 +552,6 @@ public enum CommandLineParam {
      */
     public static Options noProfileRunSubOptions() {
         Options options = new Options();
-
         options.addOption(SIGNATURE_FILE.newOption());
         options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
         options.addOption(EXTENSION_LIST.newOption());
@@ -486,7 +561,6 @@ public enum CommandLineParam {
         options.addOption(WEB_ARCHIVE_TYPES.newOption());
         options.addOption(RECURSIVE.newOption());
         options.addOption(QUIET.newOption());
-
         return options;
     }
 
@@ -497,11 +571,26 @@ public enum CommandLineParam {
      */
     public static Options profileRunSubOptions() {
         Options options = new Options();
-
         options.addOption(PROFILES.newOption());
+        options.addOption(OUTPUT_FILE.newOption());
         options.addOption(RECURSIVE.newOption());
+        options.addOption(SIGNATURE_FILE.newOption());
+        options.addOption(CONTAINER_SIGNATURE_FILE.newOption());
+        options.addOption(ARCHIVES.newOption());
+        options.addOption(ARCHIVE_TYPES.newOption());
+        options.addOption(WEB_ARCHIVES.newOption());
+        options.addOption(WEB_ARCHIVE_TYPES.newOption());
+        options.addOption(EXTENSION_LIST.newOption());
+        options.addOption(ANY_FILTER.newOption());
+        options.addOption(ALL_FILTER.newOption());
+        options.addOption(ANY_FILTER_FILE.newOption());
+        options.addOption(ALL_FILTER_FILE.newOption());
         options.addOption(QUIET.newOption());
-
+        options.addOption(QUOTE_COMMAS.newOption());
+        options.addOption(COLUMNS_TO_WRITE.newOption());
+        options.addOption(ROW_PER_FORMAT.newOption());
+        options.addOption(PROFILE_PROPERTY.newOption());
+        options.addOption(PROPERTY_FILE.newOption());
         return options;
     }
 
@@ -512,12 +601,12 @@ public enum CommandLineParam {
      */
     public static Options exportSubOptions() {
         Options options = new Options();
-
         options.addOption(PROFILES.newOption());
         options.addOption(ANY_FILTER.newOption());
         options.addOption(ALL_FILTER.newOption());
         options.addOption(BOM.newOption());
-
+        options.addOption(QUOTE_COMMAS.newOption());
+        options.addOption(COLUMNS_TO_WRITE.newOption());
         return options;
     }
 
@@ -528,11 +617,11 @@ public enum CommandLineParam {
      */
     public static Options reportSubOptions() {
         Options options = new Options();
-
         options.addOption(PROFILES.newOption());
         options.addOption(REPORT_NAME.newOption());
         options.addOption(REPORT_OUTPUT_TYPE.newOption());
-
+        options.addOption(ANY_FILTER.newOption()); //TODO: test report filters.
+        options.addOption(ALL_FILTER.newOption());
         return options;
     }
 

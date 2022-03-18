@@ -47,6 +47,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+
 /**
  * Base class for a profile.
  */
@@ -87,10 +90,6 @@ public class ProfileInstance {
     @XmlTransient
     private boolean dirty = true;
 
-    //FIXME: by making profiles dependent on a particular
-    // implementation of filter, it causes problems for other
-    // parts of the code which want to use different filter
-    // implementations.  
     @XmlElement(name = "Filter", required = true)
     private FilterImpl filter;
     
@@ -109,7 +108,6 @@ public class ProfileInstance {
     @XmlElement(name = "EndDate")
     private Date profileEndDate;
 
-    
     @XmlElement(name = "StartDate")
     private Date profileStartDate;
     
@@ -151,6 +149,24 @@ public class ProfileInstance {
     @XmlElement(name = "MatchAllExtensions")
     private Boolean matchAllExtensions;
 
+    @XmlElement(name = "outputFilePath")
+    private String outputFilePath;
+
+    @XmlTransient
+    private Filter resultsFilter; // A filter which dynamically removes output when writing to a file.
+
+    @XmlTransient
+    private Filter identificationFilter; // A filter which removes files from being identified if they don't pass the filter.
+
+    @XmlTransient
+    private Boolean quoteAllFields = Boolean.TRUE;
+
+    @XmlTransient
+    private String columnsToWrite;
+
+    @XmlTransient
+    private ExportOptions exportOptions;
+
     @XmlTransient
     private Set<ProfileEventListener> eventListeners = new HashSet<ProfileEventListener>();
 
@@ -188,6 +204,36 @@ public class ProfileInstance {
      */
     public void setFilter(FilterImpl filter) {
         this.filter = filter;
+    }
+
+    /**
+     * Sets a filter which removes results from being written, when writing to a CSV file.
+     * @param resultsFilter The filter to use, or null if no filter required.
+     */
+    public void setResultsFilter(Filter resultsFilter) {
+        this.resultsFilter = resultsFilter;
+    }
+
+    /**
+     * Sets a filter which prevents files from being identified if they don't pass the filter.
+     * @param identificationFilter The filter to use, or null if no filter required.
+     */
+    public void setIdentificationFilter(Filter identificationFilter) {
+        this.identificationFilter = identificationFilter;
+    }
+
+    /**
+     * @return The filter used to filter out results written to a file, or null if no filter is set.
+     */
+    public Filter getResultsFilter() {
+        return resultsFilter;
+    }
+
+    /**
+     * @return The filter used to filter out files to submit for identification.
+     */
+    public Filter getIdentificationFilter() {
+        return identificationFilter;
     }
 
     /**
@@ -756,5 +802,70 @@ public class ProfileInstance {
      */
     public Boolean getProcessWarcFiles() {
         return processWarcFiles;
+    }
+
+    /**
+     *
+     * @return the output file path, if set.
+     */
+    public String getOutputFilePath() {
+        return outputFilePath;
+    }
+
+    /**
+     *
+     * @param outputFilePath An output file path if the profile should be output to a file rather than the database.
+     */
+    public void setOutputFilePath(String outputFilePath) {
+        this.outputFilePath = outputFilePath;
+    }
+
+    /**
+     * @return whether all fields in CSV should be quoted, or just those that contain commas.
+     */
+    public Boolean getQuoteAllFields() {
+        return quoteAllFields;
+    }
+
+    /**
+     * @param quoteAllFields whether all fields in CSV should be quoted, or just those that contain commas.
+     */
+    public void setQuoteAllFields(Boolean quoteAllFields) {
+        this.quoteAllFields = quoteAllFields;
+    }
+
+    /**
+     * @return the column names to write, or null or empty if all column names should be written.
+     */
+    public String getColumnsToWrite() {
+        return columnsToWrite;
+    }
+
+    /**
+     * Sets which columns should be written to CSV, as a space separated list of column headers.
+     * If the string is null or empty, all columns will be written out.
+     * <p> Valid column names are:
+     * ID, PARENT_ID, URI, FILE_PATH, NAME, METHOD, STATUS, SIZE, TYPE, EXT, LAST_MODIFIED,
+     * EXTENSION_MISMATCH, HASH, FORMAT_COUNT, PUID, MIME_TYPE, FORMAT_NAME, FORMAT_VERSION.
+     *
+     * @param columnsToWrite A space separated list of column headers, or null or empty if all columns should be written.
+     */
+    public void setColumnsToWrite(String columnsToWrite) {
+        this.columnsToWrite = columnsToWrite;
+    }
+
+    /**
+     * Sets the export options to use for CSV - one row per file or one row per format.
+     * @param exportOptions the export options to use for CSV.
+     */
+    public void setExportOptions(ExportOptions exportOptions) {
+        this.exportOptions = exportOptions;
+    }
+
+    /**
+     * @return the export options to use for CSV - one row per file or one row per format.
+     */
+    public ExportOptions getExportOptions() {
+        return exportOptions;
     }
 }
