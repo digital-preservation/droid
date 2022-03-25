@@ -300,10 +300,7 @@ public class ExportDialog extends JDialog {
                 "Title 1"
             }
         ));
-        profileSelectTable.setRowHeight(20);
         profileSelectTable.setRowSelectionAllowed(false);
-        profileSelectTable.setShowHorizontalLines(false);
-        profileSelectTable.setShowVerticalLines(false);
         profileSelectTable.setTableHeader(null);
         jScrollPane1.setViewportView(profileSelectTable);
 
@@ -332,7 +329,6 @@ public class ExportDialog extends JDialog {
         RadioOneRowPerIdentification.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerIdentification.toolTipText")); // NOI18N
 
         cmdEncoding.setModel(getOutputEncodings());
-        cmdEncoding.setEditor(null);
 
         jLabel1.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jLabel1.text_1")); // NOI18N
 
