@@ -51,7 +51,7 @@ import javax.xml.ws.WebServiceFeature;
  * 
  */
 @WebServiceClient(name = "PronomService", 
-                  wsdlLocation = "http://www.nationalarchives.gov.uk/pronom/service.asmx?WSDL",
+                  wsdlLocation = "https://www.nationalarchives.gov.uk/pronom/service.asmx?WSDL",
                   targetNamespace = "http://pronom.nationalarchives.gov.uk") 
 public class PronomService_Service extends Service {
 
@@ -61,9 +61,9 @@ public class PronomService_Service extends Service {
     static {
         URL url = null;
         try {
-            url = new URL("http://www.nationalarchives.gov.uk/pronom/service.asmx?WSDL");
+            url = new URL("https://www.nationalarchives.gov.uk/pronom/service.asmx?WSDL");
         } catch (MalformedURLException e) {
-            System.err.println("Can not initialize the default wsdl from http://www.nationalarchives.gov.uk/pronom/service.asmx?WSDL");
+            System.err.println("Can not initialize the default wsdl from https://www.nationalarchives.gov.uk/pronom/service.asmx?WSDL");
             // e.printStackTrace();
         }
         WSDL_LOCATION = url;

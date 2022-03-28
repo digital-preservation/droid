@@ -37,7 +37,7 @@
   <wsdl:types/>
   <wsdl:service name="PronomService">
     <wsdl:port name="PronomServiceSoap" binding="tns:PronomServiceSoap">
-      <soap:address location="http://www.nationalarchives.gov.uk/pronom/service.asmx"/>
+      <soap:address location="https://www.nationalarchives.gov.uk/pronom/service.asmx"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
