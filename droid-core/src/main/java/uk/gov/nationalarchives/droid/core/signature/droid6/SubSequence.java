@@ -1225,8 +1225,6 @@ public class SubSequence extends SimpleElement {
             getLog().debug(e.getMessage());
         } catch (IOException e) {
             getLog().error(e.getMessage());
-        } catch (Exception e) {
-            getLog().debug(e.getMessage());
         }
         //CHECKSTYLE:ON
         return entireSequenceFound;

@@ -101,6 +101,7 @@ public abstract class AbstractContainerIdentifier implements ContainerIdentifier
                     result.setMethod(IdentificationMethod.CONTAINER);
                     result.setRequestMetaData(request.getRequestMetaData());
                     result.setPuid(mapping.getPuid());
+                    result.setName(match.getSignature().getDescription());
                     results.addResult(result);
                 }
             }
