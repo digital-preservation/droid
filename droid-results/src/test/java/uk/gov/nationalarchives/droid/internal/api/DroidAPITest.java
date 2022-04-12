@@ -42,6 +42,7 @@ import java.nio.file.Paths;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 
 public class DroidAPITest {
 
@@ -81,6 +82,23 @@ public class DroidAPITest {
 
         assertThat(identificationResult.getPuid(), is("fmt/291"));
         assertThat(identificationResult.getName(), is("Open Document Text 1.2"));
+        assertThat(identificationResult.getMethod(), is(IdentificationMethod.CONTAINER));
+
+
+    }
+
+    @Test
+    public void testIdentificationByFileExtension() throws IOException {
+        DroidAPI api = aApi();
+
+        IdentificationResultCollection result = api.submit(Paths.get("src/test/resources/test.txt"));
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getResults(), hasSize(1));
+
+        IdentificationResult singleResult = result.getResults().get(0);
+
+        assertThat(singleResult.getPuid(), is("x-fmt/111"));
+        assertThat(singleResult.getMethod(), is(IdentificationMethod.EXTENSION));
 
     }
 

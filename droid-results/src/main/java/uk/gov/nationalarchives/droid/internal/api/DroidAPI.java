@@ -103,11 +103,20 @@ public final class DroidAPI {
             } else {
                 droidCore.removeLowerPriorityHits(binaryResult);
                 droidCore.checkForExtensionsMismatches(binaryResult, request.getExtension());
-                return binaryResult;
+                if (binaryResult.getResults().isEmpty()) {
+                    return identifyByExtension(request);
+                } else {
+                    return binaryResult;
+                }
             }
         }
     }
 
+    private IdentificationResultCollection identifyByExtension(final IdentificationRequest identificationRequest) {
+        IdentificationResultCollection extensionResult = droidCore.matchExtensions(identificationRequest, false);
+        droidCore.removeLowerPriorityHits(extensionResult);
+        return extensionResult;
+    }
 
     private Optional<String> getContainerPuid(final IdentificationResultCollection binaryResult) {
         return binaryResult.getResults().stream().filter(x ->
