@@ -48,7 +48,19 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 
 /**
- *
+ * <p>
+ * TNA INTERNAL !!! class which encapsulate DROID internal non-friendly api and expose it in simple way.
+ * </p>
+ * <p>
+ * To obtain instance of this class, use factory method {@link #getInstance(Path, Path)} to obtain instance.
+ * Obtaining instance is expensive operation and if used multiple time, instance should be cached.
+ * Instance should be thread-safe, but we didn't run any internal audit. We suggest creating one instance for every thread.
+ * </p>
+ * <p>
+ * To identify file, use method {@link #submit(Path)}. This method take full path to file which should be identified.
+ * It returns identification result which can contain 0..N signatures. Bear in mind that single file can have zero to multiple
+ * signature matches!
+ * </p>
  */
 public final class DroidAPI {
 
@@ -69,6 +81,13 @@ public final class DroidAPI {
         this.ole2Idendifier = ole2Idendifier;
     }
 
+    /**
+     * Return instance, or throw error.
+     * @param binarySignature Path to xml file with binary signatures.
+     * @param containerSignature Path to xml file with contained signatures.
+     * @return Instance of droid with binary and container signature.
+     * @throws SignatureParseException On invalid signature file.
+     */
     public static DroidAPI getInstance(final Path binarySignature, final Path containerSignature) throws SignatureParseException {
         BinarySignatureIdentifier droidCore = new BinarySignatureIdentifier();
         droidCore.setSignatureFile(binarySignature.toAbsolutePath().toString());
@@ -81,6 +100,13 @@ public final class DroidAPI {
         return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier());
     }
 
+    /**
+     * Submit file for identification. It's important that file has proper file extension. If file
+     * can't be identified via binary or container signature, then we use file extension for identification.
+     * @param file Full path to file for identification.
+     * @return File identification result. File can have multiple matching signatures.
+     * @throws IOException If File can't be read or there is IO error.
+     */
     public IdentificationResultCollection submit(final Path file) throws IOException {
         final RequestMetaData metaData = new RequestMetaData(
                 Files.size(file),
