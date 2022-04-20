@@ -92,7 +92,7 @@
         <spring.version>5.3.18</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.13.1.1</derby.version>
-        <cxf.version>3.5.0</cxf.version>
+        <cxf.version>3.5.2</cxf.version>
         <java.iso-tools.version>2.1.0</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.22</flying-saucer.version>
@@ -167,7 +167,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-report-plugin</artifactId>
-                    <version>3.0.0-M5</version>
+                    <version>3.0.0-M6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
