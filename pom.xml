@@ -54,6 +54,7 @@
                         <exclude>appveyor.yml</exclude>
                         <exclude>.gitattributes</exclude>
                         <exclude>.github/**</exclude>
+                        <exclude>**/suppressions.xml</exclude>
                     </excludes>
                 </configuration>
             </plugin>
