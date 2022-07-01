@@ -97,7 +97,7 @@
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.22</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
-        <jwat.version>1.1.1</jwat.version>
+        <jwat.version>1.1.2</jwat.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
         <log4j2.version>2.17.1</log4j2.version>
