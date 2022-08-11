@@ -204,7 +204,7 @@ public class ProfileNodeResultHandler implements ResultHandler {
 
     private NodeStatus getNodeStatus(IdentificationErrorType error) {
         NodeStatus status;
-        switch(error) {
+        switch (error) {
             case ACCESS_DENIED:
                 status = NodeStatus.ACCESS_DENIED;
                 break;

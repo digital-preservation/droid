@@ -37,7 +37,8 @@
 	    <module>droid-binary</module>
 	    <module>droid-tools</module>
     </modules>
-    
+
+
     <build>
         <plugins>
             <plugin>

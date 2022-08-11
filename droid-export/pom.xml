@@ -74,6 +74,12 @@
                                 <ignoredUsedUndeclaredDependency>jakarta.annotation:jakarta.annotation-api:jar</ignoredUsedUndeclaredDependency>
                                 <ignoredUsedUndeclaredDependency>org.slf4j:slf4j-api:jar</ignoredUsedUndeclaredDependency>
                             </ignoredUsedUndeclaredDependencies>
+                            <ignoredNonTestScopedDependencies>
+                              <!-- are these actually test only? -->
+                                <ignoredNonTestScopedDependency>jakarta.annotation:jakarta.annotation-api:jar</ignoredNonTestScopedDependency>
+                                <ignoredNonTestScopedDependency>commons-io:commons-io:jar</ignoredNonTestScopedDependency>
+                                <ignoredNonTestScopedDependency>org.springframework:spring-beans:jar</ignoredNonTestScopedDependency>
+                            </ignoredNonTestScopedDependencies>
                         </configuration>
                     </execution>
                 </executions>

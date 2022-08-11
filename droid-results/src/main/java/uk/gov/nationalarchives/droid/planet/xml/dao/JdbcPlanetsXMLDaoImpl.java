@@ -182,7 +182,7 @@ public class JdbcPlanetsXMLDaoImpl implements PlanetsXMLDao {
 
             String className = value2.getClass().getSimpleName();
             //Java 6 doesn't support switch on string!!
-            switch(SqlUtils.ClassName.valueOf(className)) {
+            switch (SqlUtils.ClassName.valueOf(className)) {
                 case String:
                     profileStatement.setString(pos++, (String) value2);
                     break;
