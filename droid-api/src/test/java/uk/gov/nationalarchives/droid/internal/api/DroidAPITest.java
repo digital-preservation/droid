@@ -56,9 +56,8 @@ public class DroidAPITest {
     @Test
     public void testIdentification() throws IOException, SignatureParseException {
         DroidAPI api = DroidAPITestUtils.createApi();
-        URL testFile = Objects.requireNonNull(DroidAPITest.class.getResource("/persistence.zip"), "persistence.zip file is missing");
         List<ApiResult> results = api.submit(
-                Paths.get(testFile.getPath()));
+                Paths.get("src/test/resources/persistence.zip"));
         assertThat(results, is(notNullValue()));
 
         assertThat(results.size(), is(1));
