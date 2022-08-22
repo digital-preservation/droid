@@ -33,17 +33,15 @@ package uk.gov.nationalarchives.droid.internal.api;
 
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 
 public class DroidAPITest {
 
