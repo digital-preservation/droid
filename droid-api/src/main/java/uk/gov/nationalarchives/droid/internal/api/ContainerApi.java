@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.internal.api;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
@@ -58,15 +59,15 @@ public final class ContainerApi {
         this.containerSignature = containerSignature;
     }
 
-    private ContainerSignatureFileReader signatureReader() {
+    public ContainerSignatureFileReader signatureReader() {
         ContainerSignatureFileReader reader = new ContainerSignatureFileReader();
         reader.setFilePath(containerSignature.toAbsolutePath().toString());
+
         return reader;
     }
 
-    private IdentificationRequestFactory requestFactory() {
-        ContainerFileIdentificationRequestFactory factory = new ContainerFileIdentificationRequestFactory();
-        return factory;
+    private IdentificationRequestFactory<InputStream> requestFactory() {
+        return new ContainerFileIdentificationRequestFactory();
     }
 
     private IdentifierEngine identifierEngine() {
@@ -76,14 +77,11 @@ public final class ContainerApi {
     }
 
     private ArchiveFormatResolver archiveFormatResolver() {
-        ArchiveFormatResolverImpl resolver = new ArchiveFormatResolverImpl();
-
-        return resolver;
+        return new ArchiveFormatResolverImpl();
     }
 
     private ContainerIdentifierFactory identifierFactory() {
-        ContainerIdentifierFactoryImpl identifierFactory = new ContainerIdentifierFactoryImpl();
-        return identifierFactory;
+        return new ContainerIdentifierFactoryImpl();
     }
 
     public ZipIdentifier zipIdentifier() {
@@ -104,7 +102,9 @@ public final class ContainerApi {
     }
 
     private Ole2IdentifierEngine ole2IdentifierEngine() {
-        return new Ole2IdentifierEngine();
+        Ole2IdentifierEngine engine = new Ole2IdentifierEngine();
+        engine.setRequestFactory(requestFactory());
+        return engine;
     }
 
     public Ole2Identifier ole2Identifier() {
@@ -122,5 +122,4 @@ public final class ContainerApi {
         }
         return ole2;
     }
-
 }

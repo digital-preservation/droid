@@ -31,21 +31,27 @@
  */
 package uk.gov.nationalarchives.droid.internal.api;
 
-import java.io.IOException;
 import java.nio.file.Files;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+
+import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
+
 
 /**
  * <p>
@@ -67,18 +73,27 @@ public final class DroidAPI {
     private static final String ZIP_PUID = "x-fmt/263";
     private static final String OLE2_PUID = "fmt/111";
 
-    private static AtomicLong idGenerator = new AtomicLong();
+    private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
     private final DroidCore droidCore;
 
-    private final ContainerIdentifier zipIdendifier;
+    private final ContainerIdentifier zipIdentifier;
 
-    private final ContainerIdentifier ole2Idendifier;
+    private final ContainerIdentifier ole2Identifier;
 
-    private DroidAPI(DroidCore droidCore, ContainerIdentifier zipIdendifier, ContainerIdentifier ole2Idendifier) {
+    private final String containerSignatureVersion;
+
+    private final String binarySignatureVersion;
+
+    private final String droidVersion;
+
+    private DroidAPI(DroidCore droidCore, ContainerIdentifier zipIdentifier, ContainerIdentifier ole2Identifier, String containerSignatureVersion, String binarySignatureVersion, String droidVersion) {
         this.droidCore = droidCore;
-        this.zipIdendifier = zipIdendifier;
-        this.ole2Idendifier = ole2Idendifier;
+        this.zipIdentifier = zipIdentifier;
+        this.ole2Identifier = ole2Identifier;
+        this.containerSignatureVersion = containerSignatureVersion;
+        this.binarySignatureVersion = binarySignatureVersion;
+        this.droidVersion = droidVersion;
     }
 
     /**
@@ -91,13 +106,14 @@ public final class DroidAPI {
     public static DroidAPI getInstance(final Path binarySignature, final Path containerSignature) throws SignatureParseException {
         BinarySignatureIdentifier droidCore = new BinarySignatureIdentifier();
         droidCore.setSignatureFile(binarySignature.toAbsolutePath().toString());
+
         droidCore.init();
         droidCore.setMaxBytesToScan(Long.MAX_VALUE);
         droidCore.getSigFile().prepareForUse();
-
+        String containerVersion = StringUtils.substringAfterLast(containerSignature.getFileName().toString(), "-").split("\\.")[0];
+        String droidVersion = ResourceBundle.getBundle("options").getString("version_no");
         ContainerApi containerApi = new ContainerApi(droidCore, containerSignature);
-
-        return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier());
+        return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion);
     }
 
     /**
@@ -107,7 +123,7 @@ public final class DroidAPI {
      * @return File identification result. File can have multiple matching signatures.
      * @throws IOException If File can't be read or there is IO error.
      */
-    public IdentificationResultCollection submit(final Path file) throws IOException {
+    public List<ApiResult> submit(final Path file) throws IOException {
         final RequestMetaData metaData = new RequestMetaData(
                 Files.size(file),
                 Files.getLastModifiedTime(file).toMillis(),
@@ -115,30 +131,36 @@ public final class DroidAPI {
         );
 
         final RequestIdentifier id = new RequestIdentifier(file.toAbsolutePath().toUri());
-        id.setParentId(idGenerator.getAndIncrement());
-        id.setNodeId(idGenerator.getAndIncrement());
+        id.setParentId(ID_GENERATOR.getAndIncrement());
+        id.setNodeId(ID_GENERATOR.getAndIncrement());
+
+        IdentificationResultCollection resultCollection;
 
         try (final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, id)) {
             request.open(file);
+            String extension = request.getExtension();
 
             IdentificationResultCollection binaryResult = droidCore.matchBinarySignatures(request);
             Optional<String> containerPuid = getContainerPuid(binaryResult);
 
             if (containerPuid.isPresent()) {
-                return handleContainer(binaryResult, request, containerPuid.get());
+                resultCollection = handleContainer(binaryResult, request, containerPuid.get());
             } else {
                 droidCore.removeLowerPriorityHits(binaryResult);
                 droidCore.checkForExtensionsMismatches(binaryResult, request.getExtension());
                 if (binaryResult.getResults().isEmpty()) {
-                    return identifyByExtension(request);
+                    resultCollection = identifyByExtension(request);
                 } else {
-                    return binaryResult;
+                    resultCollection = binaryResult;
                 }
             }
+            return resultCollection.getResults()
+                    .stream().map(res -> new ApiResult(extension, res.getMethod(), res.getPuid(), res.getName()))
+                    .collect(Collectors.toList());
         }
     }
 
-    private IdentificationResultCollection identifyByExtension(final IdentificationRequest identificationRequest) {
+    private IdentificationResultCollection identifyByExtension(final FileSystemIdentificationRequest identificationRequest) {
         IdentificationResultCollection extensionResult = droidCore.matchExtensions(identificationRequest, false);
         droidCore.removeLowerPriorityHits(extensionResult);
         return extensionResult;
@@ -147,19 +169,19 @@ public final class DroidAPI {
     private Optional<String> getContainerPuid(final IdentificationResultCollection binaryResult) {
         return binaryResult.getResults().stream().filter(x ->
                 ZIP_PUID.equals(x.getPuid()) || OLE2_PUID.equals(x.getPuid())
-        ).map(x -> x.getPuid()).findFirst();
+        ).map(IdentificationResult::getPuid).findFirst();
     }
 
     private IdentificationResultCollection handleContainer(final IdentificationResultCollection binaryResult,
-                                                           final IdentificationRequest identificationRequest, final String containerPuid) throws IOException {
-        ContainerIdentifier identifier = null;
+                                                           final FileSystemIdentificationRequest identificationRequest, final String containerPuid) throws IOException {
+        ContainerIdentifier identifier;
 
         switch (containerPuid) {
             case ZIP_PUID:
-                identifier = zipIdendifier;
+                identifier = zipIdentifier;
                 break;
             case OLE2_PUID:
-                identifier = ole2Idendifier;
+                identifier = ole2Identifier;
                 break;
             default:
                 throw new RuntimeException("Unknown container PUID : " + containerPuid);
@@ -172,5 +194,17 @@ public final class DroidAPI {
         containerResults.setRequestMetaData(identificationRequest.getRequestMetaData());
 
         return containerResults.getResults().isEmpty() ? binaryResult : containerResults;
+    }
+
+    public String getContainerSignatureVersion() {
+        return containerSignatureVersion;
+    }
+
+    public String getBinarySignatureVersion() {
+        return binarySignatureVersion;
+    }
+
+    public String getDroidVersion() {
+        return droidVersion;
     }
 }
