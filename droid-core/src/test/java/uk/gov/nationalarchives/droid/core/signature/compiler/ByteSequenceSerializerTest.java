@@ -468,8 +468,6 @@ public class ByteSequenceSerializerTest {
                 } catch (CompileException | ParseException e) {
                     failureMessages += (sequence + " : " + e.getMessage());
                     failed = true;
-                    compileExpression(sequence, type);
-
                 }
             }
         }
