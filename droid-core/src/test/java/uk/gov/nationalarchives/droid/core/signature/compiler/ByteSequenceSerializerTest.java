@@ -49,38 +49,400 @@ import static uk.gov.nationalarchives.droid.core.signature.compiler.SignatureTyp
 public class ByteSequenceSerializerTest {
 
     @Test
-    public void toXML() throws Exception {
-        toXML("{40-1024} 10 00 00 00 'Word.Document.8' 00");
+    public void testSerializeToXML() {
+        serializeWithoutException("{40-1024} 10 00 00 00 'Word.Document.8' 00");
+        serializeWithoutException("AABBCC{4}??20??30??50*BBCC[!AA]");
+        serializeWithoutException("'AA''BB'AABB'BB''AA'");
+        serializeWithoutException("[!AABBCC]DDEE*30*AABBCC'end'??");
+        serializeWithoutException("[!AA:CC]DDEE*30{5-*}AABBCC'end'??");
     }
 
-    private void toXML(String expression) throws CompileException {
-       toXML(expression, ByteSequenceAnchor.BOFOffset, DROID, BINARY);
-       toXML(expression, ByteSequenceAnchor.BOFOffset, DROID, CONTAINER);
-       toXML(expression, ByteSequenceAnchor.BOFOffset, PRONOM, BINARY);
-       toXML(expression, ByteSequenceAnchor.BOFOffset, PRONOM, CONTAINER);
+    private void serializeWithoutException(String expression) {
+        serializeWithoutException(expression, ByteSequenceAnchor.BOFOffset, DROID, BINARY);
+        serializeWithoutException(expression, ByteSequenceAnchor.BOFOffset, DROID, CONTAINER);
+        serializeWithoutException(expression, ByteSequenceAnchor.BOFOffset, PRONOM, BINARY);
+        serializeWithoutException(expression, ByteSequenceAnchor.BOFOffset, PRONOM, CONTAINER);
+        serializeWithoutException(expression, ByteSequenceAnchor.EOFOffset, DROID, BINARY);
+        serializeWithoutException(expression, ByteSequenceAnchor.EOFOffset, DROID, CONTAINER);
+        serializeWithoutException(expression, ByteSequenceAnchor.EOFOffset, PRONOM, BINARY);
+        serializeWithoutException(expression, ByteSequenceAnchor.EOFOffset, PRONOM, CONTAINER);
+        serializeWithoutException(expression, ByteSequenceAnchor.VariableOffset, DROID, BINARY);
+        serializeWithoutException(expression, ByteSequenceAnchor.VariableOffset, DROID, CONTAINER);
+        serializeWithoutException(expression, ByteSequenceAnchor.VariableOffset, PRONOM, BINARY);
+        serializeWithoutException(expression, ByteSequenceAnchor.VariableOffset, PRONOM, CONTAINER);
     }
 
-    private void toXML(String expression, ByteSequenceAnchor anchor, ByteSequenceCompiler.CompileType compileType,
-                       SignatureType sigType) throws CompileException {
-        String xml = ByteSequenceSerializer.SERIALIZER.toXML(expression, anchor, compileType, sigType);
-        System.out.println(xml);
+    private void serializeWithoutException(String expression, ByteSequenceAnchor anchor, ByteSequenceCompiler.CompileType compileType,
+                                           SignatureType sigType) {
+        try {
+            ByteSequenceSerializer.SERIALIZER.toXML(expression, anchor, compileType, sigType);
+        } catch (Exception ex) {
+            fail("Exception caught compiling expression: " + expression);
+        }
     }
 
     @Test
     public void testBinaryDroidCompileSetsToAlternatives() throws Exception {
-        testRenderExpressions("[01 'abc']");
-        testRenderExpressions("02{2}[01:1C][01:1F]{2}[00:03]([41:5A]|[61:7A]){10}(43|4c|4e)");
-    }
-
-    private void testRenderExpressions(String expression) throws Exception {
-        ByteSequence seq = ByteSequenceCompiler.COMPILER.compile(expression, ByteSequenceAnchor.BOFOffset, DROID);
-        String regex = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, BINARY, false);
-        String regex2 = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, CONTAINER, false);
-        System.out.println(expression + "\t" + regex + "\t"+ regex2);
+        testRenderExpressionsWithoutExceptions("[01 'abc']");
+        testRenderExpressionsWithoutExceptions("02{2}[01:1C][01:1F]{2}[00:03]([41:5A]|[61:7A]){10}(43|4c|4e)");
     }
 
     @Test
-    public void toPRONOMRegex() throws Exception {
+    public void testByte() throws Exception {
+        String input = "FF";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(input, expression);
+
+        input = "FFAA";
+        String spaced = "FF AA";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testInvertedByte() throws Exception {
+        String input = "[!FF]";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(input, expression);
+
+        input = "[!FF][!AA]";
+        String spaced = "[!FF] [!AA]";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testRange() throws Exception {
+        String input = "[01:FE]";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(input, expression);
+
+        input = "[01:FE][02:FD]";
+        String spaced = "[01:FE] [02:FD]";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testInvertedRange() throws Exception {
+        String input = "[!01:FE]";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(input, expression);
+
+        input = "[!01:FE][!02:FD]";
+        String spaced = "[!01:FE] [!02:FD]";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testString() throws Exception {
+        String input = "'ABC'";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals("414243", expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals("41 42 43", expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(input, expression);
+
+        input = "'ABC''DEF'";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals("414243444546", expression);
+
+        String singleString = "'ABCDEF'";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(singleString, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals("41 42 43 44 45 46", expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(singleString, expression);
+    }
+
+    @Test
+    public void testSet() throws Exception {
+        String input = "(AA|BB|CC)";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        String expected = "[AABBCC]";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(expected, expression);
+
+        expected = "(AA | BB | CC)";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(expected, expression);
+
+        expected = "[AA BB CC]";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(expected, expression);
+
+        input = "(AA|BB|CC)(DD|EE|FF)";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expected = "[AABBCC][DDEEFF]";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(expected, expression);
+
+        expected = "(AA | BB | CC) (DD | EE | FF)";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(expected, expression);
+
+        expected = "[AA BB CC] [DD EE FF]";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(expected, expression);
+    }
+
+    @Test
+    public void testSequence() throws Exception {
+        String input = "AABBCCDDEEFF";
+        String spaced = "AA BB CC DD EE FF";
+
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testAny() throws Exception {
+        String input = "??";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(input, expression);
+
+        input = "????";
+        String spaced = "?? ??";
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testAllBitmask() throws Exception {
+        String input = "[&DD]";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(input, expression);
+
+        input = "[&DD][&AB]";
+        String spaced = "[&DD] [&AB]";
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testRepeat() throws Exception {
+        String input = "AA{4}BB";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        String repeatedWild = "AA????????BB";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(repeatedWild, BINARY, false);
+        assertEquals(repeatedWild, expression);
+
+        String spaced = "AA {4} BB";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+
+        input = "FF{4}AA{2}CC";
+        spaced = "FF {4} AA {2} CC";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testRepeatMinToMany() throws Exception {
+        String input = "AA{4-*}FF";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        String spaced = "AA {4-*} FF";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testRepeatMinToMax() throws Exception {
+        String input = "AA{4-8}FF";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        String spaced = "AA {4-8} FF";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    @Test
+    public void testZeroToMany() throws Exception {
+        String input = "AA*BB";
+        String spaced = "AA * BB";
+
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(input, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+    }
+
+    private void testRenderExpressionsWithoutExceptions(String expression) throws Exception {
+        ByteSequence seq = ByteSequenceCompiler.COMPILER.compile(expression, ByteSequenceAnchor.BOFOffset, DROID);
+        ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, BINARY, false);
+        ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(seq, CONTAINER, false);
     }
 
     @Test
@@ -103,11 +465,8 @@ public class ByteSequenceSerializerTest {
             if (sequence.trim().length() > 0) { //ignore blank lines in the test input files.
                 try {
                     compileExpression(sequence, type);
-                } catch (CompileException e) {
-                    failureMessages += e.getMessage();
-                    failed = true;
-                } catch (ParseException e) {
-                    failureMessages += e.getMessage();
+                } catch (CompileException | ParseException e) {
+                    failureMessages += (sequence + " : " + e.getMessage());
                     failed = true;
                 }
             }
