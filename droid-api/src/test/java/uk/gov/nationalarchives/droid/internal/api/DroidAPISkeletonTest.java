@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.internal.api;
 
-import com.google.common.collect.Sets;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
@@ -39,8 +38,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,13 +57,13 @@ import static org.hamcrest.Matchers.*;
  * but it works if we use relative path.
  */
 @RunWith(Parameterized.class)
-public class DroidApiSkeletonTest {
+public class DroidAPISkeletonTest {
 
     private final String puid;
     private final Path path;
     private final DroidAPI api;
 
-    public DroidApiSkeletonTest(String puid, Path path, DroidAPI api) {
+    public DroidAPISkeletonTest(String puid, Path path, DroidAPI api) {
         this.puid = puid;
         this.path = path;
         this.api = api;
@@ -75,14 +72,9 @@ public class DroidApiSkeletonTest {
     @Parameters
     public static Collection<Object[]> data() throws IOException, SignatureParseException {
         Pattern FILENAME = Pattern.compile("((?:x-)?fmt)-(\\d+)-signature-id-(\\d+).*");
-        Set<String> ignorePuid = Sets.newHashSet("fmt/651", "fmt/652", "fmt/685");
-
-
-        DroidAPI api = DroidAPI.getInstance(
-                Paths.get("custom_home/signature_files/DROID_SignatureFile_V96.xml"),
-                Paths.get("custom_home/container_sigs/container-signature-20200121.xml")
-        );  //Create only once instance of Droid.
-
+        Set<String> ignorePuid = Stream.of("fmt/651", "fmt/652", "fmt/685")
+                .collect(Collectors.toCollection(HashSet::new));
+        DroidAPI api = DroidAPITestUtils.createApi();
         return Stream.concat(
                         Files.list(Paths.get("../droid-core/test-skeletons/fmt")),
                         Files.list(Paths.get("../droid-core/test-skeletons/x-fmt"))
@@ -93,18 +85,17 @@ public class DroidApiSkeletonTest {
                     } else {
                         return new Object[]{z.group(1) + "/" + z.group(2), x, api};
                     }
-                }).filter(x -> x != null && !ignorePuid.contains(x[0]))
+                }).filter(x -> x != null && !ignorePuid.contains(x[0].toString()))
                 .collect(Collectors.toList());
     }
 
     @Test
     public void skeletonTest() throws Exception {
-        IdentificationResultCollection result = api.submit(path);
-        List<IdentificationResult> results = result.getResults();
+        List<ApiResult> results = api.submit(path);
         assertThat(results, hasItem(ResultMatcher.resultWithPuid(puid)));
     }
 
-    private static class ResultMatcher extends TypeSafeMatcher<IdentificationResult> {
+    private static class ResultMatcher extends TypeSafeMatcher<ApiResult> {
 
         private final String expectedPuid;
 
@@ -113,12 +104,12 @@ public class DroidApiSkeletonTest {
         }
 
         @Override
-        protected boolean matchesSafely(IdentificationResult item) {
+        protected boolean matchesSafely(ApiResult item) {
             return expectedPuid.equals(item.getPuid());
         }
 
         @Override
-        protected void describeMismatchSafely(IdentificationResult item, Description mismatchDescription) {
+        protected void describeMismatchSafely(ApiResult item, Description mismatchDescription) {
             mismatchDescription.appendText("expected puid " + expectedPuid + " but got: " + item.getPuid());
         }
 
@@ -127,7 +118,7 @@ public class DroidApiSkeletonTest {
 
         }
 
-        public static org.hamcrest.Matcher<IdentificationResult> resultWithPuid(String puid) {
+        public static org.hamcrest.Matcher<ApiResult> resultWithPuid(String puid) {
             return new ResultMatcher(puid);
         }
     }
