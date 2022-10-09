@@ -290,25 +290,17 @@ public class ByteSequenceSerializerTest {
         assertEquals(spaced, expression);
     }
 
-    @Test
-    public void testAny() throws Exception {
+    @Test(expected = CompileException.class)
+    public void testAnyOnItsOwn() throws Exception {
         String input = "??";
         String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
-        assertEquals(input, expression);
+    }
 
-        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
-        assertEquals(input, expression);
-
-        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
-        assertEquals(input, expression);
-
-        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
-        assertEquals(input, expression);
-
-        input = "????";
-        String spaced = "?? ??";
-
-        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+    @Test
+    public void testAny() throws Exception {
+        String input = "??AA";
+        String spaced = "?? AA";
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
         assertEquals(input, expression);
 
         expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
@@ -318,6 +310,140 @@ public class ByteSequenceSerializerTest {
         assertEquals(spaced, expression);
 
         expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+
+        input = "????AA";
+        String expected = "{2}AA";
+        spaced = "{2} AA";
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+
+        input = "??????BB";
+        expected = "{3}BB";
+        spaced = "{3} BB";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+
+        input = "FF??????AA";
+        expected = "FF{3}AA";
+        spaced = "FF {3} AA";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, true);
+        assertEquals(spaced, expression);
+
+    }
+
+    /**
+     * DROID and PRONOM have a syntax edge case - they cannot represent ?? wildcards if they are at the opposite end
+     * to which the bytesequence is anchored.  If anchored to the BOF, then any ?? at the end will be discarded.
+     * Likewise, if anchored to the EOF, any ?? at the start will be discarded.
+     *
+     * This is because ?? wildcards are modelled as gaps *between* things.  If there is nothing beyond the last thing
+     * away from the anchor, then there is nothing to hold the "gap".  So they are discarded.
+     *
+     * In practice, this is not a severe limitation, since being able to specify that some additional bytes should
+     * match after your signature only rules out those which appear too close to the end (or beginning) of the file
+     * being scanned.
+     *
+     * This tests that compiling expressions and serializing them results in the correct serialization depending
+     * on the anchor type.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testHangingWildcards() throws Exception {
+        // Test hanging wildcards on the end anchored to BOF (should be stripped):
+        String input = "AABB????????";
+        String expected = "AABB";
+        String spaced = "AA BB";
+
+        String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, ByteSequenceAnchor.BOFOffset, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, ByteSequenceAnchor.BOFOffset, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, ByteSequenceAnchor.BOFOffset, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, ByteSequenceAnchor.BOFOffset, true);
+        assertEquals(spaced, expression);
+
+        // Test hanging wildcards on the end anchored to EOF (should remain):
+        input = "AABB{4}";
+        expected = "AABB{4}";
+        spaced   = "AA BB {4}";
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, ByteSequenceAnchor.EOFOffset, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, ByteSequenceAnchor.EOFOffset, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, ByteSequenceAnchor.EOFOffset, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, ByteSequenceAnchor.EOFOffset, true);
+        assertEquals(spaced, expression);
+
+        // Test hanging wildcards at the start anchored to BOF (should remain):
+        input = "????????AABB";
+        expected = "{4}AABB";
+        spaced = "{4} AA BB";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, ByteSequenceAnchor.BOFOffset, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, ByteSequenceAnchor.BOFOffset, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, ByteSequenceAnchor.BOFOffset, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, ByteSequenceAnchor.BOFOffset, true);
+        assertEquals(spaced, expression);
+
+        // Test hanging wildcards at the start anchored to EOF (should be stripped):
+        input = "????????AABB";
+        expected = "AABB";
+        spaced = "AA BB";
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, ByteSequenceAnchor.EOFOffset, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, ByteSequenceAnchor.EOFOffset, false);
+        assertEquals(expected, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, ByteSequenceAnchor.EOFOffset, true);
+        assertEquals(spaced, expression);
+
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, CONTAINER, ByteSequenceAnchor.EOFOffset, true);
         assertEquals(spaced, expression);
     }
 
@@ -358,9 +484,13 @@ public class ByteSequenceSerializerTest {
         String expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, false);
         assertEquals(input, expression);
 
+        String any = "AA??BB";
+        expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(any, BINARY, false);
+        assertEquals(any, expression);
+
         String repeatedWild = "AA????????BB";
         expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(repeatedWild, BINARY, false);
-        assertEquals(repeatedWild, expression);
+        assertEquals(input, expression);
 
         String spaced = "AA {4} BB";
         expression = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(input, BINARY, true);

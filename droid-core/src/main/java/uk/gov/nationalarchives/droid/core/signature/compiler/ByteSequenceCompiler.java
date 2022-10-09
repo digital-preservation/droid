@@ -483,7 +483,6 @@ public final class ByteSequenceCompiler {
             final ParseTree node = sequenceList.get(fragmentIndex);
             switch (node.getParseTreeType()) {
                 case BYTE:
-                case ANY:
                 case RANGE:
                 case ALL_BITMASK:
                 case SET:
@@ -497,6 +496,7 @@ public final class ByteSequenceCompiler {
                     break;
                 }
 
+                case ANY:
                 case REPEAT:
                 case REPEAT_MIN_TO_MAX: { // wildcard gaps
                     if (startValueIndex == fragmentIndex + 1) { // Add any previous value not yet processed.
@@ -566,7 +566,6 @@ public final class ByteSequenceCompiler {
             switch (node.getParseTreeType()) {
 
                 case BYTE:
-                case ANY:
                 case RANGE:
                 case ALL_BITMASK:
                 case SET:
@@ -580,6 +579,7 @@ public final class ByteSequenceCompiler {
                     break;
                 }
 
+                case ANY:
                 case REPEAT:
                 case REPEAT_MIN_TO_MAX: { // wildcard gaps
                     if (endValueIndex == fragmentIndex - 1) { // Add any previous value not yet processed.
@@ -675,6 +675,8 @@ public final class ByteSequenceCompiler {
             } catch (ParseException ex) {
                 throw new CompileException(ex.getMessage(), ex);
             }
+        } else if (node.getParseTreeType() == ParseTreeType.ANY) {
+            return 1;
         }
         return 0;
     }
@@ -686,6 +688,8 @@ public final class ByteSequenceCompiler {
             } catch (ParseException ex) {
                 throw new CompileException(ex.getMessage(), ex);
             }
+        } else if (node.getParseTreeType() == ParseTreeType.ANY) {
+            return 1;
         }
         return 0;
     }
@@ -715,6 +719,7 @@ public final class ByteSequenceCompiler {
         if (result == NO_RESULT) {
 
             // If we couldn't find an anchor with limited sets, bitmasks or ranges, try again allowing anything:
+            // There is at least one signature that relies on this: [&01][&01].
             result = locateSearchSequence(sequence, startIndex, endIndex, AllowAllStrategy);
         }
         return result;
@@ -748,7 +753,7 @@ public final class ByteSequenceCompiler {
                 /* -----------------------------------------------------------------------------------------------------
                  * Types which can sometimes be part of an anchoring sequence:
                  */
-                case RANGE: case SET: case ALL_BITMASK: case ANY: {
+                case RANGE: case SET: case ALL_BITMASK: {
                     if (anchorStrategy.canBePartOfAnchor(child)) {
                         break;
                     }
@@ -759,7 +764,7 @@ public final class ByteSequenceCompiler {
                 /* -----------------------------------------------------------------------------------------------------
                  * Types which can't ever be part of an anchoring sequence:
                  */
-                case ALTERNATIVES: case REPEAT: case REPEAT_MIN_TO_MAX: {
+                case ALTERNATIVES: case REPEAT: case REPEAT_MIN_TO_MAX: case ANY: {
                     // If we found a longer sequence than we had so far, use that:
                     int totalLength = calculateLength(sequence, startPos, childIndex - 1);
                     if (totalLength > bestLength) {
@@ -774,7 +779,7 @@ public final class ByteSequenceCompiler {
                 }
 
                 default: {
-                    // do nothing - we're only looking for types which aren't part of an anchoring sequence.
+                    // do nothing and move on - we're only looking for types which aren't part of an anchoring sequence.
                 }
             }
         }

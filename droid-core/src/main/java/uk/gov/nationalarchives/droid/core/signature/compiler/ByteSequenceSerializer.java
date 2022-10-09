@@ -179,6 +179,7 @@ public final class ByteSequenceSerializer {
 
     /**
      * Rewrites a PRONOM expression with the syntax selected.
+     * Assumes we are anchored to the BOF.  Use the other method if you want to supply the anchor type too.
      *
      * @param expression The PRONOM expression to rewrite.
      * @param sigType Whether the syntax should target binary or container signature syntax.
@@ -187,7 +188,23 @@ public final class ByteSequenceSerializer {
      * @throws CompileException If anything goes wrong during the compilation.
      */
     public String toPRONOMExpression(String expression, SignatureType sigType, boolean spaceElements) throws CompileException {
+        //TODO: assumption that it's always anchored to BOFOffset.  Hanging wildcards result in different outputs if it's anchored to BOF or EOF.
         return toPRONOMExpression(ByteSequenceCompiler.COMPILER.compile(expression), sigType, spaceElements);
+    }
+
+    /**
+     * Rewrites a PRONOM expression with the syntax selected.
+     *
+     * @param expression The PRONOM expression to rewrite.
+     * @param sigType Whether the syntax should target binary or container signature syntax.
+     * @param anchorType Whether the expression is anchored to the BOF, EOF, or is Variable.
+     * @param spaceElements Whether elements in the expression should have whitespace between them.
+     * @return A PRONOM expression with the syntax selected
+     * @throws CompileException If anything goes wrong during the compilation.
+     */
+    public String toPRONOMExpression(String expression, SignatureType sigType, ByteSequenceAnchor anchorType, boolean spaceElements) throws CompileException {
+        //TODO: assumption that it's always anchored to BOFOffset.  Hanging wildcards result in different outputs if it's anchored to BOF or EOF.
+        return toPRONOMExpression(ByteSequenceCompiler.COMPILER.compile(expression, anchorType), sigType, spaceElements);
     }
 
     /**
@@ -346,7 +363,12 @@ public final class ByteSequenceSerializer {
                 break;
             }
             case REPEAT: { // repeats only get used for fixed gaps in droid expressions, e.g. {5}
-                builder.append('{').append(tree.getChild(0).getIntValue()).append('}');
+                int repeatNum = tree.getChild(0).getIntValue();
+                if (repeatNum == 1) {
+                    builder.append("??");
+                } else {
+                    builder.append('{').append(repeatNum).append('}');
+                }
                 break;
             }
             case REPEAT_MIN_TO_MANY: {
