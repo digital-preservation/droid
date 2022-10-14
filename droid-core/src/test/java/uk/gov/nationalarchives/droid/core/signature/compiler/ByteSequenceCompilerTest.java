@@ -332,11 +332,10 @@ public class ByteSequenceCompilerTest {
         }
     }
 
-    @Test
+    @Test(expected=CompileException.class)
     public void testAny() throws Exception {
         ByteSequence seq = COMPILER.compile("??");
         SubSequence sub  = assertSingleSubSequenceNoFragments(seq);
-        assertSingleByteMatcher(sub.getAnchorMatcher(), AnyByteMatcher.class);
     }
 
     @Test
@@ -502,8 +501,7 @@ public class ByteSequenceCompilerTest {
     @Test
     public void testAllowAllAnchorStrategy() throws Exception {
         testCompile(DROID, "[&01]", "[&01]", 0, 0);
-        testCompile(DROID, "??", ".", 0, 0);
-        testCompile(DROID, "?? [00:F9] ?? [&01]", ". [00-F9] . [&01]", 0, 0);
+        testCompile(DROID, "[&01][&01][&01][&01]", "[&01][&01][&01][&01]", 0, 0);
     }
 
     /*******************************************************************************************************************

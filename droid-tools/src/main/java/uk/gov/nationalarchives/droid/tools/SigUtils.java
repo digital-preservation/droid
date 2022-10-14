@@ -418,15 +418,16 @@ public final class SigUtils {
      * @param output The PrintStream to write the new expression to.
      * @param expressions A list of expressions to convert.
      * @param sigType Whether the expressions should be in BINARY or CONTAINER syntax.
+     * @param anchorType whether a signature is anchored to the BOF or EOF of a file.
      * @param spaceElements Whether to space syntactic elements for greater readability.
      * @param noTabs If notabs is set, just the compiled expressions are output, without the original expression or tabs.
      * @throws CompileException If there is a problem compiling the expression.
      */
     public static void convertExpressionSyntax(PrintStream output, List<String> expressions, SignatureType sigType,
-                                               boolean spaceElements, boolean noTabs) throws CompileException {
+                                               ByteSequenceAnchor anchorType, boolean spaceElements, boolean noTabs) throws CompileException {
         // anything not an option are the expressions to process.
         for (String expression : expressions) {
-            String xml = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(expression, sigType, spaceElements) ;
+            String xml = ByteSequenceSerializer.SERIALIZER.toPRONOMExpression(expression, sigType, anchorType, spaceElements) ;
             if (noTabs) {
                 output.println(xml);
             } else {
