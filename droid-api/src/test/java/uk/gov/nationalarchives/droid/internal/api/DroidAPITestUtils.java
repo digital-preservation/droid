@@ -36,16 +36,14 @@ import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Class to create an instance of DroidAPI for testing purpose.
+ * It makes use of hardcoded signature paths for current version
+ */
 public class DroidAPITestUtils {
     public static DroidAPI createApi() throws SignatureParseException {
         Path signaturePath = Paths.get("../droid-results/custom_home/signature_files/DROID_SignatureFile_V109.xml");
         Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20221102.xml");
-
-//        Path signaturePath = Paths.get("../droid-results/custom_home/signature_files/DROID_SignatureFile_V109.xml");
-//        Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20200121.xml");
-
         return DroidAPI.getInstance(signaturePath, containerPath);  //Create only once instance of Droid.
-
-
     }
 }
