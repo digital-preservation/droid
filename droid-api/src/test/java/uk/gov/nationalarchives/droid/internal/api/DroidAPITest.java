@@ -111,9 +111,9 @@ public class DroidAPITest {
     @Test
     public void testContainerVersions() throws SignatureParseException {
         DroidAPI api = DroidAPITestUtils.createApi();
-        assertThat(api.getContainerSignatureVersion(), is("20200121"));
+        assertThat(api.getContainerSignatureVersion(), is("20221102"));
         assertThat(api.getDroidVersion(), is(ResourceBundle.getBundle("options").getString("version_no")));
-        assertThat(api.getBinarySignatureVersion(), is("96"));
+        assertThat(api.getBinarySignatureVersion(), is("109"));
     }
 
     @Test

@@ -71,6 +71,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  */
 public class Ole2RootFileTest {
 
+    public static final String CONTAINER_SIGNATURE_TEST_FILE = "container-signature-20221102.xml";
     private Ole2Identifier ole2Identifier;
     
     
@@ -260,7 +261,7 @@ public class Ole2RootFileTest {
     @Test
     public void testInitialiseRegistersOle2ContainerIdentifierWithContainerIdentifierResolver() throws Exception {
         
-        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20200121.xml");
+        URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATURE_TEST_FILE);
         final Path path = Paths.get(containerSignatureUrl.toURI());
 
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
@@ -288,7 +289,7 @@ public class Ole2RootFileTest {
     @Test
     public void testInitialiseRegistersOle2ContainerFormatsAgainstOoxmlPuid() throws Exception {
         
-        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20200121.xml");
+        URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATURE_TEST_FILE);
         final Path path = Paths.get(containerSignatureUrl.toURI());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
@@ -311,7 +312,7 @@ public class Ole2RootFileTest {
     @Test
     public void testInitialiseDeregistersOle2BinarySignaturesFromDroid() throws Exception {
         
-        URL containerSignatureUrl = getClass().getClassLoader().getResource("container-signature-20200121.xml");
+        URL containerSignatureUrl = getClass().getClassLoader().getResource(CONTAINER_SIGNATURE_TEST_FILE);
         final Path path = Paths.get(containerSignatureUrl.toURI());
         
         ContainerIdentifierFactory containerIdentifierFactory = mock(ContainerIdentifierFactory.class);
