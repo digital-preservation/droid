@@ -55,6 +55,9 @@ import static org.hamcrest.Matchers.*;
 /**
  * Test internal API against skeleton sample. Unfortunately skeleton sample is in different project,
  * but it works if we use relative path.
+ *
+ * The test looks at puid mentioned in the filename and expects that as a result from the API
+ *
  */
 @RunWith(Parameterized.class)
 public class DroidAPISkeletonTest {
@@ -69,11 +72,11 @@ public class DroidAPISkeletonTest {
         this.api = api;
     }
 
-    @Parameters
+    @Parameters (name = "Testing file \"{1}\" for format \"{0}\"")
     public static Collection<Object[]> data() throws IOException, SignatureParseException {
         Pattern FILENAME = Pattern.compile("((?:x-)?fmt)-(\\d+)-signature-id-(\\d+).*");
-        Set<String> ignorePuid = Stream.of("fmt/651", "fmt/652", "fmt/685")
-                .collect(Collectors.toCollection(HashSet::new));
+
+        Set<String> ignorePuid = getIgnoredPuids();
         DroidAPI api = DroidAPITestUtils.createApi();
         return Stream.concat(
                         Files.list(Paths.get("../droid-core/test-skeletons/fmt")),
@@ -88,6 +91,27 @@ public class DroidAPISkeletonTest {
                 }).filter(x -> x != null && !ignorePuid.contains(x[0].toString()))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * This method returns the list of PUIDs to be ignored for the purpose of testing the results
+     * from the API for the test skeleton suite.
+     * Following table describes the current puids that are ignored because the identification using current
+     * signature file does not match the indicated puid in filename
+     * ---------------- Current signature file V109 ----------------
+     * fmt-1062-signature-id-1435.3fr			fmt/353		Signature
+     * fmt-1157-signature-id-1539.nfo
+     * fmt-1739-signature-id-2077.toast		    fmt/468		Signature
+     * fmt-1757-signature-id-2094.iso			fmt/1740	Signature
+     * fmt-1757-signature-id-2095.iso			fmt/1740	Signature
+     *
+     * @return Puids that are ignored for the current signature file
+     */
+    private static Set<String> getIgnoredPuids() {
+        Set<String> ignorePuid = Stream.of("fmt/1062", "fmt/1157", "fmt/1757", "fmt/1739")
+                .collect(Collectors.toCollection(HashSet::new));
+        return ignorePuid;
+    }
+
 
     @Test
     public void skeletonTest() throws Exception {
@@ -122,6 +146,4 @@ public class DroidAPISkeletonTest {
             return new ResultMatcher(puid);
         }
     }
-
-
 }

@@ -178,17 +178,8 @@ public final class ByteSequenceSerializer {
     }
 
     /**
-     * Returns a byteseek-compatible regular expression for a ByteSequence.
-     *
-     * @param sequence The ByteSequence.
-     * @return A string containing a byteseek-compatible regular expression.
-     */
-    public String toByteseekExpression(ByteSequence sequence) {
-        return sequence.toRegularExpression(true);
-    }
-
-    /**
      * Rewrites a PRONOM expression with the syntax selected.
+     * Assumes we are anchored to the BOF.  Use the other method if you want to supply the anchor type too.
      *
      * @param expression The PRONOM expression to rewrite.
      * @param sigType Whether the syntax should target binary or container signature syntax.
@@ -197,7 +188,23 @@ public final class ByteSequenceSerializer {
      * @throws CompileException If anything goes wrong during the compilation.
      */
     public String toPRONOMExpression(String expression, SignatureType sigType, boolean spaceElements) throws CompileException {
+        //TODO: assumption that it's always anchored to BOFOffset.  Hanging wildcards result in different outputs if it's anchored to BOF or EOF.
         return toPRONOMExpression(ByteSequenceCompiler.COMPILER.compile(expression), sigType, spaceElements);
+    }
+
+    /**
+     * Rewrites a PRONOM expression with the syntax selected.
+     *
+     * @param expression The PRONOM expression to rewrite.
+     * @param sigType Whether the syntax should target binary or container signature syntax.
+     * @param anchorType Whether the expression is anchored to the BOF, EOF, or is Variable.
+     * @param spaceElements Whether elements in the expression should have whitespace between them.
+     * @return A PRONOM expression with the syntax selected
+     * @throws CompileException If anything goes wrong during the compilation.
+     */
+    public String toPRONOMExpression(String expression, SignatureType sigType, ByteSequenceAnchor anchorType, boolean spaceElements) throws CompileException {
+        //TODO: assumption that it's always anchored to BOFOffset.  Hanging wildcards result in different outputs if it's anchored to BOF or EOF.
+        return toPRONOMExpression(ByteSequenceCompiler.COMPILER.compile(expression, anchorType), sigType, spaceElements);
     }
 
     /**
@@ -211,9 +218,9 @@ public final class ByteSequenceSerializer {
      */
     public String toPRONOMExpression(ByteSequence sequence, SignatureType sigType, boolean spaceElements) throws CompileException {
         try {
-            String byteseekRegex = sequence.toRegularExpression(true);
-            ParseTree parsed = PARSER.parse(byteseekRegex);
-            return toPRONOMExpression(parsed, sigType, spaceElements);
+            String byteseekRegex = sequence.toRegularExpression(true); // this outputs a byteseek-compatible regular expression.
+            ParseTree parsed = PARSER.parse(byteseekRegex); // The parser parses the byteseek regular expression into an abstract syntax tree (AST)
+            return toPRONOMExpression(parsed, sigType, spaceElements); // We then output this AST in PRONOM syntax.
         } catch (ParseException e) {
             throw new CompileException(e.getMessage(), e);
         }
@@ -301,7 +308,11 @@ public final class ByteSequenceSerializer {
             boolean spaceElements, final boolean inSet, final boolean inAlternatives) throws ParseException {
         switch (tree.getParseTreeType()) {
             case BYTE: {
-                builder.append(String.format(HEXDIGITS, tree.getByteValue() & 0xFF).toUpperCase());
+                if (tree.isValueInverted()) {
+                    builder.append("[!").append(String.format(HEXDIGITS, tree.getByteValue() & 0xFF).toUpperCase()).append(']');
+                } else {
+                    builder.append(String.format(HEXDIGITS, tree.getByteValue() & 0xFF).toUpperCase());
+                }
                 break;
             }
             case STRING: { // If processing a string in a set ['abc'] as alternatives, have to process as ('a'|'b'|'c')
@@ -312,23 +323,19 @@ public final class ByteSequenceSerializer {
                     for (int i = 0; i < value.length(); i++) {
                         int theChar = value.charAt(i);
                         builder.append(String.format(HEXDIGITS, theChar).toUpperCase());
+                        if (spaceElements && i + 1 < value.length()) {
+                            builder.append(' ');
+                        }
                     }
-                }
-                break;
-            }
-            case ALL_BITMASK: {
-                if (!inSet) {
-                    builder.append('[');
-                }
-                builder.append('&').append(String.format(HEXDIGITS, tree.getByteValue() & 0xFF));
-                if (!inSet) {
-                    builder.append(']');
                 }
                 break;
             }
             case RANGE: {
                 if (!inSet) {
                     builder.append('[');
+                    if (tree.isValueInverted()) {
+                        builder.append('!');
+                    }
                 }
                 appendByteValue(tree.getChild(0).getIntValue(), sigType == CONTAINER, builder);
                 builder.append(':');
@@ -342,21 +349,39 @@ public final class ByteSequenceSerializer {
                 builder.append("??");
                 break;
             }
+            case ALL_BITMASK: {
+                if (!inSet) {
+                    builder.append('[');
+                    if (tree.isValueInverted()) {
+                        builder.append('!');
+                    }
+                }
+                builder.append('&').append(String.format(HEXDIGITS, tree.getByteValue() & 0xFF).toUpperCase());
+                if (!inSet) {
+                    builder.append(']');
+                }
+                break;
+            }
             case REPEAT: { // repeats only get used for fixed gaps in droid expressions, e.g. {5}
-                builder.append('{').append(Integer.toString(tree.getChild(0).getIntValue())).append('}');
+                int repeatNum = tree.getChild(0).getIntValue();
+                if (repeatNum == 1) {
+                    builder.append("??");
+                } else {
+                    builder.append('{').append(repeatNum).append('}');
+                }
                 break;
             }
             case REPEAT_MIN_TO_MANY: {
                 builder.append('{').
-                        append(Integer.toString(tree.getChild(0).getIntValue())).
+                        append(tree.getChild(0).getIntValue()).
                         append("-*}");
                 break;
             }
             case REPEAT_MIN_TO_MAX: { // repeat min to max is only used for variable gaps.
                 builder.append('{').
-                        append(Integer.toString(tree.getChild(0).getIntValue())).
+                        append(tree.getChild(0).getIntValue()).
                         append('-').
-                        append(Integer.toString(tree.getChild(1).getIntValue())).
+                        append(tree.getChild(1).getIntValue()).
                         append('}');
                 break;
             }
@@ -514,14 +539,13 @@ public final class ByteSequenceSerializer {
         if (spaceElements) builder.append(' ');
     }
 
-    private boolean allChildrenAreSingleBytes(ParseTree node) throws ParseException {
+    private boolean allChildrenAreSingleBytes(ParseTree node) {
         for (int i = 0; i < node.getNumChildren(); i++) {
             ParseTree child = node.getChild(i);
             switch (child.getParseTreeType()) {
                 case BYTE: case STRING: {
                     break; // fine.
                 }
-                //TODO: are there other things we can put in alternative syntax like ranges?  e.g. ([&01] | 02 | 03).
                 default : return false;
             }
         }

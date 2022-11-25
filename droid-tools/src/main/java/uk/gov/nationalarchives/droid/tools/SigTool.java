@@ -180,7 +180,7 @@ public final class SigTool {
                 if (cli.hasOption(MATCH_OPTION)) {
                     matchFiles(cli, output, anchorType);
                 } else if (cli.hasOption(EXPRESSION_OUTPUT)) {
-                    SigUtils.convertExpressionSyntax(output, cli.getArgList(), sigType, spaceElements, noTabs);
+                    SigUtils.convertExpressionSyntax(output, cli.getArgList(), sigType, anchorType, spaceElements, noTabs);
                 } else {
                     SigUtils.convertExpressionsToXML(output, cli.getArgList(), compileType, sigType, anchorType, noTabs);
                 }
