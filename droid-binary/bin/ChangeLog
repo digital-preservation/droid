@@ -1,5 +1,18 @@
-Version 6.5
+Version 6.6
+* Introduced internal API for making droid easier to use as a dependency
+* Improvement to ?? signature pattern
+* Fix for inverted syntax when the bytes or ranges are inverted
+* Introduced semantic versioning
+* Improved consistency across profile and no profile mode
+* Replaced iTextPdf with OpenHTMLToPDF to address vulnerability
+* Updated to use Java 11 as bundled JRE
+* Code refactoring
+* Bug fixes
 
+For a full list of the included changes with this version, please check the full changelog (http://www.github.com/digital-preservation/droid/releases/tag/droid-6.6.0/)
+
+
+Version 6.5
 * Manage opening of WARC 1.1 and update identification of WARC 1.0
 * Ability to cherry pick types of archival container to be scanned
 * adds drag drop support for files into a profile GUI window

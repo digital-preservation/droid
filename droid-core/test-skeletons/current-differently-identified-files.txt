@@ -5,3 +5,7 @@
 // You can then add a further tab to add a comment if required.
 // Also, Entries can be commented out by adding // at the start of a line
 //x-fmt-412-signature-id-199.jar //Not identified in GUI.  Test identifies as x-fmt/412 but normal no profile run as x-fmt/263
+fmt-1062-signature-id-1435.3fr fmt/353 Identified as fmt/353
+fmt-1739-signature-id-2077.toast fmt/468 Identified as fmt/468
+fmt-1757-signature-id-2094.iso fmt/1740 Identified as fmt/1740
+fmt-1757-signature-id-2095.iso fmt/1740 Identified as fmt/1740

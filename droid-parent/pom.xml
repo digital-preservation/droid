@@ -11,7 +11,7 @@
   
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.6.0-SNAPSHOT</version>
+    <version>6.6.0-rc2-SNAPSHOT</version>
     <packaging>pom</packaging>
   
     <name>droid-parent</name>
@@ -97,7 +97,7 @@
         <jaxb.version>2.3.1</jaxb.version>
         <flying-saucer.version>9.1.22</flying-saucer.version>
         <truezip.version>7.7.10</truezip.version>
-        <jwat.version>1.1.1</jwat.version>
+        <jwat.version>1.1.3</jwat.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
         <log4j2.version>2.19.0</log4j2.version>
@@ -211,7 +211,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.4.2</version>
                 </plugin>
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
                 <!--
@@ -249,7 +249,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.eluder.coveralls</groupId>
@@ -637,7 +637,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-ri</artifactId>
-                <version>3.0.2</version>
+                <version>4.0.0</version>
                 <type>pom</type>
             </dependency>
             <dependency>
