@@ -13,3 +13,9 @@ target/*
 *.iml
 /*/*.iml
 derby.log
+/*/.classpath
+/*/.DS_Store
+.DS_Store
+/*/.project
+.project
+/*/.settings
