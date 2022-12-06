@@ -162,12 +162,6 @@
     <module name="MissingOverride"/>
     <module name="PackageAnnotation"/>
     <module name="SuppressWarnings"/>
-    <module name="ImportOrder">
-      <property name="option" value="above"/>
-      <property name="groups" value="java,javax,org,com"/>
-      <property name="ordered" value="false"/>
-      <property name="separated" value="true"/>
-    </module>
     <module name="UncommentedMain">
       <property name="severity" value="ignore"/>
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
