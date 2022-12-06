@@ -234,11 +234,6 @@
     <!-- property name="lineSeparator" value="lf"/ -->  <!-- we always expect Unix like EOF -->
   </module>
   
-  <!-- now managed by the maven licence plugin -->
-  <!-- module name="Header">
-    <property name="header" value="/**\n * &lt;p&gt;Copyright (c) The National Archives 2005-2010.  All rights reserved.\n * See Licence.txt for full licence details.\n * &lt;p/&gt;\n *\n * &lt;p&gt;DROID DCS Profile Tool\n * &lt;p/&gt;\n */"/>
-  </module -->
-  
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.suppressions.file}"/>
   </module>
