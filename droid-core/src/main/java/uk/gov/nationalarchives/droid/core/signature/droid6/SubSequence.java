@@ -769,17 +769,6 @@ public class SubSequence extends SimpleElement {
         }
     }
 
-    private int getNumberOfFragmentPositions(final List<SideFragment> fragments) {
-        int numPositions = 0;
-        for (int i = 0; i < leftFragments.size(); i++) {
-            final int currentPosition = fragments.get(i).getPosition();
-            if (currentPosition > numPositions) {
-                numPositions = currentPosition;
-            }
-        }
-        return numPositions;
-    }
-
     /**
      *
      * @return Whether the subsequence is invalid.
@@ -1615,7 +1604,6 @@ public class SubSequence extends SimpleElement {
                                            List<List<SideFragment>> fragments,
                                            OffsetAndFilePositions finalOffsetFoundPositions) {
     //CHECKSTYLE:ON
-        final boolean leftFrag = true;
 
         // set up loop start and end depending on search order:
         final int numFragPos = fragments.size(); // getNumFragmentPositions(leftFrag);
