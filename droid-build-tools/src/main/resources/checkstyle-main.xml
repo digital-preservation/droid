@@ -91,15 +91,8 @@
     <module name="MethodParamPad"/>
     <module name="ModifierOrder"/>
     <module name="NeedBraces"/>
-    <module name="NoWhitespaceAfter">
-      <property name="tokens" value="ARRAY_INIT,BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
-    </module>
 
     <!-- Maybe in future we should return this to default -->
-    <module name="NoWhitespaceBefore">
-      <property name="allowLineBreaks" value="true"/>
-      <property name="tokens" value="DOT"/>
-    </module>
     <module name="OperatorWrap"/>
     <module name="OperatorWrap">
       <property name="option" value="eol"/>
@@ -128,11 +121,6 @@
     <module name="UpperEll"/>
     <module name="VisibilityModifier"/>
     <module name="WhitespaceAfter"/>
-
-    <module name="WhitespaceAround">
-      <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, DO_WHILE, EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, RCURLY, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN, LITERAL_ASSERT, TYPE_EXTENSION_AND" />
-    </module>
-
     <module name="GenericWhitespace"/>
     <module name="FinalClass"/>
     <module name="MissingSwitchDefault"/>
