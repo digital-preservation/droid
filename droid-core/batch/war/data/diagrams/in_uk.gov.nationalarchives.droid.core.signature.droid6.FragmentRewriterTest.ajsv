@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--AgileJ Ltd. (http://www.agilej.com)--><ajsv>
+    <diagram creationDate="2022-Dec-21 17:23" licenseGrade="single" licenseeName="AgileJ community member" licenseeOrganization="agilej-community" populationMethod="inheritance" version="1.9.2.v20190518-1152">
+        <filterScript>
+
+// by inheritance generator
+hide dependency lines
+hide field lines
+hide method lines
+hide call lines
+show bytecode types in gray
+show all interfaces in blue
+show abstract classes in pink
+show overridden methods in red larger bold
+show overriding methods in purple larger bold
+
+</filterScript>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.FragmentRewriterTest" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.FragmentRewriterTest" project="droid-core" xLocation="1037" yLocation="54"/>
+        <class className="junit.framework.Assert" modelMemberId="junit.framework.Assert" project="droid-core" xLocation="30" yLocation="30"/>
+        <class className="junit.framework.TestCase" modelMemberId="junit.framework.TestCase" project="droid-core" xLocation="776" yLocation="380"/>
+        <class className="junit.framework.Test" modelMemberId="junit.framework.Test" project="droid-core" xLocation="1536" yLocation="480"/>
+    </diagram>
+</ajsv>

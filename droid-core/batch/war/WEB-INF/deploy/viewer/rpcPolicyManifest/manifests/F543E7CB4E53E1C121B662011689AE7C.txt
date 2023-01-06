@@ -1,0 +1,2 @@
+serviceClass: com.agilej.viewer.client.diagram.DiagramService
+path: AEBE8051D5F2157D43D1CFABC1F743A5.gwt.rpc

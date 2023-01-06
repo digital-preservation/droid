@@ -220,6 +220,9 @@ public class ProfileForm extends JPanel {
 
         // Make the resource name column a bit wider by default - it's always too small to see anything.
         nodeColumn0.setPreferredWidth(PREFERRED_WIDTH);
+        
+        for (int index = 0; index < columnModel.getColumnCount(); index++)
+        	columnModel.getColumn(index).setPreferredWidth(500);
 
         //((DefaultTreeModel) treeModel).reload();
 

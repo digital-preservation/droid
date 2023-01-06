@@ -1,0 +1,2 @@
+serviceClass: com.agilej.viewer.client.index.IndexService
+path: 36A1D3828C2E84DC49BD414C2330775E.gwt.rpc

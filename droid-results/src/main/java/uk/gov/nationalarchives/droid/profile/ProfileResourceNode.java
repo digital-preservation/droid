@@ -66,7 +66,10 @@ public class ProfileResourceNode {
      * Default constructor.
      */
     //BNO made public for export work:  TODO: Review
-    public ProfileResourceNode() { }
+    public ProfileResourceNode() 
+    {
+    	System.out.println();
+    }
 
     /**
      * Copy constructor for ProfileResourceNode.

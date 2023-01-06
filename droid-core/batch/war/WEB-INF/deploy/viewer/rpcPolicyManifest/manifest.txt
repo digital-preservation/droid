@@ -1,0 +1,4 @@
+# Module viewer
+# RPC service class, partial path of RPC policy file
+com.agilej.viewer.client.index.IndexService, 36A1D3828C2E84DC49BD414C2330775E.gwt.rpc
+com.agilej.viewer.client.diagram.DiagramService, AEBE8051D5F2157D43D1CFABC1F743A5.gwt.rpc

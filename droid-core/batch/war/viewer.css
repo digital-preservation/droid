@@ -1,0 +1,147 @@
+/** Add css rules here for your application. */
+
+/** Example rules used by the template application (remove for your app) */
+h1 {
+	font-size: 2em;
+	font-weight: bold;
+	color: #777777;
+	text-align: center;
+}
+
+#main {
+	overflow: auto !important;
+}
+
+.handCursor{
+	cursor: pointer;
+}
+
+.defaultCursor{
+	cursor: default;
+}
+
+.sendButton {
+	display: block;
+	font-size: 16pt;
+}
+
+/** Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+	width: 400px;
+}
+
+.dialogVPanel {
+	margin: 5px;
+}
+
+.serverResponseLabelError {
+	color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+	margin: 15px 6px 6px;
+}
+
+.imageStyle {
+	border: 1px solid gray;
+	height: 250px;
+	cursor: pointer;
+	width: 30px;
+	display: inline-table;
+	box-shadow: 3px 3px 3px gray;
+}
+
+.invisibleImageLabel {
+	color: white;
+	background-color: white;
+	width: 200px;
+}
+
+.imageLabel {
+	color: white;
+	background-color: silver;
+	width: 200px;
+}
+
+.nextLine {
+	display: block;
+}
+
+.sameLine {
+	display: inline-table;
+}
+
+.paddedFlowPanel {
+	margin: 10px;
+}
+
+.whiteBackground {
+	background-color: white;
+}
+
+.center {
+	margin-left: 5%;
+}
+
+.point {
+	cursor: pointer;
+	border: 1px solid lavender;
+}
+
+.leftSpace {
+	padding-left: 250px;
+}
+
+.borderFocus {
+	border: 1px solid silver;
+}
+
+.toolbar {
+	border: 2px solid gray;
+	background-color: lavender;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.rollover {
+	border: 1px solid gray;
+	border-spacing: 15;
+}
+
+.resizes {
+	resize: both;
+	overflow: auto;
+}
+
+.getHTML {
+	white-space: pre;
+}
+
+.editor {
+	font-family: manaco 11;
+}
+
+.invisibleListBox {
+	border-width: 0px;
+	border-color: white;
+}
+
+.editormarker{
+    position:absolute;
+    background-color: pink;
+    z-index:20
+}
+
+.gwt-Grey-Border{ 
+  border: 3px solid #9EA2AA;
+  padding: 3px;
+  background: white;
+}
+
+canvas {
+  outline: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+}

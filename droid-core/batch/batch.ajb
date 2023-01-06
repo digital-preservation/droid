@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Batch exportToPNG="false" exportToSVG="false" restrictPopulation="true">
+    <CreateBy createByType="inheritance" inwards="true" outwards="true">
+        <SeedTypeSelectorAndSwitchValues modelElementFilter="top level source types" switchValues=""/>
+        <PopulationTypeSelectorAndSwitchValues modelElementFilter="non java star package types" switchValues=""/>
+        <FilterScript>
+
+// by inheritance generator
+hide dependency lines
+hide field lines
+hide method lines
+hide call lines
+show bytecode types in gray
+show all interfaces in blue
+show abstract classes in pink
+show overridden methods in red larger bold
+show overriding methods in purple larger bold
+
+</FilterScript>
+    </CreateBy>
+    <CreateBy createByType="composition" inwards="false" outwards="false">
+        <SeedTypeSelectorAndSwitchValues modelElementFilter="top level source types" switchValues=""/>
+        <PopulationTypeSelectorAndSwitchValues modelElementFilter="non java star package types" switchValues=""/>
+        <FilterScript>
+
+// by composition generator
+hide dependency lines
+hide method lines
+hide call lines
+show bytecode types in gray
+show all interfaces in blue
+show abstract classes in pink
+hide all methods
+
+</FilterScript>
+    </CreateBy>
+    <Project name="droid-core"/>
+</Batch>

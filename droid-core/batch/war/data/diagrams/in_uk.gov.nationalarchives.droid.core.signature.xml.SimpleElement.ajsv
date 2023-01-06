@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--AgileJ Ltd. (http://www.agilej.com)--><ajsv>
+    <diagram creationDate="2022-Dec-21 17:35" licenseGrade="single" licenseeName="AgileJ community member" licenseeOrganization="agilej-community" populationMethod="manual" version="1.9.2.v20190518-1152">
+        <filterScript>
+
+// by inheritance generator
+hide dependency lines
+hide field lines
+hide method lines
+hide call lines
+show bytecode types in gray
+show all interfaces in blue
+show abstract classes in pink
+show overridden methods in red larger bold
+show overriding methods in purple larger bold
+
+</filterScript>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.SubSequence" project="droid-core" xLocation="1370" yLocation="-705"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.ByteSequence" project="droid-core" xLocation="5892" yLocation="-876"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.FFSignatureFile" project="droid-core" xLocation="5241" yLocation="1005"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.SideFragment" project="droid-core" xLocation="2928" yLocation="657"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.FileFormatHit" modelMemberId="uk.gov.nationalarchives.droid.core.signature.FileFormatHit" project="droid-core" xLocation="2369" yLocation="104"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignature" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignature" project="droid-core" xLocation="4056" yLocation="786"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.FileFormat" modelMemberId="uk.gov.nationalarchives.droid.core.signature.FileFormat" project="droid-core" xLocation="5847" yLocation="643"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection" project="droid-core" xLocation="5189" yLocation="-437"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement" modelMemberId="uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement" project="droid-core" xLocation="3622" yLocation="-1125"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.FileFormatCollection" modelMemberId="uk.gov.nationalarchives.droid.core.signature.FileFormatCollection" project="droid-core" xLocation="4257" yLocation="238"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.Shift" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.Shift" project="droid-core" xLocation="3632" yLocation="318"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.RightFragment" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.RightFragment" project="droid-core" xLocation="3682" yLocation="1112"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.droid6.LeftFragment" modelMemberId="uk.gov.nationalarchives.droid.core.signature.droid6.LeftFragment" project="droid-core" xLocation="2251" yLocation="1252"/>
+    </diagram>
+</ajsv>

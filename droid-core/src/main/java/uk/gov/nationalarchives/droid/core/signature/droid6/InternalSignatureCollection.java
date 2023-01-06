@@ -81,7 +81,7 @@ public class InternalSignatureCollection extends SimpleElement {
     //BNO there is one instance of this for the entire profile - not each request
     private static final int DEFAULT_COLLECTION_SIZE = 10;
     
-    private List<InternalSignature> intSigs = new ArrayList<InternalSignature>(DEFAULT_COLLECTION_SIZE);
+    private List<InternalSignature> internalSignatures = new ArrayList<InternalSignature>(DEFAULT_COLLECTION_SIZE);
     private Map<Integer, InternalSignature> sigsByID = new HashMap<Integer, InternalSignature>();
     
     /**
@@ -92,19 +92,16 @@ public class InternalSignatureCollection extends SimpleElement {
      * @param maxBytesToScan The maximum bytes to scan.
      * @return A list of the internal signatures which matched. 
      */
-    public List<InternalSignature> getMatchingSignatures(ByteReader targetFile, long maxBytesToScan) {
-        //BNO: intSigs here represents all the available binary signatures..
-        List<InternalSignature> matchingSigs = new ArrayList<InternalSignature>();
-        if (targetFile.getNumBytes() > 0) {
-            final int stop = intSigs.size();
-            for (int sigIndex = 0; sigIndex < stop; sigIndex++) {
-                final InternalSignature internalSig = intSigs.get(sigIndex);
-                if (internalSig.matches(targetFile, maxBytesToScan)) {
-                    matchingSigs.add(internalSig);
-                }
-            }
-        }
-        return matchingSigs;
+    public List<InternalSignature> getMatchingSignatures(ByteReader targetFile, long maxBytesToScan) 
+    {
+        final List<InternalSignature> result = new ArrayList<InternalSignature>();
+        if (targetFile.getNumBytes() == 0)
+        	return result;
+
+        for (InternalSignature internalSignature : internalSignatures)
+            if (internalSignature.matches(targetFile, maxBytesToScan)) 
+                result.add(internalSignature);
+        return result;
     }
     
    
@@ -113,7 +110,7 @@ public class InternalSignatureCollection extends SimpleElement {
      */
     public void prepareForUse() {
         //BNO: Called once when initialising the profile.
-        for (Iterator<InternalSignature> sigIterator = intSigs.iterator(); sigIterator.hasNext();) {
+        for (Iterator<InternalSignature> sigIterator = internalSignatures.iterator(); sigIterator.hasNext();) {
             InternalSignature sig = sigIterator.next();
             sig.prepareForUse();
             if (sig.isInvalidSignature()) {
@@ -135,7 +132,7 @@ public class InternalSignatureCollection extends SimpleElement {
      * @param iSig the signature to add.
      */
     public final void addInternalSignature(final InternalSignature iSig) {
-        intSigs.add(iSig);
+        internalSignatures.add(iSig);
         sigsByID.put(iSig.getID(), iSig);
     }
     
@@ -145,7 +142,7 @@ public class InternalSignatureCollection extends SimpleElement {
      * @param iSig The signature to remove.
      */
     public final void removeInternalSignature(final InternalSignature iSig) {
-        intSigs.remove(iSig);
+        internalSignatures.remove(iSig);
         sigsByID.remove(iSig.getID());
     }
     
@@ -165,7 +162,7 @@ public class InternalSignatureCollection extends SimpleElement {
      * @param iSigs The list of signatures to add.
      */
     public final void setInternalSignatures(final List<InternalSignature> iSigs) {
-        intSigs.clear();
+        internalSignatures.clear();
         sigsByID.clear();
         for (InternalSignature signature : iSigs) {
             addInternalSignature(signature);
@@ -178,7 +175,7 @@ public class InternalSignatureCollection extends SimpleElement {
      * @return A list of internal signatures in the collection.
      */
     public final List<InternalSignature> getInternalSignatures() {
-        return intSigs;
+        return internalSignatures;
     }
 
     /**
@@ -186,7 +183,7 @@ public class InternalSignatureCollection extends SimpleElement {
      * @param compareWith the internal signature comparator to compare with.
      */
     public void sortSignatures(final Comparator<InternalSignature> compareWith) {
-        Collections.sort(intSigs, compareWith);
+        Collections.sort(internalSignatures, compareWith);
     }
 
 }

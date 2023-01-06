@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<filters version="1.9.2.v20190518-1152">
+    <typeFilter description="abstract classes" signature="abstract classes" stereotype="abstract"/>
+    <typeFilter description="all classes" signature="all classes"/>
+    <fieldFilter description="all fields" signature="all fields"/>
+    <typeFilter description="all interfaces" signature="all interfaces"/>
+    <fieldFilter description="slf4j, log4j, javalogger and apache commons logger combined" signature="all loggers"/>
+    <methodFilter description="all methods including constructors" signature="all methods"/>
+    <methodFilter description="all methods which are not constructors" signature="all operations"/>
+    <typeFilter description="all types" signature="all types"/>
+    <fieldFilter description="apache commons logger" signature="apache commons logger"/>
+    <fieldFilter description="aspectj fields" signature="aspectj fields"/>
+    <methodFilter description="aspectj methods" signature="aspectj methods"/>
+    <typeFilter description="aspectj types" signature="aspectj types"/>
+    <typeFilter description="bytecode types" signature="bytecode types" stereotype="from bytecode"/>
+    <typeFilter description="classes with a default constructor" signature="classes with a default constructor"/>
+    <typeFilter description="classes which declare a method with the signature: public static void main(String[] args)" signature="classes with main"/>
+    <typeFilter description="component type of composite design pattern" signature="component type of composite design pattern" stereotype="Component"/>
+    <typeFilter description="composite type of composite design pattern" signature="composite type of composite design pattern" stereotype="Composite"/>
+    <typeFilter description="concrete classes" signature="concrete classes"/>
+    <methodFilter description="constructors" signature="constructors"/>
+    <typeFilter description="decorator type" signature="decorator type"/>
+    <methodFilter description="constructors that take no parameters" signature="default constructors"/>
+    <fieldFilter description="all fields annotated as @Deprecated" signature="deprecated fields"/>
+    <methodFilter description="methods annotated as @Deprecated" signature="deprecated methods"/>
+    <typeFilter description="deprecated types" signature="deprecated types" stereotype="deprecated"/>
+    <typeFilter description="enums" signature="enums"/>
+    <typeFilter description="types which extend java.lang.Exception" signature="exceptions" stereotype="Exception"/>
+    <fieldFilter description="fields annotated as {annotation-name}" signature="fields annotated as {annotation-name}"/>
+    <fieldFilter description="fields annotated as {annotation-name} with parameter {parameter-name} of value {parameter-value}" signature="fields annotated as {annotation-name} with parameter {parameter-name} of value {parameter-value}"/>
+    <fieldFilter description="fields whose name matches a given pattern" signature="fields named {field-name-pattern}"/>
+    <fieldFilter description="fields declared in a type whose name matches a given pattern" signature="fields of {field-owner}"/>
+    <fieldFilter description="fields which reference their declarer" signature="fields which reference their declarer"/>
+    <methodFilter description="methods whose name starts with 'get'" signature="getter methods"/>
+    <typeFilter description="inner types" signature="inner types"/>
+    <typeFilter description="inner types of a given name" signature="inner types named {type-name}"/>
+    <fieldFilter description="java logger" signature="java logger"/>
+    <typeFilter description="javabean types" signature="javabean types"/>
+    <methodFilter description="jmx methods as determined by jmx annotations" signature="jmx methods"/>
+    <typeFilter description="jmx types as denoted by jmx annotations" signature="jmx types" stereotype="JMX"/>
+    <typeFilter description="jre types" signature="jre types" stereotype="JRE"/>
+    <typeFilter description="public classes whose names starts with Test" signature="junit3 types" stereotype="JUnit Test"/>
+    <typeFilter description="leaf type of composite design pattern" signature="leaf type of composite design pattern" stereotype="Leaf"/>
+    <fieldFilter description="log4j logger" signature="log4j logger"/>
+    <methodFilter description="methods with the signature: public static void main(String[] args)" signature="main methods"/>
+    <typeFilter description="Interfaces without methods" signature="marker interfaces" stereotype="Marker"/>
+    <typeFilter description="types in a given package" signature="members of package {package-name}"/>
+    <methodFilter description="methods annotated as {annotation-name}" signature="methods annotated as {annotation-name}"/>
+    <methodFilter description="methods annotated as {annotation-name} with parameter {parameter-name} of value {parameter-value}" signature="methods annotated as {annotation-name} with parameter {parameter-name} of value {parameter-value}"/>
+    <methodFilter description="methods whose name matches a pattern" signature="methods named {method-name-pattern}"/>
+    <methodFilter description="methods declared by a given type" signature="methods of {method-owner}"/>
+    <methodFilter description="constructors which take one or more arguments" signature="non default constructors"/>
+    <typeFilter description="any type which doesn't exist in a java.* package" signature="non java star package types"/>
+    <fieldFilter description="one to many fields" signature="one to many fields"/>
+    <methodFilter description="overloaded methods" signature="overloaded methods"/>
+    <methodFilter description="overridden methods" signature="overridden methods"/>
+    <methodFilter description="overriding methods" signature="overriding methods"/>
+    <fieldFilter description="fields which have default visibility, not public, protected or private" signature="package visible fields"/>
+    <methodFilter description="methods which have default visibility, not public, protected or private" signature="package visible methods"/>
+    <typeFilter description="types which have default visibility, not public, protected or private" signature="package visible types"/>
+    <typeFilter description="classes with a default constructor and only get and set methods" signature="pojo types" stereotype="POJO"/>
+    <fieldFilter description="private fields" signature="private fields"/>
+    <methodFilter description="private methods" signature="private methods"/>
+    <typeFilter description="private types" signature="private types"/>
+    <fieldFilter description="protected fields" signature="protected fields"/>
+    <methodFilter description="protected methods" signature="protected methods"/>
+    <typeFilter description="protected types" signature="protected types"/>
+    <fieldFilter description="public fields" signature="public fields"/>
+    <methodFilter description="public methods" signature="public methods"/>
+    <typeFilter description="public types" signature="public types"/>
+    <typeFilter description="types which contain a reference to themselves" signature="self referencing types" stereotype="self-referencing"/>
+    <fieldFilter description="serial version uid fields" signature="serial version uid fields"/>
+    <typeFilter description="types which implement java.io.Serializable" signature="serializable types" stereotype="Serializable"/>
+    <methodFilter description="methods whose name starts with 'set'" signature="setter methods"/>
+    <typeFilter description="classes for which only one instance can exist accessed by a static method" signature="singeltons"/>
+    <fieldFilter description="slf4j logger" signature="slf4j logger"/>
+    <typeFilter description="classes, interfaces, annotations and enums for which the source code is available in the workspace" signature="source code types"/>
+    <methodFilter description="spring autowired methods" signature="spring autowired methods"/>
+    <typeFilter description="spring controller type" signature="spring controller type"/>
+    <fieldFilter description="spring fields" signature="spring fields"/>
+    <methodFilter description="spring methods" signature="spring methods"/>
+    <typeFilter description="spring types" signature="spring types" stereotype="Spring"/>
+    <fieldFilter description="static fields" signature="static fields"/>
+    <typeFilter description="static inner types" signature="static inner types"/>
+    <methodFilter description="static methods" signature="static methods"/>
+    <fieldFilter description="static string fields" signature="static string fields"/>
+    <fieldFilter description="string fields" signature="string fields"/>
+    <typeFilter description="subtype of type in package matching a pattern" signature="subtypes of members of package {package-name-pattern}"/>
+    <methodFilter description="synchronized methods" signature="synchronized methods"/>
+    <typeFilter description="source types which are not inner types" signature="top level source types"/>
+    <typeFilter description="types which are not inner types" signature="top level types"/>
+    <typeFilter description="types annotated as {annotation-name}" signature="types annotated as {annotation-name}"/>
+    <typeFilter description="types annotated as {annotation-name} with parameter {parameter-name} of value {parameter-value}" signature="types annotated as {annotation-name} with parameter {parameter-name} of value {parameter-value}"/>
+    <typeFilter description="types with a javadoc @author tag matching a given pattern" signature="types authored by {author}"/>
+    <typeFilter description="types declared in a package whose name matches a given pattern" signature="types declared within a package named {package-name-pattern}"/>
+    <typeFilter description="types whose name matches a pattern" signature="types named {type-name-pattern}"/>
+    <typeFilter description="types with static members" signature="types with static members"/>
+</filters>

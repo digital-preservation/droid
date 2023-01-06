@@ -91,7 +91,8 @@ public class BinarySignatureIdentifier implements DroidCore {
      * {@inheritDoc}
      */
     @Override
-    public IdentificationResultCollection matchBinarySignatures(IdentificationRequest request) {
+    public IdentificationResultCollection matchBinarySignatures(IdentificationRequest request) 
+    {
         //BNO: Called once for each identification request
         IdentificationResultCollection results = new IdentificationResultCollection(request);
         results.setRequestMetaData(request.getRequestMetaData());
@@ -118,8 +119,8 @@ public class BinarySignatureIdentifier implements DroidCore {
      * {@inheritDoc}
      */
     @Override
-    public IdentificationResultCollection matchExtensions(
-            IdentificationRequest request, boolean allExtensions) {
+    public IdentificationResultCollection matchExtensions(IdentificationRequest request, boolean allExtensions) 
+    {
         IdentificationResultCollection results = new IdentificationResultCollection(request);
         results.setRequestMetaData(request.getRequestMetaData());
         String fileExtension = request.getExtension();

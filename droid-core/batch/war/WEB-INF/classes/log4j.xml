@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration>
+  <appender name="rollingFileAppender" class="org.apache.log4j.RollingFileAppender"> 
+    <param name="file" value="agilej-viewer-logs/server.log"/>
+    <param name="MaxFileSize" value="1MB"/>
+    <param name="MaxBackupIndex" value="100"/>
+    <layout class="org.apache.log4j.PatternLayout"> 
+      <param name="ConversionPattern" value="%d %p %l - %m%n"/> 
+    </layout> 
+  </appender> 	
+  
+	<root>
+		<priority value="all"></priority>
+		<appender-ref ref="rollingFileAppender"/>
+	</root>
+</log4j:configuration>

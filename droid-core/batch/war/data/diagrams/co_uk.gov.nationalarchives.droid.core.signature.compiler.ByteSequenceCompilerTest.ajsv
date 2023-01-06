@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--AgileJ Ltd. (http://www.agilej.com)--><ajsv>
+    <diagram creationDate="2022-Dec-21 17:23" licenseGrade="single" licenseeName="AgileJ community member" licenseeOrganization="agilej-community" populationMethod="composition" version="1.9.2.v20190518-1152">
+        <filterScript>
+
+// by composition generator
+hide dependency lines
+hide method lines
+hide call lines
+show bytecode types in gray
+show all interfaces in blue
+show abstract classes in pink
+hide all methods
+
+</filterScript>
+        <class className="uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompilerTest" modelMemberId="uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompilerTest" project="droid-core" xLocation="508" yLocation="280"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor" modelMemberId="uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceAnchor" project="droid-core" xLocation="967" yLocation="344"/>
+        <class className="uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler" modelMemberId="uk.gov.nationalarchives.droid.core.signature.compiler.ByteSequenceCompiler" project="droid-core" xLocation="30" yLocation="30"/>
+    </diagram>
+</ajsv>
