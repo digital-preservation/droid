@@ -34,4 +34,4 @@
 
 SET DROID_HOME=%~dp0
 
-start "" "%DROID_HOME%jre\bin\java.exe" java -jar droid-tools-6.6.0-rc3-SNAPSHOT.jar %*
+start "" "%DROID_HOME%jre\bin\java.exe" java -jar droid-tools-${project.version}.jar %*
