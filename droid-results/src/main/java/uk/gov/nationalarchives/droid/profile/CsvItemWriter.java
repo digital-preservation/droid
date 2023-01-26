@@ -55,6 +55,7 @@ import com.univocity.parsers.csv.CsvWriterSettings;
 
 import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**
@@ -65,7 +66,7 @@ import uk.gov.nationalarchives.droid.profile.referencedata.Format;
  * There is an option to quote all values.
  * There is an option to set a custom header for the hash column.  
  */
-public class CsvItemWriter
+public class CsvItemWriter implements ItemWriter<ProfileResourceNode> 
 {
     private static final FastDateFormat DATE_FORMAT = DateFormatUtils.ISO_DATETIME_FORMAT;
     private static final String FILE_URI_SCHEME = "file";
@@ -245,6 +246,7 @@ public class CsvItemWriter
         this.quoteAllFields = quoteAll;
     }
     
+    @Override
     public void setHeaders(Map<String, String> headersToSet) 
     {
         // We receive a map of standard -> custom header values.
@@ -287,7 +289,8 @@ public class CsvItemWriter
         csvWriter = new CsvWriter(writer, csvWriterSettings);
     }
 
-    public void write(List<ProfileResourceNode> nodes) 
+    @Override
+    public void write(List<? extends ProfileResourceNode> nodes)
     {
         // Write according to the export option
         if (exportOption == ExportOptions.ONE_ROW_PER_FILE)
@@ -304,7 +307,7 @@ public class CsvItemWriter
         csvWriter.close();
     }
     
-    private void writeAsOneRowPerFormat(List<ProfileResourceNode> profileResourceNodes) 
+    private void writeAsOneRowPerFormat(List<? extends ProfileResourceNode> profileResourceNodes) 
     {
         // Write all of the headers
         final List<String> allHeaders = new ArrayList<>();
@@ -350,7 +353,7 @@ public class CsvItemWriter
         }
     }
 
-    private void writeAsOneRowPerFile(List<ProfileResourceNode> profileResourceNodes)
+    private void writeAsOneRowPerFile(List<? extends ProfileResourceNode> profileResourceNodes)
     {
         // Find the node with the most formats so we know how many headers to write
         int largestCountOfFormats = 0;
