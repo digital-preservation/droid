@@ -32,12 +32,16 @@
 package uk.gov.nationalarchives.droid.profile;
 
 import java.io.Writer;
+import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -45,343 +49,334 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.univocity.parsers.common.TextWritingException;
 import com.univocity.parsers.csv.CsvFormat;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
+import com.univocity.parsers.common.TextWritingException;
 
+import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**
- * This class wraps a com.univocity.parsers.csv.CsvWriter.
- * It can output in normalised form: one row per file-and-format combination (fixed width). 
- * It can output in denormalised form: one row per file with all matching formats (variable width).
- * In denormalised form files (rows) with fewer matched formats are padded with empty values to keep a constant width under the headers. 
- * There is an option to quote all values.
- * There is an option to set a custom header for the hash column.  
+ * @author rflitcroft
+ *
  */
-public class CsvItemWriter
-{
-	private static final FastDateFormat DATE_FORMAT = DateFormatUtils.ISO_DATETIME_FORMAT;
-	private static final String FILE_URI_SCHEME = "file";
-	private static final Logger LOG = LoggerFactory.getLogger(CsvItemWriter.class);
+public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
-	private static abstract class ColumnType
-	{
-		private final String header;
+    /**
+     * Headers used in the CSV output
+     */
+    static final String[] HEADERS = {
+            "ID",
+            "PARENT_ID",
+            "URI",
+            "FILE_PATH",
+            "NAME",
+            "METHOD",
+            "STATUS",
+            "SIZE",
+            "TYPE",
+            "EXT",
+            "LAST_MODIFIED",
+            "EXTENSION_MISMATCH",
+            "HASH",
+            "FORMAT_COUNT",
+            "PUID",
+            "MIME_TYPE",
+            "FORMAT_NAME",
+            "FORMAT_VERSION",
+    };
 
-		private ColumnType(String header)
-		{
-			this.header = header;
-		}
-		
-		abstract String getValue(ProfileResourceNode profileResourceNode, int formatIndex);
-	}
-	
-	private static class FixedColumnType extends ColumnType
-	{
-		private static interface FixedFieldWriter
-		{
-			Object value(ProfileResourceNode profileResourceNode);
-		}
-		
-		private static final FixedColumnType HASH_COLUMN = new FixedColumnType("HASH", (node) -> node.getMetaData().getHash()); 
-		
-	    private static final FixedColumnType[] FIXED_COLUMNS = {
-	            new FixedColumnType("ID", (node) -> node.getId()),
-	            new FixedColumnType("PARENT_ID", (node) -> node.getParentId()),
-	            new FixedColumnType("URI", (node) -> DroidUrlFormat.format(node.getUri())),
-	            new FixedColumnType("FILE_PATH", (node) -> FILE_URI_SCHEME.equals(node.getUri().getScheme()) ? Paths.get(node.getUri()).toAbsolutePath() : null),
-	            new FixedColumnType("NAME", (node) -> FilenameUtils.getName(node.getMetaData().getName())),
-	            new FixedColumnType("METHOD", (node) -> node.getMetaData().getIdentificationMethod()),
-	            new FixedColumnType("STATUS", (node) -> node.getMetaData().getNodeStatus().getStatus()),
-	            new FixedColumnType("SIZE", (node) -> node.getMetaData().getSize()),
-	            new FixedColumnType("TYPE", (node) -> node.getMetaData().getResourceType().getResourceType()),
-	            new FixedColumnType("EXT", (node) -> node.getMetaData().getExtension()),
-	            new FixedColumnType("LAST_MODIFIED", (node) -> node.getMetaData().getLastModifiedDate() != null ? DATE_FORMAT.format(node.getMetaData().getLastModifiedDate()) : null),
-	            new FixedColumnType("EXTENSION_MISMATCH", (node) -> node.getExtensionMismatch()),
-	            HASH_COLUMN,
-	            new FixedColumnType("FORMAT_COUNT", (node) -> node.getIdentificationCount())
-	    };
-    
-    	private final FixedFieldWriter fieldWriter;
-		
-		private FixedColumnType(String header, FixedFieldWriter fieldWriter)
-		{
-			super(header);
-			this.fieldWriter = fieldWriter;
-		}
-		
-		private static List<ColumnInstance> createColumnInstances()
-		{
-			final List<ColumnInstance> result = new ArrayList<>();
-			for (FixedColumnType fixedColumnType : FIXED_COLUMNS)
-				result.add(new ColumnInstance(fixedColumnType));
-			return Collections.unmodifiableList(result);
-		}
-		
-		@Override
-		String getValue(ProfileResourceNode profileResourceNode, int formatIndex)
-		{
-			// The format index is ignored for fixed columns
-			
-			final Object rawValue = fieldWriter.value(profileResourceNode);
-			if (rawValue == null)
-				return "";
-			return rawValue.toString();
-		}
-	}
-	
-	private static class PerFormatColumnType extends ColumnType
-	{
-		private static interface PerFormatFieldWriter
-		{
-			String value(Format format);
-		}
-		
-	    private static final PerFormatColumnType[] PER_FORMAT_COLUMNS = {
-	    		new PerFormatColumnType("PUID", (format) -> format.getPuid()),
-	    		new PerFormatColumnType("MIME_TYPE", (format) -> format.getMimeType()),
-	    		new PerFormatColumnType("FORMAT_NAME", (format) -> format.getName()),
-	    		new PerFormatColumnType("FORMAT_VERSION", (format) -> format.getVersion()),
-	    };
-	    
-	    private final PerFormatFieldWriter fieldWriter;
-	    
-	    private PerFormatColumnType(String header, PerFormatFieldWriter fieldWriter)
-	    {
-	    	super(header);
-	    	this.fieldWriter = fieldWriter;
-	    }
-		
-		private static List<ColumnInstance> createColumnInstances()
-		{
-			final List<ColumnInstance> result = new ArrayList<>();
-			for (ColumnType columnType : PER_FORMAT_COLUMNS)
-				result.add(new ColumnInstance(columnType));
-			return Collections.unmodifiableList(result);
-		}
-		
-		@Override
-		String getValue(ProfileResourceNode profileResourceNode, int formatIndex)
-		{
-			// A null identification count means zero matches found
-			if (profileResourceNode.getIdentificationCount() == null)
-				return "";
-			
-			// If the format index requested for this node is out of range then we just pad the row with empty values
-			if (formatIndex >= profileResourceNode.getIdentificationCount())
-				return "";
-			
-			return fieldWriter.value(profileResourceNode.getFormatIdentifications().get(formatIndex));
-		}
-	}
+    private static final String FILE_URI_SCHEME = "file";
 
-	/**
-	 * Each instance of the CsvItemWriter has instance versions which hold the column state 
-	 */
-	private static class ColumnInstance
-	{
-		private final ColumnType columnType;
-		private boolean active;
-		private String customHeader;
+    /*
+     * Indexes of the headers used in the CSV output.
+     */
+    private static final int ID_ARRAY_INDEX                 = 0;
+    private static final int PARENT_ID_ARRAY_INDEX          = 1;
+    private static final int URI_ARRAY_INDEX                = 2;
+    private static final int FILE_PATH_ARRAY_INDEX          = 3;
+    private static final int FILE_NAME_ARRAY_INDEX          = 4;
+    private static final int ID_METHOD_ARRAY_INDEX          = 5;
+    private static final int STATUS_ARRAY_INDEX             = 6;
+    private static final int SIZE_ARRAY_INDEX               = 7;
+    private static final int RESOURCE_ARRAY_INDEX           = 8;
+    private static final int EXTENSION_ARRAY_INDEX          = 9;
+    private static final int LAST_MODIFIED_ARRAY_INDEX      = 10;
+    private static final int EXTENSION_MISMATCH_ARRAY_INDEX = 11;
+    private static final int HASH_ARRAY_INDEX               = 12;
+    private static final int ID_COUNT_ARRAY_INDEX           = 13;
+    private static final int PUID_ARRAY_INDEX               = 14;
+    private static final int MIME_TYPE_ARRAY_INDEX          = 15;
+    private static final int FORMAT_NAME_ARRAY_INDEX        = 16;
+    private static final int FORMAT_VERSION_ARRAY_INDEX     = 17;
 
-		private ColumnInstance(ColumnType columnType)
-		{
-			this.columnType = columnType;
-			active = true;
-			customHeader = columnType.header;
-		}
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
-		public void activateIfListed(List<String> includedHeaderValues) 
-		{
-			active = includedHeaderValues.contains(customHeader);
-		}
-
-		public String write(ProfileResourceNode profileResourceNode, int formatIndex) 
-		{
-			return columnType.getValue(profileResourceNode, formatIndex);
-		}
-	}
-
-	// These columns are present at the start of every row
-	private final List<ColumnInstance> fixedColumnInstances = FixedColumnType.createColumnInstances();
-	
-	// These columns may be used multiple times, once for each matched format
-	private final List<ColumnInstance> perFormatColumnInstances = PerFormatColumnType.createColumnInstances();
-
-    // These field values control how the output is written
     private CsvWriter csvWriter;
-    private ExportOptions exportOption = ExportOptions.ONE_ROW_PER_FILE;
-    private boolean quoteAllFields = true;
+    private FastDateFormat dateFormat = DateFormatUtils.ISO_DATETIME_FORMAT;
+    private ExportOptions options = ExportOptions.ONE_ROW_PER_FILE;
+    
+    private String[] headers;
+    private boolean quoteAllFields;
+    private boolean[] columnsToWrite;
+    private int numColumnsToWrite;
 
-    public CsvItemWriter() 
-    {
+    /**
+     * Empty bean constructor.
+     */
+    public CsvItemWriter() {
        this(null);
     }
 
-    public CsvItemWriter(CsvWriter writer) 
-    {
+    /**
+     * Constructor taking parameters.
+     * @param writer The CsvWriter to use.
+     */
+    public CsvItemWriter(CsvWriter writer) {
         this.csvWriter = writer;
+        this.quoteAllFields = true;
+        numColumnsToWrite = HEADERS.length;
+        columnsToWrite = new boolean[HEADERS.length];
+        Arrays.fill(columnsToWrite, true);
+    }
+
+    @Override
+    public void write(List<? extends ProfileResourceNode> nodes) {
+        switch (options) {
+            case ONE_ROW_PER_FILE: {
+                writeOneRowPerFile(nodes);
+                break;
+            }
+            case ONE_ROW_PER_FORMAT: {
+                writeOneRowPerFormat(nodes);
+                break;
+            }
+            default: {
+                writeOneRowPerFile(nodes);
+            }
+        }
     }
     
-    public void setCsvWriter(CsvWriter csvWriter) 
-    {
+    private void writeOneRowPerFile(List<? extends ProfileResourceNode> nodes) {
+        try {
+            for (ProfileResourceNode node : nodes) {
+                List<String> nodeEntries = new ArrayList<String>();
+                addNodeColumns(nodeEntries, node);
+                for (Format format : node.getFormatIdentifications()) {
+                    addColumn(nodeEntries, PUID_ARRAY_INDEX, format.getPuid());
+                    addColumn(nodeEntries, MIME_TYPE_ARRAY_INDEX, format.getMimeType());
+                    addColumn(nodeEntries, FORMAT_NAME_ARRAY_INDEX, format.getName());
+                    addColumn(nodeEntries, FORMAT_VERSION_ARRAY_INDEX, format.getVersion());
+                }
+                csvWriter.writeRow(nodeEntries);
+            }
+            csvWriter.flush();
+        } catch (final TextWritingException e) {
+            log.error(e.getRecordCharacters(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+    
+    private void writeOneRowPerFormat(List<? extends ProfileResourceNode> nodes) {
+        try {
+            for (ProfileResourceNode node : nodes) {
+                for (Format format : node.getFormatIdentifications()) {
+                    List<String> nodeEntries = new ArrayList<>();
+                    addNodeColumns(nodeEntries, node);
+                    addColumn(nodeEntries, PUID_ARRAY_INDEX, format.getPuid());
+                    addColumn(nodeEntries, MIME_TYPE_ARRAY_INDEX, format.getMimeType());
+                    addColumn(nodeEntries, FORMAT_NAME_ARRAY_INDEX, format.getName());
+                    addColumn(nodeEntries, FORMAT_VERSION_ARRAY_INDEX, format.getVersion());
+                    csvWriter.writeRow(nodeEntries);
+                }
+            }
+            csvWriter.flush();
+        } catch (final TextWritingException e) {
+            log.error(e.getRecordCharacters(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * @param csvWriter the csvWriter to write to.
+     */
+    void setCsvWriter(CsvWriter csvWriter) {
         this.csvWriter = csvWriter;
     }
 
-    public void setOptions(ExportOptions exportOption) 
-    {
-        this.exportOption = exportOption;
-    }
-
-    public void setQuoteAllFields(boolean quoteAll) 
-    {
-        this.quoteAllFields = quoteAll;
-    }
-    
-    public void setHeaders(Map<String, String> headersToSet) 
-    {
-        // We receive a map of standard -> custom header values.
-    	// However, all we do is look in the map for a key called "hash" and override that column with the corresponding value in the set
-        final String hashHeaderValue = headersToSet.get("hash");
-        if (hashHeaderValue != null)
-        	for (ColumnInstance fixedColumnInstance : fixedColumnInstances)
-        		if (fixedColumnInstance.columnType == FixedColumnType.HASH_COLUMN)
-        			fixedColumnInstance.customHeader = hashHeaderValue;
-    }
-
-    public void setColumnsToWrite(String spaceSeparatedListOfHeaderValuesToControlWhichColumnsToIncludeInTheOutput) 
-    {
-    	// For backwards compatibility, setting included columns to null or an empty string activates all columns (they are already active by default)
-    	if (spaceSeparatedListOfHeaderValuesToControlWhichColumnsToIncludeInTheOutput == null)
-    		return;
-    	final List<String> includedHeaderValues = Arrays.asList(spaceSeparatedListOfHeaderValuesToControlWhichColumnsToIncludeInTheOutput.split(" "));
-    	if (includedHeaderValues.isEmpty())
-    		return;
-    	
-    	// Some columns have been selected to filter in, so let them look for their own identifier in the list of included columns
-    	for (ColumnInstance fixedColumnInstance : fixedColumnInstances)
-    		fixedColumnInstance.activateIfListed(includedHeaderValues);
-    	for (ColumnInstance perFormatColumnInstance : perFormatColumnInstances)
-    		perFormatColumnInstance.activateIfListed(includedHeaderValues);
-    }
-    
-	public void open(final Writer writer) 
-    {
-		// Prepare the CSV writer settings
+    @Override
+    public void open(final Writer writer) {
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
         csvWriterSettings.setQuoteAllFields(quoteAllFields);
-        
-        // Following Unix convention on line separators as previously
         CsvFormat format = new CsvFormat();
+        // following Unix convention on line separators as previously
         format.setLineSeparator("\n");
         csvWriterSettings.setFormat(format);
-        
-        // Create the wrapped CSV writer
         csvWriter = new CsvWriter(writer, csvWriterSettings);
+        if (headers == null) {
+            headers = HEADERS;
+        }
+        String[] headersToWrite = getHeadersToWrite(headers);
+        csvWriter.writeHeaders(headersToWrite);
     }
 
-    public void write(List<ProfileResourceNode> nodes) 
-    {
-    	// Write according to the export option
-    	if (exportOption == ExportOptions.ONE_ROW_PER_FILE)
-    		writeAsOneRowPerFile(nodes);
-    	else
-    		writeAsOneRowPerFormat(nodes);
-
-    	// Indicate that we have finished writing
-    	csvWriter.flush();
+    @Override
+    public void setOptions(ExportOptions options) {
+        this.options = options;
     }
     
-    public void close() 
-    {
-    	csvWriter.close();
+    /**
+     * Closes the CSV writer.
+     */
+    @Override
+    public void close() {
+        csvWriter.close();
     }
     
-    private void writeAsOneRowPerFormat(List<ProfileResourceNode> profileResourceNodes) 
-    {
-    	// Write all of the headers
-    	final List<String> allHeaders = new ArrayList<>();
-    	for (ColumnInstance columnInstance : fixedColumnInstances)
-    		if (columnInstance.active)
-    			allHeaders.add(columnInstance.customHeader);
-    	for (ColumnInstance columnInstance : perFormatColumnInstances)
-    		if (columnInstance.active)
-    			allHeaders.add(columnInstance.customHeader);
-        csvWriter.writeHeaders(allHeaders);
-    	
-        // Write all of the value rows
-        try 
-        {
-            for (ProfileResourceNode node : profileResourceNodes) 
-            	writeEachFormatsOnASeparateLine(node);
-        } 
-        catch (final TextWritingException e) 
-        {
-            LOG.error(e.getRecordCharacters(), e);
-            throw new RuntimeException(e.getMessage(), e);
+    private static String nullSafeName(Enum<?> value) {
+        return value == null ? "" : value.toString();
+    }
+    
+    private static String nullSafeNumber(Number number) {
+        return number == null ? "" : number.toString();
+    }
+    
+    private static String nullSafeDate(Date date, FastDateFormat format) {
+        return date == null ? "" : format.format(date);
+    }
+    
+    private static String toFilePath(URI uri) {
+        if (FILE_URI_SCHEME.equals(uri.getScheme())) {
+            return Paths.get(uri).toAbsolutePath().toString();
         }
-	}
+        
+        return null;
+    }
 
-	private void writeEachFormatsOnASeparateLine(ProfileResourceNode profileResourceNode) 
-	{
-		// For backwards compatibility, if a file has no identifiable format, we still write a single blank format
-		final int identificationCount = profileResourceNode.getIdentificationCount() != null ? profileResourceNode.getIdentificationCount() : 1;
-		
-	    for (int formatIndex = 0; formatIndex < identificationCount; formatIndex++) 
-	    {
-	        final List<String> rowValues = new ArrayList<>();
-	        
-	        // Write the fixed values
-	        for (ColumnInstance fixedColumnInstance : fixedColumnInstances)
-	        	rowValues.add(fixedColumnInstance.write(profileResourceNode, formatIndex));
-	        
-	        // Write the per format values
-	        for (ColumnInstance perFormatColumnInstance : perFormatColumnInstances)
-	        	rowValues.add(perFormatColumnInstance.write(profileResourceNode, formatIndex));
-	        
-	        csvWriter.writeRow(rowValues);
-	    }
-	}
+    private static String toFileName(String name) {
+        return FilenameUtils.getName(name);
+    }
+    
+    /**
+     * No config is needed by this class, but it's retained temporarily for backwards compatibility purposes.
+     * @param config the config to set
+     */
+    public void setConfig(DroidGlobalConfig config) {
+    }
 
-	private void writeAsOneRowPerFile(List<ProfileResourceNode> profileResourceNodes)
-	{
-		// Find the node with the most formats so we know how many headers to write
-		int largestCountOfFormats = 0;
-		for (ProfileResourceNode profileResourceNode : profileResourceNodes)
-			if (profileResourceNode.getIdentificationCount() > largestCountOfFormats)
-				largestCountOfFormats = profileResourceNode.getIdentificationCount(); 
-		final int numberOfFormatsToWrite = largestCountOfFormats;
-		
-    	// Write the header row
-    	final List<String> allHeaders = new ArrayList<>();
-    	for (ColumnInstance columnInstance : fixedColumnInstances)
-    		if (columnInstance.active)
-    			allHeaders.add(columnInstance.customHeader);
-    	for (int formatIndex = 0; formatIndex < numberOfFormatsToWrite; formatIndex++)
-    		for (ColumnInstance columnInstance : perFormatColumnInstances)
-    			if (columnInstance.active)
-    				allHeaders.add(columnInstance.customHeader + (formatIndex > 0 ? formatIndex + 1 : ""));
-        csvWriter.writeHeaders(allHeaders);
-		
-        // Write the value rows
-        for (ProfileResourceNode profileResourceNode : profileResourceNodes)
-        {
-	        final List<String> rowValues = new ArrayList<>();
-	        
-	        // Write the fixed values (the format index is ignored for the fixed values, so we use zero)
-	        for (ColumnInstance fixedColumnInstance : fixedColumnInstances)
-	        	rowValues.add(fixedColumnInstance.write(profileResourceNode, 0));
-	        
-	        // Write the per format values
-	        for (int formatIndex = 0; formatIndex < numberOfFormatsToWrite; formatIndex++)
-	        	for (ColumnInstance perFormatColumnInstance : perFormatColumnInstances)
-	        		rowValues.add(perFormatColumnInstance.write(profileResourceNode, formatIndex));
-	        
-	        csvWriter.writeRow(rowValues);
+    /**
+     * @param headersToSet the headers to set
+     */
+    @Override
+    public void setHeaders(Map<String, String> headersToSet) {
+
+        if (this.headers == null) {
+            this.headers = HEADERS;
         }
-	}
+
+        String hashHeader = headersToSet.get("hash");
+        if (hashHeader != null) {
+            this.headers[HASH_ARRAY_INDEX] = hashHeader;
+        }
+    }
+
+    @Override
+    public void setQuoteAllFields(boolean quoteAll) {
+        this.quoteAllFields = quoteAll;
+    }
+
+    @Override
+    public void setColumnsToWrite(String columnNames) {
+        Set<String> headersToWrite = getColumnsToWrite(columnNames);
+        if (headersToWrite == null) {
+            Arrays.fill(columnsToWrite, true);
+            numColumnsToWrite = columnsToWrite.length;
+        } else {
+            int numberToWrite = 0;
+            for (int i = 0; i < HEADERS.length; i++) {
+                if (headersToWrite.contains(HEADERS[i])) {
+                    columnsToWrite[i] = true;
+                    numberToWrite++;
+                    headersToWrite.remove(HEADERS[i]);
+                } else {
+                    columnsToWrite[i] = false;
+                }
+            }
+            // Defence: if no valid column names were specified, log a warning then write them all out:
+            if (numberToWrite == 0) {
+                numColumnsToWrite = columnsToWrite.length;
+                Arrays.fill(columnsToWrite, true);
+                log.warn("-co option: no CSV columns specified are valid, writing all columns: " + columnNames);
+            } else {
+                numColumnsToWrite = numberToWrite;
+                // If there are some columns specified left over, they aren't valid columns - log a warning:
+                if (headersToWrite.size() > 0) {
+                    String invalidHeaders = "";
+                    for (String invalidColumn : headersToWrite) {
+                        invalidHeaders = invalidHeaders + invalidColumn + ' ';
+                    }
+                    log.warn("-co option - some CSV columns specified were invalid: " + invalidHeaders);
+                }
+            }
+        }
+    }
+
+    private Set<String> getColumnsToWrite(String columnNames) {
+        if (columnNames != null && !columnNames.isEmpty()) {
+            String[] columns = columnNames.split(" ");
+            if (columns.length > 0) {
+                Set<String> set = new HashSet<>();
+                for (String column : columns) {
+                    set.add(column.toUpperCase(Locale.ROOT));
+                }
+                return set;
+            }
+        }
+        return null;
+    }
+
+    private String[] getHeadersToWrite(String[] headersToWrite) {
+        if (numColumnsToWrite < columnsToWrite.length) {
+            String[] newHeaders = new String[numColumnsToWrite];
+            int newHeaderIndex = 0;
+            for (int i = 0; i < columnsToWrite.length; i++) {
+                if (columnsToWrite[i]) {
+                    newHeaders[newHeaderIndex++] = headers[i];
+                }
+            }
+            return newHeaders;
+        }
+        return headersToWrite;
+    }
+
+    private void addNodeColumns(List<String> row, ProfileResourceNode node) {
+        NodeMetaData metaData = node.getMetaData();
+        addColumn(row, ID_ARRAY_INDEX, nullSafeNumber(node.getId()));
+        addColumn(row, PARENT_ID_ARRAY_INDEX, nullSafeNumber(node.getParentId()));
+        addColumn(row, URI_ARRAY_INDEX, DroidUrlFormat.format(node.getUri()));
+        addColumn(row, FILE_PATH_ARRAY_INDEX, toFilePath(node.getUri()));
+        addColumn(row, FILE_NAME_ARRAY_INDEX, toFileName(metaData.getName()));
+        addColumn(row, ID_METHOD_ARRAY_INDEX, nullSafeName(metaData.getIdentificationMethod()));
+        addColumn(row, STATUS_ARRAY_INDEX, metaData.getNodeStatus().getStatus());
+        addColumn(row, SIZE_ARRAY_INDEX, nullSafeNumber(metaData.getSize()));
+        addColumn(row, RESOURCE_ARRAY_INDEX, metaData.getResourceType().getResourceType());
+        addColumn(row, EXTENSION_ARRAY_INDEX, metaData.getExtension());
+        addColumn(row, LAST_MODIFIED_ARRAY_INDEX, nullSafeDate(metaData.getLastModifiedDate(), dateFormat));
+        addColumn(row, EXTENSION_MISMATCH_ARRAY_INDEX, node.getExtensionMismatch().toString());
+        addColumn(row, HASH_ARRAY_INDEX, metaData.getHash());
+        addColumn(row, ID_COUNT_ARRAY_INDEX, nullSafeNumber(node.getIdentificationCount()));
+    }
+
+    private void addColumn(List<String> row, int columnIndex, String value) {
+        if (columnsToWrite[columnIndex]) {
+            row.add(value);
+        }
+    }
+
+
+
 }
