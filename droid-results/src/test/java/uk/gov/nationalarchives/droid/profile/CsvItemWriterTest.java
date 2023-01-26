@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+//CHECKSTYLE:OFF
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -549,3 +551,5 @@ public class CsvItemWriterTest {
         return format;
     }
 }
+
+//CHECKSTYLE:ON
