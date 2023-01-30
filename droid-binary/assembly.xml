@@ -98,22 +98,10 @@
       <fileMode>644</fileMode>
     </file>
     <file>
-      <source>bin/Running DROID.txt</source>
+      <source>bin/sigtool.bat</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
       <fileMode>644</fileMode>
-    </file>
-    <file>
-      <source>bin/droid.sh</source>
-      <outputDirectory>/</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>755</fileMode>
-    </file>
-    <file>
-      <source>bin/sigtool</source>
-      <outputDirectory>/</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>755</fileMode>
     </file>
     <file>
       <source>bin/Running DROID.txt</source>
