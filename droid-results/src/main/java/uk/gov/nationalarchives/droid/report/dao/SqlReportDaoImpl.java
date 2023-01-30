@@ -103,6 +103,7 @@ public class SqlReportDaoImpl implements ReportDao {
         try {
             connection = this.datasource.getConnection();
             statement = connection.prepareStatement(sqlQuery);
+            log.info("***** SQL: " + sqlQuery);
             setFilterParameters(statement, filter);
             resultset = statement.executeQuery();
             List<ReportLineItem> reportData = new ArrayList<ReportLineItem>();
@@ -131,8 +132,7 @@ public class SqlReportDaoImpl implements ReportDao {
 
     }
 
-
-    private String getQueryString(ReportFieldEnum reportField, List<GroupByField> groupByFields, Criterion filter) {
+    public String getQueryString(ReportFieldEnum reportField, List<GroupByField> groupByFields, Criterion filter) {
         final String selectStatement = getSelectStatement(reportField, groupByFields);
         final FilterInfo filterInfo = getFilterInfo(filter);
         final String groupingStatement = getGroupingStatement(groupByFields);

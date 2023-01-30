@@ -152,7 +152,9 @@ public class ReportManagerImpl implements ReportManager {
             report.addItem(item);
             
             Map<String, GroupedFieldItem> groups = new LinkedHashMap<String, GroupedFieldItem>();
-            
+
+            log.info("**** REPORT: " + specItem.getDescription());
+
             for (String profileId : request.getProfileIds()) {
                 ProfileInstance profile = profileContextLocator.getProfileInstance(profileId);
                 report.addProfile(profile);
@@ -163,7 +165,11 @@ public class ReportManagerImpl implements ReportManager {
                 Filter filterToUse = optionalFilter == null ? profile.getFilter() : optionalFilter; 
                 
                 Criterion filter = ReportUtils.buildFilter(filterToUse, specItem.getFilter());
-                
+
+                if (specItem.getDescription().equals("File sizes per PUID")) {
+                    System.out.println("boom");
+                }
+
                 List<ReportLineItem> reportData = profileInstanceManager.getReportData(
                         filter, specItem.getField(), specItem.getGroupByFields());
     
