@@ -82,7 +82,8 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
      * @param progressMonitor The progress monitor.
      */
     public ProfileSpecWalkerImpl(FileEventHandler fileEventHandler, DirectoryEventHandler directoryEventHandler,
-                                 ProgressMonitor progressMonitor) {
+                                 ProgressMonitor progressMonitor) 
+    {
         setFileEventHandler(fileEventHandler);
         setDirectoryEventHandler(directoryEventHandler);
         setProgressMonitor(progressMonitor);
@@ -160,9 +161,19 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 
                 walkState.setWalkStatus(WalkStatus.IN_PROGRESS);
                 fileWalker.walk();
-            } else {
+            } 
+            else 
+            {
+            	// The resource is not a directory
+            	
+            	// Update the progress to say that we are dealing with this resource
                 progressMonitor.startJob(resource.getUri());
-                fileEventHandler.onEvent(Paths.get(resource.getUri()), null, null);
+
+                
+                if ("s3".equalsIgnoreCase(resource.getUri().getScheme()))
+                	fileEventHandler.onS3Event(resource);
+                else
+                	fileEventHandler.onEvent(Paths.get(resource.getUri()), null, null);
             }
             
             fastForward = false;
@@ -179,7 +190,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
         this.fileEventHandler = fileEventHandler;
 
     }
-
+    
     /**
      * @param directoryEventHandler
      *            an event handler to be fired when a directory is encountered.

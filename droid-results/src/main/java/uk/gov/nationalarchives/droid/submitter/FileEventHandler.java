@@ -40,6 +40,14 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3URI;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationErrorType;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationException;
@@ -49,6 +57,8 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
+import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
@@ -99,6 +109,33 @@ public class FileEventHandler {
         setSubmissionThrottle(submissionThrottle);
     }
 
+    public void onS3Event(AbstractProfileResource resource)
+    {
+    	// Prepare the metadata
+        RequestMetaData metaData = new RequestMetaData(1024L, new Date(0).getTime(), resource.getName());
+        
+        // Prepare the identifier
+        RequestIdentifier identifier = new RequestIdentifier(resource.getUri());
+        identifier.setParentResourceId(null);
+        identifier.setResourceId(null);
+        
+        // Prepare the request
+        IdentificationRequest<Path> request = new S3IdentificationRequest(metaData, identifier);
+        
+        if (droidCore.passesIdentificationFilter(request)) 
+        {
+            try 
+            {
+                droidCore.submit(request);
+                submissionThrottle.apply();
+            } 
+            catch (Exception e) 
+            {
+            	e.printStackTrace();
+            }
+        }
+    }
+    
     /**
      * Creates a job in the database and submits the job to the identification
      * engine.
