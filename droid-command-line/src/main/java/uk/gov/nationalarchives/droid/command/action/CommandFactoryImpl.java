@@ -249,6 +249,24 @@ public class CommandFactoryImpl implements CommandFactory {
         command.setIdentificationFilter(getIdentificationFilter(cli));
         return command;
     }
+    
+    @Override
+    public DroidCommand getS3Command(CommandLine cli) throws CommandLineSyntaxException
+    {
+    	final ProfileRunCommand command = context.getProfileRunCommand();
+    	PropertiesConfiguration overrides = getOverrideProperties(cli);
+    	overrides.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
+    	overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "NAME PUID");
+    	command.setResources(getS3Resources(cli));
+    	command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
+    	command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
+    	command.setProperties(overrides); // must be called after we set destination.
+    	command.setContainerSignatureFile(cli.getOptionValue(CommandLineParam.CONTAINER_SIGNATURE_FILE.toString()));
+    	command.setSignatureFile(cli.getOptionValue(CommandLineParam.SIGNATURE_FILE.toString()));
+    	command.setResultsFilter(getFileOnlyResultsFilter());
+    	command.setIdentificationFilter(getIdentificationFilter(cli));
+    	return command;
+    }
 
     private Filter getFileOnlyResultsFilter() {
         Object[] filterValue = new Object[]{ResourceType.FOLDER};
@@ -309,6 +327,17 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private String[] getNoProfileResources(CommandLine cli) throws CommandLineSyntaxException {
         String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
+        if (resources == null || resources.length == 0) {
+            resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
+            if (resources == null || resources.length == 0) {
+                throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+            }
+        }
+        return resources;
+    }
+    
+    private String[] getS3Resources(CommandLine cli) throws CommandLineSyntaxException {
+        String[] resources = cli.getOptionValues(CommandLineParam.RUN_S3.toString());
         if (resources == null || resources.length == 0) {
             resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
             if (resources == null || resources.length == 0) {

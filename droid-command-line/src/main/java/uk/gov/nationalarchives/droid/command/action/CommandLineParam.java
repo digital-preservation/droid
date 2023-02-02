@@ -259,6 +259,16 @@ public enum CommandLineParam {
             return commandFactory.getNoProfileCommand(cli);
         }
     },
+    
+    /** Runs without a profile and with the specified S3 object. */
+    RUN_S3("S3", "S3-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "id") 
+    {
+    	@Override
+    	public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) throws CommandLineSyntaxException 
+    	{
+    		return commandFactory.getS3Command(cli);
+    	}
+    },
 
     /** Signature file. */
     SIGNATURE_FILE("Ns", "signature-file", true, 1, I18N.SIGNATURE_FILE_HELP, filename()) {
@@ -387,6 +397,7 @@ public enum CommandLineParam {
         addTopLevelCommand(LIST_FILTER_FIELD);
         addTopLevelCommand(RUN_PROFILE);
         addTopLevelCommand(RUN_NO_PROFILE);
+        addTopLevelCommand(RUN_S3);
         addTopLevelCommand(CHECK_SIGNATURE_UPDATE);
         addTopLevelCommand(DOWNLOAD_SIGNATURE_UPDATE);
         addTopLevelCommand(DEFAULT_SIGNATURE_VERSION);

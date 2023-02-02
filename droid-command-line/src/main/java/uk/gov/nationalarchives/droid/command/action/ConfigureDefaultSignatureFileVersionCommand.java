@@ -71,39 +71,26 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
      * {@inheritDoc}
      */
     @Override
-    public void execute() throws CommandExecutionException {
-        
-        boolean validVersion = false;
-        Map<SignatureType, SortedMap<String, SignatureFileInfo>> sigFileInfos = 
-            signatureManager.getAvailableSignatureFiles();
-        
-        for (SignatureType sigType : SignatureType.values()) {
-            Map<String, SignatureFileInfo> sigFileInfoForType = sigFileInfos.get(sigType);
-            validVersion = updated(sigFileInfoForType, sigType);
-            if (validVersion) {
-                break;
-            }
-        }
-
-        if (!validVersion) {
-            throw new CommandExecutionException(I18N.getResource(
-                    I18N.CONFIGURE_SIGNATURE_FILE_VERSION_INVALID,
-                    signatureFileVersion));
-        }
+    public void execute() throws CommandExecutionException 
+    {
+        for (SignatureType sigType : SignatureType.values()) 
+            if (updated(signatureManager.getAvailableSignatureFiles().get(sigType), sigType))
+            	return;
+        throw new CommandExecutionException(I18N.getResource(I18N.CONFIGURE_SIGNATURE_FILE_VERSION_INVALID, signatureFileVersion));
     }
 
-    private boolean updated(Map<String, SignatureFileInfo> sigInfo, SignatureType type) throws CommandExecutionException {
-        if (sigInfo != null) {
-            for (Map.Entry<String, SignatureFileInfo> entry : sigInfo.entrySet()) {
-                String key = entry.getKey();
-                SignatureFileInfo info = entry.getValue();
-                if (info.getVersion() == signatureFileVersion) {
-                    updateDefaultVersion(key, type);
-                    return true;
-                }
+    private boolean updated(Map<String, SignatureFileInfo> sigInfo, SignatureType type) throws CommandExecutionException 
+    {
+        if (sigInfo == null) 
+        	return false;
+        for (Map.Entry<String, SignatureFileInfo> entry : sigInfo.entrySet()) 
+        {
+            if (entry.getValue().getVersion() == signatureFileVersion) 
+            {
+                updateDefaultVersion(entry.getKey(), type);
+                return true;
             }
         }
-
         return false;
     }
 
