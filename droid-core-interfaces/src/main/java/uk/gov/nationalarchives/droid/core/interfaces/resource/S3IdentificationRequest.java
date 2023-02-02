@@ -77,6 +77,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
         size = metaData.getSize();
         fileName = metaData.getName();
         extension = ResourceUtils.getExtension(fileName);
+        System.out.println("S3IdentificationRequest <init> called");
     }
     
     /**
@@ -86,6 +87,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
     public final void open(final Path theFile) throws IOException 
     {
     	// Do nothing
+    	System.out.println("S3IdentificationRequest open called");
     }
 
     /**
@@ -93,6 +95,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final String getExtension() {
+    	System.out.println("S3IdentificationRequest getExtension called");
         return extension;
     }
     
@@ -101,6 +104,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final String getFileName() {
+    	System.out.println("S3IdentificationRequest getFileName called");
         return fileName;
     }
     
@@ -110,6 +114,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final long size() {
+    	System.out.println("S3IdentificationRequest size called");
         return size;
     }
 
@@ -118,6 +123,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final void close() throws IOException {
+    	System.out.println("S3IdentificationRequest close called");
         file = null;
         fileReader.close();
     }
@@ -129,6 +135,8 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
     @Override
     public final InputStream getSourceInputStream() throws IOException 
     {
+    	System.out.println("S3IdentificationRequest getSourceInputStream called");
+
     	// Create the S3 client
     	final AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
     	
@@ -145,6 +153,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final RequestMetaData getRequestMetaData() {
+    	System.out.println("S3IdentificationRequest getRequestMetaData called");
         return requestMetaData;
     }
 
@@ -152,105 +161,31 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      * @return the identifier
      */
     public final RequestIdentifier getIdentifier() {
+    	System.out.println("S3IdentificationRequest getIdentifier called");
         return identifier;
     }
 
 
     @Override
-    public byte getByte(long position) throws IOException {
-        final int result = fileReader.readByte(position);
+    public byte getByte(long position) throws IOException 
+    {
+    	System.out.println("S3IdentificationRequest getByte " + position + " called");
+    
+    	final int result = fileReader.readByte(position);
         if (result < 0) {
             throw new IOException("No byte at position " + position);
         }
         return (byte) result;
     }
 
+    WindowReader windowReader;
+    
     @Override
     public WindowReader getWindowReader() 
     {
-    	return new WindowReader() {
-
-			@Override
-			public void close() throws IOException 
-			{
-				// Do nothing
-			}
-
-			@Override
-			public Iterator<Window> iterator() 
-			{
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public int readByte(long position) throws IOException 
-			{
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public Window getWindow(long position) throws IOException 
-			{
-				return new Window() 
-				{
-
-					@Override
-					public byte getByte(int position) throws IOException 
-					{
-						// TODO Auto-generated method stub
-						return 0;
-					}
-
-					@Override
-					public byte[] getArray() throws IOException 
-					{
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public long getWindowPosition() 
-					{
-						// TODO Auto-generated method stub
-						return 0;
-					}
-
-					@Override
-					public long getWindowEndPosition() 
-					{
-						// TODO Auto-generated method stub
-						return 0;
-					}
-
-					@Override
-					public long getNextWindowPosition() 
-					{
-						// TODO Auto-generated method stub
-						return 0;
-					}
-
-					@Override
-					public int length() 
-					{
-						return 1024;
-					}};
-			}
-
-			@Override
-			public int getWindowOffset(long position) 
-			{
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public long length() throws IOException 
-			{
-				// TODO Auto-generated method stub
-				return 0;
-			}};
+    	if (windowReader == null)
+    		windowReader = new S3WindowReader(identifier.getUri());
+    	return windowReader;
     }
 
     /**
@@ -258,6 +193,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      * @return File
      */
     public Path getFile() {
+    	System.out.println("S3IdentificationRequest getFile called");
         return file;
     }
 }
