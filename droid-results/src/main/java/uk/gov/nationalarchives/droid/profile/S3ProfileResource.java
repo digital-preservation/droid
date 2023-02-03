@@ -56,7 +56,6 @@ public class S3ProfileResource extends AbstractProfileResource {
         
         // TODO Find the filename
         setName(s3uriString.substring(s3uriString.lastIndexOf('/') + 1));
-        setSize(null);
         
         final FileTime lastModified = null;
         setLastModifiedDate(lastModified == null ? new Date(0) : new Date(lastModified.toMillis()));
@@ -75,8 +74,7 @@ public class S3ProfileResource extends AbstractProfileResource {
     @Override
     public void setSize(Path s3Path) 
     {
-    	// TODO find the real size if it is needed at this point
-        setSize(1024);
+    	System.out.println("S3ProfileResource setSize called");
     }
 
 	public static boolean isS3uri(String candidateS3uri) 

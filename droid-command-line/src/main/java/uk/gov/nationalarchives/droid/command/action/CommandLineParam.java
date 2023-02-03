@@ -264,7 +264,8 @@ public enum CommandLineParam {
     RUN_S3("S3", "S3-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "id") 
     {
     	@Override
-    	public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) throws CommandLineSyntaxException 
+    	public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) 
+    			throws CommandLineSyntaxException 
     	{
     		return commandFactory.getS3Command(cli);
     	}

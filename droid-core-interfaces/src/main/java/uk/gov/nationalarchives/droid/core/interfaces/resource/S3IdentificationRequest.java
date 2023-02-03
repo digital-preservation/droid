@@ -34,7 +34,6 @@ package uk.gov.nationalarchives.droid.core.interfaces.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Iterator;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -42,41 +41,25 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
-import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
-import net.byteseek.io.reader.FileReader;
-import net.byteseek.io.reader.cache.TopAndTailFixedLengthCache;
-import net.byteseek.io.reader.cache.WindowCache;
-import net.byteseek.io.reader.windows.Window;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
 public class S3IdentificationRequest implements IdentificationRequest<Path> {
 
-    private static final int TOP_TAIL_BUFFER_CAPACITY = 8 * 1024 * 1024; // buffer 8Mb on the top and tail of files.
-
-    private final String extension;
-    private final String fileName;
-    private final long size;
     private WindowReader fileReader;
     private final RequestIdentifier identifier;
     private RequestMetaData requestMetaData;
     private Path file;
-
-    /**
-     * Constructs a new identification request.
-     * @param metaData the metaData about the binary.
-     * @param identifier the request's identifier
-     */
-    public S3IdentificationRequest(final RequestMetaData metaData, final RequestIdentifier identifier)
+    WindowReader windowReader;
+    
+    private AmazonS3 s3client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
+    
+    public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier)
     {
         this.identifier = identifier;
-        requestMetaData = metaData;
-        size = metaData.getSize();
-        fileName = metaData.getName();
-        extension = ResourceUtils.getExtension(fileName);
+        this.requestMetaData = requestMetaData;
         System.out.println("S3IdentificationRequest <init> called");
     }
     
@@ -86,17 +69,18 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
     @Override
     public final void open(final Path theFile) throws IOException 
     {
-    	// Do nothing
-    	System.out.println("S3IdentificationRequest open called");
+    	// We're not going to worry about this for the spike, and it doesn't look like it gets called anyway.
+    	throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final String getExtension() {
+    public final String getExtension() 
+    {
     	System.out.println("S3IdentificationRequest getExtension called");
-        return extension;
+        return ResourceUtils.getExtension(requestMetaData.getName());
     }
     
     /**
@@ -105,17 +89,16 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
     @Override
     public final String getFileName() {
     	System.out.println("S3IdentificationRequest getFileName called");
-        return fileName;
+        return requestMetaData.getName();
     }
-    
    
     /**
      * {@inheritDoc}
      */
     @Override
-    public final long size() {
-    	System.out.println("S3IdentificationRequest size called");
-        return size;
+    public final long size() 
+    {
+        return requestMetaData.getSize();
     }
 
     /**
@@ -152,7 +135,8 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      * {@inheritDoc}
      */
     @Override
-    public final RequestMetaData getRequestMetaData() {
+    public final RequestMetaData getRequestMetaData() 
+    {
     	System.out.println("S3IdentificationRequest getRequestMetaData called");
         return requestMetaData;
     }
@@ -160,8 +144,9 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
     /**
      * @return the identifier
      */
-    public final RequestIdentifier getIdentifier() {
-    	System.out.println("S3IdentificationRequest getIdentifier called");
+    public final RequestIdentifier getIdentifier() 
+    {
+    	System.out.println("S3IdentificationRequest getIdentifier called " + identifier);
         return identifier;
     }
 
@@ -177,19 +162,17 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
         }
         return (byte) result;
     }
-
-    WindowReader windowReader;
     
     @Override
     public WindowReader getWindowReader() 
     {
     	if (windowReader == null)
-    		windowReader = new S3WindowReader(identifier.getUri());
+    		windowReader = new S3WindowReader(s3client, identifier.getUri());
     	return windowReader;
     }
 
     /**
-     * Return file associate with identification reques.
+     * Return file associate with identification request.
      * @return File
      */
     public Path getFile() {

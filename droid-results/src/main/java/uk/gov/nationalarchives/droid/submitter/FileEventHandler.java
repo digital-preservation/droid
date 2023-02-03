@@ -40,14 +40,6 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.AmazonS3URI;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationErrorType;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationException;
@@ -109,10 +101,12 @@ public class FileEventHandler {
         setSubmissionThrottle(submissionThrottle);
     }
 
+    // This should not be part of this class - but for speed of implementing the spike I have added it here.
     public void onS3Event(AbstractProfileResource resource)
     {
     	// Prepare the metadata
-        RequestMetaData metaData = new RequestMetaData(1024L, new Date(0).getTime(), resource.getName());
+    	// TODO find the real size
+        RequestMetaData metaData = new RequestMetaData(1024L * 1024L * 6, new Date(0).getTime(), resource.getName());
         
         // Prepare the identifier
         RequestIdentifier identifier = new RequestIdentifier(resource.getUri());
