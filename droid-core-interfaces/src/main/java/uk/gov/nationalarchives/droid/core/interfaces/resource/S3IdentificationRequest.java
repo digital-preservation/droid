@@ -98,7 +98,8 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
     @Override
     public final long size() 
     {
-        return requestMetaData.getSize();
+    	AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
+    	return s3client.getObjectMetadata(amazonS3URI.getBucket(), amazonS3URI.getKey()).getContentLength();
     }
 
     /**

@@ -105,8 +105,9 @@ public class FileEventHandler {
     public void onS3Event(AbstractProfileResource resource)
     {
     	// Prepare the metadata
-    	// TODO find the real size
-        RequestMetaData metaData = new RequestMetaData(1024L * 1024L * 6, new Date(0).getTime(), resource.getName());
+    	// TODO find the real size - it is a pain to get it from S3 from within droid-results
+    	// TODO get the real modification time from S3
+        RequestMetaData metaData = new RequestMetaData(-1L, new Date(0).getTime(), resource.getName());
         
         // Prepare the identifier
         RequestIdentifier identifier = new RequestIdentifier(resource.getUri());
@@ -116,7 +117,8 @@ public class FileEventHandler {
         // Prepare the request
         IdentificationRequest<Path> request = new S3IdentificationRequest(metaData, identifier);
         
-        if (droidCore.passesIdentificationFilter(request)) 
+        // For now, don't filter out any requests
+//        if (droidCore.passesIdentificationFilter(request)) 
         {
             try 
             {
