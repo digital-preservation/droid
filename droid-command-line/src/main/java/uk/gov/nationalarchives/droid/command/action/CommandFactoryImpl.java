@@ -238,7 +238,7 @@ public class CommandFactoryImpl implements CommandFactory {
         final ProfileRunCommand command = context.getProfileRunCommand();
         PropertiesConfiguration overrides = getOverrideProperties(cli);
         overrides.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
-        overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "NAME PUID");
+        overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "FILE_PATH PUID");
         command.setResources(getNoProfileResources(cli));
         command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
