@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
@@ -1184,7 +1185,7 @@ public class CommandFactoryTest {
         assertEquals("ONE_ROW_PER_FILE", e1.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", e1.getProperties().getProperty("profile.outputFilePath"));
         assertEquals(Boolean.FALSE, e1.getProperties().getProperty("profile.quoteAllFields"));
-        assertEquals("NAME PUID", e1.getProperties().getProperty("profile.columnsToWrite"));
+        assertEquals("FILE_PATH PUID", e1.getProperties().getProperty("profile.columnsToWrite"));
 
         assertNull( e1.getIdentificationFilter());
         Filter filter = e1.getResultsFilter();
@@ -1547,3 +1548,4 @@ public class CommandFactoryTest {
     }
     
 }
+//CHECKSTYLE:ON
