@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -334,7 +335,7 @@ public final class ArchiveFileUtils {
         String parentScheme = parent.getScheme();
         String parentSsp = parent.getSchemeSpecificPart();
 
-        String gzEntryName = GzipUtils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart()));
+        String gzEntryName = BZip2Utils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart()));
         final StringBuilder builder = new StringBuilder(parentSsp.length()
                 + ARCHIVE_DELIMITER.length() + gzEntryName.length());
         builder.append("bz:").append(parentScheme);
