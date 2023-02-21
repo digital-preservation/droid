@@ -198,7 +198,7 @@ public class CsvItemWriterTest {
             final String expectedEntry = toCsvRow(new String[] {
                     "", "",
                     isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
-                    isNotWindows() ? "/my/file1.txt" : "file:/C:\\my\\file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
                     "file1.txt",
                     "Signature",
                     "Done",
@@ -240,7 +240,7 @@ public class CsvItemWriterTest {
             final String expectedEntry = toCsvRow(new String[] {
                     "", "",
                     isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
-                    isNotWindows() ? "/my/file1.txt" : "file:/C:\\my\\file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
                     "file1.txt",
                     "Signature",
                     "Done",
@@ -286,7 +286,7 @@ public class CsvItemWriterTest {
             final String expectedEntry1 = toCsvRow(new String[] {
                     "", "",
                     isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
-                    isNotWindows() ? "/my/file1.txt" : "file:/C:\\my\\file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
                     "file1.txt",
                     "Signature",
                     "Done",
@@ -336,7 +336,7 @@ public class CsvItemWriterTest {
             final String expectedEntry1 = toCsvRow(new String[] {
                     "", "",
                     isNotWindows() ? "file:/my/file1.txt" : "file:/C:/my/file1.txt",
-                    isNotWindows() ? "/my/file1.txt" : "file:/C:\\my\\file1.txt",
+                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
                     "file1.txt",
                     "Signature",
                     "Done",
