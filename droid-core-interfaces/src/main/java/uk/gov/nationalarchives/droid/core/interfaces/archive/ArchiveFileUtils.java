@@ -312,7 +312,7 @@ public final class ArchiveFileUtils {
         String gzEntryName = GzipUtils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart()));
         final StringBuilder builder = new StringBuilder(parentSsp.length()
                 + ARCHIVE_DELIMITER.length() + gzEntryName.length());
-        builder.append("gz:").append(parentScheme);
+        builder.append(ImageType.GZIP).append(":").append(parentScheme);
         String newScheme = builder.toString();
         builder.setLength(0);
         builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(gzEntryName);
@@ -338,7 +338,7 @@ public final class ArchiveFileUtils {
         String gzEntryName = BZip2Utils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart()));
         final StringBuilder builder = new StringBuilder(parentSsp.length()
                 + ARCHIVE_DELIMITER.length() + gzEntryName.length());
-        builder.append("bzip2:").append(parentScheme);
+        builder.append(ImageType.BZIP2).append(":").append(parentScheme);
         String newScheme = builder.toString();
         builder.setLength(0);
         builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(gzEntryName);
@@ -482,7 +482,9 @@ public final class ArchiveFileUtils {
          TAR("tar"),
          ZIP("zip"),
          SEVENZ("sevenz"),
-         FAT("fat");
+         FAT("fat"),
+         BZIP2("bzip2"),
+         GZIP("gzip");
 
          private final String extension;
 
