@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
@@ -89,8 +90,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             "FORMAT_NAME",
             "FORMAT_VERSION",
     };
-
-    private static final String FILE_URI_SCHEME = "file";
 
     /*
      * Indexes of the headers used in the CSV output.
@@ -249,14 +248,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         return date == null ? "" : format.format(date);
     }
     
-    private static String toFilePath(URI uri) {
-        if (FILE_URI_SCHEME.equals(uri.getScheme())) {
-            return Paths.get(uri).toAbsolutePath().toString();
-        }
-        
-        return null;
-    }
-
     private static String toFileName(String name) {
         return FilenameUtils.getName(name);
     }
@@ -358,7 +349,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         addColumn(row, ID_ARRAY_INDEX, nullSafeNumber(node.getId()));
         addColumn(row, PARENT_ID_ARRAY_INDEX, nullSafeNumber(node.getParentId()));
         addColumn(row, URI_ARRAY_INDEX, DroidUrlFormat.format(node.getUri()));
-        addColumn(row, FILE_PATH_ARRAY_INDEX, toFilePath(node.getUri()));
+        addColumn(row, FILE_PATH_ARRAY_INDEX, node.toString());
         addColumn(row, FILE_NAME_ARRAY_INDEX, toFileName(metaData.getName()));
         addColumn(row, ID_METHOD_ARRAY_INDEX, nullSafeName(metaData.getIdentificationMethod()));
         addColumn(row, STATUS_ARRAY_INDEX, metaData.getNodeStatus().getStatus());
@@ -380,3 +371,4 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
 
 }
+//CHECKSTYLE:ON

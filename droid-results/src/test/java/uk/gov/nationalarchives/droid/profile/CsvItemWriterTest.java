@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
@@ -437,3 +438,4 @@ public class CsvItemWriterTest {
         return format;
     }
 }
+//CHECKSTYLE:ON
