@@ -235,7 +235,7 @@ public final class ArchiveFileUtils {
                 sourceFileOffset += blockSize;
 
                 if (sourceFileOffset < fileLength) {
-                    ByteBuffer maxBuffer = ByteBuffer.allocateDirect((int) FS_READ_BYTE_BUFFER_SIZE);
+                    ByteBuffer maxBuffer = ByteBuffer.allocateDirect(FS_READ_BYTE_BUFFER_SIZE);
 
                     while (sourceFileOffset < fileLength) {
                         fsFile.getFile().read(sourceFileOffset, maxBuffer);
@@ -338,7 +338,7 @@ public final class ArchiveFileUtils {
         String gzEntryName = BZip2Utils.getUncompressedFilename(FilenameUtils.getName(parent.getSchemeSpecificPart()));
         final StringBuilder builder = new StringBuilder(parentSsp.length()
                 + ARCHIVE_DELIMITER.length() + gzEntryName.length());
-        builder.append("bz:").append(parentScheme);
+        builder.append("bzip2:").append(parentScheme);
         String newScheme = builder.toString();
         builder.setLength(0);
         builder.append(parentSsp).append(ARCHIVE_DELIMITER).append(gzEntryName);
@@ -372,7 +372,7 @@ public final class ArchiveFileUtils {
      *         which is a path in its own right (not just the names of each individual folder)
      */
     public static List<String> getAncestorPaths(String path) {
-        ArrayList<String> paths = new ArrayList<String>();
+        ArrayList<String> paths = new ArrayList<>();
         if (path != null && !path.isEmpty()) {
             String processPath = path;
             int lastSeparator = processPath.length() - 1;
@@ -409,7 +409,7 @@ public final class ArchiveFileUtils {
             final int positionInWindow = reader.getWindowOffset(pos);
             final int availableBytes = window.length() - positionInWindow;
             final int remainingBytes = bytesToRead - bytesCopied;
-            final int bytesToCopy    = remainingBytes < availableBytes ? remainingBytes : availableBytes;
+            final int bytesToCopy    = Math.min(remainingBytes, availableBytes);
             System.arraycopy(window.getArray(), positionInWindow, buffer, offset + bytesCopied, bytesToCopy);
             pos         += bytesToCopy;
             bytesCopied += bytesToCopy;
@@ -437,7 +437,7 @@ public final class ArchiveFileUtils {
         while (bufferRemaining > 0 && window != null) {
             final int positionInWindow = reader.getWindowOffset(pos);
             final int availableBytes = window.length() - positionInWindow;
-            final int bytesToCopy = availableBytes <= bufferRemaining ? availableBytes : bufferRemaining;
+            final int bytesToCopy = Math.min(availableBytes, bufferRemaining);
             buffer.put(window.getArray(), positionInWindow, bytesToCopy);
             pos         += bytesToCopy;
             bytesCopied += bytesToCopy;
@@ -484,7 +484,7 @@ public final class ArchiveFileUtils {
          SEVENZ("sevenz"),
          FAT("fat");
 
-         private String extension;
+         private final String extension;
 
         ImageType(String extension) {
             this.extension = extension;
