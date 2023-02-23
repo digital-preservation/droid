@@ -65,7 +65,7 @@ public class BZipArchiveHandlerTest  {
 
         IdentificationRequestFactory factory = mock(IdentificationRequestFactory.class);
 
-        URI expectedUri = URI.create(BZip2Utils.getUncompressedFilename(file.toUri().toString()));
+        URI expectedUri = ArchiveFileUtils.toBZipUri(file.toUri());
 
         RequestIdentifier identifier = new RequestIdentifier(file.toUri());
         identifier.setAncestorId(10L);

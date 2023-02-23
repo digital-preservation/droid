@@ -188,7 +188,7 @@ public class ArchiveFileUtilsTest {
     public void testBuildGzipUriWithGzExtension() {
         URI parent = URI.create("file:/C:/anyhost/dir/mygz.tar.gz");
         
-        assertEquals("gz:file:/C:/anyhost/dir/mygz.tar.gz!/mygz.tar",
+        assertEquals("gzip:file:/C:/anyhost/dir/mygz.tar.gz!/mygz.tar",
                 ArchiveFileUtils.toGZipUri(parent).toString());
     }
 
@@ -196,7 +196,7 @@ public class ArchiveFileUtilsTest {
     public void testBuildGzipUriWithNoGzExtension() {
         URI parent = URI.create("file:/C:/anyhost/dir/mygz");
         
-        assertEquals("gz:file:/C:/anyhost/dir/mygz!/mygz",
+        assertEquals("gzip:file:/C:/anyhost/dir/mygz!/mygz",
             ArchiveFileUtils.toGZipUri(parent).toString());
     }
     
@@ -242,5 +242,13 @@ public class ArchiveFileUtilsTest {
             assertThat(savedFile.getKey().getName()+": deleted", savedFile.getValue().toFile().delete(), equalTo(true));
         }
         assertThat("All files from FsDirectory written to temp file", tempFilePathMap.size(), equalTo(5));
+    }
+
+    @Test
+    public void should_generate_BZipUri_with_correct_bZipPrefix_For_TarDotBz2() {
+        URI bZip2Parent = URI.create("file:///home/some-user/test-data/droid/archives/one/samples.tar.bz2");
+        URI bZip2TarURI = ArchiveFileUtils.toBZipUri(bZip2Parent);
+
+        assertThat(bZip2TarURI.toString(), equalTo("bzip2:file:///home/some-user/test-data/droid/archives/one/samples.tar.bz2!/samples.tar"));
     }
 }

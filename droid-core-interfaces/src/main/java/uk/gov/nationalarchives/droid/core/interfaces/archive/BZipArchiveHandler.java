@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.io.FilenameUtils;
 
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
@@ -78,7 +77,7 @@ public class BZipArchiveHandler implements ArchiveHandler {
         try {
             URI parent = request.getIdentifier().getUri();
             long correlationId = request.getIdentifier().getNodeId();
-            final URI uri = URI.create(BZip2Utils.getUncompressedFilename(parent.toString()));
+            final URI uri = ArchiveFileUtils.toBZipUri(parent);
 
             String path = uri.getSchemeSpecificPart();
             String fileName = FilenameUtils.getName(path);
@@ -91,13 +90,8 @@ public class BZipArchiveHandler implements ArchiveHandler {
             archiveRequest = factory.newRequest(metaData, identifier);
             submitRequest = droidCore.passesIdentificationFilter(archiveRequest);
             if (submitRequest) {
-                final InputStream bzin = new BZip2CompressorInputStream(in);
-                try {
+                try (InputStream bzin = new BZip2CompressorInputStream(in)) {
                     archiveRequest.open(bzin);
-                } finally {
-                    if (bzin != null) {
-                        bzin.close();
-                    }
                 }
             }
         } finally {

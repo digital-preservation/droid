@@ -1,4 +1,3 @@
-//CHECKSTYLE:OFF
 /*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
@@ -32,9 +31,22 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import com.univocity.parsers.common.TextWritingException;
+import com.univocity.parsers.csv.CsvFormat;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
+import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
+import uk.gov.nationalarchives.droid.profile.referencedata.Format;
+
 import java.io.Writer;
-import java.net.URI;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,23 +55,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.univocity.parsers.csv.CsvFormat;
-import com.univocity.parsers.csv.CsvWriter;
-import com.univocity.parsers.csv.CsvWriterSettings;
-import com.univocity.parsers.common.TextWritingException;
-
-import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
-import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
-import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
-import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
-import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**
  * @author rflitcroft
@@ -116,12 +111,12 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private CsvWriter csvWriter;
-    private FastDateFormat dateFormat = DateFormatUtils.ISO_DATETIME_FORMAT;
+    private final FastDateFormat dateFormat = DateFormatUtils.ISO_DATETIME_FORMAT;
     private ExportOptions options = ExportOptions.ONE_ROW_PER_FILE;
     
     private String[] headers;
     private boolean quoteAllFields;
-    private boolean[] columnsToWrite;
+    private final boolean[] columnsToWrite;
     private int numColumnsToWrite;
 
     /**
@@ -163,7 +158,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private void writeOneRowPerFile(List<? extends ProfileResourceNode> nodes) {
         try {
             for (ProfileResourceNode node : nodes) {
-                List<String> nodeEntries = new ArrayList<String>();
+                List<String> nodeEntries = new ArrayList<>();
                 addNodeColumns(nodeEntries, node);
                 for (Format format : node.getFormatIdentifications()) {
                     addColumn(nodeEntries, PUID_ARRAY_INDEX, format.getPuid());
@@ -367,8 +362,5 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             row.add(value);
         }
     }
-
-
-
 }
-//CHECKSTYLE:ON
+
