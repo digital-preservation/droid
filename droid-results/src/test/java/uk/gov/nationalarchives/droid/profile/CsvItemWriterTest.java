@@ -1,4 +1,3 @@
-//CHECKSTYLE:OFF
 /*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
@@ -112,7 +111,7 @@ public class CsvItemWriterTest {
             //when(config.getBooleanProperty(DroidGlobalProperty\.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
-            final String expectedString = toCsvLine(CsvItemWriter.HEADERS);
+            final String expectedString = toCsvRow(CsvItemWriter.HEADERS) + LINE_SEPARATOR;
 
             assertEquals(writer.toString(), expectedString);
         }
@@ -120,10 +119,6 @@ public class CsvItemWriterTest {
 
     private static String toCsvRow(final String[] values) {
         return "\"" + StringUtils.join(values, "\",\"") + "\"";
-    }
-
-    private static String toCsvLine(final String[] values) {
-        return toCsvRow(values) + LINE_SEPARATOR;
     }
 
     @Test
@@ -438,4 +433,4 @@ public class CsvItemWriterTest {
         return format;
     }
 }
-//CHECKSTYLE:ON
+

@@ -1,4 +1,3 @@
-// CHECKSTYLE:OFF
 /*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
@@ -194,22 +193,21 @@ public class ProfileResourceNode {
     @Override
     public String toString()
     {
-        if (uri == null)
+        if (uri == null) {
             return "[URI not set]";
-        if ("file".equals(uri.getScheme()))
+        }
+
+        if ("file".equals(uri.getScheme())) {
             return Paths.get(uri).toAbsolutePath().toString();
+        }
 
         String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", "");
 
         // Handle substitution of 7z
         final String sevenZedIdentifier = "sevenz:";
-        if (result.startsWith(sevenZedIdentifier))
+        if (result.startsWith(sevenZedIdentifier)) {
             result = "7z:" + result.substring(sevenZedIdentifier.length());
-
-        // Handle substitution of gz
-        final String gzIdentifier = "gz:";
-        if (result.startsWith(gzIdentifier))
-            result = "gzip:" + result.substring(gzIdentifier.length());
+        }
 
         return result;
     }
@@ -333,5 +331,5 @@ public class ProfileResourceNode {
         return finished;
     }
 }
-// CHECKSTYLE:ON
+
 

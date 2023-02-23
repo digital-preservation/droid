@@ -1,4 +1,3 @@
-//CHECKSTYLE:OFF
 /*
  * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
  * All rights reserved.
@@ -852,7 +851,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getIdentificationFilter();
-        assertEquals(false, filter.isNarrowed());
+        assertFalse(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1015,7 +1014,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getResultsFilter();
-        assertEquals(false, filter.isNarrowed());
+        assertFalse(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1064,7 +1063,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getResultsFilter();
-        assertEquals(true, filter.isNarrowed());
+        assertTrue(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1112,7 +1111,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getIdentificationFilter();
-        assertEquals(false, filter.isNarrowed());
+        assertFalse(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1149,7 +1148,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getIdentificationFilter();
-        assertEquals(true, filter.isNarrowed());
+        assertTrue(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1177,7 +1176,7 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(4, propertyNames.size());
+        assertEquals(13, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertTrue(propertyNames.contains("profile.columnsToWrite"));
@@ -1198,6 +1197,131 @@ public class CommandFactoryTest {
         Object[] values = (Object[]) crit1.getValue();
         assertEquals(1, values.length);
         assertEquals(ResourceType.FOLDER, values[0]);
+    }
+
+    @Test
+    public void no_profile_mode_should_set_expand_archives_to_false_when_hyphen_A_flag_is_not_set() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-Nr",
+                "/home/user/Documents/test.doc",
+                "/home/user/Documents/test.xls"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getNoProfileCommand(cli);
+
+        assertNotNull(e1);
+        assertFalse(e1.getRecursive());
+
+        assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
+        List<String> propertyNames = getPropertyNames(e1.getProperties());
+        assertEquals(13, propertyNames.size());
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processTar"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processZip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processGzip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processRar"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.process7zip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processIso"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processBzip2"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processArc"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processWarc"));
+    }
+
+    @Test
+    public void no_profile_mode_should_set_expand_archives_to_true_when_hyphen_A_flag_is_set() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-Nr",
+                "/home/user/Documents/test.doc",
+                "/home/user/Documents/test.xls",
+                "-A"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getNoProfileCommand(cli);
+
+        assertNotNull(e1);
+        assertFalse(e1.getRecursive());
+
+        assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
+        List<String> propertyNames = getPropertyNames(e1.getProperties());
+        assertEquals(13, propertyNames.size());
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processTar"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processZip"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processGzip"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processRar"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.process7zip"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processIso"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processBzip2"));
+
+        // -A should not affect the web archives
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processArc"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processWarc"));
+    }
+
+    @Test
+    public void no_profile_mode_should_set_expand_web_archives_to_true_when_hyphen_W_flag_is_set() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-Nr",
+                "/home/user/Documents/test.doc",
+                "/home/user/Documents/test.xls",
+                "-W"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getNoProfileCommand(cli);
+
+        assertNotNull(e1);
+        assertFalse(e1.getRecursive());
+
+        assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
+        List<String> propertyNames = getPropertyNames(e1.getProperties());
+        assertEquals(13, propertyNames.size());
+
+        // -W should not affect the archive types
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processTar"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processZip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processGzip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processRar"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.process7zip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processIso"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processBzip2"));
+
+        // -W should make these true
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processArc"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processWarc"));
+    }
+
+    @Test
+    public void no_profile_mode_should_set_specific_archive_types_to_expand_when_hyphen_At_flag_is_used() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-Nr",
+                "/home/user/Documents/test.doc",
+                "/home/user/Documents/test.xls",
+                "-At",
+                "TAR", "ZIP", "ISO"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getNoProfileCommand(cli);
+
+        assertNotNull(e1);
+        assertFalse(e1.getRecursive());
+
+        assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
+        List<String> propertyNames = getPropertyNames(e1.getProperties());
+        assertEquals(13, propertyNames.size());
+
+        // -Only the 3 archives passed to -At should expand
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processTar"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processZip"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processIso"));
+
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processGzip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processRar"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.process7zip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processBzip2"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processArc"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processWarc"));
     }
 
     /**
@@ -1548,4 +1672,3 @@ public class CommandFactoryTest {
     }
     
 }
-//CHECKSTYLE:ON
