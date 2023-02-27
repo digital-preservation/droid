@@ -141,7 +141,7 @@ IF "%1"=="" GOTO NOPARAM
 
 :PARAM
 REM Has command-line parameters -- run command-line version:
-${JRE_BIN_PATH}java %DROID_OPTIONS% -jar "%DROID_HOME%droid-command-line-${project.version}.jar" %*
+"${JRE_BIN_PATH}java" %DROID_OPTIONS% -jar "%DROID_HOME%droid-command-line-${project.version}.jar" %*
 
 GOTO end
 
