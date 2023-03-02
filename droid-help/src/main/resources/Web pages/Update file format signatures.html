@@ -74,20 +74,6 @@
       Archives. &nbsp;To manually update your file format signatures, select the <b><font size=
       "4">Tools / Check for signature updates...</font></b> menu item. &nbsp;
     </p>
-    <p align="center">
-       <img src="../Images/Install signature.png">
-    </p>
-    <p>
-       Either enter the file name and path of the signature file you want to install, or press the
-      <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Browse... &nbsp;</font></b>
-      button to bring up a file selection dialog. &nbsp;If you check the "Use this signature file
-      as default", it will become the default for new profiles. &nbsp;If not, the signature will be
-      available to select in the preferences should you want to use it at some point in the future,
-      but will not be used by default. &nbsp;When you have selected the file to install, press the
-      <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Install &nbsp;&nbsp;</font></b>
-      button, or <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Cancel
-      &nbsp;</font></b> to exit the dialog making no changes.
-    </p>
     <p>
        It is also possible for DROID to automatically check for and update its signatures on a
       regular schedule. &nbsp;This can be configured in the <a href=
@@ -96,11 +82,27 @@
     <p>
        If you have a <a href="Update file format signatures.html#BinarySigs">binary signature</a>
       file locally that you want to use, you can install this file in DROID using the <b><font
-      size="4">Tools / Install signature file...</font></b> menu item. &nbsp;This will bring up a
-      file open dialog from which you can select the signature file that you want DROID to use.
-      &nbsp;Currently this feature cannot be used to install <a href=
-      "Update file format signatures.html#ContainerSigs">container signatures</a>, only binary
-      signature files.
+            size="4">Tools / Install signature file...</font></b> menu item. This will bring up
+      a dialog as shown below</p>
+    <p align="center">
+      <img src="../Images/Install signature.png">
+    </p>
+    <p>
+      Either enter the file name and path of the signature file you want to install, or press the
+      <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Browse... &nbsp;</font></b>
+      button to bring up a file selection dialog, from which you can select the signature file
+      that you want DROID to use. If you check the "Use this signature file
+      as default", it will become the default for new profiles. &nbsp;If not, the signature will be
+      available to select in the preferences should you want to use it at some point in the future,
+      but will not be used by default. &nbsp;When you have selected the file to install, press the
+      <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Install &nbsp;&nbsp;</font></b>
+      button, or <b><font style=" background-color: #c0c0c0;" size="4"> &nbsp;Cancel
+      &nbsp;</font></b> to exit the dialog making no changes.
+    </p>
+
+    <p>Please note: Currently this feature is only available for <a href="Update file format signatures.html#BinarySigs">
+      binary signature</a> files. It cannot be used to install <a href="Update file format signatures.html#ContainerSigs">
+      container signatures</a>.
     </p>
     <p>
        Alternatively, you can manually copy a binary or container signature file into your droid
