@@ -30,7 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package uk.gov.nationalarchives.droid.command.action;
-
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,9 +61,9 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
  *
  * @author rflitcroft, Alok Kumar Dash, mpalmer
  */
-//CHECKSTYLE:OFF - ClassDataAbstractionCoupling and ClassFanOutComplexity just over limit.
+
 public class CommandFactoryImpl implements CommandFactory {
-    //CHECKSTYLE:ON
+
 
     private static final String NO_RESOURCES_SPECIFIED = "No resources specified.";
     private static final String NO_PROFILES_SPECIFIED_FOR_EXPORT = "No profiles specified for export.";
@@ -222,6 +221,7 @@ public class CommandFactoryImpl implements CommandFactory {
     public DroidCommand getProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
         final ProfileRunCommand command = context.getProfileRunCommand();
         PropertiesConfiguration overrides = getOverrideProperties(cli);
+        processCommandLineArchiveFlags(cli, overrides);
         command.setResources(getResources(cli));
         command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
@@ -237,8 +237,14 @@ public class CommandFactoryImpl implements CommandFactory {
     public DroidCommand getNoProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
         final ProfileRunCommand command = context.getProfileRunCommand();
         PropertiesConfiguration overrides = getOverrideProperties(cli);
+
+        //explicitly set all archives expansion to false to override the profile defaults
+        setAllArchivesExpand(overrides, false);
+        setAllWebArchivesExpand(overrides, false);
+        processCommandLineArchiveFlags(cli, overrides);
+
         overrides.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
-        overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "NAME PUID");
+        overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "FILE_PATH PUID");
         command.setResources(getNoProfileResources(cli));
         command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
@@ -351,7 +357,6 @@ public class CommandFactoryImpl implements CommandFactory {
             overrideProperties = new PropertiesConfiguration();
         }
 
-        processCommandLineArchiveFlags(cli, overrideProperties);
         processCommandLineCSVOptions(cli, overrideProperties);
 
         return overrideProperties;
