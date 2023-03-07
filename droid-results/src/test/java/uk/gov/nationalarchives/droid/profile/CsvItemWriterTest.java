@@ -31,14 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.joda.time.DateTime;
@@ -47,7 +39,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
@@ -55,10 +46,20 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.export.interfaces.JobOptions;
-import uk.gov.nationalarchives.droid.profile.CsvItemWriter;
-import uk.gov.nationalarchives.droid.profile.NodeMetaData;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author rflitcroft
@@ -398,15 +399,51 @@ public class CsvItemWriterTest {
             assertEquals(11, lines.length);
         }
     }
+
+    @Test
+    public void should_write_nodes_inside_archives_using_seaparators_depending_on_OS() throws IOException, URISyntaxException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+            Format id = buildFormat(999);
+            ProfileResourceNode node = buildProfileResourceNode(34, 2000L,
+                    new URI("sevenz:file:///home/user/test-data/droid/archives/samples.7z!/Screenshot%20from%202020-01-22%2021-36-16.png"));
+            node.addFormatIdentification(id);
+            nodes.add(node);
+
+            ProfileResourceNode node2 = buildProfileResourceNode(35, 2000L,
+                    new URI("rar:file:///home/user/test-data/droid/archives/custom%20sample.rar!/dir/another%20dir/fmt-143-signature-id-608.wav"));
+            node2.addFormatIdentification(id);
+            nodes.add(node2);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
+            String expectedFilePath = isNotWindows() ?
+                    "\"7z:/home/user/test-data/droid/archives/samples.7z!/Screenshot from 2020-01-22 21-36-16.png\"" :
+                    "\"7z:\\home\\user\\test-data\\droid\\archives\\samples.7z!\\Screenshot from 2020-01-22 21-36-16.png\"";
+            assertEquals(expectedFilePath, lines[1].split(",")[3]);
+
+            String expectedFilePath2 = isNotWindows() ?
+                    "\"rar:/home/user/test-data/droid/archives/custom sample.rar!/dir/another dir/fmt-143-signature-id-608.wav\"" :
+                    "\"rar:\\home\\user\\test-data\\droid\\archives\\custom sample.rar!\\dir\\another dir\\fmt-143-signature-id-608.wav\"";
+
+            assertEquals(expectedFilePath2, lines[2].split(",")[3]);
+        }
+    }
     
     private static boolean isNotWindows() {
         return !SystemUtils.IS_OS_WINDOWS;
     }
     
     private static ProfileResourceNode buildProfileResourceNode(int i, Long size) {
-        
         File f = isNotWindows() ? new File("/my/file" + i + ".txt") : new File("C:/my/file" + i + ".txt");
-        ProfileResourceNode node = new ProfileResourceNode(f.toURI());
+        return buildProfileResourceNode(i, size, f.toURI());
+    }
+
+    private static ProfileResourceNode buildProfileResourceNode(int i, Long size, URI uriOfNode) {
+        ProfileResourceNode node = new ProfileResourceNode(uriOfNode);
         node.setExtensionMismatch(false);
         NodeMetaData metaData = new NodeMetaData();
         metaData.setExtension("foo");
@@ -418,10 +455,10 @@ public class CsvItemWriterTest {
         metaData.setSize(size);
         metaData.setHash("1111111111111111111111111111111" + i);
         node.setMetaData(metaData);
-        
+
         return node;
     }
-    
+
     
     private static Format buildFormat(int i) {
         Format format = new Format();
