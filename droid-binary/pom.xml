@@ -35,7 +35,7 @@
                         </goals>
                         <configuration>
                             <!-- To update, retrieve link for windows jdk on x86 architecture from https://adoptium.net -->
-                            <url>https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.16.1%2B1/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.16.1_1.zip</url>
+                            <url>https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip</url>
                             <unpack>false</unpack>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
@@ -56,10 +56,9 @@
                         <configuration>
                             <tasks>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.16.1_1.zip" dest="${project.build.directory}/jre_tmp/" />
-
+                                <unzip src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip" dest="${project.build.directory}/jre_tmp/" />
                                 <move todir="${project.build.directory}/jre-windows/">
-                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.16.1+1-jre/">
+                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.18+10-jre/">
                                         <include name="**/*" />
                                     </fileset>
                                 </move>
