@@ -46,7 +46,10 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
+import java.io.File;
 import java.io.Writer;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -85,6 +88,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             "FORMAT_NAME",
             "FORMAT_VERSION",
     };
+
+    private static final String FILE_URI_SCHEME = "file";
 
     /*
      * Indexes of the headers used in the CSV output.
@@ -247,7 +252,29 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private static String toFileName(String name) {
         return FilenameUtils.getName(name);
     }
-    
+
+    private String toFilePath(URI uri) {
+        if (uri == null) {
+            log.warn("[URI not set]");
+            return "";
+        }
+        if (FILE_URI_SCHEME.equals(uri.getScheme())) {
+            return Paths.get(uri).toAbsolutePath().toString();
+        }
+
+        // for URIs that have other than "file" scheme
+        String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", "");
+        result = result.replace("/", File.separator);
+
+        // Handle substitution of 7z
+        final String sevenZedIdentifier = "sevenz:";
+        if (result.startsWith(sevenZedIdentifier)) {
+            result = "7z:" + result.substring(sevenZedIdentifier.length());
+        }
+
+        return result;
+    }
+
     /**
      * No config is needed by this class, but it's retained temporarily for backwards compatibility purposes.
      * @param config the config to set
@@ -343,7 +370,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         addColumn(row, ID_ARRAY_INDEX, nullSafeNumber(node.getId()));
         addColumn(row, PARENT_ID_ARRAY_INDEX, nullSafeNumber(node.getParentId()));
         addColumn(row, URI_ARRAY_INDEX, DroidUrlFormat.format(node.getUri()));
-        addColumn(row, FILE_PATH_ARRAY_INDEX, node.toString());
+        addColumn(row, FILE_PATH_ARRAY_INDEX, toFilePath(node.getUri()));
         addColumn(row, FILE_NAME_ARRAY_INDEX, toFileName(metaData.getName()));
         addColumn(row, ID_METHOD_ARRAY_INDEX, nullSafeName(metaData.getIdentificationMethod()));
         addColumn(row, STATUS_ARRAY_INDEX, metaData.getNodeStatus().getStatus());
