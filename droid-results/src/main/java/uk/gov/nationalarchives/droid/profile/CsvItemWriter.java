@@ -107,6 +107,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private static final int MIME_TYPE_ARRAY_INDEX          = 15;
     private static final int FORMAT_NAME_ARRAY_INDEX        = 16;
     private static final int FORMAT_VERSION_ARRAY_INDEX     = 17;
+    private static final String BLANK_SPACE_DELIMITER       = " ";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -212,7 +213,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         csvWriterSettings.setFormat(format);
         csvWriter = new CsvWriter(writer, csvWriterSettings);
         if (headers == null) {
-            headers = HEADERS;
+            headers = Arrays.copyOf(HEADERS, HEADERS.length) ;
         }
         String[] headersToWrite = getHeadersToWrite(headers);
         csvWriter.writeHeaders(headersToWrite);
@@ -261,9 +262,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     public void setHeaders(Map<String, String> headersToSet) {
 
         if (this.headers == null) {
-            this.headers = HEADERS;
+            this.headers = Arrays.copyOf(HEADERS, HEADERS.length);
         }
 
+        // The header for hash is modified based on algorithm used to generate the hash
         String hashHeader = headersToSet.get("hash");
         if (hashHeader != null) {
             this.headers[HASH_ARRAY_INDEX] = hashHeader;
@@ -301,10 +303,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 numColumnsToWrite = numberToWrite;
                 // If there are some columns specified left over, they aren't valid columns - log a warning:
                 if (headersToWrite.size() > 0) {
-                    String invalidHeaders = "";
-                    for (String invalidColumn : headersToWrite) {
-                        invalidHeaders = invalidHeaders + invalidColumn + ' ';
-                    }
+                    String invalidHeaders = String.join(BLANK_SPACE_DELIMITER, headersToWrite);
                     log.warn("-co option - some CSV columns specified were invalid: " + invalidHeaders);
                 }
             }
@@ -313,7 +312,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     private Set<String> getColumnsToWrite(String columnNames) {
         if (columnNames != null && !columnNames.isEmpty()) {
-            String[] columns = columnNames.split(" ");
+            String[] columns = columnNames.split(BLANK_SPACE_DELIMITER);
             if (columns.length > 0) {
                 Set<String> set = new HashSet<>();
                 for (String column : columns) {
