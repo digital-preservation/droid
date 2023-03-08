@@ -107,7 +107,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private static final int MIME_TYPE_ARRAY_INDEX          = 15;
     private static final int FORMAT_NAME_ARRAY_INDEX        = 16;
     private static final int FORMAT_VERSION_ARRAY_INDEX     = 17;
-    private static final String BLANK_SPACE_DELIMITER = " ";
+    private static final String BLANK_SPACE_DELIMITER       = " ";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
