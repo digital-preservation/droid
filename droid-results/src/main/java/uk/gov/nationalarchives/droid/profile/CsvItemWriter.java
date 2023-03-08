@@ -274,30 +274,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         return result;
     }
 
-/*
-        if (uri == null)
-            return ;
-        if ("file".equals(uri.getScheme()))
-            return Paths.get(uri).toAbsolutePath().toString();
-
-        String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", "");
-
-        // Handle substitution of 7z
-        final String sevenZedIdentifier = "sevenz:";
-        if (result.startsWith(sevenZedIdentifier))
-            result = "7z:" + result.substring(sevenZedIdentifier.length());
-
-        // Handle substitution of gz
-        final String gzIdentifier = "gz:";
-        if (result.startsWith(gzIdentifier))
-            result = "gzip:" + result.substring(gzIdentifier.length());
-
-        return result;
-
- */
-
-
-
     /**
      * No config is needed by this class, but it's retained temporarily for backwards compatibility purposes.
      * @param config the config to set
