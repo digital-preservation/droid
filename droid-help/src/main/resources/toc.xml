@@ -37,7 +37,7 @@
 
 <toc version="2.0">
 	<tocitem text="Welcome to DROID" target="Welcome to DROID">
-		<tocitem text="Whats New" target="Whats New" />
+		<tocitem text="What's New" target="Whats New" />
 		<tocitem text="License" target="License" />
 		<tocitem text="Third-party components" target="Third-party components" />
 		<tocitem text="FAQ" target="FAQ" />
