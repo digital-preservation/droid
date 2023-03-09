@@ -20,7 +20,7 @@ Version 6.6.0
 * Fix for inverted syntax when the bytes or ranges are inverted
 * Introduced semantic versioning
 * Improved consistency across profile and no profile mode
-* Introduced internal API for making droid easier to use as a dependency
+* Introduced internal API for making DROID easier to use as a dependency
 * Code refactoring
 * Bug fixes
 
