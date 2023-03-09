@@ -37,7 +37,7 @@
 
 <index version="2.0">
 	<indexitem text="Welcome to DROID" target="Welcome to DROID">
-		<indexitem text="Whats New" target="Whats New" />
+		<indexitem text="What's New" target="Whats New" />
 		<indexitem text="License" target="License" />
 		<indexitem text="Third-party components.html" target="Third-party components" />
 		<indexitem text="FAQ" target="FAQ" />

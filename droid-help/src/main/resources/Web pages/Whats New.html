@@ -35,7 +35,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=Cp1252">
     <meta name="generator" content="Helen">
-    <title>Whats New</title>
+    <title>What's New</title>
   </head>
   <body>
     <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#555555" border="0">
@@ -65,17 +65,38 @@
       </tr>
     </table>
     <p>
+      Droid 6.6.1 offers the following fixes and improvements:
+    </p>
+    <ul>
+      <li>#898 Bugfix: Use backslash on Windows OS in no profile output</li>
+      <li>#900 Bugfix: Failure to consistently output HASH column in CSV</li>
+      <li>Updated to use latest version of Java 11 bundled JRE</li>
+      <li>#886 Bugfix: Terminology corrected on the preferences dialog</li>    </ul>
+    <p>
       Droid 6.6.0 offers the following new features:
     </p>
     <ul>
-      <li>Internal API for making droid easier to use as a dependency</li>
-      <li>Updated bundled jre to Java 11</li>
+      <li>Updated the bundled JRE to a newer version</li>
       <li>Improvement to ?? signature pattern</li>
+      <li>Ability to specify columns to export with the -co option, e.g. -co NAME PUID</li>
+      <li>Configure CSV to only quote if there is a comma in a field, use the -qc option</li>
+      <li>The GUI export dialog also includes column and quoting configuration options.</li>
+      <li>Write a profile straight to a CSV file, not writing to a database, using the -o output option, e.g. -o "/home/user/results.csv"</li>
+      <li>Write a profile straight to the console, by not specifying an output file or a profile to write to.</li>
+      <li>Ability to filter profiles written to CSV file or console just as for an export.</li>
+      <li>Ability to filter a more than one extensions, e.g. -F "file_ext any doc docx xls xlsx".</li>
+      <li>Filter files before they are identified on file metadata (name, extension, last modified, size), using the -ff and -FF filter options.</li>
+      <li>Set both binary and container signature files to use to override profile defaults.</li>
+      <li>Update profile defaults for both binary and container signature files</li>
       <li>Fix for inverted syntax when the bytes or ranges are inverted</li>
+      <li>Introduced semantic versioning</li>
       <li>Improved consistency across profile and no profile mode</li>
+      <li>Introduced internal API for making droid easier to use as a dependency</li>
+      <li>Code refactoring</li>
+      <li>Bug fixes</li>
     </ul>
     <p>
-      For a full list of the included changes with this version, please check the <a href="http://www.github.com/digital-preservation/droid/releases/tag/droid-6.6/">changelog</a>
+      For a full list of the included changes with this version, please check the <a href="http://www.github.com/digital-preservation/droid/releases/tag/droid-6.6.0/">changelog</a>
       <img src="../Images/Icon_External_Link.png"> on github
     </p>
   </body>
