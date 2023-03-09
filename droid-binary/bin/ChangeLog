@@ -5,7 +5,7 @@ Version 6.6.1
 * #886 Bugfix: Terminology corrected on the preferences dialog
 
 Version 6.6.0
-* Updated to use Java 11 as bundled JRE
+* Updated the bundled JRE to a newer version
 * Improvement to ?? signature pattern
 * Ability to specify columns to export with the -co option, e.g. -co NAME PUID
 * Configure CSV to only quote if there is a comma in a field, use the -qc option
