@@ -35,7 +35,7 @@
 
 <p>DROID uses internal signatures to identify and report the specific file format versions of digital files. These signatures are stored in an XML signature file, generated from information recorded in the <a href="http://www.nationalarchives.gov.uk/PRONOM/Default.aspx" title="PRONOM Technical Registry">PRONOM technical registry</a>. New and updated signatures are regularly added to PRONOM, and DROID can be configured to automatically download updated signature files.</p>
 
-<p>The DROID binary zip file is available to download from the <a href="http://www.nationalarchives.gov.uk/information-management/projects-and-work/droid.htm" title="DROID download page">dedicated page on The National Archives website</a>.</p>
+<p>The DROID binary zip file is available to download from the <a href="https://www.nationalarchives.gov.uk/information-management/manage-information/preserving-digital-records/droid/" title="DROID download page">dedicated page on The National Archives website</a>.</p>
 
 <p>DROID is a platform-independent Java application. It can be invoked from two interfaces:</p>
 
@@ -47,7 +47,7 @@
 <h3>
 <a name="user-requirements" class="anchor" href="#user-requirements"><span class="octicon octicon-link"></span></a>User requirements</h3>
 
-<p>DROID requires a minimum of Java 8 Standard Edition (SE). DROID was built and tested on Java 1.8. DROID version 6.4 will likely operate with Java 7, but this is not guaranteed.</p>
+<p>DROID requires a minimum of Java 8 Standard Edition (SE). DROID was built and tested on Java 1.8. DROID version 6.6.x will likely operate with Java 7, but this is not guaranteed.</p>
 
 <p>Signature Files and their release notes can be found at the following links: </p>
 
@@ -66,20 +66,23 @@
 
 <p>The DROID code base is split up into separate projects, to facilitate only using parts of the DROID code that are required, and to enhance and enforce modularity in its construction:</p>
 
-<pre><code>Droid-binary                          Additional files required in a release build
-Droid-build-tools-TRUNK               A maven project to package the release
-Droid-command-line                    Command-line control over DROID
-Droid-container                       Container signature processing
-Droid-core                            Binary signature processing
-Droid-core-interfaces                 Resource processing &amp; format recognition
-Droid-export                          Export droid profiles to CSV
-Droid-export-interfaces               Interfaces for export of DROID profiles
-Droid-help                            JavaHelp for DROID
-Droid-parent                          An empty parent project for the other projects
-Droid-report                          Reporting for DROID profiles
-Droid-report-interfaces               Interfaces for DROID reporting
-Droid-results                         Profile handling, database and filtering
-Droid-swing-ui                        Swing GUI control over DROID
+<pre><code>
+droid-api                             Internal API module to include in third party application for easy file identification
+droid-binary                          Additional files required in a release build
+droid-build-tools                     A maven project to package the release
+droid-command-line                    Command-line control over DROID
+droid-container                       Container signature processing
+droid-core                            Binary signature processing
+droid-core-interfaces                 Resource processing &amp; format recognition
+droid-export                          Export droid profiles to CSV
+droid-export-interfaces               Interfaces for export of DROID profiles
+droid-help                            JavaHelp for DROID
+droid-parent                          An empty parent project for the other projects
+droid-report                          Reporting for DROID profiles
+droid-report-interfaces               Interfaces for DROID reporting
+droid-results                         Profile handling, database and filtering
+droid-tools                           Tools associated with DROID (e.g. signature utility, signature file parsing)
+droid-ui                              Swing GUI control over DROID
 </code></pre>
 
 <h3>
@@ -96,7 +99,7 @@ swing-outline-1.4.1                   Netbeans Swing GUI tree table control, par
 <a name="building-droid" class="anchor" href="#building-droid"><span class="octicon octicon-link"></span></a>Building DROID</h3>
 
 <p>DROID was built using Apache Maven 3. First make sure that this is installed
-and if behind a proxy, edit the Maven settings.xml file to reflec the proxy
+and if behind a proxy, edit the Maven settings.xml file to reflect the proxy
 server details. </p>
 
 <p>There are an additional three jar files required, as listed in the dependencies
@@ -119,6 +122,72 @@ will build. Follow the Maven output to see where Maven has placed the binaries.<
 
 <h3>
 <a name="release-notes" class="anchor" href="#release-notes"><span class="octicon octicon-link"></span></a>Release Notes</h3>
+
+<h4>DROID 6.6.0</h4>
+<p>This release has improvements and bug fixes as listed below  </p>
+
+<pre><code>Enhancements and bug fixes
+-   Updated to use newer version of Java 11 as bundled JRE
+-   Improvement to ?? signature pattern
+-   Ability to specify columns to export with the -co option, e.g. -co NAME PUID
+-   Configure CSV to only quote if there is a comma in a field, use the -qc option
+-   The GUI export dialog also includes column and quoting configuration options.
+-   Write a profile straight to a CSV file, not writing to a database, using the -o output option, e.g. -o "/home/user/results.csv"
+-   Write a profile straight to the console, by not specifying an output file or a profile to write to.
+-   Ability to filter profiles written to CSV file or console just as for an export.
+-   Ability to filter a more than one extensions, e.g. -F "file_ext any doc docx xls xlsx".
+-   Filter files before they are identified on file metadata (name, extension, last modified, size), using the -ff and -FF filter options.
+-   Set both binary and container signature files to use to override profile defaults.
+-   Update profile defaults for both binary and container signature files
+-   Fix for inverted syntax when the bytes or ranges are inverted
+-   Introduced semantic versioning
+-   Improved consistency across profile and no profile mode
+-   Introduced internal API for making droid easier to use as a dependency
+</code></pre>
+
+<h4>DROID 6.5.0</h4>
+<p>This release has many improvements and bug fixes over the previous release  </p>
+
+<pre><code>Enhancements
+-   Only log hikari errors.
+-   Manage opening of WARC 1.1 and update identification of WARC 1.0
+-   Ability to cherry pick types of archival container to be scanned in CLI and GUI
+-   Only parse container sigs once
+-   Adds drag drop support for files into a profile GUI window
+-   Match signatures in OLE2 sub folders
+-   Binary bundle without jre now works for windows too
+-   Sort the PUID values in the filter dialog.
+-   Full implementation of standard signature syntax in container signatures
+-   Bundle jre with windows
+-   Let archive files be embedded in any other archive file.
+-   Add support for Java 11
+-   FatFile support
+-   Full implementation of standard signature syntax in container signatures
+-   Fix: put back LF (unix) line separators in csv exports
+-   Fix filter button on windows on java8
+-   Fix: iso prefix in CLI when expanding ISO archives
+-   Fix graphical glitches on Windows 10
+-   Filter by extension should work when recursing folders
+-   Fix support for siard 2.1
+-   Fix: .bat script in jre bundle to enable running from network drive
+-   Manage special folders (forbidden, shortcuts)
+-   Fix .bat file in bundle without jre
+-   Fix: processing of the quiet parameter on CLI
+-   Fix: CLI can browse again folders recursively
+-   Fix: checkbox filter icon display on main screen
+-   Added lastmodified for files inside ziparchive
+-   Profiles produced now have Windows ends (CR+Newline) rather than just Unix (Newline)
+-   Filter on extension in CLI does not work if -R is set
+-   Filtering for extension and choosing a single file does not restrict to that file
+-   Fix: fmt-1196 SIARD 2.1 is wrongly identified as ZIP
+-   cannot open forbidden folders
+-   cannot open folder shortcuts on Windows
+-   CSV export incorrect
+-   UI fails to expand / collapse node in warc after a leaf node is clicked
+
+</code></pre>
+
+
 
 <h4>
 <a name="droid-64" class="anchor" href="#droid-64"><span class="octicon octicon-link"></span></a>DROID 6.4</h4>
