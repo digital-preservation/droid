@@ -31,17 +31,16 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import uk.gov.nationalarchives.droid.profile.referencedata.Format;
+
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
-import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 /**
 * @author rflitcroft, mpalmer
@@ -211,6 +210,7 @@ public class ProfileResourceNode {
 
         return result;
     }
+
 
     /**
      * @return prefix Getter method for prefix.

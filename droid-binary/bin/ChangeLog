@@ -1,11 +1,26 @@
-Version 6.6
-* Introduced internal API for making droid easier to use as a dependency
+Version 6.6.1
+* #898 Bugfix: Use backslash on Windows OS in no profile output
+* #900 Bugfix: Failure to consistently output HASH column in CSV
+* Updated to use latest version of Java 11 bundled JRE
+* #886 Bugfix: Terminology corrected on the preferences dialog
+
+Version 6.6.0
+* Updated the bundled JRE to a newer version
 * Improvement to ?? signature pattern
+* Ability to specify columns to export with the -co option, e.g. -co NAME PUID
+* Configure CSV to only quote if there is a comma in a field, use the -qc option
+* The GUI export dialog also includes column and quoting configuration options.
+* Write a profile straight to a CSV file, not writing to a database, using the -o output option, e.g. -o "/home/user/results.csv"
+* Write a profile straight to the console, by not specifying an output file or a profile to write to.
+* Ability to filter profiles written to CSV file or console just as for an export.
+* Ability to filter a more than one extensions, e.g. -F "file_ext any doc docx xls xlsx".
+* Filter files before they are identified on file metadata (name, extension, last modified, size), using the -ff and -FF filter options.
+* Set both binary and container signature files to use to override profile defaults.
+* Update profile defaults for both binary and container signature files
 * Fix for inverted syntax when the bytes or ranges are inverted
 * Introduced semantic versioning
 * Improved consistency across profile and no profile mode
-* Replaced iTextPdf with OpenHTMLToPDF to address vulnerability
-* Updated to use Java 11 as bundled JRE
+* Introduced internal API for making DROID easier to use as a dependency
 * Code refactoring
 * Bug fixes
 

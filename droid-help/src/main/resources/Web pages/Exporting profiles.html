@@ -135,9 +135,9 @@
     </h3>
     <p>
        The file system&nbsp;location of the resource being profiled, if the resource was directly
-      in a file system. &nbsp;Some files are not inside a file system - for example, files inside a
-      zip file. In this case, the file path will be blank, as there is no file path to the
-      resource. &nbsp;
+      in a file system. &nbsp;Some files are not on the file system - for example, files inside a
+      zip file. In this case, the file paths are written relative to the parent file which
+      exists on the file system. Such paths also include the type of archive as a prefix.
     </p>
     <p>
        Please note that file paths are platform dependent (they are different on Windows and unix).

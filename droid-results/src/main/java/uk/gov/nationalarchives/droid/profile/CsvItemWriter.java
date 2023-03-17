@@ -46,7 +46,10 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
+import java.io.File;
 import java.io.Writer;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -86,6 +89,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             "FORMAT_VERSION",
     };
 
+    private static final String FILE_URI_SCHEME = "file";
+
     /*
      * Indexes of the headers used in the CSV output.
      */
@@ -107,6 +112,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private static final int MIME_TYPE_ARRAY_INDEX          = 15;
     private static final int FORMAT_NAME_ARRAY_INDEX        = 16;
     private static final int FORMAT_VERSION_ARRAY_INDEX     = 17;
+    private static final String BLANK_SPACE_DELIMITER       = " ";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -212,7 +218,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         csvWriterSettings.setFormat(format);
         csvWriter = new CsvWriter(writer, csvWriterSettings);
         if (headers == null) {
-            headers = HEADERS;
+            headers = Arrays.copyOf(HEADERS, HEADERS.length) ;
         }
         String[] headersToWrite = getHeadersToWrite(headers);
         csvWriter.writeHeaders(headersToWrite);
@@ -246,7 +252,29 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private static String toFileName(String name) {
         return FilenameUtils.getName(name);
     }
-    
+
+    private String toFilePath(URI uri) {
+        if (uri == null) {
+            log.warn("[URI not set]");
+            return "";
+        }
+        if (FILE_URI_SCHEME.equals(uri.getScheme())) {
+            return Paths.get(uri).toAbsolutePath().toString();
+        }
+
+        // for URIs that have other than "file" scheme
+        String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", "");
+        result = result.replace("/", File.separator);
+
+        // Handle substitution of 7z
+        final String sevenZedIdentifier = "sevenz:";
+        if (result.startsWith(sevenZedIdentifier)) {
+            result = "7z:" + result.substring(sevenZedIdentifier.length());
+        }
+
+        return result;
+    }
+
     /**
      * No config is needed by this class, but it's retained temporarily for backwards compatibility purposes.
      * @param config the config to set
@@ -261,9 +289,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     public void setHeaders(Map<String, String> headersToSet) {
 
         if (this.headers == null) {
-            this.headers = HEADERS;
+            this.headers = Arrays.copyOf(HEADERS, HEADERS.length);
         }
 
+        // The header for hash is modified based on algorithm used to generate the hash
         String hashHeader = headersToSet.get("hash");
         if (hashHeader != null) {
             this.headers[HASH_ARRAY_INDEX] = hashHeader;
@@ -301,10 +330,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 numColumnsToWrite = numberToWrite;
                 // If there are some columns specified left over, they aren't valid columns - log a warning:
                 if (headersToWrite.size() > 0) {
-                    String invalidHeaders = "";
-                    for (String invalidColumn : headersToWrite) {
-                        invalidHeaders = invalidHeaders + invalidColumn + ' ';
-                    }
+                    String invalidHeaders = String.join(BLANK_SPACE_DELIMITER, headersToWrite);
                     log.warn("-co option - some CSV columns specified were invalid: " + invalidHeaders);
                 }
             }
@@ -313,7 +339,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     private Set<String> getColumnsToWrite(String columnNames) {
         if (columnNames != null && !columnNames.isEmpty()) {
-            String[] columns = columnNames.split(" ");
+            String[] columns = columnNames.split(BLANK_SPACE_DELIMITER);
             if (columns.length > 0) {
                 Set<String> set = new HashSet<>();
                 for (String column : columns) {
@@ -344,7 +370,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         addColumn(row, ID_ARRAY_INDEX, nullSafeNumber(node.getId()));
         addColumn(row, PARENT_ID_ARRAY_INDEX, nullSafeNumber(node.getParentId()));
         addColumn(row, URI_ARRAY_INDEX, DroidUrlFormat.format(node.getUri()));
-        addColumn(row, FILE_PATH_ARRAY_INDEX, node.toString());
+        addColumn(row, FILE_PATH_ARRAY_INDEX, toFilePath(node.getUri()));
         addColumn(row, FILE_NAME_ARRAY_INDEX, toFileName(metaData.getName()));
         addColumn(row, ID_METHOD_ARRAY_INDEX, nullSafeName(metaData.getIdentificationMethod()));
         addColumn(row, STATUS_ARRAY_INDEX, metaData.getNodeStatus().getStatus());
