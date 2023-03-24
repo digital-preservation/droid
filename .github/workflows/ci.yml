@@ -32,10 +32,3 @@ jobs:
         run: mvn -V -B -DskipTests=true install
       - name: Maven Test
         run: mvn -B verify
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: droid-binary
-          path: ./droid-binary/target/*.zip
-          if-no-files-found: error
-          retention-days: 2
