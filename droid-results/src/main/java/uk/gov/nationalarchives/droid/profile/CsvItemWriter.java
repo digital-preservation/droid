@@ -249,6 +249,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         format.setLineSeparator("\n");
         csvWriterSettings.setFormat(format);
         csvWriter = new CsvWriter(writer, csvWriterSettings);
+        if (headers == null) {
+            headers = Arrays.copyOf(HEADERS, HEADERS.length);
+        }
     }
 
     private void writeHeadersForOneLinePerFormatExport(List<? extends ProfileResourceNode> nodes) {
@@ -257,7 +260,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             throw new RuntimeException("Unexpectedly called per file header creation. Unable to proceed");
         }
 
-        List<String> headersToWrite = Arrays.stream(getHeadersToWrite(HEADERS)).collect(Collectors.toList()) ;
+        List<String> headersToWrite = Arrays.stream(getHeadersToWrite(headers)).collect(Collectors.toList()) ;
 
         //if we are writing one row per file, then we tag the "per format" fields as additional columns,
         //if such columns need to be added, we create appropriate headers with a running suffix and write
