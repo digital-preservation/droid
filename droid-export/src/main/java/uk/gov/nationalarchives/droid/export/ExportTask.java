@@ -188,8 +188,8 @@ public class ExportTask implements Runnable {
 
         //BNO - amended to add header customisations for different hash algorithms
         Map<String, String> headerCustomisations = getHeaderCustomisationsFromProfiles();
-        itemWriter.setHeaders(headerCustomisations);
         itemWriter.setOptions(options);
+        itemWriter.setHeaders(headerCustomisations);
         itemWriter.open(writer);
         
         StopWatch stopWatch = new StopWatch();
@@ -253,9 +253,9 @@ public class ExportTask implements Runnable {
         // for the hash algorithm needs to be customised depending on whether or not the profile(s) selected
         // for export contain hash algorithms, and if so
         // whether all the selected profiles use the same algorithm.
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         String hashAlgorithmHeader = "HASH";
-        Set<String> algorithmsFound = new HashSet<String>();
+        Set<String> algorithmsFound = new HashSet<>();
  
         for (String profileId : this.profileIds) {
             if (!this.profileContextLocator.hasProfileContext(profileId)) {
