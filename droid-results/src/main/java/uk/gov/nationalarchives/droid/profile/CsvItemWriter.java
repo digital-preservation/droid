@@ -52,12 +52,15 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author rflitcroft
@@ -65,29 +68,54 @@ import java.util.Set;
  */
 public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
+    private static final String HEADER_NAME_ID = "ID";
+    private static final String HEADER_NAME_PARENT_ID = "PARENT_ID";
+    private static final String HEADER_NAME_URI = "URI";
+    private static final String HEADER_NAME_FILE_PATH = "FILE_PATH";
+    private static final String HEADER_NAME_NAME = "NAME";
+    private static final String HEADER_NAME_METHOD = "METHOD";
+    private static final String HEADER_NAME_STATUS = "STATUS";
+    private static final String HEADER_NAME_SIZE = "SIZE";
+    private static final String HEADER_NAME_TYPE = "TYPE";
+    private static final String HEADER_NAME_EXT = "EXT";
+    private static final String HEADER_NAME_LAST_MODIFIED = "LAST_MODIFIED";
+    private static final String HEADER_NAME_EXTENSION_MISMATCH = "EXTENSION_MISMATCH";
+    private static final String HEADER_NAME_HASH = "HASH";
+    private static final String HEADER_NAME_FORMAT_COUNT = "FORMAT_COUNT";
+    private static final String HEADER_NAME_PUID = "PUID";
+    private static final String HEADER_NAME_MIME_TYPE = "MIME_TYPE";
+    private static final String HEADER_NAME_FORMAT_NAME = "FORMAT_NAME";
+    private static final String HEADER_NAME_FORMAT_VERSION = "FORMAT_VERSION";
+
     /**
      * Headers used in the CSV output
      */
     static final String[] HEADERS = {
-            "ID",
-            "PARENT_ID",
-            "URI",
-            "FILE_PATH",
-            "NAME",
-            "METHOD",
-            "STATUS",
-            "SIZE",
-            "TYPE",
-            "EXT",
-            "LAST_MODIFIED",
-            "EXTENSION_MISMATCH",
-            "HASH",
-            "FORMAT_COUNT",
-            "PUID",
-            "MIME_TYPE",
-            "FORMAT_NAME",
-            "FORMAT_VERSION",
+            HEADER_NAME_ID,
+            HEADER_NAME_PARENT_ID,
+            HEADER_NAME_URI,
+            HEADER_NAME_FILE_PATH,
+            HEADER_NAME_NAME,
+            HEADER_NAME_METHOD,
+            HEADER_NAME_STATUS,
+            HEADER_NAME_SIZE,
+            HEADER_NAME_TYPE,
+            HEADER_NAME_EXT,
+            HEADER_NAME_LAST_MODIFIED,
+            HEADER_NAME_EXTENSION_MISMATCH,
+            HEADER_NAME_HASH,
+            HEADER_NAME_FORMAT_COUNT,
+            HEADER_NAME_PUID,
+            HEADER_NAME_MIME_TYPE,
+            HEADER_NAME_FORMAT_NAME,
+            HEADER_NAME_FORMAT_VERSION,
     };
+
+    /**
+     * List of headers that appear more than once if a file matches more than one format
+     */
+    static final List<String> PER_FORMAT_HEADERS = Arrays.asList(
+            HEADER_NAME_PUID, HEADER_NAME_MIME_TYPE, HEADER_NAME_FORMAT_NAME, HEADER_NAME_FORMAT_VERSION);
 
     private static final String FILE_URI_SCHEME = "file";
 
@@ -162,6 +190,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
     
     private void writeOneRowPerFile(List<? extends ProfileResourceNode> nodes) {
+        if (csvWriter.getRecordCount() == 0) {
+            writeHeadersForOneLinePerFormatExport(nodes);
+        }
         try {
             for (ProfileResourceNode node : nodes) {
                 List<String> nodeEntries = new ArrayList<>();
@@ -182,6 +213,11 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
     
     private void writeOneRowPerFormat(List<? extends ProfileResourceNode> nodes) {
+        List<String> headersToWrite = Arrays.stream(getHeadersToWrite(headers)).collect(Collectors.toList()) ;
+        if (csvWriter.getRecordCount() == 0) {
+            csvWriter.writeHeaders(headersToWrite);
+        }
+
         try {
             for (ProfileResourceNode node : nodes) {
                 for (Format format : node.getFormatIdentifications()) {
@@ -220,7 +256,43 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         if (headers == null) {
             headers = Arrays.copyOf(HEADERS, HEADERS.length) ;
         }
-        String[] headersToWrite = getHeadersToWrite(headers);
+    }
+
+    private void writeHeadersForOneLinePerFormatExport(List<? extends ProfileResourceNode> nodes) {
+
+        if (options == ExportOptions.ONE_ROW_PER_FORMAT) {
+            throw new RuntimeException("Unexpectedly called per file header creation. Unable to proceed");
+        }
+
+        List<String> headersToWrite = Arrays.stream(getHeadersToWrite(headers)).collect(Collectors.toList()) ;
+
+        //if we are writing one row per file, then we tag the "per format" fields as additional columns,
+        //if such columns need to be added, we create appropriate headers with a running suffix and write
+        //them to the file
+        if (!Collections.disjoint(headersToWrite, PER_FORMAT_HEADERS)) {
+            Optional<Integer> maxIdentificationsOption = nodes.stream().map(ProfileResourceNode::getIdentificationCount).collect(Collectors.toList()).stream().filter(Objects::nonNull).max(Integer::compare);
+            int maxIdentifications = 0;
+            if (maxIdentificationsOption.isPresent()) {
+                maxIdentifications = maxIdentificationsOption.get();
+            }
+            if (maxIdentifications > 1) { //add headers
+                for (int newColumnSuffix = 2; newColumnSuffix <= maxIdentifications; newColumnSuffix++) {
+                    //"PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION"
+                    if (headersToWrite.contains(HEADER_NAME_PUID)) {
+                        headersToWrite.add(HEADER_NAME_PUID + newColumnSuffix);
+                    }
+                    if (headersToWrite.contains(HEADER_NAME_MIME_TYPE)) {
+                        headersToWrite.add(HEADER_NAME_MIME_TYPE + newColumnSuffix);
+                    }
+                    if (headersToWrite.contains(HEADER_NAME_FORMAT_NAME)) {
+                        headersToWrite.add(HEADER_NAME_FORMAT_NAME + newColumnSuffix);
+                    }
+                    if (headersToWrite.contains(HEADER_NAME_FORMAT_VERSION)) {
+                        headersToWrite.add(HEADER_NAME_FORMAT_VERSION + newColumnSuffix);
+                    }
+                }
+            }
+        }
         csvWriter.writeHeaders(headersToWrite);
     }
 
@@ -341,11 +413,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         if (columnNames != null && !columnNames.isEmpty()) {
             String[] columns = columnNames.split(BLANK_SPACE_DELIMITER);
             if (columns.length > 0) {
-                Set<String> set = new HashSet<>();
-                for (String column : columns) {
-                    set.add(column.toUpperCase(Locale.ROOT));
-                }
-                return set;
+                return Arrays.stream(columns).map(name -> name.toUpperCase(Locale.ROOT)).collect(Collectors.toSet());
             }
         }
         return null;
