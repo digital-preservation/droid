@@ -190,7 +190,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
     
     private void writeOneRowPerFile(List<? extends ProfileResourceNode> nodes) {
-        writeHeadersForOneLinePerFormatExport(nodes);
+        if (csvWriter.getRecordCount() == 0) {
+            writeHeadersForOneLinePerFormatExport(nodes);
+        }
         try {
             for (ProfileResourceNode node : nodes) {
                 List<String> nodeEntries = new ArrayList<>();
@@ -211,8 +213,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
     
     private void writeOneRowPerFormat(List<? extends ProfileResourceNode> nodes) {
-        List<String> headersToWrite = Arrays.stream(getHeadersToWrite(HEADERS)).collect(Collectors.toList()) ;
-        csvWriter.writeHeaders(headersToWrite);
+        List<String> headersToWrite = Arrays.stream(getHeadersToWrite(headers)).collect(Collectors.toList()) ;
+        if (csvWriter.getRecordCount() == 0) {
+            csvWriter.writeHeaders(headersToWrite);
+        }
 
         try {
             for (ProfileResourceNode node : nodes) {
@@ -289,7 +293,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 }
             }
         }
-
         csvWriter.writeHeaders(headersToWrite);
     }
 
