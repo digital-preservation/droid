@@ -184,6 +184,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 break;
             }
             default: {
+                //what? unknown option
+                log.warn("Unable to handle ExportOptions = " + options + ", was there a new option created?");
+                options = ExportOptions.ONE_ROW_PER_FILE;
                 writeOneRowPerFile(nodes);
             }
         }
