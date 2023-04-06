@@ -191,7 +191,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     
     private void writeOneRowPerFile(List<? extends ProfileResourceNode> nodes) {
         if (csvWriter.getRecordCount() == 0) {
-            writeHeadersForOneLinePerFileExport(nodes);
+            writeHeadersForOneRowPerFileExport(nodes);
         }
         try {
             for (ProfileResourceNode node : nodes) {
@@ -258,7 +258,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         }
     }
 
-    private void writeHeadersForOneLinePerFileExport(List<? extends ProfileResourceNode> nodes) {
+    private void writeHeadersForOneRowPerFileExport(List<? extends ProfileResourceNode> nodes) {
 
         if (options != ExportOptions.ONE_ROW_PER_FILE) {
             throw new RuntimeException("Unexpectedly called per file header creation. Unable to proceed");
@@ -278,17 +278,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             if (maxIdentifications > 1) { //add headers
                 for (int newColumnSuffix = 2; newColumnSuffix <= maxIdentifications; newColumnSuffix++) {
                     //"PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION"
-                    if (headersToWrite.contains(HEADER_NAME_PUID)) {
-                        headersToWrite.add(HEADER_NAME_PUID + newColumnSuffix);
-                    }
-                    if (headersToWrite.contains(HEADER_NAME_MIME_TYPE)) {
-                        headersToWrite.add(HEADER_NAME_MIME_TYPE + newColumnSuffix);
-                    }
-                    if (headersToWrite.contains(HEADER_NAME_FORMAT_NAME)) {
-                        headersToWrite.add(HEADER_NAME_FORMAT_NAME + newColumnSuffix);
-                    }
-                    if (headersToWrite.contains(HEADER_NAME_FORMAT_VERSION)) {
-                        headersToWrite.add(HEADER_NAME_FORMAT_VERSION + newColumnSuffix);
+                    for (String headerEntry : PER_FORMAT_HEADERS) {
+                        if (headersToWrite.contains(headerEntry)) {
+                            headersToWrite.add(headerEntry + newColumnSuffix);
+                        }
                     }
                 }
             }
