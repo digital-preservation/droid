@@ -191,7 +191,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     
     private void writeOneRowPerFile(List<? extends ProfileResourceNode> nodes) {
         if (csvWriter.getRecordCount() == 0) {
-            writeHeadersForOneLinePerFormatExport(nodes);
+            writeHeadersForOneLinePerFileExport(nodes);
         }
         try {
             for (ProfileResourceNode node : nodes) {
@@ -258,9 +258,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         }
     }
 
-    private void writeHeadersForOneLinePerFormatExport(List<? extends ProfileResourceNode> nodes) {
+    private void writeHeadersForOneLinePerFileExport(List<? extends ProfileResourceNode> nodes) {
 
-        if (options == ExportOptions.ONE_ROW_PER_FORMAT) {
+        if (options != ExportOptions.ONE_ROW_PER_FILE) {
             throw new RuntimeException("Unexpectedly called per file header creation. Unable to proceed");
         }
 
