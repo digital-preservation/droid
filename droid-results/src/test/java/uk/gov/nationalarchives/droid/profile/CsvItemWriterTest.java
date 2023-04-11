@@ -76,8 +76,8 @@ import static org.mockito.Mockito.when;
  */
 public class CsvItemWriterTest {
 
-	private static DateTime testDateTime = new DateTime(12345678L);
-	private static final String LINE_SEPARATOR = "\n";
+    private static final DateTime testDateTime = new DateTime(12345678L);
+    private static final String LINE_SEPARATOR = "\n";
     private CsvItemWriter itemWriter;
     private File destination;
     private DroidGlobalConfig config;
@@ -100,22 +100,6 @@ public class CsvItemWriterTest {
     @After
     public void tearDown() {
         itemWriter.close();
-    }
-
-    @Test
-    public void testWriteHeadersOnOpen() throws IOException {
-        try(final Writer writer = new StringWriter()) {
-            JobOptions jobOptions = mock(JobOptions.class);
-            when(jobOptions.getParameter("location")).thenReturn("test.csv");
-
-            // String hashAlgorithm = config.getProperties().getProperty("HASH_ALGORITHM").toString();
-            //when(config.getBooleanProperty(DroidGlobalProperty\.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
-            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
-            itemWriter.open(writer);
-            final String expectedString = toCsvRow(CsvItemWriter.HEADERS) + LINE_SEPARATOR;
-
-            assertEquals(writer.toString(), expectedString);
-        }
     }
 
     private static String toCsvRow(final String[] values) {
@@ -261,7 +245,7 @@ public class CsvItemWriterTest {
     }
 
     @Test
-    public void testWriteOneNodeWithTwoFormatsWithOneRowPerFile() throws IOException {
+    public void shouldCreateAdditionalHeadersForIdentificationFormatsWhenWritingAnEntryPerFile() throws IOException {
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
 
         try(final Writer writer = new StringWriter()) {
@@ -278,6 +262,12 @@ public class CsvItemWriterTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+
+            final String expectedHeaders = toCsvRow(new String[] {
+                    "ID","PARENT_ID","URI","FILE_PATH","NAME","METHOD","STATUS","SIZE","TYPE","EXT","LAST_MODIFIED","EXTENSION_MISMATCH","HASH","FORMAT_COUNT",
+                    "PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION", //per format columns
+                    "PUID2","MIME_TYPE2","FORMAT_NAME2","FORMAT_VERSION2", //per format columns
+            });
 
             final String expectedEntry1 = toCsvRow(new String[] {
                     "", "",
@@ -306,6 +296,7 @@ public class CsvItemWriterTest {
             final String[] lines = writer.toString().split(LINE_SEPARATOR);
 
             assertEquals(2, lines.length);
+            assertEquals(expectedHeaders, lines[0]);
             assertEquals(expectedEntry1, lines[1]);
         }
     }
@@ -470,4 +461,3 @@ public class CsvItemWriterTest {
         return format;
     }
 }
-
