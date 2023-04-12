@@ -188,8 +188,8 @@ public class ExportTask implements Runnable {
 
         //BNO - amended to add header customisations for different hash algorithms
         Map<String, String> headerCustomisations = getHeaderCustomisationsFromProfiles();
-        itemWriter.setHeaders(headerCustomisations);
         itemWriter.setOptions(options);
+        itemWriter.setHeaders(headerCustomisations);
         itemWriter.open(writer);
         
         StopWatch stopWatch = new StopWatch();
