@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,8 +43,10 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 
-import de.schlichtherle.truezip.zip.ZipEntry;
-import de.schlichtherle.truezip.zip.ZipFile;
+//import de.schlichtherle.truezip.zip.ZipEntry;
+//import de.schlichtherle.truezip.zip.ZipFile;
+import net.java.truevfs.comp.zip.ZipFile;
+import net.java.truevfs.comp.zip.ZipEntry;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -83,7 +86,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        final ZipFile zipFile = new ZipFile(new TrueZipReader(request.getWindowReader()));
+        final ZipFile zipFile = new ZipFile(Paths.get(request.getFileName()));
         try {
             Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
                 @Override
@@ -158,7 +161,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         if (droidCore.passesIdentificationFilter(request)) {
             InputStream in = null;
             try {
-                in = file.getInputStream(entry);
+                in = file.getInputStream(entry.getName());
                 request.open(in);
             } finally {
                 if (in != null) {

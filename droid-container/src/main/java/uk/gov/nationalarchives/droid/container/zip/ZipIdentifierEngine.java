@@ -31,18 +31,22 @@
  */
 package uk.gov.nationalarchives.droid.container.zip;
 
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 
-import de.schlichtherle.truezip.zip.ZipEntry;
-import de.schlichtherle.truezip.zip.ZipFile;
+import net.java.truevfs.comp.zip.ZipFile;
+import net.java.truevfs.comp.zip.ZipEntry;
 import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipReader;
+//import uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipReader;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 /**
@@ -77,14 +81,16 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
     @Override
     public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
         //rof, DEFAULT_CHARSET, true, false
-        ZipFile zipFile = new ZipFile(new TrueZipReader(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
+        //ZipFile zipFile = new ZipFile(new TrueZipReader(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
+        ZipFile zipFile = new ZipFile(((FileSystemIdentificationRequest)request).getFile(), ZipFile.DEFAULT_CHARSET, true, false);
+
         try {
             // For each entry:
             for (String entryName : matches.getAllFileEntries()) {
-                final ZipEntry entry = zipFile.getEntry(entryName);
+                final ZipEntry entry = zipFile.entry(entryName);
                 if (entry != null) {
                     // Get a stream for the entry and a byte reader over the stream:
-                    InputStream stream = zipFile.getInputStream(entry);
+                    InputStream stream = zipFile.getInputStream(entry.getName());
                     ByteReader reader = null;
                     try {
                         reader = newByteReader(stream);
