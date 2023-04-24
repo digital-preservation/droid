@@ -31,29 +31,38 @@
  */
 package uk.gov.nationalarchives.droid.internal.api;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class DroidAPITest {
 
+    private DroidAPI api;
+
+    @Before
+    public void setup() throws SignatureParseException {
+        api = DroidAPITestUtils.createApi();
+    }
+
     @Test
-    public void testCreateInstance() throws SignatureParseException {
-        DroidAPI api = DroidAPITestUtils.createApi();
+    public void should_create_non_null_instance_using_test_utility_class() {
         assertThat(api, is(notNullValue()));
     }
 
     @Test
-    public void testIdentification() throws IOException, SignatureParseException {
-        DroidAPI api = DroidAPITestUtils.createApi();
+    public void should_identify_given_file_with_binary_signature() throws IOException {
         List<ApiResult> results = api.submit(
                 Paths.get("src/test/resources/persistence.zip"));
         assertThat(results, is(notNullValue()));
@@ -64,12 +73,11 @@ public class DroidAPITest {
 
         assertThat(identificationResult.getPuid(), is("x-fmt/263"));
         assertThat(identificationResult.getName(), is("ZIP Format"));
+        assertThat(identificationResult.getMethod(), is(IdentificationMethod.BINARY_SIGNATURE));
     }
 
     @Test
-    public void testContainerIdentification() throws IOException, SignatureParseException {
-        DroidAPI api = DroidAPITestUtils.createApi();
-
+    public void should_identify_given_file_using_container_signature() throws IOException {
         List<ApiResult> results = api.submit(
                 Paths.get("../droid-container/src/test/resources/odf_text.odt"));
         assertThat(results, is(notNullValue()));
@@ -84,9 +92,7 @@ public class DroidAPITest {
     }
 
     @Test
-    public void testIdentificationByFileExtension() throws IOException, SignatureParseException {
-        DroidAPI api = DroidAPITestUtils.createApi();
-
+    public void should_identify_given_file_using_file_extension() throws IOException {
         List<ApiResult> results = api.submit(Paths.get("src/test/resources/test.txt"));
         assertThat(results, is(notNullValue()));
         assertThat(results, hasSize(1));
@@ -98,9 +104,7 @@ public class DroidAPITest {
     }
 
     @Test
-    public void testFileExtensions() throws IOException, SignatureParseException {
-        DroidAPI api = DroidAPITestUtils.createApi();
-
+    public void should_report_extension_of_the_file_under_identification_test() throws IOException {
         List<ApiResult> resultsWithExtension = api.submit(Paths.get("src/test/resources/test.txt"));
         List<ApiResult> resultsWithoutExtension = api.submit(Paths.get("src/test/resources/word97"));
 
@@ -109,23 +113,38 @@ public class DroidAPITest {
     }
 
     @Test
-    public void testContainerVersions() throws SignatureParseException {
-        DroidAPI api = DroidAPITestUtils.createApi();
+    public void should_report_all_puids_when_there_are_more_than_one_identification_hits() throws IOException {
+        List<ApiResult> results = api.submit(Paths.get("src/test/resources/double-identification.jpg"));
+        assertThat(results.size(), is(2));
+        assertThat(results.stream().map(ApiResult::getPuid).collect(Collectors.toList()),
+                containsInAnyOrder("fmt/96", "fmt/41"));
+        assertThat(results.stream().map(ApiResult::getName).collect(Collectors.toList()),
+                containsInAnyOrder("Raw JPEG Stream", "Hypertext Markup Language"));
+    }
+
+    @Test
+    public void should_report_when_there_is_an_extension_mismatch() throws IOException {
+        List<ApiResult> results = api.submit(Paths.get("src/test/resources/docx-file-as-xls.xlsx"));
+        assertThat(results.size(), is(1));
+        assertThat(results.get(0).getPuid(), is("fmt/412"));
+        assertThat(results.get(0).isFileExtensionMismatch(), is(true));
+    }
+
+    @Test
+    public void should_report_correct_version_for_the_binary_and_container_signature() {
         assertThat(api.getContainerSignatureVersion(), is("20221102"));
         assertThat(api.getDroidVersion(), is(ResourceBundle.getBundle("options").getString("version_no")));
         assertThat(api.getBinarySignatureVersion(), is("109"));
     }
 
     @Test
-    public void testEmptyFileWithNoExtension() throws IOException, SignatureParseException {
-        DroidAPI api = DroidAPITestUtils.createApi();
+    public void should_report_correct_size_of_zero_for_an_empty_file() throws IOException {
         List<ApiResult> results = api.submit(Paths.get("src/test/resources/test"));
         assertThat(results.size(), is(0));
     }
 
     @Test
-    public void testRunInLoop() throws IOException, SignatureParseException {
-        DroidAPI api = DroidAPITestUtils.createApi();
+    public void should_produce_results_for_every_time_a_file_is_submitted_for_identification() throws IOException {
         final int MAX_ITER = 5000;
         int acc = 0;
         for (int i = 0; i < MAX_ITER; i++) {

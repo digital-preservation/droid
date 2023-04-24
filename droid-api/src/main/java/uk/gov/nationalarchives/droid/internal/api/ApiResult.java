@@ -37,14 +37,15 @@ public class ApiResult {
     private final String extension;
     private final IdentificationMethod method;
     private final String puid;
-
     private final String name;
+    private final boolean fileExtensionMismatch;
 
-    public ApiResult(String extension, IdentificationMethod method, String puid, String name) {
+    public ApiResult(String extension, IdentificationMethod method, String puid, String name, boolean fileExtensionMismatch) {
         this.extension = extension;
         this.method = method;
         this.puid = puid;
         this.name = name;
+        this.fileExtensionMismatch = fileExtensionMismatch;
     }
 
     public String getName() {
@@ -61,5 +62,9 @@ public class ApiResult {
 
     public String getExtension() {
         return extension;
+    }
+
+    public boolean isFileExtensionMismatch() {
+        return fileExtensionMismatch;
     }
 }
