@@ -33,19 +33,20 @@ package uk.gov.nationalarchives.droid.internal.api;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.Timeout;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class DroidAPITest {
 
@@ -138,9 +139,9 @@ public class DroidAPITest {
     }
 
     @Test
-    public void should_report_correct_size_of_zero_for_an_empty_file() throws IOException {
+    public void should_produce_zero_results_for_an_empty_file() throws IOException {
         List<ApiResult> results = api.submit(Paths.get("src/test/resources/test"));
-        assertThat(results.size(), is(0));
+        assertThat(results, hasSize(0));
     }
 
     @Test
