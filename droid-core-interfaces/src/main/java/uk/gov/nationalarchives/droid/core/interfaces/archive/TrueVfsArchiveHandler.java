@@ -31,22 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.FilenameUtils;
-
-//import de.schlichtherle.truezip.zip.ZipEntry;
-//import de.schlichtherle.truezip.zip.ZipFile;
-import net.java.truevfs.comp.zip.ZipFile;
 import net.java.truevfs.comp.zip.ZipEntry;
+import net.java.truevfs.comp.zip.ZipFile;
+import org.apache.commons.io.FilenameUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
@@ -54,11 +41,20 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 /**
  * @author a-mpalmer
  *
  */
-public class TrueZipArchiveHandler implements ArchiveHandler {
+public class TrueVfsArchiveHandler implements ArchiveHandler {
 
     private AsynchDroid droidCore;
     private IdentificationRequestFactory<InputStream> factory;
@@ -67,7 +63,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
     /**
      * Empty bean constructor.
      */
-    public TrueZipArchiveHandler() {
+    public TrueVfsArchiveHandler() {
     }
 
     /**
@@ -76,9 +72,9 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      * @param factory The IdentificationRequestFactory to use.
      * @param resultHandler The ResultHandler to use.
      */
-    public TrueZipArchiveHandler(AsynchDroid droidCore,
-                             IdentificationRequestFactory<InputStream> factory,
-                             ResultHandler resultHandler) {
+    public TrueVfsArchiveHandler(AsynchDroid droidCore,
+                                 IdentificationRequestFactory<InputStream> factory,
+                                 ResultHandler resultHandler) {
         this.droidCore = droidCore;
         this.factory = factory;
         this.resultHandler = resultHandler;
@@ -86,7 +82,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        final ZipFile zipFile = new ZipFile(Paths.get(request.getFileName()));
+        ZipFile zipFile = new ZipFile(new ByteseekWindowWrapper(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
         try {
             Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
                 @Override

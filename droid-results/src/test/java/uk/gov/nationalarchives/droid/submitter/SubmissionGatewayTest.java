@@ -61,7 +61,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFormatResolver;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveHandlerFactory;
-import uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.TrueVfsArchiveHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ZipEntryRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.control.PauseAspect;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
@@ -105,7 +105,7 @@ public class SubmissionGatewayTest {
         ArchiveFormatResolver archiveFormatResolver = mock(ArchiveFormatResolver.class);
         ArchiveHandlerFactory archiveHandlerFactory = mock(ArchiveHandlerFactory.class);
 
-        TrueZipArchiveHandler zipHandler = new TrueZipArchiveHandler();
+        TrueVfsArchiveHandler zipHandler = new TrueVfsArchiveHandler();
         zipHandler.setDroidCore(submissionGateway);
         zipHandler.setFactory(new ZipEntryRequestFactory());
         zipHandler.setResultHandler(resultHandler);

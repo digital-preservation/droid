@@ -31,23 +31,18 @@
  */
 package uk.gov.nationalarchives.droid.container.zip;
 
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-
-import net.java.truevfs.comp.zip.ZipFile;
 import net.java.truevfs.comp.zip.ZipEntry;
+import net.java.truevfs.comp.zip.ZipFile;
 import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-//import uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipReader;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.ByteseekWindowWrapper;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  *
@@ -55,34 +50,9 @@ import uk.gov.nationalarchives.droid.core.signature.ByteReader;
  */
 public class ZipIdentifierEngine extends AbstractIdentifierEngine {
 
-
-    // Use built in java zip processing.
-    /*
     @Override
     public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
-        InputStream in = request.getSourceInputStream();
-        try {
-            final ZipInputStream zin = new ZipInputStream(in);
-            try {
-                // For each entry:
-                for (String entryName : matches.getAllFileEntries()) {
-                    //TODO:MP rewrite zip identifier engine to use built-in java processing.
-
-                }
-            } finally {
-                zin.close();
-            }
-        } finally {
-            in.close();
-        }
-    }
-    */
-
-    @Override
-    public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
-        //rof, DEFAULT_CHARSET, true, false
-        //ZipFile zipFile = new ZipFile(new TrueZipReader(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
-        ZipFile zipFile = new ZipFile(((FileSystemIdentificationRequest)request).getFile(), ZipFile.DEFAULT_CHARSET, true, false);
+        ZipFile zipFile = new ZipFile(new ByteseekWindowWrapper(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
 
         try {
             // For each entry:
@@ -113,5 +83,4 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
             zipFile.close();
         }
     }
-
 }
