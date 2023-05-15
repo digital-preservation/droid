@@ -195,15 +195,12 @@ public class ProfileDiskAction {
 
             final String entryPath = getUnixStylePath(StringUtils.substringAfter(file.getAbsolutePath(), source.toAbsolutePath().toString() + File.separator));
 
-            //ZipArchiveEntry entry = (ZipArchiveEntry) out.createArchiveEntry(file, entryPath);
-            //out.putArchiveEntry(entry);
             final ZipEntry entry = new ZipEntry(entryPath);
             out.putNextEntry(entry);
 
             try (final InputStream in = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
                 bytesProcessed = writeFile(in, out, callback, bytesProcessed, bytesToProcess);
             } finally {
-                //out.closeArchiveEntry();
                 out.closeEntry();
             }
 
@@ -334,8 +331,8 @@ public class ProfileDiskAction {
         return totalBytesRead;
     }
     
-    private long writeFile(final InputStream in, final ZipOutputStream out, //ZipArchiveOutputStream out,
-            final ProgressObserver observer, final long bytesSoFar, final long totalSize)
+    private long writeFile(final InputStream in, final ZipOutputStream out, final ProgressObserver observer,
+                           final long bytesSoFar, final long totalSize)
         throws IOException {
         long totalBytesWritten = bytesSoFar;
         int bytesIn = 0;
