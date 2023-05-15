@@ -160,8 +160,6 @@ public class ProfileDiskAction {
         @Override
         protected void handleStart(final File startDirectory, final Collection results)
             throws IOException {
-
-            //out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(destination)));
             out = new ZipOutputStream(Files.newOutputStream(destination));
             out.setMethod(ZipEntry.DEFLATED); 
         }
