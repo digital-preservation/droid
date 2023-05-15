@@ -126,7 +126,6 @@
         <dependency>
             <groupId>net.java.truevfs</groupId>
             <artifactId>truevfs-comp-zip</artifactId>
-            <version>0.14.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

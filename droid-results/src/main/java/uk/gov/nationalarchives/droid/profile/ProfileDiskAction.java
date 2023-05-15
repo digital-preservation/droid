@@ -44,14 +44,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 
+import net.java.truevfs.comp.zip.ZipEntry;
+import net.java.truevfs.comp.zip.ZipFile;
+import net.java.truevfs.comp.zip.ZipOutputStream;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.schlichtherle.truezip.zip.ZipFile;
-import de.schlichtherle.truezip.zip.ZipEntry;
-import de.schlichtherle.truezip.zip.ZipOutputStream;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
@@ -236,20 +236,20 @@ public class ProfileDiskAction {
             FileUtil.deleteQuietly(destination);
         }
 
-        final ZipFile zip = new ZipFile(source.toFile());
+        final ZipFile zip = new ZipFile(source.toFile().toPath());
         
         try {
             // count the zip entries so we can do progress bar
             long totalSize = 0L;
-            for (final Enumeration<? extends ZipEntry> it = zip.entries(); it
-                    .hasMoreElements();) {
-                ZipEntry e = it.nextElement();
+            final Enumeration<? extends ZipEntry> zipEntries = zip.entries();
+            while (zipEntries.hasMoreElements()) {
+                ZipEntry e = zipEntries.nextElement();
                 totalSize += e.getSize();
             }
 
             long bytesSoFar = 0L;
-            for (final Enumeration<? extends ZipEntry> it = zip.entries(); it
-                    .hasMoreElements();) {
+            final Enumeration<? extends ZipEntry> it = zip.entries();
+            while (it.hasMoreElements()) {
                 ZipEntry entry = it.nextElement();
                 
                 // zip entries can be created on windows or unix, and can retain
@@ -264,7 +264,7 @@ public class ProfileDiskAction {
 
                 Files.createDirectories(expandedFile.getParent());
 
-                try (final InputStream in = new BufferedInputStream(zip.getInputStream(entry));
+                try (final InputStream in = new BufferedInputStream(zip.getInputStream(entry.getName()));
                         final OutputStream out = new BufferedOutputStream(Files.newOutputStream(expandedFile))) {
                     bytesSoFar = readFile(in, out, observer, bytesSoFar, totalSize);
                 }

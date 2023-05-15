@@ -132,7 +132,7 @@ public class TrueVfsArchiveHandler implements ArchiveHandler {
      * @param entry the zip entry to submit
      * @param parentName the name of the parent file
      * @param entryName the name of the Zip entry
-     * @param file the Truezip zipFile
+     * @param file the TrueVfs zipFile
      * @param correlationId an ID to correlate this submission to
      * @param originatorNodeId the ID of the originator node
      * @throws IOException if there was an error accessing the input stream 'in'
