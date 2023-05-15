@@ -135,7 +135,7 @@ public final class ByteseekWindowWrapper implements SeekableByteChannel {
     }
 
     private void ensureOpen() throws IOException {
-        if (closed) {
+        if (!isOpen()) {
             throw new ClosedChannelException();
         }
     }
