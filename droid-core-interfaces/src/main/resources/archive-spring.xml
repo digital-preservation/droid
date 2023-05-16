@@ -61,7 +61,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <!--
 <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.ZipArchiveHandler"/>
 -->
-    <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TrueZipArchiveHandler"/>
+    <bean id="zipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TrueVfsArchiveHandler"/>
     <bean id="tarHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.TarArchiveHandler"/>
     <bean id="gzHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.GZipArchiveHandler"/>
     <bean id="bzipHandler" class="uk.gov.nationalarchives.droid.core.interfaces.archive.BZipArchiveHandler"/>
