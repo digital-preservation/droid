@@ -95,6 +95,8 @@ public interface CommandFactory {
      * @throws CommandLineSyntaxException if the command line args were invalid
      */
     DroidCommand getNoProfileCommand(CommandLine cli) throws CommandLineSyntaxException;
+    
+    DroidCommand getS3Command(CommandLine cli) throws CommandLineSyntaxException;
 
 
     /**

@@ -98,35 +98,34 @@ public class DroidJob extends SwingWorker<Integer, ProfileResourceNode> {
      * {@inheritDoc}
      */
     @Override
-    protected void process(List<ProfileResourceNode> chunks) {
-        for (ProfileResourceNode node : chunks) {
-        
-            Long parentId = node.getParentId() == null ? -1L : node.getParentId();
-            DefaultMutableTreeNode parent = profileForm.getInMemoryNodes().get(parentId);
-            if (parent != null) {
-                parent.setAllowsChildren(true);
-                boolean updated = false;
-                for (Enumeration<TreeNode> e = parent.children();
-                     e.hasMoreElements() && !updated;) {
-                    DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) e.nextElement();
-                    if (childNode.getUserObject().equals(node)) {
-                        childNode.setUserObject(node);
-                        childNode.setAllowsChildren(node.allowsChildren());
-                        treeModel.nodeChanged(childNode);
-                        updated = true;
-                    }
-                } 
-                
-                if (!updated) {
-                    DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(node, node.allowsChildren());
-                    treeModel.insertNodeInto(newNode, parent, parent.getChildCount());
-                }
-                treeModel.nodeChanged(parent);
+    protected void process(List<ProfileResourceNode> profileResourceNodes) {
+        for (ProfileResourceNode profileResourceNode : profileResourceNodes) {
+            final Long parentId = profileResourceNode.getParentId() == null ? -1L : profileResourceNode.getParentId();
+            final DefaultMutableTreeNode parent = profileForm.getInMemoryNodes().get(parentId);
+            if (parent == null) {
+                continue;
             }
+            parent.setAllowsChildren(true);
+            boolean updated = false;
+            for (Enumeration<TreeNode> sibling = parent.children(); sibling.hasMoreElements() && !updated;) {
+                final DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) sibling.nextElement();
+                if (childNode.getUserObject().equals(profileResourceNode)) {
+                    childNode.setUserObject(profileResourceNode);
+                    childNode.setAllowsChildren(profileResourceNode.allowsChildren());
+                    treeModel.nodeChanged(childNode);
+                    updated = true;
+                }
+            } 
+            
+            if (!updated) {
+                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(profileResourceNode, profileResourceNode.allowsChildren());
+                treeModel.insertNodeInto(newNode, parent, parent.getChildCount());
+            }
+            treeModel.nodeChanged(parent);
         }
         
-        if (!chunks.isEmpty()) {
-            String decodedURI = java.net.URLDecoder.decode(chunks.get(0).getUri().toString());
+        if (!profileResourceNodes.isEmpty()) {
+            String decodedURI = java.net.URLDecoder.decode(profileResourceNodes.get(0).getUri().toString());
             String abbreviatedUri = DroidStringUtils.abbreviate(decodedURI, profileForm.getProfileProgressBar());
             profileForm.getProfileProgressBar().setString(abbreviatedUri);
         }

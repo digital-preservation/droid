@@ -43,11 +43,12 @@ import uk.gov.nationalarchives.droid.command.i18n.I18N;
 
 /**
  * @author rflitcroft
- *
  */
 public enum CommandLineParam {
 
-    /** help. */
+    /**
+     * help.
+     */
     HELP("h", "help", I18N.HELP_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -55,7 +56,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Version. */
+    /**
+     * Version.
+     */
     VERSION("v", "version", I18N.VERSION_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -63,7 +66,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Export with one row per file. */
+    /**
+     * Export with one row per file.
+     */
     EXPORT_ONE_ROW_PER_FILE("e", "export-file", false, 1, I18N.EXPORT_FILE_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
@@ -72,7 +77,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Export with one row per format. */
+    /**
+     * Export with one row per format.
+     */
     EXPORT_ONE_ROW_PER_FORMAT("E", "export-format", false, 1, I18N.EXPORT_FORMAT_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
@@ -81,7 +88,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** List of profiles to be worked on. */
+    /**
+     * List of profiles to be worked on.
+     */
     PROFILES("p", "profile(s)", true, -1, I18N.PROFILES_HELP, "filename(s)") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -109,7 +118,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Narrow filter. */
+    /**
+     * Narrow filter.
+     */
     ALL_FILTER("f", "filter-all", true, -1, I18N.ALL_FILTER, filters()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
@@ -118,7 +129,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Widen filter. */
+    /**
+     * Widen filter.
+     */
     ANY_FILTER("F", "filter-any", true, -1, I18N.ANY_FILTER, filters()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
@@ -127,7 +140,8 @@ public enum CommandLineParam {
         }
     },
 
-    /** Narrow filter that filters files from being submitted for identification.
+    /**
+     * Narrow filter that filters files from being submitted for identification.
      * Only works on basic file metadata: filename, filesize, last modified date, extensions
      */
     ALL_FILTER_FILE("ff", "filter-all-file", true, -1, I18N.ALL_FILTER_FILE, filters()) {
@@ -138,7 +152,8 @@ public enum CommandLineParam {
         }
     },
 
-    /** Widen filter that filters files from being submitted for identification.
+    /**
+     * Widen filter that filters files from being submitted for identification.
      * Only works on basic file metadata: filename, filesize, last modified date, extensions
      */
     ANY_FILTER_FILE("FF", "filter-any-file", true, -1, I18N.ANY_FILTER_FILE, filters()) {
@@ -149,7 +164,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Add BOM to file parameter.   */
+    /**
+     * Add BOM to file parameter.
+     */
     BOM("B", "bom", I18N.EXPORT_WITH_BOM) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
@@ -158,7 +175,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** List of reports to be worked on. */
+    /**
+     * List of reports to be worked on.
+     */
     REPORT("r", "report", true, 1, I18N.REPORT_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
@@ -167,7 +186,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** List of  report to be worked on. */
+    /**
+     * List of  report to be worked on.
+     */
     REPORT_NAME("n", "report-name", true, 1, I18N.REPORT_NAME_HELP, "report name") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -175,7 +196,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Set the report output type. */
+    /**
+     * Set the report output type.
+     */
     REPORT_OUTPUT_TYPE("t", "report-type", true, 1, I18N.REPORT_TYPE_HELP, "report type") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -183,7 +206,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Lists the reports. */
+    /**
+     * Lists the reports.
+     */
     LIST_REPORTS("l", "list-reports", I18N.LIST_REPORTS_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
@@ -192,7 +217,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Lists the filter fields. */
+    /**
+     * Lists the filter fields.
+     */
     LIST_FILTER_FIELD("k", "filter-fields", I18N.LIST_FILTER_FIELD) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
@@ -201,7 +228,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Runs a profile with the specified resources. */
+    /**
+     * Runs a profile with the specified resources.
+     */
     RUN_PROFILE("a", "profile-resources", true, -1, I18N.RUN_PROFILE_HELP, "resources") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
@@ -210,7 +239,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Specifies the file to write CSV output to, or stdout to write to console. */
+    /**
+     * Specifies the file to write CSV output to, or stdout to write to console.
+     */
     OUTPUT_FILE("o", "output-file", true, 1, I18N.OUTPUT_FILE_HELP, "output") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -246,12 +277,14 @@ public enum CommandLineParam {
     ROW_PER_FORMAT("ri", "row-per-id", I18N.ROW_PER_IDENTIFICATION) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory,
-                CommandLine cli) throws CommandLineException {
+                                       CommandLine cli) throws CommandLineException {
             return null;
         }
     },
 
-    /** Runs without a profile and with the specified resources. */
+    /**
+     * Runs without a profile and with the specified resources.
+     */
     RUN_NO_PROFILE("Nr", "no-profile-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "folder") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
@@ -260,7 +293,20 @@ public enum CommandLineParam {
         }
     },
 
-    /** Signature file. */
+    /**
+     * Runs without a profile and with the specified S3 object.
+     */
+    RUN_S3("S3", "S3-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "id") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
+                throws CommandLineSyntaxException {
+            return commandFactory.getS3Command(cli);
+        }
+    },
+
+    /**
+     * Signature file.
+     */
     SIGNATURE_FILE("Ns", "signature-file", true, 1, I18N.SIGNATURE_FILE_HELP, filename()) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -268,7 +314,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Container signature file. */
+    /**
+     * Container signature file.
+     */
     CONTAINER_SIGNATURE_FILE("Nc", "container-file", true, 1,
             I18N.CONTAINER_SIGNATURE_FILE_HELP, filename()) {
         @Override
@@ -277,7 +325,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Extensions to match. */
+    /**
+     * Extensions to match.
+     */
     EXTENSION_LIST("Nx", "extension-list", true, -1, I18N.EXTENSION_LIST_HELP, "extensions") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -285,7 +335,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Recursive operation flag. */
+    /**
+     * Recursive operation flag.
+     */
     RECURSIVE("R", "recurse", I18N.RECURSE_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -293,28 +345,36 @@ public enum CommandLineParam {
         }
     },
 
-    /** Open archives flag. */
+    /**
+     * Open archives flag.
+     */
     ARCHIVES("A", "open-all-archives", I18N.ARCHIVES_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
-    /** Open archive types. */
+    /**
+     * Open archive types.
+     */
     ARCHIVE_TYPES("At", "open-archive-types", true, -1, I18N.ARCHIVE_TYPES_HELP, "archive types") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
-    /** Open all webarchives flag. */
+    /**
+     * Open all webarchives flag.
+     */
     WEB_ARCHIVES("W", "open-all-webarchives", I18N.WEB_ARCHIVES_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
-    /** Open webarchive types. */
+    /**
+     * Open webarchive types.
+     */
     WEB_ARCHIVE_TYPES("Wt", "open-webarchive-types", true, 2, I18N.WEB_ARCHIVE_TYPES_HELP, "web archive types") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -322,7 +382,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Quiet operation flag. */
+    /**
+     * Quiet operation flag.
+     */
     QUIET("q", "quiet", I18N.QUIET_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -330,7 +392,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Check for signature updates. */
+    /**
+     * Check for signature updates.
+     */
     CHECK_SIGNATURE_UPDATE("c", "check-signature-update", I18N.CHECK_SIGNATURE_UPDATE_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -338,7 +402,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Download latest signature update. */
+    /**
+     * Download latest signature update.
+     */
     DOWNLOAD_SIGNATURE_UPDATE("d", "download-signature-update", I18N.DOWNLOAD_SIGNATURE_UPDATE_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -346,7 +412,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** List all signature files. */
+    /**
+     * List all signature files.
+     */
     LIST_SIGNATURE_VERSIONS("X", "list-signature-files", I18N.LIST_SIGNATURE_VERSIONS_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -355,7 +423,9 @@ public enum CommandLineParam {
     },
 
 
-    /** Display the default signature update. */
+    /**
+     * Display the default signature update.
+     */
     DEFAULT_SIGNATURE_VERSION("x", "display-signature-file", I18N.DEFAULT_SIGNATURE_VERSION_HELP) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
@@ -363,7 +433,9 @@ public enum CommandLineParam {
         }
     },
 
-    /** Display the default signature update. */
+    /**
+     * Display the default signature update.
+     */
     CONFIGURE_DEFAULT_SIGNATURE_VERSION("s", "set-signature-file", true, 1,
             I18N.CONFIGURE_DEFAULT_SIGNATURE_VERSION_HELP, I18N.getResource(I18N.VERSION)) {
         @Override
@@ -387,6 +459,7 @@ public enum CommandLineParam {
         addTopLevelCommand(LIST_FILTER_FIELD);
         addTopLevelCommand(RUN_PROFILE);
         addTopLevelCommand(RUN_NO_PROFILE);
+        addTopLevelCommand(RUN_S3);
         addTopLevelCommand(CHECK_SIGNATURE_UPDATE);
         addTopLevelCommand(DOWNLOAD_SIGNATURE_UPDATE);
         addTopLevelCommand(DEFAULT_SIGNATURE_VERSION);
@@ -429,10 +502,11 @@ public enum CommandLineParam {
 
     /**
      * Gets a droid command for this command line option.
+     *
      * @param commandFactory the command factory
-     * @param cli the command line
-     * @throws CommandLineException command parse exception.
+     * @param cli            the command line
      * @return a droid command.
+     * @throws CommandLineException command parse exception.
      */
     public abstract DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
             throws CommandLineException;
@@ -453,7 +527,6 @@ public enum CommandLineParam {
     }
 
     /**
-     *
      * @return a new option for the parameter.
      */
     Option newOption() {
@@ -474,6 +547,7 @@ public enum CommandLineParam {
 
     /**
      * All options.
+     *
      * @return all options
      */
     public static Options options() {
@@ -629,7 +703,6 @@ public enum CommandLineParam {
      * Gets Options from Command Line parameter.
      *
      * @param commandLineParam The command line parameter
-     *
      * @return options for Command Line parameter
      */
     public static Options getOptions(final CommandLineParam commandLineParam) {

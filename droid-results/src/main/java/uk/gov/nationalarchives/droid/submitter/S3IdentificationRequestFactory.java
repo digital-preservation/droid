@@ -29,39 +29,25 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.profile;
+package uk.gov.nationalarchives.droid.submitter;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-/**
- * Creates either a file or a directory profile resource from its file path, and whether it is a recursive profile
- * resource in the case of directories.
- *
- * @author rflitcroft
- *
- */
-public class ProfileResourceFactory {
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
+
+public class S3IdentificationRequestFactory implements IdentificationRequestFactory<Path> {
 
     /**
-     * Resolves a location string to a profile resource.
-     * @param location the resources location string
-     * @param recursive if the resource should be recursed
-     * @return a new profile resource
-     * @throws IllegalArgumentException if the location passed in is not a file or a directory.
+     * {@inheritDoc}
      */
-    public AbstractProfileResource getResource(String location, boolean recursive) {
-        final Path f = Paths.get(location);
-        if (Files.isRegularFile(f)) {
-            return new FileProfileResource(f);
-        } else if (Files.isDirectory(f)) {
-            return new DirectoryProfileResource(f, recursive);
-        } else if (S3ProfileResource.isS3uri(location)) {
-        	return new S3ProfileResource(location);
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("Unknown location [%s]", location));
-        }
+    @Override
+    public final IdentificationRequest<Path> newRequest(RequestMetaData metaData, RequestIdentifier identifier) 
+    {
+        return new S3IdentificationRequest(metaData, identifier);
     }
+    
 }

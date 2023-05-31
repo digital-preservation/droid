@@ -1,0 +1,200 @@
+/*
+ * Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ *  * Neither the name of the The National Archives nor the
+ *    names of its contributors may be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package uk.gov.nationalarchives.droid.core.interfaces.resource;
+
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3URI;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import net.byteseek.io.reader.WindowReader;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+
+public class S3IdentificationRequest implements IdentificationRequest<Path> {
+
+    private WindowReader fileReader;
+    private final RequestIdentifier identifier;
+    private RequestMetaData requestMetaData;
+    private Path file;
+    private WindowReader windowReader;
+
+    /*
+    If you wish to use specific credentials, configure the following and use it, Currently it uses the
+    default profile from your AWS credentials config file.
+     */
+
+//    private AWSCredentials credentials = new BasicAWSCredentials(
+//            "SOME_ACCESS_KEY", //change to correct value if you want to use this method
+//            "SOME_SECRET_KEY" //change to correct value if you want to use this method
+//    );
+//    private AmazonS3 s3client = AmazonS3ClientBuilder
+//            .standard()
+//            //.withCredentials(new  AWSStaticCredentialsProvider(credentials))
+//            .withRegion(Regions.EU_WEST_2)
+//            .build();
+
+    private AmazonS3 s3client = buildClient();
+
+    private AmazonS3 buildClient() {
+        AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2);
+        builder.setCredentials(DefaultAWSCredentialsProviderChain.getInstance());
+        return builder.build();
+    }
+
+
+
+    public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier) {
+        this.identifier = identifier;
+        this.requestMetaData = requestMetaData;
+        System.out.println("S3IdentificationRequest <init> called");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void open(final Path theFile) throws IOException {
+        // We're not going to worry about this for the spike, and it doesn't look like it gets called anyway.
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getExtension() {
+        System.out.println("S3IdentificationRequest getExtension called");
+        return ResourceUtils.getExtension(requestMetaData.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getFileName() {
+        System.out.println("S3IdentificationRequest getFileName called");
+        return requestMetaData.getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final long size() {
+        AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
+        return s3client.getObjectMetadata(amazonS3URI.getBucket(), amazonS3URI.getKey()).getContentLength();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void close() throws IOException {
+        System.out.println("S3IdentificationRequest close called");
+        file = null;
+        fileReader.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws IOException on failure to get InputStream
+     */
+    @Override
+    public final InputStream getSourceInputStream() throws IOException {
+        System.out.println("S3IdentificationRequest getSourceInputStream called");
+
+        // Create the S3 client
+        final AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
+
+        // Wrap the URI in an S3 URI
+        final AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
+
+        final S3Object s3object = s3Client.getObject(new GetObjectRequest(amazonS3URI.getBucket(), amazonS3URI.getKey()));
+
+        return s3object.getObjectContent();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final RequestMetaData getRequestMetaData() {
+        System.out.println("S3IdentificationRequest getRequestMetaData called");
+        return requestMetaData;
+    }
+
+    /**
+     * @return the identifier
+     */
+    public final RequestIdentifier getIdentifier() {
+        System.out.println("S3IdentificationRequest getIdentifier called " + identifier);
+        return identifier;
+    }
+
+
+    @Override
+    public byte getByte(long position) throws IOException {
+        System.out.println("S3IdentificationRequest getByte " + position + " called");
+
+        final int result = fileReader.readByte(position);
+        if (result < 0) {
+            throw new IOException("No byte at position " + position);
+        }
+        return (byte) result;
+    }
+
+    @Override
+    public WindowReader getWindowReader() {
+        if (windowReader == null) {
+            windowReader = new S3WindowReader(s3client, identifier.getUri());
+        }
+        return windowReader;
+    }
+
+    /**
+     * Return file associate with identification request.
+     *
+     * @return File
+     */
+    public Path getFile() {
+        System.out.println("S3IdentificationRequest getFile called");
+        return file;
+    }
+}

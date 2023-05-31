@@ -31,37 +31,48 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.nio.file.Files;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.util.Date;
+import java.util.regex.Pattern;
 
-/**
- * Creates either a file or a directory profile resource from its file path, and whether it is a recursive profile
- * resource in the case of directories.
- *
- * @author rflitcroft
- *
- */
-public class ProfileResourceFactory {
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "S3")
+public class S3ProfileResource extends AbstractProfileResource {
+
+    public S3ProfileResource(final String s3uriString) {
+        try {
+            setUri(new URI(s3uriString));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        // TODO Find the filename
+        setName(s3uriString.substring(s3uriString.lastIndexOf('/') + 1));
+
+        final FileTime lastModified = null;
+        setLastModifiedDate(lastModified == null ? new Date(0) : new Date(lastModified.toMillis()));
+
+        setExtension(s3uriString.substring(s3uriString.lastIndexOf('.')));
+    }
 
     /**
-     * Resolves a location string to a profile resource.
-     * @param location the resources location string
-     * @param recursive if the resource should be recursed
-     * @return a new profile resource
-     * @throws IllegalArgumentException if the location passed in is not a file or a directory.
+     * {@inheritDoc}
      */
-    public AbstractProfileResource getResource(String location, boolean recursive) {
-        final Path f = Paths.get(location);
-        if (Files.isRegularFile(f)) {
-            return new FileProfileResource(f);
-        } else if (Files.isDirectory(f)) {
-            return new DirectoryProfileResource(f, recursive);
-        } else if (S3ProfileResource.isS3uri(location)) {
-        	return new S3ProfileResource(location);
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("Unknown location [%s]", location));
-        }
+    @Override
+    public boolean isDirectory() {
+        return false;
+    }
+
+    @Override
+    public void setSize(Path s3Path) {
+        System.out.println("S3ProfileResource setSize called");
+    }
+
+    public static boolean isS3uri(String candidateS3uri) {
+        return Pattern.matches("^s3://([^/]+)/(.*?([^/]+))$", candidateS3uri);
     }
 }

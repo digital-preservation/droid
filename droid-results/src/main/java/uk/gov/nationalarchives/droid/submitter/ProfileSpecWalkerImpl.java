@@ -51,9 +51,8 @@ import uk.gov.nationalarchives.droid.submitter.ProfileWalkState.WalkStatus;
  * Iterates over all resources in the profile spec.
  * This is NOT thread safe, and you must instantiate a new instance for
  * any concurrent walking.
- * 
+ *
  * @author rflitcroft
- * 
  */
 public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
@@ -64,7 +63,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
     private FileEventHandler fileEventHandler;
     private DirectoryEventHandler directoryEventHandler;
     private ProgressMonitor progressMonitor;
-    
+
     private transient volatile boolean cancelled;
 
     private StringBuilder uriBuilder = new StringBuilder(URI_BUILDER_SIZE);
@@ -77,9 +76,10 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     /**
      * Parameterized constructor.
-     * @param fileEventHandler The file event handler.
+     *
+     * @param fileEventHandler      The file event handler.
      * @param directoryEventHandler The directory event handler.
-     * @param progressMonitor The progress monitor.
+     * @param progressMonitor       The progress monitor.
      */
     public ProfileSpecWalkerImpl(FileEventHandler fileEventHandler, DirectoryEventHandler directoryEventHandler,
                                  ProgressMonitor progressMonitor) {
@@ -90,36 +90,36 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     @Override
     public void walk(final ProfileSpec profileSpec, final ProfileWalkState walkState) throws IOException {
-        
+
         final List<AbstractProfileResource> resources = profileSpec.getResources();
 
         boolean fastForward = false;
-        
+
         int startIndex = 0;
         if (walkState.getWalkStatus().equals(WalkStatus.IN_PROGRESS)) {
             fastForward = true;
             startIndex = resources.indexOf(walkState.getCurrentResource());
         }
-        
+
         for (int i = startIndex; i < resources.size(); i++) {
             AbstractProfileResource resource = resources.get(i);
             if (!fastForward) {
                 walkState.setCurrentResource(resource);
                 walkState.setCurrentFileWalker(null);
             }
-            
+
             if (cancelled) {
                 break;
             }
-            
+
             if (resource.isDirectory()) {
                 FileWalker fileWalker;
                 if (!fastForward) {
                     walkState.setCurrentFileWalker(new FileWalker(resource.getUri(), resource.isRecursive()));
                 }
-                
+
                 fileWalker = walkState.getCurrentFileWalker();
-                
+
                 fileWalker.setFileHandler(new FileWalkerHandler() {
 
                     @Override
@@ -133,7 +133,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                         return null;
                     }
                 });
-                
+
                 fileWalker.setDirectoryHandler(new FileWalkerHandler() {
                     @Override
                     public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
@@ -145,10 +145,10 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                         return directoryEventHandler.onEvent(file, parentId, depth, false);
                     }
                 });
-                
+
                 fileWalker.setRestrictedDirectoryHandler(new FileWalkerHandler() {
                     @Override
-                    public ResourceId handle(final Path file, final  int depth, final ProgressEntry parent) {
+                    public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
                         if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
                                 || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
                             progressMonitor.startJob(toURI(file));
@@ -157,23 +157,31 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                         return directoryEventHandler.onEvent(file, parentId, depth, true);
                     }
                 });
-                
+
                 walkState.setWalkStatus(WalkStatus.IN_PROGRESS);
                 fileWalker.walk();
             } else {
+                // The resource is not a directory
+
+                // Update the progress to say that we are dealing with this resource
                 progressMonitor.startJob(resource.getUri());
-                fileEventHandler.onEvent(Paths.get(resource.getUri()), null, null);
+
+                // Temporary hack to support S3
+                if ("s3".equalsIgnoreCase(resource.getUri().getScheme())) {
+                    fileEventHandler.onS3Event(resource);
+                } else {
+                    fileEventHandler.onEvent(Paths.get(resource.getUri()), null, null);
+                }
             }
-            
+
             fastForward = false;
         }
         walkState.setWalkStatus(WalkStatus.FINISHED);
         progressMonitor.setTargetCount(progressMonitor.getIdentificationCount());
     }
-    
+
     /**
-     * @param fileEventHandler
-     *            an event handler to be fired when a file is encountered.
+     * @param fileEventHandler an event handler to be fired when a file is encountered.
      */
     public void setFileEventHandler(FileEventHandler fileEventHandler) {
         this.fileEventHandler = fileEventHandler;
@@ -181,28 +189,26 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
     }
 
     /**
-     * @param directoryEventHandler
-     *            an event handler to be fired when a directory is encountered.
+     * @param directoryEventHandler an event handler to be fired when a directory is encountered.
      */
     public void setDirectoryEventHandler(DirectoryEventHandler directoryEventHandler) {
         this.directoryEventHandler = directoryEventHandler;
     }
 
     /**
-     *  To cancel Profile speck walker.
+     * To cancel Profile speck walker.
      */
     public void cancel() {
         cancelled = true;
     }
 
     /**
-     * @param progressMonitor
-     *            the progressMonitor to set
+     * @param progressMonitor the progressMonitor to set
      */
     public void setProgressMonitor(ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
     }
-    
+
     /**
      * @return the progressMonitor
      */

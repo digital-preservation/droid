@@ -49,12 +49,13 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
+import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
- * 
  */
 public class FileEventHandler {
 
@@ -73,12 +74,12 @@ public class FileEventHandler {
     /**
      * Default Constructor.
      */
-    public FileEventHandler() { }
-    
-    
+    public FileEventHandler() {
+    }
+
+
     /**
-     * @param droidCore
-     *            an identification engine for this event handler to submit to
+     * @param droidCore an identification engine for this event handler to submit to
      */
     public FileEventHandler(AsynchDroid droidCore) {
         this.droidCore = droidCore;
@@ -86,9 +87,10 @@ public class FileEventHandler {
 
     /**
      * Paramaterized constructor.
-     * @param droidCore The engine to submit to.
-     * @param resultHandler The result handler
-     * @param requestFactory The request factory.
+     *
+     * @param droidCore          The engine to submit to.
+     * @param resultHandler      The result handler
+     * @param requestFactory     The request factory.
      * @param submissionThrottle The submission throttle.
      */
     public FileEventHandler(AsynchDroid droidCore, ResultHandler resultHandler,
@@ -99,16 +101,40 @@ public class FileEventHandler {
         setSubmissionThrottle(submissionThrottle);
     }
 
+    // This should not be part of this class - but for speed of implementing the spike I have added it here.
+    public void onS3Event(AbstractProfileResource resource) {
+        // Prepare the metadata
+        // TODO find the real size - it is a pain to get it from S3 from within droid-results
+        // TODO get the real modification time from S3
+        RequestMetaData metaData = new RequestMetaData(-1L, new Date(0).getTime(), resource.getName());
+
+        // Prepare the identifier
+        RequestIdentifier identifier = new RequestIdentifier(resource.getUri());
+        identifier.setParentResourceId(null);
+        identifier.setResourceId(null);
+
+        // Prepare the request
+        IdentificationRequest<Path> request = new S3IdentificationRequest(metaData, identifier);
+
+        // For now, don't filter out any requests
+//        if (droidCore.passesIdentificationFilter(request)) 
+//        {
+            try {
+                droidCore.submit(request);
+                submissionThrottle.apply();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+//        }
+    }
+
     /**
      * Creates a job in the database and submits the job to the identification
      * engine.
-     * 
-     * @param file
-     *            the node file to handle
-     * @param parentId
-     *            the ID of the node's parent
-     * @param nodeId
-     *            an optional node ID for the request.
+     *
+     * @param file     the node file to handle
+     * @param parentId the ID of the node's parent
+     * @param nodeId   an optional node ID for the request.
      */
     public void onEvent(final Path file, ResourceId parentId, ResourceId nodeId) {
 
@@ -148,14 +174,14 @@ public class FileEventHandler {
     public SubmissionThrottle getSubmissionThrottle() {
         return submissionThrottle;
     }
-    
+
     /**
      * @param submissionThrottle the submissionThrottle to set
      */
     public void setSubmissionThrottle(SubmissionThrottle submissionThrottle) {
         this.submissionThrottle = submissionThrottle;
     }
-    
+
     /**
      * @param droidCore the droidCore to set
      */
@@ -169,7 +195,7 @@ public class FileEventHandler {
     public void setResultHandler(ResultHandler resultHandler) {
         this.resultHandler = resultHandler;
     }
-    
+
     /**
      * @param requestFactory the requestFactory to set
      */
