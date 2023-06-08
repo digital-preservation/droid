@@ -409,15 +409,19 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private void setExpandArchiveTypes(PropertiesConfiguration overrideProperties, String[] archiveTypes) {
         setAllArchivesExpand(overrideProperties, false);
-        for (String archiveType : archiveTypes) {
-            overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+        if (archiveTypes != null) {
+            for (String archiveType : archiveTypes) {
+                overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+            }
         }
     }
 
     private void setExpandWebArchiveTypes(PropertiesConfiguration overrideProperties, String[] webArchiveTypes) {
         setAllWebArchivesExpand(overrideProperties, false);
-        for (String archiveType : webArchiveTypes) {
-            overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+        if (webArchiveTypes != null) {
+            for (String archiveType : webArchiveTypes) {
+                overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+            }
         }
     }
 
