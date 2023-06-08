@@ -31,23 +31,21 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.hash;
 
+
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import static org.junit.Assert.assertEquals;
 
-/**
- * @author gseaman
- *
- */
-public class SHA256HashGenerator implements HashGenerator {
+public class SHA512HashGeneratorTest {
 
-    /**
-     * {@inheritDoc}
-     * @throws java.io.IOException exception
-     */
-    @Override
-    public String hash(InputStream in) throws IOException {
-        return DigestUtils.sha256Hex(in);
+    @Test
+    public void should_generate_correct_hash_using_sha_512_algorithm() throws IOException {
+        InputStream in = getClass().getClassLoader().getResourceAsStream("hash/commons-collections-3.2.1-bin.zip");
+        String hash = new SHA512HashGenerator().hash(in);
+        assertEquals("28c195eda6aae080f6e06e331a1161a6840dd5164853b9968621c4657f15e893075860b7a12150968884828b71c5e0a39e5c11645199b8f23b44ac894dd9ce2a", hash);
     }
+
 }
