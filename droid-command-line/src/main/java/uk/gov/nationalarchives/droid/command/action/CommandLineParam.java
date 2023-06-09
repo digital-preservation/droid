@@ -94,7 +94,7 @@ public enum CommandLineParam {
      */
     PROFILE_PROPERTY("Pr", "profile-property", true, -1, I18N.PROFILE_PROPERTY_HELP, "profile property") {
         @Override
-        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) throws CommandLineException {
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
@@ -104,7 +104,7 @@ public enum CommandLineParam {
      */
     PROPERTY_FILE("Pf", "property-file", true, 1, I18N.PROPERTY_FILE_HELP, "property file") {
         @Override
-        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) throws CommandLineException {
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
@@ -152,8 +152,7 @@ public enum CommandLineParam {
     /** Add BOM to file parameter.   */
     BOM("B", "bom", I18N.EXPORT_WITH_BOM) {
         @Override
-        public DroidCommand getCommand(CommandFactory commandFactory,
-                                       CommandLine cli) throws CommandLineException {
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
@@ -223,8 +222,7 @@ public enum CommandLineParam {
      */
     QUOTE_COMMAS("qc", "quote-commas", I18N.QUOTE_COMMAS_HELP) {
         @Override
-        public DroidCommand getCommand(CommandFactory commandFactory,
-                                       CommandLine cli) throws CommandLineException {
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
@@ -234,8 +232,7 @@ public enum CommandLineParam {
      */
     COLUMNS_TO_WRITE("co", "columns", true, -1, I18N.COLUMNS_TO_WRITE_HELP, "columns-to-write") {
         @Override
-        public DroidCommand getCommand(CommandFactory commandFactory,
-                                       CommandLine cli) throws CommandLineException {
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
@@ -245,8 +242,7 @@ public enum CommandLineParam {
      */
     ROW_PER_FORMAT("ri", "row-per-id", I18N.ROW_PER_IDENTIFICATION) {
         @Override
-        public DroidCommand getCommand(CommandFactory commandFactory,
-                CommandLine cli) throws CommandLineException {
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
@@ -301,7 +297,7 @@ public enum CommandLineParam {
         }
     },
     /** Open archive types. */
-    ARCHIVE_TYPES("At", "open-archive-types", true, -1, I18N.ARCHIVE_TYPES_HELP, "archive types") {
+    ARCHIVE_TYPES("At", "open-archive-types", false, -1, I18N.ARCHIVE_TYPES_HELP, "archive types") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -315,7 +311,7 @@ public enum CommandLineParam {
         }
     },
     /** Open webarchive types. */
-    WEB_ARCHIVE_TYPES("Wt", "open-webarchive-types", true, 2, I18N.WEB_ARCHIVE_TYPES_HELP, "web archive types") {
+    WEB_ARCHIVE_TYPES("Wt", "open-webarchive-types", false, 2, I18N.WEB_ARCHIVE_TYPES_HELP, "web archive types") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -376,7 +372,7 @@ public enum CommandLineParam {
     /**
      * All the top-level command line options.
      */
-    public static final Map<String, CommandLineParam> TOP_LEVEL_COMMANDS = new HashMap<String, CommandLineParam>();
+    public static final Map<String, CommandLineParam> TOP_LEVEL_COMMANDS = new HashMap<>();
 
     static {
         addTopLevelCommand(HELP);
@@ -397,21 +393,21 @@ public enum CommandLineParam {
 
     private static final String FILENAME = "filename";
 
-    private String shortName;
-    private String longName;
-    private String resourceKey;
+    private final String shortName;
+    private final String longName;
+    private final String resourceKey;
     private boolean argsRequired;
     private int maxArgs;
     private String argName;
 
 
-    private CommandLineParam(String shortName, String longName, String resourceKey) {
+    CommandLineParam(String shortName, String longName, String resourceKey) {
         this.shortName = shortName;
         this.longName = longName;
         this.resourceKey = resourceKey;
     }
 
-    private CommandLineParam(String shortName, String longName, boolean argsRequired,
+    CommandLineParam(String shortName, String longName, boolean argsRequired,
                              int maxArgs, String resourceKey, String argName) {
         this(shortName, longName, resourceKey);
         this.maxArgs = maxArgs;

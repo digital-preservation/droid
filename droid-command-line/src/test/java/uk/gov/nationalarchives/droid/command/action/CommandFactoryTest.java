@@ -31,36 +31,29 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.nio.file.*;
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import org.springframework.context.annotation.Profile;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
-import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
-import uk.gov.nationalarchives.droid.report.interfaces.ReportManager;
-import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
-import uk.gov.nationalarchives.droid.report.interfaces.ReportSpecItem;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author rflitcroft
@@ -1320,6 +1313,74 @@ public class CommandFactoryTest {
         assertFalse((boolean)e1.getProperties().getProperty("profile.processRar"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.process7zip"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.processBzip2"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processArc"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processWarc"));
+    }
+
+    @Test
+    public void should_not_expand_any_archives_when_hyphen_At_flag_is_used_without_any_arguments() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-Nr",
+                "/home/user/Documents/test.doc",
+                "/home/user/Documents/test.xls",
+                "-W",
+                "-At"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getNoProfileCommand(cli);
+
+        assertNotNull(e1);
+        assertFalse(e1.getRecursive());
+
+        assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
+        List<String> propertyNames = getPropertyNames(e1.getProperties());
+        assertEquals(13, propertyNames.size());
+
+        // All archive types should be set to do not process
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processTar"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processZip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processIso"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processGzip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processRar"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.process7zip"));
+        assertFalse((boolean)e1.getProperties().getProperty("profile.processBzip2"));
+
+        //all web archives should be processed
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processArc"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processWarc"));
+    }
+
+    @Test
+    public void should_not_expand_any_web_archives_when_hyphen_Wt_flag_is_used_without_any_arguments() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-Nr",
+                "/home/user/Documents/test.doc",
+                "/home/user/Documents/test.xls",
+                "-Wt",
+                "-A"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getNoProfileCommand(cli);
+
+        assertNotNull(e1);
+        assertFalse(e1.getRecursive());
+
+        assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
+        List<String> propertyNames = getPropertyNames(e1.getProperties());
+        assertEquals(13, propertyNames.size());
+
+        //All archives should be processed
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processTar"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processZip"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processIso"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processGzip"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processRar"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.process7zip"));
+        assertTrue((boolean)e1.getProperties().getProperty("profile.processBzip2"));
+
+        //All web archives should be set to: do not process
         assertFalse((boolean)e1.getProperties().getProperty("profile.processArc"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.processWarc"));
     }
