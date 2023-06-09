@@ -1337,7 +1337,7 @@ public class CommandFactoryTest {
         List<String> propertyNames = getPropertyNames(e1.getProperties());
         assertEquals(13, propertyNames.size());
 
-        // -Only the 3 archives passed to -At should expand
+        // All archive types should be set to do not process
         assertFalse((boolean)e1.getProperties().getProperty("profile.processTar"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.processZip"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.processIso"));
@@ -1346,6 +1346,7 @@ public class CommandFactoryTest {
         assertFalse((boolean)e1.getProperties().getProperty("profile.process7zip"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.processBzip2"));
 
+        //all web archives should be processed
         assertTrue((boolean)e1.getProperties().getProperty("profile.processArc"));
         assertTrue((boolean)e1.getProperties().getProperty("profile.processWarc"));
     }
@@ -1370,7 +1371,7 @@ public class CommandFactoryTest {
         List<String> propertyNames = getPropertyNames(e1.getProperties());
         assertEquals(13, propertyNames.size());
 
-        // -Only the 3 archives passed to -At should expand
+        //All archives should be processed
         assertTrue((boolean)e1.getProperties().getProperty("profile.processTar"));
         assertTrue((boolean)e1.getProperties().getProperty("profile.processZip"));
         assertTrue((boolean)e1.getProperties().getProperty("profile.processIso"));
@@ -1379,6 +1380,7 @@ public class CommandFactoryTest {
         assertTrue((boolean)e1.getProperties().getProperty("profile.process7zip"));
         assertTrue((boolean)e1.getProperties().getProperty("profile.processBzip2"));
 
+        //All web archives should be set to: do not process
         assertFalse((boolean)e1.getProperties().getProperty("profile.processArc"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.processWarc"));
     }
