@@ -31,16 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.hash;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
-/**
- * @author gseaman
- *
- */
-public class SHA256HashGenerator implements HashGenerator {
+public class SHA512HashGenerator implements HashGenerator {
 
     /**
      * {@inheritDoc}
@@ -48,6 +44,6 @@ public class SHA256HashGenerator implements HashGenerator {
      */
     @Override
     public String hash(InputStream in) throws IOException {
-        return DigestUtils.sha256Hex(in);
+        return DigestUtils.sha512Hex(in);
     }
 }
