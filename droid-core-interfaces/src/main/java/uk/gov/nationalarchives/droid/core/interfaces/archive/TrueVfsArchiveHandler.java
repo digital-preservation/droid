@@ -31,6 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
+import net.java.truevfs.comp.zip.ZipEntry;
+import net.java.truevfs.comp.zip.ZipFile;
+import org.apache.commons.io.FilenameUtils;
+import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
+import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -39,23 +50,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.FilenameUtils;
-
-import de.schlichtherle.truezip.zip.ZipEntry;
-import de.schlichtherle.truezip.zip.ZipFile;
-import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultImpl;
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
-import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 /**
  * @author a-mpalmer
  *
  */
-public class TrueZipArchiveHandler implements ArchiveHandler {
+public class TrueVfsArchiveHandler implements ArchiveHandler {
 
     private AsynchDroid droidCore;
     private IdentificationRequestFactory<InputStream> factory;
@@ -64,7 +63,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
     /**
      * Empty bean constructor.
      */
-    public TrueZipArchiveHandler() {
+    public TrueVfsArchiveHandler() {
     }
 
     /**
@@ -73,9 +72,9 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      * @param factory The IdentificationRequestFactory to use.
      * @param resultHandler The ResultHandler to use.
      */
-    public TrueZipArchiveHandler(AsynchDroid droidCore,
-                             IdentificationRequestFactory<InputStream> factory,
-                             ResultHandler resultHandler) {
+    public TrueVfsArchiveHandler(AsynchDroid droidCore,
+                                 IdentificationRequestFactory<InputStream> factory,
+                                 ResultHandler resultHandler) {
         this.droidCore = droidCore;
         this.factory = factory;
         this.resultHandler = resultHandler;
@@ -83,7 +82,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
 
     @Override
     public void handle(IdentificationRequest request) throws IOException {
-        final ZipFile zipFile = new ZipFile(new TrueZipReader(request.getWindowReader()));
+        ZipFile zipFile = new ZipFile(new ByteseekWindowWrapper(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
         try {
             Iterable<ZipEntry> iterable = new Iterable<ZipEntry>() {
                 @Override
@@ -133,7 +132,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
      * @param entry the zip entry to submit
      * @param parentName the name of the parent file
      * @param entryName the name of the Zip entry
-     * @param file the Truezip zipFile
+     * @param file the TrueVfs zipFile
      * @param correlationId an ID to correlate this submission to
      * @param originatorNodeId the ID of the originator node
      * @throws IOException if there was an error accessing the input stream 'in'
@@ -158,7 +157,7 @@ public class TrueZipArchiveHandler implements ArchiveHandler {
         if (droidCore.passesIdentificationFilter(request)) {
             InputStream in = null;
             try {
-                in = file.getInputStream(entry);
+                in = file.getInputStream(entry.getName());
                 request.open(in);
             } finally {
                 if (in != null) {

@@ -29,42 +29,21 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.internal.api;
+package uk.gov.nationalarchives.droid.core.interfaces.hash;
 
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
+import org.apache.commons.codec.digest.DigestUtils;
 
-public class ApiResult {
-    private final String extension;
-    private final IdentificationMethod method;
-    private final String puid;
-    private final String name;
-    private final boolean fileExtensionMismatch;
+import java.io.IOException;
+import java.io.InputStream;
 
-    public ApiResult(String extension, IdentificationMethod method, String puid, String name, boolean fileExtensionMismatch) {
-        this.extension = extension;
-        this.method = method;
-        this.puid = puid;
-        this.name = name;
-        this.fileExtensionMismatch = fileExtensionMismatch;
-    }
+public class SHA512HashGenerator implements HashGenerator {
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPuid() {
-        return puid;
-    }
-
-    public IdentificationMethod getMethod() {
-        return method;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public boolean isFileExtensionMismatch() {
-        return fileExtensionMismatch;
+    /**
+     * {@inheritDoc}
+     * @throws java.io.IOException exception
+     */
+    @Override
+    public String hash(InputStream in) throws IOException {
+        return DigestUtils.sha512Hex(in);
     }
 }
