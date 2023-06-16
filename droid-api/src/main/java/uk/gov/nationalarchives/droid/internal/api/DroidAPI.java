@@ -154,8 +154,11 @@ public final class DroidAPI {
                     resultCollection = binaryResult;
                 }
             }
+
+            boolean fileExtensionMismatch = resultCollection.getExtensionMismatch();
+
             return resultCollection.getResults()
-                    .stream().map(res -> new ApiResult(extension, res.getMethod(), res.getPuid(), res.getName()))
+                    .stream().map(res -> new ApiResult(extension, res.getMethod(), res.getPuid(), res.getName(), fileExtensionMismatch))
                     .collect(Collectors.toList());
         }
     }

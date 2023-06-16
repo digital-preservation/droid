@@ -36,3 +36,5 @@ The file commons-collections-3.2.1-bin.zip in this directory has a known MD5 has
  a8145a4737bc7dbc192e7ca49d563f598e9e07a4
  Its SHA256 hash is:
  759d425105e23ba7016396b7dba776fc14a0e962bcf19a9f2fcf5efa1d23f45b
+ Its SHA512 hash is:
+ 28c195eda6aae080f6e06e331a1161a6840dd5164853b9968621c4657f15e893075860b7a12150968884828b71c5e0a39e5c11645199b8f23b44ac894dd9ce2a

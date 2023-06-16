@@ -29,42 +29,23 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.internal.api;
+package uk.gov.nationalarchives.droid.core.interfaces.hash;
 
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 
-public class ApiResult {
-    private final String extension;
-    private final IdentificationMethod method;
-    private final String puid;
-    private final String name;
-    private final boolean fileExtensionMismatch;
+import org.junit.Test;
 
-    public ApiResult(String extension, IdentificationMethod method, String puid, String name, boolean fileExtensionMismatch) {
-        this.extension = extension;
-        this.method = method;
-        this.puid = puid;
-        this.name = name;
-        this.fileExtensionMismatch = fileExtensionMismatch;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.junit.Assert.assertEquals;
+
+public class SHA512HashGeneratorTest {
+
+    @Test
+    public void should_generate_correct_hash_using_sha_512_algorithm() throws IOException {
+        InputStream in = getClass().getClassLoader().getResourceAsStream("hash/commons-collections-3.2.1-bin.zip");
+        String hash = new SHA512HashGenerator().hash(in);
+        assertEquals("28c195eda6aae080f6e06e331a1161a6840dd5164853b9968621c4657f15e893075860b7a12150968884828b71c5e0a39e5c11645199b8f23b44ac894dd9ce2a", hash);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPuid() {
-        return puid;
-    }
-
-    public IdentificationMethod getMethod() {
-        return method;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public boolean isFileExtensionMismatch() {
-        return fileExtensionMismatch;
-    }
 }

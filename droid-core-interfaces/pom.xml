@@ -124,30 +124,8 @@
             <version>1.15</version>
         </dependency>
         <dependency>
-            <groupId>de.schlichtherle.truezip</groupId>
-            <artifactId>truezip-driver-zip</artifactId>
-            <exclusions>
-                <!-- the version of bcprov-jdk15on
-                    used by truezip-driver-zip
-                    exhibits security vulnerability
-                    CVE-2018-1000613
-                -->
-                <exclusion>
-                    <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- required to use truezip-driver-zip at runtime -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.70</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.schlichtherle.truezip</groupId>
-            <artifactId>truezip-kernel</artifactId>
+            <groupId>net.java.truevfs</groupId>
+            <artifactId>truevfs-comp-zip</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

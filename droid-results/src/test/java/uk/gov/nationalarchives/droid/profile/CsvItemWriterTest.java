@@ -423,12 +423,13 @@ public class CsvItemWriterTest {
             assertEquals(expectedFilePath2, lines[2].split(",")[3]);
         }
     }
-    
+
     private static boolean isNotWindows() {
         return !SystemUtils.IS_OS_WINDOWS;
     }
     
     private static ProfileResourceNode buildProfileResourceNode(int i, Long size) {
+        
         File f = isNotWindows() ? new File("/my/file" + i + ".txt") : new File("C:/my/file" + i + ".txt");
         return buildProfileResourceNode(i, size, f.toURI());
     }

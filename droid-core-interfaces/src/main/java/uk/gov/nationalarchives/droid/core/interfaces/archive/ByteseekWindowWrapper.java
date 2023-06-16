@@ -31,40 +31,45 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
-import java.io.IOException;
-
-import de.schlichtherle.truezip.rof.AbstractReadOnlyFile;
 import net.byteseek.io.reader.WindowReader;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.SeekableByteChannel;
+
 /**
- * This class adapts a byteseek 2 WindowReader to behave as a ReadOnlyFile interface defined in TrueZip.
+ * A wrapper class which implements the SeekableByteChannel interface which the TrueVFS zip library works with.
+ * The class delegates most of the work to the underlying WindowReader except keeping count of the current position
+ * of the reader
  * <p>
  * This allows us to use an existing WindowReader, which will already have cached much of the underlying
- * file to supply the data for TrueZip to process a zip file, without having to write the entire
+ * file to supply the data for TrueVFS to process a zip file, without having to write the entire
  * WindowReader back out to a normal temporary file.
  *
- * Created by matt on 30/05/15.
- */
-public final class TrueZipReader extends AbstractReadOnlyFile {
+  */
+public final class ByteseekWindowWrapper implements SeekableByteChannel {
 
+    private static final String NOT_IMPLEMENTED = "This method from the SeekableByteChannel interface is not implemented";
     private final WindowReader reader;
-    private long filePointer;
-    private boolean closeReaderIfClosed;
+    private final boolean closeReaderIfClosed;
     private boolean closed;
+    private long currentPosition;
 
     /**
-     * Constructs a ReaderReadOnlyFiule backed by a WindowReader.
+     * Constructs a ByteseekWindowWrapper backed by a WindowReader.
      * <p>
-     * The underlying WindowReader will not be closed when this TrueZipReader is closed.
+     * When the instance is closed, the backing window reader will be closed if
+     * closeReaderIfClosed is true.
      *
-     * @param reader The WindowReader to back this ReadOnlyFile.
+     * @param reader The WindowReader backing this ReadOnlyFile.
      */
-    public TrueZipReader(final WindowReader reader) {
+    public ByteseekWindowWrapper(final WindowReader reader) {
         this(reader, false);
     }
 
     /**
-     * Constructs a TrueZipReader backed by a WindowReader.
+     * Constructs a ByteseekWindowWrapper backed by a WindowReader.
      * <p>
      * When the instance is closed, the backing window reader will be closed if
      * closeReaderIfClosed is true.
@@ -72,58 +77,53 @@ public final class TrueZipReader extends AbstractReadOnlyFile {
      * @param reader The WindowReader backing this ReadOnlyFile.
      * @param closeReaderIfClosed If true, then the backing WindowReader will be closed when this is closed.
      */
-    public TrueZipReader(final WindowReader reader, final boolean closeReaderIfClosed) {
+    public ByteseekWindowWrapper(final WindowReader reader, final boolean closeReaderIfClosed) {
         super();
         this.reader = reader;
         this.closeReaderIfClosed = closeReaderIfClosed;
     }
 
+
     @Override
-    public long length() throws IOException {
+    public int read(ByteBuffer dst) throws IOException {
+        ensureOpen();
+        if (currentPosition >= size()) {
+            return -1;
+        }
+        final int bytesCopied = ArchiveFileUtils.copyToBuffer(reader, currentPosition, dst);
+        currentPosition += bytesCopied;
+        return bytesCopied;
+    }
+
+    @Override
+    public int write(ByteBuffer src) throws IOException {
+        throw new IOException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public long position() throws IOException {
+        return currentPosition;
+    }
+
+    @Override
+    public SeekableByteChannel position(long newPosition) throws IOException {
+        currentPosition = newPosition;
+        return this;
+    }
+
+    @Override
+    public long size() throws IOException {
         return reader.length();
     }
 
     @Override
-    public long getFilePointer() throws IOException {
-        ensureOpen();
-        return filePointer;
+    public SeekableByteChannel truncate(long size) throws IOException {
+        throw new IOException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public int read() throws IOException {
-        ensureOpen();
-        final int result = reader.readByte(filePointer);
-        if (result >= 0) {
-            filePointer++;
-        }
-        return result;
-    }
-
-    @Override
-    public void seek(long position) throws IOException {
-        ensureOpen();
-        if (position < 0) {
-            throw new IOException("Cannot seek to a negative position: " + position);
-        }
-        if (position >= reader.length()) {
-            throw new IOException("Cannot seek past the end of data with length "
-                    + reader.length() + ".  Seek position was " + position);
-        }
-        filePointer = position;
-    }
-
-    @Override
-    public int read(byte[] bytes, int offset, int length) throws IOException {
-        ensureOpen();
-        if ((offset | length) < 0) {
-            throw new IndexOutOfBoundsException("Offset or length cannot be negative: {" + offset + "," + length + "}");
-        }
-        if (filePointer >= length() || length == 0) {
-            return -1;
-        }
-        final int bytesCopied = ArchiveFileUtils.copyToBuffer(reader, filePointer, bytes, offset, length);
-        filePointer += bytesCopied;
-        return bytesCopied;
+    public boolean isOpen() {
+        return !closed;
     }
 
     @Override
@@ -135,8 +135,8 @@ public final class TrueZipReader extends AbstractReadOnlyFile {
     }
 
     private void ensureOpen() throws IOException {
-        if (closed) {
-            throw new IOException("The " + this + " is closed.");
+        if (!isOpen()) {
+            throw new ClosedChannelException();
         }
     }
 }
