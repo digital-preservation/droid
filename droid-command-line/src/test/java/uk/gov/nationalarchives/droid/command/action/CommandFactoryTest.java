@@ -31,36 +31,29 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.nio.file.*;
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import org.springframework.context.annotation.Profile;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
-import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
-import uk.gov.nationalarchives.droid.report.interfaces.ReportManager;
-import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
-import uk.gov.nationalarchives.droid.report.interfaces.ReportSpecItem;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author rflitcroft
@@ -851,7 +844,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getIdentificationFilter();
-        assertEquals(false, filter.isNarrowed());
+        assertFalse(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1014,7 +1007,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getResultsFilter();
-        assertEquals(false, filter.isNarrowed());
+        assertFalse(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1063,7 +1056,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getResultsFilter();
-        assertEquals(true, filter.isNarrowed());
+        assertTrue(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1111,7 +1104,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getIdentificationFilter();
-        assertEquals(false, filter.isNarrowed());
+        assertFalse(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1148,7 +1141,7 @@ public class CommandFactoryTest {
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getIdentificationFilter();
-        assertEquals(true, filter.isNarrowed());
+        assertTrue(filter.isNarrowed());
 
         assertNotNull(filter);
         List<FilterCriterion> criterionList = filter.getCriteria();
@@ -1176,7 +1169,7 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(4, propertyNames.size());
+        assertEquals(13, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertTrue(propertyNames.contains("profile.columnsToWrite"));
@@ -1184,7 +1177,7 @@ public class CommandFactoryTest {
         assertEquals("ONE_ROW_PER_FILE", e1.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", e1.getProperties().getProperty("profile.outputFilePath"));
         assertEquals(Boolean.FALSE, e1.getProperties().getProperty("profile.quoteAllFields"));
-        assertEquals("NAME PUID", e1.getProperties().getProperty("profile.columnsToWrite"));
+        assertEquals("FILE_PATH PUID", e1.getProperties().getProperty("profile.columnsToWrite"));
 
         assertNull( e1.getIdentificationFilter());
         Filter filter = e1.getResultsFilter();
