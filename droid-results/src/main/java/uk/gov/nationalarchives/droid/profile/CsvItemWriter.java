@@ -279,7 +279,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 maxIdentifications = maxIdentificationsOption.get();
             }
             if (maxIdentifications > 1) { //add headers
-                for (int newColumnSuffix = 2; newColumnSuffix <= maxIdentifications; newColumnSuffix++) {
+                for (int newColumnSuffix = 1; newColumnSuffix < maxIdentifications; newColumnSuffix++) {
                     //"PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION"
                     for (String headerEntry : PER_FORMAT_HEADERS) {
                         if (headersToWrite.contains(headerEntry)) {

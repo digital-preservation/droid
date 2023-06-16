@@ -45,7 +45,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
-import uk.gov.nationalarchives.droid.export.interfaces.JobOptions;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 import java.io.File;
@@ -79,7 +78,6 @@ public class CsvItemWriterTest {
     private static final DateTime testDateTime = new DateTime(12345678L);
     private static final String LINE_SEPARATOR = "\n";
     private CsvItemWriter itemWriter;
-    private File destination;
     private DroidGlobalConfig config;
     private String testDateTimeString;
     
@@ -87,7 +85,7 @@ public class CsvItemWriterTest {
     public void setup() {
         File dir = new File("exports");
         dir.mkdir();
-        destination = new File(dir, "test1.csv");
+        File destination = new File(dir, "test1.csv");
         destination.delete();
         itemWriter = new CsvItemWriter();
         
@@ -266,7 +264,7 @@ public class CsvItemWriterTest {
             final String expectedHeaders = toCsvRow(new String[] {
                     "ID","PARENT_ID","URI","FILE_PATH","NAME","METHOD","STATUS","SIZE","TYPE","EXT","LAST_MODIFIED","EXTENSION_MISMATCH","HASH","FORMAT_COUNT",
                     "PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION", //per format columns
-                    "PUID2","MIME_TYPE2","FORMAT_NAME2","FORMAT_VERSION2", //per format columns
+                    "PUID1","MIME_TYPE1","FORMAT_NAME1","FORMAT_VERSION1", //per format columns
             });
 
             final String expectedEntry1 = toCsvRow(new String[] {
