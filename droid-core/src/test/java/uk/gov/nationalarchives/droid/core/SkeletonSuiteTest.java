@@ -80,7 +80,7 @@ public class SkeletonSuiteTest {
 
     private static final String TEST_FILES_DIR = "test-skeletons/";
     //TODO: Read latest signature file by default where required in this and other tests.
-    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V109.xml";
+    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V112.xml";
     private static final Pattern PuidInFilenamePattern = Pattern.compile("^(x-)?fmt-\\d{1,4}");
     private static final Pattern PuidPattern = Pattern.compile("^(x-)?fmt/\\d{1,4}");
 

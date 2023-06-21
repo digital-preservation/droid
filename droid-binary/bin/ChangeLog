@@ -1,3 +1,11 @@
+Version 6.7.0
+* #898 Improvement: Sigtool uses the version of java bundled with Droid on the Windows OS
+* #938 Improvement: Internal API result includes whether there is an extension mismatch in identification
+* #861 Improvement: CSV export has column headers when there is more than one PUID per file
+* #952 Improvement: SHA512 is available as an option for checksums
+* #232 Improvement: Moved to using a different zip library for opening the zip archives
+* #953 Bugfix: On CLI, -At and -Wt options without any arguments do not analyse archives or web archives
+
 Version 6.6.1
 * #898 Bugfix: Use backslash on Windows OS in no profile output
 * #900 Bugfix: Failure to consistently output HASH column in CSV
