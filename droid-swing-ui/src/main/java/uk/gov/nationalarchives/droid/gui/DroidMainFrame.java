@@ -329,15 +329,31 @@ public class DroidMainFrame extends JFrame {
         resourceFileChooser = new ResourceSelectorDialog(this);
         resourceFileChooser.setModal(true);
 
-        String version = org.openide.util.NbBundle.getMessage(DroidMainFrame.class, "product.version");
-        AboutDialogData.AboutDialogDataBuilder builder = new AboutDialogData.AboutDialogDataBuilder();
-        AboutDialogData data = builder.withDroidVersion(version).build();
-
+        AboutDialogData data = populateAboutDialogData();
         aboutDialog = new AboutDialog(this, true, data);
 
         reportDialog = new ReportDialog(this);
 
         initButtons();
+    }
+
+    private AboutDialogData populateAboutDialogData() {
+        //version of Droid
+        String version = NbBundle.getMessage(DroidMainFrame.class, "product.version");
+        String javaVersion = System.getProperty("java.runtime.name") + " " + System.getProperty("java.runtime.version");
+        String javaLocation = System.getProperty("java.home");
+        String osName = System.getProperty("os.name") + " " + System.getProperty("os.version");
+        String droidUserDir = System.getProperty("droidUserDir");
+        Runtime runtime = Runtime.getRuntime();
+        String mem = runtime.freeMemory() + " of " + runtime.totalMemory() + " available";
+
+        return new AboutDialogData.AboutDialogDataBuilder()
+                .withDroidVersion(version)
+                .withJavaVersion(javaVersion)
+                .withJavaLocation(javaLocation)
+                .withOsName(osName)
+                .withDroidFolder(droidUserDir)
+                .build();
     }
 
     /**
