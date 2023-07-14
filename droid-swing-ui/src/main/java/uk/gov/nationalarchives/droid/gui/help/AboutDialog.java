@@ -93,7 +93,11 @@ public class AboutDialog extends javax.swing.JDialog {
         setPreferredSize(new java.awt.Dimension(640, 410));
 
         buttonOk.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOk.text")); // NOI18N
-        buttonOk.addActionListener(this::buttonOkActionPerformed);
+        buttonOk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonOkActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -134,7 +138,11 @@ public class AboutDialog extends javax.swing.JDialog {
 
         buttonOpenDroidFolder.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenDroidFolder.text")); // NOI18N
         buttonOpenDroidFolder.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenDroidFolder.toolTipText")); // NOI18N
-        buttonOpenDroidFolder.addActionListener(this::buttonOpenDroidFolderActionPerformed);
+        buttonOpenDroidFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonOpenDroidFolderActionPerformed(evt);
+            }
+        });
 
         labelLogLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelLogLocation.text")); // NOI18N
         labelLogLocation.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelLogLocation.toolTipText")); // NOI18N
@@ -144,7 +152,11 @@ public class AboutDialog extends javax.swing.JDialog {
         txtLogLocation.setFocusable(false);
 
         buttonOpenLogLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenLogLocation.text")); // NOI18N
-        buttonOpenLogLocation.addActionListener(this::buttonOpenLogLocationActionPerformed);
+        buttonOpenLogLocation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonOpenLogLocationActionPerformed(evt);
+            }
+        });
 
         labelBuildDate.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelBuildDate.text")); // NOI18N
         labelBuildDate.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelBuildDate.toolTipText")); // NOI18N
@@ -233,7 +245,11 @@ public class AboutDialog extends javax.swing.JDialog {
 
         buttonCopyToClipboard.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonCopyToClipboard.text")); // NOI18N
         buttonCopyToClipboard.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonCopyToClipboard.toolTipText")); // NOI18N
-        buttonCopyToClipboard.addActionListener(this::buttonCopyToClipboardActionPerformed);
+        buttonCopyToClipboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCopyToClipboardActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
