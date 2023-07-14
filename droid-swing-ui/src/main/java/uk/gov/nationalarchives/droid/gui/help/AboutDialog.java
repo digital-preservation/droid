@@ -32,6 +32,9 @@
 package uk.gov.nationalarchives.droid.gui.help;
 
 import java.awt.Desktop;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 
@@ -41,12 +44,14 @@ import java.io.IOException;
  */
 public class AboutDialog extends javax.swing.JDialog {
 
+    private static final String CLIPBOARD_LINE_FORMAT = "%s: %s";
+
     /**
      * Creates new form AboutDialog.
      *
-     * @param parent
-     * @param modal
-     * @param data
+     * @param parent parent frame for this dialog
+     * @param modal modality of the dialog
+     * @param data data to be populated in the UI controls
      */
     public AboutDialog(java.awt.Frame parent, boolean modal, AboutDialogData data) {
         super(parent, modal);
@@ -67,7 +72,7 @@ public class AboutDialog extends javax.swing.JDialog {
         txtJavaVersion = new javax.swing.JTextField();
         labelJavaLocation = new javax.swing.JLabel();
         txtJavaLocation = new javax.swing.JTextField();
-        labelJavaLocation1 = new javax.swing.JLabel();
+        labelOSName = new javax.swing.JLabel();
         txtOSName = new javax.swing.JTextField();
         labelVersion = new javax.swing.JLabel();
         txtVersion = new javax.swing.JTextField();
@@ -78,20 +83,17 @@ public class AboutDialog extends javax.swing.JDialog {
         labelLogLocation = new javax.swing.JLabel();
         txtLogLocation = new javax.swing.JTextField();
         buttonOpenLogLocation = new javax.swing.JButton();
-        labelVersion1 = new javax.swing.JLabel();
+        labelBuildDate = new javax.swing.JLabel();
         txtBuildDate = new javax.swing.JTextField();
+        buttonCopyToClipboard = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.title_1")); // NOI18N
-        setMinimumSize(new java.awt.Dimension(640, 380));
-        setModal(true);
+        setMinimumSize(new java.awt.Dimension(640, 410));
+        setPreferredSize(new java.awt.Dimension(640, 410));
 
         buttonOk.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOk.text")); // NOI18N
-        buttonOk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonOkActionPerformed(evt);
-            }
-        });
+        buttonOk.addActionListener(this::buttonOkActionPerformed);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -100,60 +102,52 @@ public class AboutDialog extends javax.swing.JDialog {
         txtJavaVersion.setFocusable(false);
 
         labelJavaLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaLocation.text")); // NOI18N
+        labelJavaLocation.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaLocation.toolTipText")); // NOI18N
 
         txtJavaLocation.setEditable(false);
         txtJavaLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtJavaLocation.text")); // NOI18N
         txtJavaLocation.setFocusable(false);
 
-        labelJavaLocation1.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaLocation1.text")); // NOI18N
+        labelOSName.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelOSName.text")); // NOI18N
+        labelOSName.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelOSName.toolTipText")); // NOI18N
 
         txtOSName.setEditable(false);
         txtOSName.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtOSName.text")); // NOI18N
         txtOSName.setFocusable(false);
 
         labelVersion.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelVersion.text")); // NOI18N
+        labelVersion.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelVersion.toolTipText")); // NOI18N
 
         txtVersion.setEditable(false);
         txtVersion.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtVersion.text")); // NOI18N
         txtVersion.setFocusable(false);
 
         labelJavaVersion.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaVersion.text")); // NOI18N
+        labelJavaVersion.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaVersion.toolTipText")); // NOI18N
 
         labelDroidFolder.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelDroidFolder.text")); // NOI18N
+        labelDroidFolder.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelDroidFolder.toolTipText")); // NOI18N
 
         txtDroidFolder.setEditable(false);
         txtDroidFolder.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtDroidFolder.text")); // NOI18N
         txtDroidFolder.setFocusable(false);
 
         buttonOpenDroidFolder.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenDroidFolder.text")); // NOI18N
-        buttonOpenDroidFolder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    buttonOpenDroidFolderActionPerformed(evt);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        buttonOpenDroidFolder.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenDroidFolder.toolTipText")); // NOI18N
+        buttonOpenDroidFolder.addActionListener(this::buttonOpenDroidFolderActionPerformed);
 
         labelLogLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelLogLocation.text")); // NOI18N
+        labelLogLocation.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelLogLocation.toolTipText")); // NOI18N
 
         txtLogLocation.setEditable(false);
         txtLogLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtLogLocation.text")); // NOI18N
         txtLogLocation.setFocusable(false);
 
         buttonOpenLogLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenLogLocation.text")); // NOI18N
-        buttonOpenLogLocation.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    buttonOpenLogLocationActionPerformed(evt);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        buttonOpenLogLocation.addActionListener(this::buttonOpenLogLocationActionPerformed);
 
-        labelVersion1.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelVersion1.text")); // NOI18N
+        labelBuildDate.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelBuildDate.text")); // NOI18N
+        labelBuildDate.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelBuildDate.toolTipText")); // NOI18N
 
         txtBuildDate.setEditable(false);
         txtBuildDate.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtBuildDate.text")); // NOI18N
@@ -181,13 +175,13 @@ public class AboutDialog extends javax.swing.JDialog {
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(txtVersion)
                                         .addGap(18, 18, 18)
-                                        .addComponent(labelVersion1)
+                                        .addComponent(labelBuildDate)
                                         .addGap(18, 18, 18)
                                         .addComponent(txtBuildDate))))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(labelJavaLocation)
-                                    .addComponent(labelJavaLocation1)
+                                    .addComponent(labelOSName)
                                     .addComponent(labelLogLocation))
                                 .addGap(23, 23, 23)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,7 +204,7 @@ public class AboutDialog extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelVersion)
                     .addComponent(txtVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelVersion1)
+                    .addComponent(labelBuildDate)
                     .addComponent(txtBuildDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -222,7 +216,7 @@ public class AboutDialog extends javax.swing.JDialog {
                     .addComponent(txtJavaLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelJavaLocation1)
+                    .addComponent(labelOSName)
                     .addComponent(txtOSName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -234,8 +228,12 @@ public class AboutDialog extends javax.swing.JDialog {
                     .addComponent(txtLogLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonOpenLogLocation)
                     .addComponent(labelLogLocation))
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
+
+        buttonCopyToClipboard.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonCopyToClipboard.text")); // NOI18N
+        buttonCopyToClipboard.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonCopyToClipboard.toolTipText")); // NOI18N
+        buttonCopyToClipboard.addActionListener(this::buttonCopyToClipboardActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -244,7 +242,11 @@ public class AboutDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(buttonOk)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(buttonCopyToClipboard)
+                        .addGap(18, 18, 18)
+                        .addComponent(buttonOk))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(19, 19, 19))
         );
@@ -254,7 +256,9 @@ public class AboutDialog extends javax.swing.JDialog {
                 .addGap(24, 24, 24)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(buttonOk)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(buttonOk)
+                    .addComponent(buttonCopyToClipboard))
                 .addGap(18, 18, 18))
         );
 
@@ -265,28 +269,57 @@ public class AboutDialog extends javax.swing.JDialog {
         this.setVisible(false);
     }//GEN-LAST:event_buttonOkActionPerformed
 
-    private void buttonOpenDroidFolderActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_buttonOpenDroidFolderActionPerformed
+    private void buttonOpenDroidFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOpenDroidFolderActionPerformed
         File file = new File(txtDroidFolder.getText());
-        Desktop.getDesktop().open(file);
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException iox) {
+            throw new RuntimeException(iox);
+        }
     }//GEN-LAST:event_buttonOpenDroidFolderActionPerformed
 
-    private void buttonOpenLogLocationActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_buttonOpenLogLocationActionPerformed
+    private void buttonOpenLogLocationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOpenLogLocationActionPerformed
         File file = new File(txtLogLocation.getText());
-        Desktop.getDesktop().open(file);
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException iox) {
+            throw new RuntimeException(iox);
+        }
     }//GEN-LAST:event_buttonOpenLogLocationActionPerformed
 
+    private void buttonCopyToClipboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCopyToClipboardActionPerformed
+        String details = String.format(CLIPBOARD_LINE_FORMAT, labelVersion.getText(), txtVersion.getText()) +
+                System.lineSeparator() +
+                String.format(CLIPBOARD_LINE_FORMAT, labelBuildDate.getText(), txtBuildDate.getText()) +
+                System.lineSeparator() +
+                String.format(CLIPBOARD_LINE_FORMAT, labelJavaVersion.getText(), txtJavaVersion.getText()) +
+                System.lineSeparator() +
+                String.format(CLIPBOARD_LINE_FORMAT, labelJavaLocation.getText(), txtJavaLocation.getText()) +
+                System.lineSeparator() +
+                String.format(CLIPBOARD_LINE_FORMAT, labelOSName.getText(), txtOSName.getText()) +
+                System.lineSeparator() +
+                String.format(CLIPBOARD_LINE_FORMAT, labelDroidFolder.getText(), txtDroidFolder.getText()) +
+                System.lineSeparator() +
+                String.format(CLIPBOARD_LINE_FORMAT, labelLogLocation.getText(), txtLogLocation.getText());
+
+        StringSelection clipboardContent = new StringSelection(details);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(clipboardContent, null);
+    }//GEN-LAST:event_buttonCopyToClipboardActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonCopyToClipboard;
     private javax.swing.JButton buttonOk;
     private javax.swing.JButton buttonOpenDroidFolder;
     private javax.swing.JButton buttonOpenLogLocation;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel labelBuildDate;
     private javax.swing.JLabel labelDroidFolder;
     private javax.swing.JLabel labelJavaLocation;
-    private javax.swing.JLabel labelJavaLocation1;
     private javax.swing.JLabel labelJavaVersion;
     private javax.swing.JLabel labelLogLocation;
+    private javax.swing.JLabel labelOSName;
     private javax.swing.JLabel labelVersion;
-    private javax.swing.JLabel labelVersion1;
     private javax.swing.JTextField txtBuildDate;
     private javax.swing.JTextField txtDroidFolder;
     private javax.swing.JTextField txtJavaLocation;
