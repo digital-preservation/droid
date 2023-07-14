@@ -125,6 +125,8 @@ public class DroidMainFrame extends JFrame {
 
     private static final String STATE = "state";
 
+    private static final String TWO_STRINGS_SEP_BY_SPACE = "%s %s";
+
     private static final long serialVersionUID = 8170787911864425667L;
 
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -340,19 +342,22 @@ public class DroidMainFrame extends JFrame {
     private AboutDialogData populateAboutDialogData() {
         //version of Droid
         String version = NbBundle.getMessage(DroidMainFrame.class, "product.version");
-        String javaVersion = System.getProperty("java.runtime.name") + " " + System.getProperty("java.runtime.version");
+        String javaVersion = String.format(TWO_STRINGS_SEP_BY_SPACE,
+                System.getProperty("java.runtime.name"), System.getProperty("java.runtime.version"));
         String javaLocation = System.getProperty("java.home");
-        String osName = System.getProperty("os.name") + " " + System.getProperty("os.version");
-        String droidUserDir = System.getProperty("droidUserDir");
-        Runtime runtime = Runtime.getRuntime();
-        String mem = runtime.freeMemory() + " of " + runtime.totalMemory() + " available";
-
+        String osName = String.format(TWO_STRINGS_SEP_BY_SPACE,
+                System.getProperty("os.name"), System.getProperty("os.version"));
+        String droidUserDir = System.getProperty(RuntimeConfig.DROID_USER);
+        String droidLogDir = System.getProperty(RuntimeConfig.LOG_DIR);
+        String buildTime = NbBundle.getMessage(DroidMainFrame.class, "product.build.time");
         return new AboutDialogData.AboutDialogDataBuilder()
                 .withDroidVersion(version)
+                .withBuildTimeStamp(buildTime)
                 .withJavaVersion(javaVersion)
                 .withJavaLocation(javaLocation)
                 .withOsName(osName)
                 .withDroidFolder(droidUserDir)
+                .withLogFolder(droidLogDir)
                 .build();
     }
 

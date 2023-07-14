@@ -12,7 +12,12 @@
     <packaging>jar</packaging>
   
     <name>droid-ui</name>
-    
+
+    <properties>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>dd-MMM-YYYY</maven.build.timestamp.format>
+    </properties>
+
     <scm>
         <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
         <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
@@ -246,9 +251,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>unknown.binary</groupId>
-            <artifactId>AbsoluteLayout</artifactId>
-            <version>SNAPSHOT</version>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>unknown.binary</groupId>-->
+<!--            <artifactId>AbsoluteLayout</artifactId>-->
+<!--            <version>SNAPSHOT</version>-->
+<!--        </dependency>-->
     </dependencies>
 </project>
