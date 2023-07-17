@@ -340,8 +340,8 @@ public class DroidMainFrame extends JFrame {
     }
 
     private AboutDialogData populateAboutDialogData() {
-        //version of Droid
         String version = NbBundle.getMessage(DroidMainFrame.class, "product.version");
+        String buildTime = NbBundle.getMessage(DroidMainFrame.class, "product.build.time");
         String javaVersion = String.format(TWO_STRINGS_SEP_BY_SPACE,
                 System.getProperty("java.runtime.name"), System.getProperty("java.runtime.version"));
         String javaLocation = System.getProperty("java.home");
@@ -349,7 +349,6 @@ public class DroidMainFrame extends JFrame {
                 System.getProperty("os.name"), System.getProperty("os.version"));
         String droidUserDir = System.getProperty(RuntimeConfig.DROID_USER);
         String droidLogDir = System.getProperty(RuntimeConfig.LOG_DIR);
-        String buildTime = NbBundle.getMessage(DroidMainFrame.class, "product.build.time");
         return new AboutDialogData.AboutDialogDataBuilder()
                 .withDroidVersion(version)
                 .withBuildTimeStamp(buildTime)
