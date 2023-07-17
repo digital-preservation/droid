@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.gui.help;
 
+import uk.gov.nationalarchives.droid.gui.DroidMainFrame;
+
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -85,12 +87,19 @@ public class AboutDialog extends javax.swing.JDialog {
         buttonOpenLogLocation = new javax.swing.JButton();
         labelBuildDate = new javax.swing.JLabel();
         txtBuildDate = new javax.swing.JTextField();
+        labelProfileCount = new javax.swing.JLabel();
+        txtProfileCount = new javax.swing.JTextField();
         buttonCopyToClipboard = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.title_1")); // NOI18N
-        setMinimumSize(new java.awt.Dimension(640, 410));
-        setPreferredSize(new java.awt.Dimension(640, 410));
+        setMinimumSize(new java.awt.Dimension(540, 470));
+        setPreferredSize(new java.awt.Dimension(640, 470));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         buttonOk.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOk.text")); // NOI18N
         buttonOk.addActionListener(new java.awt.event.ActionListener() {
@@ -165,49 +174,51 @@ public class AboutDialog extends javax.swing.JDialog {
         txtBuildDate.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtBuildDate.text")); // NOI18N
         txtBuildDate.setFocusable(false);
 
+        labelProfileCount.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelProfileCount.text")); // NOI18N
+        labelProfileCount.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelProfileCount.toolTipText")); // NOI18N
+
+        txtProfileCount.setEditable(false);
+        txtProfileCount.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtProfileCount.text")); // NOI18N
+        txtProfileCount.setFocusable(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(labelVersion)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(labelJavaVersion)
+                            .addGap(6, 6, 6)))
+                    .addComponent(labelJavaLocation)
+                    .addComponent(labelOSName)
+                    .addComponent(labelDroidFolder)
+                    .addComponent(labelLogLocation)
+                    .addComponent(labelProfileCount))
+                .addGap(24, 24, 24)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtOSName)
+                    .addComponent(txtJavaLocation)
+                    .addComponent(txtJavaVersion)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(labelDroidFolder)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(labelBuildDate)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtBuildDate, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtLogLocation, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtDroidFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(labelVersion)
-                                    .addComponent(labelJavaVersion))
-                                .addGap(24, 24, 24)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtJavaVersion)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txtVersion)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(labelBuildDate)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(txtBuildDate))))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(labelJavaLocation)
-                                    .addComponent(labelOSName)
-                                    .addComponent(labelLogLocation))
-                                .addGap(23, 23, 23)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtOSName)
-                                    .addComponent(txtJavaLocation)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txtDroidFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(buttonOpenDroidFolder))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txtLogLocation, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(buttonOpenLogLocation)))))
-                        .addGap(17, 17, 17))))
+                            .addComponent(buttonOpenDroidFolder)
+                            .addComponent(buttonOpenLogLocation)))
+                    .addComponent(txtProfileCount))
+                .addGap(17, 17, 17))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -237,10 +248,14 @@ public class AboutDialog extends javax.swing.JDialog {
                     .addComponent(buttonOpenDroidFolder))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelLogLocation)
                     .addComponent(txtLogLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonOpenLogLocation)
-                    .addComponent(labelLogLocation))
-                .addContainerGap(56, Short.MAX_VALUE))
+                    .addComponent(buttonOpenLogLocation))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelProfileCount)
+                    .addComponent(txtProfileCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         buttonCopyToClipboard.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonCopyToClipboard.text")); // NOI18N
@@ -255,8 +270,8 @@ public class AboutDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -264,18 +279,18 @@ public class AboutDialog extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(buttonOk))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(19, 19, 19))
+                .addGap(21, 21, 21))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(16, 16, 16)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonOk)
                     .addComponent(buttonCopyToClipboard))
-                .addGap(18, 18, 18))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
@@ -323,6 +338,14 @@ public class AboutDialog extends javax.swing.JDialog {
         clipboard.setContents(clipboardContent, null);
     }//GEN-LAST:event_buttonCopyToClipboardActionPerformed
 
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        DroidMainFrame parent = (DroidMainFrame) getParent();
+        long count = parent.getProfileCount();
+        // if the count is -1, it means something went wrong in counting the folders
+        String profileCount = count == -1 ? "Unknown" : String.valueOf(count);
+        txtProfileCount.setText(profileCount);
+    }//GEN-LAST:event_formWindowActivated
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCopyToClipboard;
     private javax.swing.JButton buttonOk;
@@ -335,6 +358,7 @@ public class AboutDialog extends javax.swing.JDialog {
     private javax.swing.JLabel labelJavaVersion;
     private javax.swing.JLabel labelLogLocation;
     private javax.swing.JLabel labelOSName;
+    private javax.swing.JLabel labelProfileCount;
     private javax.swing.JLabel labelVersion;
     private javax.swing.JTextField txtBuildDate;
     private javax.swing.JTextField txtDroidFolder;
@@ -342,6 +366,7 @@ public class AboutDialog extends javax.swing.JDialog {
     private javax.swing.JTextField txtJavaVersion;
     private javax.swing.JTextField txtLogLocation;
     private javax.swing.JTextField txtOSName;
+    private javax.swing.JTextField txtProfileCount;
     private javax.swing.JTextField txtVersion;
     // End of variables declaration//GEN-END:variables
 

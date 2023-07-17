@@ -31,44 +31,12 @@
  */
 package uk.gov.nationalarchives.droid.gui;
 
-import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-
-import javax.help.CSH;
-import javax.help.HelpBroker;
-import javax.help.HelpSet;
-import javax.help.HelpSetException;
-import javax.help.SwingHelpUtilities;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.joda.time.DateTime;
 import org.openide.util.NbBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
@@ -86,13 +54,13 @@ import uk.gov.nationalarchives.droid.gui.action.OpenContainingFolderAction;
 import uk.gov.nationalarchives.droid.gui.action.RemoveFilesAndFoldersAction;
 import uk.gov.nationalarchives.droid.gui.action.StopRunningProfilesAction;
 import uk.gov.nationalarchives.droid.gui.config.ConfigDialog;
-import uk.gov.nationalarchives.droid.gui.config.SignatureInstallDialog;
 import uk.gov.nationalarchives.droid.gui.config.InstallSignatureFileAction;
+import uk.gov.nationalarchives.droid.gui.config.SignatureInstallDialog;
 import uk.gov.nationalarchives.droid.gui.event.ButtonManager;
 import uk.gov.nationalarchives.droid.gui.export.ExportAction;
 import uk.gov.nationalarchives.droid.gui.export.ExportDialog;
-import uk.gov.nationalarchives.droid.gui.export.ExportProgressDialog;
 import uk.gov.nationalarchives.droid.gui.export.ExportFileChooser;
+import uk.gov.nationalarchives.droid.gui.export.ExportProgressDialog;
 import uk.gov.nationalarchives.droid.gui.filechooser.ProfileFileChooser;
 import uk.gov.nationalarchives.droid.gui.filechooser.ResourceSelectorDialog;
 import uk.gov.nationalarchives.droid.gui.filter.FilterDialog;
@@ -116,6 +84,40 @@ import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.ProfileState;
 import uk.gov.nationalarchives.droid.report.ReportTransformerImpl;
 
+import javax.help.CSH;
+import javax.help.HelpBroker;
+import javax.help.HelpSet;
+import javax.help.HelpSetException;
+import javax.help.SwingHelpUtilities;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOError;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+
 /**
  * @author Alok Kumar Dash
  */
@@ -126,6 +128,8 @@ public class DroidMainFrame extends JFrame {
     private static final String STATE = "state";
 
     private static final String TWO_STRINGS_SEP_BY_SPACE = "%s %s";
+
+    private static final String PROFILE_FOLDER_NAME = "profiles";
 
     private static final long serialVersionUID = 8170787911864425667L;
 
@@ -358,6 +362,21 @@ public class DroidMainFrame extends JFrame {
                 .withDroidFolder(droidUserDir)
                 .withLogFolder(droidLogDir)
                 .build();
+    }
+
+    public long getProfileCount() {
+        Path profilesPath = Paths.get(System.getProperty(RuntimeConfig.DROID_USER), PROFILE_FOLDER_NAME);
+        if (!Files.exists(profilesPath)) {
+            return -1;
+        }
+        try {
+            long profileCount = Arrays.stream(new File(profilesPath.toUri()).listFiles()).filter(File::isDirectory).count();
+            return profileCount;
+        } catch (IOError | SecurityException  re) {
+            //if we can't get the count, it should not stop droid from working, hence swallow the exception
+            log.warn("Failed to get profile count because " + re.getMessage());
+            return -1;
+        }
     }
 
     /**
