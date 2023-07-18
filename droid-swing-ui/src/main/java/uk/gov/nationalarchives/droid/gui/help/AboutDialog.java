@@ -331,7 +331,9 @@ public class AboutDialog extends javax.swing.JDialog {
                 System.lineSeparator() +
                 String.format(CLIPBOARD_LINE_FORMAT, labelDroidFolder.getText(), txtDroidFolder.getText()) +
                 System.lineSeparator() +
-                String.format(CLIPBOARD_LINE_FORMAT, labelLogLocation.getText(), txtLogLocation.getText());
+                String.format(CLIPBOARD_LINE_FORMAT, labelLogLocation.getText(), txtLogLocation.getText()) +
+                System.lineSeparator() +
+                String.format(CLIPBOARD_LINE_FORMAT, labelProfileCount.getText(), txtProfileCount.getText());
 
         StringSelection clipboardContent = new StringSelection(details);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
