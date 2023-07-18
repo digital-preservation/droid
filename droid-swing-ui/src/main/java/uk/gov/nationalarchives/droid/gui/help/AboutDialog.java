@@ -112,28 +112,24 @@ public class AboutDialog extends javax.swing.JDialog {
 
         txtJavaVersion.setEditable(false);
         txtJavaVersion.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtJavaVersion.text")); // NOI18N
-        txtJavaVersion.setFocusable(false);
 
         labelJavaLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaLocation.text")); // NOI18N
         labelJavaLocation.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaLocation.toolTipText")); // NOI18N
 
         txtJavaLocation.setEditable(false);
         txtJavaLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtJavaLocation.text")); // NOI18N
-        txtJavaLocation.setFocusable(false);
 
         labelOSName.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelOSName.text")); // NOI18N
         labelOSName.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelOSName.toolTipText")); // NOI18N
 
         txtOSName.setEditable(false);
         txtOSName.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtOSName.text")); // NOI18N
-        txtOSName.setFocusable(false);
 
         labelVersion.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelVersion.text")); // NOI18N
         labelVersion.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelVersion.toolTipText")); // NOI18N
 
         txtVersion.setEditable(false);
         txtVersion.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtVersion.text")); // NOI18N
-        txtVersion.setFocusable(false);
 
         labelJavaVersion.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaVersion.text")); // NOI18N
         labelJavaVersion.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelJavaVersion.toolTipText")); // NOI18N
@@ -143,7 +139,6 @@ public class AboutDialog extends javax.swing.JDialog {
 
         txtDroidFolder.setEditable(false);
         txtDroidFolder.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtDroidFolder.text")); // NOI18N
-        txtDroidFolder.setFocusable(false);
 
         buttonOpenDroidFolder.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenDroidFolder.text")); // NOI18N
         buttonOpenDroidFolder.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenDroidFolder.toolTipText")); // NOI18N
@@ -158,7 +153,6 @@ public class AboutDialog extends javax.swing.JDialog {
 
         txtLogLocation.setEditable(false);
         txtLogLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtLogLocation.text")); // NOI18N
-        txtLogLocation.setFocusable(false);
 
         buttonOpenLogLocation.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.buttonOpenLogLocation.text")); // NOI18N
         buttonOpenLogLocation.addActionListener(new java.awt.event.ActionListener() {
@@ -172,14 +166,12 @@ public class AboutDialog extends javax.swing.JDialog {
 
         txtBuildDate.setEditable(false);
         txtBuildDate.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtBuildDate.text")); // NOI18N
-        txtBuildDate.setFocusable(false);
 
         labelProfileCount.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelProfileCount.text")); // NOI18N
         labelProfileCount.setToolTipText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.labelProfileCount.toolTipText")); // NOI18N
 
         txtProfileCount.setEditable(false);
         txtProfileCount.setText(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.txtProfileCount.text")); // NOI18N
-        txtProfileCount.setFocusable(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -290,7 +282,7 @@ public class AboutDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonOk)
                     .addComponent(buttonCopyToClipboard))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(88, Short.MAX_VALUE))
         );
 
         pack();
