@@ -608,7 +608,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-ri</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.1</version>
                 <type>pom</type>
             </dependency>
             <dependency>
