@@ -17,9 +17,8 @@
         <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
         <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
         <url>scm:git:https://github.com/digital-preservation/droid.git</url>
-      <tag>HEAD</tag>
-  </scm>
-    
+        <tag>HEAD</tag>
+    </scm>
     <build>
         <plugins>
             <plugin>
@@ -42,10 +41,10 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>prepare-files-windows</id>
@@ -54,35 +53,34 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip" dest="${project.build.directory}/jre_tmp/" />
+                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip"/>
                                 <move todir="${project.build.directory}/jre-windows/">
                                     <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.18+10-jre/">
-                                        <include name="**/*" />
+                                        <include name="**/*"/>
                                     </fileset>
                                 </move>
-
                                 <delete includeemptydirs="true">
-                                    <fileset dir="${project.build.directory}/jre_tmp/">
-                                    </fileset>
+                                    <fileset dir="${project.build.directory}/jre_tmp/"/>
                                 </delete>
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- append to the packaging phase. -->
+                        <id>make-assembly</id>
+                        <!-- this is used for inheritance merges -->
+                        <phase>package</phase>
+                        <!-- append to the packaging phase. -->
                         <goals>
-                            <goal>single</goal> <!-- goals == mojos -->
+                            <goal>single</goal>
+                            <!-- goals == mojos -->
                         </goals>
                         <configuration>
                             <filters>
@@ -112,7 +110,6 @@
             </plugin>
         </plugins>
     </build>
-  
     <dependencies>
         <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
@@ -120,17 +117,17 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-  	<dependency>
+        <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-ui</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
-  	</dependency>
+        </dependency>
         <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-tools</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-  </dependencies>
+    </dependencies>
 </project>
