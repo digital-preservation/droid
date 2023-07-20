@@ -1,127 +1,111 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-  
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
         <version>6.6.2-SNAPSHOT</version>
-  	    <relativePath>../droid-parent</relativePath>
+        <relativePath>../droid-parent</relativePath>
     </parent>
-  
     <artifactId>droid-binary</artifactId>
     <packaging>pom</packaging>
-  
     <name>droid-binaries</name>
-    
     <scm>
         <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
         <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
         <url>scm:git:https://github.com/digital-preservation/droid.git</url>
-      <tag>HEAD</tag>
-  </scm>
-
-    <profiles>
-        <profile>
-            <id>unix-only</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.googlecode.maven-download-plugin</groupId>
-                        <artifactId>download-maven-plugin</artifactId>
-                        <version>1.6.8</version>
-                        <executions>
-                            <execution>
-                                <id>download-files-windows</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- To update, retrieve link for windows jdk on x86 architecture from https://adoptium.net -->
-                                    <url>https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip</url>
-                                    <unpack>false</unpack>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>prepare-files-windows</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                        <unzip src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip" dest="${project.build.directory}/jre_tmp/" />
-                                        <move todir="${project.build.directory}/jre-windows/">
-                                            <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.18+10-jre/">
-                                                <include name="**/*" />
-                                            </fileset>
-                                        </move>
-
-                                        <delete includeemptydirs="true">
-                                            <fileset dir="${project.build.directory}/jre_tmp/">
-                                            </fileset>
-                                        </delete>
-                                    </tasks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                                <phase>package</phase> <!-- append to the packaging phase. -->
-                                <goals>
-                                    <goal>single</goal> <!-- goals == mojos -->
-                                </goals>
-                                <configuration>
-                                    <filters>
-                                        <filter>${basedir}/src/assembly/filter.properties</filter>
-                                    </filters>
-                                    <descriptors>
-                                        <descriptor>assembly.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>make-assembly-windows</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <filters>
-                                        <filter>${basedir}/src/assembly/filter-windows-with-jre.properties</filter>
-                                    </filters>
-                                    <descriptors>
-                                        <descriptor>assembly-windows-with-jre.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+        <tag>HEAD</tag>
+    </scm>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <executions>
+                    <execution>
+                        <id>download-files-windows</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <!-- To update, retrieve link for windows jdk on x86 architecture from https://adoptium.net -->
+                            <url>https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>prepare-files-windows</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- Update binary from https://adoptopenjdk.net/releases.html -->
+                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip"/>
+                                <move todir="${project.build.directory}/jre-windows/">
+                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.18+10-jre/">
+                                        <include name="**/*"/>
+                                    </fileset>
+                                </move>
+                                <delete includeemptydirs="true">
+                                    <fileset dir="${project.build.directory}/jre_tmp/"/>
+                                </delete>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <!-- this is used for inheritance merges -->
+                        <phase>package</phase>
+                        <!-- append to the packaging phase. -->
+                        <goals>
+                            <goal>single</goal>
+                            <!-- goals == mojos -->
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>${basedir}/src/assembly/filter.properties</filter>
+                            </filters>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>make-assembly-windows</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>${basedir}/src/assembly/filter-windows-with-jre.properties</filter>
+                            </filters>
+                            <descriptors>
+                                <descriptor>assembly-windows-with-jre.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
@@ -129,17 +113,17 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-  	<dependency>
+        <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-ui</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
-  	</dependency>
+        </dependency>
         <dependency>
             <groupId>uk.gov.nationalarchives</groupId>
             <artifactId>droid-tools</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-  </dependencies>
+    </dependencies>
 </project>
