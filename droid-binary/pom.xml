@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.7.0-RC2-SNAPSHOT</version>
+        <version>6.7.0-RC2</version>
   	    <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -17,7 +17,7 @@
         <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
         <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
         <url>scm:git:https://github.com/digital-preservation/droid.git</url>
-        <tag>HEAD</tag>
+        <tag>droid-6.7.0-RC2</tag>
     </scm>
     <build>
         <plugins>
@@ -55,14 +55,14 @@
                         <configuration>
                             <target>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip"/>
+                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip" />
                                 <move todir="${project.build.directory}/jre-windows/">
                                     <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.18+10-jre/">
-                                        <include name="**/*"/>
+                                        <include name="**/*" />
                                     </fileset>
                                 </move>
                                 <delete includeemptydirs="true">
-                                    <fileset dir="${project.build.directory}/jre_tmp/"/>
+                                    <fileset dir="${project.build.directory}/jre_tmp/" />
                                 </delete>
                             </target>
                         </configuration>
