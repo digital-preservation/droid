@@ -4,6 +4,7 @@ Version 6.7.0
 * #861 Improvement: CSV export has column headers when there is more than one PUID per file
 * #952 Improvement: SHA512 is available as an option for checksums
 * #232 Improvement: Moved to using a different zip library for opening the zip archives
+* #977 Improvement: Added an `About Droid` dialog to the GUI
 * #953 Bugfix: On CLI, -At and -Wt options without any arguments do not analyse archives or web archives
 
 Version 6.6.1

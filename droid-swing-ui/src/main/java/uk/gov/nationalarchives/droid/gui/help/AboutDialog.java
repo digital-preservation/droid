@@ -93,8 +93,8 @@ public class AboutDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(org.openide.util.NbBundle.getMessage(AboutDialog.class, "AboutDialog.title_1")); // NOI18N
-        setMinimumSize(new java.awt.Dimension(540, 470));
-        setPreferredSize(new java.awt.Dimension(640, 470));
+        setMinimumSize(new java.awt.Dimension(640, 470));
+        setPreferredSize(new java.awt.Dimension(680, 470));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
@@ -338,6 +338,8 @@ public class AboutDialog extends javax.swing.JDialog {
         // if the count is -1, it means something went wrong in counting the folders
         String profileCount = count == -1 ? "Unknown" : String.valueOf(count);
         txtProfileCount.setText(profileCount);
+        this.getRootPane().setDefaultButton(buttonOk);
+        buttonOk.requestFocus();
     }//GEN-LAST:event_formWindowActivated
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -7,10 +7,10 @@
       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/help/Bundle.properties" key="AboutDialog.title_1" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
     </Property>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[540, 470]"/>
+      <Dimension value="[640, 470]"/>
     </Property>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[640, 470]"/>
+      <Dimension value="[680, 470]"/>
     </Property>
   </Properties>
   <SyntheticProperties>
