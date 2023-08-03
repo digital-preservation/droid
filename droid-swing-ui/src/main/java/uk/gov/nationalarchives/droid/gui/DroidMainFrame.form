@@ -522,6 +522,7 @@
     </Container>
     <Container class="javax.swing.JToolBar" name="droidToolBar">
       <Properties>
+        <Property name="floatable" type="boolean" value="false"/>
         <Property name="rollover" type="boolean" value="true"/>
         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
           <Insets value="[4, 4, 4, 4]"/>
