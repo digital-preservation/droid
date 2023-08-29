@@ -97,7 +97,7 @@ public class DroidAPISkeletonTest {
      * from the API for the test skeleton suite.
      * Following table describes the current puids that are ignored because the identification using current
      * signature file does not match the indicated puid in filename
-     * ---------------- Current signature file V112 ----------------
+     * ---------------- Current signature file V114 ----------------
      * fmt-1062-signature-id-1435.3fr			fmt/353		Signature
      * fmt-1157-signature-id-1539.nfo
      * fmt-1739-signature-id-2077.toast		    fmt/468		Signature

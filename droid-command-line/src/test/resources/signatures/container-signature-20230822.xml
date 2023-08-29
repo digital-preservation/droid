@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="34">
+<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="35">
   <ContainerSignatures>
     <ContainerSignature Id="1000" ContainerType="OLE2">
       <Description>Microsoft Word 6.0/95 OLE2</Description>
@@ -4992,7 +4992,7 @@
       </Files>
     </ContainerSignature>
 
-<ContainerSignature ContainerType="ZIP" Id="31000">
+	<ContainerSignature ContainerType="ZIP" Id="31000">
       <Description>SIARD 1.0</Description>
       <Files>
         <File>
@@ -5013,7 +5013,7 @@
       </Files>
     </ContainerSignature>
 
-<ContainerSignature ContainerType="ZIP" Id="31010">
+	<ContainerSignature ContainerType="ZIP" Id="31010">
       <Description>SIARD 2.0</Description>
       <Files>
         <File>
@@ -5034,7 +5034,7 @@
       </Files>
     </ContainerSignature>
 
-<ContainerSignature ContainerType="ZIP" Id="31020">
+	<ContainerSignature ContainerType="ZIP" Id="31020">
       <Description>SIARD 2.1</Description>
       <Files>
         <File>
@@ -5947,6 +5947,26 @@
 	                            <ByteSequence Reference="EOFoffset">
 	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="16">
 	                                    <Sequence>45 4F 44 46</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+		
+		<ContainerSignature Id="52100" ContainerType="OLE2">
+            <Description>GST Art 2</Description>
+            <Files>
+				<File>
+                    <Path>Contents</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="52000">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="16" SubSeqMaxOffset="16">
+	                                    <Sequence>47 53 54 3A 41 52 54 00</Sequence>
 	                                </SubSequence>
 	                            </ByteSequence>
 	                        </InternalSignature>
@@ -7090,13 +7110,14 @@
     <!--  3DS Max 2(OLE2)-->
     <FileFormatMapping signatureId="30040" Puid="fmt/978"/>
 
+
     <!--  SIARD - Software-Independent Archiving of Relational Databases v1.0(ZIP)-->
     <FileFormatMapping signatureId="31000" Puid="fmt/161"/>
     <!--  SIARD - Software-Independent Archiving of Relational Databases v2.0(ZIP)-->
     <FileFormatMapping signatureId="31010" Puid="fmt/995"/>
     <!--  SIARD - Software-Independent Archiving of Relational Databases v2.1(ZIP)-->
     <FileFormatMapping signatureId="31020" Puid="fmt/1196"/>
-	  <!--  SIARD - Software-Independent Archiving of Relational Databases v2.2(ZIP)-->
+	<!--  SIARD - Software-Independent Archiving of Relational Databases v2.2(ZIP)-->
     <FileFormatMapping signatureId="31030" Puid="fmt/1777"/>
     <!--  Open Raster Image Format(ZIP)-->
     <FileFormatMapping signatureId="32000" Puid="fmt/998"/>
@@ -7202,7 +7223,10 @@
 
     <!-- GST Publisher 2 (OLE2)-->
     <FileFormatMapping signatureId="52000" Puid="fmt/1416"/>
-
+	
+    <!-- GST Art 2 (OLE2)-->
+    <FileFormatMapping signatureId="52100" Puid="fmt/1878"/>
+	
     <!-- Corel Print House 1 (OLE2)-->
     <FileFormatMapping signatureId="53000" Puid="fmt/1417"/>
     <!-- Corel Print House 1 (OLE2)-->
