@@ -35,10 +35,9 @@
         <module>droid-results</module>
         <module>droid-swing-ui</module>
         <module>droid-api</module>
-	      <module>droid-binary</module>
-	      <module>droid-tools</module>
+        <module>droid-binary</module>
+        <module>droid-tools</module>
     </modules>
-
     <build>
         <plugins>
             <plugin>
