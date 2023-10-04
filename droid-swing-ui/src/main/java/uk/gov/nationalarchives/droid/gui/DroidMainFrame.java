@@ -512,6 +512,7 @@ public class DroidMainFrame extends JFrame {
             }
         });
 
+        droidToolBar.setFloatable(false);
         droidToolBar.setRollover(true);
         droidToolBar.setMargin(new java.awt.Insets(4, 4, 4, 4));
         droidToolBar.setMaximumSize(new java.awt.Dimension(0, 0));
