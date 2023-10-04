@@ -47,7 +47,7 @@
 <h3>
 <a name="user-requirements" class="anchor" href="#user-requirements"><span class="octicon octicon-link"></span></a>User requirements</h3>
 
-<p>DROID requires a minimum of Java 8 Standard Edition (SE). DROID was built and tested on Java 1.8. DROID version 6.6.x will likely operate with Java 7, but this is not guaranteed.</p>
+<p>DROID requires a minimum of Java 8 Standard Edition (SE). DROID was built and tested on Java 1.8. DROID version 6.7.x will likely operate with Java 7, but this is not guaranteed.</p>
 
 <p>Signature Files and their release notes can be found at the following links: </p>
 
@@ -123,7 +123,21 @@ will build. Follow the Maven output to see where Maven has placed the binaries.<
 <h3>
 <a name="release-notes" class="anchor" href="#release-notes"><span class="octicon octicon-link"></span></a>Release Notes</h3>
 
-<h4>DROID 6.6.0</h4>
+<h4>DROID 6.7.0</h4>
+<p>This release has following fixes and improvements</P>
+
+<pre><code>Improvements and Fixes
+-   #898 Improvement: Sigtool uses the version of java bundled with Droid on the Windows OS
+-   #938 Improvement: Internal API result includes whether there is an extension mismatch in identification
+-   #861 Improvement: CSV export has column headers when there is more than one PUID per file
+-   #952 Improvement: SHA512 is available as an option for checksums
+-   #977 Improvement: Added an About Droid dialog to the GUI
+-   Improvement: Moved to using a different zip library for opening the zip archives
+-   #953 Bugfix: On CLI, -At and -Wt options without any arguments do not analyse archives or web archives
+</code></pre>
+
+
+        <h4>DROID 6.6.0</h4>
 <p>This release has improvements and bug fixes as listed below  </p>
 
 <pre><code>Enhancements and bug fixes
