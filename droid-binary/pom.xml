@@ -1,14 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+  
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.6.2-SNAPSHOT</version>
-        <relativePath>../droid-parent</relativePath>
+        <version>6.7.1-SNAPSHOT</version>
+  	    <relativePath>../droid-parent</relativePath>
     </parent>
+  
     <artifactId>droid-binary</artifactId>
     <packaging>pom</packaging>
+  
     <name>droid-binaries</name>
+    
     <scm>
         <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
         <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
@@ -51,14 +55,14 @@
                         <configuration>
                             <target>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip"/>
+                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip" />
                                 <move todir="${project.build.directory}/jre-windows/">
                                     <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.18+10-jre/">
-                                        <include name="**/*"/>
+                                        <include name="**/*" />
                                     </fileset>
                                 </move>
                                 <delete includeemptydirs="true">
-                                    <fileset dir="${project.build.directory}/jre_tmp/"/>
+                                    <fileset dir="${project.build.directory}/jre_tmp/" />
                                 </delete>
                             </target>
                         </configuration>
