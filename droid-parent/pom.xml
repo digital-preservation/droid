@@ -263,7 +263,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.1.2</version>
+                <version>9.0.6</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                     <suppressionFile>${project.basedir}/dependency-check/suppressions.xml</suppressionFile>
