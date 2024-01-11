@@ -101,7 +101,7 @@ public class ConfigDialog extends JDialog {
 
     private final List<String> propertiesThatTakeEffectInNewProfile = new ArrayList<>();
 
-    private boolean automaticallyCreateNewProfile = false;
+    private boolean automaticallyCreateNewProfile;
     private int response;
     private final Map<String, Object> props = new HashMap<String, Object>();
     private final Map<String, Object> propsOnLaunch = new HashMap<String, Object>();
