@@ -338,7 +338,7 @@ public class ConfigDialog extends JDialog {
         jLabel9.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel9.text")); // NOI18N
 
         buttonGroupExtension.add(rowPerFileButton2);
-        rowPerFileButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton2.text")); // NOI18N
+        rowPerFileButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.matchAllExtensions.text")); // NOI18N
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"profile.matchAllExtensions\"]}"),
@@ -346,7 +346,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         buttonGroupExtension.add(rowPerFormatButton2);
-        rowPerFormatButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFormatButton2.text")); // NOI18N
+        rowPerFormatButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.matchExtensionNoSig.text")); // NOI18N
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.matchAllExtensions\"]}"),
