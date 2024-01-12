@@ -81,6 +81,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
 
 /**
@@ -98,9 +99,7 @@ public class ConfigDialog extends JDialog {
 
     private static final String PRONOM_SIGNATURE_URL_KEY = "pronom.update.url";
     private static final String PRONOM_CONTAINER_URL_KEY = "container.update.url";
-
-    private final List<String> propertiesThatTakeEffectInNewProfile = new ArrayList<>();
-
+    private final List<String> propertiesAffectingNewProfile = new ArrayList<>();
     private boolean automaticallyCreateNewProfile;
     private int response;
     private final Map<String, Object> props = new HashMap<String, Object>();
@@ -140,7 +139,7 @@ public class ConfigDialog extends JDialog {
     }
 
     private void populatePropertyListNeedingNewProfile() {
-        propertiesThatTakeEffectInNewProfile.addAll(
+        propertiesAffectingNewProfile.addAll(
                 Arrays.asList(DroidGlobalProperty.BINARY_UPDATE_URL.getName(), DroidGlobalProperty.CONTAINER_UPDATE_URL.getName(),
                         DroidGlobalProperty.PROCESS_ZIP.getName(), DroidGlobalProperty.PROCESS_TAR.getName(),
                         DroidGlobalProperty.PROCESS_GZIP.getName(), DroidGlobalProperty.PROCESS_RAR.getName(),
@@ -148,7 +147,8 @@ public class ConfigDialog extends JDialog {
                         DroidGlobalProperty.PROCESS_BZIP2.getName(), DroidGlobalProperty.PROCESS_ARC.getName(),
                         DroidGlobalProperty.PROCESS_WARC.getName(), DroidGlobalProperty.GENERATE_HASH.getName(),
                         DroidGlobalProperty.HASH_ALGORITHM.getName(), DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName(),
-                        DroidGlobalProperty.EXTENSION_ALL.getName(), DroidGlobalProperty.DEFAULT_THROTTLE.getName()
+                        DroidGlobalProperty.EXTENSION_ALL.getName(), DroidGlobalProperty.DEFAULT_THROTTLE.getName(),
+                        "WHAT_IS_THIS"
             )
         );
     }
@@ -921,8 +921,8 @@ public class ConfigDialog extends JDialog {
         if (isDirtyForNewProfile()) {
             int optionResponse = JOptionPane.showOptionDialog(
                     this,
-                    NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel10.text_1"),
-                    "Create New Profile?",
+                    NbBundle.getMessage(ConfigDialog.class, "CreateNewProfileQuestionDialog.body.text"),
+                    NbBundle.getMessage(ConfigDialog.class, "CreateNewProfileQuestionDialog.title.text"),
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
@@ -944,8 +944,8 @@ public class ConfigDialog extends JDialog {
     }//GEN-LAST:event_okButtonActionPerformed
 
     private boolean isDirtyForNewProfile() {
-        for (String propertyName : propertiesThatTakeEffectInNewProfile) {
-            if (props.get(propertyName) != propsOnLaunch.get(propertyName)) {
+        for (String propertyName : propertiesAffectingNewProfile) {
+            if (!Objects.equals(props.get(propertyName), propsOnLaunch.get(propertyName))) {
                 return true;
             }
         }
@@ -1215,14 +1215,4 @@ public class ConfigDialog extends JDialog {
     public List<String> getAllContainerSigFiles() {
         return allContainerSigFiles;
     }
-
-    /**
-     * @return the allTextSigFiles
-     */
-    /*
-    public List<String> getAllTextSigFiles() {
-        return allTextSigFiles;
-    }
-    */
-
 }
