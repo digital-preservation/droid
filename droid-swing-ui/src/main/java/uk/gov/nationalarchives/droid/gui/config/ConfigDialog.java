@@ -147,8 +147,7 @@ public class ConfigDialog extends JDialog {
                         DroidGlobalProperty.PROCESS_BZIP2.getName(), DroidGlobalProperty.PROCESS_ARC.getName(),
                         DroidGlobalProperty.PROCESS_WARC.getName(), DroidGlobalProperty.GENERATE_HASH.getName(),
                         DroidGlobalProperty.HASH_ALGORITHM.getName(), DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName(),
-                        DroidGlobalProperty.EXTENSION_ALL.getName(), DroidGlobalProperty.DEFAULT_THROTTLE.getName(),
-                        "WHAT_IS_THIS"
+                        DroidGlobalProperty.EXTENSION_ALL.getName(), DroidGlobalProperty.DEFAULT_THROTTLE.getName()
             )
         );
     }
