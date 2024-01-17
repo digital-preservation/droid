@@ -31,59 +31,58 @@
  */
 package uk.gov.nationalarchives.droid.gui.config;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
-
 import org.apache.commons.collections4.list.SetUniqueList;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.beansbinding.ELProperty;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.observablecollections.ObservableMap;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.openide.util.NbBundle;
-
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.gui.GlobalContext;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SortedMap;
 
 /**
  *
@@ -100,9 +99,11 @@ public class ConfigDialog extends JDialog {
 
     private static final String PRONOM_SIGNATURE_URL_KEY = "pronom.update.url";
     private static final String PRONOM_CONTAINER_URL_KEY = "container.update.url";
-    
+    private final List<String> propertiesAffectingNewProfile = new ArrayList<>();
+    private boolean automaticallyCreateNewProfile;
     private int response;
-    private Map<String, Object> props = new HashMap<String, Object>();
+    private final Map<String, Object> props = new HashMap<String, Object>();
+    private final Map<String, Object> propsOnLaunch = new HashMap<String, Object>();
     private GlobalContext context;
     
     private ObservableMap<String, Object> globalConfig = ObservableCollections.observableMap(props);
@@ -129,21 +130,37 @@ public class ConfigDialog extends JDialog {
     public ConfigDialog(Frame owner, GlobalContext context) {
         super(owner, true);
         this.context = context;
+        populatePropertyListNeedingNewProfile();
         init(context.getGlobalConfig().getPropertiesMap());
         initComponents();
         setPanelComponents(autoUpdatePanel, autoUpdateCheckbox.isSelected());
         updateFrequencyTextBox.setEnabled(updateScheduleRadioButton.isSelected() && autoUpdateCheckbox.isSelected());
         setLocationRelativeTo(owner);
     }
-    
+
+    private void populatePropertyListNeedingNewProfile() {
+        propertiesAffectingNewProfile.addAll(
+                Arrays.asList(DroidGlobalProperty.BINARY_UPDATE_URL.getName(), DroidGlobalProperty.CONTAINER_UPDATE_URL.getName(),
+                        DroidGlobalProperty.PROCESS_ZIP.getName(), DroidGlobalProperty.PROCESS_TAR.getName(),
+                        DroidGlobalProperty.PROCESS_GZIP.getName(), DroidGlobalProperty.PROCESS_RAR.getName(),
+                        DroidGlobalProperty.PROCESS_7ZIP.getName(), DroidGlobalProperty.PROCESS_ISO.getName(),
+                        DroidGlobalProperty.PROCESS_BZIP2.getName(), DroidGlobalProperty.PROCESS_ARC.getName(),
+                        DroidGlobalProperty.PROCESS_WARC.getName(), DroidGlobalProperty.GENERATE_HASH.getName(),
+                        DroidGlobalProperty.HASH_ALGORITHM.getName(), DroidGlobalProperty.MAX_BYTES_TO_SCAN.getName(),
+                        DroidGlobalProperty.EXTENSION_ALL.getName(), DroidGlobalProperty.DEFAULT_THROTTLE.getName()
+            )
+        );
+    }
+
     /**
      * Initialises the dialog with all the settings.
      * @param properties the settings
      */
     public void init(Map<String, Object> properties) {
         response = CANCEL;
-        
+
         props.putAll(properties);
+        propsOnLaunch.putAll(properties); //copy of initial state to detect dirty later
 
         final Map<SignatureType, SortedMap<String, SignatureFileInfo>> allSignatureFiles = 
             context.getActionFactory().newListSignatureFilesAction().list();
@@ -295,11 +312,7 @@ public class ConfigDialog extends JDialog {
                         generateHashCheckBox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
-        generateHashCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                generateHashCheckBoxActionPerformed(evt);
-            }
-        });
+        generateHashCheckBox.addActionListener(evt -> generateHashCheckBoxActionPerformed(evt));
 
         eLProperty = ELProperty.create("${allContainerSigFiles}");
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, this, eLProperty, containerSigCombo);
@@ -309,11 +322,7 @@ public class ConfigDialog extends JDialog {
                         containerSigCombo, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
-        containerSigCombo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                containerSigComboActionPerformed(evt);
-            }
-        });
+        containerSigCombo.addActionListener(evt -> containerSigComboActionPerformed(evt));
 
         containerSigFileLabel.setLabelFor(containerSigCombo);
         containerSigFileLabel.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.containerSigFileLabel.text_1")); // NOI18N
@@ -328,7 +337,7 @@ public class ConfigDialog extends JDialog {
         jLabel9.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel9.text")); // NOI18N
 
         buttonGroupExtension.add(rowPerFileButton2);
-        rowPerFileButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton2.text")); // NOI18N
+        rowPerFileButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.matchAllExtensions.text")); // NOI18N
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"profile.matchAllExtensions\"]}"),
@@ -336,7 +345,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         buttonGroupExtension.add(rowPerFormatButton2);
-        rowPerFormatButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFormatButton2.text")); // NOI18N
+        rowPerFormatButton2.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.matchExtensionNoSig.text")); // NOI18N
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.matchAllExtensions\"]}"),
@@ -351,20 +360,12 @@ public class ConfigDialog extends JDialog {
                         hashAlgorithmCombo, BeanProperty.create("selectedItem"));
         bindingGroup.addBinding(binding);
 
-        hashAlgorithmCombo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                hashAlgorithmComboActionPerformed(evt);
-            }
-        });
+        hashAlgorithmCombo.addActionListener(evt -> hashAlgorithmComboActionPerformed(evt));
 
         jLabel10.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel10.text_1")); // NOI18N
 
         processZipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processZipCheckBox.text")); // NOI18N
-        processZipCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processZipCheckBoxActionPerformed(evt);
-            }
-        });
+        processZipCheckBox.addActionListener(evt -> processZipCheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processZip\"]}"),
@@ -374,11 +375,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         processTarCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processTarCheckBox.text")); // NOI18N
-        processTarCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processTarCheckBoxActionPerformed(evt);
-            }
-        });
+        processTarCheckBox.addActionListener(evt -> processTarCheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processTar\"]}"),
@@ -389,11 +386,7 @@ public class ConfigDialog extends JDialog {
 
 
         processGzipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processGzipCheckBox.text")); // NOI18N
-        processGzipCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processGzipCheckBoxActionPerformed(evt);
-            }
-        });
+        processGzipCheckBox.addActionListener(evt -> processGzipCheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processGzip\"]}"),
@@ -403,11 +396,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         processRarCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processRarCheckBox.text")); // NOI18N
-        processRarCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processRarCheckBoxActionPerformed(evt);
-            }
-        });
+        processRarCheckBox.addActionListener(evt -> processRarCheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processRar\"]}"),
@@ -417,11 +406,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         process7zipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.process7zipCheckBox.text")); // NOI18N
-        process7zipCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                process7zipCheckBoxActionPerformed(evt);
-            }
-        });
+        process7zipCheckBox.addActionListener(evt -> process7zipCheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.process7zip\"]}"),
@@ -431,11 +416,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         processIsoCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processIsoCheckBox.text")); // NOI18N
-        processIsoCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processIsoCheckBoxActionPerformed(evt);
-            }
-        });
+        processIsoCheckBox.addActionListener(evt -> processIsoCheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processIso\"]}"),
@@ -445,11 +426,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         processBzip2CheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processBzip2CheckBox.text")); // NOI18N
-        processBzip2CheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processBzip2CheckBoxActionPerformed(evt);
-            }
-        });
+        processBzip2CheckBox.addActionListener(evt -> processBzip2CheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processBzip2\"]}"),
@@ -459,11 +436,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         toggleArchivesButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.toggleArchivesButton.text")); // NOI18N
-        toggleArchivesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                toggleArchivesButtonActionPerformed(evt);
-            }
-        });
+        toggleArchivesButton.addActionListener(evt -> toggleArchivesButtonActionPerformed(evt));
 
         archivesLabel.setLabelFor(containerSigCombo);
         archivesLabel.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.archivesLabel.text")); // NOI18N
@@ -516,11 +489,7 @@ public class ConfigDialog extends JDialog {
         webArchivesLabel.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.webArchivesLabel.text")); // NOI18N
 
         processArcCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processArcCheckBox.text")); // NOI18N
-        processArcCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processArcCheckBoxActionPerformed(evt);
-            }
-        });
+        processArcCheckBox.addActionListener(evt -> processArcCheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processArc\"]}"),
@@ -530,11 +499,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         processWarcCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processWarcCheckBox.text")); // NOI18N
-        processWarcCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                processWarcCheckBoxActionPerformed(evt);
-            }
-        });
+        processWarcCheckBox.addActionListener(evt -> processWarcCheckBoxActionPerformed(evt));
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"profile.processWarc\"]}"),
@@ -544,11 +509,7 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         toggleWebArchivesButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.toggleWebArchivesButton.text")); // NOI18N
-        toggleWebArchivesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                toggleWebArchivesButtonActionPerformed(evt);
-            }
-        });
+        toggleWebArchivesButton.addActionListener(evt -> toggleWebArchivesButtonActionPerformed(evt));
 
         GroupLayout jPanel6Layout = new GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -678,11 +639,7 @@ public class ConfigDialog extends JDialog {
                         rowPerFormatButton1, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
-        rowPerFormatButton1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                rowPerFormatButton1ActionPerformed(evt);
-            }
-        });
+        rowPerFormatButton1.addActionListener(evt -> rowPerFormatButton1ActionPerformed(evt));
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -734,11 +691,7 @@ public class ConfigDialog extends JDialog {
                         updateUrlTextBox, BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
-        updateUrlTextBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                updateUrlTextBoxActionPerformed(evt);
-            }
-        });
+        updateUrlTextBox.addActionListener(evt -> updateUrlTextBoxActionPerformed(evt));
 
         autoUpdatePanel.setBorder(
                 BorderFactory.createTitledBorder(BorderFactory.createTitledBorder(""),
@@ -763,11 +716,7 @@ public class ConfigDialog extends JDialog {
                         updateOnStartupRadioButton, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
-        updateOnStartupRadioButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                updateOnStartupRadioButtonActionPerformed(evt);
-            }
-        });
+        updateOnStartupRadioButton.addActionListener(evt -> updateOnStartupRadioButtonActionPerformed(evt));
 
         updateFrequencyButtonGroup.add(updateScheduleRadioButton);
         updateScheduleRadioButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.updateScheduleRadioButton.text")); // NOI18N
@@ -810,20 +759,12 @@ public class ConfigDialog extends JDialog {
                         autoUpdateCheckbox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
-        autoUpdateCheckbox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                autoUpdateItemStateChanged(evt);
-            }
-        });
+        autoUpdateCheckbox.addItemListener(evt -> autoUpdateItemStateChanged(evt));
 
         jLabel7.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel6.text")); // NOI18N
 
         proxySettingsButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.proxySettingsButton.text")); // NOI18N
-        proxySettingsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                proxySettingsButtonActionPerformed(evt);
-            }
-        });
+        proxySettingsButton.addActionListener(evt -> proxySettingsButtonActionPerformed(evt));
 
         containerSigUrl.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.containerSigUrl.toolTipText")); // NOI18N
 
@@ -860,18 +801,10 @@ public class ConfigDialog extends JDialog {
                         autoSetDefaultSignatureFileCheckBox, BeanProperty.create("selected"));
         bindingGroup.addBinding(binding);
 
-        autoSetDefaultSignatureFileCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                autoSetDefaultSignatureFileCheckBoxActionPerformed(evt);
-            }
-        });
+        autoSetDefaultSignatureFileCheckBox.addActionListener(evt -> autoSetDefaultSignatureFileCheckBoxActionPerformed(evt));
 
         pronomUrlResetButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.pronomUrlResetButton.text")); // NOI18N
-        pronomUrlResetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                pronomUrlResetButtonActionPerformed(evt);
-            }
-        });
+        pronomUrlResetButton.addActionListener(evt -> pronomUrlResetButtonActionPerformed(evt));
 
         GroupLayout jPanel5Layout = new GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -942,18 +875,10 @@ public class ConfigDialog extends JDialog {
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel3.TabConstraints.tabTitle"), jPanel5); // NOI18N
 
         cancelButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.cancelButton.text")); // NOI18N
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
 
         okButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.okButton.text")); // NOI18N
-        okButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -992,8 +917,39 @@ public class ConfigDialog extends JDialog {
 
     private void okButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         response = OK;
+        if (isDirtyForNewProfile()) {
+            int optionResponse = JOptionPane.showOptionDialog(
+                    this,
+                    NbBundle.getMessage(ConfigDialog.class, "CreateNewProfileQuestionDialog.body.text"),
+                    NbBundle.getMessage(ConfigDialog.class, "CreateNewProfileQuestionDialog.title.text"),
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null,
+                    null
+            );
+            switch (optionResponse) {
+                case JOptionPane.YES_OPTION:
+                    automaticallyCreateNewProfile = true;
+                    break;
+                case JOptionPane.NO_OPTION:
+                    automaticallyCreateNewProfile = false;
+                    break;
+                case JOptionPane.CANCEL_OPTION:
+                    return;
+            }
+        }
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
+
+    private boolean isDirtyForNewProfile() {
+        for (String propertyName : propertiesAffectingNewProfile) {
+            if (!Objects.equals(props.get(propertyName), propsOnLaunch.get(propertyName))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
@@ -1192,6 +1148,10 @@ public class ConfigDialog extends JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
+     * @return boolean indicating whether the user opted to create a new profile when this dialog closes
+     */
+    public boolean getCreateNewProfile() { return  automaticallyCreateNewProfile; }
+    /**
      * @return the dialog response
      */
     public int getResponse() {
@@ -1254,14 +1214,4 @@ public class ConfigDialog extends JDialog {
     public List<String> getAllContainerSigFiles() {
         return allContainerSigFiles;
     }
-
-    /**
-     * @return the allTextSigFiles
-     */
-    /*
-    public List<String> getAllTextSigFiles() {
-        return allTextSigFiles;
-    }
-    */
-
 }
