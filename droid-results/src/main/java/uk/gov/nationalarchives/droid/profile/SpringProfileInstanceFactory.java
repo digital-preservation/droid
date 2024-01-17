@@ -53,7 +53,6 @@ import uk.gov.nationalarchives.droid.profile.datasource.DerbyPooledDataSource;
  * 
  */
 public class SpringProfileInstanceFactory implements ProfileInstanceLocator {
-
     /**
      * 
      */
@@ -63,7 +62,7 @@ public class SpringProfileInstanceFactory implements ProfileInstanceLocator {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private Map<String, GenericApplicationContext> profileInstanceManagers =
+    private final Map<String, GenericApplicationContext> profileInstanceManagers =
          new HashMap<String, GenericApplicationContext>();
 
     /**
@@ -159,6 +158,10 @@ public class SpringProfileInstanceFactory implements ProfileInstanceLocator {
      */
     @Override
     public synchronized void closeProfileInstance(String location) {
+        ApplicationContext ac = profileInstanceManagers.get(location);
+        DerbyPooledDataSource dataSource = (DerbyPooledDataSource) ac
+                .getBean(DATA_SOURCE_BEAN_NAME);
+        dataSource.close();
         GenericApplicationContext ctx = profileInstanceManagers
                 .remove(location);
         if (ctx != null) {
