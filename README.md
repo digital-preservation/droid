@@ -116,6 +116,8 @@ You will need JAVA 8 to 11 installed to run DROID.
 Unpack the archive `droid-binary-${VERSION}-bin-unix.zip`, then use the `droid.sh` script to run the application.
 
 ### Windows users
+Archive  `droid-binary-${VERSION}-bin-win64-with-jre.zip`
+
 
 You will need JAVA 8 to 11 installed to run DROID. For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 11.
 
