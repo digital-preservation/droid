@@ -254,5 +254,15 @@ public class BinarySignatureIdentifier implements DroidCore {
             }
         }
     }
-   
+
+    /**
+     * Return the name of format based on the puid.
+     * @param puid puid whose corresponding format name is needed
+     * @return format name
+     */
+    @Override
+    public String formatNameByPuid(String puid) {
+        FileFormat format = sigFile.getFileFormat(puid);
+        return format != null? format.getName() : null;
+    }
 }
