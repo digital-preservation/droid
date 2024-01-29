@@ -257,7 +257,7 @@ public class BinarySignatureIdentifier implements DroidCore {
 
     /**
      * Return the name of format based on the puid.
-     * @param puid
+     * @param puid puid whose corresponding format name is needed
      * @return format name
      */
     @Override
