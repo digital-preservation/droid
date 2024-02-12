@@ -54,7 +54,9 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -80,7 +82,12 @@ public class CsvItemWriterTest {
     private CsvItemWriter itemWriter;
     private DroidGlobalConfig config;
     private String testDateTimeString;
-    
+
+    private static final String defaultHeaders = toCsvRow(new String[] {
+            "ID","PARENT_ID","URI","FILE_PATH","NAME","METHOD","STATUS","SIZE","TYPE","EXT","LAST_MODIFIED","EXTENSION_MISMATCH","HASH","FORMAT_COUNT",
+            "PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION"
+    });
+
     @Before
     public void setup() {
         File dir = new File("exports");
@@ -105,7 +112,7 @@ public class CsvItemWriterTest {
     }
 
     @Test
-    public void testWriteNoNodes() throws IOException {
+    public void should_write_only_headers_when_there_are_no_nodes_to_be_written() throws IOException {
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
 
         try(final Writer writer = new StringWriter()) {
@@ -113,12 +120,14 @@ public class CsvItemWriterTest {
             itemWriter.open(writer);
             itemWriter.write(nodes);
 
-            assertEquals(1, writer.toString().split("\n").length);
+            String[] writtenLines = writer.toString().split(LINE_SEPARATOR);
+            assertEquals(1, writtenLines.length);
+            assertEquals(defaultHeaders, writtenLines[0]);
         }
     }
 
     @Test
-    public void testWriteOneNode() throws IOException {
+    public void should_write_one_node_as_one_row_per_format_export() throws IOException {
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
 
         try(final Writer writer = new StringWriter()) {
@@ -153,6 +162,7 @@ public class CsvItemWriterTest {
 
             final String[] lines = writer.toString().split(LINE_SEPARATOR);
             assertEquals(2, lines.length);
+            assertEquals(defaultHeaders, lines[0]);
             assertEquals(expectedEntry, lines[1]);
         }
     }
@@ -300,6 +310,122 @@ public class CsvItemWriterTest {
     }
 
     @Test
+    public void should_restrict_to_limited_number_of_columns_when_the_column_names_are_set_on_the_writer_writing_per_file() throws IOException {
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id1 = buildFormat(1);
+            Format id2 = buildFormat(2);
+
+            ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
+            node.addFormatIdentification(id1);
+            node.addFormatIdentification(id2);
+
+            nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
+            itemWriter.setColumnsToWrite("ID FORMAT_NAME");
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedHeaders = toCsvRow(new String[] {
+                    "ID", "FORMAT_NAME", "FORMAT_NAME1" //per format columns
+            });
+
+            final String expectedEntry1 = toCsvRow(new String[] {
+                    "",
+                    "Plain Text",
+                    "Plain Text"
+            });
+
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
+
+            assertEquals(2, lines.length);
+            assertEquals(expectedHeaders, lines[0]);
+            assertEquals(expectedEntry1, lines[1]);
+        }
+    }
+
+    @Test
+    public void should_restrict_to_limited_number_of_columns_when_the_column_names_are_set_on_the_writer_writing_per_format() throws IOException {
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id1 = buildFormat(1);
+            Format id2 = buildFormat(2);
+
+            ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
+            node.addFormatIdentification(id1);
+            node.addFormatIdentification(id2);
+
+            nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
+            itemWriter.setColumnsToWrite("ID NAME FORMAT_NAME FORMAT_VERSION");
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedHeaders = toCsvRow(new String[] {
+                    "ID", "NAME", "FORMAT_NAME", "FORMAT_VERSION" //per format columns
+            });
+
+            final String expectedEntry1 = toCsvRow(new String[] {
+                    "",
+                    "file1.txt",
+                    "Plain Text",
+                    "1.0"
+            });
+
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
+
+            assertEquals(3, lines.length);
+            assertEquals(expectedHeaders, lines[0]);
+            assertEquals(expectedEntry1, lines[1]);
+            assertEquals(expectedEntry1, lines[2]);
+        }
+    }
+
+    @Test
+    public void should_do_header_customisations_for_hash_column_when_an_algorithm_is_present() throws IOException {
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id1 = buildFormat(1);
+
+            ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
+            node.addFormatIdentification(id1);
+
+            nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
+
+            Map<String, String> headerCustomisation = new HashMap<>();
+            headerCustomisation.put("hash", "XTRA_STRONG_HASH");
+            itemWriter.setHeaders(headerCustomisation);
+            itemWriter.setColumnsToWrite("ID NAME FORMAT_NAME HASH");
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedHeaders = toCsvRow(new String[] {
+                    "ID", "NAME", "XTRA_STRONG_HASH", "FORMAT_NAME"
+            });
+
+            final String expectedEntry1 = toCsvRow(new String[] {
+                    "",
+                    "file1.txt",
+                    "11111111111111111111111111111111",
+                    "Plain Text"
+            });
+
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
+
+            assertEquals(2, lines.length);
+            assertEquals(expectedHeaders, lines[0]);
+            assertEquals(expectedEntry1, lines[1]);
+        }
+
+    }
+
+    @Test
     public void testWriteOneNodeWithTwoFormatsWithOneRowPerFormat() throws IOException {
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(true);
 
@@ -307,7 +433,7 @@ public class CsvItemWriterTest {
             List<ProfileResourceNode> nodes = new ArrayList<>();
 
             Format id1 = buildFormat(1);
-            Format id2 = buildFormat(2);
+            Format id2 = buildFormat(2, "2.0");
 
             ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
             node.addFormatIdentification(id1);
@@ -355,7 +481,7 @@ public class CsvItemWriterTest {
                     "fmt/2",
                     "text/plain",
                     "Plain Text",
-                    "1.0",
+                    "2.0",
             });
 
             final String[] lines = writer.toString().split(LINE_SEPARATOR);
@@ -451,12 +577,17 @@ public class CsvItemWriterTest {
 
     
     private static Format buildFormat(int i) {
+        return buildFormat(i, "1.0");
+    }
+
+    private static Format buildFormat(int i, String version) {
         Format format = new Format();
         format.setPuid("fmt/" + i);
         format.setMimeType("text/plain");
         format.setName("Plain Text");
-        format.setVersion("1.0");
-        
+        format.setVersion(version);
+
         return format;
     }
+
 }
