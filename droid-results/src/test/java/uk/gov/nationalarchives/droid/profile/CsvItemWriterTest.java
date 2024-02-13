@@ -45,6 +45,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 import java.io.File;
@@ -306,6 +307,47 @@ public class CsvItemWriterTest {
             assertEquals(2, lines.length);
             assertEquals(expectedHeaders, lines[0]);
             assertEquals(expectedEntry1, lines[1]);
+        }
+    }
+
+    @Test
+    public void should_create_additional_headers_for_identification_format_in_order_of_template_when_writing_entries_per_file() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+        ExportTemplate template = mock(ExportTemplate.class);
+
+        Map<Integer, String> columnPositions = new HashMap<>();
+
+        columnPositions.put(0, "ID");
+        columnPositions.put(1, "PUID");
+        columnPositions.put(2, "HASH");
+        columnPositions.put(3, "FORMAT_NAME");
+
+        when(template.getColumnOrderMap()).thenReturn(columnPositions);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id1 = buildFormat(1);
+            Format id2 = buildFormat(2);
+
+            ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
+            node.addFormatIdentification(id1);
+            node.addFormatIdentification(id2);
+
+            nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
+            itemWriter.setExportTemplate(template);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedHeaders = toCsvRow(new String[] {
+                    "ID", "PUID", "PUID1", "HASH", "FORMAT_NAME", "FORMAT_NAME1"
+            });
+
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
+
+            assertEquals(2, lines.length);
+            assertEquals(expectedHeaders, lines[0]);
         }
     }
 

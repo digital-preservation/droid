@@ -56,6 +56,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -121,30 +122,12 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     private static final String FILE_URI_SCHEME = "file";
 
-    /*
-     * Default indexes of the headers used in the CSV output.
-     */
-//    private static final int ID_ARRAY_INDEX                 = 0;
-//    private static final int PARENT_ID_ARRAY_INDEX          = 1;
-//    private static final int URI_ARRAY_INDEX                = 2;
-//    private static final int FILE_PATH_ARRAY_INDEX          = 3;
-//    private static final int FILE_NAME_ARRAY_INDEX          = 4;
-//    private static final int ID_METHOD_ARRAY_INDEX          = 5;
-//    private static final int STATUS_ARRAY_INDEX             = 6;
-//    private static final int SIZE_ARRAY_INDEX               = 7;
-//    private static final int RESOURCE_ARRAY_INDEX           = 8;
-//    private static final int EXTENSION_ARRAY_INDEX          = 9;
-//    private static final int LAST_MODIFIED_ARRAY_INDEX      = 10;
-//    private static final int EXTENSION_MISMATCH_ARRAY_INDEX = 11;
-//    private static final int HASH_ARRAY_INDEX               = 12;
-//    private static final int ID_COUNT_ARRAY_INDEX           = 13;
-//    private static final int PUID_ARRAY_INDEX               = 14;
-//    private static final int MIME_TYPE_ARRAY_INDEX          = 15;
-//    private static final int FORMAT_NAME_ARRAY_INDEX        = 16;
-//    private static final int FORMAT_VERSION_ARRAY_INDEX     = 17;
+    //default index of the hash column, since this column header may be modified, this is the only
+    // column that we may need to access using index.
+    private static final int HASH_ARRAY_INDEX               = 12;
     private static final String BLANK_SPACE_DELIMITER       = " ";
 
-    private Map<String, Integer> columnPositions = new HashMap<>();
+    private Map<Integer, String> columnPositions = new HashMap<>();
 
     private Map<String, Boolean> columnsToWriteMap = new HashMap<>();
 
@@ -175,8 +158,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         this.csvWriter = writer;
         this.quoteAllFields = true;
         numColumnsToWrite = HEADERS.length;
-//        columnsToWrite = new boolean[HEADERS.length];
-//        Arrays.fill(columnsToWrite, true);
         populateDefaultColumnsToWrite();
         populateDefaultColumnPositionMap();
     }
@@ -205,24 +186,24 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     private void populateDefaultColumnPositionMap() {
         int index = 0;
-        columnPositions.put(HEADER_NAME_ID, index++);
-        columnPositions.put(HEADER_NAME_PARENT_ID, index++);
-        columnPositions.put(HEADER_NAME_URI, index++);
-        columnPositions.put(HEADER_NAME_FILE_PATH, index++);
-        columnPositions.put(HEADER_NAME_NAME, index++);
-        columnPositions.put(HEADER_NAME_METHOD, index++);
-        columnPositions.put(HEADER_NAME_STATUS, index++);
-        columnPositions.put(HEADER_NAME_SIZE, index++);
-        columnPositions.put(HEADER_NAME_TYPE, index++);
-        columnPositions.put(HEADER_NAME_EXT, index++);
-        columnPositions.put(HEADER_NAME_LAST_MODIFIED, index++);
-        columnPositions.put(HEADER_NAME_EXTENSION_MISMATCH, index++);
-        columnPositions.put(HEADER_NAME_HASH, index++);
-        columnPositions.put(HEADER_NAME_FORMAT_COUNT, index++);
-        columnPositions.put(HEADER_NAME_PUID, index++);
-        columnPositions.put(HEADER_NAME_MIME_TYPE, index++);
-        columnPositions.put(HEADER_NAME_FORMAT_NAME, index++);
-        columnPositions.put(HEADER_NAME_FORMAT_VERSION, index++);
+        columnPositions.put(index++, HEADER_NAME_ID);
+        columnPositions.put(index++, HEADER_NAME_PARENT_ID);
+        columnPositions.put(index++, HEADER_NAME_URI);
+        columnPositions.put(index++, HEADER_NAME_FILE_PATH);
+        columnPositions.put(index++, HEADER_NAME_NAME);
+        columnPositions.put(index++, HEADER_NAME_METHOD);
+        columnPositions.put(index++, HEADER_NAME_STATUS);
+        columnPositions.put(index++, HEADER_NAME_SIZE);
+        columnPositions.put(index++, HEADER_NAME_TYPE);
+        columnPositions.put(index++, HEADER_NAME_EXT);
+        columnPositions.put(index++, HEADER_NAME_LAST_MODIFIED);
+        columnPositions.put(index++, HEADER_NAME_EXTENSION_MISMATCH);
+        columnPositions.put(index++, HEADER_NAME_HASH);
+        columnPositions.put(index++, HEADER_NAME_FORMAT_COUNT);
+        columnPositions.put(index++, HEADER_NAME_PUID);
+        columnPositions.put(index++, HEADER_NAME_MIME_TYPE);
+        columnPositions.put(index++, HEADER_NAME_FORMAT_NAME);
+        columnPositions.put(index++, HEADER_NAME_FORMAT_VERSION);
     }
 
     @Override
@@ -246,13 +227,38 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
     
     private void writeOneRowPerFile(List<? extends ProfileResourceNode> nodes) {
+        int maxIdCount = getMaxIdentificationCount(nodes);
         if (csvWriter.getRecordCount() == 0) {
-            writeHeadersForOneRowPerFileExport(nodes);
+            writeHeadersForOneRowPerFileExport(maxIdCount);
         }
         try {
+            writeDataRowsForOneRowPerFileExport(nodes, maxIdCount);
+        } catch (final TextWritingException e) {
+            log.error(e.getRecordCharacters(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    private void writeDataRowsForOneRowPerFileExport(List<? extends ProfileResourceNode> nodes, int maxIdCount) {
+        if (exportTemplate != null) {
+            int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
             for (ProfileResourceNode node : nodes) {
                 List<String> nodeEntries = new ArrayList<>();
-                addNodeColumns(nodeEntries, node);
+                for (int i = 0; i <= maxCols; i++) {
+                    String columnName = columnPositions.get(i);
+                    if (PER_FORMAT_HEADERS.contains(columnName)) {
+                        addFormatColumn(nodeEntries, node, columnPositions.get(i), maxIdCount);
+                    } else {
+                        addNodeColumn(nodeEntries, node, columnPositions.get(i));
+                    }
+                }
+                csvWriter.writeRow(nodeEntries);
+            }
+            csvWriter.flush();
+        } else {
+            for (ProfileResourceNode node : nodes) {
+                List<String> nodeEntries = new ArrayList<>();
+                addNodeColumnsInDefaultOrder(nodeEntries, node);
                 for (Format format : node.getFormatIdentifications()) {
                     addColumn(nodeEntries, HEADER_NAME_PUID, format.getPuid());
                     addColumn(nodeEntries, HEADER_NAME_MIME_TYPE, format.getMimeType());
@@ -262,23 +268,130 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 csvWriter.writeRow(nodeEntries);
             }
             csvWriter.flush();
+
+        }
+    }
+
+    //CHECKSTYLE:OFF - cyclomatic complexity is too high but we have to go through so many column names!!
+    private void addNodeColumn(List<String> nodeEntries, ProfileResourceNode node, String columnName) {
+        NodeMetaData metaData = node.getMetaData();
+        if (!columnsToWriteMap.get(columnName)) {
+            return;
+        }
+        switch (columnName) {
+            case HEADER_NAME_ID:
+                nodeEntries.add(nullSafeNumber(node.getId()));
+                break;
+            case HEADER_NAME_PARENT_ID:
+                nodeEntries.add(nullSafeNumber(node.getParentId()));
+                break;
+            case HEADER_NAME_URI:
+                nodeEntries.add(DroidUrlFormat.format(node.getUri()));
+                break;
+            case HEADER_NAME_FILE_PATH:
+                nodeEntries.add(toFilePath(node.getUri()));
+                break;
+            case HEADER_NAME_NAME:
+                nodeEntries.add(toFileName(metaData.getName()));
+                break;
+            case HEADER_NAME_METHOD:
+                nodeEntries.add(nullSafeName(metaData.getIdentificationMethod()));
+                break;
+            case HEADER_NAME_STATUS:
+                nodeEntries.add(metaData.getNodeStatus().getStatus());
+                break;
+            case HEADER_NAME_SIZE:
+                nodeEntries.add(nullSafeNumber(metaData.getSize()));
+                break;
+            case HEADER_NAME_TYPE:
+                nodeEntries.add(metaData.getResourceType().getResourceType());
+                break;
+            case HEADER_NAME_EXT:
+                nodeEntries.add(metaData.getExtension());
+                break;
+            case HEADER_NAME_LAST_MODIFIED:
+                nodeEntries.add(nullSafeDate(metaData.getLastModifiedDate(), dateFormat));
+                break;
+            case HEADER_NAME_EXTENSION_MISMATCH:
+                nodeEntries.add(node.getExtensionMismatch().toString());
+                break;
+            case HEADER_NAME_HASH:
+                nodeEntries.add(metaData.getHash());
+                break;
+            case HEADER_NAME_FORMAT_COUNT:
+                nodeEntries.add(nullSafeNumber(node.getIdentificationCount()));
+                break;
+        }
+    }
+
+    private void addFormatColumn(List<String> nodeEntries, ProfileResourceNode node, String columnName, int maxIdCount) {
+        List<Format> formats = node.getFormatIdentifications();
+        if (!columnsToWriteMap.get(columnName)) {
+            return;
+        }
+        for (int i = 0; i < maxIdCount; i++) {
+            Format format = i < formats.size() ? formats.get(i) : null;
+            nodeEntries.add(getFormatValue(columnName, format));
+        }
+    }
+
+    private String getFormatValue(String columnName, Format format) {
+        String retVal = "";
+        switch (columnName) {
+            case HEADER_NAME_PUID:
+                retVal = format == null ? "" : format.getPuid();
+                break;
+            case HEADER_NAME_MIME_TYPE:
+                retVal = format == null ? "" : format.getMimeType();
+                break;
+            case HEADER_NAME_FORMAT_NAME:
+                retVal = format == null ? "" : format.getName();
+                break;
+            case HEADER_NAME_FORMAT_VERSION:
+                retVal = format == null ? "" : format.getVersion();
+        }
+        return retVal;
+    }
+
+    //CHECKSTYLE:ON
+
+    private void writeOneRowPerFormat(List<? extends ProfileResourceNode> nodes) {
+        if (csvWriter.getRecordCount() == 0) {
+            writeHeadersForOneRowPerFormatExport();
+        }
+        try {
+            writeDataRowsForOneRowPerFormatExport(nodes);
+            csvWriter.flush();
         } catch (final TextWritingException e) {
             log.error(e.getRecordCharacters(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-    
-    private void writeOneRowPerFormat(List<? extends ProfileResourceNode> nodes) {
-        List<String> headersToWrite = Arrays.stream(getHeadersToWrite(allHeaders)).collect(Collectors.toList()) ;
-        if (csvWriter.getRecordCount() == 0) {
-            csvWriter.writeHeaders(headersToWrite);
-        }
 
-        try {
+    private void writeDataRowsForOneRowPerFormatExport(List<? extends ProfileResourceNode> nodes) {
+        if (exportTemplate != null) {
+            int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
+            for (ProfileResourceNode node : nodes) {
+                List<String> nodeEntries = new ArrayList<>();
+                for (Format format : node.getFormatIdentifications()) {
+                    for (int i = 0; i <= maxCols; i++) {
+                        String columnName = columnPositions.get(i);
+                        if (PER_FORMAT_HEADERS.contains(columnName)) {
+                            String columnValue = getFormatValue(columnName, format);
+                            nodeEntries.add(columnValue);
+                        } else {
+                            addNodeColumn(nodeEntries, node, columnPositions.get(i));
+                        }
+                    }
+                }
+                csvWriter.writeRow(nodeEntries);
+            }
+            csvWriter.flush();
+        } else {
             for (ProfileResourceNode node : nodes) {
                 for (Format format : node.getFormatIdentifications()) {
                     List<String> nodeEntries = new ArrayList<>();
-                    addNodeColumns(nodeEntries, node);
+                    addNodeColumnsInDefaultOrder(nodeEntries, node);
                     addColumn(nodeEntries, HEADER_NAME_PUID, format.getPuid());
                     addColumn(nodeEntries, HEADER_NAME_MIME_TYPE, format.getMimeType());
                     addColumn(nodeEntries, HEADER_NAME_FORMAT_NAME, format.getName());
@@ -287,9 +400,17 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 }
             }
             csvWriter.flush();
-        } catch (final TextWritingException e) {
-            log.error(e.getRecordCharacters(), e);
-            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    private void writeHeadersForOneRowPerFormatExport() {
+        if (exportTemplate != null) {
+            //for per format, there are no additional headers.
+            List<String> headersToWrite = getHeadersToWriteFromTemplate(1);
+            csvWriter.writeHeaders(headersToWrite);
+        } else {
+            List<String> headersToWrite = new ArrayList<>(getHeadersToWrite(allHeaders));
+            csvWriter.writeHeaders(headersToWrite);
         }
     }
 
@@ -305,7 +426,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
         csvWriterSettings.setQuoteAllFields(quoteAllFields);
         CsvFormat format = new CsvFormat();
-        // following Unix convention on line separators as previously
+        // following Unix convention about line separators as previously
         format.setLineSeparator("\n");
         csvWriterSettings.setFormat(format);
         csvWriter = new CsvWriter(writer, csvWriterSettings);
@@ -314,30 +435,25 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         }
     }
 
-//    private void writeHeadersForOneRowPerFileExportUsingTemplate(List<? extends ProfileResourceNode> nodes) {
-//        Map<Integer, String> columnOrder = exportTemplate.getColumnOrderMap();
-//    }
-
-
-    private void writeHeadersForOneRowPerFileExport(List<? extends ProfileResourceNode> nodes) {
+    private void writeHeadersForOneRowPerFileExport(int maxIdCount) {
 
         if (options != ExportOptions.ONE_ROW_PER_FILE) {
             throw new RuntimeException("Unexpectedly called per file header creation. Unable to proceed");
         }
 
-//        if (exportTemplate != null) {
-//            writeHeadersForOneRowPerFileExportUsingTemplate(nodes);
-//        } else {
-
-            List<String> headersToWrite = Arrays.stream(getHeadersToWrite(allHeaders)).collect(Collectors.toList());
+        if (exportTemplate != null) {
+            List<String> headersToWrite = getHeadersToWriteFromTemplate(maxIdCount);
+            csvWriter.writeHeaders(headersToWrite);
+        } else {
+            List<String> headersToWrite = new ArrayList<>(getHeadersToWrite(allHeaders));
+            // Arrays.stream(getHeadersToWrite(allHeaders)).collect(Collectors.toList());
 
             //if we are writing one row per file, then we tag the "per format" fields as additional columns,
             //if such columns need to be added, we create appropriate headers with a running suffix and write
             //them to the file
             if (!Collections.disjoint(headersToWrite, PER_FORMAT_HEADERS)) {
-                int maxIdentifications = getMaxIdentificationCount(nodes);
-                if (maxIdentifications > 1) { //add headers
-                    for (int newColumnSuffix = 1; newColumnSuffix < maxIdentifications; newColumnSuffix++) {
+                if (maxIdCount > 1) { //add headers
+                    for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
                         //"PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION"
                         for (String headerEntry : PER_FORMAT_HEADERS) {
                             if (headersToWrite.contains(headerEntry)) {
@@ -349,7 +465,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             }
             csvWriter.writeHeaders(headersToWrite);
         }
-//    }
+    }
+
 
     private static int getMaxIdentificationCount(List<? extends ProfileResourceNode> nodes) {
         Optional<Integer> maxIdentificationsOption = nodes.stream().map(ProfileResourceNode::getIdentificationCount).collect(Collectors.toList()).stream().filter(Objects::nonNull).max(Integer::compare);
@@ -431,7 +548,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         // The header for hash is modified based on algorithm used to generate the hash
         String hashHeader = headersToSet.get("hash");
         if (hashHeader != null) {
-            this.allHeaders[columnPositions.get(HEADER_NAME_HASH)] = hashHeader;
+            List<Map.Entry<Integer, String>> hashEntry = columnPositions.entrySet().stream().filter(entry -> entry.getValue().equals(HEADER_NAME_HASH)).collect(Collectors.toList());
+            if (!hashEntry.isEmpty()) {
+                this.allHeaders[HASH_ARRAY_INDEX] = hashHeader;
+            }
         }
     }
 
@@ -457,7 +577,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 }
             }
             // Defence: if no valid column names were specified, log a warning then write them all out:
-            if (!columnsToWriteMap.values().contains(true)) {
+            if (!columnsToWriteMap.containsValue(true)) {
                 populateDefaultColumnsToWrite();
                 numColumnsToWrite = columnsToWriteMap.size();
                 log.warn("-co option: no CSV columns specified are valid, writing all columns: " + columnNames);
@@ -475,6 +595,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     @Override
     public void setExportTemplate(ExportTemplate template) {
         this.exportTemplate = template;
+        this.columnPositions = template.getColumnOrderMap();
+        setColumnsToWrite(String.join(BLANK_SPACE_DELIMITER, columnPositions.values()));
     }
 
     private Set<String> getColumnsToWrite(String columnNames) {
@@ -487,7 +609,28 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         return null;
     }
 
-    private String[] getHeadersToWrite(String[] headersToWrite) {
+    private List<String> getHeadersToWriteFromTemplate(int maxIdCount) {
+        if (exportTemplate == null) {
+            throw new IllegalArgumentException("Export template does not exist, unable to get headers from template");
+        }
+        List<String> retVal = new LinkedList<>();
+        List<String> headersFromTemplate = new ArrayList<>(exportTemplate.getColumnOrderMap().values());
+        for (String header : headersFromTemplate) {
+            if (header.equals(HEADER_NAME_HASH)) {
+                retVal.add(allHeaders[HASH_ARRAY_INDEX]);
+            } else {
+                retVal.add(header);
+            }
+            if (PER_FORMAT_HEADERS.contains(header)) {
+                for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
+                    retVal.add(header + newColumnSuffix);
+                }
+            }
+        }
+        return retVal;
+    }
+
+    private List<String> getHeadersToWrite(String[] headersToWrite) {
         if (numColumnsToWrite <  columnsToWriteMap.size()) {
             String[] newHeaders = new String[numColumnsToWrite];
             int newHeaderIndex = 0;
@@ -496,12 +639,12 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                     newHeaders[newHeaderIndex++] = allHeaders[i];
                 }
             }
-            return newHeaders;
+            return Arrays.stream(newHeaders).collect(Collectors.toList());
         }
-        return headersToWrite;
+        return Arrays.stream(headersToWrite).collect(Collectors.toList());
     }
 
-    private void addNodeColumns(List<String> row, ProfileResourceNode node) {
+    private void addNodeColumnsInDefaultOrder(List<String> row, ProfileResourceNode node) {
         NodeMetaData metaData = node.getMetaData();
         addColumn(row, HEADER_NAME_ID, nullSafeNumber(node.getId()));
         addColumn(row, HEADER_NAME_PARENT_ID, nullSafeNumber(node.getParentId()));

@@ -39,11 +39,15 @@ import java.util.Map;
 public class ExportTemplateImpl implements ExportTemplate {
     private Map<Integer, String> columnOrderMap = new HashMap<>();
 
+    //CHECKSTYLE:OFF - No need to worry about magic numbers here for now, until UI is all wired up
     public ExportTemplateImpl() {
         columnOrderMap.put(0, "ID");
         columnOrderMap.put(1, "PUID");
-        columnOrderMap.put(2, "SIZE");
+        columnOrderMap.put(2, "FILE_PATH");
+        columnOrderMap.put(3, "SIZE");
+        columnOrderMap.put(4, "HASH");
     }
+    //CHECKSTYLE:ON
 
     public Map<Integer, String> getColumnOrderMap() {
         return columnOrderMap;
