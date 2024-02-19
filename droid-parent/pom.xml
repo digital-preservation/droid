@@ -689,7 +689,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.21</version>
+                <version>1.26.0</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
