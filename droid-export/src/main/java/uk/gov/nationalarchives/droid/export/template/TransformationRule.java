@@ -29,11 +29,19 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.export.interfaces;
+package uk.gov.nationalarchives.droid.export.template;
 
-import java.util.Map;
 
-public interface ExportTemplate {
-    Map<Integer, ExportTemplateColumnDef> getColumnOrderMap() ;
+public abstract class TransformationRule implements Transformation {
+    private String columnName;
+    public TransformationRule(String columnName) {
+        this.columnName = columnName;
+    }
 
+    public String getColumnName() {
+        return columnName;
+    }
+
+    @Override
+    public abstract String transform(String inputValue);
 }

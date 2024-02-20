@@ -29,11 +29,18 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.export.interfaces;
+package uk.gov.nationalarchives.droid.export.template;
 
-import java.util.Map;
+public class ConstantStringRule extends TransformationRule {
 
-public interface ExportTemplate {
-    Map<Integer, ExportTemplateColumnDef> getColumnOrderMap() ;
+    private String constantValue;
 
+    public ConstantStringRule(String columnName, String constantValue) {
+        super(columnName);
+        this.constantValue = constantValue;
+    }
+    @Override
+    public String transform(String inputValue) {
+        return constantValue;
+    }
 }

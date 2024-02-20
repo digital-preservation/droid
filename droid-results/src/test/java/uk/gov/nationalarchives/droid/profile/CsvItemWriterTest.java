@@ -46,6 +46,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 import java.io.File;
@@ -315,12 +316,21 @@ public class CsvItemWriterTest {
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
         ExportTemplate template = mock(ExportTemplate.class);
 
-        Map<Integer, String> columnPositions = new HashMap<>();
+        Map<Integer, ExportTemplateColumnDef> columnPositions = new HashMap<>();
 
-        columnPositions.put(0, "ID");
-        columnPositions.put(1, "PUID");
-        columnPositions.put(2, "HASH");
-        columnPositions.put(3, "FORMAT_NAME");
+        ExportTemplateColumnDef def1 = mock(ExportTemplateColumnDef.class);
+        when(def1.getOriginalColumnName()).thenReturn("ID");
+        ExportTemplateColumnDef def2 = mock(ExportTemplateColumnDef.class);
+        when(def2.getOriginalColumnName()).thenReturn("PUID");
+        ExportTemplateColumnDef def3 = mock(ExportTemplateColumnDef.class);
+        when(def3.getOriginalColumnName()).thenReturn("HASH");
+        ExportTemplateColumnDef def4 = mock(ExportTemplateColumnDef.class);
+        when(def4.getOriginalColumnName()).thenReturn("FORMAT_NAME");
+
+        columnPositions.put(0, def1);
+        columnPositions.put(1, def2);
+        columnPositions.put(2, def3);
+        columnPositions.put(3, def4);
 
         when(template.getColumnOrderMap()).thenReturn(columnPositions);
 

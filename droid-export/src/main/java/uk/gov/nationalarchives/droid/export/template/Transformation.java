@@ -29,11 +29,8 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package uk.gov.nationalarchives.droid.export.interfaces;
+package uk.gov.nationalarchives.droid.export.template;
 
-import java.util.Map;
-
-public interface ExportTemplate {
-    Map<Integer, ExportTemplateColumnDef> getColumnOrderMap() ;
-
+public interface Transformation {
+    String transform(String inputValue);
 }

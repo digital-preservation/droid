@@ -1,0 +1,6 @@
+version: 1.0
+Identifier: $ID
+Puid: $PUID
+Path: $FILE_PATH
+Size: $SIZE
+HASH: $HASH
