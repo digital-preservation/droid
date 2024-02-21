@@ -127,8 +127,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     // column that we may need to access using index.
     private static final int HASH_ARRAY_INDEX               = 12;
     private static final String BLANK_SPACE_DELIMITER       = " ";
-
-//    private Map<Integer, ExportTemplateColumnDef> columnPositions = new HashMap<>();
+    private static final String EMPTY_STRING       = "";
 
     private Map<String, Boolean> columnsToWriteMap = new HashMap<>();
 
@@ -159,7 +158,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         this.quoteAllFields = true;
         numColumnsToWrite = HEADERS.length;
         populateDefaultColumnsToWrite();
-        //populateDefaultColumnPositionMap();
     }
 
     private void populateDefaultColumnsToWrite() {
@@ -239,6 +237,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         }
     }
 
+    //CHECKSTYLE:OFF - cyclomatic complexity is too high but we have to go through so many column names!!
     private void writeDataRowsForOneRowPerFileExport(List<? extends ProfileResourceNode> nodes, int maxIdCount) {
         if (exportTemplate != null) {
             Map<Integer, ExportTemplateColumnDef> columnPositions = exportTemplate.getColumnOrderMap();
@@ -255,25 +254,23 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 }
                 csvWriter.writeRow(nodeEntries);
             }
-            csvWriter.flush();
         } else {
             for (ProfileResourceNode node : nodes) {
                 List<String> nodeEntries = new ArrayList<>();
                 addNodeColumnsInDefaultOrder(nodeEntries, node);
-                for (Format format : node.getFormatIdentifications()) {
-                    addColumn(nodeEntries, HEADER_NAME_PUID, format.getPuid());
-                    addColumn(nodeEntries, HEADER_NAME_MIME_TYPE, format.getMimeType());
-                    addColumn(nodeEntries, HEADER_NAME_FORMAT_NAME, format.getName());
-                    addColumn(nodeEntries, HEADER_NAME_FORMAT_VERSION, format.getVersion());
+                List<Format> formatIdentifications = node.getFormatIdentifications();
+                for (int i = 0; i < maxIdCount; i++) {
+                    addColumn(nodeEntries, HEADER_NAME_PUID,  (i < formatIdentifications.size()) ?  formatIdentifications.get(i).getPuid() : EMPTY_STRING);
+                    addColumn(nodeEntries, HEADER_NAME_MIME_TYPE, (i < formatIdentifications.size()) ?  formatIdentifications.get(i).getMimeType() : EMPTY_STRING);
+                    addColumn(nodeEntries, HEADER_NAME_FORMAT_NAME, (i < formatIdentifications.size()) ?  formatIdentifications.get(i).getName() : EMPTY_STRING);
+                    addColumn(nodeEntries, HEADER_NAME_FORMAT_VERSION, (i < formatIdentifications.size()) ?  formatIdentifications.get(i).getVersion(): EMPTY_STRING);
                 }
                 csvWriter.writeRow(nodeEntries);
             }
-            csvWriter.flush();
-
         }
+        csvWriter.flush();
     }
 
-    //CHECKSTYLE:OFF - cyclomatic complexity is too high but we have to go through so many column names!!
     private void addNodeColumn(List<String> nodeEntries, ProfileResourceNode node, String columnName) {
         NodeMetaData metaData = node.getMetaData();
         if (!columnsToWriteMap.get(columnName)) {
@@ -337,19 +334,19 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
 
     private String getFormatValue(String columnName, Format format) {
-        String retVal = "";
+        String retVal = EMPTY_STRING;
         switch (columnName) {
             case HEADER_NAME_PUID:
-                retVal = format == null ? "" : format.getPuid();
+                retVal = format == null ? EMPTY_STRING : format.getPuid();
                 break;
             case HEADER_NAME_MIME_TYPE:
-                retVal = format == null ? "" : format.getMimeType();
+                retVal = format == null ? EMPTY_STRING : format.getMimeType();
                 break;
             case HEADER_NAME_FORMAT_NAME:
-                retVal = format == null ? "" : format.getName();
+                retVal = format == null ? EMPTY_STRING : format.getName();
                 break;
             case HEADER_NAME_FORMAT_VERSION:
-                retVal = format == null ? "" : format.getVersion();
+                retVal = format == null ? EMPTY_STRING : format.getVersion();
         }
         return retVal;
     }
@@ -493,15 +490,15 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
     
     private static String nullSafeName(Enum<?> value) {
-        return value == null ? "" : value.toString();
+        return value == null ? EMPTY_STRING : value.toString();
     }
     
     private static String nullSafeNumber(Number number) {
-        return number == null ? "" : number.toString();
+        return number == null ? EMPTY_STRING : number.toString();
     }
     
     private static String nullSafeDate(Date date, FastDateFormat format) {
-        return date == null ? "" : format.format(date);
+        return date == null ? EMPTY_STRING : format.format(date);
     }
     
     private static String toFileName(String name) {
@@ -511,14 +508,14 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private String toFilePath(URI uri) {
         if (uri == null) {
             log.warn("[URI not set]");
-            return "";
+            return EMPTY_STRING;
         }
         if (FILE_URI_SCHEME.equals(uri.getScheme())) {
             return Paths.get(uri).toAbsolutePath().toString();
         }
 
         // for URIs that have other than "file" scheme
-        String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", "");
+        String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", EMPTY_STRING);
         result = result.replace("/", File.separator);
 
         // Handle substitution of 7z

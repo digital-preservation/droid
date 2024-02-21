@@ -600,6 +600,63 @@ public class CsvItemWriterTest {
         }
     }
 
+    @Test
+    public void should_write_data_row_with_additional_blank_elements_when_other_rows_have_more_identified_formats() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id1 = buildFormat(1);
+            Format id2 = buildFormat(2);
+
+            ProfileResourceNode nodeWithTwoIdentifications = buildProfileResourceNode(1, 1000L);
+            nodeWithTwoIdentifications.addFormatIdentification(id1);
+            nodeWithTwoIdentifications.addFormatIdentification(id2);
+
+            ProfileResourceNode nodeWithOneIentifications = buildProfileResourceNode(2, 500L);
+            Format id3 = buildFormat(3);
+            nodeWithOneIentifications.addFormatIdentification(id3);
+
+            nodes.add(nodeWithTwoIdentifications);
+            nodes.add(nodeWithOneIentifications);
+
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
+            itemWriter.setColumnsToWrite("ID PUID FORMAT_NAME METHOD");
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedHeaders = toCsvRow(new String[] {
+                    "ID","METHOD","PUID","FORMAT_NAME","PUID1","FORMAT_NAME1"
+            });
+
+            final String expectedEntry1 = toCsvRow(new String[] {
+                    "",
+                    "Signature",
+                    "fmt/1",
+                    "Plain Text",
+                    "fmt/2",
+                    "Plain Text"
+            });
+
+            final String expectedEntry2 = toCsvRow(new String[] {
+                    "",
+                    "Signature",
+                    "fmt/3",
+                    "Plain Text",
+                    "",
+                    ""
+            });
+
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
+
+            assertEquals(3, lines.length);
+            assertEquals(expectedHeaders, lines[0]);
+            assertEquals(expectedEntry1, lines[1]);
+            assertEquals(expectedEntry2, lines[2]);
+        }
+    }
+
     private static boolean isNotWindows() {
         return !SystemUtils.IS_OS_WINDOWS;
     }

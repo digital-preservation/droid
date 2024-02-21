@@ -43,15 +43,14 @@ public class ExportTemplateImpl implements ExportTemplate {
     //CHECKSTYLE:OFF - No need to worry about magic numbers here for now, until UI is all wired up
     public ExportTemplateImpl() {
         columnOrderMap.put(0, new ProfileResourceNodeColumnDef("ID", "Identifier"));
-        columnOrderMap.put(1, new ProfileResourceNodeColumnDef("PUID", "Puid"));
-        columnOrderMap.put(2, new ProfileResourceNodeColumnDef("FILE_PATH", "Path"));
-        columnOrderMap.put(3, new ProfileResourceNodeColumnDef("SIZE", "Size"));
-        columnOrderMap.put(4, new ProfileResourceNodeColumnDef("HASH", "HASH"));
+        columnOrderMap.put(1, new ProfileResourceNodeColumnDef("FILE_PATH", "Path"));
+        columnOrderMap.put(2, new ProfileResourceNodeColumnDef("SIZE", "Size"));
+        columnOrderMap.put(3, new ProfileResourceNodeColumnDef("HASH", "HASH"));
+        columnOrderMap.put(4, new ProfileResourceNodeColumnDef("PUID", "Puid"));
     }
     //CHECKSTYLE:ON
 
     public Map<Integer, ExportTemplateColumnDef> getColumnOrderMap() {
         return columnOrderMap;
     }
-
 }
