@@ -619,16 +619,17 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             throw new IllegalArgumentException("Export template does not exist, unable to get headers from template");
         }
         List<String> retVal = new LinkedList<>();
-        List<String> headersFromTemplate = exportTemplate.getColumnOrderMap().values().stream().map(e -> e.getOriginalColumnName()).collect(Collectors.toList());
-        for (String header : headersFromTemplate) {
-            if (header.equals(HEADER_NAME_HASH)) {
+
+        for (int i = 0; i < exportTemplate.getColumnOrderMap().size(); i++) {
+            ExportTemplateColumnDef def = exportTemplate.getColumnOrderMap().get(i);
+            if (def.getHeaderLabel().equals(HEADER_NAME_HASH)) {
                 retVal.add(allHeaders[HASH_ARRAY_INDEX]);
             } else {
-                retVal.add(header);
+                retVal.add(def.getHeaderLabel());
             }
-            if (PER_FORMAT_HEADERS.contains(header)) {
+            if (PER_FORMAT_HEADERS.contains(def.getOriginalColumnName())) {
                 for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
-                    retVal.add(header + newColumnSuffix);
+                    retVal.add(def.getHeaderLabel() + newColumnSuffix);
                 }
             }
         }

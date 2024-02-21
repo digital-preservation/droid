@@ -320,12 +320,16 @@ public class CsvItemWriterTest {
 
         ExportTemplateColumnDef def1 = mock(ExportTemplateColumnDef.class);
         when(def1.getOriginalColumnName()).thenReturn("ID");
+        when(def1.getHeaderLabel()).thenReturn("Identifier");
         ExportTemplateColumnDef def2 = mock(ExportTemplateColumnDef.class);
         when(def2.getOriginalColumnName()).thenReturn("PUID");
+        when(def2.getHeaderLabel()).thenReturn("Puid");
         ExportTemplateColumnDef def3 = mock(ExportTemplateColumnDef.class);
         when(def3.getOriginalColumnName()).thenReturn("HASH");
+        when(def3.getHeaderLabel()).thenReturn("Hash123");
         ExportTemplateColumnDef def4 = mock(ExportTemplateColumnDef.class);
         when(def4.getOriginalColumnName()).thenReturn("FORMAT_NAME");
+        when(def4.getHeaderLabel()).thenReturn("Format_Name");
 
         columnPositions.put(0, def1);
         columnPositions.put(1, def2);
@@ -343,15 +347,15 @@ public class CsvItemWriterTest {
             ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
             node.addFormatIdentification(id1);
             node.addFormatIdentification(id2);
-
             nodes.add(node);
+
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
             itemWriter.setExportTemplate(template);
             itemWriter.open(writer);
             itemWriter.write(nodes);
 
             final String expectedHeaders = toCsvRow(new String[] {
-                    "ID", "PUID", "PUID1", "HASH", "FORMAT_NAME", "FORMAT_NAME1"
+                    "Identifier", "Puid", "Puid1", "Hash123", "Format_Name", "Format_Name1"
             });
 
             final String[] lines = writer.toString().split(LINE_SEPARATOR);
