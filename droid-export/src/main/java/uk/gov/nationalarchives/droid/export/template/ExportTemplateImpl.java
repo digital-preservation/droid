@@ -47,6 +47,7 @@ public class ExportTemplateImpl implements ExportTemplate {
         columnOrderMap.put(2, new ProfileResourceNodeColumnDef("SIZE", "Size"));
         columnOrderMap.put(3, new ProfileResourceNodeColumnDef("HASH", "HASH"));
         columnOrderMap.put(4, new ProfileResourceNodeColumnDef("PUID", "Puid"));
+        columnOrderMap.put(5, new ConstantStringColumnDef("Welsh", "Language"));
     }
     //CHECKSTYLE:ON
 

@@ -181,29 +181,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         columnsToWriteMap.put(HEADER_NAME_FORMAT_VERSION, true);
     }
 
-
-//    private void populateDefaultColumnPositionMap() {
-//        int index = 0;
-//        columnPositions.put(index++, HEADER_NAME_ID);
-//        columnPositions.put(index++, HEADER_NAME_PARENT_ID);
-//        columnPositions.put(index++, HEADER_NAME_URI);
-//        columnPositions.put(index++, HEADER_NAME_FILE_PATH);
-//        columnPositions.put(index++, HEADER_NAME_NAME);
-//        columnPositions.put(index++, HEADER_NAME_METHOD);
-//        columnPositions.put(index++, HEADER_NAME_STATUS);
-//        columnPositions.put(index++, HEADER_NAME_SIZE);
-//        columnPositions.put(index++, HEADER_NAME_TYPE);
-//        columnPositions.put(index++, HEADER_NAME_EXT);
-//        columnPositions.put(index++, HEADER_NAME_LAST_MODIFIED);
-//        columnPositions.put(index++, HEADER_NAME_EXTENSION_MISMATCH);
-//        columnPositions.put(index++, HEADER_NAME_HASH);
-//        columnPositions.put(index++, HEADER_NAME_FORMAT_COUNT);
-//        columnPositions.put(index++, HEADER_NAME_PUID);
-//        columnPositions.put(index++, HEADER_NAME_MIME_TYPE);
-//        columnPositions.put(index++, HEADER_NAME_FORMAT_NAME);
-//        columnPositions.put(index++, HEADER_NAME_FORMAT_VERSION);
-//    }
-
     @Override
     public void write(List<? extends ProfileResourceNode> nodes) {
         switch (options) {
@@ -245,11 +222,16 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             for (ProfileResourceNode node : nodes) {
                 List<String> nodeEntries = new ArrayList<>();
                 for (int i = 0; i <= maxCols; i++) {
-                    String columnName = columnPositions.get(i).getOriginalColumnName();
-                    if (PER_FORMAT_HEADERS.contains(columnName)) {
-                        addFormatColumn(nodeEntries, node, columnPositions.get(i).getOriginalColumnName(), maxIdCount);
+                    ExportTemplateColumnDef def = columnPositions.get(i);
+                    if (def.isProfileNodeColumn()) {
+                        String columnName = columnPositions.get(i).getOriginalColumnName();
+                        if (PER_FORMAT_HEADERS.contains(columnName)) {
+                            addFormatColumn(nodeEntries, node, columnPositions.get(i).getOriginalColumnName(), maxIdCount);
+                        } else {
+                            addNodeColumn(nodeEntries, node, columnPositions.get(i).getOriginalColumnName());
+                        }
                     } else {
-                        addNodeColumn(nodeEntries, node, columnPositions.get(i).getOriginalColumnName());
+                        nodeEntries.add(def.getDataValue());
                     }
                 }
                 csvWriter.writeRow(nodeEntries);
@@ -549,7 +531,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         if (hashHeader != null) {
             if (exportTemplate != null) {
                 Map<Integer, ExportTemplateColumnDef> columnPositions = exportTemplate.getColumnOrderMap();
-                List<Map.Entry<Integer, ExportTemplateColumnDef>> hashEntry = columnPositions.entrySet().stream().filter(entry -> entry.getValue().getOriginalColumnName().equals(HEADER_NAME_HASH)).collect(Collectors.toList());
+                List<Map.Entry<Integer, ExportTemplateColumnDef>> profileCols = columnPositions.entrySet().stream().filter(e -> e.getValue().isProfileNodeColumn()).collect(Collectors.toList());
+                List<Map.Entry<Integer, ExportTemplateColumnDef>> hashEntry = profileCols.stream().filter(entry -> entry.getValue().getOriginalColumnName().equals(HEADER_NAME_HASH)).collect(Collectors.toList());
                 if (!hashEntry.isEmpty()) {
                     this.allHeaders[HASH_ARRAY_INDEX] = hashHeader;
                 }
@@ -599,9 +582,9 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     @Override
     public void setExportTemplate(ExportTemplate template) {
         this.exportTemplate = template;
-        Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
-        List<String> allColumns = columnPositions.values().stream().map(c -> c.getOriginalColumnName()).collect(Collectors.toList());
-        setColumnsToWrite(String.join(BLANK_SPACE_DELIMITER, allColumns));
+//        Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
+//        List<String> allColumns = columnPositions.values().stream().map(c -> c.getOriginalColumnName()).collect(Collectors.toList());
+//        setColumnsToWrite(String.join(BLANK_SPACE_DELIMITER, allColumns));
     }
 
     private Set<String> getColumnsToWrite(String columnNames) {
@@ -627,9 +610,11 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             } else {
                 retVal.add(def.getHeaderLabel());
             }
-            if (PER_FORMAT_HEADERS.contains(def.getOriginalColumnName())) {
-                for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
-                    retVal.add(def.getHeaderLabel() + newColumnSuffix);
+            if (def.isProfileNodeColumn()) {
+                if (PER_FORMAT_HEADERS.contains(def.getOriginalColumnName())) {
+                    for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
+                        retVal.add(def.getHeaderLabel() + newColumnSuffix);
+                    }
                 }
             }
         }
