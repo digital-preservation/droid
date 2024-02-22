@@ -61,6 +61,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -318,27 +319,17 @@ public class CsvItemWriterTest {
 
         Map<Integer, ExportTemplateColumnDef> columnPositions = new HashMap<>();
 
-        ExportTemplateColumnDef def1 = mock(ExportTemplateColumnDef.class);
-        when(def1.getOriginalColumnName()).thenReturn("ID");
-        when(def1.getHeaderLabel()).thenReturn("Identifier");
-        when(def1.isProfileNodeColumn()).thenReturn(true);
-        ExportTemplateColumnDef def2 = mock(ExportTemplateColumnDef.class);
-        when(def2.getOriginalColumnName()).thenReturn("PUID");
-        when(def2.getHeaderLabel()).thenReturn("Puid");
-        when(def2.isProfileNodeColumn()).thenReturn(true);
-        ExportTemplateColumnDef def3 = mock(ExportTemplateColumnDef.class);
-        when(def3.getOriginalColumnName()).thenReturn("HASH");
-        when(def3.getHeaderLabel()).thenReturn("Hash123");
-        when(def3.isProfileNodeColumn()).thenReturn(true);
-        ExportTemplateColumnDef def4 = mock(ExportTemplateColumnDef.class);
-        when(def4.getOriginalColumnName()).thenReturn("FORMAT_NAME");
-        when(def4.getHeaderLabel()).thenReturn("Format_Name");
-        when(def4.isProfileNodeColumn()).thenReturn(true);
+        ExportTemplateColumnDef def1 = getMockColumnDef("ID", "Identifier", ExportTemplateColumnDef.ColumnType.ProfileResourceNode);
+        ExportTemplateColumnDef def2 = getMockColumnDef("PUID", "Puid", ExportTemplateColumnDef.ColumnType.ProfileResourceNode);
+        ExportTemplateColumnDef def3 = getMockColumnDef("HASH", "Hash123", ExportTemplateColumnDef.ColumnType.ProfileResourceNode);
+        ExportTemplateColumnDef def4 = getMockColumnDef("FORMAT_NAME", "Format_Name", ExportTemplateColumnDef.ColumnType.ProfileResourceNode);
+        ExportTemplateColumnDef def5 = getMockColumnDef("Simple Column", "Simple_Header", ExportTemplateColumnDef.ColumnType.ConstantString);
 
         columnPositions.put(0, def1);
         columnPositions.put(1, def2);
         columnPositions.put(2, def3);
         columnPositions.put(3, def4);
+        columnPositions.put(4, def5);
 
         when(template.getColumnOrderMap()).thenReturn(columnPositions);
 
@@ -359,13 +350,14 @@ public class CsvItemWriterTest {
             itemWriter.write(nodes);
 
             final String expectedHeaders = toCsvRow(new String[] {
-                    "Identifier", "Puid", "Puid1", "Hash123", "Format_Name", "Format_Name1"
+                    "Identifier", "Puid", "Puid1", "Hash123", "Format_Name", "Format_Name1", "Simple_Header"
             });
 
             final String[] lines = writer.toString().split(LINE_SEPARATOR);
 
             assertEquals(2, lines.length);
             assertEquals(expectedHeaders, lines[0]);
+            assertEquals(7, lines[1].split(",").length);
         }
     }
 
@@ -376,19 +368,9 @@ public class CsvItemWriterTest {
 
         Map<Integer, ExportTemplateColumnDef> columnPositions = new HashMap<>();
 
-        ExportTemplateColumnDef def1 = mock(ExportTemplateColumnDef.class);
-        when(def1.getOriginalColumnName()).thenReturn("ID");
-        when(def1.getHeaderLabel()).thenReturn("Identifier");
-        when(def1.isProfileNodeColumn()).thenReturn(true);
-        ExportTemplateColumnDef def2 = mock(ExportTemplateColumnDef.class);
-        when(def2.getOriginalColumnName()).thenThrow(new RuntimeException("Constant String Columns do not have an associated original column name"));
-        when(def2.getHeaderLabel()).thenReturn("Language");
-        when(def2.isProfileNodeColumn()).thenReturn(false);
-        when(def2.getDataValue()).thenReturn("Simplified English");
-        ExportTemplateColumnDef def3 = mock(ExportTemplateColumnDef.class);
-        when(def3.getOriginalColumnName()).thenReturn("FORMAT_NAME");
-        when(def3.getHeaderLabel()).thenReturn("Format_Name");
-        when(def3.isProfileNodeColumn()).thenReturn(true);
+        ExportTemplateColumnDef def1 = getMockColumnDef("ID", "Identifier", ExportTemplateColumnDef.ColumnType.ProfileResourceNode);
+        ExportTemplateColumnDef def2 = getMockColumnDef("Simplified English", "Language", ExportTemplateColumnDef.ColumnType.ConstantString);
+        ExportTemplateColumnDef def3 = getMockColumnDef("FORMAT_NAME", "Format_Name", ExportTemplateColumnDef.ColumnType.ProfileResourceNode);
 
         columnPositions.put(0, def1);
         columnPositions.put(1, def2);
@@ -418,6 +400,58 @@ public class CsvItemWriterTest {
                     "",
                     "Simplified English",
                     "Plain Text"
+            });
+
+
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
+
+            assertEquals(2, lines.length);
+            assertEquals(expectedHeaders, lines[0]);
+            assertEquals(expectedEntry, lines[1]);
+        }
+
+    }
+
+    @Test
+    public void should_write_a_column_with_modified_value_and_a_pre_defined_constant_value() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+        ExportTemplate template = mock(ExportTemplate.class);
+
+        Map<Integer, ExportTemplateColumnDef> columnPositions = new HashMap<>();
+
+        ExportTemplateColumnDef def1 = getMockColumnDef("ID", "Identifier", ExportTemplateColumnDef.ColumnType.ProfileResourceNode);
+        ExportTemplateColumnDef def2 = getMockColumnDef("Simplified English", "Language", ExportTemplateColumnDef.ColumnType.ConstantString);
+        ExportTemplateColumnDef def3 = getMockColumnDef("FORMAT_NAME", "Format_Name", ExportTemplateColumnDef.ColumnType.DataModifier);
+
+
+        columnPositions.put(0, def1);
+        columnPositions.put(1, def2);
+        columnPositions.put(2, def3);
+
+        when(template.getColumnOrderMap()).thenReturn(columnPositions);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+
+            Format id1 = buildFormat(1);
+
+            ProfileResourceNode node = buildProfileResourceNode(1, 1000L);
+            node.addFormatIdentification(id1);
+            nodes.add(node);
+
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
+            itemWriter.setExportTemplate(template);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedHeaders = toCsvRow(new String[] {
+                    "Identifier", "Language", "Format_Name"
+            });
+
+            final String expectedEntry = toCsvRow(new String[] {
+                    "",
+                    "Simplified English",
+                    "plain text"
             });
 
 
@@ -724,6 +758,31 @@ public class CsvItemWriterTest {
             assertEquals(expectedEntry1, lines[1]);
             assertEquals(expectedEntry2, lines[2]);
         }
+    }
+
+    private static ExportTemplateColumnDef getMockColumnDef(String param1, String header, ExportTemplateColumnDef.ColumnType columnType) {
+        ExportTemplateColumnDef def = mock(ExportTemplateColumnDef.class);
+        when(def.getColumnType()).thenReturn(columnType);
+        switch (columnType) {
+            case ProfileResourceNode:
+                when(def.getOriginalColumnName()).thenReturn(param1);
+                when(def.getHeaderLabel()).thenReturn(header);
+                when(def.getDataValue()).thenThrow(new RuntimeException("Profile resource node column uses data from the profile results"));
+                when(def.getOperatedValue(anyString())).thenAnswer(i -> i.getArguments()[0]);
+                break;
+            case ConstantString:
+                when(def.getOriginalColumnName()).thenThrow(new RuntimeException("Constant String Columns do not have an associated original column name"));
+                when(def.getHeaderLabel()).thenReturn(header);
+                when(def.getDataValue()).thenReturn(param1);
+                break;
+            case DataModifier:
+                when(def.getOriginalColumnName()).thenReturn(param1);
+                when(def.getHeaderLabel()).thenReturn(header);
+                when(def.getDataValue()).thenThrow(new RuntimeException("Profile resource node column uses data from the profile results"));
+                when(def.getOperatedValue(anyString())).thenAnswer(i -> i.getArguments()[0].toString().toLowerCase());
+                break;
+        }
+        return def;
     }
 
     private static boolean isNotWindows() {

@@ -49,11 +49,6 @@ public class ProfileResourceNodeColumnDef implements ExportTemplateColumnDef {
     }
 
     @Override
-    public Boolean isProfileNodeColumn() {
-        return true;
-    }
-
-    @Override
     public String getOriginalColumnName() {
         return originalHeaderLabel;
     }
@@ -61,5 +56,15 @@ public class ProfileResourceNodeColumnDef implements ExportTemplateColumnDef {
     @Override
     public String getDataValue() {
         throw new RuntimeException("Profile resource node column uses data from the profile results");
+    }
+
+    @Override
+    public ColumnType getColumnType() {
+        return ColumnType.ProfileResourceNode;
+    }
+
+    @Override
+    public String getOperatedValue(String input) {
+        return input;
     }
 }

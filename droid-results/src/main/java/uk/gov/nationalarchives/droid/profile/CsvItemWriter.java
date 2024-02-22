@@ -223,15 +223,15 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 List<String> nodeEntries = new ArrayList<>();
                 for (int i = 0; i <= maxCols; i++) {
                     ExportTemplateColumnDef def = columnPositions.get(i);
-                    if (def.isProfileNodeColumn()) {
-                        String columnName = columnPositions.get(i).getOriginalColumnName();
-                        if (PER_FORMAT_HEADERS.contains(columnName)) {
-                            addFormatColumn(nodeEntries, node, columnPositions.get(i).getOriginalColumnName(), maxIdCount);
-                        } else {
-                            addNodeColumn(nodeEntries, node, columnPositions.get(i).getOriginalColumnName());
-                        }
-                    } else {
+                    if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
                         nodeEntries.add(def.getDataValue());
+                    } else {
+                        String columnName = def.getOriginalColumnName();
+                        if (PER_FORMAT_HEADERS.contains(columnName)) {
+                            addFormatColumnTemplate(nodeEntries, node, def, maxIdCount);
+                        } else {
+                            addNodeColumn(nodeEntries, node, def);
+                        }
                     }
                 }
                 csvWriter.writeRow(nodeEntries);
@@ -253,65 +253,67 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         csvWriter.flush();
     }
 
-    private void addNodeColumn(List<String> nodeEntries, ProfileResourceNode node, String columnName) {
+    private void addNodeColumn(List<String> nodeEntries, ProfileResourceNode node, ExportTemplateColumnDef def) {
         NodeMetaData metaData = node.getMetaData();
-        if (!columnsToWriteMap.get(columnName)) {
+        if (!columnsToWriteMap.get(def.getOriginalColumnName())) {
             return;
         }
-        switch (columnName) {
+        String columnValue = "";
+        switch (def.getOriginalColumnName()) {
             case HEADER_NAME_ID:
-                nodeEntries.add(nullSafeNumber(node.getId()));
+                columnValue = nullSafeNumber(node.getId());
                 break;
             case HEADER_NAME_PARENT_ID:
-                nodeEntries.add(nullSafeNumber(node.getParentId()));
+                columnValue = nullSafeNumber(node.getParentId());
                 break;
             case HEADER_NAME_URI:
-                nodeEntries.add(DroidUrlFormat.format(node.getUri()));
+                columnValue = DroidUrlFormat.format(node.getUri());
                 break;
             case HEADER_NAME_FILE_PATH:
-                nodeEntries.add(toFilePath(node.getUri()));
+                columnValue = toFilePath(node.getUri());
                 break;
             case HEADER_NAME_NAME:
-                nodeEntries.add(toFileName(metaData.getName()));
+                columnValue = toFileName(metaData.getName());
                 break;
             case HEADER_NAME_METHOD:
-                nodeEntries.add(nullSafeName(metaData.getIdentificationMethod()));
+                columnValue = nullSafeName(metaData.getIdentificationMethod());
                 break;
             case HEADER_NAME_STATUS:
-                nodeEntries.add(metaData.getNodeStatus().getStatus());
+                columnValue = metaData.getNodeStatus().getStatus();
                 break;
             case HEADER_NAME_SIZE:
-                nodeEntries.add(nullSafeNumber(metaData.getSize()));
+                columnValue = nullSafeNumber(metaData.getSize());
                 break;
             case HEADER_NAME_TYPE:
-                nodeEntries.add(metaData.getResourceType().getResourceType());
+                columnValue = metaData.getResourceType().getResourceType();
                 break;
             case HEADER_NAME_EXT:
-                nodeEntries.add(metaData.getExtension());
+                columnValue = metaData.getExtension();
                 break;
             case HEADER_NAME_LAST_MODIFIED:
-                nodeEntries.add(nullSafeDate(metaData.getLastModifiedDate(), dateFormat));
+                columnValue = nullSafeDate(metaData.getLastModifiedDate(), dateFormat);
                 break;
             case HEADER_NAME_EXTENSION_MISMATCH:
-                nodeEntries.add(node.getExtensionMismatch().toString());
+                columnValue = node.getExtensionMismatch().toString();
                 break;
             case HEADER_NAME_HASH:
-                nodeEntries.add(metaData.getHash());
+                columnValue = metaData.getHash();
                 break;
             case HEADER_NAME_FORMAT_COUNT:
-                nodeEntries.add(nullSafeNumber(node.getIdentificationCount()));
+                columnValue = nullSafeNumber(node.getIdentificationCount());
                 break;
         }
+        nodeEntries.add(def.getOperatedValue(columnValue));
     }
 
-    private void addFormatColumn(List<String> nodeEntries, ProfileResourceNode node, String columnName, int maxIdCount) {
+    private void addFormatColumnTemplate(List<String> nodeEntries, ProfileResourceNode node, ExportTemplateColumnDef def, int maxIdCount) {
         List<Format> formats = node.getFormatIdentifications();
-        if (!columnsToWriteMap.get(columnName)) {
+        if (!columnsToWriteMap.get(def.getOriginalColumnName())) {
             return;
         }
         for (int i = 0; i < maxIdCount; i++) {
             Format format = i < formats.size() ? formats.get(i) : null;
-            nodeEntries.add(getFormatValue(columnName, format));
+            nodeEntries.add(def.getOperatedValue(getFormatValue(def.getOriginalColumnName(), format)));
         }
     }
 
@@ -356,12 +358,13 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 List<String> nodeEntries = new ArrayList<>();
                 for (Format format : node.getFormatIdentifications()) {
                     for (int i = 0; i <= maxCols; i++) {
-                        String columnName = columnPositions.get(i).getOriginalColumnName();
+                        ExportTemplateColumnDef def = columnPositions.get(i);
+                        String columnName = def.getOriginalColumnName();
                         if (PER_FORMAT_HEADERS.contains(columnName)) {
                             String columnValue = getFormatValue(columnName, format);
                             nodeEntries.add(columnValue);
                         } else {
-                            addNodeColumn(nodeEntries, node, columnPositions.get(i).getOriginalColumnName());
+                            addNodeColumn(nodeEntries, node, def);
                         }
                     }
                 }
@@ -531,8 +534,13 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         if (hashHeader != null) {
             if (exportTemplate != null) {
                 Map<Integer, ExportTemplateColumnDef> columnPositions = exportTemplate.getColumnOrderMap();
-                List<Map.Entry<Integer, ExportTemplateColumnDef>> profileCols = columnPositions.entrySet().stream().filter(e -> e.getValue().isProfileNodeColumn()).collect(Collectors.toList());
-                List<Map.Entry<Integer, ExportTemplateColumnDef>> hashEntry = profileCols.stream().filter(entry -> entry.getValue().getOriginalColumnName().equals(HEADER_NAME_HASH)).collect(Collectors.toList());
+                List<Map.Entry<Integer, ExportTemplateColumnDef>> profileCols = columnPositions.entrySet()
+                        .stream()
+                        .filter(e -> e.getValue().getColumnType() == ExportTemplateColumnDef.ColumnType.ProfileResourceNode)
+                        .collect(Collectors.toList());
+                List<Map.Entry<Integer, ExportTemplateColumnDef>> hashEntry = profileCols.stream()
+                        .filter(entry -> entry.getValue().getOriginalColumnName().equals(HEADER_NAME_HASH))
+                        .collect(Collectors.toList());
                 if (!hashEntry.isEmpty()) {
                     this.allHeaders[HASH_ARRAY_INDEX] = hashHeader;
                 }
@@ -610,7 +618,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             } else {
                 retVal.add(def.getHeaderLabel());
             }
-            if (def.isProfileNodeColumn()) {
+            if (def.getColumnType() != ExportTemplateColumnDef.ColumnType.ConstantString) {
                 if (PER_FORMAT_HEADERS.contains(def.getOriginalColumnName())) {
                     for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
                         retVal.add(def.getHeaderLabel() + newColumnSuffix);

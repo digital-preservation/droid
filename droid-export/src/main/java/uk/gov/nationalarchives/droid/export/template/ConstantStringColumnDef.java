@@ -49,11 +49,6 @@ public class ConstantStringColumnDef implements ExportTemplateColumnDef {
     }
 
     @Override
-    public Boolean isProfileNodeColumn() {
-        return false;
-    }
-
-    @Override
     public String getOriginalColumnName() {
         throw new RuntimeException("Constant String Columns do not have an associated original column name");
     }
@@ -61,5 +56,15 @@ public class ConstantStringColumnDef implements ExportTemplateColumnDef {
     @Override
     public String getDataValue() {
         return dataValue;
+    }
+
+    @Override
+    public ColumnType getColumnType() {
+        return ColumnType.ConstantString;
+    }
+
+    @Override
+    public String getOperatedValue(String input) {
+        return input;
     }
 }

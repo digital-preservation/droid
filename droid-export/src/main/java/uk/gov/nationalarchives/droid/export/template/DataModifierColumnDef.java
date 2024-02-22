@@ -31,28 +31,47 @@
  */
 package uk.gov.nationalarchives.droid.export.template;
 
-import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 
-import java.util.HashMap;
-import java.util.Map;
+public class DataModifierColumnDef implements ExportTemplateColumnDef {
 
-public class ExportTemplateImpl implements ExportTemplate {
-    private Map<Integer, ExportTemplateColumnDef> columnOrderMap = new HashMap<>();
+    private final DataModification operation;
+    private ProfileResourceNodeColumnDef innerDef;
 
-    //CHECKSTYLE:OFF - No need to worry about magic numbers here for now, until UI is all wired up
-    public ExportTemplateImpl() {
-        columnOrderMap.put(0, new ProfileResourceNodeColumnDef("ID", "Identifier"));
-        columnOrderMap.put(1, new ProfileResourceNodeColumnDef("FILE_PATH", "Path"));
-        columnOrderMap.put(2, new ProfileResourceNodeColumnDef("SIZE", "Size"));
-        columnOrderMap.put(3, new ProfileResourceNodeColumnDef("HASH", "HASH"));
-        columnOrderMap.put(4, new ProfileResourceNodeColumnDef("PUID", "Puid"));
-        columnOrderMap.put(5, new ConstantStringColumnDef("Welsh", "Language"));
-        columnOrderMap.put(6, new DataModifierColumnDef(new ProfileResourceNodeColumnDef("MIME_TYPE", "Mime Type"), ExportTemplateColumnDef.DataModification.UCASE));
+    public DataModifierColumnDef(ProfileResourceNodeColumnDef innerDef, DataModification operation) {
+        this.innerDef = innerDef;
+        this.operation = operation;
     }
-    //CHECKSTYLE:ON
 
-    public Map<Integer, ExportTemplateColumnDef> getColumnOrderMap() {
-        return columnOrderMap;
+    @Override
+    public String getHeaderLabel() {
+        return innerDef.getHeaderLabel();
+    }
+
+    @Override
+    public String getOriginalColumnName() {
+        return innerDef.getOriginalColumnName();
+    }
+
+    @Override
+    public String getDataValue() {
+        return innerDef.getDataValue();
+    }
+
+    @Override
+    public ColumnType getColumnType() {
+        return ColumnType.DataModifier;
+    }
+
+    @Override
+    public String getOperatedValue(String input) {
+        switch(operation) {
+            case LCASE:
+                return input.toLowerCase();
+            case UCASE:
+                return input.toUpperCase();
+            default:
+                throw new RuntimeException("Value conversion for operation " + operation + " is not implemented");
+        }
     }
 }

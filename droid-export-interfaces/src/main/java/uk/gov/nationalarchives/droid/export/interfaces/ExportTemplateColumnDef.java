@@ -33,7 +33,42 @@ package uk.gov.nationalarchives.droid.export.interfaces;
 
 public interface ExportTemplateColumnDef {
     String getHeaderLabel();
-    Boolean isProfileNodeColumn();
     String getOriginalColumnName();
     String getDataValue();
+
+    ColumnType getColumnType();
+
+    /**
+     * Column type as defined in the ExportTemplate. There are 3 types of columns.
+     */
+    enum ColumnType {
+        /**
+         * ProfileResourceNode - The data comes directly from the profile result.
+         */
+        ProfileResourceNode,
+        /**
+         * ConstantString - The data comes directly from the constant value in the template.
+         */
+        ConstantString,
+        /**
+         * DataModifier - The data is modified as per the operation associated with column.
+         */
+        DataModifier
+    }
+
+    /**
+     * Data modification operations for the DataModifier columns type.
+     * At this time, only case change is supported
+     */
+    enum DataModification {
+        /**
+         * Convert the given string value to lowercase.
+         */
+        LCASE,
+        /**
+         * Convert the given string value to uppercase.
+         */
+        UCASE
+    }
+    String getOperatedValue(String input);
 }
