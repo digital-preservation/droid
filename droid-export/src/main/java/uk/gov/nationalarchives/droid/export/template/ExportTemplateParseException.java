@@ -31,6 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.export.template;
 
-public interface Transformation {
-    String transform(String inputValue);
+
+public class ExportTemplateParseException extends RuntimeException {
+    public ExportTemplateParseException(String message) {
+        super(message);
+    }
+
+    public ExportTemplateParseException() {
+        this("Unable to parse export template file");
+    }
 }

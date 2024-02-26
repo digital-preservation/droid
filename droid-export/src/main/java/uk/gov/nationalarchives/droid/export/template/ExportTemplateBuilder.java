@@ -32,9 +32,96 @@
 package uk.gov.nationalarchives.droid.export.template;
 
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ExportTemplateBuilder {
+
+    /**
+     * Constant string for colon used as delimeter in multiple places.
+     */
+    public static final String COLON = ":";
+
     public ExportTemplate buildExportTemplate(String pathToTemplate) {
-        return null;
+        List<String> templateLines;
+        try {
+            templateLines = Files.readAllLines(Paths.get(pathToTemplate));
+            Map<Integer, ExportTemplateColumnDef> columnMap = buildColumnMap(templateLines);
+            return new ExportTemplateImpl(columnMap);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to read template file");
+        }
+    }
+
+    private Map<Integer, ExportTemplateColumnDef> buildColumnMap(List<String> templateLines) {
+        String versionLine = templateLines.get(0);
+        String version = parseVersionLine(versionLine);
+
+        //we have only one version at the moment, but future provision for versioning
+        switch (version) {
+            case "1.0":
+                return parseExportTemplateV1(templateLines.subList(1, templateLines.size()));
+            default:
+                throw new ExportTemplateParseException("Unsupported version for the export template");
+        }
+    }
+
+    private Map<Integer, ExportTemplateColumnDef> parseExportTemplateV1(List<String> columnLines) {
+        Map<Integer, ExportTemplateColumnDef> columnMap = new HashMap<>();
+        for (int i = 0; i < columnLines.size(); i++) {
+            String line = columnLines.get(i);
+            String[] tokens = line.split(COLON);
+            if (tokens.length != 2) {
+                throw new ExportTemplateParseException("Unable to parse line:  " + line);
+            }
+
+            String header = tokens[0].trim();
+            String param2 = tokens[1].trim();
+
+            if (param2.startsWith("$")) {
+                columnMap.put(i, createProfileNodeDef(header, param2));
+            } else if (param2.startsWith("\"")) {
+                columnMap.put(i, createConstantStringDef(header, param2));
+            } else {
+                columnMap.put(i, createDataModifierDef(header, param2));
+            }
+        }
+        return columnMap;
+    }
+
+    private ExportTemplateColumnDef createDataModifierDef(String header, String param2) {
+        String[] tokens = param2.split("\\(");
+        String operationName = tokens[0].trim();
+        String column = tokens[1].trim().substring(0, tokens[1].trim().length() - 1);
+        ProfileResourceNodeColumnDef inner = createProfileNodeDef(header, column);
+
+        ExportTemplateColumnDef.DataModification operation = ExportTemplateColumnDef.DataModification.valueOf(operationName);
+        return new DataModifierColumnDef(inner, operation);
+    }
+
+    private ExportTemplateColumnDef createConstantStringDef(String header, String param2) {
+        String data = param2.substring(1, param2.length() - 2);
+        return new ConstantStringColumnDef(data, header);
+    }
+
+    private ProfileResourceNodeColumnDef createProfileNodeDef(String header, String param2) {
+        String originalColumnName = param2.substring(1);
+        return new ProfileResourceNodeColumnDef(originalColumnName, header);
+    }
+
+    private String parseVersionLine(String versionLine) {
+        String[] tokens = versionLine.split(COLON);
+        if ((tokens.length != 2) || (!tokens[0].trim().equals("version"))) {
+            throw new ExportTemplateParseException("Invalid version line, expecting \"version: <version number>\"");
+        }
+        return tokens[1].trim();
     }
 }
+
+

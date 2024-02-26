@@ -1486,6 +1486,7 @@ public class DroidMainFrame extends JFrame {
                     exportAction.setBom(exportOptions.isBom());
                     exportAction.setQuoteAllFields(exportOptions.getQuoteAllColumns());
                     exportAction.setColumnsToWrite(columnNames);
+                    exportAction.setExportTemplatePath("/home/sparkhi/test-data/droid/export-template");
 
                     exportAction.setCallback(new ActionDoneCallback<ExportAction>() {
                         @Override

@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExportTemplateImpl implements ExportTemplate {
-    private Map<Integer, ExportTemplateColumnDef> columnOrderMap = new HashMap<>();
+    private final Map<Integer, ExportTemplateColumnDef> columnOrderMap = new HashMap<>();
 
     //CHECKSTYLE:OFF - No need to worry about magic numbers here for now, until UI is all wired up
     public ExportTemplateImpl() {
@@ -49,6 +49,10 @@ public class ExportTemplateImpl implements ExportTemplate {
         columnOrderMap.put(4, new ProfileResourceNodeColumnDef("PUID", "Puid"));
         columnOrderMap.put(5, new ConstantStringColumnDef("Welsh", "Language"));
         columnOrderMap.put(6, new DataModifierColumnDef(new ProfileResourceNodeColumnDef("MIME_TYPE", "Mime Type"), ExportTemplateColumnDef.DataModification.UCASE));
+    }
+
+    public ExportTemplateImpl(final Map<Integer, ExportTemplateColumnDef> columnOrder) {
+        this.columnOrderMap.putAll(columnOrder);
     }
     //CHECKSTYLE:ON
 

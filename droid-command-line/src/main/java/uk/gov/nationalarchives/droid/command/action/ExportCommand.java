@@ -39,6 +39,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
@@ -60,7 +61,7 @@ public class ExportCommand implements DroidCommand {
     private boolean bom;
     private boolean quoteAllFields = true;
     private String columnsToWrite;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -86,9 +87,7 @@ public class ExportCommand implements DroidCommand {
         // Run the export
         try {
             //default to UTF-8
-            final String outputEncoding = "UTF-8"; //TODO set encoding from command line option
-            final Future<?> fProfiles = exportManager.exportProfiles(profileIds, destination, filter,
-                    options, outputEncoding, bom, quoteAllFields, columnsToWrite);
+            final Future<?> fProfiles = exportManager.exportProfiles(profileIds, destination, filter, getExportDetails());
             fProfiles.get();
         } catch (InterruptedException e) {
             throw new CommandExecutionException(e);
@@ -217,5 +216,22 @@ public class ExportCommand implements DroidCommand {
      */
     public String getColumnsToWrite() {
         return columnsToWrite;
+    }
+
+    /**
+     *
+     * @return the export details for this export command.
+     */
+    private ExportDetails getExportDetails() {
+        ExportDetails.ExportDetailsBuilder builder = new ExportDetails.ExportDetailsBuilder();
+        ExportDetails details = builder.withExportOptions(getExportOptions())
+                .withOutpuEncoding("UTF-8") //default
+                .withBomFlag(isBom())
+                .withQuotingAllFields(getQuoteAllFields())
+                .withColumnsToWrite(getColumnsToWrite())
+                .withExportTemplatePath(null)
+                .build();
+
+        return details;
     }
 }

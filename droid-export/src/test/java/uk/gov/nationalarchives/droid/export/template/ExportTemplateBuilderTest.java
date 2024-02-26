@@ -31,14 +31,69 @@
  */
 package uk.gov.nationalarchives.droid.export.template;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class ExportTemplateBuilderTest {
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
     @Test
-    public void should_read_an_export_template_file_and_construct_export_template_object() {
-
+    public void should_read_an_export_template_file_and_construct_export_template_object() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version: 1.0",
+                "Identifier: $ID",
+                "Language: \"Gibberish\"",
+                "Path: UCASE($FILE_PATH)",
+                "Size: $SIZE",
+                "HASH: $HASH");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+        ExportTemplate template = builder.buildExportTemplate(tempFile.getAbsolutePath());
+        assertNotNull(template);
+        assertTrue(template.getColumnOrderMap().get(1) instanceof ConstantStringColumnDef);
+        assertTrue(template.getColumnOrderMap().get(2) instanceof DataModifierColumnDef);
+        assertEquals("FILE_PATH", template.getColumnOrderMap().get(2).getOriginalColumnName());
     }
+
+    @Test
+    public void should_throw_exception_when_version_string_is_bad() throws IOException {
+        expectedEx.expect(ExportTemplateParseException.class);
+        expectedEx.expectMessage("Invalid version line, expecting \"version: <version number>\"");
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        Files.write(tempFile.toPath(), "versio: 1.3".getBytes(StandardCharsets.UTF_8));
+        List<String> data = Collections.singletonList("myCol:$My_COL");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.APPEND);
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        builder.buildExportTemplate(tempFile.getAbsolutePath());
+    }
+
+    @Test
+    public void should_throw_exception_when_data_line_does_not_have_exactly_two_tokens_delimited_by_colon() throws IOException {
+        expectedEx.expect(ExportTemplateParseException.class);
+        expectedEx.expectMessage("Unable to parse line:  myCol $SOME_COL");
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList("version: 1.0", "myCol $SOME_COL");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        builder.buildExportTemplate(tempFile.getAbsolutePath());
+    }
+
 }

@@ -64,11 +64,17 @@ public interface ExportTemplateColumnDef {
         /**
          * Convert the given string value to lowercase.
          */
-        LCASE,
+        LCASE("LCASE"),
         /**
          * Convert the given string value to uppercase.
          */
-        UCASE
+        UCASE("UCASE");
+
+        private final String label;
+
+        DataModification(String label) {
+            this.label = label;
+        }
     }
     String getOperatedValue(String input);
 }
