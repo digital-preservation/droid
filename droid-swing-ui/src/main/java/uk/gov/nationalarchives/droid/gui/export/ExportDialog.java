@@ -31,14 +31,21 @@
  */
 package uk.gov.nationalarchives.droid.gui.export;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.swing.BorderFactory;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
@@ -57,6 +64,8 @@ import javax.swing.SwingConstants;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JComboBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
@@ -74,12 +83,14 @@ public class ExportDialog extends JDialog {
 
     private static final long serialVersionUID = -4598078880004073202L;
     private static final int CAPACITY = 128;
+    private static final String EXPORT_TEMPLATE_FILE_EXTENSION = ".template";
 
     private DroidMainFrame droidMain;
     private DefaultTableModel tableModel;
     private List<ProfileWrapper> profilesRowData;
     private boolean approved;
-    
+    private Path exportTemplatesFolder;
+
     /** 
      * Creates new form ReportDialog.
      * @param parent the dialog's parent
@@ -90,7 +101,7 @@ public class ExportDialog extends JDialog {
         setModal(true);
         
         initComponents();
-        jScrollPane1.getViewport().setBackground(profileSelectTable.getBackground());
+        jScrollPaneProfileSelection.getViewport().setBackground(profileSelectTable.getBackground());
         pack();
         setLocationRelativeTo(getParent());
         
@@ -129,9 +140,16 @@ public class ExportDialog extends JDialog {
         profileSelectTable.setDefaultEditor(ProfileForm.class, new CheckBoxEditor());
         profileSelectTable.setDefaultRenderer(ProfileForm.class, new CheckBoxRenderer());
         
-        jScrollPane1.setColumnHeaderView(null);
+        jScrollPaneProfileSelection.setColumnHeaderView(null);
         profileSelectTable.setCellSelectionEnabled(false);
-        
+
+        ComboBoxModel templatesModel = getExportTemplatesModel();
+        if (templatesModel.getSize() == 0) {
+            jCheckBoxUseTemplate.setEnabled(false);
+        } else {
+            jComboBoxTemplates.setModel(templatesModel);
+        }
+
         enableGenerateButton();
         approved = false;
         setVisible(true);
@@ -228,6 +246,31 @@ public class ExportDialog extends JDialog {
         return builder.toString().trim();
     }
 
+    public String getTemplatePath() {
+        try {
+            //for now just return the first template, for testing purpose one template in folder should suffice
+            List<Path> templates = Files.list(exportTemplatesFolder).collect(Collectors.toList());
+            for (Path template : templates) {
+                if (!Files.isDirectory(template) && (template.getFileName().toString().endsWith(EXPORT_TEMPLATE_FILE_EXTENSION))) {
+                    return template.toAbsolutePath().toString();
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+
+//        if (jCheckBoxUseTemplate.isSelected()) {
+//            return "/home/sparkhi/test-data/droid/export-template";
+//        } else {
+//            return null;
+//        }
+    }
+
+    public void setDefaultTemplatesFolder(Path templatesFolder) {
+        this.exportTemplatesFolder = templatesFolder;
+    }
+
     private void addColumn(String columnName, boolean selected, StringBuilder builder) {
         if (selected) {
             builder.append(columnName).append(' ');
@@ -251,9 +294,9 @@ public class ExportDialog extends JDialog {
 
         buttonGroup1 = new ButtonGroup();
         profileSelectLabel = new JLabel();
-        jScrollPane1 = new JScrollPane();
+        jScrollPaneProfileSelection = new JScrollPane();
         profileSelectTable = new JTable();
-        jPanel1 = new JPanel();
+        jPanelBottomControl = new JPanel();
         cancelButton = new JButton();
         exportButton = new JButton();
         RadioOneRowPerFile = new JRadioButton();
@@ -263,7 +306,9 @@ public class ExportDialog extends JDialog {
         jCheckBoxQuoteAll = new JCheckBox();
         toggleColumnButton = new JButton();
         jButtonSetAllColumns = new JButton();
-        jPanel2 = new JPanel();
+        jPanelRight = new JPanel();
+        jPanelCards = new JPanel();
+        jPanelColumnChoices = new JPanel();
         profileSelectLabel1 = new JLabel();
         jCheckBoxId = new JCheckBox();
         jCheckBoxParentId = new JCheckBox();
@@ -283,14 +328,20 @@ public class ExportDialog extends JDialog {
         jCheckBoxFormatVersion = new JCheckBox();
         jCheckBoxExtMismatch = new JCheckBox();
         jCheckBoxFileHash = new JCheckBox();
+        jPanelTemplateChoices = new JPanel();
+        jLabel2 = new JLabel();
+        jComboBoxTemplates = new JComboBox<>();
+        jCheckBoxUseTemplate = new JCheckBox();
 
         setTitle(NbBundle.getMessage(ExportDialog.class, "ExportDialog.title_1")); // NOI18N
         setAlwaysOnTop(true);
+        setMinimumSize(new Dimension(1155, 760));
         setName("exportDialog"); // NOI18N
+        setPreferredSize(new Dimension(1055, 760));
 
         profileSelectLabel.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.profileSelectLabel.text_1")); // NOI18N
 
-        jScrollPane1.setPreferredSize(new Dimension(300, 402));
+        jScrollPaneProfileSelection.setPreferredSize(new Dimension(300, 402));
 
         profileSelectTable.setModel(new DefaultTableModel(
             new Object [][] {
@@ -302,7 +353,7 @@ public class ExportDialog extends JDialog {
         ));
         profileSelectTable.setRowSelectionAllowed(false);
         profileSelectTable.setTableHeader(null);
-        jScrollPane1.setViewportView(profileSelectTable);
+        jScrollPaneProfileSelection.setViewportView(profileSelectTable);
 
         cancelButton.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.cancelButton.text")); // NOI18N
         cancelButton.setVerticalAlignment(SwingConstants.BOTTOM);
@@ -357,51 +408,61 @@ public class ExportDialog extends JDialog {
             }
         });
 
-        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        GroupLayout jPanelBottomControlLayout = new GroupLayout(jPanelBottomControl);
+        jPanelBottomControl.setLayout(jPanelBottomControlLayout);
+        jPanelBottomControlLayout.setHorizontalGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanelBottomControlLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(cmdEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(exportButton)
-                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                        .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanelBottomControlLayout.createSequentialGroup()
                         .addComponent(RadioOneRowPerFile)
                         .addGap(18, 18, 18)
                         .addComponent(RadioOneRowPerIdentification)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jCheckBoxQuoteAll)
-                        .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonSetAllColumns)
-                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                        .addComponent(toggleColumnButton)))
-                .addContainerGap())
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(Alignment.TRAILING, jPanelBottomControlLayout.createSequentialGroup()
+                        .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.TRAILING)
+                            .addGroup(jPanelBottomControlLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(cmdEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(exportButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 180, GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanelBottomControlLayout.createSequentialGroup()
+                                .addComponent(jCheckBoxQuoteAll)
+                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonSetAllColumns)
+                                .addGap(18, 18, 18)
+                                .addComponent(toggleColumnButton)))
+                        .addGap(27, 27, 27))))
         );
-        jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+        jPanelBottomControlLayout.setVerticalGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(Alignment.TRAILING, jPanelBottomControlLayout.createSequentialGroup()
+                .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(toggleColumnButton)
                     .addComponent(jCheckBoxQuoteAll)
                     .addComponent(jButtonSetAllColumns))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(RadioOneRowPerFile)
                     .addComponent(RadioOneRowPerIdentification))
                 .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(exportButton)
                     .addComponent(cmdEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addContainerGap())
         );
+
+        jPanelRight.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 10));
+        jPanelRight.setLayout(new BorderLayout());
+
+        jPanelCards.setBorder(BorderFactory.createEtchedBorder());
+        jPanelCards.setLayout(new CardLayout());
+
+        jPanelColumnChoices.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         profileSelectLabel1.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.profileSelectLabel1.text")); // NOI18N
 
@@ -477,11 +538,11 @@ public class ExportDialog extends JDialog {
         jCheckBoxFileHash.setSelected(true);
         jCheckBoxFileHash.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxFileHash.text")); // NOI18N
 
-        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        GroupLayout jPanelColumnChoicesLayout = new GroupLayout(jPanelColumnChoices);
+        jPanelColumnChoices.setLayout(jPanelColumnChoicesLayout);
+        jPanelColumnChoicesLayout.setHorizontalGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanelColumnChoicesLayout.createSequentialGroup()
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jCheckBoxId)
                     .addComponent(profileSelectLabel1)
                     .addComponent(jCheckBoxParentId)
@@ -493,87 +554,127 @@ public class ExportDialog extends JDialog {
                     .addComponent(jCheckBoxExtension)
                     .addComponent(jCheckBoxExtMismatch))
                 .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jCheckBoxFileHash)
-                    .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(jCheckBoxIdCount, Alignment.TRAILING)
-                        .addComponent(jCheckBoxMIMEtype))
-                    .addComponent(jCheckBoxFormatName)
-                    .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-                        .addGroup(Alignment.TRAILING, jPanel2Layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(jCheckBoxFileHash)
+                        .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(jCheckBoxIdCount, Alignment.TRAILING)
+                            .addComponent(jCheckBoxMIMEtype))
+                        .addGroup(Alignment.TRAILING, jPanelColumnChoicesLayout.createParallelGroup(Alignment.LEADING)
                             .addComponent(jCheckBoxIdMethod)
                             .addComponent(jCheckBoxStatus)
                             .addComponent(jCheckBoxFormatVersion))
-                        .addComponent(jCheckBoxPUID))
-                    .addComponent(jCheckBoxResourceType))
+                        .addComponent(jCheckBoxResourceType))
+                    .addComponent(jCheckBoxFormatName)
+                    .addComponent(jCheckBoxPUID))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        jPanelColumnChoicesLayout.setVerticalGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanelColumnChoicesLayout.createSequentialGroup()
                 .addComponent(profileSelectLabel1)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxId)
                     .addComponent(jCheckBoxPUID))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxParentId)
                     .addComponent(jCheckBoxFormatName))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxURI)
                     .addComponent(jCheckBoxFormatVersion))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxFilePath)
                     .addComponent(jCheckBoxMIMEtype))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxFileName)
                     .addComponent(jCheckBoxIdCount))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxFileSize, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCheckBoxIdMethod))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxLastModified)
                     .addComponent(jCheckBoxStatus))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxExtension)
                     .addComponent(jCheckBoxResourceType))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxExtMismatch)
                     .addComponent(jCheckBoxFileHash))
-                .addGap(0, 9, Short.MAX_VALUE))
+                .addGap(0, 85, Short.MAX_VALUE))
         );
+
+        jPanelColumnChoicesLayout.linkSize(SwingConstants.VERTICAL, new Component[] {jCheckBoxExtMismatch, jCheckBoxExtension, jCheckBoxFileHash, jCheckBoxFileName, jCheckBoxFilePath, jCheckBoxFileSize, jCheckBoxFormatName, jCheckBoxFormatVersion, jCheckBoxId, jCheckBoxIdCount, jCheckBoxIdMethod, jCheckBoxLastModified, jCheckBoxMIMEtype, jCheckBoxPUID, jCheckBoxParentId, jCheckBoxResourceType, jCheckBoxStatus, jCheckBoxURI});
+
+        jPanelCards.add(jPanelColumnChoices, "card5");
+
+        jPanelTemplateChoices.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        jLabel2.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jLabel2.text")); // NOI18N
+
+        GroupLayout jPanelTemplateChoicesLayout = new GroupLayout(jPanelTemplateChoices);
+        jPanelTemplateChoices.setLayout(jPanelTemplateChoicesLayout);
+        jPanelTemplateChoicesLayout.setHorizontalGroup(jPanelTemplateChoicesLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanelTemplateChoicesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelTemplateChoicesLayout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jComboBoxTemplates, 0, 694, Short.MAX_VALUE))
+                .addGap(25, 25, 25))
+        );
+        jPanelTemplateChoicesLayout.setVerticalGroup(jPanelTemplateChoicesLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanelTemplateChoicesLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(jLabel2)
+                .addGap(32, 32, 32)
+                .addComponent(jComboBoxTemplates, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(422, Short.MAX_VALUE))
+        );
+
+        jPanelCards.add(jPanelTemplateChoices, "card3");
+
+        jPanelRight.add(jPanelCards, BorderLayout.CENTER);
+
+        jCheckBoxUseTemplate.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxUseTemplate.text")); // NOI18N
+        jCheckBoxUseTemplate.setBorder(BorderFactory.createEmptyBorder(1, 15, 1, 1));
+        jCheckBoxUseTemplate.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                jCheckBoxUseTemplateStateChanged(evt);
+            }
+        });
+        jPanelRight.add(jCheckBoxUseTemplate, BorderLayout.PAGE_START);
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(jPanel1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelBottomControl, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(profileSelectLabel)
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPaneProfileSelection, GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanelRight, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(profileSelectLabel)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jScrollPaneProfileSelection, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanelRight, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanelBottomControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -635,6 +736,11 @@ public class ExportDialog extends JDialog {
         jCheckBoxFileHash.setSelected(true);
     }//GEN-LAST:event_jButtonSetAllColumnsActionPerformed
 
+    private void jCheckBoxUseTemplateStateChanged(ChangeEvent evt) {//GEN-FIRST:event_jCheckBoxUseTemplateStateChanged
+        jPanelTemplateChoices.setVisible(jCheckBoxUseTemplate.isSelected());
+        jPanelColumnChoices.setVisible(!jCheckBoxUseTemplate.isSelected());
+    }//GEN-LAST:event_jCheckBoxUseTemplateStateChanged
+
     /**
      * @param evt The event that triggers the action.
      */
@@ -673,10 +779,16 @@ public class ExportDialog extends JDialog {
     private JCheckBox jCheckBoxResourceType;
     private JCheckBox jCheckBoxStatus;
     private JCheckBox jCheckBoxURI;
+    private JCheckBox jCheckBoxUseTemplate;
+    private JComboBox<String> jComboBoxTemplates;
     private JLabel jLabel1;
-    private JPanel jPanel1;
-    private JPanel jPanel2;
-    private JScrollPane jScrollPane1;
+    private JLabel jLabel2;
+    private JPanel jPanelBottomControl;
+    private JPanel jPanelCards;
+    private JPanel jPanelColumnChoices;
+    private JPanel jPanelRight;
+    private JPanel jPanelTemplateChoices;
+    private JScrollPane jScrollPaneProfileSelection;
     private JLabel profileSelectLabel;
     private JLabel profileSelectLabel1;
     private JTable profileSelectTable;
@@ -775,7 +887,44 @@ public class ExportDialog extends JDialog {
         
         return model;
     }
-    
+
+    class ExportTemplateComboBoxItem {
+        private String label;
+        private Path item;
+
+        ExportTemplateComboBoxItem(Path templateFilePath) {
+            this.label = templateFilePath.getFileName().toString();
+            this.item = templateFilePath;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public Path getItem() {
+            return item;
+        }
+
+        @Override
+        public String toString() {
+            return this.label;
+        }
+    }
+
+    private ComboBoxModel getExportTemplatesModel() {
+        final DefaultComboBoxModel model = new DefaultComboBoxModel();
+        try {
+            List<Path> templates = Files.list(exportTemplatesFolder).collect(Collectors.toList());
+            for (Path template : templates) {
+                if (!Files.isDirectory(template) && (template.getFileName().toString().endsWith(EXPORT_TEMPLATE_FILE_EXTENSION))) {
+                    model.addElement(new ExportTemplateComboBoxItem(template));
+                }
+            }
+            return model;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     
     private final class CheckBoxRenderer extends JCheckBox implements TableCellRenderer {
         

@@ -255,6 +255,11 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     private void addNodeColumn(List<String> nodeEntries, ProfileResourceNode node, ExportTemplateColumnDef def) {
         NodeMetaData metaData = node.getMetaData();
+
+        if (!columnsToWriteMap.containsKey(def.getOriginalColumnName())) {
+            throw new IllegalArgumentException("Unknown profile result column: " + def.getOriginalColumnName());
+        }
+
         if (!columnsToWriteMap.get(def.getOriginalColumnName())) {
             return;
         }

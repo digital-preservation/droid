@@ -1460,6 +1460,9 @@ public class DroidMainFrame extends JFrame {
         } else {
             exportOptions.setExportOptions(ExportOptions.ONE_ROW_PER_FILE);
         }
+
+        exportOptions.setDefaultTemplatesFolder(globalContext.getGlobalConfig().getExportTemplatesDir());
+
         exportOptions.showDialog();
         if (exportOptions.isApproved()) {
             String columnNames = exportOptions.getColumnsToExport();
@@ -1486,7 +1489,7 @@ public class DroidMainFrame extends JFrame {
                     exportAction.setBom(exportOptions.isBom());
                     exportAction.setQuoteAllFields(exportOptions.getQuoteAllColumns());
                     exportAction.setColumnsToWrite(columnNames);
-                    exportAction.setExportTemplatePath("/home/sparkhi/test-data/droid/export-template");
+                    exportAction.setExportTemplatePath(exportOptions.getTemplatePath());
 
                     exportAction.setCallback(new ActionDoneCallback<ExportAction>() {
                         @Override

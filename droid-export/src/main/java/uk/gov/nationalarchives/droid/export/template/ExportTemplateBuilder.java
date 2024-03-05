@@ -46,9 +46,13 @@ public class ExportTemplateBuilder {
     /**
      * Constant string for colon used as delimeter in multiple places.
      */
-    public static final String COLON = ":";
+    private static final String COLON = ":";
+    private static final String UNABLE_TO_PARSE_LINE_MSG = "Unable to parse line: '%s'";
 
     public ExportTemplate buildExportTemplate(String pathToTemplate) {
+        if (pathToTemplate == null) {
+            return null;
+        }
         List<String> templateLines;
         try {
             templateLines = Files.readAllLines(Paths.get(pathToTemplate));
@@ -76,20 +80,22 @@ public class ExportTemplateBuilder {
         Map<Integer, ExportTemplateColumnDef> columnMap = new HashMap<>();
         for (int i = 0; i < columnLines.size(); i++) {
             String line = columnLines.get(i);
-            String[] tokens = line.split(COLON);
-            if (tokens.length != 2) {
-                throw new ExportTemplateParseException("Unable to parse line:  " + line);
+            if (!line.contains(COLON)) {
+                throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line));
+            }
+            String header = line.substring(0, line.indexOf(COLON));
+            if (header.length() == 0) {
+                throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line));
             }
 
-            String header = tokens[0].trim();
-            String param2 = tokens[1].trim();
+            String token2 = line.substring(line.indexOf(COLON) + 1).trim();
 
-            if (param2.startsWith("$")) {
-                columnMap.put(i, createProfileNodeDef(header, param2));
-            } else if (param2.startsWith("\"")) {
-                columnMap.put(i, createConstantStringDef(header, param2));
+            if (token2.startsWith("$")) {
+                columnMap.put(i, createProfileNodeDef(header, token2));
+            } else if ((token2.length() == 0) || (token2.startsWith("\""))) {
+                columnMap.put(i, createConstantStringDef(header, token2));
             } else {
-                columnMap.put(i, createDataModifierDef(header, param2));
+                columnMap.put(i, createDataModifierDef(header, token2));
             }
         }
         return columnMap;
@@ -106,7 +112,7 @@ public class ExportTemplateBuilder {
     }
 
     private ExportTemplateColumnDef createConstantStringDef(String header, String param2) {
-        String data = param2.substring(1, param2.length() - 2);
+        String data = param2.length() == 0 ? "" : param2.substring(1, param2.length() - 2);
         return new ConstantStringColumnDef(data, header);
     }
 
@@ -116,11 +122,12 @@ public class ExportTemplateBuilder {
     }
 
     private String parseVersionLine(String versionLine) {
-        String[] tokens = versionLine.split(COLON);
-        if ((tokens.length != 2) || (!tokens[0].trim().equals("version"))) {
+        String versionPrefix = "version";
+        if (!versionLine.trim().startsWith(versionPrefix)) {
             throw new ExportTemplateParseException("Invalid version line, expecting \"version: <version number>\"");
         }
-        return tokens[1].trim();
+
+        return versionLine.substring(versionPrefix.length()).trim();
     }
 }
 

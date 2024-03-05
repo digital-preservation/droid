@@ -42,6 +42,7 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 //import uk.gov.nationalarchives.droid.export.template.ExportTemplateBuilder;
+import uk.gov.nationalarchives.droid.export.template.ExportTemplateBuilder;
 import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
@@ -82,7 +83,7 @@ public class ExportManagerImpl implements ExportManager {
     ) {
         itemWriter.setQuoteAllFields(details.quoteAllFields());
         itemWriter.setColumnsToWrite(details.getColumnsToWrite());
-        //itemWriter.setExportTemplate(new ExportTemplateBuilder().buildExportTemplate(details.getExportTemplatePath()));
+        itemWriter.setExportTemplate(new ExportTemplateBuilder().buildExportTemplate(details.getExportTemplatePath()));
         final ExportTask exportTask = new ExportTask(destination,
                 profileIds, filter, details.getExportOptions(), details.getOutputEncoding(), details.bomFlag(), itemWriter, profileContextLocator);
         final FutureTask<?> task = new FutureTask<Object>(exportTask, null) {
