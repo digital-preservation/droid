@@ -364,12 +364,16 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                 for (Format format : node.getFormatIdentifications()) {
                     for (int i = 0; i <= maxCols; i++) {
                         ExportTemplateColumnDef def = columnPositions.get(i);
-                        String columnName = def.getOriginalColumnName();
-                        if (PER_FORMAT_HEADERS.contains(columnName)) {
-                            String columnValue = getFormatValue(columnName, format);
-                            nodeEntries.add(columnValue);
+                        if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
+                            nodeEntries.add(def.getDataValue());
                         } else {
-                            addNodeColumn(nodeEntries, node, def);
+                            String columnName = def.getOriginalColumnName();
+                            if (PER_FORMAT_HEADERS.contains(columnName)) {
+                                String columnValue = getFormatValue(columnName, format);
+                                nodeEntries.add(columnValue);
+                            } else {
+                                addNodeColumn(nodeEntries, node, def);
+                            }
                         }
                     }
                 }
