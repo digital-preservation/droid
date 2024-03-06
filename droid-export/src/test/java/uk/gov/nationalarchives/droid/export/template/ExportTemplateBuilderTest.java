@@ -35,6 +35,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,9 +66,14 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
         ExportTemplate template = builder.buildExportTemplate(tempFile.getAbsolutePath());
         assertNotNull(template);
-        assertTrue(template.getColumnOrderMap().get(1) instanceof ConstantStringColumnDef);
-        assertTrue(template.getColumnOrderMap().get(2) instanceof DataModifierColumnDef);
-        assertEquals("FILE_PATH", template.getColumnOrderMap().get(2).getOriginalColumnName());
+        ExportTemplateColumnDef cscd = template.getColumnOrderMap().get(1);
+        assertTrue(cscd instanceof ConstantStringColumnDef);
+        assertEquals("Gibberish",template.getColumnOrderMap().get(1).getDataValue());
+
+        ExportTemplateColumnDef dmcd = template.getColumnOrderMap().get(2);
+        assertTrue(dmcd instanceof DataModifierColumnDef);
+        assertEquals("FILE_PATH", dmcd.getOriginalColumnName());
+        assertEquals("SMALL", dmcd.getOperatedValue("small"));
     }
 
     @Test

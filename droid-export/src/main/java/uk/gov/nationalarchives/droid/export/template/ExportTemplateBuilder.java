@@ -112,7 +112,7 @@ public class ExportTemplateBuilder {
     }
 
     private ExportTemplateColumnDef createConstantStringDef(String header, String param2) {
-        String data = param2.length() == 0 ? "" : param2.substring(1, param2.length() - 2);
+        String data = param2.length() == 0 ? "" : param2.substring(1, param2.length() - 1);
         return new ConstantStringColumnDef(data, header);
     }
 
