@@ -64,6 +64,9 @@ public class ExportTemplateBuilder {
     }
 
     private Map<Integer, ExportTemplateColumnDef> buildColumnMap(List<String> templateLines) {
+        if ((templateLines == null) || (templateLines.size() == 0)) {
+            throw new ExportTemplateParseException("Export template is empty");
+        }
         String versionLine = templateLines.get(0);
         String version = parseVersionLine(versionLine);
 

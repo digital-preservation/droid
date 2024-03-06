@@ -147,7 +147,7 @@ public class ExportDialog extends JDialog {
         if (templatesModel.getSize() == 0) {
             jCheckBoxUseTemplate.setEnabled(false);
         } else {
-            jComboBoxTemplates.setModel(templatesModel);
+            jComboBox1.setModel(templatesModel);
         }
 
         enableGenerateButton();
@@ -330,12 +330,12 @@ public class ExportDialog extends JDialog {
         jCheckBoxFileHash = new JCheckBox();
         jPanelTemplateChoices = new JPanel();
         jLabel2 = new JLabel();
-        jComboBoxTemplates = new JComboBox<>();
+        jComboBox1 = new JComboBox<>();
         jCheckBoxUseTemplate = new JCheckBox();
 
         setTitle(NbBundle.getMessage(ExportDialog.class, "ExportDialog.title_1")); // NOI18N
         setAlwaysOnTop(true);
-        setMinimumSize(new Dimension(1155, 760));
+        setMinimumSize(new Dimension(1155, 835));
         setName("exportDialog"); // NOI18N
         setPreferredSize(new Dimension(1055, 760));
 
@@ -354,6 +354,8 @@ public class ExportDialog extends JDialog {
         profileSelectTable.setRowSelectionAllowed(false);
         profileSelectTable.setTableHeader(null);
         jScrollPaneProfileSelection.setViewportView(profileSelectTable);
+
+        jPanelBottomControl.setBorder(BorderFactory.createEmptyBorder(1, 1, 10, 1));
 
         cancelButton.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.cancelButton.text")); // NOI18N
         cancelButton.setVerticalAlignment(SwingConstants.BOTTOM);
@@ -608,7 +610,7 @@ public class ExportDialog extends JDialog {
                 .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxExtMismatch)
                     .addComponent(jCheckBoxFileHash))
-                .addGap(0, 85, Short.MAX_VALUE))
+                .addGap(0, 52, Short.MAX_VALUE))
         );
 
         jPanelColumnChoicesLayout.linkSize(SwingConstants.VERTICAL, new Component[] {jCheckBoxExtMismatch, jCheckBoxExtension, jCheckBoxFileHash, jCheckBoxFileName, jCheckBoxFilePath, jCheckBoxFileSize, jCheckBoxFormatName, jCheckBoxFormatVersion, jCheckBoxId, jCheckBoxIdCount, jCheckBoxIdMethod, jCheckBoxLastModified, jCheckBoxMIMEtype, jCheckBoxPUID, jCheckBoxParentId, jCheckBoxResourceType, jCheckBoxStatus, jCheckBoxURI});
@@ -619,6 +621,8 @@ public class ExportDialog extends JDialog {
 
         jLabel2.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jLabel2.text")); // NOI18N
 
+        jComboBox1.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         GroupLayout jPanelTemplateChoicesLayout = new GroupLayout(jPanelTemplateChoices);
         jPanelTemplateChoices.setLayout(jPanelTemplateChoicesLayout);
         jPanelTemplateChoicesLayout.setHorizontalGroup(jPanelTemplateChoicesLayout.createParallelGroup(Alignment.LEADING)
@@ -626,7 +630,7 @@ public class ExportDialog extends JDialog {
                 .addContainerGap()
                 .addGroup(jPanelTemplateChoicesLayout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(jComboBoxTemplates, 0, 694, Short.MAX_VALUE))
+                    .addComponent(jComboBox1, 0, 638, Short.MAX_VALUE))
                 .addGap(25, 25, 25))
         );
         jPanelTemplateChoicesLayout.setVerticalGroup(jPanelTemplateChoicesLayout.createParallelGroup(Alignment.LEADING)
@@ -634,8 +638,8 @@ public class ExportDialog extends JDialog {
                 .addGap(25, 25, 25)
                 .addComponent(jLabel2)
                 .addGap(32, 32, 32)
-                .addComponent(jComboBoxTemplates, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(422, Short.MAX_VALUE))
+                .addComponent(jComboBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(389, Short.MAX_VALUE))
         );
 
         jPanelCards.add(jPanelTemplateChoices, "card3");
@@ -780,7 +784,7 @@ public class ExportDialog extends JDialog {
     private JCheckBox jCheckBoxStatus;
     private JCheckBox jCheckBoxURI;
     private JCheckBox jCheckBoxUseTemplate;
-    private JComboBox<String> jComboBoxTemplates;
+    private JComboBox<String> jComboBox1;
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JPanel jPanelBottomControl;
