@@ -43,6 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
@@ -74,6 +75,7 @@ import org.openide.util.NbBundle;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.gui.DroidMainFrame;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
+import uk.gov.nationalarchives.droid.gui.util.SortedComboBoxModel;
 
 /**
  *
@@ -247,24 +249,12 @@ public class ExportDialog extends JDialog {
     }
 
     public String getTemplatePath() {
-        try {
-            //for now just return the first template, for testing purpose one template in folder should suffice
-            List<Path> templates = Files.list(exportTemplatesFolder).collect(Collectors.toList());
-            for (Path template : templates) {
-                if (!Files.isDirectory(template) && (template.getFileName().toString().endsWith(EXPORT_TEMPLATE_FILE_EXTENSION))) {
-                    return template.toAbsolutePath().toString();
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (jCheckBoxUseTemplate.isSelected()) {
+            ExportTemplateComboBoxItem item = (ExportTemplateComboBoxItem) jComboBox1.getSelectedItem();
+            return item.getTemplatePath().toAbsolutePath().toString();
+        } else {
+            return null;
         }
-        return null;
-
-//        if (jCheckBoxUseTemplate.isSelected()) {
-//            return "/home/sparkhi/test-data/droid/export-template";
-//        } else {
-//            return null;
-//        }
     }
 
     public void setDefaultTemplatesFolder(Path templatesFolder) {
@@ -892,39 +882,48 @@ public class ExportDialog extends JDialog {
         return model;
     }
 
-    class ExportTemplateComboBoxItem {
+    class ExportTemplateComboBoxItem implements Comparable{
         private String label;
-        private Path item;
+        private Path templatePath;
 
         ExportTemplateComboBoxItem(Path templateFilePath) {
             this.label = templateFilePath.getFileName().toString();
-            this.item = templateFilePath;
+            this.templatePath = templateFilePath;
         }
 
         public String getLabel() {
             return label;
         }
 
-        public Path getItem() {
-            return item;
+        public Path getTemplatePath() {
+            return templatePath;
         }
 
         @Override
         public String toString() {
             return this.label;
         }
+
+        @Override
+        public int compareTo(Object o) {
+            if (!(o instanceof ExportTemplateComboBoxItem)) {
+                throw new ClassCastException("Invalid item for comparison " + o.getClass().getName());
+            }
+            ExportTemplateComboBoxItem that = (ExportTemplateComboBoxItem) o;
+            return this.getLabel().toUpperCase().compareTo(that.getLabel().toUpperCase());
+        }
     }
 
     private ComboBoxModel getExportTemplatesModel() {
-        final DefaultComboBoxModel model = new DefaultComboBoxModel();
+        List<ExportTemplateComboBoxItem> items = new LinkedList<>();
         try {
             List<Path> templates = Files.list(exportTemplatesFolder).collect(Collectors.toList());
             for (Path template : templates) {
                 if (!Files.isDirectory(template) && (template.getFileName().toString().endsWith(EXPORT_TEMPLATE_FILE_EXTENSION))) {
-                    model.addElement(new ExportTemplateComboBoxItem(template));
+                    items.add(new ExportTemplateComboBoxItem(template));
                 }
             }
-            return model;
+            return new SortedComboBoxModel(items) ;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

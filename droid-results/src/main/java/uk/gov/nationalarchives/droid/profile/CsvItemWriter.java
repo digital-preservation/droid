@@ -360,8 +360,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
             Map<Integer, ExportTemplateColumnDef> columnPositions = exportTemplate.getColumnOrderMap();
             int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
             for (ProfileResourceNode node : nodes) {
-                List<String> nodeEntries = new ArrayList<>();
                 for (Format format : node.getFormatIdentifications()) {
+                    List<String> nodeEntries = new ArrayList<>();
                     for (int i = 0; i <= maxCols; i++) {
                         ExportTemplateColumnDef def = columnPositions.get(i);
                         if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
@@ -376,8 +376,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                             }
                         }
                     }
+                    csvWriter.writeRow(nodeEntries);
                 }
-                csvWriter.writeRow(nodeEntries);
             }
             csvWriter.flush();
         } else {

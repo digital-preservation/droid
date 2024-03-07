@@ -40,15 +40,23 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+/**
+ * Class to build export template from a file.
+ * The class parses a file in a simple way using delimiters and string manipulations.
+ */
 public class ExportTemplateBuilder {
 
-    /**
-     * Constant string for colon used as delimeter in multiple places.
-     */
     private static final String COLON = ":";
     private static final String UNABLE_TO_PARSE_LINE_MSG = "Unable to parse line: '%s'";
+    private static final String DOUBLE_QUOTES = "\"";
 
+    /**
+     * The entry point into building an ExportTemplate object by reading a template file.
+     * @param pathToTemplate absolute path to the template file
+     * @return ExportTemplate object
+     */
     public ExportTemplate buildExportTemplate(String pathToTemplate) {
         if (pathToTemplate == null) {
             return null;
@@ -79,7 +87,8 @@ public class ExportTemplateBuilder {
         }
     }
 
-    private Map<Integer, ExportTemplateColumnDef> parseExportTemplateV1(List<String> columnLines) {
+    private Map<Integer, ExportTemplateColumnDef> parseExportTemplateV1(List<String> templateLines) {
+        List<String> columnLines = templateLines.stream().filter(line -> line.trim().length() > 0).collect(Collectors.toList());
         Map<Integer, ExportTemplateColumnDef> columnMap = new HashMap<>();
         for (int i = 0; i < columnLines.size(); i++) {
             String line = columnLines.get(i);
@@ -95,7 +104,7 @@ public class ExportTemplateBuilder {
 
             if (token2.startsWith("$")) {
                 columnMap.put(i, createProfileNodeDef(header, token2));
-            } else if ((token2.length() == 0) || (token2.startsWith("\""))) {
+            } else if ((token2.length() == 0) || (token2.startsWith(DOUBLE_QUOTES))) {
                 columnMap.put(i, createConstantStringDef(header, token2));
             } else {
                 columnMap.put(i, createDataModifierDef(header, token2));
@@ -115,8 +124,14 @@ public class ExportTemplateBuilder {
     }
 
     private ExportTemplateColumnDef createConstantStringDef(String header, String param2) {
-        String data = param2.length() == 0 ? "" : param2.substring(1, param2.length() - 1);
-        return new ConstantStringColumnDef(data, header);
+        if (param2.length() == 0) {
+            return new ConstantStringColumnDef("", header);
+        } else {
+            if (!param2.endsWith(DOUBLE_QUOTES)) {
+                throw new ExportTemplateParseException("The line with a constant value ('" + param2 + "') in template definition does not have closing quotes");
+            }
+            return new ConstantStringColumnDef(param2.substring(1, param2.length() - 1), header);
+        }
     }
 
     private ProfileResourceNodeColumnDef createProfileNodeDef(String header, String param2) {
@@ -127,7 +142,7 @@ public class ExportTemplateBuilder {
     private String parseVersionLine(String versionLine) {
         String versionPrefix = "version";
         if (!versionLine.trim().startsWith(versionPrefix)) {
-            throw new ExportTemplateParseException("Invalid version line, expecting \"version: <version number>\"");
+            throw new ExportTemplateParseException("First line in the template needs to specify version in the form \"version <version number>\"");
         }
 
         return versionLine.substring(versionPrefix.length()).trim();

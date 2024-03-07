@@ -121,6 +121,51 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.APPEND);
         ExportTemplateBuilder builder = new ExportTemplateBuilder();
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Invalid version line, expecting \"version: <version number>\"", ex.getMessage());
+        assertEquals("First line in the template needs to specify version in the form \"version <version number>\"", ex.getMessage());
+    }
+
+    @Test
+    public void should_trim_blanks_from_lines_and_tokens_to_produce_a_valid_template() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "",
+                "Language: \"Marathi\"    ",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+        ExportTemplate template = builder.buildExportTemplate(tempFile.getAbsolutePath());
+        assertEquals(1, template.getColumnOrderMap().size());
+        assertEquals("Marathi", template.getColumnOrderMap().get(0).getDataValue());
+    }
+
+    @Test
+    public void should_allow_constant_strings_with_double_quotes_in_the_data_value() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "",
+                "Language: \"Star trek: \"Klingon\"\"",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+        ExportTemplate template = builder.buildExportTemplate(tempFile.getAbsolutePath());
+        assertEquals(1, template.getColumnOrderMap().size());
+        assertEquals("Star trek: \"Klingon\"", template.getColumnOrderMap().get(0).getDataValue());
+    }
+
+    @Test
+    public void should_throw_an_exception_if_the_constant_string_value_does_not_have_closing_double_quotes() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "",
+                "Language: \"English",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("The line with a constant value ('\"English') in template definition does not have closing quotes", ex.getMessage());
     }
 }
