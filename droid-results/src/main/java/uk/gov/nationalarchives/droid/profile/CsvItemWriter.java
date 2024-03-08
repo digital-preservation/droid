@@ -183,6 +183,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
 
     @Override
     public void write(List<? extends ProfileResourceNode> nodes) {
+        //TODO - Get the correct FormattedDataWriter from the
         switch (options) {
             case ONE_ROW_PER_FILE: {
                 writeOneRowPerFile(nodes);
@@ -599,9 +600,6 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     @Override
     public void setExportTemplate(ExportTemplate template) {
         this.exportTemplate = template;
-//        Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
-//        List<String> allColumns = columnPositions.values().stream().map(c -> c.getOriginalColumnName()).collect(Collectors.toList());
-//        setColumnsToWrite(String.join(BLANK_SPACE_DELIMITER, allColumns));
     }
 
     private Set<String> getColumnsToWrite(String columnNames) {

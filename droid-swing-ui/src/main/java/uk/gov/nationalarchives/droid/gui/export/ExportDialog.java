@@ -150,6 +150,7 @@ public class ExportDialog extends JDialog {
             jCheckBoxUseTemplate.setEnabled(false);
         } else {
             jComboBox1.setModel(templatesModel);
+            jComboBox1.setSelectedItem(templatesModel.getElementAt(0));
         }
 
         enableGenerateButton();

@@ -50,6 +50,5 @@ public class SortedComboBoxModel<E extends Comparable<? super E>> extends Defaul
         for (int i = 0; i < items.size(); i++) {
             super.addElement(items.get(i));
         }
-        setSelectedItem(items.get(0));
     }
 }
