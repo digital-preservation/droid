@@ -111,7 +111,10 @@ public final class CsvWriterConstants {
      */
     public static final String HEADER_NAME_FORMAT_VERSION = "FORMAT_VERSION";
 
-    public static final FastDateFormat dateFormat = DateFormatUtils.ISO_DATETIME_FORMAT;
+    /**
+     * Default dateTime format to be used for writing CSVs.
+     */
+    public static final FastDateFormat DATE_FORMAT = DateFormatUtils.ISO_DATETIME_FORMAT;
 
 
     /**

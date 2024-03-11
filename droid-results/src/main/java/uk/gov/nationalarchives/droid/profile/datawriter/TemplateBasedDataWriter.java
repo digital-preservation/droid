@@ -189,7 +189,7 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
                 columnValue = metaData.getExtension();
                 break;
             case CsvWriterConstants.HEADER_NAME_LAST_MODIFIED:
-                columnValue = nullSafeDate(metaData.getLastModifiedDate(), CsvWriterConstants.dateFormat);
+                columnValue = nullSafeDate(metaData.getLastModifiedDate(), CsvWriterConstants.DATE_FORMAT);
                 break;
             case CsvWriterConstants.HEADER_NAME_EXTENSION_MISMATCH:
                 columnValue = node.getExtensionMismatch().toString();

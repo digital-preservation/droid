@@ -134,7 +134,7 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
         addColumn(row, CsvWriterConstants.HEADER_NAME_SIZE, nullSafeNumber(metaData.getSize()));
         addColumn(row, CsvWriterConstants.HEADER_NAME_TYPE, metaData.getResourceType().getResourceType());
         addColumn(row, CsvWriterConstants.HEADER_NAME_EXT, metaData.getExtension());
-        addColumn(row, CsvWriterConstants.HEADER_NAME_LAST_MODIFIED, nullSafeDate(metaData.getLastModifiedDate(), CsvWriterConstants.dateFormat));
+        addColumn(row, CsvWriterConstants.HEADER_NAME_LAST_MODIFIED, nullSafeDate(metaData.getLastModifiedDate(), CsvWriterConstants.DATE_FORMAT));
         addColumn(row, CsvWriterConstants.HEADER_NAME_EXTENSION_MISMATCH, node.getExtensionMismatch().toString());
         addColumn(row, CsvWriterConstants.HEADER_NAME_HASH, metaData.getHash());
         addColumn(row, CsvWriterConstants.HEADER_NAME_FORMAT_COUNT, nullSafeNumber(node.getIdentificationCount()));
