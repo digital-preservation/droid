@@ -229,15 +229,13 @@ public class ExportAction extends SwingWorker<Void, Integer> {
      */
     private ExportDetails getExportDetails() {
         ExportDetails.ExportDetailsBuilder builder = new ExportDetails.ExportDetailsBuilder();
-        ExportDetails details = builder.withExportOptions(options)
-                .withOutpuEncoding(outputEncoding) //default
+        return builder.withExportOptions(options)
+                .withOutpuEncoding(outputEncoding)
                 .withBomFlag(bom)
                 .withQuotingAllFields(quoteAllFields)
                 .withColumnsToWrite(columnsToWrite)
                 .withExportTemplatePath(exportTemplatePath)
                 .build();
-
-        return details;
     }
 
 }

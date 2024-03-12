@@ -37,25 +37,15 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of ExportTemplate.
+ */
 public class ExportTemplateImpl implements ExportTemplate {
     private final Map<Integer, ExportTemplateColumnDef> columnOrderMap = new HashMap<>();
-
-    //CHECKSTYLE:OFF - No need to worry about magic numbers here for now, until UI is all wired up
-    public ExportTemplateImpl() {
-        columnOrderMap.put(0, new ProfileResourceNodeColumnDef("ID", "Identifier"));
-        columnOrderMap.put(1, new ProfileResourceNodeColumnDef("FILE_PATH", "Path"));
-        columnOrderMap.put(2, new ProfileResourceNodeColumnDef("SIZE", "Size"));
-        columnOrderMap.put(3, new ProfileResourceNodeColumnDef("HASH", "HASH"));
-        columnOrderMap.put(4, new ProfileResourceNodeColumnDef("PUID", "Puid"));
-        columnOrderMap.put(5, new ConstantStringColumnDef("Welsh", "Language"));
-        columnOrderMap.put(6, new DataModifierColumnDef(new ProfileResourceNodeColumnDef("MIME_TYPE", "Mime Type"), ExportTemplateColumnDef.DataModification.UCASE));
-    }
 
     public ExportTemplateImpl(final Map<Integer, ExportTemplateColumnDef> columnOrder) {
         this.columnOrderMap.putAll(columnOrder);
     }
-    //CHECKSTYLE:ON
-
     public Map<Integer, ExportTemplateColumnDef> getColumnOrderMap() {
         return columnOrderMap;
     }

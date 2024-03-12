@@ -49,6 +49,16 @@ public final class ExportDetails {
     private final boolean quoteAllFields;
     private final String columnsToWrite;
     private final String exportTemplatePath;
+
+    /**
+     * Private constructor. The consumer can get the ExportDetails instance using the ExportDetailsBuilder.
+     * @param exportOptions  whether it is a "per row" export or "per format" export
+     * @param outputEncoding  encoding to be used
+     * @param bomFlag whether to use BOM
+     * @param quoteAllFields whether the export fields should be enclosed in double quotes
+     * @param columnsToWrite List of columns to write
+     * @param exportTemplatePath absolute path to an export template, if one is being used.
+     */
     private ExportDetails(ExportOptions exportOptions, String outputEncoding, boolean bomFlag, boolean quoteAllFields, String columnsToWrite, String exportTemplatePath) {
         this.exportOptions = exportOptions;
         this.outputEncoding = outputEncoding;
@@ -102,6 +112,9 @@ public final class ExportDetails {
         return exportTemplatePath;
     }
 
+    /**
+     * Builder class to build the ExportDetails as a fluent API.
+     */
     public static class ExportDetailsBuilder {
         private ExportOptions exportOptions = ExportOptions.ONE_ROW_PER_FILE;
         private String outputEncoding;
