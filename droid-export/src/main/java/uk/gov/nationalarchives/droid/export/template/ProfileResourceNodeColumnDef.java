@@ -59,7 +59,7 @@ public class ProfileResourceNodeColumnDef implements ExportTemplateColumnDef {
     }
 
     /**
-     * Returns the original column name
+     * Returns the original column name.
      * @return The well-known name of column as it appears in the profile results
      */
     @Override

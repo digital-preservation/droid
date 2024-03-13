@@ -36,13 +36,13 @@ package uk.gov.nationalarchives.droid.export.interfaces;
  */
 public interface ExportTemplateColumnDef {
     /**
-     * Returns the header label to be used in the output for this column
+     * Returns the header label to be used in the output for this column.
      * @return header
      */
     String getHeaderLabel();
 
     /**
-     * Returns the well-known column names from one of the default headers
+     * Returns the well-known column names from one of the default headers.
      * Throws an exception if the definition represents a non-profile column
      * @return origianl column name
      */
@@ -56,13 +56,13 @@ public interface ExportTemplateColumnDef {
     String getDataValue();
 
     /**
-     * Returns the column type for this column definition
+     * Returns the column type for this column definition.
      * @return column type
      */
     ColumnType getColumnType();
 
     /**
-     * Returns the result after performing the specific operation on the input
+     * Returns the result after performing the specific operation on the input.
      * @param input String representing input data
      * @return String after performing operation associated with this column definition.
      */

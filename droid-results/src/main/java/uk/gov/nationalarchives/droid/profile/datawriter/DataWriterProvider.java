@@ -45,7 +45,7 @@ public final class DataWriterProvider {
     }
 
     /**
-     * Instantiae and return specific data writer (either column based, or template based)
+     * Instantiae and return specific data writer (either column based, or template based).
      * @param columnsToWriteMap Map with a list of columns to write
      * @param exportTemplate exportTemplate
      * @return Specific data writer.

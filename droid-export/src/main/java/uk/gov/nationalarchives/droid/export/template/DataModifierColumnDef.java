@@ -69,7 +69,7 @@ public class DataModifierColumnDef implements ExportTemplateColumnDef {
     }
 
     /**
-     * Return data value from the underlying definition
+     * Return data value from the underlying definition.
      * @return data value from underlying definition
      */
     @Override
