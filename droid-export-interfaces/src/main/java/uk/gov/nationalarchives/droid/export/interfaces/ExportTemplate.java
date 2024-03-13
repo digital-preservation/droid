@@ -33,7 +33,15 @@ package uk.gov.nationalarchives.droid.export.interfaces;
 
 import java.util.Map;
 
+/**
+ * ExportTemplate interface.
+ * There is only one method which returns a map of integer -> ExportTemplateColumnDef
+ */
 public interface ExportTemplate {
+    /**
+     * Get the map of Integer -> ExportTemplateColumnDef representing column order.
+     * @return Map with keys as column order and values as column definition
+     */
     Map<Integer, ExportTemplateColumnDef> getColumnOrderMap() ;
 
 }

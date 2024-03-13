@@ -41,9 +41,15 @@ import java.util.Map;
 public final class DataWriterProvider {
 
     private DataWriterProvider() {
-        //private constructor to avoid anyone instantiating this class
+        //hidden constructor
     }
 
+    /**
+     * Instantiae and return specific data writer (either column based, or template based)
+     * @param columnsToWriteMap Map with a list of columns to write
+     * @param exportTemplate exportTemplate
+     * @return Specific data writer.
+     */
     public static FormattedDataWriter getDataWriter(Map<String, Boolean> columnsToWriteMap, ExportTemplate exportTemplate) {
         if (exportTemplate != null) {
             return new TemplateBasedDataWriter(exportTemplate);

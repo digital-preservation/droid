@@ -33,26 +33,44 @@ package uk.gov.nationalarchives.droid.export.template;
 
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 
+/**
+ * Class for a column definition representing constant string in the export template.
+ * e.g. foo: "bar"
+ * In such case, "foo" is the header for this column and "bar" is the value for it.
+ */
 public class ConstantStringColumnDef implements ExportTemplateColumnDef {
 
     private final String headerLabel;
-    private String dataValue;
+    private final String dataValue;
 
     public ConstantStringColumnDef(String dataValue, String headerLabel) {
         this.dataValue = dataValue;
         this.headerLabel = headerLabel;
     }
 
+    /**
+     * Returns the header label associated with this column definition.
+     * @return header label
+     */
     @Override
     public String getHeaderLabel() {
         return headerLabel;
     }
 
+    /**
+     * This type of column does not have a profile column associated with it.
+     * As a result, this method simply throws an exception if a consumer tries to get original column name
+     * @return nothing
+     */
     @Override
     public String getOriginalColumnName() {
         throw new RuntimeException("Constant String Columns do not have an associated original column name");
     }
 
+    /**
+     * Returns the data value associated with this column as defined in the export template.
+     * @return data value
+     */
     @Override
     public String getDataValue() {
         return dataValue;
@@ -63,6 +81,11 @@ public class ConstantStringColumnDef implements ExportTemplateColumnDef {
         return ColumnType.ConstantString;
     }
 
+    /**
+     * This type of column does not have any associated operation, hence returns the input value as it is.
+     * @param input String representing input data
+     * @return the input value as it is
+     */
     @Override
     public String getOperatedValue(String input) {
         return input;

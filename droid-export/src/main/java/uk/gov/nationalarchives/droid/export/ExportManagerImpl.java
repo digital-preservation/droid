@@ -31,20 +31,19 @@
  */
 package uk.gov.nationalarchives.droid.export;
 
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
+import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
+import uk.gov.nationalarchives.droid.export.template.ExportTemplateBuilder;
+import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-
-import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
-import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
-import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
-import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
-//import uk.gov.nationalarchives.droid.export.template.ExportTemplateBuilder;
-import uk.gov.nationalarchives.droid.export.template.ExportTemplateBuilder;
-import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
 /**
  * @author rflitcroft

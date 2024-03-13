@@ -33,6 +33,12 @@ package uk.gov.nationalarchives.droid.export.template;
 
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 
+/**
+ * Class for a column definition representing an underlying profile resource node column.
+ * e.g. identifier: $ID
+ * In such case, "identifier" is the header for this column and the data is retrieved from the
+ * ID column in the results .
+ */
 public class ProfileResourceNodeColumnDef implements ExportTemplateColumnDef {
 
     private final String originalHeaderLabel;
@@ -43,16 +49,29 @@ public class ProfileResourceNodeColumnDef implements ExportTemplateColumnDef {
         this.headerLabel = headerLabel;
     }
 
+    /**
+     * Returns the header label associated with this column definition.
+     * @return header label
+     */
     @Override
     public String getHeaderLabel() {
         return headerLabel;
     }
 
+    /**
+     * Returns the original column name
+     * @return The well-known name of column as it appears in the profile results
+     */
     @Override
     public String getOriginalColumnName() {
         return originalHeaderLabel;
     }
 
+    /**
+     * This type of column does not have data associated with it.
+     * As a result, this method simply throws an exception if a consumer tries to get data from it
+     * @return nothing
+     */
     @Override
     public String getDataValue() {
         throw new RuntimeException("Profile resource node column uses data from the profile results");
@@ -63,6 +82,11 @@ public class ProfileResourceNodeColumnDef implements ExportTemplateColumnDef {
         return ColumnType.ProfileResourceNode;
     }
 
+    /**
+     * This type of column does not have any associated operation, hence returns the input value as it is.
+     * @param input String representing input data
+     * @return the input value as it is
+     */
     @Override
     public String getOperatedValue(String input) {
         return input;

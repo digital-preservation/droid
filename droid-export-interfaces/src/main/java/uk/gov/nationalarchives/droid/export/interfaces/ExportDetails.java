@@ -51,7 +51,7 @@ public final class ExportDetails {
     private final String exportTemplatePath;
 
     /**
-     * Private constructor. The consumer can get the ExportDetails instance using the ExportDetailsBuilder.
+     * Private constructor. The consumer can get the ExportDetails instance using ExportDetailsBuilder.
      * @param exportOptions  whether it is a "per row" export or "per format" export
      * @param outputEncoding  encoding to be used
      * @param bomFlag whether to use BOM
@@ -117,9 +117,9 @@ public final class ExportDetails {
      */
     public static class ExportDetailsBuilder {
         private ExportOptions exportOptions = ExportOptions.ONE_ROW_PER_FILE;
-        private String outputEncoding;
+        private String outputEncoding = "UTF-8";
         private boolean bomFlag;
-        private boolean quoteAllFields;
+        private boolean quoteAllFields = true;
         private String columnsToWrite;
         private String exportTemplatePath;
 
@@ -147,8 +147,8 @@ public final class ExportDetails {
             return this;
         }
 
-        public ExportDetailsBuilder withExportTemplatePath(String templatePAth) {
-            this.exportTemplatePath = templatePAth;
+        public ExportDetailsBuilder withExportTemplatePath(String templatePath) {
+            this.exportTemplatePath = templatePath;
             return this;
         }
 

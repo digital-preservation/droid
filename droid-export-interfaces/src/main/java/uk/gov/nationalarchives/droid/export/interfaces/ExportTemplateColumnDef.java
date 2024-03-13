@@ -31,12 +31,42 @@
  */
 package uk.gov.nationalarchives.droid.export.interfaces;
 
+/**
+ * Export template column definition.
+ */
 public interface ExportTemplateColumnDef {
+    /**
+     * Returns the header label to be used in the output for this column
+     * @return header
+     */
     String getHeaderLabel();
+
+    /**
+     * Returns the well-known column names from one of the default headers
+     * Throws an exception if the definition represents a non-profile column
+     * @return origianl column name
+     */
     String getOriginalColumnName();
+
+    /**
+     * Returns the data value, if any associated with this column definition.
+     * Throws an exception if the data is coming from profile results
+     * @return data value
+     */
     String getDataValue();
 
+    /**
+     * Returns the column type for this column definition
+     * @return column type
+     */
     ColumnType getColumnType();
+
+    /**
+     * Returns the result after performing the specific operation on the input
+     * @param input String representing input data
+     * @return String after performing operation associated with this column definition.
+     */
+    String getOperatedValue(String input);
 
     /**
      * Column type as defined in the ExportTemplate. There are 3 types of columns.
@@ -76,5 +106,4 @@ public interface ExportTemplateColumnDef {
             this.label = label;
         }
     }
-    String getOperatedValue(String input);
 }
