@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.BorderFactory;
 
 import javax.swing.ButtonGroup;
@@ -87,7 +88,7 @@ public class ExportDialog extends JDialog {
     private static final int CAPACITY = 128;
     private static final String EXPORT_TEMPLATE_FILE_EXTENSION = ".template";
 
-    private DroidMainFrame droidMain;
+    private final DroidMainFrame droidMain;
     private DefaultTableModel tableModel;
     private List<ProfileWrapper> profilesRowData;
     private boolean approved;
@@ -205,7 +206,7 @@ public class ExportDialog extends JDialog {
      * @return the profilesRowData
      */
     public List<String> getSelectedProfileIds() {
-        List<String> selectedProfiles = new ArrayList<String>();
+        List<String> selectedProfiles = new ArrayList<>();
         
         for (ProfileWrapper profileWrapper : profilesRowData) {
             if (profileWrapper.isSelected()) {
@@ -734,6 +735,8 @@ public class ExportDialog extends JDialog {
     private void jCheckBoxUseTemplateStateChanged(ChangeEvent evt) {//GEN-FIRST:event_jCheckBoxUseTemplateStateChanged
         jPanelTemplateChoices.setVisible(jCheckBoxUseTemplate.isSelected());
         jPanelColumnChoices.setVisible(!jCheckBoxUseTemplate.isSelected());
+        jButtonSetAllColumns.setEnabled(!jCheckBoxUseTemplate.isSelected());
+        toggleColumnButton.setEnabled(!jCheckBoxUseTemplate.isSelected());
     }//GEN-LAST:event_jCheckBoxUseTemplateStateChanged
 
     /**
@@ -884,11 +887,12 @@ public class ExportDialog extends JDialog {
     }
 
     class ExportTemplateComboBoxItem implements Comparable{
-        private String label;
-        private Path templatePath;
+        private final String label;
+        private final Path templatePath;
 
         ExportTemplateComboBoxItem(Path templateFilePath) {
-            this.label = templateFilePath.getFileName().toString();
+            String templateFileName = templateFilePath.getFileName().toString();
+            this.label = templateFileName.substring(0, templateFileName.length() - EXPORT_TEMPLATE_FILE_EXTENSION.length());
             this.templatePath = templateFilePath;
         }
 
@@ -917,8 +921,8 @@ public class ExportDialog extends JDialog {
 
     private ComboBoxModel getExportTemplatesModel() {
         List<ExportTemplateComboBoxItem> items = new LinkedList<>();
-        try {
-            List<Path> templates = Files.list(exportTemplatesFolder).collect(Collectors.toList());
+        try (Stream<Path> fileStream = Files.list(exportTemplatesFolder)) {
+            List<Path> templates = fileStream.collect(Collectors.toList());
             for (Path template : templates) {
                 if (!Files.isDirectory(template) && (template.getFileName().toString().endsWith(EXPORT_TEMPLATE_FILE_EXTENSION))) {
                     items.add(new ExportTemplateComboBoxItem(template));
