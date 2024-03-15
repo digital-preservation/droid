@@ -62,6 +62,8 @@ public class ExportCommand implements DroidCommand {
     private boolean quoteAllFields = true;
     private String columnsToWrite;
 
+    private String exportTemplate;
+
     /**
      * {@inheritDoc}
      */
@@ -219,6 +221,21 @@ public class ExportCommand implements DroidCommand {
     }
 
     /**
+     * @return Absolute path of export template.
+     */
+    public String getExportTemplate() {
+        return exportTemplate;
+    }
+
+    /**
+     * @param exportTemplate Absolute path of export template.
+     */
+    public void setExportTemplate(String exportTemplate) {
+        this.exportTemplate = exportTemplate;
+    }
+
+
+    /**
      *
      * @return the export details for this export command.
      * For an export from CLI,
@@ -233,7 +250,7 @@ public class ExportCommand implements DroidCommand {
                 .withBomFlag(isBom())
                 .withQuotingAllFields(getQuoteAllFields())
                 .withColumnsToWrite(getColumnsToWrite())
-                .withExportTemplatePath(null)
+                .withExportTemplatePath(getExportTemplate())
                 .build();
     }
 }
