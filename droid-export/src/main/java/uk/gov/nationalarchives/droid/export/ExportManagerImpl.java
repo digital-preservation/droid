@@ -77,8 +77,6 @@ public class ExportManagerImpl implements ExportManager {
     @Override
     public Future<?> exportProfiles(final List<String> profileIds, final String destination,
                                     final Filter filter, final ExportDetails details
-            /*final ExportOptions options, final String outputEncoding, final boolean bom,
-                                    final boolean quoteAllFields, String columnsToWrite, String exportTemplatePath*/
     ) {
         itemWriter.setQuoteAllFields(details.quoteAllFields());
         itemWriter.setColumnsToWrite(details.getColumnsToWrite());
