@@ -226,5 +226,4 @@ public final class I18N {
         String pattern = getResource(key);
         return MessageFormat.format(pattern, params);
     }
-
 }

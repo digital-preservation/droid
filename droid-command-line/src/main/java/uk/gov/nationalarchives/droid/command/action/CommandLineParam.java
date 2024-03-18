@@ -621,6 +621,7 @@ public enum CommandLineParam {
         options.addOption(BOM.newOption());
         options.addOption(QUOTE_COMMAS.newOption());
         options.addOption(COLUMNS_TO_WRITE.newOption());
+        options.addOption(EXPORT_TEMPLATE.newOption());
         return options;
     }
 

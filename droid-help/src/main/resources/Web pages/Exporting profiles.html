@@ -75,47 +75,34 @@
       export a profile, press the <img src="../Images/Export small.png"> <b><font style=
       " background-color: #c0c0c0;" size="4">&nbsp;&nbsp;&nbsp;Export
       &nbsp;</font></b>&nbsp;button, or select the<b><font size="4"> File / Export
-      all...</font></b> menu item.
+      all...</font></b> menu item. This shows the export dialog. The profiles you have open are listed
+      in the export window. &nbsp;If a profile is empty, or in the process of running, it is greyed out.
+      &nbsp;Select all the profiles you want to  export into a single CSV file by checking the boxes next to
+      them. &nbsp;&nbsp;If any of your profiles have active <a href="Explore the results.html">filters</a>, then
+      the results will also be filtered. &nbsp;Each profile can have different filters defined and enabled.
     </p>
     <p>
-       The profiles you have open are listed in the export window. &nbsp;If a profile is empty, or
-      in the process of running, it will be greyed out. &nbsp;Select all the profiles you want to
-      export into a single CSV file by checking the boxes next to them. &nbsp;&nbsp;If any of your
-      profiles have active <a href="Explore the results.html">filters</a>, then the results will
-      also be filtered. &nbsp;Each profile can have different filters defined and enabled. If you leave
-      the "Use export template" checkbox unchecked, you  can choose which columns to be included
-      in the export as shown below:
+      There are two possible ways of exporting the profiles.
+      <ul>
+        <li>
+          <a href="#SelectColumns">Selecting the columns for export</a>
+        </li>
+        <li>
+          <a href="#SelectExportTemplate">Selecting a predefined Export Template for export</a>
+        </li>
+      </ul>
+    </p>
+    <p>
+    <h2>
+      <a id="SelectColumns" name="SelectColumns">Selecting the columns for export</a>
+    </h2>
+    </p>
+    <p>
+      When the "Use export template" checkbox is unchecked, you are presented with an option to select
+      one or more columns that you wish to export, as shown below:
     </p>
     <p align="center">
       <img src="../Images/Export dialog.png">
-    </p>
-    <p>
-      If you have any export templates available to DROID,  the "Use export template" checkbox
-      is enabled. Checking this checkbox shows you a view to select one of the configured templates
-      to be used for export as shown below:
-    </p>
-    <p align="center">
-      <img src="../Images/Export dialog template.png">
-    </p>
-    <p>
-      You can also select other options such as whether the values should be enclosed in quotes
-      when exporting. You can also select whether the export should produce one row per file,
-      or one row per format. &nbsp;When exporting one row per file, each row in the CSV file will
-      represent a single file, folder or archival file profiled with DROID. &nbsp;If exporting one
-      row per format, each row in the CSV file will be a single format identificaiton made by
-      DROID.&nbsp;Since a file can be identified as being more than one possible format, this option
-      will produce CSV files with multiple rows for the same file (but with different identifications
-      for it).
-    </p>
-    <p>
-        The characters of the export will be encoded as UTF-8 by default. If you need to set this
-    to the encoding used on your local machine instead, select 'Platform specific' instead.
-    </p> 
-    <p>
-       When you are happy you want to export your profiles, press the <b><font style=
-      " background-color: #c0c0c0;" size="4">&nbsp;&nbsp;&nbsp;Export
-      profiles...&nbsp;</font></b>&nbsp; button. &nbsp;This will bring up a standard file-save
-      dialog, in which&nbsp;you can specify where you want your CSV file to be saved. &nbsp;
     </p>
     <h2>
        CSV File Columns
@@ -308,7 +295,65 @@
       blank even when a file has a PUID.
     </p>
     <p>
-       &nbsp;
+    <h2>
+      <a id="#SelectExportTemplate" name="SelectExportTemplate">Selecting a predefined Export Template for export</a>
+    </h2>
+    </p>
+    <p>
+      If you have configured any export templates for use with DROID,  the "Use export template" checkbox
+      is enabled. Checking this checkbox shows you a view to select one of the configured templates
+      to be used for export as shown below:
+    </p>
+    <p align="center">
+      <img src="../Images/Export dialog template.png">
+    </p>
+    <p>
+      An export template is a simple text file which defines customisations of columns to be exported.
+      Using a template, you can customise headers for the data columns, add new columns to the export,
+      convert the data in a column to be uppercase / lowercase and change the order in which columns
+      appear in the export. An example template is shown below:
+    </p>
+    <p>
+      <pre>
+      <code>version 1.0
+      Identifier: $ID
+      LowerName: LCASE($NAME)
+      Language: "Simplified English"
+      Submitter:
+      </code>
+      </pre>
+    </p>
+    <p>
+      The above template indicates:
+      <ol>
+      <li> The template is defined in version 1.0 of template syntax </li>
+      <li> There are 4 columns to be exported in the order Identifier, LowerName, Language and Submitter</li>
+      <li> Values in the column "Identifier" are populated using values in the "ID" column</li>
+      <li> Values in the columns "LowerName" are populated by converting the values from the "NAME" column to lowercase</li>
+      <li> There is a non-profile column called "Language" and the values are hardcoded to "Simplified English"</li>
+      <li> There is a column called "Submitter" and the values are left empty </li>
+    </ol>
+    </p>
+    <p>
+      Once you have selected the columns to export or selected a template that you wish to use,
+      you can also select other options such as whether the values should be enclosed in quotes
+      when exporting. You can also select whether the export should produce one row per file,
+      or one row per format. &nbsp;When exporting one row per file, each row in the CSV file will
+      represent a single file, folder or archival file profiled with DROID. &nbsp;If exporting one
+      row per format, each row in the CSV file will be a single format identificaiton made by
+      DROID.&nbsp;Since a file can be identified as being more than one possible format, this option
+      will produce CSV files with multiple rows for the same file (but with different identifications
+      for it).
+    </p>
+    <p>
+      The characters of the export will be encoded as UTF-8 by default. If you need to set this
+      to the encoding used on your local machine instead, select 'Platform specific' instead.
+    </p>
+    <p>
+      When you are happy you want to export your profiles, press the <b><font style=
+                                                                                      " background-color: #c0c0c0;" size="4">&nbsp;&nbsp;&nbsp;Export
+      profiles...&nbsp;</font></b>&nbsp; button. &nbsp;This will bring up a standard file-save
+      dialog, in which&nbsp;you can specify where you want your CSV file to be saved. &nbsp;
     </p>
     <table cellpadding="8" bgcolor="#eeeeee" border="0" cellspacing="0" width="100%">
       <tr>
