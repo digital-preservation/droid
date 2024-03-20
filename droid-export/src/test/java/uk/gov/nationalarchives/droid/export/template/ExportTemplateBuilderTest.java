@@ -168,4 +168,34 @@ public class ExportTemplateBuilderTest {
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
         assertEquals("The line with a constant value ('\"English') in template definition does not have closing quotes", ex.getMessage());
     }
+
+    @Test
+    public void should_throw_an_exception_if_the_column_name_given_for_profile_resource_column_is_not_a_well_known_header() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "",
+                "Identifier: $UUID",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("Invalid column name. UUID does not exist in profile results", ex.getMessage());
+    }
+
+    @Test
+    public void should_throw_an_exception_when_the_operation_is_unknown() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "",
+                "Identifier: Lower($ID)",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("Undefined operation 'Lower' encountered in export template", ex.getMessage());
+    }
 }

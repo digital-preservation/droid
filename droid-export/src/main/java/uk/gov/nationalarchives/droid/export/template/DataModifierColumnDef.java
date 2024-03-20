@@ -96,6 +96,9 @@ public class DataModifierColumnDef implements ExportTemplateColumnDef {
      */
     @Override
     public String getOperatedValue(String input) {
+        if ((input == null) || (input.length() == 0)) {
+            return "";
+        }
         switch(operation) {
             case LCASE:
                 return input.toLowerCase();

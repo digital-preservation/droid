@@ -88,6 +88,6 @@ public class ConstantStringColumnDef implements ExportTemplateColumnDef {
      */
     @Override
     public String getOperatedValue(String input) {
-        return input;
+        return input == null ? "" : input;
     }
 }

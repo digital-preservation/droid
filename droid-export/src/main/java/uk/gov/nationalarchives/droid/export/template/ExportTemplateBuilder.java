@@ -33,10 +33,12 @@ package uk.gov.nationalarchives.droid.export.template;
 
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
+import uk.gov.nationalarchives.droid.profile.CsvWriterConstants;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,8 +121,12 @@ public class ExportTemplateBuilder {
         String column = tokens[1].trim().substring(0, tokens[1].trim().length() - 1);
         ProfileResourceNodeColumnDef inner = createProfileNodeDef(header, column);
 
-        ExportTemplateColumnDef.DataModification operation = ExportTemplateColumnDef.DataModification.valueOf(operationName);
-        return new DataModifierColumnDef(inner, operation);
+        try {
+            ExportTemplateColumnDef.DataModification operation = ExportTemplateColumnDef.DataModification.valueOf(operationName);
+            return new DataModifierColumnDef(inner, operation);
+        } catch (IllegalArgumentException iae) {
+            throw new ExportTemplateParseException("Undefined operation '" + operationName + "' encountered in export template");
+        }
     }
 
     private ExportTemplateColumnDef createConstantStringDef(String header, String param2) {
@@ -136,6 +142,9 @@ public class ExportTemplateBuilder {
 
     private ProfileResourceNodeColumnDef createProfileNodeDef(String header, String param2) {
         String originalColumnName = param2.substring(1);
+        if (!(Arrays.stream(CsvWriterConstants.HEADERS).collect(Collectors.toList()).contains(originalColumnName))) {
+            throw new ExportTemplateParseException("Invalid column name. " + originalColumnName + " does not exist in profile results");
+        }
         return new ProfileResourceNodeColumnDef(originalColumnName, header);
     }
 

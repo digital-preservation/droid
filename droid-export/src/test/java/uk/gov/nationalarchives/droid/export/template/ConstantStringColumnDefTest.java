@@ -31,64 +31,45 @@
  */
 package uk.gov.nationalarchives.droid.export.template;
 
+import org.junit.Test;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 
-/**
- * Class for a column definition representing an underlying profile resource node column.
- * e.g. identifier: $ID
- * In such case, "identifier" is the header for this column and the data is retrieved from the
- * ID column in the results .
- */
-public class ProfileResourceNodeColumnDef implements ExportTemplateColumnDef {
+import static org.junit.Assert.*;
 
-    private final String originalHeaderLabel;
-    private final String headerLabel;
-
-    public ProfileResourceNodeColumnDef(String originalHeaderLabel, String headerLabel) {
-        this.originalHeaderLabel = originalHeaderLabel;
-        this.headerLabel = headerLabel;
+public class ConstantStringColumnDefTest {
+    @Test
+    public void should_operate_on_null_value_and_return_empty_string() {
+        ConstantStringColumnDef def = new ConstantStringColumnDef("English (UK)", "Language");
+        assertEquals("", def.getOperatedValue(null));
     }
 
-    /**
-     * Returns the header label associated with this column definition.
-     * @return header label
-     */
-    @Override
-    public String getHeaderLabel() {
-        return headerLabel;
+    @Test
+    public void should_return_input_as_it_is_when_asked_for_operated_value() {
+        ConstantStringColumnDef def = new ConstantStringColumnDef("English (UK)", "Language");
+        assertEquals("FoRMat", def.getOperatedValue("FoRMat"));
     }
 
-    /**
-     * Returns the original column name.
-     * @return The well-known name of column as it appears in the profile results
-     */
-    @Override
-    public String getOriginalColumnName() {
-        return originalHeaderLabel;
+    @Test
+    public void should_return_header_label_as_set_when_defining_the_column_definition() {
+        ConstantStringColumnDef def = new ConstantStringColumnDef("English (UK)", "Language");
+        assertEquals("Language", def.getHeaderLabel());
+    }
+    @Test
+    public void should_throw_exception_when_asking_for_original_column_name() {
+        ConstantStringColumnDef def = new ConstantStringColumnDef("English (UK)", "Language");
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> def.getOriginalColumnName());
+        assertEquals("Constant String Columns do not have an associated original column name", ex.getMessage());
     }
 
-    /**
-     * This type of column does not have data associated with it.
-     * As a result, this method simply throws an exception if a consumer tries to get data from it
-     * @return nothing
-     */
-    @Override
-    public String getDataValue() {
-        throw new RuntimeException("Profile resource node column uses data from the profile results");
+    @Test
+    public void should_return_data_as_set_in_the_definition() {
+        ConstantStringColumnDef def = new ConstantStringColumnDef("English (UK)", "Language");
+        assertEquals("English (UK)", def.getDataValue());
     }
 
-    @Override
-    public ColumnType getColumnType() {
-        return ColumnType.ProfileResourceNode;
-    }
-
-    /**
-     * This type of column does not have any associated operation, hence returns the input value as it is.
-     * @param input String representing input data
-     * @return the input value as it is
-     */
-    @Override
-    public String getOperatedValue(String input) {
-        return input == null ? "" : input;
+    @Test
+    public void should_return_column_type_as_data_modifier_column_def() {
+        ConstantStringColumnDef def = new ConstantStringColumnDef("English (UK)", "Language");
+        assertEquals(ExportTemplateColumnDef.ColumnType.ConstantString, def.getColumnType());
     }
 }
