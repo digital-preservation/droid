@@ -198,4 +198,18 @@ public class ExportTemplateBuilderTest {
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
         assertEquals("Undefined operation 'Lower' encountered in export template", ex.getMessage());
     }
+
+    @Test
+    public void should_trim_leading_and_trailing_spaces_from_a_header_label() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "     Identifier     : \"Something\"",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplate template =  builder.buildExportTemplate(tempFile.getAbsolutePath());
+        assertEquals("Identifier", template.getColumnOrderMap().get(0).getHeaderLabel());
+    }
 }

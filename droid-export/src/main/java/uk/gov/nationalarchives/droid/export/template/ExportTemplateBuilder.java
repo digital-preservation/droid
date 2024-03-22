@@ -97,7 +97,7 @@ public class ExportTemplateBuilder {
             if (!line.contains(COLON)) {
                 throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line));
             }
-            String header = line.substring(0, line.indexOf(COLON));
+            String header = line.substring(0, line.indexOf(COLON)).trim();
             if (header.length() == 0) {
                 throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line));
             }
@@ -150,11 +150,12 @@ public class ExportTemplateBuilder {
 
     private String parseVersionLine(String versionLine) {
         String versionPrefix = "version";
-        if (!versionLine.trim().startsWith(versionPrefix)) {
+        String versionString = versionLine.trim();
+        if (!versionString.startsWith(versionPrefix)) {
             throw new ExportTemplateParseException("First line in the template needs to specify version in the form \"version <version number>\"");
         }
 
-        return versionLine.substring(versionPrefix.length()).trim();
+        return versionString.substring(versionPrefix.length()).trim();
     }
 }
 
