@@ -53,6 +53,9 @@ public class ExportTemplateBuilder {
     private static final String COLON = ":";
     private static final String UNABLE_TO_PARSE_LINE_MSG = "Unable to parse line: '%s'";
     private static final String DOUBLE_QUOTES = "\"";
+    private static final String OPENING_BRACKET = "(";
+    private static final String CLOSING_BRACKET = ")";
+    private static final String DATA_COLUMN_PREFIX = "$";
 
     /**
      * The entry point into building an ExportTemplate object by reading a template file.
@@ -104,7 +107,7 @@ public class ExportTemplateBuilder {
 
             String token2 = line.substring(line.indexOf(COLON) + 1).trim();
 
-            if (token2.startsWith("$")) {
+            if (token2.startsWith(DATA_COLUMN_PREFIX)) {
                 columnMap.put(i, createProfileNodeDef(header, token2));
             } else if ((token2.length() == 0) || (token2.startsWith(DOUBLE_QUOTES))) {
                 columnMap.put(i, createConstantStringDef(header, token2));
@@ -116,16 +119,39 @@ public class ExportTemplateBuilder {
     }
 
     private ExportTemplateColumnDef createDataModifierDef(String header, String param2) {
+
+        assertDataModifierSyntaxValid(param2);
+
         String[] tokens = param2.split("\\(");
         String operationName = tokens[0].trim();
+
+        List<String> operations = Arrays.stream(
+                ExportTemplateColumnDef.DataModification.values()).map(v -> v.toString()).
+                collect(Collectors.toList());
+
+        if (!operations.contains(operationName)) {
+            throw new ExportTemplateParseException("Undefined operation '" + operationName + "' encountered in export template");
+        }
+
         String column = tokens[1].trim().substring(0, tokens[1].trim().length() - 1);
         ProfileResourceNodeColumnDef inner = createProfileNodeDef(header, column);
 
-        try {
-            ExportTemplateColumnDef.DataModification operation = ExportTemplateColumnDef.DataModification.valueOf(operationName);
-            return new DataModifierColumnDef(inner, operation);
-        } catch (IllegalArgumentException iae) {
-            throw new ExportTemplateParseException("Undefined operation '" + operationName + "' encountered in export template");
+        ExportTemplateColumnDef.DataModification operation = ExportTemplateColumnDef.DataModification.valueOf(operationName);
+        return new DataModifierColumnDef(inner, operation);
+    }
+
+    private void assertDataModifierSyntaxValid(String expression) {
+
+        String expressionToTest = expression.trim();
+
+        // valid statement like LCASE($URI)
+        boolean isValid = true;
+        isValid = isValid && (expressionToTest.chars().filter(ch -> ch == '(').count() == 1); //exactly one '('
+        isValid = isValid && (expressionToTest.chars().filter(ch -> ch == ')').count() == 1); //exactly one ')'
+        isValid = isValid && (expressionToTest.indexOf(OPENING_BRACKET) < expressionToTest.indexOf(CLOSING_BRACKET)); //'(' before ')'
+        isValid = isValid && (expressionToTest.indexOf(OPENING_BRACKET) > 0);
+        if (!isValid) {
+            throw new ExportTemplateParseException("Invalid syntax, unable to parse expression '" + expression + "'");
         }
     }
 
@@ -141,9 +167,13 @@ public class ExportTemplateBuilder {
     }
 
     private ProfileResourceNodeColumnDef createProfileNodeDef(String header, String param2) {
+        String messageFormat = "Invalid column name. %s does not exist in profile results";
+        if (param2.length() == 0 || !param2.startsWith(DATA_COLUMN_PREFIX)) {
+            throw new ExportTemplateParseException(String.format(messageFormat, param2));
+        }
         String originalColumnName = param2.substring(1);
         if (!(Arrays.stream(CsvWriterConstants.HEADERS).collect(Collectors.toList()).contains(originalColumnName))) {
-            throw new ExportTemplateParseException("Invalid column name. " + originalColumnName + " does not exist in profile results");
+            throw new ExportTemplateParseException(String.format(messageFormat, originalColumnName));
         }
         return new ProfileResourceNodeColumnDef(originalColumnName, header);
     }

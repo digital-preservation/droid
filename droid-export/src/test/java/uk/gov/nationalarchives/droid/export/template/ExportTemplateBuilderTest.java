@@ -212,4 +212,61 @@ public class ExportTemplateBuilderTest {
         ExportTemplate template =  builder.buildExportTemplate(tempFile.getAbsolutePath());
         assertEquals("Identifier", template.getColumnOrderMap().get(0).getHeaderLabel());
     }
+
+    @Test
+    public void should_support_colon_in_the_constant_string_value() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "     MyWebsite     : \"http://www.knowingwhere.com\"",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplate template =  builder.buildExportTemplate(tempFile.getAbsolutePath());
+        assertEquals("MyWebsite", template.getColumnOrderMap().get(0).getHeaderLabel());
+        assertEquals("http://www.knowingwhere.com", template.getColumnOrderMap().get(0).getDataValue());
+    }
+
+    @Test
+    public void should_throw_an_exception_when_an_operation_cannot_be_located() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "     Copyright     : Crown Copyright (C)",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("Undefined operation 'Crown Copyright' encountered in export template", ex.getMessage());
+    }
+
+    @Test
+    public void should_throw_an_exception_when_a_constant_is_not_enclosed_in_double_quotes() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "     Copyright     : Crown Copyright",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("Invalid syntax, unable to parse expression 'Crown Copyright'", ex.getMessage());
+    }
+
+    @Test
+    public void should_throw_an_exception_when_a_column_name_for_modofication_is_invalid() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "     Copyright     : LCASE($CROWN)",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("Invalid column name. CROWN does not exist in profile results", ex.getMessage());
+    }
 }
