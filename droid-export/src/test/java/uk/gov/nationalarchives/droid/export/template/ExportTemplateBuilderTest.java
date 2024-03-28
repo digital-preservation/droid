@@ -181,7 +181,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Invalid column name. UUID does not exist in profile results", ex.getMessage());
+        assertEquals("Invalid column name. 'UUID' does not exist in profile results", ex.getMessage());
     }
 
     @Test
@@ -239,7 +239,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Undefined operation 'Crown Copyright' encountered in export template", ex.getMessage());
+        assertEquals("Invalid syntax in data modifier expression 'Crown Copyright (C)', expecting '$' after '('", ex.getMessage());
     }
 
     @Test
@@ -253,7 +253,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Invalid syntax, unable to parse expression 'Crown Copyright'", ex.getMessage());
+        assertEquals("Invalid syntax in data modifier expression 'Crown Copyright', expecting exactly one occurence of '('", ex.getMessage());
     }
 
     @Test
@@ -267,6 +267,21 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Invalid column name. CROWN does not exist in profile results", ex.getMessage());
+        assertEquals("Invalid column name. 'CROWN' does not exist in profile results", ex.getMessage());
     }
+
+    @Test
+    public void should_throw_an_exception_when_a_column_name_is_not_prefixed_with_dollar_sign() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "     Copyright     : LCASE(PUID)",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("Invalid syntax in data modifier expression 'LCASE(PUID)', expecting '$' after '('", ex.getMessage());
+    }
+
 }

@@ -141,17 +141,25 @@ public class ExportTemplateBuilder {
     }
 
     private void assertDataModifierSyntaxValid(String expression) {
-
+        String messageFormat = "Invalid syntax in data modifier expression '%s', %s";
         String expressionToTest = expression.trim();
-
         // valid statement like LCASE($URI)
-        boolean isValid = true;
-        isValid = isValid && (expressionToTest.chars().filter(ch -> ch == '(').count() == 1); //exactly one '('
-        isValid = isValid && (expressionToTest.chars().filter(ch -> ch == ')').count() == 1); //exactly one ')'
-        isValid = isValid && (expressionToTest.indexOf(OPENING_BRACKET) < expressionToTest.indexOf(CLOSING_BRACKET)); //'(' before ')'
-        isValid = isValid && (expressionToTest.indexOf(OPENING_BRACKET) > 0);
-        if (!isValid) {
-            throw new ExportTemplateParseException("Invalid syntax, unable to parse expression '" + expression + "'");
+        if (expressionToTest.chars().filter(ch -> ch == '(').count() != 1) {
+            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting exactly one occurence of '('"));
+        }
+        if (expressionToTest.chars().filter(ch -> ch == ')').count() != 1) {
+            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting exactly one occurence of ')'"));
+        }
+        if (expressionToTest.indexOf(OPENING_BRACKET) > expressionToTest.indexOf(CLOSING_BRACKET)) {
+            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting '(' before ')'"));
+        }
+        if (expressionToTest.indexOf(OPENING_BRACKET) == 0) {
+            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting an operation definition before '('"));
+        }
+        String dataColumnToken = expressionToTest.substring(expressionToTest.indexOf(OPENING_BRACKET) + 1,
+                expressionToTest.indexOf(CLOSING_BRACKET)).trim();
+        if (!dataColumnToken.startsWith(DATA_COLUMN_PREFIX)) {
+            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting '$' after '('"));
         }
     }
 
@@ -167,8 +175,8 @@ public class ExportTemplateBuilder {
     }
 
     private ProfileResourceNodeColumnDef createProfileNodeDef(String header, String param2) {
-        String messageFormat = "Invalid column name. %s does not exist in profile results";
-        if (param2.length() == 0 || !param2.startsWith(DATA_COLUMN_PREFIX)) {
+        String messageFormat = "Invalid column name. '%s' does not exist in profile results";
+        if (!param2.startsWith(DATA_COLUMN_PREFIX)) {
             throw new ExportTemplateParseException(String.format(messageFormat, param2));
         }
         String originalColumnName = param2.substring(1);
