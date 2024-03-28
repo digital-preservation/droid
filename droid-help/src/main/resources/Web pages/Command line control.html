@@ -97,7 +97,7 @@
             <a href="#FilteringResults">Filtering results once identified</a>
         </li>
         <li>
-            <a href="FilteringOptions">List filtering options</a>
+            <a href="#FilteringOptions">List filtering options</a>
         </li>
         <li>
             <a href="#SignatureFilesToUse">Specifying the signature files to use</a>
@@ -216,7 +216,7 @@ To identify files from the command line, run droid with a list of files or folde
 </table>
 <p>
 <h3>
-    <a id="WritingFile" name="WritingFile">Writing to a file</a></h3>
+    <a id="WritingCSVFile" name="WritingCSVFile">Writing to a file</a></h3>
 To output the CSV results to a file rather than the console, you can use the <b>-o</b> option:
 <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
     <tr>
@@ -529,6 +529,28 @@ For example:
     <tr>
         <td>
             <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid -p "C:\Results\myprofile1.droid" "C:\Results\myprofile2.droid" <b>-e</b></font>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
+            <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
+        </td>
+    </tr>
+</table>
+<p>
+    If you want to export a subset of columns, simply specify a space separated list of those columns after the -co option:
+<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
+    <tr>
+        <td>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid -p "C:\Results\myprofile1.droid" -e "C:\Exports\myprofiles.csv" <b>-co FILE_PATH STATUS HASH PUID</b></font>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
+            <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
+        </td>
+    </tr>
+</table>
+<p>
+    If you have defined an export template, simply specify the absolute path to the export template after the -et option:
+<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
+    <tr>
+        <td>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid -p "C:\Results\myprofile1.droid" -e "C:\Exports\myprofiles.csv" <b>-et "C:\Templates\MyExport.template"</b></font>
             <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
             <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
         </td>
@@ -1221,6 +1243,15 @@ This table lists all the command line options available:
         <td>Specifies that CSV output should only write the <a href="#ColumnNameTable">columns</a> specified. </td>
         <td style="border:1px solid #000" bgcolor="#000000"><font color="#ffffff" face="Monospaced, Courier New, Courier, mono"/>
             droid “C:\Files\A Folder” "C:\Files\A File” -co FILE_PATH STATUS HASH PUID
+        </td>
+    </tr>
+    <tr>
+        <td>-et</td>
+        <td>--export-template</td>
+        <td>Absolute path to the export template</td>
+        <td>Specifies that CSV output should be written using the customisations defined in the Export Template. </td>
+        <td style="border:1px solid #000" bgcolor="#000000"><font color="#ffffff" face="Monospaced, Courier New, Courier, mono"/>
+            droid “C:\Files\A Folder” "C:\Files\A File” -et "C:\Templates\MyExport.template"
         </td>
     </tr>
     <tr>

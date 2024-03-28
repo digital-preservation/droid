@@ -41,6 +41,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
@@ -55,6 +56,7 @@ import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -92,7 +94,7 @@ public class ExportCommandTest {
         when(profileManager.open(eq(Paths.get("foo3")), any(ProgressObserver.class))).thenReturn(profile3);
         
         Future future = mock(Future.class);
-        when(exportManager.exportProfiles(any(List.class), eq(destination), (Filter) isNull(), eq(ExportOptions.ONE_ROW_PER_FORMAT), eq("UTF-8"), eq(false), eq(true), eq(null))).thenReturn(future);
+        when(exportManager.exportProfiles(any(List.class), eq(destination), (Filter) isNull(), any(ExportDetails.class))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
         
@@ -108,8 +110,18 @@ public class ExportCommandTest {
         String[] expectedExportedProfiles = new String[] {
             "profile1", "profile2", "profile3",
         };
-        
-        verify(exportManager).exportProfiles(Arrays.asList(expectedExportedProfiles), destination, null, ExportOptions.ONE_ROW_PER_FORMAT, "UTF-8", false, true, null);
+
+        ArgumentCaptor<ExportDetails> exportDetailsCaptor = ArgumentCaptor.forClass(ExportDetails.class);
+        ArgumentCaptor<Filter> filterCaptor = ArgumentCaptor.forClass(Filter.class);
+
+        verify(exportManager).exportProfiles(eq(Arrays.asList(expectedExportedProfiles)), eq(destination), filterCaptor.capture(), exportDetailsCaptor.capture());
+
+        ExportDetails details = exportDetailsCaptor.getValue();
+        assertEquals(ExportOptions.ONE_ROW_PER_FORMAT, details.getExportOptions());
+        assertEquals("UTF-8", details.getOutputEncoding());
+        assertEquals(false, details.bomFlag());
+        assertEquals(true, details.quoteAllFields());
+        assertNull(details.getColumnsToWrite());
     }
 
     @Test
@@ -124,7 +136,7 @@ public class ExportCommandTest {
         when(profileManager.open(eq(Paths.get("foo1")), any(ProgressObserver.class))).thenReturn(profile1);
         
         Future future = mock(Future.class);
-        when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false), eq(true), eq(null))).thenReturn(future);
+        when(exportManager.exportProfiles(any(List.class), eq("destination"), any(Filter.class), any(ExportDetails.class))).thenReturn(future);
         
         ExportCommand command = new ExportCommand();
 
@@ -146,8 +158,15 @@ public class ExportCommandTest {
         };
         
         ArgumentCaptor<Filter> filterCaptor = ArgumentCaptor.forClass(Filter.class);
+        ArgumentCaptor<ExportDetails> exportDetailsCaptor = ArgumentCaptor.forClass(ExportDetails.class);
         verify(exportManager).exportProfiles(eq(Arrays.asList(expectedExportedProfiles)), 
-                eq("destination"), filterCaptor.capture(), eq(ExportOptions.ONE_ROW_PER_FORMAT), any(String.class), eq(false), eq(true), eq(null));
+                eq("destination"), filterCaptor.capture(), exportDetailsCaptor.capture());
+
+        ExportDetails details = exportDetailsCaptor.getValue();
+        assertEquals(ExportOptions.ONE_ROW_PER_FORMAT, details.getExportOptions());
+        assertEquals(false, details.bomFlag());
+        assertEquals(true, details.quoteAllFields());
+        assertNull(details.getColumnsToWrite());
 
         Filter filter = filterCaptor.getValue();
         final List<FilterCriterion> criteria = filter.getCriteria();

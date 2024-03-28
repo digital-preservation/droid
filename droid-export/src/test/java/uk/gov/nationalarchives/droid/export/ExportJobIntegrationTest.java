@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
 import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
 import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
@@ -98,10 +99,14 @@ public class ExportJobIntegrationTest {
         String[] profileIds = new String[] {
             "test", 
         };
-        
-        exportManager.exportProfiles(Arrays.asList(profileIds), "exports/export.csv", null,
-            ExportOptions.ONE_ROW_PER_FILE, null, false, true, null);
-        
+
+        ExportDetails details = new ExportDetails.ExportDetailsBuilder()
+                .withExportOptions(ExportOptions.ONE_ROW_PER_FILE)
+                .withQuotingAllFields(true)
+                .build();
+
+        exportManager.exportProfiles(Arrays.asList(profileIds), "exports/export.csv", null, details);
+
         profileContextLocator.removeProfileContext("test");
         
     }

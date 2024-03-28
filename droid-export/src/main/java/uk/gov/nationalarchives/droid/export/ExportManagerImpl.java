@@ -31,18 +31,19 @@
  */
 package uk.gov.nationalarchives.droid.export;
 
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
+import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
+import uk.gov.nationalarchives.droid.export.template.ExportTemplateBuilder;
+import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-
-import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
-import uk.gov.nationalarchives.droid.export.interfaces.ExportManager;
-import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
-import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
-import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
 /**
  * @author rflitcroft
@@ -74,13 +75,14 @@ public class ExportManagerImpl implements ExportManager {
     }
 
     @Override
-    public Future<?> exportProfiles(final List<String> profileIds, final String destination, 
-        final Filter filter, final ExportOptions options, final String outputEncoding, final boolean bom,
-                                    final boolean quoteAllFields, String columnsToWrite) {
-        itemWriter.setQuoteAllFields(quoteAllFields);
-        itemWriter.setColumnsToWrite(columnsToWrite);
+    public Future<?> exportProfiles(final List<String> profileIds, final String destination,
+                                    final Filter filter, final ExportDetails details
+    ) {
+        itemWriter.setQuoteAllFields(details.quoteAllFields());
+        itemWriter.setColumnsToWrite(details.getColumnsToWrite());
+        itemWriter.setExportTemplate(new ExportTemplateBuilder().buildExportTemplate(details.getExportTemplatePath()));
         final ExportTask exportTask = new ExportTask(destination,
-                profileIds, filter, options, outputEncoding, bom, itemWriter, profileContextLocator);
+                profileIds, filter, details.getExportOptions(), details.getOutputEncoding(), details.bomFlag(), itemWriter, profileContextLocator);
         final FutureTask<?> task = new FutureTask<Object>(exportTask, null) {
             @Override
             public boolean cancel(final boolean mayInterruptIfRunning) {

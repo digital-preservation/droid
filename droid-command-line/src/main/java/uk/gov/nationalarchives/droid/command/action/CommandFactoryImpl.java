@@ -115,6 +115,10 @@ public class CommandFactoryImpl implements CommandFactory {
             cmd.setColumnsToWrite(columns);
         }
 
+        if (cli.hasOption(CommandLineParam.EXPORT_TEMPLATE.getLongName())) {
+            cmd.setExportTemplate(cli.getOptionValue(CommandLineParam.EXPORT_TEMPLATE.getLongName()));
+        }
+
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
             cmd.setFilter(createFilter(cli.getOptionValues(CommandLineParam.ALL_FILTER.toString()), true));
         }
@@ -151,6 +155,10 @@ public class CommandFactoryImpl implements CommandFactory {
         if (cli.hasOption(CommandLineParam.COLUMNS_TO_WRITE.getLongName())) {
             String columns = String.join(SPACE, cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName()));
             cmd.setColumnsToWrite(columns);
+        }
+
+        if (cli.hasOption(CommandLineParam.EXPORT_TEMPLATE.getLongName())) {
+            cmd.setExportTemplate(cli.getOptionValue(CommandLineParam.EXPORT_TEMPLATE.getLongName()));
         }
 
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {

@@ -72,6 +72,11 @@ public final class I18N {
     public static final String COLUMNS_TO_WRITE_HELP = "profile.columnsToWrite.help";
 
     /**
+     * Sets the absolute path of an export template.
+     */
+    public static final String EXPORT_TEMPLATE_HELP = "profile.exportTemplate.help";
+
+    /**
      * Sets CSV output to write a row per format (rather than a row per file which is the default).
      */
     public static final String ROW_PER_IDENTIFICATION = "profile.rowsPerFormat.help";
@@ -221,5 +226,4 @@ public final class I18N {
         String pattern = getResource(key);
         return MessageFormat.format(pattern, params);
     }
-
 }

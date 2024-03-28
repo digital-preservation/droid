@@ -88,4 +88,11 @@ public interface ItemWriter<T> {
      */
     void setColumnsToWrite(String columnNames);
 
+    /**
+     * Sets the ExportTemplate which can override the column names, column ordering and contents of the columns.
+     *
+     * @param template An instance of ExportTemplate.
+     */
+    void setExportTemplate(ExportTemplate template);
+
 }

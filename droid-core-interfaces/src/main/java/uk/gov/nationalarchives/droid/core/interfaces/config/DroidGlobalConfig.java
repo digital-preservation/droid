@@ -95,7 +95,9 @@ public class DroidGlobalConfig {
     private Path textSignatureFileDir;
     private Path reportDefinitionDir;
     private Path filterDir;
-    
+
+    private Path exportTemplatesDir;
+
     private PropertiesConfiguration props;
     private PropertiesConfiguration defaultProps;
 
@@ -160,6 +162,9 @@ public class DroidGlobalConfig {
         
         tempDir = Paths.get(droidTempPath, "tmp");
         Files.createDirectories(tempDir);
+
+        exportTemplatesDir = droidWorkDir.resolve("export_templates");
+        Files.createDirectories(exportTemplatesDir);
     }
 
     /**
@@ -357,7 +362,12 @@ public class DroidGlobalConfig {
     public Path getTempDir() {
         return tempDir;
     }
-    
+
+    /**
+     * @return directory for the export templates.
+     */
+    public Path getExportTemplatesDir() { return exportTemplatesDir; }
+
     private void createResourceFile(final Path resourceDir, final String fileName, final String resourceName) throws IOException {
         final Path resourcefile = resourceDir.resolve(fileName);
         if (!Files.exists(resourcefile)) {

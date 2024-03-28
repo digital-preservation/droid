@@ -31,33 +31,35 @@
  */
 package uk.gov.nationalarchives.droid.export;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ItemReader;
+import uk.gov.nationalarchives.droid.export.interfaces.ItemReaderCallback;
+import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
+import uk.gov.nationalarchives.droid.export.interfaces.JobCancellationException;
+import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
+import uk.gov.nationalarchives.droid.profile.ProfileInstance;
+import uk.gov.nationalarchives.droid.profile.ProfileInstanceManager;
+import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
+
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-
-import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
-import uk.gov.nationalarchives.droid.export.interfaces.*;
-import uk.gov.nationalarchives.droid.profile.ProfileContextLocator;
-import uk.gov.nationalarchives.droid.profile.ProfileInstance;
-import uk.gov.nationalarchives.droid.profile.ProfileInstanceManager;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
 /**
  * @author rflitcroft
@@ -125,8 +127,14 @@ public class ExportManagerImplTest {
 
         List<String> profileIdList = new ArrayList<String>();
         profileIdList.add("profile1");
-        
-        exportManager.exportProfiles(profileIdList, "destination", null, ExportOptions.ONE_ROW_PER_FILE, null, false, true, "").get();
+
+        ExportDetails details = new ExportDetails.ExportDetailsBuilder()
+                .withExportOptions(ExportOptions.ONE_ROW_PER_FILE)
+                .withQuotingAllFields(true)
+                .withColumnsToWrite("")
+                .build();
+
+        exportManager.exportProfiles(profileIdList, "destination", null, details).get();
 
         verify(writer).open(any(Writer.class));
         verify(writer).write(fis);
