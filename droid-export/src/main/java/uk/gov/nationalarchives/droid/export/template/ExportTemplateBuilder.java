@@ -51,7 +51,8 @@ import java.util.stream.Collectors;
 public class ExportTemplateBuilder {
 
     private static final String COLON = ":";
-    private static final String UNABLE_TO_PARSE_LINE_MSG = "Unable to parse line: '%s'";
+    private static final String UNABLE_TO_PARSE_LINE_MSG = "Unable to parse line: '%s', %s";
+    private static final String INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT = "Invalid syntax in data modifier expression '%s', %s";
     private static final String DOUBLE_QUOTES = "\"";
     private static final String OPENING_BRACKET = "(";
     private static final String CLOSING_BRACKET = ")";
@@ -98,11 +99,11 @@ public class ExportTemplateBuilder {
         for (int i = 0; i < columnLines.size(); i++) {
             String line = columnLines.get(i);
             if (!line.contains(COLON)) {
-                throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line));
+                throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line, "line does not contain ':'"));
             }
             String header = line.substring(0, line.indexOf(COLON)).trim();
             if (header.length() == 0) {
-                throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line));
+                throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line, "column header is empty"));
             }
 
             String token2 = line.substring(line.indexOf(COLON) + 1).trim();
@@ -141,25 +142,24 @@ public class ExportTemplateBuilder {
     }
 
     private void assertDataModifierSyntaxValid(String expression) {
-        String messageFormat = "Invalid syntax in data modifier expression '%s', %s";
         String expressionToTest = expression.trim();
         // valid statement like LCASE($URI)
         if (expressionToTest.chars().filter(ch -> ch == '(').count() != 1) {
-            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting exactly one occurence of '('"));
+            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting exactly one occurence of '('"));
         }
         if (expressionToTest.chars().filter(ch -> ch == ')').count() != 1) {
-            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting exactly one occurence of ')'"));
+            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting exactly one occurence of ')'"));
         }
         if (expressionToTest.indexOf(OPENING_BRACKET) > expressionToTest.indexOf(CLOSING_BRACKET)) {
-            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting '(' before ')'"));
+            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting '(' before ')'"));
         }
         if (expressionToTest.indexOf(OPENING_BRACKET) == 0) {
-            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting an operation definition before '('"));
+            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting an operation definition before '('"));
         }
         String dataColumnToken = expressionToTest.substring(expressionToTest.indexOf(OPENING_BRACKET) + 1,
                 expressionToTest.indexOf(CLOSING_BRACKET)).trim();
         if (!dataColumnToken.startsWith(DATA_COLUMN_PREFIX)) {
-            throw new ExportTemplateParseException(String.format(messageFormat, expression, "expecting '$' after '('"));
+            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting '$' after '('"));
         }
     }
 

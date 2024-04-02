@@ -83,7 +83,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
         ExportTemplateBuilder builder = new ExportTemplateBuilder();
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Unable to parse line: 'myCol $My_COL'", ex.getMessage());
+        assertEquals("Unable to parse line: 'myCol $My_COL', line does not contain ':'", ex.getMessage());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
         ExportTemplateBuilder builder = new ExportTemplateBuilder();
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Unable to parse line: ': $My_COL'", ex.getMessage());
+        assertEquals("Unable to parse line: ': $My_COL', column header is empty", ex.getMessage());
     }
 
     @Test
@@ -283,5 +283,4 @@ public class ExportTemplateBuilderTest {
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
         assertEquals("Invalid syntax in data modifier expression 'LCASE(PUID)', expecting '$' after '('", ex.getMessage());
     }
-
 }
