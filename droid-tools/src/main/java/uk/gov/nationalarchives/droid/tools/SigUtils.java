@@ -749,9 +749,10 @@ public final class SigUtils {
         long lastmodified = Files.getLastModifiedTime(file).toMillis();
         RequestMetaData metaData = new RequestMetaData(size, lastmodified, file.toString());
         RequestIdentifier identifier = new RequestIdentifier(file.toUri());
-        IdentificationRequest fileRequest = new FileSystemIdentificationRequest(metaData, identifier);
-        fileRequest.open(file);
-        return new IdentificationRequestByteReaderAdapter(fileRequest);
+        try (IdentificationRequest fileRequest = new FileSystemIdentificationRequest(metaData, identifier)) {
+            fileRequest.open(file);
+            return new IdentificationRequestByteReaderAdapter(fileRequest);
+        }
     }
 
     /**
