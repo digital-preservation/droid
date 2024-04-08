@@ -128,7 +128,7 @@ public final class ExportDetails {
             return  this;
         }
 
-        public ExportDetailsBuilder withOutpuEncoding(String encoding) {
+        public ExportDetailsBuilder withOutputEncoding(String encoding) {
             this.outputEncoding = encoding;
             return this;
         }

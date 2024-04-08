@@ -246,7 +246,7 @@ public class ExportCommand implements DroidCommand {
         ExportDetails.ExportDetailsBuilder builder = new ExportDetails.ExportDetailsBuilder();
 
         return builder.withExportOptions(getExportOptions())
-                .withOutpuEncoding("UTF-8") //default
+                .withOutputEncoding("UTF-8") //default
                 .withBomFlag(isBom())
                 .withQuotingAllFields(getQuoteAllFields())
                 .withColumnsToWrite(getColumnsToWrite())

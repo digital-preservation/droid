@@ -67,13 +67,14 @@ public class ExportTemplateBuilder {
         if (pathToTemplate == null) {
             return null;
         }
+
         List<String> templateLines;
         try {
             templateLines = Files.readAllLines(Paths.get(pathToTemplate));
             Map<Integer, ExportTemplateColumnDef> columnMap = buildColumnMap(templateLines);
             return new ExportTemplateImpl(columnMap);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to read template file");
+            throw new RuntimeException("Unable to read export template file at path: " + pathToTemplate);
         }
     }
 

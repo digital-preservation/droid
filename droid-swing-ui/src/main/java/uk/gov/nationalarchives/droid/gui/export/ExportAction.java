@@ -230,7 +230,7 @@ public class ExportAction extends SwingWorker<Void, Integer> {
     private ExportDetails getExportDetails() {
         ExportDetails.ExportDetailsBuilder builder = new ExportDetails.ExportDetailsBuilder();
         return builder.withExportOptions(options)
-                .withOutpuEncoding(outputEncoding)
+                .withOutputEncoding(outputEncoding)
                 .withBomFlag(bom)
                 .withQuotingAllFields(quoteAllFields)
                 .withColumnsToWrite(columnsToWrite)
