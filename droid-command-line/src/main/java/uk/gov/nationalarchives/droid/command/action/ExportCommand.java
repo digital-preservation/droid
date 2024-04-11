@@ -240,7 +240,6 @@ public class ExportCommand implements DroidCommand {
      * @return the export details for this export command.
      * For an export from CLI,
      * OutputEncoding is always defaulted to UTF-8
-     * exportTemplate is always null until we implement support for the template in CLI
      */
     private ExportDetails getExportDetails() {
         ExportDetails.ExportDetailsBuilder builder = new ExportDetails.ExportDetailsBuilder();

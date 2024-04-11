@@ -103,7 +103,7 @@ public class ExportTemplateBuilder {
                 throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line, "line does not contain ':'"));
             }
             String header = line.substring(0, line.indexOf(COLON)).trim();
-            if (header.length() == 0) {
+            if (header.isEmpty()) {
                 throw new ExportTemplateParseException(String.format(UNABLE_TO_PARSE_LINE_MSG, line, "column header is empty"));
             }
 
@@ -111,7 +111,7 @@ public class ExportTemplateBuilder {
 
             if (token2.startsWith(DATA_COLUMN_PREFIX)) {
                 columnMap.put(i, createProfileNodeDef(header, token2));
-            } else if ((token2.length() == 0) || (token2.startsWith(DOUBLE_QUOTES))) {
+            } else if ((token2.isEmpty()) || (token2.startsWith(DOUBLE_QUOTES))) {
                 columnMap.put(i, createConstantStringDef(header, token2));
             } else {
                 columnMap.put(i, createDataModifierDef(header, token2));
@@ -146,10 +146,10 @@ public class ExportTemplateBuilder {
         String expressionToTest = expression.trim();
         // valid statement like LCASE($URI)
         if (expressionToTest.chars().filter(ch -> ch == '(').count() != 1) {
-            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting exactly one occurence of '('"));
+            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting exactly one occurrence of '('"));
         }
         if (expressionToTest.chars().filter(ch -> ch == ')').count() != 1) {
-            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting exactly one occurence of ')'"));
+            throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting exactly one occurrence of ')'"));
         }
         if (expressionToTest.indexOf(OPENING_BRACKET) > expressionToTest.indexOf(CLOSING_BRACKET)) {
             throw new ExportTemplateParseException(String.format(INVALID_DATA_MODIFIER_SYNTAX_MESSAGE_FORMAT, expression, "expecting '(' before ')'"));
@@ -165,7 +165,7 @@ public class ExportTemplateBuilder {
     }
 
     private ExportTemplateColumnDef createConstantStringDef(String header, String param2) {
-        if (param2.length() == 0) {
+        if (param2.isEmpty()) {
             return new ConstantStringColumnDef("", header);
         } else {
             if (!param2.endsWith(DOUBLE_QUOTES)) {

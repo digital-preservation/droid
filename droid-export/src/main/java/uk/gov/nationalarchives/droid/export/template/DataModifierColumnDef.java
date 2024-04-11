@@ -96,7 +96,7 @@ public class DataModifierColumnDef implements ExportTemplateColumnDef {
      */
     @Override
     public String getOperatedValue(String input) {
-        if ((input == null) || (input.length() == 0)) {
+        if ((input == null) || (input.isEmpty())) {
             return "";
         }
         switch(operation) {

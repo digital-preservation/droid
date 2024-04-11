@@ -45,6 +45,7 @@ public interface ExportTemplateColumnDef {
      * Returns the well-known column names from one of the default headers.
      * Throws an exception if the definition represents a non-profile column
      * @return origianl column name
+     * @throws RuntimeException Implementing methods may throw a RuntimeException if the method is not relevant
      */
     String getOriginalColumnName();
 
@@ -52,6 +53,7 @@ public interface ExportTemplateColumnDef {
      * Returns the data value, if any associated with this column definition.
      * Throws an exception if the data is coming from profile results
      * @return data value
+     * @throws RuntimeException Implementing methods may throw a RuntimeException if the method is not relevant
      */
     String getDataValue();
 
@@ -92,18 +94,12 @@ public interface ExportTemplateColumnDef {
      */
     enum DataModification {
         /**
-         * Convert the given string value to lowercase.
+         * Represents a data modification operation to convert given string value to lowercase.
          */
-        LCASE("LCASE"),
+        LCASE,
         /**
-         * Convert the given string value to uppercase.
+         * Represents a data modification operation to convert given string value to uppercase.
          */
-        UCASE("UCASE");
-
-        private final String label;
-
-        DataModification(String label) {
-            this.label = label;
-        }
+        UCASE
     }
 }

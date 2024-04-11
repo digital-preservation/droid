@@ -98,18 +98,17 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
         //if we are writing one row per file, then we tag the "per format" fields as additional columns,
         //if such columns need to be added, we create appropriate headers with a running suffix and write
         //them to the file
-        if (!Collections.disjoint(headersToWrite, CsvWriterConstants.PER_FORMAT_HEADERS)) {
-            if (maxIdCount > 1) { //add headers
-                for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
-                    //"PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION"
-                    for (String headerEntry : CsvWriterConstants.PER_FORMAT_HEADERS) {
-                        if (headersToWrite.contains(headerEntry)) {
-                            headersToWrite.add(headerEntry + newColumnSuffix);
-                        }
+        if (!Collections.disjoint(headersToWrite, CsvWriterConstants.PER_FORMAT_HEADERS) && (maxIdCount > 1)) { //add headers
+            for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
+                //"PUID","MIME_TYPE","FORMAT_NAME","FORMAT_VERSION"
+                for (String headerEntry : CsvWriterConstants.PER_FORMAT_HEADERS) {
+                    if (headersToWrite.contains(headerEntry)) {
+                        headersToWrite.add(headerEntry + newColumnSuffix);
                     }
                 }
             }
         }
+
         csvWriter.writeHeaders(headersToWrite);
         csvWriter.flush();
     }

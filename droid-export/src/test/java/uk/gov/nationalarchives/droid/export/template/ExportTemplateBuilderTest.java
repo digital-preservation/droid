@@ -253,7 +253,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Invalid syntax in data modifier expression 'Crown Copyright', expecting exactly one occurence of '('", ex.getMessage());
+        assertEquals("Invalid syntax in data modifier expression 'Crown Copyright', expecting exactly one occurrence of '('", ex.getMessage());
     }
 
     @Test
