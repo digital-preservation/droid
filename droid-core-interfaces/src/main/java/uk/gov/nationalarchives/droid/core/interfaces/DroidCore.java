@@ -124,6 +124,11 @@ public interface DroidCore {
      * @param fileExtension The file extension to check against.
      */
     void checkForExtensionsMismatches(IdentificationResultCollection results, String fileExtension);
-    
-    
+
+    /**
+     * Returns name of the format based on puid from the signatures.
+     * @param puid string representation of puid
+     * @return format name
+     */
+    String formatNameByPuid(String puid);
 }

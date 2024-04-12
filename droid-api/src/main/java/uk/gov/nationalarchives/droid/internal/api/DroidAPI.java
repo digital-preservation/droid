@@ -45,6 +45,7 @@ import org.apache.commons.lang.StringUtils;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -158,9 +159,18 @@ public final class DroidAPI {
             boolean fileExtensionMismatch = resultCollection.getExtensionMismatch();
 
             return resultCollection.getResults()
-                    .stream().map(res -> new ApiResult(extension, res.getMethod(), res.getPuid(), res.getName(), fileExtensionMismatch))
+                    .stream().map(res -> createApiResult(res, extension, fileExtensionMismatch))
                     .collect(Collectors.toList());
         }
+    }
+
+    private ApiResult createApiResult(IdentificationResult result, String extension, boolean extensionMismatch) {
+        String name = result.getName();
+        if (result.getMethod().equals(IdentificationMethod.CONTAINER)
+                && (droidCore.formatNameByPuid(result.getPuid()) != null)) {
+            name = droidCore.formatNameByPuid(result.getPuid());
+        }
+        return new ApiResult(extension, result.getMethod(), result.getPuid(), name, extensionMismatch);
     }
 
     private IdentificationResultCollection identifyByExtension(final FileSystemIdentificationRequest identificationRequest) {
