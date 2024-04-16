@@ -31,23 +31,18 @@
  */
 package uk.gov.nationalarchives.droid.container.httpservice;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.commons.configuration.event.ConfigurationEvent;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.util.DateParseException;
-import org.apache.commons.httpclient.util.DateUtil;
-
+import org.apache.http.Header;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.DateUtils;
+import org.apache.http.conn.routing.HttpRoutePlanner;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
@@ -55,6 +50,14 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureUpdateService;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author rflitcroft
@@ -72,7 +75,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
         + "server at\n[%s]"; 
 
     private String endpointUrl;
-    private HttpClient client = new HttpClient();
+    private CloseableHttpClient client = HttpClientBuilder.create().build();
 
     /**
      * Empty bean constructor.
@@ -90,13 +93,14 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
 
     @Override
     public SignatureFileInfo getLatestVersion(int currentVersion) throws SignatureServiceException {
-        GetMethod get = new GetMethod(endpointUrl);
+        HttpGet get = new HttpGet(endpointUrl);
         try {
             Date versionDate = getDateFromVersion(currentVersion);
-            String dateString = DateUtil.formatDate(versionDate);
-            get.addRequestHeader("If-Modified-Since", dateString);
-            
-            int statusCode = client.executeMethod(get);
+            String dateString = DateUtils.formatDate(versionDate);
+            get.addHeader("If-Modified-Since", dateString);
+
+            HttpResponse response = client.execute(get);
+            int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_NOT_FOUND) {
                 throw new SignatureServiceException(
                         String.format(FILE_NOT_FOUND_404, endpointUrl));
@@ -104,7 +108,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
                 throw new SignatureServiceException(
                         String.format(ERROR_MESSAGE_PATTERN, endpointUrl, statusCode));
             }
-            int version = getVersion(get);
+            int version = getVersion(response);
             return new SignatureFileInfo(version, false, SignatureType.CONTAINER);
         } catch (UnknownHostException e) {
             throw new SignatureServiceException(
@@ -116,12 +120,15 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
         }
     }
     
-    private static int getVersion(HttpMethod httpMethod) throws DateParseException {
+    private static int getVersion(HttpResponse httpResponse) throws DateParseException {
         int version = 0;
-        Header header = httpMethod.getResponseHeader(LAST_MODIFIED_HEADER);
+        Header header = httpResponse.getFirstHeader(LAST_MODIFIED_HEADER);
         if (header != null) {
             String lastModified = header.getValue();
-            Date lastModifiedDate = DateUtil.parseDate(lastModified);
+            Date lastModifiedDate = DateUtils.parseDate(lastModified);
+            if (lastModifiedDate == null) {
+                throw new DateParseException(lastModified);
+            }
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
             version = Integer.parseInt(sdf.format(lastModifiedDate));
         }
@@ -136,10 +143,11 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
 
     @Override
     public SignatureFileInfo importSignatureFile(final Path targetDir) throws SignatureServiceException {
-        final GetMethod get = new GetMethod(endpointUrl);
+        final HttpGet get = new HttpGet(endpointUrl);
         
         try {
-            final int statusCode = client.executeMethod(get);
+            final HttpResponse response = client.execute(get);
+            final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_NOT_FOUND) {
                 throw new SignatureServiceException(
                         String.format(FILE_NOT_FOUND_404, endpointUrl));
@@ -148,13 +156,13 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
                         String.format(ERROR_MESSAGE_PATTERN, endpointUrl, statusCode));
             }
             
-            final int version = getVersion(get);
+            final int version = getVersion(response);
             
             final SignatureFileInfo signatureFileInfo = new SignatureFileInfo(version, false, SignatureType.CONTAINER);
             final String fileName = String.format(FILENAME_PATTERN, version);
 
             final Path targetFile = targetDir.resolve(fileName);
-            Files.copy(get.getResponseBodyAsStream(), targetFile);
+            Files.copy(response.getEntity().getContent(), targetFile);
             
             signatureFileInfo.setFile(targetFile);
             return signatureFileInfo;
@@ -189,10 +197,11 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
     public void onProxyChange(ProxySettings proxySettings) {
         
         if (proxySettings.isEnabled()) {
-            client = new HttpClient();
-            client.getHostConfiguration().setProxy(proxySettings.getProxyHost(), proxySettings.getProxyPort());
+            HttpRoutePlanner proxyRoutePlanner = new DefaultProxyRoutePlanner(
+                    new HttpHost(proxySettings.getProxyHost(), proxySettings.getProxyPort()));
+            client = HttpClients.custom().setRoutePlanner(proxyRoutePlanner).build();
         } else {
-            client = new HttpClient();
+            client = HttpClientBuilder.create().build();
         }
         
     }

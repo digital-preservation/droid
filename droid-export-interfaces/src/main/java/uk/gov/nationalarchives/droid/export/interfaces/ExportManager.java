@@ -45,7 +45,6 @@ public interface ExportManager {
 
     /**
      * Exports one or more profiles to a CSV file.
-     * 
      * FIXME:
      * The only reason this interface takes an optional filter
      * is so that the command line can pass in one of its own 
@@ -62,15 +61,10 @@ public interface ExportManager {
      * @param profileIds the list of profiles to export.
      * @param destination the destination filename
      * @param filter optional filter
-     * @param options the options for export.
-     * @param outputEncoding The character encoding to use in the output, null to use default encoding
-     * @param bom BOM flag.
-     * @param quoteAllFields - whether to quote all fields, or just those that contain commas.
-     * @param columnsToWrite a space separated list of column names to write.  If null or empty, all columns are written.
+     * @param details details about various export preferences
      * @return future for cancelling the task. 
      */
     Future<?> exportProfiles(List<String> profileIds, String destination,
-            Filter filter, ExportOptions options, String outputEncoding,
-                             boolean bom, boolean quoteAllFields, String columnsToWrite);
+            Filter filter, ExportDetails details);
 
 }
