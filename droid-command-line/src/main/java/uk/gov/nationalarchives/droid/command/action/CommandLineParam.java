@@ -238,6 +238,16 @@ public enum CommandLineParam {
     },
 
     /**
+     * Specifies the absolute path for the export template to be used.
+     */
+    EXPORT_TEMPLATE("et", "export-template", true, -1, I18N.EXPORT_TEMPLATE_HELP, "template-file") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+
+    /**
      * Specifies that a row per identification should be written out in a CSV file or console output.
      */
     ROW_PER_FORMAT("ri", "row-per-id", I18N.ROW_PER_IDENTIFICATION) {
@@ -503,6 +513,7 @@ public enum CommandLineParam {
 
         options.addOptionGroup(getFilterOptionGroup());
         options.addOptionGroup(getFileFilterOptionGroup());
+        options.addOptionGroup(getExportOptionGroup());
         options.addOptionGroup(topGroup);
 
         return options;
@@ -521,6 +532,13 @@ public enum CommandLineParam {
         filterOptions.addOption(ALL_FILTER.newOption());
         filterOptions.addOption(ANY_FILTER.newOption());
         return filterOptions;
+    }
+
+    private static OptionGroup getExportOptionGroup() {
+        OptionGroup exportOptions = new OptionGroup();
+        exportOptions.addOption(COLUMNS_TO_WRITE.newOption());
+        exportOptions.addOption(EXPORT_TEMPLATE.newOption());
+        return exportOptions;
     }
 
     /**
@@ -603,6 +621,7 @@ public enum CommandLineParam {
         options.addOption(BOM.newOption());
         options.addOption(QUOTE_COMMAS.newOption());
         options.addOption(COLUMNS_TO_WRITE.newOption());
+        options.addOption(EXPORT_TEMPLATE.newOption());
         return options;
     }
 
