@@ -48,6 +48,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
                 <entry key="GZ" value-ref="gzHandler"/>
                 <entry key="ARC" value-ref="arcHandler"/>
                 <entry key="WARC" value-ref="warcHandler"/>
+                <!-- FIXME:, FOLLOWING ENTRY MAPPED TO warc, CREATE PROPER HANDLER-->
+                <entry key="WACZ" value-ref="warcHandler"/>
                 <entry key="BZ" value-ref="bzipHandler"/>
                 <entry key="7Z" value-ref="sevenZipHandler"/>
                 <entry key="ISO" value-ref="isoHandler"/>
@@ -194,6 +196,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
                 <entry key="GZ" value="${archive.gz}"/>
                 <entry key="ARC" value="${archive.arc}"/>
                 <entry key="WARC" value="${archive.warc}"/>
+                <entry key="WACZ" value="${archive.wacz}"/>
                 <entry key="BZ" value="${archive.bz}"/>
                 <entry key="7Z" value="${archive.7z}"/>
                 <entry key="ISO" value="${archive.iso}"/>
