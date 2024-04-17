@@ -639,6 +639,7 @@ public class ExportDialog extends JDialog {
         jPanelRight.add(jPanelCards, BorderLayout.CENTER);
 
         jCheckBoxUseTemplate.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxUseTemplate.text")); // NOI18N
+        jCheckBoxUseTemplate.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxUseTemplate.toolTipText")); // NOI18N
         jCheckBoxUseTemplate.setBorder(BorderFactory.createEmptyBorder(1, 15, 1, 1));
         jCheckBoxUseTemplate.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
