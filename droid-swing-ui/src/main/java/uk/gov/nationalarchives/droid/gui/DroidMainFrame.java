@@ -141,7 +141,6 @@ public class DroidMainFrame extends JFrame {
     private JFileChooser filterFileChooser;
     private ResourceSelectorDialog resourceFileChooser;
     private ButtonManager buttonManager;
-    private ConfigDialog configDialog;
     private GlobalContext globalContext;
     private JFileChooser exportFileChooser;
     private SignatureInstallDialog signatureInstallDialog;
@@ -320,7 +319,6 @@ public class DroidMainFrame extends JFrame {
 
         globalContext = new SpringGuiContext();
         profileManager = globalContext.getProfileManager();
-        configDialog = new ConfigDialog(this, globalContext);
         droidContext = new DroidUIContext(jProfilesTabbedPane, profileManager);
         exportFileChooser = new ExportFileChooser();
         filterFileChooser = new FilterFileChooser(globalContext.getGlobalConfig().getFilterDir().toFile());
@@ -1172,25 +1170,29 @@ public class DroidMainFrame extends JFrame {
     }// GEN-LAST:event_jMenuItemCopyFIlterToAllActionPerformed
 
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_settingsMenuItemActionPerformed
-        // initialise the dialog's values
+        // create the dialog and initialise the dialog's values
         Map<String, Object> settings = globalContext.getGlobalConfig().getPropertiesMap();
-        configDialog.init(settings);
 
-        configDialog.setVisible(true);
-        if (configDialog.getResponse() == ConfigDialog.OK) {
-            try {
-                globalContext.getGlobalConfig().update(configDialog.getGlobalConfig());
-            } catch (ConfigurationException e) {
-                log.error("Error updating properties: " + e.getMessage(), e);
-                JOptionPane.showMessageDialog(configDialog, NbBundle.getMessage(ConfigDialog.class,
-                        "ConfigDialog.error.text"),
-                        NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.error.title"), JOptionPane.ERROR_MESSAGE);
-
+        ConfigDialog configDialog = new ConfigDialog(this, globalContext);
+        try {
+            configDialog.init(settings);
+            configDialog.setVisible(true);
+            if (configDialog.getResponse() == ConfigDialog.OK) {
+                try {
+                    globalContext.getGlobalConfig().update(configDialog.getGlobalConfig());
+                } catch (ConfigurationException e) {
+                    log.error("Error updating properties: " + e.getMessage(), e);
+                    JOptionPane.showMessageDialog(configDialog, NbBundle.getMessage(ConfigDialog.class,
+                                    "ConfigDialog.error.text"),
+                            NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.error.title"), JOptionPane.ERROR_MESSAGE);
+                }
             }
-        }
 
-        if (configDialog.getCreateNewProfile()) {
-            createAndInitNewProfile();
+            if (configDialog.getCreateNewProfile()) {
+                createAndInitNewProfile();
+            }
+        } finally {
+            configDialog.dispose();
         }
     }// GEN-LAST:event_settingsMenuItemActionPerformed
 

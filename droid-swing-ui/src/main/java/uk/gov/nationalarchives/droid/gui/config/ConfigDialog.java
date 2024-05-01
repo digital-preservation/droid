@@ -907,7 +907,6 @@ public class ConfigDialog extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        response = OK;
         if (isDirtyForNewProfile()) {
             int optionResponse = JOptionPane.showOptionDialog(
                     this,
@@ -921,9 +920,11 @@ public class ConfigDialog extends JDialog {
             );
             switch (optionResponse) {
                 case JOptionPane.YES_OPTION:
+                    response = OK;
                     automaticallyCreateNewProfile = true;
                     break;
                 case JOptionPane.NO_OPTION:
+                    response = OK;
                     automaticallyCreateNewProfile = false;
                     break;
                 case JOptionPane.CANCEL_OPTION:
@@ -943,6 +944,7 @@ public class ConfigDialog extends JDialog {
     }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        response = CANCEL;
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
