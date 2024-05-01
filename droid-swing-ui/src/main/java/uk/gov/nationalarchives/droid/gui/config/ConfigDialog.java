@@ -140,7 +140,7 @@ public class ConfigDialog extends JDialog {
 
     private void populatePropertyListNeedingNewProfile() {
         propertiesAffectingNewProfile.addAll(
-                Arrays.asList(DroidGlobalProperty.BINARY_UPDATE_URL.getName(), DroidGlobalProperty.CONTAINER_UPDATE_URL.getName(),
+                Arrays.asList(DroidGlobalProperty.DEFAULT_BINARY_SIG_FILE_VERSION.getName(), DroidGlobalProperty.DEFAULT_CONTAINER_SIG_FILE_VERSION.getName(),
                         DroidGlobalProperty.PROCESS_ZIP.getName(), DroidGlobalProperty.PROCESS_TAR.getName(),
                         DroidGlobalProperty.PROCESS_GZIP.getName(), DroidGlobalProperty.PROCESS_RAR.getName(),
                         DroidGlobalProperty.PROCESS_7ZIP.getName(), DroidGlobalProperty.PROCESS_ISO.getName(),
