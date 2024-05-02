@@ -930,6 +930,8 @@ public class ConfigDialog extends JDialog {
                 case JOptionPane.CANCEL_OPTION:
                     return;
             }
+        } else {
+            response = OK;
         }
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
