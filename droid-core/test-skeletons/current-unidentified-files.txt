@@ -15,3 +15,4 @@ fmt-1157-signature-id-1539.nfo  malformated test file, see https://github.com/ex
 //fmt-295-signature-id-314.ods      -Not identified in GUI but name-based identification in test.
 //fmt-482-signature-id-906.ibooks   -Not identified in GUI but name-based identification in test.
 //fmt-483-signature-id-905.epub     -Not identified in GUI but name-based identification in test.
+fmt-1618-signature-id-1953.ent    //GUI identifies only by extension

@@ -55,7 +55,6 @@ import static org.hamcrest.Matchers.*;
 /**
  * Test internal API against skeleton sample. Unfortunately skeleton sample is in different project,
  * but it works if we use relative path.
- *
  * The test looks at puid mentioned in the filename and expects that as a result from the API
  *
  */
@@ -97,7 +96,7 @@ public class DroidAPISkeletonTest {
      * from the API for the test skeleton suite.
      * Following table describes the current puids that are ignored because the identification using current
      * signature file does not match the indicated puid in filename
-     * ---------------- Current signature file V114 ----------------
+     * ---------------- Current signature file V118 ----------------
      * fmt-1062-signature-id-1435.3fr			fmt/353		Signature
      * fmt-1157-signature-id-1539.nfo
      * fmt-1739-signature-id-2077.toast		    fmt/468		Signature
@@ -107,9 +106,8 @@ public class DroidAPISkeletonTest {
      * @return Puids that are ignored for the current signature file
      */
     private static Set<String> getIgnoredPuids() {
-        Set<String> ignorePuid = Stream.of("fmt/1062", "fmt/1157", "fmt/1757", "fmt/1739")
+        return Stream.of("fmt/1062", "fmt/1157", "fmt/1757", "fmt/1739")
                 .collect(Collectors.toCollection(HashSet::new));
-        return ignorePuid;
     }
 
 
