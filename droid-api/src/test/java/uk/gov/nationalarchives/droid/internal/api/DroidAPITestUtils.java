@@ -43,7 +43,7 @@ import java.nio.file.Paths;
 public class DroidAPITestUtils {
     public static DroidAPI createApi() throws SignatureParseException {
         Path signaturePath = Paths.get("../droid-results/custom_home/signature_files/DROID_SignatureFile_V118.xml");
-        Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20230822.xml");
+        Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20240501.xml");
         return DroidAPI.getInstance(signaturePath, containerPath);  //Create only once instance of Droid.
     }
 }
