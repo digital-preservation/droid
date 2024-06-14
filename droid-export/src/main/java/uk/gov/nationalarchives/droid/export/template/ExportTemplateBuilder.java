@@ -111,13 +111,23 @@ public class ExportTemplateBuilder {
 
             if (token2.startsWith(DATA_COLUMN_PREFIX)) {
                 columnMap.put(i, createProfileNodeDef(header, token2));
-            } else if ((token2.isEmpty()) || (token2.startsWith(DOUBLE_QUOTES))) {
-                columnMap.put(i, createConstantStringDef(header, token2));
-            } else {
+            } else if (isExpressionForDataModification(token2)) {
                 columnMap.put(i, createDataModifierDef(header, token2));
+            } else {
+                columnMap.put(i, createConstantStringDef(header, token2));
             }
         }
         return columnMap;
+    }
+
+    private boolean isExpressionForDataModification(String expressionParam) {
+        List<String> operations = Arrays.stream(
+                        ExportTemplateColumnDef.DataModification.values()).map(v -> v.toString() + OPENING_BRACKET).
+                collect(Collectors.toList());
+        String expression = expressionParam.trim();
+
+        List<String> possibleOperations = operations.stream().filter(op -> expression.startsWith(op)).collect(Collectors.toList());
+        return possibleOperations.size() > 0;
     }
 
     private ExportTemplateColumnDef createDataModifierDef(String header, String param2) {
@@ -168,10 +178,11 @@ public class ExportTemplateBuilder {
         if (param2.isEmpty()) {
             return new ConstantStringColumnDef("", header);
         } else {
-            if (!param2.endsWith(DOUBLE_QUOTES)) {
-                throw new ExportTemplateParseException("The line with a constant value ('" + param2 + "') in template definition does not have closing quotes");
+            if (param2.startsWith(DOUBLE_QUOTES) && param2.endsWith(DOUBLE_QUOTES)) {
+                return new ConstantStringColumnDef(param2.substring(1, param2.length() - 1), header);
+            } else {
+                throw new ExportTemplateParseException("The line with a constant value ('" + param2 + "') is not fully enclosed in quotes");
             }
-            return new ConstantStringColumnDef(param2.substring(1, param2.length() - 1), header);
         }
     }
 
