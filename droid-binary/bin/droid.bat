@@ -94,14 +94,14 @@ REM ---------------
 REM This is the maximum memory DROID can use in megabytes.
 REM Remove the "REM " from the line below and set the maximum memory after the "=".
 REM Also configure this property using the environment variable: droidMemory.
-REM SET droidMemory=512
+REM SET droidMemory=1024
 
 
 
 REM Assemble options
 REM ================
-REM Default to using 512 megabytes of memory if no other settings provided:
-SET DROID_OPTIONS="-Xmx512m"
+REM Default to using 1024 megabytes of memory if no other settings provided:
+SET DROID_OPTIONS="-Xmx1024m"
 
 IF "%droidMemory%"=="" GOTO UserDir
 SET DROID_OPTIONS="-Xmx%droidMemory%m"
