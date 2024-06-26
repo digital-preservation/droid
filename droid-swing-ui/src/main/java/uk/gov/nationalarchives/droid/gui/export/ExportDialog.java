@@ -327,9 +327,9 @@ public class ExportDialog extends JDialog {
 
         setTitle(NbBundle.getMessage(ExportDialog.class, "ExportDialog.title_1")); // NOI18N
         setAlwaysOnTop(true);
-        setMinimumSize(new Dimension(1155, 835));
+        setMinimumSize(new Dimension(730, 520));
         setName("exportDialog"); // NOI18N
-        setPreferredSize(new Dimension(1055, 760));
+        setPreferredSize(new Dimension(730, 520));
 
         profileSelectLabel.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.profileSelectLabel.text_1")); // NOI18N
 
