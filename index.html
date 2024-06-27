@@ -123,6 +123,23 @@ will build. Follow the Maven output to see where Maven has placed the binaries.<
 <h3>
 <a name="release-notes" class="anchor" href="#release-notes"><span class="octicon octicon-link"></span></a>Release Notes</h3>
 
+<h4>DROID 6.8.0</h4>
+<p>This release has following fixes and improvements</P>
+
+<pre><code>Improvements and Fixes
+- Feature: Export Templates - Ability to customise the Droid CSV export by defining templates
+- #932 Improvement: Prompt for a new profile creation on closing the preferences dialog
+- #938 Improvement: The Windows distributable now includes a 64 bit Java 17 JRE
+- #1063 Improvement: Updated commons-httpclient dependecy used for signature download
+- Updated documentation for CSV columns in export
+- Increased the default maximum memory to 1024MB in startup scripts
+- #561 Bugfix: On Windows, when a profile is closed, the associated profile folder is not deleted
+- #1072 Bugfix: Empty columns are not populated with a blank when a file has more than one format identification
+- #1011 Bugfix: Mismatch in the format name between GUI and API when identification method is 'Container'
+- #1100 Bugfix: Cancelling the preferences dialog still makes changes to the preferences
+- #1072 Fewer elements in data row when exporting profiles per file when some of them have more than one identification
+</code></pre>
+
 <h4>DROID 6.7.0</h4>
 <p>This release has following fixes and improvements</P>
 
