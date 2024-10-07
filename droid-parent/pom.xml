@@ -789,7 +789,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>com.github.junrar</groupId>
                 <artifactId>junrar</artifactId>
-                <version>7.5.4</version>
+                <version>7.5.5</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
