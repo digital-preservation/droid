@@ -35,10 +35,11 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
-
+import uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.ContainerType;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.generateId;
 
 public class DroidAPITest {
 
@@ -63,6 +65,52 @@ public class DroidAPITest {
     }
 
     @Test
+    public void should_match_gzip_container_file() {
+        String data = "TEST";
+        ContainerType containerType = new ContainerType("GZIP", generateId(),"x-fmt/266");
+        DroidAPI api = DroidAPITestUtils.createApiForContainer(new DroidAPITestUtils.ContainerFile(containerType, data, "fmt/12345", Optional.empty()));
+        try {
+            List<ApiResult> results = api.submit(DroidAPITestUtils.generateGzFile(data));
+            assertThat(results, hasSize(1));
+            assertThat(results.getFirst().getPuid(), is("fmt/12345"));
+            assertThat(results.getFirst().getMethod(), is(IdentificationMethod.CONTAINER));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void should_match_zip_container_file() {
+        String data = "TEST";
+        ContainerType containerType = new ContainerType("ZIP", generateId(),"x-fmt/263");
+        DroidAPI api = DroidAPITestUtils.createApiForContainer(new DroidAPITestUtils.ContainerFile(containerType, data, "fmt/12345", Optional.of(data)));
+        try {
+            List<ApiResult> results = api.submit(DroidAPITestUtils.generateZipFile(data, data));
+            assertThat(results, hasSize(1));
+            assertThat(results.getFirst().getPuid(), is("fmt/12345"));
+            assertThat(results.getFirst().getMethod(), is(IdentificationMethod.CONTAINER));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void should_match_ole2_container_file() {
+        String data = "TEST";
+        ContainerType containerType = new ContainerType("OLE2", generateId(),"fmt/111");
+        DroidAPI api = DroidAPITestUtils.createApiForContainer(new DroidAPITestUtils.ContainerFile(containerType, data, "fmt/12345", Optional.of(data)));
+        try {
+            List<ApiResult> results = api.submit(DroidAPITestUtils.generateOle2File(data, data));
+            assertThat(results, hasSize(1));
+            assertThat(results.getFirst().getPuid(), is("fmt/12345"));
+            assertThat(results.getFirst().getMethod(), is(IdentificationMethod.CONTAINER));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Test
     public void should_identify_given_file_with_binary_signature() throws IOException {
         List<ApiResult> results = api.submit(
                 Paths.get("src/test/resources/persistence.zip"));
@@ -70,7 +118,7 @@ public class DroidAPITest {
 
         assertThat(results.size(), is(1));
 
-        ApiResult identificationResult = results.get(0);
+        ApiResult identificationResult = results.getFirst();
 
         assertThat(identificationResult.getPuid(), is("x-fmt/263"));
         assertThat(identificationResult.getName(), is("ZIP Format"));
@@ -85,7 +133,7 @@ public class DroidAPITest {
 
         assertThat(results.size(), is(1));
 
-        ApiResult identificationResult = results.get(0);
+        ApiResult identificationResult = results.getFirst();
 
         assertThat(identificationResult.getPuid(), is("fmt/291"));
         assertThat(identificationResult.getName(), is("OpenDocument Text"));
@@ -98,7 +146,7 @@ public class DroidAPITest {
         assertThat(results, is(notNullValue()));
         assertThat(results, hasSize(1));
 
-        ApiResult singleResult = results.get(0);
+        ApiResult singleResult = results.getFirst();
 
         assertThat(singleResult.getPuid(), is("x-fmt/111"));
         assertThat(singleResult.getMethod(), is(IdentificationMethod.EXTENSION));
@@ -109,8 +157,8 @@ public class DroidAPITest {
         List<ApiResult> resultsWithExtension = api.submit(Paths.get("src/test/resources/test.txt"));
         List<ApiResult> resultsWithoutExtension = api.submit(Paths.get("src/test/resources/word97"));
 
-        assertThat(resultsWithExtension.get(0).getExtension(), is("txt"));
-        assertThat(resultsWithoutExtension.get(0).getExtension(), is(""));
+        assertThat(resultsWithExtension.getFirst().getExtension(), is("txt"));
+        assertThat(resultsWithoutExtension.getFirst().getExtension(), is(""));
     }
 
     @Test
@@ -127,8 +175,8 @@ public class DroidAPITest {
     public void should_report_when_there_is_an_extension_mismatch() throws IOException {
         List<ApiResult> results = api.submit(Paths.get("src/test/resources/docx-file-as-xls.xlsx"));
         assertThat(results.size(), is(1));
-        assertThat(results.get(0).getPuid(), is("fmt/412"));
-        assertThat(results.get(0).isFileExtensionMismatch(), is(true));
+        assertThat(results.getFirst().getPuid(), is("fmt/412"));
+        assertThat(results.getFirst().isFileExtensionMismatch(), is(true));
     }
 
     @Test
@@ -160,6 +208,6 @@ public class DroidAPITest {
     public void should_identify_fmt_40_correctly_with_container_identification_method() throws IOException {
         List<ApiResult> results = api.submit(
                 Paths.get("../droid-container/src/test/resources/word97.doc"));
-        assertThat(results.get(0).getName(), is("Microsoft Word Document"));
+        assertThat(results.getFirst().getName(), is("Microsoft Word Document"));
     }
 }
