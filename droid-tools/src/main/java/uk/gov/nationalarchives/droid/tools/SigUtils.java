@@ -31,12 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.tools;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,6 +59,7 @@ import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.container.IdentifierEngine;
+import uk.gov.nationalarchives.droid.container.gz.GzIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine;
 import uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine;
 import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
@@ -111,6 +107,7 @@ public final class SigUtils {
     private static final String IO_EXCEPTION_PROCESSING = "IO exception processing: ";
 
     private static final int ZIP_SIG_ID = 200;
+    private static final int GZ_SIG_ID = 266;
     private static final int OLE2_SIG_ID = 170;
 
     static {
@@ -128,6 +125,7 @@ public final class SigUtils {
     }
 
     private static final IdentifierEngine ZIP_IDENTIFIER_ENGINE = new ZipIdentifierEngine();
+    private static final IdentifierEngine GZ_IDENTIFIER_ENGINE = new GzIdentifierEngine();
     private static final IdentifierEngine OLE2_IDENTIFIER_ENGINE = new Ole2IdentifierEngine();
 
     /**
@@ -677,6 +675,10 @@ public final class SigUtils {
                 }
                 case OLE2_SIG_ID: { // ole2 sig identifier.
                     engine = OLE2_IDENTIFIER_ENGINE;
+                    break;
+                }
+                case GZ_SIG_ID: {
+                    engine = GZ_IDENTIFIER_ENGINE;
                     break;
                 }
                 default : engine = null;

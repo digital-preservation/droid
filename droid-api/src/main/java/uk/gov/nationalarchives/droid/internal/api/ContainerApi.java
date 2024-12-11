@@ -37,6 +37,7 @@ import java.nio.file.Path;
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader;
 import uk.gov.nationalarchives.droid.container.IdentifierEngine;
+import uk.gov.nationalarchives.droid.container.gz.GzIdentifier;
 import uk.gov.nationalarchives.droid.container.ole2.Ole2Identifier;
 import uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine;
 import uk.gov.nationalarchives.droid.container.zip.ZipIdentifier;
@@ -82,6 +83,23 @@ public final class ContainerApi {
 
     private ContainerIdentifierFactory identifierFactory() {
         return new ContainerIdentifierFactoryImpl();
+    }
+
+    public GzIdentifier gzIdentifier() {
+        GzIdentifier gz = new GzIdentifier();
+        gz.setContainerType("GZ");
+        gz.setContainerIdentifierFactory(identifierFactory());
+        gz.setContainerFormatResolver(archiveFormatResolver());
+        gz.setDroidCore(droid);
+        gz.setIdentifierEngine(identifierEngine());
+        gz.setSignatureReader(signatureReader());
+
+        try {
+            gz.init();
+        } catch (SignatureFileException e) {
+            throw new RuntimeException("Unable to init gz identifier", e);
+        }
+        return gz;
     }
 
     public ZipIdentifier zipIdentifier() {

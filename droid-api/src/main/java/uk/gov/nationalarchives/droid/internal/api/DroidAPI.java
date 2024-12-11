@@ -82,16 +82,19 @@ public final class DroidAPI {
 
     private final ContainerIdentifier ole2Identifier;
 
+    private final ContainerIdentifier gzIdentifier;
+
     private final String containerSignatureVersion;
 
     private final String binarySignatureVersion;
 
     private final String droidVersion;
 
-    private DroidAPI(DroidCore droidCore, ContainerIdentifier zipIdentifier, ContainerIdentifier ole2Identifier, String containerSignatureVersion, String binarySignatureVersion, String droidVersion) {
+    private DroidAPI(DroidCore droidCore, ContainerIdentifier zipIdentifier, ContainerIdentifier ole2Identifier, ContainerIdentifier gzIdentifier, String containerSignatureVersion, String binarySignatureVersion, String droidVersion) {
         this.droidCore = droidCore;
         this.zipIdentifier = zipIdentifier;
         this.ole2Identifier = ole2Identifier;
+        this.gzIdentifier = gzIdentifier;
         this.containerSignatureVersion = containerSignatureVersion;
         this.binarySignatureVersion = binarySignatureVersion;
         this.droidVersion = droidVersion;
@@ -114,7 +117,7 @@ public final class DroidAPI {
         String containerVersion = StringUtils.substringAfterLast(containerSignature.getFileName().toString(), "-").split("\\.")[0];
         String droidVersion = ResourceBundle.getBundle("options").getString("version_no");
         ContainerApi containerApi = new ContainerApi(droidCore, containerSignature);
-        return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion);
+        return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerApi.gzIdentifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion);
     }
 
     /**
