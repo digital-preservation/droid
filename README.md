@@ -3,6 +3,7 @@
 [![CI](https://github.com/digital-preservation/droid/workflows/CI/badge.svg)](https://github.com/digital-preservation/droid/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/github/digital-preservation/droid/badge.svg?branch=master)](https://coveralls.io/github/digital-preservation/droid?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives/droid/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives)
+[![Project Map](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/digitalpreservationdroid/)
 
 ## General Information
 
