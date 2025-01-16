@@ -59,6 +59,7 @@ public class ProfileFileChooser extends JFileChooser {
         FileNameExtensionFilter filter = new FileNameExtensionFilter("DROID 6 profile", "droid");
         addChoosableFileFilter(filter);
         setFileFilter(filter);
+        setMultiSelectionEnabled(false);
     }
     
     /**

@@ -91,7 +91,7 @@
 
         <spring.version>5.3.27</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
-        <derby.version>10.13.1.1</derby.version>
+        <derby.version>10.17.1.0</derby.version>
         <cxf.version>3.5.9</cxf.version>
         <java.iso-tools.version>2.1.0</java.iso-tools.version>
         <jaxb.version>2.3.1</jaxb.version>
@@ -764,7 +764,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>4.6.1</version>
+                <version>5.15.2</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
