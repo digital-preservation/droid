@@ -133,9 +133,9 @@ public class DroidAPITest {
 
     @Test
     public void should_report_correct_version_for_the_binary_and_container_signature() {
-        assertThat(api.getContainerSignatureVersion(), is("20240501"));
+        assertThat(api.getContainerSignatureVersion(), is("20240715"));
         assertThat(api.getDroidVersion(), is(ResourceBundle.getBundle("options").getString("version_no")));
-        assertThat(api.getBinarySignatureVersion(), is("118"));
+        assertThat(api.getBinarySignatureVersion(), is("119"));
     }
 
     @Test
