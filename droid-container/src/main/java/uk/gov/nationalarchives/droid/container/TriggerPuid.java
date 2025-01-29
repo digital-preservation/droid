@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.container;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 /**
  * @author rflitcroft
