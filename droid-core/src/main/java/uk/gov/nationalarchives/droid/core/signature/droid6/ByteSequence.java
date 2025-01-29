@@ -459,8 +459,8 @@ public class ByteSequence extends uk.gov.nationalarchives.droid.core.signature.x
      * @param targetFile
      * @return the offset
      */
-    private int getIndirectOffset(final ByteReader targetFile) throws IOException {
-        int offset = 0;
+    private long getIndirectOffset(final ByteReader targetFile) throws IOException {
+        long offset = 0;
         if (this.hasIndirectOffset) {
             long power = 1;
             long offsetLocation = indirectOffsetLocation;
