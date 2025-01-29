@@ -70,6 +70,10 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+        </dependency>
+        <dependency>
             <groupId>net.byteseek</groupId>
             <artifactId>byteseek</artifactId>
         </dependency>

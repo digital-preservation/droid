@@ -41,7 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;

@@ -87,9 +87,9 @@
             </exclusions>
         </dependency>
 
-        <dependency> <!--JAXB-API-->
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
 
 

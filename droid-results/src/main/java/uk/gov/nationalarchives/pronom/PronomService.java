@@ -31,13 +31,13 @@
  */
 package uk.gov.nationalarchives.pronom;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta. xml.ws.ResponseWrapper;
 
 import uk.gov.nationalarchives.pronom.signaturefile.XmlFragment;
 
@@ -69,8 +69,8 @@ public interface PronomService {
     @WebMethod(action = "http://pronom.nationalarchives.gov.uk:getSignatureFileVersionV1In")
     void getSignatureFileVersionV1(
         @WebParam(mode = WebParam.Mode.OUT, name = "Version", targetNamespace = "http://pronom.nationalarchives.gov.uk")
-        javax.xml.ws.Holder<Version> version,
+        jakarta.xml.ws.Holder<Version> version,
         @WebParam(mode = WebParam.Mode.OUT, name = "Deprecated", targetNamespace = "http://pronom.nationalarchives.gov.uk")
-        javax.xml.ws.Holder<java.lang.Boolean> deprecated
+        jakarta.xml.ws.Holder<java.lang.Boolean> deprecated
     );
 }

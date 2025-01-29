@@ -61,7 +61,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
