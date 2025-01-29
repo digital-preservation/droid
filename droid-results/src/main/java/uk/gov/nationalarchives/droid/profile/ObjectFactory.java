@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 /**
  * @author rflitcroft

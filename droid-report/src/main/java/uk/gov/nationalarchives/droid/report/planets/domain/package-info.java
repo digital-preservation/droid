@@ -36,5 +36,5 @@
 // Generated on: 2010.03.22 at 11:40:59 AM GMT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.nationalarchives.gov.uk/CollectionProfile", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.nationalarchives.gov.uk/CollectionProfile", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package uk.gov.nationalarchives.droid.report.planets.domain;
