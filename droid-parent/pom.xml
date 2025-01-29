@@ -773,7 +773,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
-                <version>2.7.3</version>
+                <version>3.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.github.stephenc.java-iso-tools</groupId>
