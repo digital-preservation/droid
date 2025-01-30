@@ -72,7 +72,7 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
  */
 public class ProfileManagerImplTest {
 
-    private static final String DERBY_DRIVER_CLASSNAME = "org.apache.derby.jdbc.EmbeddedDriver";
+    private static final String DERBY_DRIVER_CLASSNAME = "org.apache.derby.iapi.jdbc.AutoloadedDriver";
     
     private ProfileManagerImpl profileManager;
     private ProfileSpecDao profileSpecDao;
