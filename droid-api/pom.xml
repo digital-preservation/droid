@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>droid-parent</artifactId>
 		<groupId>uk.gov.nationalarchives</groupId>
-		<version>6.7.1-SNAPSHOT</version>
+		<version>6.8.1-SNAPSHOT</version>
 		<relativePath>../droid-parent</relativePath>
 	</parent>
 
@@ -72,8 +72,8 @@
 						<configuration>
 							<failOnWarning>true</failOnWarning>
 							<ignoredUnusedDeclaredDependencies>
-                <ignoredUnusedDeclaredDependency>org.glassfish.jaxb:jaxb-runtime</ignoredUnusedDeclaredDependency>
-								<ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api:jar</ignoredUnusedDeclaredDependency>
+                			<ignoredUnusedDeclaredDependency>org.glassfish.jaxb:jaxb-runtime</ignoredUnusedDeclaredDependency>
+							<ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api:jar</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
               <ignoredUsedUndeclaredDependencies>
                 <ignoredUsedUndeclaredDependency>commons-lang:commons-lang:jar</ignoredUsedUndeclaredDependency>
@@ -125,11 +125,6 @@
 			<artifactId>droid-container</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>

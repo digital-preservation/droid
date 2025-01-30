@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.7.1-SNAPSHOT</version>
+        <version>6.8.1-SNAPSHOT</version>
   	    <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -24,7 +24,7 @@
             <plugin>
                 <groupId>com.googlecode.maven-download-plugin</groupId>
                 <artifactId>download-maven-plugin</artifactId>
-                <version>1.6.8</version>
+                <version>1.9.0</version>
                 <executions>
                     <execution>
                         <id>download-files-windows</id>
@@ -33,8 +33,8 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <!-- To update, retrieve link for windows jdk on x86 architecture from https://adoptium.net -->
-                            <url>https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip</url>
+                            <!-- To update, retrieve link for 64 bit Windows jre from https://adoptium.net -->
+                            <url>https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jre_x64_windows_hotspot_21.0.5_11.zip</url>
                             <unpack>false</unpack>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
@@ -55,9 +55,9 @@
                         <configuration>
                             <target>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.18_10.zip" />
+                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK21U-jre_x64_windows_hotspot_21.0.5_11.zip" />
                                 <move todir="${project.build.directory}/jre-windows/">
-                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-11.0.18+10-jre/">
+                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-21.0.5+11-jre/">
                                         <include name="**/*" />
                                     </fileset>
                                 </move>

@@ -72,8 +72,8 @@ public class DroidGlobalConfig {
     private static final String DEFAULT_DROID_PROPERTIES = "default_droid.properties";
 
     //FIXME: update to latest signature file before release.
-    private static final String DROID_SIGNATURE_FILE = "DROID_SignatureFile_V114.xml";
-    private static final String CONTAINER_SIGNATURE_FILE = "container-signature-20230822.xml";
+    private static final String DROID_SIGNATURE_FILE = "DROID_SignatureFile_V118.xml";
+    private static final String CONTAINER_SIGNATURE_FILE = "container-signature-20240501.xml";
     private static final String TEXT_SIGNATURE_FILE = "text-signature-20101101.xml";
     
     private static final String DATABASE_DURABILITY = "database.durability";
@@ -95,7 +95,9 @@ public class DroidGlobalConfig {
     private Path textSignatureFileDir;
     private Path reportDefinitionDir;
     private Path filterDir;
-    
+
+    private Path exportTemplatesDir;
+
     private PropertiesConfiguration props;
     private PropertiesConfiguration defaultProps;
 
@@ -160,6 +162,9 @@ public class DroidGlobalConfig {
         
         tempDir = Paths.get(droidTempPath, "tmp");
         Files.createDirectories(tempDir);
+
+        exportTemplatesDir = droidWorkDir.resolve("export_templates");
+        Files.createDirectories(exportTemplatesDir);
     }
 
     /**
@@ -357,7 +362,12 @@ public class DroidGlobalConfig {
     public Path getTempDir() {
         return tempDir;
     }
-    
+
+    /**
+     * @return directory for the export templates.
+     */
+    public Path getExportTemplatesDir() { return exportTemplatesDir; }
+
     private void createResourceFile(final Path resourceDir, final String fileName, final String resourceName) throws IOException {
         final Path resourcefile = resourceDir.resolve(fileName);
         if (!Files.exists(resourcefile)) {
