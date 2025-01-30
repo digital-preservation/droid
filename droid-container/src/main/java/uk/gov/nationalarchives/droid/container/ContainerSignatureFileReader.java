@@ -36,7 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 
