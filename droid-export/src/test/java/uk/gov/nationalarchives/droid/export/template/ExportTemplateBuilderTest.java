@@ -109,6 +109,7 @@ public class ExportTemplateBuilderTest {
         ExportTemplate template = builder.buildExportTemplate(tempFile.getAbsolutePath());
         assertNotNull(template);
         assertTrue(template.getColumnOrderMap().get(1) instanceof ConstantStringColumnDef);
+        assertEquals("", template.getColumnOrderMap().get(1).getDataValue());
         assertTrue(template.getColumnOrderMap().get(2) instanceof DataModifierColumnDef);
         assertEquals("FILE_PATH", template.getColumnOrderMap().get(2).getOriginalColumnName());
     }
@@ -166,7 +167,37 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("The line with a constant value ('\"English') in template definition does not have closing quotes", ex.getMessage());
+        assertEquals("The line with a constant value ('\"English') is not fully enclosed in quotes", ex.getMessage());
+    }
+
+    @Test
+    public void should_throw_an_exception_if_the_constant_string_value_does_not_have_opening_double_quotes() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "",
+                "Language: English\"",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("The line with a constant value ('English\"') is not fully enclosed in quotes", ex.getMessage());
+    }
+
+    @Test
+    public void should_throw_an_exception_if_the_constant_string_value_does_not_have_fully_enclosing_quotes() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "",
+                "Language: En\"gli\"sh",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
+        assertEquals("The line with a constant value ('En\"gli\"sh') is not fully enclosed in quotes", ex.getMessage());
     }
 
     @Test
@@ -196,7 +227,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Undefined operation 'Lower' encountered in export template", ex.getMessage());
+        assertEquals("The line with a constant value ('Lower($ID)') is not fully enclosed in quotes", ex.getMessage());
     }
 
     @Test
@@ -229,6 +260,21 @@ public class ExportTemplateBuilderTest {
     }
 
     @Test
+    public void should_support_constant_value_which_includes_operation_name() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
+        List<String> data = Arrays.asList(
+                "version 1.0",
+                "     MyWebsite     : \"LCASE($ID)\"",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+
+        ExportTemplate template =  builder.buildExportTemplate(tempFile.getAbsolutePath());
+        assertEquals("MyWebsite", template.getColumnOrderMap().get(0).getHeaderLabel());
+        assertEquals("LCASE($ID)", template.getColumnOrderMap().get(0).getDataValue());
+    }
+
+    @Test
     public void should_throw_an_exception_when_an_operation_cannot_be_located() throws IOException {
         ExportTemplateBuilder builder = new ExportTemplateBuilder();
         File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
@@ -239,7 +285,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Invalid syntax in data modifier expression 'Crown Copyright (C)', expecting '$' after '('", ex.getMessage());
+        assertEquals("The line with a constant value ('Crown Copyright (C)') is not fully enclosed in quotes", ex.getMessage());
     }
 
     @Test
@@ -253,7 +299,7 @@ public class ExportTemplateBuilderTest {
         Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
 
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
-        assertEquals("Invalid syntax in data modifier expression 'Crown Copyright', expecting exactly one occurrence of '('", ex.getMessage());
+        assertEquals("The line with a constant value ('Crown Copyright') is not fully enclosed in quotes", ex.getMessage());
     }
 
     @Test

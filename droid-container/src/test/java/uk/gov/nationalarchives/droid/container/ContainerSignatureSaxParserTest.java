@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * @author rflitcroft

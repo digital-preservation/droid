@@ -86,7 +86,7 @@ logLevel=""
 # Max memory: droidMemory
 # -----------------------
 # The maximum memory for DROID to use in megabytes.
-droidMemory="512m"
+droidMemory="1024m"
 
 
 # Run DROID:
