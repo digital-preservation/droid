@@ -34,7 +34,7 @@ package uk.gov.nationalarchives.droid.report;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.report.interfaces.ReportSpec;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import java.nio.file.Paths;
 import static org.junit.Assert.*;
 

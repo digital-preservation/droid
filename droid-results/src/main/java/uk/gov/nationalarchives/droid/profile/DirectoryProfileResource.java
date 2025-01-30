@@ -33,8 +33,8 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.nio.file.Path;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author rflitcroft

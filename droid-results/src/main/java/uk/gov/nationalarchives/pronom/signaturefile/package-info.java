@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-@javax.xml.bind.annotation.XmlSchema(
+@jakarta.xml.bind.annotation.XmlSchema(
         namespace = "http://www.nationalarchives.gov.uk/pronom/SignatureFile",
-        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+        elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package uk.gov.nationalarchives.pronom.signaturefile;
