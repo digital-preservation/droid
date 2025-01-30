@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.8.0-SNAPSHOT</version>
+        <version>6.8.1-SNAPSHOT</version>
         <relativePath>../droid-parent</relativePath>
     </parent>
         
@@ -70,8 +70,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
     </dependencies>
 </project>
