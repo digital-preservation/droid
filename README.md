@@ -1,7 +1,6 @@
 # DROID (Digital Record Object Identification) 
 
 [![CI](https://github.com/digital-preservation/droid/workflows/CI/badge.svg)](https://github.com/digital-preservation/droid/actions?query=workflow%3ACI)
-[![Build status](https://ci.appveyor.com/api/projects/status/hrr6c3ckbghjvd7h/branch/master?svg=true)](https://ci.appveyor.com/project/dpreservation/droid/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/digital-preservation/droid/badge.svg?branch=master)](https://coveralls.io/github/digital-preservation/droid?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives/droid/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives)
 
@@ -111,17 +110,17 @@ Once the code is cloned into a folder (e.g. `droid`), executing `mvn clean insta
 
 ### Linux / OSX users
 
-You will need JAVA 8 to 11 installed to run DROID.
+You will need JAVA 8 to 17 installed to run DROID.
 
-Unpack the archive `droid-binary-${VERSION}-bin-unix.zip`, then use the `droid.sh` script to run the application.
+Unpack the archive `droid-binary-${VERSION}-bin.zip`, then use the `droid.sh` script to run the application.
 
 ### Windows users
 Archive  `droid-binary-${VERSION}-bin-win64-with-jre.zip`
 
 
-You will need JAVA 8 to 11 installed to run DROID. For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 11.
+You will need JAVA 8 to 17 installed to run DROID. For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 17.
 
-Unpack the archive `droid-binary-${VERSION}-bin-win32-with-jre.zip`, then use the `droid.bat` script to run the application.
+Unpack the archive `droid-binary-${VERSION}-bin-win64-with-jre.zip`, then use the `droid.bat` script to run the application.
 
 ## Signatures
 

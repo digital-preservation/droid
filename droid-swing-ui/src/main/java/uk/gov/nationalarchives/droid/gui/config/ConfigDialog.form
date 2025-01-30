@@ -107,11 +107,6 @@
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="jLabel10" min="-2" pref="418" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Component id="generateHashCheckBox" min="-2" max="-2" attributes="0"/>
@@ -188,9 +183,7 @@
                           <Component id="defaultThrottleTextBox1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="156" max="32767" attributes="0"/>
+                      <EmptySpace pref="53" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -209,9 +202,6 @@
                   <Format format="#0" subtype="-1" type="0"/>
                 </Property>
               </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="value" source="Form" sourcePath="${globalConfig[\&quot;profile.defaultThrottle\&quot;]}" target="defaultThrottleTextBox1" targetPath="value" updateStrategy="0" immediately="false"/>
-                    </BindingProperties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel4">
               <Properties>
@@ -231,10 +221,6 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="defaultSigFileComboBox1">
-                    <BindingProperties>
-                        <BindingProperty name="elements" source="Form" sourcePath="${allBinarySigFiles}" target="defaultSigFileComboBox1" targetPath="elements" updateStrategy="1" immediately="false"/>
-                        <BindingProperty name="selectedItem" source="Form" sourcePath="${globalConfig[\&quot;profile.defaultBinarySigFileVersion\&quot;]}" target="defaultSigFileComboBox1" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
-                    </BindingProperties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="generateHashCheckBox">
               <Properties>
@@ -242,9 +228,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.generateHashCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.generateHash\&quot;]}" target="generateHashCheckBox" targetPath="selected" updateStrategy="0" immediately="false"/>
-                    </BindingProperties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="generateHashCheckBoxActionPerformed"/>
               </Events>
@@ -255,10 +238,6 @@
                   <StringArray count="0"/>
                 </Property>
               </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="elements" source="Form" sourcePath="${allContainerSigFiles}" target="containerSigCombo" targetPath="elements" updateStrategy="1" immediately="false"/>
-                        <BindingProperty name="selectedItem" source="Form" sourcePath="${globalConfig[\&quot;profile.defaultContainerSigFileVersion\&quot;]}" target="containerSigCombo" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
-                    </BindingProperties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="containerSigComboActionPerformed"/>
               </Events>
@@ -277,9 +256,6 @@
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
               </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="text" source="Form" sourcePath="${globalConfig[\&quot;profile.maxBytesToScan\&quot;]}" target="jTextField2" targetPath="text" updateStrategy="0" immediately="false"/>
-                    </BindingProperties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
@@ -297,9 +273,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.rowPerFileButton2.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${!globalConfig[\&quot;profile.matchAllExtensions\&quot;]}" target="rowPerFileButton2" targetPath="selected" updateStrategy="1" immediately="false"/>
-                    </BindingProperties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="rowPerFormatButton2">
               <Properties>
@@ -310,9 +283,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.rowPerFormatButton2.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.matchAllExtensions\&quot;]}" target="rowPerFormatButton2" targetPath="selected" updateStrategy="0" immediately="false"/>
-                    </BindingProperties>
             </Component>
             <Component class="javax.swing.JComboBox" name="hashAlgorithmCombo">
               <Properties>
@@ -320,20 +290,9 @@
                   <StringArray count="0"/>
                 </Property>
               </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="elements" source="Form" sourcePath="${allHashAlgorithms}" target="hashAlgorithmCombo" targetPath="elements" updateStrategy="1" immediately="false"/>
-                        <BindingProperty name="selectedItem" source="Form" sourcePath="${globalConfig[\&quot;profile.hashAlgorithm\&quot;]}" target="hashAlgorithmCombo" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
-                    </BindingProperties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hashAlgorithmComboActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel10">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.jLabel10.text_1" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
             </Component>
             <Container class="javax.swing.JPanel" name="jPanel4">
 
@@ -364,7 +323,7 @@
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="archivesLabel" min="-2" pref="461" max="-2" attributes="1"/>
-                          <EmptySpace min="0" pref="121" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -397,11 +356,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processZipCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processZip\&quot;]}" target="processZipCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="zipBinding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processZipCheckBoxActionPerformed"/>
                   </Events>
@@ -412,11 +366,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processTarCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processTar\&quot;]}" target="processTarCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="tarBinding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processTarCheckBoxActionPerformed"/>
                   </Events>
@@ -427,11 +376,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processGzipCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processGzip\&quot;]}" target="processGzipCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="gzipBinding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processGzipCheckBoxActionPerformed"/>
                   </Events>
@@ -442,11 +386,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processRarCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processRar\&quot;]}" target="processRarCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="rarBinding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processRarCheckBoxActionPerformed"/>
                   </Events>
@@ -457,11 +396,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.process7zipCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.process7zip\&quot;]}" target="process7zipCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="7zipBinding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="process7zipCheckBoxActionPerformed"/>
                   </Events>
@@ -472,11 +406,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processIsoCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processIso\&quot;]}" target="processIsoCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="isoBinding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processIsoCheckBoxActionPerformed"/>
                   </Events>
@@ -487,11 +416,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processBzip2CheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processBzip2\&quot;]}" target="processBzip2CheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="bzip2Binding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processBzip2CheckBoxActionPerformed"/>
                   </Events>
@@ -570,11 +494,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processArcCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processArc\&quot;]}" target="processArcCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="arcBinding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processArcCheckBoxActionPerformed"/>
                   </Events>
@@ -585,11 +504,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.processWarcCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                    <BindingProperties>
-                        <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;profile.processWarc\&quot;]}" target="processWarcCheckBox" targetPath="selected" updateStrategy="0" immediately="false">
-                            <Property name="name" type="java.lang.String" value="warcBinding"/>
-                        </BindingProperty>
-                    </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processWarcCheckBoxActionPerformed"/>
                   </Events>
@@ -686,9 +600,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.rowPerFileButton1.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                              <BindingProperties>
-                                  <BindingProperty name="selected" source="Form" sourcePath="${!globalConfig[\&quot;export.rowPerFormat\&quot;]}" target="rowPerFileButton1" targetPath="selected" updateStrategy="1" immediately="false"/>
-                              </BindingProperties>
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="rowPerFormatButton1">
                   <Properties>
@@ -699,9 +610,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.rowPerFormatButton1.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                              <BindingProperties>
-                                  <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;export.rowPerFormat\&quot;]}" target="rowPerFormatButton1" targetPath="selected" updateStrategy="0" immediately="false"/>
-                              </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rowPerFormatButton1ActionPerformed"/>
                   </Events>
@@ -831,9 +739,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.updateUrlTextBox.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                      <BindingProperties>
-                          <BindingProperty name="text" source="Form" sourcePath="${globalConfig[\&quot;pronom.update.url\&quot;]}" target="updateUrlTextBox" targetPath="text" updateStrategy="0" immediately="false"/>
-                      </BindingProperties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updateUrlTextBoxActionPerformed"/>
               </Events>
@@ -889,10 +794,6 @@
               </Layout>
               <SubComponents>
                 <Component class="javax.swing.JSpinner" name="updateFrequencyTextBox">
-                              <BindingProperties>
-                                  <BindingProperty name="value" source="Form" sourcePath="${globalConfig[\&quot;update.frequency.days\&quot;]}" target="updateFrequencyTextBox" targetPath="value" updateStrategy="0" immediately="false"/>
-                                  <BindingProperty name="enabled" source="updateScheduleRadioButton" sourcePath="${selected}" target="updateFrequencyTextBox" targetPath="enabled" updateStrategy="1" immediately="false"/>
-                              </BindingProperties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel6">
                   <Properties>
@@ -910,9 +811,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.updateOnStartupRadioButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                              <BindingProperties>
-                                  <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;update.frequency.startup\&quot;]}" target="updateOnStartupRadioButton" targetPath="selected" updateStrategy="0" immediately="false"/>
-                              </BindingProperties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updateOnStartupRadioButtonActionPerformed"/>
                   </Events>
@@ -926,9 +824,6 @@
                       <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.updateScheduleRadioButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
-                              <BindingProperties>
-                                  <BindingProperty name="selected" source="Form" sourcePath="${!globalConfig[\&quot;update.frequency.startup\&quot;]}" target="updateScheduleRadioButton" targetPath="selected" updateStrategy="2" immediately="false"/>
-                              </BindingProperties>
                 </Component>
               </SubComponents>
             </Container>
@@ -938,9 +833,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.autoUpdateCheckbox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                      <BindingProperties>
-                          <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;update.autoCheck\&quot;]}" target="autoUpdateCheckbox" targetPath="selected" updateStrategy="0" immediately="false"/>
-                      </BindingProperties>
               <Events>
                 <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="autoUpdateItemStateChanged"/>
               </Events>
@@ -968,9 +860,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.containerSigUrl.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                      <BindingProperties>
-                          <BindingProperty name="text" source="Form" sourcePath="${globalConfig[\&quot;container.update.url\&quot;]}" target="containerSigUrl" targetPath="text" updateStrategy="0" immediately="false"/>
-                      </BindingProperties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
@@ -1001,11 +890,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.jLabel1.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                      <BindingProperties>
-                          <BindingProperty name="text" source="Form" sourcePath="${globalConfig[\&quot;puid.urlPattern\&quot;]}" target="jTextField1" targetPath="text" updateStrategy="0" immediately="false">
-                              <BindingParameter name="javax.swing.binding.ParameterKeys.TEXT_CHANGE_STRATEGY" value="javax.swing.binding.TextChangeStrategy.ON_ACTION_OR_FOCUS_LOST"/>
-                          </BindingProperty>
-                      </BindingProperties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="askToDownloadCheckBox">
               <Properties>
@@ -1013,9 +897,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.askToDownloadCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                      <BindingProperties>
-                          <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;update.downloadPrompt\&quot;]}" target="askToDownloadCheckBox" targetPath="selected" updateStrategy="0" immediately="false"/>
-                      </BindingProperties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="autoSetDefaultSignatureFileCheckBox">
               <Properties>
@@ -1023,9 +904,6 @@
                   <ResourceString bundle="uk/gov/nationalarchives/droid/gui/config/Bundle.properties" key="ConfigDialog.autoSetDefaultSignatureFileCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-                      <BindingProperties>
-                          <BindingProperty name="selected" source="Form" sourcePath="${globalConfig[\&quot;update.autoSetDefault\&quot;]}" target="autoSetDefaultSignatureFileCheckBox" targetPath="selected" updateStrategy="0" immediately="false"/>
-                      </BindingProperties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoSetDefaultSignatureFileCheckBoxActionPerformed"/>
               </Events>

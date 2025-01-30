@@ -140,7 +140,7 @@ public class ConfigDialog extends JDialog {
 
     private void populatePropertyListNeedingNewProfile() {
         propertiesAffectingNewProfile.addAll(
-                Arrays.asList(DroidGlobalProperty.BINARY_UPDATE_URL.getName(), DroidGlobalProperty.CONTAINER_UPDATE_URL.getName(),
+                Arrays.asList(DroidGlobalProperty.DEFAULT_BINARY_SIG_FILE_VERSION.getName(), DroidGlobalProperty.DEFAULT_CONTAINER_SIG_FILE_VERSION.getName(),
                         DroidGlobalProperty.PROCESS_ZIP.getName(), DroidGlobalProperty.PROCESS_TAR.getName(),
                         DroidGlobalProperty.PROCESS_GZIP.getName(), DroidGlobalProperty.PROCESS_RAR.getName(),
                         DroidGlobalProperty.PROCESS_7ZIP.getName(), DroidGlobalProperty.PROCESS_ISO.getName(),
@@ -234,7 +234,6 @@ public class ConfigDialog extends JDialog {
         rowPerFileButton2 = new JRadioButton();
         rowPerFormatButton2 = new JRadioButton();
         hashAlgorithmCombo = new JComboBox();
-        jLabel10 = new JLabel();
         jPanel4 = new JPanel();
         processZipCheckBox = new JCheckBox();
         processTarCheckBox = new JCheckBox();
@@ -361,8 +360,6 @@ public class ConfigDialog extends JDialog {
         bindingGroup.addBinding(binding);
 
         hashAlgorithmCombo.addActionListener(evt -> hashAlgorithmComboActionPerformed(evt));
-
-        jLabel10.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jLabel10.text_1")); // NOI18N
 
         processZipCheckBox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.processZipCheckBox.text")); // NOI18N
         processZipCheckBox.addActionListener(evt -> processZipCheckBoxActionPerformed(evt));
@@ -552,10 +549,6 @@ public class ConfigDialog extends JDialog {
                             .addComponent(containerSigCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel10, GroupLayout.PREFERRED_SIZE, 418, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(generateHashCheckBox)
@@ -614,9 +607,7 @@ public class ConfigDialog extends JDialog {
                     .addComponent(jLabel3)
                     .addComponent(defaultThrottleTextBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(jLabel10)
-                .addContainerGap(156, Short.MAX_VALUE))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle"), jPanel3); // NOI18N
@@ -916,7 +907,6 @@ public class ConfigDialog extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        response = OK;
         if (isDirtyForNewProfile()) {
             int optionResponse = JOptionPane.showOptionDialog(
                     this,
@@ -930,14 +920,18 @@ public class ConfigDialog extends JDialog {
             );
             switch (optionResponse) {
                 case JOptionPane.YES_OPTION:
+                    response = OK;
                     automaticallyCreateNewProfile = true;
                     break;
                 case JOptionPane.NO_OPTION:
+                    response = OK;
                     automaticallyCreateNewProfile = false;
                     break;
                 case JOptionPane.CANCEL_OPTION:
                     return;
             }
+        } else {
+            response = OK;
         }
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
@@ -952,6 +946,7 @@ public class ConfigDialog extends JDialog {
     }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        response = CANCEL;
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
@@ -1103,7 +1098,6 @@ public class ConfigDialog extends JDialog {
     private JCheckBox generateHashCheckBox;
     private JComboBox hashAlgorithmCombo;
     private JLabel jLabel1;
-    private JLabel jLabel10;
     private JLabel jLabel11;
     private JLabel jLabel2;
     private JLabel jLabel3;

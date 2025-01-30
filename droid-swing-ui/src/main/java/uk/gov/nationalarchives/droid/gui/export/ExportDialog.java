@@ -327,9 +327,9 @@ public class ExportDialog extends JDialog {
 
         setTitle(NbBundle.getMessage(ExportDialog.class, "ExportDialog.title_1")); // NOI18N
         setAlwaysOnTop(true);
-        setMinimumSize(new Dimension(1155, 835));
+        setMinimumSize(new Dimension(730, 520));
         setName("exportDialog"); // NOI18N
-        setPreferredSize(new Dimension(1055, 760));
+        setPreferredSize(new Dimension(730, 520));
 
         profileSelectLabel.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.profileSelectLabel.text_1")); // NOI18N
 
@@ -639,6 +639,7 @@ public class ExportDialog extends JDialog {
         jPanelRight.add(jPanelCards, BorderLayout.CENTER);
 
         jCheckBoxUseTemplate.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxUseTemplate.text")); // NOI18N
+        jCheckBoxUseTemplate.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.jCheckBoxUseTemplate.toolTipText")); // NOI18N
         jCheckBoxUseTemplate.setBorder(BorderFactory.createEmptyBorder(1, 15, 1, 1));
         jCheckBoxUseTemplate.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
