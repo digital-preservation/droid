@@ -29,5 +29,5 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://pronom.nationalarchives.gov.uk", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://pronom.nationalarchives.gov.uk", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package uk.gov.nationalarchives.pronom;
