@@ -74,6 +74,7 @@ import javax.swing.table.TableCellRenderer;
 import org.openide.util.NbBundle;
 
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 import uk.gov.nationalarchives.droid.gui.DroidMainFrame;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
 import uk.gov.nationalarchives.droid.gui.util.SortedComboBoxModel;
@@ -169,6 +170,17 @@ public class ExportDialog extends JDialog {
             return ExportOptions.ONE_ROW_PER_FILE;
         }
         return ExportOptions.ONE_ROW_PER_FORMAT;
+    }
+
+    /**
+     *
+     * @return ExportOutputOptions - how to output the export.
+     */
+    public ExportOutputOptions getExportOutputOptions() {
+        if (RadioCSVOutput.isSelected()) {
+            return ExportOutputOptions.CSV_OUTPUT;
+        }
+        return ExportOutputOptions.JSON_OUTPUT;
     }
 
     /**
@@ -285,6 +297,7 @@ public class ExportDialog extends JDialog {
     private void initComponents() {
 
         buttonGroup1 = new ButtonGroup();
+        buttonGroup2 = new ButtonGroup();
         profileSelectLabel = new JLabel();
         jScrollPaneProfileSelection = new JScrollPane();
         profileSelectTable = new JTable();
@@ -298,6 +311,8 @@ public class ExportDialog extends JDialog {
         jCheckBoxQuoteAll = new JCheckBox();
         toggleColumnButton = new JButton();
         jButtonSetAllColumns = new JButton();
+        RadioCSVOutput = new JRadioButton();
+        RadioJSONOutput = new JRadioButton();
         jPanelRight = new JPanel();
         jPanelCards = new JPanel();
         jPanelColumnChoices = new JPanel();
@@ -402,24 +417,28 @@ public class ExportDialog extends JDialog {
             }
         });
 
+        buttonGroup2.add(RadioCSVOutput);
+        RadioCSVOutput.setSelected(true);
+        RadioCSVOutput.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioCSVOutput.text")); // NOI18N
+        RadioCSVOutput.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioCSVOutput.toolTipText")); // NOI18N
+
+        buttonGroup2.add(RadioJSONOutput);
+        RadioJSONOutput.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioJSONOutput.text")); // NOI18N
+        RadioJSONOutput.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioJSONOutput.toolTipText")); // NOI18N
+
         GroupLayout jPanelBottomControlLayout = new GroupLayout(jPanelBottomControl);
         jPanelBottomControl.setLayout(jPanelBottomControlLayout);
         jPanelBottomControlLayout.setHorizontalGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanelBottomControlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jPanelBottomControlLayout.createSequentialGroup()
-                        .addComponent(RadioOneRowPerFile)
-                        .addGap(18, 18, 18)
-                        .addComponent(RadioOneRowPerIdentification)
-                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(Alignment.TRAILING, jPanelBottomControlLayout.createSequentialGroup()
                         .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.TRAILING)
                             .addGroup(jPanelBottomControlLayout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(18, 18, 18)
                                 .addComponent(cmdEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(ComponentPlacement.RELATED, 586, Short.MAX_VALUE)
                                 .addComponent(exportButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 180, GroupLayout.PREFERRED_SIZE))
@@ -429,7 +448,19 @@ public class ExportDialog extends JDialog {
                                 .addComponent(jButtonSetAllColumns)
                                 .addGap(18, 18, 18)
                                 .addComponent(toggleColumnButton)))
-                        .addGap(27, 27, 27))))
+                        .addGap(27, 27, 27))
+                    .addGroup(jPanelBottomControlLayout.createSequentialGroup()
+                        .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(RadioOneRowPerFile)
+                            .addComponent(RadioCSVOutput))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(jPanelBottomControlLayout.createSequentialGroup()
+                                .addComponent(RadioJSONOutput)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanelBottomControlLayout.createSequentialGroup()
+                                .addComponent(RadioOneRowPerIdentification)
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
         );
         jPanelBottomControlLayout.setVerticalGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, jPanelBottomControlLayout.createSequentialGroup()
@@ -441,7 +472,11 @@ public class ExportDialog extends JDialog {
                 .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(RadioOneRowPerFile)
                     .addComponent(RadioOneRowPerIdentification))
-                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(RadioCSVOutput)
+                    .addComponent(RadioJSONOutput))
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanelBottomControlLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(exportButton)
@@ -602,7 +637,7 @@ public class ExportDialog extends JDialog {
                 .addGroup(jPanelColumnChoicesLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jCheckBoxExtMismatch)
                     .addComponent(jCheckBoxFileHash))
-                .addGap(0, 52, Short.MAX_VALUE))
+                .addGap(0, 147, Short.MAX_VALUE))
         );
 
         jPanelColumnChoicesLayout.linkSize(SwingConstants.VERTICAL, new Component[] {jCheckBoxExtMismatch, jCheckBoxExtension, jCheckBoxFileHash, jCheckBoxFileName, jCheckBoxFilePath, jCheckBoxFileSize, jCheckBoxFormatName, jCheckBoxFormatVersion, jCheckBoxId, jCheckBoxIdCount, jCheckBoxIdMethod, jCheckBoxLastModified, jCheckBoxMIMEtype, jCheckBoxPUID, jCheckBoxParentId, jCheckBoxResourceType, jCheckBoxStatus, jCheckBoxURI});
@@ -631,7 +666,7 @@ public class ExportDialog extends JDialog {
                 .addComponent(jLabel2)
                 .addGap(32, 32, 32)
                 .addComponent(jComboBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(389, Short.MAX_VALUE))
+                .addContainerGap(336, Short.MAX_VALUE))
         );
 
         jPanelCards.add(jPanelTemplateChoices, "card3");
@@ -671,7 +706,8 @@ public class ExportDialog extends JDialog {
                         .addComponent(jScrollPaneProfileSelection, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jPanelRight, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jPanelBottomControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanelBottomControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -752,9 +788,12 @@ public class ExportDialog extends JDialog {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JRadioButton RadioCSVOutput;
+    private JRadioButton RadioJSONOutput;
     private JRadioButton RadioOneRowPerFile;
     private JRadioButton RadioOneRowPerIdentification;
     private ButtonGroup buttonGroup1;
+    private ButtonGroup buttonGroup2;
     private JButton cancelButton;
     private JComboBox cmdEncoding;
     private JButton exportButton;

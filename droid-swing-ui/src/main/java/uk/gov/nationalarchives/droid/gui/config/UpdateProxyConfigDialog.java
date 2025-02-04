@@ -298,7 +298,7 @@ public class UpdateProxyConfigDialog extends JDialog {
     private BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     
-    private static class IntegerFormatterFactory extends AbstractFormatterFactory {
+    private static final class IntegerFormatterFactory extends AbstractFormatterFactory {
         @Override
         public AbstractFormatter getFormatter(JFormattedTextField tf) {
             NumberFormatter formatter = new NumberFormatter(new DecimalFormat("#0"));

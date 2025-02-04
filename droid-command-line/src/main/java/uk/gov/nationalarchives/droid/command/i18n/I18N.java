@@ -82,6 +82,16 @@ public final class I18N {
     public static final String ROW_PER_IDENTIFICATION = "profile.rowsPerFormat.help";
 
     /**
+     * Writes the output as JSON.
+     */
+    public static final String JSON_OUTPUT = "profile.json.help";
+
+    /**
+     * Writes the output as XML.
+     */
+    public static final String XML_OUTPUT = "profile.xml.help";
+
+    /**
      * Override default properties from the command line.
      */
     public static final String PROFILE_PROPERTY_HELP = "profile.property.help";

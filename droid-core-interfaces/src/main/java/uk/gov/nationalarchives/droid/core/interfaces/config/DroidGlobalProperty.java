@@ -151,6 +151,11 @@ public enum DroidGlobalProperty {
      */
     EXPORT_OPTIONS("profile.exportOptions", PropertyType.TEXT, true),
 
+    /**
+     * The output options used when exporting - options are json or csv.
+     */
+    EXPORT_OUTPUT_OPTIONS("profile.exportOutputOptions", PropertyType.TEXT, true),
+
     /** Whether to match all extensions, or just ones without another signature attached. */
     EXTENSION_ALL("profile.matchAllExtensions", PropertyType.BOOLEAN, true),
     

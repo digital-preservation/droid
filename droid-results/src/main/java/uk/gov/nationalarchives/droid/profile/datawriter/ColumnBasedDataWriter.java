@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile.datawriter;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.univocity.parsers.csv.CsvWriter;
 import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
 import uk.gov.nationalarchives.droid.profile.CsvWriterConstants;
@@ -38,6 +39,7 @@ import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,6 +76,28 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
     }
 
     @Override
+    public void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
+        OutputJson outputJson = new OutputJson();
+        int maxIdCount = getMaxIdentificationCount(nodes);
+        String hashHeader = headers[CsvWriterConstants.HASH_ARRAY_INDEX];
+        for (ProfileResourceNode node : nodes) {
+            List<Format> formatIdentifications = node.getFormatIdentifications();
+            ObjectNode objectNode = outputJson.createObjectNode();
+            addNodeJsonEntriesInDefaultOrder(objectNode, node, hashHeader);
+            for (int i = 0; i < maxIdCount; i++) {
+                String suffix = i == 0 ? "" : Integer.toString(i);
+                addEntry(objectNode, CsvWriterConstants.HEADER_NAME_PUID,  (i < formatIdentifications.size()) ?  formatIdentifications.get(i).getPuid() : CsvWriterConstants.EMPTY_STRING, suffix);
+                addEntry(objectNode, CsvWriterConstants.HEADER_NAME_MIME_TYPE, (i < formatIdentifications.size()) ?  formatIdentifications.get(i).getMimeType() : CsvWriterConstants.EMPTY_STRING, suffix);
+                addEntry(objectNode, CsvWriterConstants.HEADER_NAME_FORMAT_NAME, (i < formatIdentifications.size()) ?  formatIdentifications.get(i).getName() : CsvWriterConstants.EMPTY_STRING, suffix);
+                addEntry(objectNode, CsvWriterConstants.HEADER_NAME_FORMAT_VERSION, (i < formatIdentifications.size()) ?  formatIdentifications.get(i).getVersion(): CsvWriterConstants.EMPTY_STRING, suffix);
+            }
+            outputJson.getArrayNode().add(objectNode);
+        }
+        outputJson.writeJson(writer);
+
+    }
+
+    @Override
     public void writeDataRowsForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, CsvWriter csvWriter) {
         for (ProfileResourceNode node : nodes) {
             for (Format format : node.getFormatIdentifications()) {
@@ -87,6 +111,25 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
             }
         }
         csvWriter.flush();
+    }
+
+    @Override
+    public void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
+        OutputJson outputJson = new OutputJson();
+        String hashHeader = headers[CsvWriterConstants.HASH_ARRAY_INDEX];
+        for (ProfileResourceNode node : nodes) {
+            for (Format format : node.getFormatIdentifications()) {
+                ObjectNode objectNode = outputJson.createObjectNode();
+                addNodeJsonEntriesInDefaultOrder(objectNode, node, hashHeader);
+
+                addEntry(objectNode, CsvWriterConstants.HEADER_NAME_PUID, format.getPuid());
+                addEntry(objectNode, CsvWriterConstants.HEADER_NAME_MIME_TYPE, format.getMimeType());
+                addEntry(objectNode, CsvWriterConstants.HEADER_NAME_FORMAT_NAME, format.getName());
+                addEntry(objectNode, CsvWriterConstants.HEADER_NAME_FORMAT_VERSION, format.getVersion());
+                outputJson.getArrayNode().add(objectNode);
+            }
+        }
+        outputJson.writeJson(writer);
     }
 
     @Override
@@ -121,6 +164,25 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
         csvWriter.flush();
     }
 
+    private void addNodeJsonEntriesInDefaultOrder(ObjectNode objectNode, ProfileResourceNode resourceNode, String hashHeader) {
+        NodeMetaData metaData = resourceNode.getMetaData();
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_ID, resourceNode.getId());
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_ID, resourceNode.getId());
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_PARENT_ID, resourceNode.getParentId());
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_URI, DroidUrlFormat.format(resourceNode.getUri()));
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_FILE_PATH, toFilePath(resourceNode.getUri()));
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_NAME, toFileName(metaData.getName()));
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_METHOD, nullSafeName(metaData.getIdentificationMethod()));
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_STATUS, metaData.getNodeStatus().getStatus());
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_SIZE, metaData.getSize());
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_TYPE, metaData.getResourceType().getResourceType());
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_EXT, metaData.getExtension());
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_LAST_MODIFIED, nullSafeDate(metaData.getLastModifiedDate(), CsvWriterConstants.DATE_FORMAT));
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_EXTENSION_MISMATCH, resourceNode.getExtensionMismatch().toString());
+        addEntry(objectNode, hashHeader, metaData.getHash(), "", CsvWriterConstants.HEADER_NAME_HASH);
+        addEntry(objectNode, CsvWriterConstants.HEADER_NAME_FORMAT_COUNT, nullSafeNumber(resourceNode.getIdentificationCount()));
+    }
+
     private void addNodeColumnsInDefaultOrder(List<String> row, ProfileResourceNode node) {
         NodeMetaData metaData = node.getMetaData();
         addColumn(row, CsvWriterConstants.HEADER_NAME_ID, nullSafeNumber(node.getId()));
@@ -142,6 +204,27 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
     private void addColumn(List<String> row, String columnName, String value) {
         if (columnsToWriteMap.get(columnName)) {
             row.add(value);
+        }
+    }
+
+    private void addEntry(ObjectNode objectNode, String columnName, Object value) {
+        addEntry(objectNode, columnName, value, "", null);
+    }
+
+    private void addEntry(ObjectNode objectNode, String columnName, Object value, String suffix) {
+        addEntry(objectNode, columnName, value, suffix, null);
+    }
+
+    private void addEntry(ObjectNode objectNode, String columnName, Object value, String suffix, String columnLookup) {
+        if (columnsToWriteMap.get(columnLookup == null ? columnName : columnLookup)) {
+            switch (value) {
+                case Integer num -> objectNode.put(columnName + suffix, num);
+                case Long lon -> objectNode.put(columnName + suffix, lon);
+                case Double db -> objectNode.put(columnName + suffix, db);
+                case String s -> objectNode.put(columnName + suffix, s);
+                case null -> objectNode.putNull(columnName + suffix);
+                default -> {}
+            }
         }
     }
 

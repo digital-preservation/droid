@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.profile.datawriter;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.univocity.parsers.csv.CsvWriter;
 import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
@@ -40,6 +41,7 @@ import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,23 +62,30 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
         Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
         int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
         for (ProfileResourceNode node : nodes) {
-            List<String> nodeEntries = new ArrayList<>();
-            for (int i = 0; i <= maxCols; i++) {
-                ExportTemplateColumnDef def = columnPositions.get(i);
-                if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
-                    nodeEntries.add(def.getDataValue());
-                } else {
-                    String columnName = def.getOriginalColumnName();
-                    if (CsvWriterConstants.PER_FORMAT_HEADERS.contains(columnName)) {
-                        addFormatColumnTemplate(nodeEntries, node, def, maxIdCount);
-                    } else {
-                        addNodeColumn(nodeEntries, node, def);
-                    }
-                }
-            }
+            List<String> nodeEntries = getOneRowPerFileNodeEntries(node, maxCols, columnPositions, maxIdCount);
             csvWriter.writeRow(nodeEntries);
         }
         csvWriter.flush();
+    }
+
+    @Override
+    public void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
+        OutputJson outputJson = new OutputJson();
+
+        int maxIdCount = getMaxIdentificationCount(nodes);
+        List<String> headersToWrite = getHeadersToWrite(maxIdCount);
+        Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
+        int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
+        for (ProfileResourceNode node : nodes) {
+            List<String> nodeEntries = getOneRowPerFileNodeEntries(node, maxCols, columnPositions, maxIdCount);
+            ObjectNode rowNode = outputJson.createObjectNode();
+            for (int i=0; i < headersToWrite.size(); i++) {
+                rowNode.put(headersToWrite.get(i), nodeEntries.get(i));
+            }
+            outputJson.getArrayNode().add(rowNode);
+        }
+        outputJson.writeJson(writer);
+
     }
 
     @Override
@@ -85,25 +94,32 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
         int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
         for (ProfileResourceNode node : nodes) {
             for (Format format : node.getFormatIdentifications()) {
-                List<String> nodeEntries = new ArrayList<>();
-                for (int i = 0; i <= maxCols; i++) {
-                    ExportTemplateColumnDef def = columnPositions.get(i);
-                    if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
-                        nodeEntries.add(def.getDataValue());
-                    } else {
-                        String columnName = def.getOriginalColumnName();
-                        if (CsvWriterConstants.PER_FORMAT_HEADERS.contains(columnName)) {
-                            String columnValue = getFormatValue(columnName, format);
-                            nodeEntries.add(columnValue);
-                        } else {
-                            addNodeColumn(nodeEntries, node, def);
-                        }
-                    }
-                }
+                List<String> nodeEntries = getOneRowPerFormatNodeEntries(node, format, maxCols, columnPositions);
                 csvWriter.writeRow(nodeEntries);
             }
         }
         csvWriter.flush();
+    }
+
+    @Override
+    public void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
+        super.setCustomisedHeaders(headers);
+        OutputJson outputJson = new OutputJson();
+        int maxIdCount = 1;
+        List<String> headersToWrite = getHeadersToWrite(maxIdCount);
+        Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
+        int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
+        for (ProfileResourceNode node : nodes) {
+            for (Format format : node.getFormatIdentifications()) {
+                List<String> nodeEntries = getOneRowPerFormatNodeEntries(node, format, maxCols, columnPositions);
+                ObjectNode rowNode = outputJson.createObjectNode();
+                for (int i=0; i < headersToWrite.size(); i++) {
+                    rowNode.put(headersToWrite.get(i), nodeEntries.get(i));
+                }
+                outputJson.getArrayNode().add(rowNode);
+            }
+        }
+        outputJson.writeJson(writer);
     }
 
     @Override
@@ -122,6 +138,43 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
         List<String> headersToWrite = getHeadersToWrite(maxIdColumns);
         csvWriter.writeHeaders(headersToWrite);
         csvWriter.flush();
+    }
+
+    private List<String> getOneRowPerFormatNodeEntries(ProfileResourceNode node, Format format, int maxCols, Map<Integer, ExportTemplateColumnDef> columnPositions) {
+        List<String> nodeEntries = new ArrayList<>();
+        for (int i = 0; i <= maxCols; i++) {
+            ExportTemplateColumnDef def = columnPositions.get(i);
+            if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
+                nodeEntries.add(def.getDataValue());
+            } else {
+                String columnName = def.getOriginalColumnName();
+                if (CsvWriterConstants.PER_FORMAT_HEADERS.contains(columnName)) {
+                    String columnValue = getFormatValue(columnName, format);
+                    nodeEntries.add(columnValue);
+                } else {
+                    addNodeColumn(nodeEntries, node, def);
+                }
+            }
+        }
+        return nodeEntries;
+    }
+
+    private List<String> getOneRowPerFileNodeEntries(ProfileResourceNode node, int maxCols, Map<Integer, ExportTemplateColumnDef> columnPositions, int maxIdCount) {
+        List<String> nodeEntries = new ArrayList<>();
+        for (int i = 0; i <= maxCols; i++) {
+            ExportTemplateColumnDef def = columnPositions.get(i);
+            if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
+                nodeEntries.add(def.getDataValue());
+            } else {
+                String columnName = def.getOriginalColumnName();
+                if (CsvWriterConstants.PER_FORMAT_HEADERS.contains(columnName)) {
+                    addFormatColumnTemplate(nodeEntries, node, def, maxIdCount);
+                } else {
+                    addNodeColumn(nodeEntries, node, def);
+                }
+            }
+        }
+        return nodeEntries;
     }
 
     private void addFormatColumnTemplate(List<String> nodeEntries, ProfileResourceNode node, ExportTemplateColumnDef def, int maxIdCount) {
