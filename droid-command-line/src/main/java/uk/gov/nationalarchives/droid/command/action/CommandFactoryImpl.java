@@ -370,12 +370,12 @@ public class CommandFactoryImpl implements CommandFactory {
             overrideProperties = new PropertiesConfiguration();
         }
 
-        processCommandLineCSVOptions(cli, overrideProperties);
+        processCommandLineExportOptions(cli, overrideProperties);
 
         return overrideProperties;
     }
 
-    private void processCommandLineCSVOptions(CommandLine cli, PropertiesConfiguration overrideProperties) {
+    private void processCommandLineExportOptions(CommandLine cli, PropertiesConfiguration overrideProperties) {
         if (cli.hasOption(CommandLineParam.COLUMNS_TO_WRITE.getLongName())) {
             overrideProperties.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(),
                     String.join(SPACE, cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName())));

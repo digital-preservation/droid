@@ -270,7 +270,7 @@ public enum CommandLineParam {
     /**
      * Outputs the results as csv.
      */
-    CSV_OUTPUT("csv", "csv-output", I18N.JSON_OUTPUT) {
+    CSV_OUTPUT("csv", "csv-output", I18N.CSV_OUTPUT) {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
@@ -531,6 +531,7 @@ public enum CommandLineParam {
         options.addOption(QUOTE_COMMAS.newOption());
         options.addOption(ROW_PER_FORMAT.newOption());
         options.addOption(JSON_OUTPUT.newOption());
+        options.addOption(CSV_OUTPUT.newOption());
 
         options.addOptionGroup(getFilterOptionGroup());
         options.addOptionGroup(getFileFilterOptionGroup());

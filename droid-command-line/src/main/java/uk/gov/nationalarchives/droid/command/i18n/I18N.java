@@ -87,9 +87,9 @@ public final class I18N {
     public static final String JSON_OUTPUT = "profile.json.help";
 
     /**
-     * Writes the output as XML.
+     * Writes the output as JSON.
      */
-    public static final String XML_OUTPUT = "profile.xml.help";
+    public static final String CSV_OUTPUT = "profile.csv.help";
 
     /**
      * Override default properties from the command line.

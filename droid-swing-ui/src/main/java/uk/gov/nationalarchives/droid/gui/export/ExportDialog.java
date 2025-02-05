@@ -438,7 +438,7 @@ public class ExportDialog extends JDialog {
                                 .addComponent(jLabel1)
                                 .addGap(18, 18, 18)
                                 .addComponent(cmdEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(ComponentPlacement.RELATED, 586, Short.MAX_VALUE)
+                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(exportButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 180, GroupLayout.PREFERRED_SIZE))

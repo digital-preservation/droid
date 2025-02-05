@@ -39,7 +39,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.nationalarchives.droid.profile.CsvWriterConstants;
+import uk.gov.nationalarchives.droid.profile.WriterConstants;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
 import java.io.File;
@@ -72,15 +72,15 @@ public abstract  class FormattedDataWriter {
     public  abstract void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer);
 
     protected static String nullSafeName(Enum<?> value) {
-        return value == null ? CsvWriterConstants.EMPTY_STRING : value.toString();
+        return value == null ? WriterConstants.EMPTY_STRING : value.toString();
     }
 
     protected static String nullSafeNumber(Number number) {
-        return number == null ? CsvWriterConstants.EMPTY_STRING : number.toString();
+        return number == null ? WriterConstants.EMPTY_STRING : number.toString();
     }
 
     protected static String nullSafeDate(Date date, FastDateFormat format) {
-        return date == null ? CsvWriterConstants.EMPTY_STRING : format.format(date);
+        return date == null ? WriterConstants.EMPTY_STRING : format.format(date);
     }
 
     protected static String toFileName(String name) {
@@ -90,14 +90,14 @@ public abstract  class FormattedDataWriter {
     protected String toFilePath(URI uri) {
         if (uri == null) {
             log.warn("[URI not set]");
-            return CsvWriterConstants.EMPTY_STRING;
+            return WriterConstants.EMPTY_STRING;
         }
-        if (CsvWriterConstants.FILE_URI_SCHEME.equals(uri.getScheme())) {
+        if (WriterConstants.FILE_URI_SCHEME.equals(uri.getScheme())) {
             return Paths.get(uri).toAbsolutePath().toString();
         }
 
         // for URIs that have other than "file" scheme
-        String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", CsvWriterConstants.EMPTY_STRING);
+        String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", WriterConstants.EMPTY_STRING);
         result = result.replace("/", File.separator);
 
         // Handle substitution of 7z
