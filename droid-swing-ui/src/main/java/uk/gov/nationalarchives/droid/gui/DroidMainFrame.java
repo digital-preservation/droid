@@ -141,7 +141,7 @@ public class DroidMainFrame extends JFrame {
     private ResourceSelectorDialog resourceFileChooser;
     private ButtonManager buttonManager;
     private GlobalContext globalContext;
-    private JFileChooser exportFileChooser;
+    private ExportFileChooser exportFileChooser;
     private SignatureInstallDialog signatureInstallDialog;
     private ReportDialog reportDialog;
     private AboutDialog aboutDialog;
@@ -1463,7 +1463,6 @@ public class DroidMainFrame extends JFrame {
         }
 
         exportOptions.setDefaultTemplatesFolder(globalContext.getGlobalConfig().getExportTemplatesDir());
-
         exportOptions.showDialog();
         if (exportOptions.isApproved()) {
             String columnNames = exportOptions.getColumnsToExport();
@@ -1471,7 +1470,9 @@ public class DroidMainFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "No columns for export were selected.",
                         "Export warning", JOptionPane.WARNING_MESSAGE);
             } else {
+                exportFileChooser.setExportOutputOptions(exportOptions.getExportOutputOptions());
                 int response = exportFileChooser.showSaveDialog(this);
+
                 if (response == JFileChooser.APPROVE_OPTION) {
                     List<String> profileIds = new ArrayList<String>();
                     profileIds.addAll(exportOptions.getSelectedProfileIds());
