@@ -82,7 +82,7 @@ public class ExportManagerImpl implements ExportManager {
         itemWriter.setColumnsToWrite(details.getColumnsToWrite());
         itemWriter.setExportTemplate(new ExportTemplateBuilder().buildExportTemplate(details.getExportTemplatePath()));
         final ExportTask exportTask = new ExportTask(destination,
-                profileIds, filter, details.getExportOptions(), details.getOutputEncoding(), details.bomFlag(), itemWriter, profileContextLocator);
+                profileIds, filter, details, itemWriter, profileContextLocator);
         final FutureTask<?> task = new FutureTask<Object>(exportTask, null) {
             @Override
             public boolean cancel(final boolean mayInterruptIfRunning) {

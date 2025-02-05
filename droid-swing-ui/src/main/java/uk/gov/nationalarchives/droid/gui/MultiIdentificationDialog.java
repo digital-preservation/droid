@@ -233,7 +233,7 @@ public class MultiIdentificationDialog extends JDialog {
         }
     }
     
-    private class PuidLinkMouseListener extends MouseAdapter {
+    private final class PuidLinkMouseListener extends MouseAdapter {
         
         @Override
         public void mouseMoved(MouseEvent e) {

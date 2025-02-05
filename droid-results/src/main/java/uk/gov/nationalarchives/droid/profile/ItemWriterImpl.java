@@ -39,12 +39,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.datawriter.DataWriterProvider;
 import uk.gov.nationalarchives.droid.profile.datawriter.FormattedDataWriter;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,7 +60,7 @@ import java.util.stream.Collectors;
  * @author rflitcroft
  *
  */
-public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
+public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
 
     private static final String BLANK_SPACE_DELIMITER       = " ";
     private final Map<String, Boolean> columnsToWriteMap = new HashMap<>();
@@ -66,7 +68,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private CsvWriter csvWriter;
+    private Writer writer;
     private ExportOptions options = ExportOptions.ONE_ROW_PER_FILE;
+    private ExportOutputOptions outputOptions;
+
     
     private String[] allHeaders;
     private boolean quoteAllFields;
@@ -75,7 +80,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     /**
      * Empty bean constructor.
      */
-    public CsvItemWriter() {
+    public ItemWriterImpl() {
        this(null);
     }
 
@@ -83,7 +88,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
      * Constructor taking parameters.
      * @param writer The CsvWriter to use.
      */
-    public CsvItemWriter(CsvWriter writer) {
+    public ItemWriterImpl(CsvWriter writer) {
         this.csvWriter = writer;
         this.quoteAllFields = true;
         populateDefaultColumnsToWrite();
@@ -115,11 +120,20 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         FormattedDataWriter dataWriter = DataWriterProvider.getDataWriter(columnsToWriteMap, exportTemplate);
         switch (options) {
             case ONE_ROW_PER_FILE: {
-                writeOneRowPerFile(nodes, dataWriter);
+                if (outputOptions == ExportOutputOptions.JSON_OUTPUT) {
+                    dataWriter.writeJsonForOneRowPerFile(nodes, allHeaders, this.writer);
+                } else {
+                    writeOneRowPerFile(nodes, dataWriter);
+                }
                 break;
             }
             case ONE_ROW_PER_FORMAT: {
-                writeOneRowPerFormat(nodes, dataWriter);
+                if (outputOptions == ExportOutputOptions.JSON_OUTPUT) {
+                    dataWriter.writeJsonForOneRowPerFormat(nodes, allHeaders, this.writer);
+                } else {
+                    writeOneRowPerFormat(nodes, dataWriter);
+                }
+
                 break;
             }
             default: {
@@ -163,14 +177,15 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
 
     @Override
-    public void open(final Writer writer) {
+    public void open(final Writer outputWriter) {
+        this.writer = outputWriter;
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
         csvWriterSettings.setQuoteAllFields(quoteAllFields);
         CsvFormat format = new CsvFormat();
         // following Unix convention about line separators as previously
         format.setLineSeparator("\n");
         csvWriterSettings.setFormat(format);
-        csvWriter = new CsvWriter(writer, csvWriterSettings);
+        csvWriter = new CsvWriter(outputWriter, csvWriterSettings);
         if (allHeaders == null) {
             allHeaders = Arrays.copyOf(CsvWriterConstants.HEADERS, CsvWriterConstants.HEADERS.length) ;
         }
@@ -180,12 +195,22 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     public void setOptions(ExportOptions options) {
         this.options = options;
     }
+
+    @Override
+    public void setOutputOptions(ExportOutputOptions outputOptions) {
+        this.outputOptions = outputOptions;
+    }
     
     /**
      * Closes the CSV writer.
      */
     @Override
     public void close() {
+        try {
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         csvWriter.close();
     }
     

@@ -43,7 +43,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
-import uk.gov.nationalarchives.droid.gui.action.ActionDoneCallback;
 import uk.gov.nationalarchives.droid.gui.action.ActionFactory;
 import uk.gov.nationalarchives.droid.gui.action.AddFilesAndFoldersAction;
 import uk.gov.nationalarchives.droid.gui.action.ApplyFilterToTreeTableAction;
@@ -142,7 +141,7 @@ public class DroidMainFrame extends JFrame {
     private ResourceSelectorDialog resourceFileChooser;
     private ButtonManager buttonManager;
     private GlobalContext globalContext;
-    private JFileChooser exportFileChooser;
+    private ExportFileChooser exportFileChooser;
     private SignatureInstallDialog signatureInstallDialog;
     private ReportDialog reportDialog;
     private AboutDialog aboutDialog;
@@ -1464,7 +1463,6 @@ public class DroidMainFrame extends JFrame {
         }
 
         exportOptions.setDefaultTemplatesFolder(globalContext.getGlobalConfig().getExportTemplatesDir());
-
         exportOptions.showDialog();
         if (exportOptions.isApproved()) {
             String columnNames = exportOptions.getColumnsToExport();
@@ -1472,7 +1470,9 @@ public class DroidMainFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "No columns for export were selected.",
                         "Export warning", JOptionPane.WARNING_MESSAGE);
             } else {
+                exportFileChooser.setExportOutputOptions(exportOptions.getExportOutputOptions());
                 int response = exportFileChooser.showSaveDialog(this);
+
                 if (response == JFileChooser.APPROVE_OPTION) {
                     List<String> profileIds = new ArrayList<String>();
                     profileIds.addAll(exportOptions.getSelectedProfileIds());
@@ -1487,30 +1487,28 @@ public class DroidMainFrame extends JFrame {
                     exportAction.setDestination(exportFileChooser.getSelectedFile());
                     exportAction.setProfileIds(profileIds);
                     exportAction.setExportOptions(exportOptions.getExportOptions());
+                    exportAction.setExportOutputOptions(exportOptions.getExportOutputOptions());
                     exportAction.setOutputEncoding(exportOptions.getOutputEncoding());
                     exportAction.setBom(exportOptions.isBom());
                     exportAction.setQuoteAllFields(exportOptions.getQuoteAllColumns());
                     exportAction.setColumnsToWrite(columnNames);
                     exportAction.setExportTemplatePath(exportOptions.getTemplatePath());
 
-                    exportAction.setCallback(new ActionDoneCallback<ExportAction>() {
-                        @Override
-                        public void done(ExportAction action) {
-                            try {
-                                exportDialog.setVisible(false);
-                                exportDialog.dispose();
-                                action.get();
-                                JOptionPane.showMessageDialog(DroidMainFrame.this, "Export Complete.", "Export Complete",
-                                        JOptionPane.INFORMATION_MESSAGE);
-                            } catch (ExecutionException e) {
-                                DialogUtils.showGeneralErrorDialog(DroidMainFrame.this, "Export Error", e.getCause()
-                                        .getMessage());
-                            } catch (InterruptedException e) {
-                                DialogUtils.showGeneralErrorDialog(DroidMainFrame.this, "Export Interrupted", e.getCause()
-                                        .getMessage());
-                            } catch (CancellationException e) {
-                                log.info("Export cancelled");
-                            }
+                    exportAction.setCallback(action -> {
+                        try {
+                            exportDialog.setVisible(false);
+                            exportDialog.dispose();
+                            action.get();
+                            JOptionPane.showMessageDialog(DroidMainFrame.this, "Export Complete.", "Export Complete",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } catch (ExecutionException e) {
+                            DialogUtils.showGeneralErrorDialog(DroidMainFrame.this, "Export Error", e.getCause()
+                                    .getMessage());
+                        } catch (InterruptedException e) {
+                            DialogUtils.showGeneralErrorDialog(DroidMainFrame.this, "Export Interrupted", e.getCause()
+                                    .getMessage());
+                        } catch (CancellationException e) {
+                            log.info("Export cancelled");
                         }
                     });
 

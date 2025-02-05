@@ -49,18 +49,21 @@ public final class ExportDetails {
     private final boolean quoteAllFields;
     private final String columnsToWrite;
     private final String exportTemplatePath;
+    private final ExportOutputOptions outputOptions;
 
     /**
      * Private constructor. The consumer can get the ExportDetails instance using ExportDetailsBuilder.
      * @param exportOptions  whether it is a "per row" export or "per format" export
+     * @param outputOptions  whether to export as csv or json
      * @param outputEncoding  encoding to be used
      * @param bomFlag whether to use BOM
      * @param quoteAllFields whether the export fields should be enclosed in double quotes
      * @param columnsToWrite List of columns to write
      * @param exportTemplatePath absolute path to an export template, if one is being used.
      */
-    private ExportDetails(ExportOptions exportOptions, String outputEncoding, boolean bomFlag, boolean quoteAllFields, String columnsToWrite, String exportTemplatePath) {
+    private ExportDetails(ExportOptions exportOptions, ExportOutputOptions outputOptions, String outputEncoding, boolean bomFlag, boolean quoteAllFields, String columnsToWrite, String exportTemplatePath) {
         this.exportOptions = exportOptions;
+        this.outputOptions = outputOptions;
         this.outputEncoding = outputEncoding;
         this.bomFlag = bomFlag;
         this.quoteAllFields = quoteAllFields;
@@ -74,6 +77,14 @@ public final class ExportDetails {
      */
     public ExportOptions getExportOptions() {
         return exportOptions;
+    }
+
+    /**
+     *
+     * @return The output options
+     */
+    public ExportOutputOptions getOutputOptions() {
+        return outputOptions;
     }
 
     /**
@@ -117,6 +128,7 @@ public final class ExportDetails {
      */
     public static class ExportDetailsBuilder {
         private ExportOptions exportOptions = ExportOptions.ONE_ROW_PER_FILE;
+        private ExportOutputOptions outputOptions = ExportOutputOptions.CSV_OUTPUT;
         private String outputEncoding = "UTF-8";
         private boolean bomFlag;
         private boolean quoteAllFields = true;
@@ -126,6 +138,11 @@ public final class ExportDetails {
         public ExportDetailsBuilder withExportOptions(ExportOptions options) {
             this.exportOptions = options;
             return  this;
+        }
+
+        public ExportDetailsBuilder withExportOutputOptions(ExportOutputOptions options) {
+            this.outputOptions = options;
+            return this;
         }
 
         public ExportDetailsBuilder withOutputEncoding(String encoding) {
@@ -153,7 +170,7 @@ public final class ExportDetails {
         }
 
         public ExportDetails build() {
-            return new ExportDetails(exportOptions, outputEncoding, bomFlag, quoteAllFields, columnsToWrite, exportTemplatePath);
+            return new ExportDetails(exportOptions, outputOptions, outputEncoding, bomFlag, quoteAllFields, columnsToWrite, exportTemplatePath);
         }
     }
 }

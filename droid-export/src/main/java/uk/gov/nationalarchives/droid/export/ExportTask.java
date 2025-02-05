@@ -53,6 +53,8 @@ import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemReader;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemReaderCallback;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
@@ -79,6 +81,7 @@ public class ExportTask implements Runnable {
     private final List<String> profileIds;
     private final Filter filterOverride;
     private final ExportOptions options;
+    private final ExportOutputOptions outputOptions;
     private final String outputEncoding;
     private final boolean bom;
     private final ItemWriter<ProfileResourceNode> itemWriter;
@@ -91,22 +94,20 @@ public class ExportTask implements Runnable {
      * @param destination Output file path
      * @param profileIds ids of the profiles to export
      * @param filterOverride the override filter
-     * @param options options for the export file format
-     * @param outputEncoding A charset encoding for the output file, or null indicates platform locale encoding
-     * @param bom Add bom to the file.
+     * @param exportDetails parameters used for the export
      * @param itemWriter The writer for writing the export items
      * @param profileContextLocator locator of the profile context
      */
     public ExportTask(final String destination, final List<String> profileIds,
-            final Filter filterOverride, final ExportOptions options,
-            final String outputEncoding, final boolean bom, final ItemWriter<ProfileResourceNode> itemWriter,
-            final ProfileContextLocator profileContextLocator) {
+                      final Filter filterOverride, final ExportDetails exportDetails, final ItemWriter<ProfileResourceNode> itemWriter,
+                      final ProfileContextLocator profileContextLocator) {
         this.destination = destination;
         this.profileIds = profileIds;
         this.filterOverride = filterOverride;
-        this.options = options;
-        this.outputEncoding = outputEncoding;
-        this.bom = bom;
+        this.options = exportDetails.getExportOptions();
+        this.outputOptions = exportDetails.getOutputOptions();
+        this.outputEncoding = exportDetails.getOutputEncoding();
+        this.bom = exportDetails.bomFlag();
         this.itemWriter = itemWriter;
         this.profileContextLocator = profileContextLocator;
     }
@@ -189,6 +190,7 @@ public class ExportTask implements Runnable {
         //BNO - amended to add header customisations for different hash algorithms
         Map<String, String> headerCustomisations = getHeaderCustomisationsFromProfiles();
         itemWriter.setOptions(options);
+        itemWriter.setOutputOptions(outputOptions);
         itemWriter.setHeaders(headerCustomisations);
         itemWriter.open(writer);
         

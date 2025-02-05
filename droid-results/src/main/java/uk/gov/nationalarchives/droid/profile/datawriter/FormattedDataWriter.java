@@ -31,6 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.profile.datawriter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.univocity.parsers.csv.CsvWriter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.time.FastDateFormat;
@@ -40,6 +43,8 @@ import uk.gov.nationalarchives.droid.profile.CsvWriterConstants;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -61,8 +66,10 @@ public abstract  class FormattedDataWriter {
 
     public abstract void writeHeadersForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, CsvWriter csvWriter);
     public abstract void writeDataRowsForOneRowPerFile(List<? extends ProfileResourceNode> nodes, CsvWriter csvWriter);
+    public abstract void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers,  Writer writer);
     public abstract void writeHeadersForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, CsvWriter csvWriter);
     public  abstract void writeDataRowsForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, CsvWriter csvWriter);
+    public  abstract void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer);
 
     protected static String nullSafeName(Enum<?> value) {
         return value == null ? CsvWriterConstants.EMPTY_STRING : value.toString();
@@ -118,5 +125,31 @@ public abstract  class FormattedDataWriter {
 
     protected String[] getCustomisedHeaders() {
         return this.customisedHeaders;
+    }
+
+    protected static class OutputJson {
+        private final ArrayNode arrayNode;
+        private final ObjectMapper objectMapper;
+
+        public OutputJson() {
+            this.objectMapper = new ObjectMapper();
+            this.arrayNode = objectMapper.createArrayNode();
+        }
+
+        public void writeJson(Writer writer) {
+            try {
+                objectMapper.writeValue(writer, arrayNode);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public ArrayNode getArrayNode() {
+            return arrayNode;
+        }
+
+        public ObjectNode createObjectNode() {
+            return objectMapper.createObjectNode();
+        }
     }
 }

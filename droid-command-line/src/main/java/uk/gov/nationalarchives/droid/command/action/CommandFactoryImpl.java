@@ -55,6 +55,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 
 /**
  * Creates command objects from the cli.
@@ -87,6 +88,10 @@ public class CommandFactoryImpl implements CommandFactory {
         this.printWriter = printWriter;
     }
 
+    private ExportOutputOptions getExportOutputOptions(CommandLine cli) {
+        return cli.hasOption(CommandLineParam.JSON_OUTPUT.toString()) ? ExportOutputOptions.JSON_OUTPUT : ExportOutputOptions.CSV_OUTPUT;
+    }
+
     /**
      * @param cli the command line
      * @throws CommandLineSyntaxException command parse exception.
@@ -102,7 +107,7 @@ public class CommandFactoryImpl implements CommandFactory {
         final String destination = cli.getOptionValue(CommandLineParam.EXPORT_ONE_ROW_PER_FILE.toString());
 
         final String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
-        final ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE);
+        final ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE, getExportOutputOptions(cli));
         final boolean bom = cli.hasOption(CommandLineParam.BOM.toString());
 
         cmd.setDestination(destination);
@@ -145,7 +150,7 @@ public class CommandFactoryImpl implements CommandFactory {
         final String destination = cli.getOptionValue(CommandLineParam.EXPORT_ONE_ROW_PER_FORMAT.toString());
 
         final String[] profiles = cli.getOptionValues(CommandLineParam.PROFILES.toString());
-        final ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT);
+        final ExportCommand cmd = context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, getExportOutputOptions(cli));
         final boolean bom = cli.hasOption(CommandLineParam.BOM.toString());
         cmd.setDestination(destination);
         cmd.setProfiles(profiles);
@@ -377,6 +382,11 @@ public class CommandFactoryImpl implements CommandFactory {
         }
         if (cli.hasOption(CommandLineParam.QUOTE_COMMAS.getLongName())) {
             overrideProperties.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
+        }
+        if (cli.hasOption(CommandLineParam.JSON_OUTPUT.getLongName())) {
+            overrideProperties.setProperty(DroidGlobalProperty.EXPORT_OUTPUT_OPTIONS.getName(), ExportOutputOptions.JSON_OUTPUT.name());
+        } else {
+            overrideProperties.setProperty(DroidGlobalProperty.EXPORT_OUTPUT_OPTIONS.getName(), ExportOutputOptions.CSV_OUTPUT.name());
         }
         if (cli.hasOption(CommandLineParam.ROW_PER_FORMAT.getLongName())) {
             overrideProperties.setProperty(DroidGlobalProperty.EXPORT_OPTIONS.getName(), ExportOptions.ONE_ROW_PER_FORMAT.name());

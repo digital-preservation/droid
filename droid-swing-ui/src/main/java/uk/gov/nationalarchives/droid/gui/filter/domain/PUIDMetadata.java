@@ -96,7 +96,7 @@ public class PUIDMetadata extends GenericMetadata {
         }
     }
 
-    private static class FilterValueComparator implements Comparator<FilterValue> {
+    private static final class FilterValueComparator implements Comparator<FilterValue> {
 
         @Override
         public int compare(FilterValue o1, FilterValue o2) {

@@ -281,7 +281,7 @@ public class JDBCBatchResultHandlerDao implements ResultHandlerDao {
             result.close();
             int x;
 
-            switch(numberOfColumnsInPrnTable) {
+            switch (numberOfColumnsInPrnTable) {
                 case PRN_COL_COUNT_SANS_UCASE_COLS:
                     String[] statements =
                     {ALTER_NAME_COLUMN_SIZE, CREATE_UCASE_PRN_EXTN_COL, CREATE_UCASE_PRN_NAME_COL,
