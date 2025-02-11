@@ -83,8 +83,8 @@
     </mailingLists>
   
     <properties>
-        <project.build.source>1.8</project.build.source>
-        <project.build.target>1.8</project.build.target>
+        <project.build.source>21</project.build.source>
+        <project.build.target>21</project.build.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <project.email>pronom@nationalarchives.gov.uk</project.email>
@@ -111,7 +111,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.8.1</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.shared</groupId>
@@ -438,7 +438,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
+                    <source>21</source>
                 </configuration>
             </plugin>
 <!-- N.B. sourceFileExcludes won't work till version 2.11 is released 
