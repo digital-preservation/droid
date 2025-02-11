@@ -99,7 +99,7 @@ public class DataModifierColumnDef implements ExportTemplateColumnDef {
         if ((input == null) || (input.isEmpty())) {
             return "";
         }
-        switch(operation) {
+        switch (operation) {
             case LCASE:
                 return input.toLowerCase();
             case UCASE:

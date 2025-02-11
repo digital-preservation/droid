@@ -257,6 +257,26 @@ public enum CommandLineParam {
         }
     },
 
+    /**
+     * Outputs the results as json.
+     */
+    JSON_OUTPUT("json", "json-output", I18N.JSON_OUTPUT) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+
+    /**
+     * Outputs the results as csv.
+     */
+    CSV_OUTPUT("csv", "csv-output", I18N.CSV_OUTPUT) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+
     /** Runs without a profile and with the specified resources. */
     RUN_NO_PROFILE("Nr", "no-profile-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "folder") {
         @Override
@@ -510,10 +530,13 @@ public enum CommandLineParam {
         options.addOption(COLUMNS_TO_WRITE.newOption());
         options.addOption(QUOTE_COMMAS.newOption());
         options.addOption(ROW_PER_FORMAT.newOption());
+        options.addOption(JSON_OUTPUT.newOption());
+        options.addOption(CSV_OUTPUT.newOption());
 
         options.addOptionGroup(getFilterOptionGroup());
         options.addOptionGroup(getFileFilterOptionGroup());
         options.addOptionGroup(getExportOptionGroup());
+        options.addOptionGroup(getExportOutputOptionsGroup());
         options.addOptionGroup(topGroup);
 
         return options;
@@ -539,6 +562,13 @@ public enum CommandLineParam {
         exportOptions.addOption(COLUMNS_TO_WRITE.newOption());
         exportOptions.addOption(EXPORT_TEMPLATE.newOption());
         return exportOptions;
+    }
+
+    private static OptionGroup getExportOutputOptionsGroup() {
+        OptionGroup exportOutputOptions = new OptionGroup();
+        exportOutputOptions.addOption(JSON_OUTPUT.newOption());
+        exportOutputOptions.addOption(CSV_OUTPUT.newOption());
+        return exportOutputOptions;
     }
 
     /**

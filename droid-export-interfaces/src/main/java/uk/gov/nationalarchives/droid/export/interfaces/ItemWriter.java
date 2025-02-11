@@ -64,7 +64,12 @@ public interface ItemWriter<T> {
      * @param options Sets the options to use when writing out the export.
      */
     void setOptions(ExportOptions options);
-    
+
+    /**
+     * @param outputOptions Sets the output options to use when writing out the export
+     */
+    void setOutputOptions(ExportOutputOptions outputOptions);
+
     /**
      * Customises the column headers in the export output.
      * @param headersToSet - Map of headers to customise and values to set.

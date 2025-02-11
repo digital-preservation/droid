@@ -45,6 +45,7 @@ import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 
 /**
  * The evil singleton Spring Application context.
@@ -86,9 +87,10 @@ public final class SpringUiContext implements GlobalContext {
     }
 
     @Override
-    public ExportCommand getExportCommand(ExportOptions opt) {
+    public ExportCommand getExportCommand(ExportOptions opt, ExportOutputOptions exportOutputOptions) {
         ExportCommand command = context.getBean("exportCommand", ExportCommand.class);
         command.setExportOptions(opt);
+        command.setOutputOptions(exportOutputOptions);
         return command;
     }
 

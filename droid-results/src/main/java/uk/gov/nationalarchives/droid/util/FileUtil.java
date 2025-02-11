@@ -338,7 +338,7 @@ public final class FileUtil {
         }
     }
 
-    private static class DirSizeVisitor extends SimpleFileVisitor<Path> {
+    private static final class DirSizeVisitor extends SimpleFileVisitor<Path> {
         private long size;
 
         @Override
@@ -352,7 +352,7 @@ public final class FileUtil {
         }
     }
 
-    private static class DeleteDirVisitor extends SimpleFileVisitor<Path> {
+    private static final class DeleteDirVisitor extends SimpleFileVisitor<Path> {
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
             Files.deleteIfExists(file);

@@ -107,7 +107,7 @@ public class RarReader implements VolumeManager {
         /**
          * A class that adapts the WindowReader to the SeekableReadOnlyByteChannel interface.
          */
-        private class ReaderReadOnlyAccess implements SeekableReadOnlyByteChannel {
+        private final class ReaderReadOnlyAccess implements SeekableReadOnlyByteChannel {
 
             private long position;
 

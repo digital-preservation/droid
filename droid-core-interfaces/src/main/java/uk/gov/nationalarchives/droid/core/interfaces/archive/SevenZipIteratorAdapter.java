@@ -70,7 +70,7 @@ public class SevenZipIteratorAdapter implements Iterable<SevenZipArchiveHandler.
      * An Iterator over SevenZEntryInfo classes, which wrap a SevenZArchiveEntry and an InputStream
      * to give access to the files in the archive.
      */
-    private class SevenZipIterator implements Iterator<SevenZipArchiveHandler.SevenZEntryInfo> {
+    private final class SevenZipIterator implements Iterator<SevenZipArchiveHandler.SevenZEntryInfo> {
 
         private final Logger log = LoggerFactory.getLogger(getClass());
         private final InputStream stream = new SevenZipEntryStream();
@@ -105,7 +105,7 @@ public class SevenZipIteratorAdapter implements Iterable<SevenZipArchiveHandler.
      * The SevenZipFile provides stream read methods.  A call to the ZipFile read method reads from
      * the stream associated with its current seven zip entry.
      */
-    private class SevenZipEntryStream extends InputStream {
+    private final class SevenZipEntryStream extends InputStream {
 
         private final byte[] oneByte = new byte[1];
 

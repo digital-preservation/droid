@@ -263,7 +263,7 @@ public class SqlReportDaoImpl implements ReportDao {
     /**
      * Private class to model the filter information
      */
-    private class FilterInfo {
+    private final class FilterInfo {
         private String filterSubQuery = "";
         private Object[] filterValues = new Object[0];
         

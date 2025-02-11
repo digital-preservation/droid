@@ -37,7 +37,7 @@ import org.apache.commons.lang.time.FastDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
-public final class CsvWriterConstants {
+public final class WriterConstants {
     /**
      * Default header for the corresponding column.
      */
@@ -163,7 +163,7 @@ public final class CsvWriterConstants {
      */
     public static final String FILE_URI_SCHEME = "file";
 
-    private CsvWriterConstants() {
+    private WriterConstants() {
         //hidden constructor
     }
 

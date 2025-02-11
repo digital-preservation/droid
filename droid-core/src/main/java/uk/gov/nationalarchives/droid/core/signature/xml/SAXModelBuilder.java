@@ -295,14 +295,14 @@ public class SAXModelBuilder extends DefaultHandler {
     }
 
     private void setByteSequenceProperty(ByteSequence target, String name, Object value) {
-        switch(name) {
+        switch (name) {
             case SUB_SEQUENCE: target.addSubSequence((SubSequence) value); break;
             default: logUnknownProperty(name, target);
         }
     }
 
     private void setSubSequenceProperty(SubSequence target, String name, Object value) {
-        switch(name) {
+        switch (name) {
             case LEFT_FRAGMENT: target.addLeftFragment((LeftFragment) value); break;
             case RIGHT_FRAGMENT: target.addRightFragment((RightFragment) value); break;
             case SEQUENCE: target.setSequence(((SimpleElement) value).getText().trim()); break;

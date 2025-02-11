@@ -55,6 +55,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -173,7 +174,7 @@ public class DroidCommandLineTest {
         };
         
         ExportCommand command = mock(ExportCommand.class);
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(command);
 
         DroidCommandLine droidCommandLine = new DroidCommandLine(args);
         droidCommandLine.setContext(context);
@@ -202,7 +203,7 @@ public class DroidCommandLineTest {
         };
         
         ExportCommand command = mock(ExportCommand.class);
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(command);
         
         DroidCommandLine droidCommandLine = new DroidCommandLine(args);
         
@@ -236,7 +237,7 @@ public class DroidCommandLineTest {
         };
         
         ExportCommand command = mock(ExportCommand.class);
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(command);
         
         DroidCommandLine droidCommandLine = new DroidCommandLine(args);
         
@@ -287,7 +288,7 @@ public class DroidCommandLineTest {
         };
         
         ExportCommand command = mock(ExportCommand.class);
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(command);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(command);
         
         DroidCommandLine droidCommandLine = new DroidCommandLine(args);
         
