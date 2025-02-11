@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
@@ -101,32 +102,7 @@ public class FileEventHandler {
         setSubmissionThrottle(submissionThrottle);
     }
 
-    // This should not be part of this class - but for speed of implementing the spike I have added it here.
-    public void onS3Event(AbstractProfileResource resource) {
-        // Prepare the metadata
-        // TODO find the real size - it is a pain to get it from S3 from within droid-results
-        // TODO get the real modification time from S3
-        RequestMetaData metaData = new RequestMetaData(-1L, new Date(0).getTime(), resource.getName());
 
-        // Prepare the identifier
-        RequestIdentifier identifier = new RequestIdentifier(resource.getUri());
-        identifier.setParentResourceId(null);
-        identifier.setResourceId(null);
-
-        // Prepare the request
-        IdentificationRequest<Path> request = new S3IdentificationRequest(metaData, identifier);
-
-        // For now, don't filter out any requests
-//        if (droidCore.passesIdentificationFilter(request)) 
-//        {
-            try {
-                droidCore.submit(request);
-                submissionThrottle.apply();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-//        }
-    }
 
     /**
      * Creates a job in the database and submits the job to the identification

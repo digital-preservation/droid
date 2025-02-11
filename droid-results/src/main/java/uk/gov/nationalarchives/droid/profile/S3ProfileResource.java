@@ -68,6 +68,11 @@ public class S3ProfileResource extends AbstractProfileResource {
     }
 
     @Override
+    public boolean isS3Object() {
+        return true;
+    }
+
+    @Override
     public void setSize(Path s3Path) {
         System.out.println("S3ProfileResource setSize called");
     }

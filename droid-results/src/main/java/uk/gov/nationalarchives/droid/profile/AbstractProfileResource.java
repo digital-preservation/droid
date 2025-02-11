@@ -141,6 +141,11 @@ public abstract class AbstractProfileResource {
     public abstract boolean isDirectory();
 
     /**
+     * @return true if the resource is an S3 object
+     */
+    public abstract boolean isS3Object();
+
+    /**
      * @return true if the resource should be recursed into; false otherwise
      */
     public boolean isRecursive() {

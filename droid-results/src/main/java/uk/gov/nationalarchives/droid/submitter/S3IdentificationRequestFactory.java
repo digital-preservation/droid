@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
+import java.net.URI;
 import java.nio.file.Path;
 
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -39,13 +40,13 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationReque
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
 
-public class S3IdentificationRequestFactory implements IdentificationRequestFactory<Path> {
+public class S3IdentificationRequestFactory implements IdentificationRequestFactory<URI> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest<Path> newRequest(RequestMetaData metaData, RequestIdentifier identifier) 
+    public final IdentificationRequest<URI> newRequest(RequestMetaData metaData, RequestIdentifier identifier)
     {
         return new S3IdentificationRequest(metaData, identifier);
     }

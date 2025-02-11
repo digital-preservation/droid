@@ -36,40 +36,28 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3URI;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
+import net.byteseek.io.reader.cache.TopAndTailFixedLengthCache;
+import net.byteseek.io.reader.cache.WindowCache;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
 
-public class S3IdentificationRequest implements IdentificationRequest<Path> {
 
-    private WindowReader fileReader;
+public class S3IdentificationRequest implements IdentificationRequest<URI> {
+
+    private static final int TOP_TAIL_BUFFER_CAPACITY = 30 * 1024 * 1024;
+    private WindowReader s3Reader;
     private final RequestIdentifier identifier;
-    private RequestMetaData requestMetaData;
-    private Path file;
-    private WindowReader windowReader;
+    private final RequestMetaData requestMetaData;
+    private final Long size;
 
-    /*
-    If you wish to use specific credentials, configure the following and use it, Currently it uses the
-    default profile from your AWS credentials config file.
-     */
-
-//    private AWSCredentials credentials = new BasicAWSCredentials(
-//            "SOME_ACCESS_KEY", //change to correct value if you want to use this method
-//            "SOME_SECRET_KEY" //change to correct value if you want to use this method
-//    );
-//    private AmazonS3 s3client = AmazonS3ClientBuilder
-//            .standard()
-//            //.withCredentials(new  AWSStaticCredentialsProvider(credentials))
-//            .withRegion(Regions.EU_WEST_2)
-//            .build();
-
-    private AmazonS3 s3client = buildClient();
+    private final AmazonS3 s3client = buildClient();
 
     private AmazonS3 buildClient() {
         AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2);
@@ -77,21 +65,26 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
         return builder.build();
     }
 
-
+    private WindowReader buildWindowReader(final URI theFile) {
+        final WindowCache cache = new TopAndTailFixedLengthCache(this.size, TOP_TAIL_BUFFER_CAPACITY);
+        return new S3WindowReader(cache, theFile, s3client);
+    }
 
     public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier) {
         this.identifier = identifier;
         this.requestMetaData = requestMetaData;
-        System.out.println("S3IdentificationRequest <init> called");
+        AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
+        this.size = s3client.getObjectMetadata(amazonS3URI.getBucket(), amazonS3URI.getKey()).getContentLength();
+        this.s3Reader = buildWindowReader(identifier.getUri());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final void open(final Path theFile) throws IOException {
-        // We're not going to worry about this for the spike, and it doesn't look like it gets called anyway.
-        throw new UnsupportedOperationException();
+    public final void open(final URI theFile) throws IOException {
+        this.s3Reader = buildWindowReader(theFile);
+        s3Reader.getWindow(0);
     }
 
     /**
@@ -99,7 +92,6 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final String getExtension() {
-        System.out.println("S3IdentificationRequest getExtension called");
         return ResourceUtils.getExtension(requestMetaData.getName());
     }
 
@@ -108,7 +100,6 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final String getFileName() {
-        System.out.println("S3IdentificationRequest getFileName called");
         return requestMetaData.getName();
     }
 
@@ -117,8 +108,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final long size() {
-        AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
-        return s3client.getObjectMetadata(amazonS3URI.getBucket(), amazonS3URI.getKey()).getContentLength();
+        return this.size;
     }
 
     /**
@@ -126,9 +116,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final void close() throws IOException {
-        System.out.println("S3IdentificationRequest close called");
-        file = null;
-        fileReader.close();
+        System.out.println("Close");
     }
 
     /**
@@ -138,17 +126,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final InputStream getSourceInputStream() throws IOException {
-        System.out.println("S3IdentificationRequest getSourceInputStream called");
-
-        // Create the S3 client
-        final AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
-
-        // Wrap the URI in an S3 URI
-        final AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
-
-        final S3Object s3object = s3Client.getObject(new GetObjectRequest(amazonS3URI.getBucket(), amazonS3URI.getKey()));
-
-        return s3object.getObjectContent();
+        return new ReaderInputStream(s3Reader, false);
     }
 
     /**
@@ -156,7 +134,6 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      */
     @Override
     public final RequestMetaData getRequestMetaData() {
-        System.out.println("S3IdentificationRequest getRequestMetaData called");
         return requestMetaData;
     }
 
@@ -164,16 +141,13 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      * @return the identifier
      */
     public final RequestIdentifier getIdentifier() {
-        System.out.println("S3IdentificationRequest getIdentifier called " + identifier);
         return identifier;
     }
 
 
     @Override
     public byte getByte(long position) throws IOException {
-        System.out.println("S3IdentificationRequest getByte " + position + " called");
-
-        final int result = fileReader.readByte(position);
+        final int result = s3Reader.readByte(position);
         if (result < 0) {
             throw new IOException("No byte at position " + position);
         }
@@ -182,10 +156,7 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
 
     @Override
     public WindowReader getWindowReader() {
-        if (windowReader == null) {
-            windowReader = new S3WindowReader(s3client, identifier.getUri());
-        }
-        return windowReader;
+        return this.s3Reader;
     }
 
     /**
@@ -194,7 +165,6 @@ public class S3IdentificationRequest implements IdentificationRequest<Path> {
      * @return File
      */
     public Path getFile() {
-        System.out.println("S3IdentificationRequest getFile called");
-        return file;
+        return null;
     }
 }

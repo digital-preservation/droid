@@ -253,6 +253,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <bean id="profileSpecWalker" class="uk.gov.nationalarchives.droid.submitter.ProfileSpecWalkerImpl">
         <property name="fileEventHandler" ref="fileEventHandler"/>
+        <property name="s3EventHandler" ref="s3EventHandler"/>
         <property name="directoryEventHandler" ref="dirEventHandler"/>
         <property name="progressMonitor" ref="progressMonitor"/>
     </bean>
@@ -287,6 +288,11 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
             <bean class="uk.gov.nationalarchives.droid.submitter.FileIdentificationRequestFactory">
             </bean>
         </property>
+    </bean>
+
+    <bean id="s3EventHandler" class="uk.gov.nationalarchives.droid.submitter.S3EventHandler">
+        <property name="submissionThrottle" ref="submissionThrottle"/>
+        <property name="droidCore" ref="submissionGateway"/>
     </bean>
 
     <bean id="dirEventHandler" class="uk.gov.nationalarchives.droid.submitter.DirectoryEventHandler">
