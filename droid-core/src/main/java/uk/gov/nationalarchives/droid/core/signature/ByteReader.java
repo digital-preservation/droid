@@ -78,7 +78,7 @@ import net.byteseek.io.reader.WindowReader;
  *
  * @author linb, boreilly
  */
-public interface ByteReader {
+public interface ByteReader extends AutoCloseable {
 
     /* Setters for identification status */
     /**
