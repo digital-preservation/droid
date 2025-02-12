@@ -96,6 +96,7 @@ public interface CommandFactory {
      */
     DroidCommand getNoProfileCommand(CommandLine cli) throws CommandLineSyntaxException;
     
+
     DroidCommand getS3Command(CommandLine cli) throws CommandLineSyntaxException;
 
 

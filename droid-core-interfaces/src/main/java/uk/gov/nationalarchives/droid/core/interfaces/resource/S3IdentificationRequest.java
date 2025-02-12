@@ -31,15 +31,15 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.AmazonS3URI;
 import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.cache.TopAndTailFixedLengthCache;
 import net.byteseek.io.reader.cache.WindowCache;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Uri;
+import software.amazon.awssdk.services.s3.S3Utilities;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
@@ -49,7 +49,7 @@ import java.net.URI;
 import java.nio.file.Path;
 
 
-public class S3IdentificationRequest implements IdentificationRequest<URI> {
+public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
 
     private static final int TOP_TAIL_BUFFER_CAPACITY = 30 * 1024 * 1024;
     private WindowReader s3Reader;
@@ -57,24 +57,27 @@ public class S3IdentificationRequest implements IdentificationRequest<URI> {
     private final RequestMetaData requestMetaData;
     private final Long size;
 
-    private final AmazonS3 s3client;
+    private final S3Client s3client;
 
     public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier) {
         this.identifier = identifier;
         this.s3client = buildClient();
         this.requestMetaData = requestMetaData;
-        AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
-        this.size = s3client.getObjectMetadata(amazonS3URI.getBucket(), amazonS3URI.getKey()).getContentLength();
-        this.s3Reader = buildWindowReader(identifier.getUri());
+        S3Uri s3Uri = S3Utilities.builder().region(Region.EU_WEST_2).build().parseUri(identifier.getUri());
+        String bucket = s3Uri.bucket().orElseThrow(() -> new RuntimeException("Bucket not found in uri " + identifier.getUri()));
+        String key = s3Uri.key().orElseThrow(() -> new RuntimeException("Key not found in uri " + identifier.getUri()));
+        HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucket).key(key).build();
+        this.size = s3client.headObject(request).contentLength();
+        this.s3Reader = buildWindowReader(s3Uri);
     }
 
-    private AmazonS3 buildClient() {
-        AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2);
-        builder.setCredentials(DefaultAWSCredentialsProviderChain.getInstance());
-        return builder.build();
+    private S3Client buildClient() {
+        return S3Client.builder()
+                .region(Region.EU_WEST_2)
+                .build();
     }
 
-    private WindowReader buildWindowReader(final URI theFile) {
+    private WindowReader buildWindowReader(final S3Uri theFile) {
         final WindowCache cache = new TopAndTailFixedLengthCache(this.size, TOP_TAIL_BUFFER_CAPACITY);
         return new S3WindowReader(cache, theFile, s3client);
     }
@@ -83,7 +86,7 @@ public class S3IdentificationRequest implements IdentificationRequest<URI> {
      * {@inheritDoc}
      */
     @Override
-    public final void open(final URI theFile) throws IOException {
+    public final void open(final S3Uri theFile) throws IOException {
         this.s3Reader = buildWindowReader(theFile);
         s3Reader.getWindow(0);
     }
@@ -116,9 +119,7 @@ public class S3IdentificationRequest implements IdentificationRequest<URI> {
      * {@inheritDoc}
      */
     @Override
-    public final void close() throws IOException {
-        System.out.println("Close");
-    }
+    public final void close() throws IOException {}
 
     /**
      * {@inheritDoc}

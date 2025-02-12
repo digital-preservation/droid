@@ -38,7 +38,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "S3")
 public class S3ProfileResource extends AbstractProfileResource {

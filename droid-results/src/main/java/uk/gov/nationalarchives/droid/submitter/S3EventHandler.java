@@ -1,5 +1,6 @@
 package uk.gov.nationalarchives.droid.submitter;
 
+import software.amazon.awssdk.services.s3.S3Uri;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
@@ -33,7 +34,7 @@ public class S3EventHandler {
         identifier.setResourceId(null);
 
         // Prepare the request
-        IdentificationRequest<URI> request = new S3IdentificationRequest(metaData, identifier);
+        IdentificationRequest<S3Uri> request = new S3IdentificationRequest(metaData, identifier);
 
         // For now, don't filter out any requests
         if (droidCore.passesIdentificationFilter(request)) {

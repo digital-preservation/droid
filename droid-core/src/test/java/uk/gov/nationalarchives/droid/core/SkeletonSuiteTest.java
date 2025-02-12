@@ -33,8 +33,6 @@ package uk.gov.nationalarchives.droid.core;
 
 import java.io.*;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +40,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.amazonaws.services.s3.AmazonS3URI;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.*;
 
@@ -51,6 +48,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import software.amazon.awssdk.services.s3.S3Uri;
+import software.amazon.awssdk.services.s3.S3Utilities;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
@@ -168,17 +167,17 @@ public class SkeletonSuiteTest {
         //Go through all the skeleton files.  Check if the PUID that DROId identifies for the file matches the beginning
         // of the file name. Or if not, that it is expected to return a different PUID, or none at all.
         for(final Path skeletonPath : this.allPaths) {
-            AmazonS3URI amazonS3URI = new AmazonS3URI("s3://dp-sam-test-bucket/" + skeletonPath.toString());
 
+            URI resourceUri = skeletonPath.toUri();
             String filename = skeletonPath.getFileName().toString();
 
             RequestMetaData metaData = new RequestMetaData(
                     Files.size(skeletonPath), Files.getLastModifiedTime(skeletonPath).toMillis(), filename);
-            RequestIdentifier identifier = new RequestIdentifier(amazonS3URI.getURI());
+            RequestIdentifier identifier = new RequestIdentifier(resourceUri);
             identifier.setParentId(1L);
 
-            IdentificationRequest<URI> request = new S3IdentificationRequest(metaData, identifier);
-            request.open(amazonS3URI.getURI());
+            IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
+            request.open(skeletonPath);
 
             IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
             List<IdentificationResult> results = resultsCollection.getResults();
@@ -267,17 +266,17 @@ public class SkeletonSuiteTest {
         //Go through all the skeleton files.  Check if the PUID that DROId identifies for the file matches the beginning
         // of the file name. Or if not, that it is expected to return a different PUID, or none at all.
         for(final Path skeletonPath : this.allPaths) {
-            AmazonS3URI amazonS3URI = new AmazonS3URI("s3://dp-sam-test-bucket/" + skeletonPath.toString());
-
+            URI uri = URI.create("s3://dp-sam-test-bucket/" + skeletonPath);
+            S3Uri s3Uri = S3Utilities.builder().build().parseUri(uri);
             String filename = skeletonPath.getFileName().toString();
 
             RequestMetaData metaData = new RequestMetaData(
                     Files.size(skeletonPath), Files.getLastModifiedTime(skeletonPath).toMillis(), filename);
-            RequestIdentifier identifier = new RequestIdentifier(amazonS3URI.getURI());
+            RequestIdentifier identifier = new RequestIdentifier(uri);
             identifier.setParentId(1L);
 
-            IdentificationRequest<URI> request = new S3IdentificationRequest(metaData, identifier);
-            request.open(amazonS3URI.getURI());
+            IdentificationRequest<S3Uri> request = new S3IdentificationRequest(metaData, identifier);
+            request.open(s3Uri);
 
             IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
             List<IdentificationResult> results = resultsCollection.getResults();

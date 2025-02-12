@@ -34,19 +34,20 @@ package uk.gov.nationalarchives.droid.submitter;
 import java.net.URI;
 import java.nio.file.Path;
 
+import software.amazon.awssdk.services.s3.S3Uri;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
 
-public class S3IdentificationRequestFactory implements IdentificationRequestFactory<URI> {
+public class S3IdentificationRequestFactory implements IdentificationRequestFactory<S3Uri> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final IdentificationRequest<URI> newRequest(RequestMetaData metaData, RequestIdentifier identifier)
+    public final IdentificationRequest<S3Uri> newRequest(RequestMetaData metaData, RequestIdentifier identifier)
     {
         return new S3IdentificationRequest(metaData, identifier);
     }

@@ -31,49 +31,56 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3URI;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import net.byteseek.io.reader.AbstractReader;
 import net.byteseek.io.reader.cache.WindowCache;
 import net.byteseek.io.reader.windows.SoftWindow;
 import net.byteseek.io.reader.windows.SoftWindowRecovery;
 import net.byteseek.io.reader.windows.Window;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Uri;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 
 import java.io.IOException;
-import java.net.URI;
 
 public class S3WindowReader extends AbstractReader implements SoftWindowRecovery {
 
-    private final AmazonS3URI s3Uri;
+    private final S3Object s3Object;
 
-    private final AmazonS3 s3Client;
+    private final S3Client s3Client;
 
     private final Long length;
 
     //private final Integer windowSize; TODO Allow override from CLI
 
-    public S3WindowReader(WindowCache cache, URI s3Uri, AmazonS3 s3Client) {
+    private record S3Object(String bucket, String key) {}
+
+    public S3WindowReader(WindowCache cache, S3Uri uri, S3Client s3Client) {
         super(cache);
-        this.s3Uri = new AmazonS3URI(s3Uri);
         this.s3Client = s3Client;
-        this.length = s3Client.getObjectMetadata(this.s3Uri.getBucket(), this.s3Uri.getKey()).getContentLength();
+        String bucket = uri.bucket().orElseThrow(() -> new RuntimeException("Bucket not found in uri " + uri));
+        String key = uri.key().orElseThrow(() -> new RuntimeException("Key not found in uri " + uri));
+        HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucket).key(key).build();
+        this.length = s3Client.headObject(request).contentLength();
+        this.s3Object = new S3Object(bucket, key);
     }
 
     @Override
     protected Window createWindow(long windowStart) throws IOException {
         if (windowStart >= 0) {
-            GetObjectRequest getS3ObjectRequest = new GetObjectRequest(this.s3Uri.getBucket(), this.s3Uri.getKey());
+            GetObjectRequest getS3ObjectRequest = GetObjectRequest.builder()
+                    .bucket(this.s3Object.bucket)
+                    .key(this.s3Object.key)
+                    .range("bytes=" + windowStart + "-" + (windowStart + this.windowSize -1))
+                    .build();
 
-            getS3ObjectRequest.setRange(windowStart, windowStart + this.windowSize - 1);
 
-            final S3Object s3object = s3Client.getObject(getS3ObjectRequest);
-            S3ObjectInputStream objectContent = s3object.getObjectContent();
-            byte[] bytes  = objectContent.readAllBytes();
+            ResponseInputStream<GetObjectResponse> response = s3Client.getObject(getS3ObjectRequest);
+            byte[] bytes  = response.readAllBytes();
             int totalRead = bytes.length;
-            objectContent.close();
+            response.close();
             if (totalRead > 0) {
                 return new SoftWindow(bytes, windowStart, totalRead, this);
             }
