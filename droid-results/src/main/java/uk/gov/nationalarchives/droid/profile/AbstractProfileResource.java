@@ -146,6 +146,11 @@ public abstract class AbstractProfileResource {
     public abstract boolean isS3Object();
 
     /**
+     * @return true if the resource is an HTTP object
+     */
+    public abstract boolean isHttpObject();
+
+    /**
      * @return true if the resource should be recursed into; false otherwise
      */
     public boolean isRecursive() {

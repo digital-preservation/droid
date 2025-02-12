@@ -99,6 +99,8 @@ public interface CommandFactory {
 
     DroidCommand getS3Command(CommandLine cli) throws CommandLineSyntaxException;
 
+    DroidCommand getHttpCommand(CommandLine cli) throws CommandLineSyntaxException;
+
 
     /**
      * @return a new check signature update command.

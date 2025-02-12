@@ -283,6 +283,15 @@ public enum CommandLineParam {
         }
     },
 
+    /** Runs without a profile and with the specified http(s) url. */
+    RUN_HTTP("HTTP", "HTTP-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "id") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
+                throws CommandLineSyntaxException {
+            return commandFactory.getHttpCommand(cli);
+        }
+    },
+
     /** Container signature file. */
     CONTAINER_SIGNATURE_FILE("Nc", "container-file", true, 1,
             I18N.CONTAINER_SIGNATURE_FILE_HELP, filename()) {
@@ -402,6 +411,7 @@ public enum CommandLineParam {
         addTopLevelCommand(LIST_FILTER_FIELD);
         addTopLevelCommand(RUN_PROFILE);
         addTopLevelCommand(RUN_S3);
+        addTopLevelCommand(RUN_HTTP);
         addTopLevelCommand(RUN_NO_PROFILE);
         addTopLevelCommand(CHECK_SIGNATURE_UPDATE);
         addTopLevelCommand(DOWNLOAD_SIGNATURE_UPDATE);

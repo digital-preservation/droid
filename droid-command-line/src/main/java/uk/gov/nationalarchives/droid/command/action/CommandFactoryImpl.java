@@ -251,6 +251,11 @@ public class CommandFactoryImpl implements CommandFactory {
         return getCommand(cli, getS3Resources(cli));
     }
 
+    @Override
+    public DroidCommand getHttpCommand(CommandLine cli) throws CommandLineSyntaxException {
+        return getCommand(cli, getHttpResources(cli));
+    }
+
     private DroidCommand getCommand(CommandLine cli, String[] resources) throws CommandLineSyntaxException {
         final ProfileRunCommand command = context.getProfileRunCommand();
         PropertiesConfiguration overrides = getOverrideProperties(cli);
@@ -343,6 +348,17 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private String[] getS3Resources(CommandLine cli) throws CommandLineSyntaxException {
         String[] resources = cli.getOptionValues(CommandLineParam.RUN_S3.toString());
+        if (resources == null || resources.length == 0) {
+            resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
+            if (resources == null || resources.length == 0) {
+                throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+            }
+        }
+        return resources;
+    }
+
+    private String[] getHttpResources(CommandLine cli) throws CommandLineSyntaxException {
+        String[] resources = cli.getOptionValues(CommandLineParam.RUN_HTTP.toString());
         if (resources == null || resources.length == 0) {
             resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
             if (resources == null || resources.length == 0) {

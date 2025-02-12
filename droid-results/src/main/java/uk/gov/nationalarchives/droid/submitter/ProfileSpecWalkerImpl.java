@@ -62,6 +62,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     private FileEventHandler fileEventHandler;
     private S3EventHandler s3EventHandler;
+    private HttpEventHandler httpEventHandler;
     private DirectoryEventHandler directoryEventHandler;
     private ProgressMonitor progressMonitor;
 
@@ -163,6 +164,8 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 fileWalker.walk();
             } else if (resource.isS3Object()) {
                 s3EventHandler.onS3Event(resource);
+            } else if (resource.isHttpObject()) {
+                httpEventHandler.onHttpEvent(resource);
             } else {
                 // The resource is not a directory
                 // Update the progress to say that we are dealing with this resource
@@ -225,5 +228,9 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     public void setS3EventHandler(S3EventHandler s3EventHandler) {
         this.s3EventHandler = s3EventHandler;
+    }
+
+    public void setHttpEventHandler(HttpEventHandler httpEventHandler) {
+        this.httpEventHandler = httpEventHandler;
     }
 }
