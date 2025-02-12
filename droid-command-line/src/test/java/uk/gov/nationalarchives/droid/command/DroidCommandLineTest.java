@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.internal.matchers.Equals;
 import uk.gov.nationalarchives.droid.command.action.CheckSignatureUpdateCommand;
 import uk.gov.nationalarchives.droid.command.action.CommandFactory;
 import uk.gov.nationalarchives.droid.command.action.CommandLineException;
@@ -60,10 +61,8 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author rflitcroft
@@ -91,7 +90,12 @@ public class DroidCommandLineTest {
         
         //a return code of 1 denotes a failure
         Assert.assertEquals(1, droidCommandLine.processExecution());
-        verify(printWriter).println("Incorrect command line syntax: Unrecognized option: --zzzzzz");
+
+        ArgumentCaptor<StringBuilder> stringBuilderArgumentCaptor = ArgumentCaptor.forClass(StringBuilder.class);
+
+        verify(printWriter).println(stringBuilderArgumentCaptor.capture());
+
+        Assert.assertEquals(stringBuilderArgumentCaptor.getValue().toString(), "Incorrect command line syntax: Unrecognized option: --zzzzzz");
     }
 
     @Test
@@ -104,7 +108,12 @@ public class DroidCommandLineTest {
 
         //a return code of 1 denotes a failure
         Assert.assertEquals(1, droidCommandLine.processExecution());
-        verify(printWriter).println("An unknown error occurred: Unknown location [NotACommand]");
+
+        ArgumentCaptor<StringBuilder> stringBuilderCaptor = ArgumentCaptor.forClass(StringBuilder.class);
+
+        verify(printWriter).println(stringBuilderCaptor.capture());
+
+        Assert.assertEquals(stringBuilderCaptor.getValue().toString(), "An unknown error occurred: Unknown location [NotACommand]");
     }
     
     @Test
@@ -117,7 +126,7 @@ public class DroidCommandLineTest {
         droidCommandLine.setPrintWriter(printWriter);
         droidCommandLine.processExecution();
         
-        verify(printWriter).println(any(String.class));
+        verify(printWriter).println(any(StringBuilder.class));
     }
 
     @Test
@@ -129,7 +138,7 @@ public class DroidCommandLineTest {
         droidCommandLine.setPrintWriter(printWriter);
         droidCommandLine.processExecution();
         
-        verify(printWriter).println(any(String.class));
+        verify(printWriter).println(any(StringBuilder.class));
     }
     
     @Test
@@ -141,10 +150,14 @@ public class DroidCommandLineTest {
         DroidCommandLine droidCommandLine = new DroidCommandLine(args);
         droidCommandLine.setPrintWriter(printWriter);
         droidCommandLine.processExecution();
-        
-        verify(printWriter).println("usage: droid [options]");
-        verify(printWriter).println("OPTIONS:");
-        //TestUtil.verifyHelpOptions(printWriter);
+
+        ArgumentCaptor<StringBuilder> stringBuilderCaptor = ArgumentCaptor.forClass(StringBuilder.class);
+
+        verify(printWriter, times(13)).println(stringBuilderCaptor.capture());
+
+        List<StringBuilder> allValues = stringBuilderCaptor.getAllValues();
+        Assert.assertEquals(allValues.getFirst().toString(), "usage: droid [options]");
+        Assert.assertEquals(allValues.get(1).toString(), "OPTIONS:");
     }
 
     @Test
@@ -155,10 +168,14 @@ public class DroidCommandLineTest {
         DroidCommandLine droidCommandLine = new DroidCommandLine(args);
         droidCommandLine.setPrintWriter(printWriter);
         droidCommandLine.processExecution();
-        
-        verify(printWriter).println("usage: droid [options]");
-        verify(printWriter).println("OPTIONS:");
-        //TestUtil.verifyHelpOptions(printWriter);
+
+        ArgumentCaptor<StringBuilder> stringBuilderCaptor = ArgumentCaptor.forClass(StringBuilder.class);
+
+        verify(printWriter, times(13)).println(stringBuilderCaptor.capture());
+
+        List<StringBuilder> allValues = stringBuilderCaptor.getAllValues();
+        Assert.assertEquals(allValues.getFirst().toString(), "usage: droid [options]");
+        Assert.assertEquals(allValues.get(1).toString(), "OPTIONS:");
     }
     
     @Test
@@ -337,7 +354,12 @@ public class DroidCommandLineTest {
         droidCommandLine.setContext(context);
 
         droidCommandLine.processExecution();
-        verify(printWriter).println("Incorrect command line syntax: The option 'v' was specified but an " +
+
+        ArgumentCaptor<StringBuilder> stringBuilderCaptor = ArgumentCaptor.forClass(StringBuilder.class);
+
+        verify(printWriter).println(stringBuilderCaptor.capture());
+
+        Assert.assertEquals(stringBuilderCaptor.getValue().toString(), "Incorrect command line syntax: The option 'v' was specified but an " +
                 "option from this group has already been selected: 'h'");
     }
     
@@ -447,10 +469,10 @@ public class DroidCommandLineTest {
         DroidCommandLine droidCommandLine = new DroidCommandLine(args, printWriter);
         droidCommandLine.setContext(context);
         droidCommandLine.processExecution();
-        ArgumentCaptor<String> argCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<StringBuilder> argCaptor = ArgumentCaptor.forClass(StringBuilder.class);
         verify(printWriter).println(argCaptor.capture());
-        String value = argCaptor.getValue();
-        assertTrue(value.startsWith("Incorrect command line syntax: No actionable command line options specified (use -h to see all available options): -p"));
+        StringBuilder value = argCaptor.getValue();
+        assertTrue(value.toString().startsWith("Incorrect command line syntax: No actionable command line options specified (use -h to see all available options): -p"));
     }
     
     @Test
@@ -470,7 +492,10 @@ public class DroidCommandLineTest {
         DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
 
-        verify(printWriter).println("Incorrect command line syntax: Must specify exactly one profile.");
+        ArgumentCaptor<StringBuilder> stringBuilderCaptor = ArgumentCaptor.forClass(StringBuilder.class);
+
+        verify(printWriter).println(stringBuilderCaptor.capture());
+        Assert.assertEquals(stringBuilderCaptor.getValue().toString(), "Incorrect command line syntax: Must specify exactly one profile.");
     }
 
     @Test
@@ -511,7 +536,11 @@ public class DroidCommandLineTest {
         
         DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-        verify(printWriter).println("Incorrect command line syntax: Missing argument for option: a");
+
+        ArgumentCaptor<StringBuilder> stringBuilderCaptor = ArgumentCaptor.forClass(StringBuilder.class);
+
+        verify(printWriter).println(stringBuilderCaptor.capture());
+        Assert.assertEquals(stringBuilderCaptor.getValue().toString(), "Incorrect command line syntax: Missing argument for option: a");
     }
 
     
@@ -638,7 +667,12 @@ public class DroidCommandLineTest {
         
         DroidCommandLine commandLine = new DroidCommandLine(args, printWriter);
         commandLine.processExecution();
-        verify(printWriter).println("Incorrect command line syntax: Missing argument for option: s");
+
+        ArgumentCaptor<StringBuilder> stringBuilderCaptor = ArgumentCaptor.forClass(StringBuilder.class);
+
+        verify(printWriter).println(stringBuilderCaptor.capture());
+
+        Assert.assertEquals(stringBuilderCaptor.getValue().toString(), "Incorrect command line syntax: Missing argument for option: s");
     }
 
     @Test
