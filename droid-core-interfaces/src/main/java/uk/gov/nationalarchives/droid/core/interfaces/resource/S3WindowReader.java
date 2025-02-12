@@ -38,15 +38,12 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import net.byteseek.io.reader.AbstractReader;
 import net.byteseek.io.reader.cache.WindowCache;
-import net.byteseek.io.reader.windows.HardWindow;
 import net.byteseek.io.reader.windows.SoftWindow;
 import net.byteseek.io.reader.windows.SoftWindowRecovery;
 import net.byteseek.io.reader.windows.Window;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 public class S3WindowReader extends AbstractReader implements SoftWindowRecovery {
 
@@ -56,14 +53,13 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
 
     private final Long length;
 
-    private final Integer windowSize;
+    //private final Integer windowSize; TODO Allow override from CLI
 
     public S3WindowReader(WindowCache cache, URI s3Uri, AmazonS3 s3Client) {
         super(cache);
         this.s3Uri = new AmazonS3URI(s3Uri);
         this.s3Client = s3Client;
         this.length = s3Client.getObjectMetadata(this.s3Uri.getBucket(), this.s3Uri.getKey()).getContentLength();
-        this.windowSize = this.length > 1024 * 1024 * 500 ? 1024 * 1024 * 50 : 4096;
     }
 
     @Override

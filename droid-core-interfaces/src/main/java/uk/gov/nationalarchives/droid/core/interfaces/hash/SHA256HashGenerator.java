@@ -50,5 +50,4 @@ public class SHA256HashGenerator implements HashGenerator {
     public String hash(InputStream in) throws IOException {
         return DigestUtils.sha256Hex(in);
     }
-
 }

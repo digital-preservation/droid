@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.report.planets.xml;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;

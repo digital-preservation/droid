@@ -57,7 +57,16 @@ public class S3IdentificationRequest implements IdentificationRequest<URI> {
     private final RequestMetaData requestMetaData;
     private final Long size;
 
-    private final AmazonS3 s3client = buildClient();
+    private final AmazonS3 s3client;
+
+    public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier) {
+        this.identifier = identifier;
+        this.s3client = buildClient();
+        this.requestMetaData = requestMetaData;
+        AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
+        this.size = s3client.getObjectMetadata(amazonS3URI.getBucket(), amazonS3URI.getKey()).getContentLength();
+        this.s3Reader = buildWindowReader(identifier.getUri());
+    }
 
     private AmazonS3 buildClient() {
         AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2);
@@ -68,14 +77,6 @@ public class S3IdentificationRequest implements IdentificationRequest<URI> {
     private WindowReader buildWindowReader(final URI theFile) {
         final WindowCache cache = new TopAndTailFixedLengthCache(this.size, TOP_TAIL_BUFFER_CAPACITY);
         return new S3WindowReader(cache, theFile, s3client);
-    }
-
-    public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier) {
-        this.identifier = identifier;
-        this.requestMetaData = requestMetaData;
-        AmazonS3URI amazonS3URI = new AmazonS3URI(identifier.getUri());
-        this.size = s3client.getObjectMetadata(amazonS3URI.getBucket(), amazonS3URI.getKey()).getContentLength();
-        this.s3Reader = buildWindowReader(identifier.getUri());
     }
 
     /**

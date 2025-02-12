@@ -36,6 +36,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -189,8 +190,25 @@ public class ProfileResourceNode {
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        return uri == null ? "[URI not set]" : java.net.URLDecoder.decode(uri.toString());
+    public String toString()
+    {
+        if (uri == null) {
+            return "[URI not set]";
+        }
+
+        if ("file".equals(uri.getScheme())) {
+            return Paths.get(uri).toAbsolutePath().toString();
+        }
+
+        String result = java.net.URLDecoder.decode(uri.toString()).replaceAll("file://", "");
+
+        // Handle substitution of 7z
+        final String sevenZedIdentifier = "sevenz:";
+        if (result.startsWith(sevenZedIdentifier)) {
+            result = "7z:" + result.substring(sevenZedIdentifier.length());
+        }
+
+        return result;
     }
 
 

@@ -115,6 +115,10 @@ public class CommandFactoryImpl implements CommandFactory {
             cmd.setColumnsToWrite(columns);
         }
 
+        if (cli.hasOption(CommandLineParam.EXPORT_TEMPLATE.getLongName())) {
+            cmd.setExportTemplate(cli.getOptionValue(CommandLineParam.EXPORT_TEMPLATE.getLongName()));
+        }
+
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
             cmd.setFilter(createFilter(cli.getOptionValues(CommandLineParam.ALL_FILTER.toString()), true));
         }
@@ -151,6 +155,10 @@ public class CommandFactoryImpl implements CommandFactory {
         if (cli.hasOption(CommandLineParam.COLUMNS_TO_WRITE.getLongName())) {
             String columns = String.join(SPACE, cli.getOptionValues(CommandLineParam.COLUMNS_TO_WRITE.getLongName()));
             cmd.setColumnsToWrite(columns);
+        }
+
+        if (cli.hasOption(CommandLineParam.EXPORT_TEMPLATE.getLongName())) {
+            cmd.setExportTemplate(cli.getOptionValue(CommandLineParam.EXPORT_TEMPLATE.getLongName()));
         }
 
         if (cli.hasOption(CommandLineParam.ALL_FILTER.toString())) {
@@ -235,15 +243,6 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public DroidCommand getNoProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
-        return getCommand(cli, getNoProfileResources(cli));
-    }
-
-    @Override
-    public DroidCommand getS3Command(CommandLine cli) throws CommandLineSyntaxException {
-        return getCommand(cli, getS3Resources(cli));
-    }
-
-    private DroidCommand getCommand(CommandLine cli, String[] resources) throws CommandLineSyntaxException {
         final ProfileRunCommand command = context.getProfileRunCommand();
         PropertiesConfiguration overrides = getOverrideProperties(cli);
 
@@ -254,7 +253,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
         overrides.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
         overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "FILE_PATH PUID");
-        command.setResources(resources);
+        command.setResources(getNoProfileResources(cli));
         command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
         command.setProperties(overrides); // must be called after we set destination.
@@ -324,17 +323,6 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private String[] getNoProfileResources(CommandLine cli) throws CommandLineSyntaxException {
         String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
-        if (resources == null || resources.length == 0) {
-            resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
-            if (resources == null || resources.length == 0) {
-                throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
-            }
-        }
-        return resources;
-    }
-    
-    private String[] getS3Resources(CommandLine cli) throws CommandLineSyntaxException {
-        String[] resources = cli.getOptionValues(CommandLineParam.RUN_S3.toString());
         if (resources == null || resources.length == 0) {
             resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
             if (resources == null || resources.length == 0) {
@@ -429,15 +417,19 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private void setExpandArchiveTypes(PropertiesConfiguration overrideProperties, String[] archiveTypes) {
         setAllArchivesExpand(overrideProperties, false);
-        for (String archiveType : archiveTypes) {
-            overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+        if (archiveTypes != null) {
+            for (String archiveType : archiveTypes) {
+                overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+            }
         }
     }
 
     private void setExpandWebArchiveTypes(PropertiesConfiguration overrideProperties, String[] webArchiveTypes) {
         setAllWebArchivesExpand(overrideProperties, false);
-        for (String archiveType : webArchiveTypes) {
-            overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+        if (webArchiveTypes != null) {
+            for (String archiveType : webArchiveTypes) {
+                overrideProperties.setProperty(getArchivePropertyName(archiveType), true);
+            }
         }
     }
 

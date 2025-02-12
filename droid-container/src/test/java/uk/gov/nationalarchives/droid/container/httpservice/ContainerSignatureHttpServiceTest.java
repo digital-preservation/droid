@@ -74,8 +74,8 @@ public class ContainerSignatureHttpServiceTest {
         stubFor(get(urlEqualTo("/pronom/container-signature.xml"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "text/xml")
-                        .withHeader("Last-Modified", "Wed, 21 Jan 2022 07:28:00 GMT")
-                        .withBody(IOUtils.resourceToString("/container-signature-20221102.xml", StandardCharsets.UTF_8))
+                        .withHeader("Last-Modified", "Tue, 22 Aug 2023 12:47:41 GMT")
+                        .withBody(IOUtils.resourceToString("/container-signature-20240715.xml", StandardCharsets.UTF_8))
                 ));
 
 

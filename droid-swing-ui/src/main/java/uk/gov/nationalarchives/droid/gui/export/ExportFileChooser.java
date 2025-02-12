@@ -55,10 +55,10 @@ public class ExportFileChooser extends JFileChooser {
     @Override
     protected void setup(FileSystemView view) {
         super.setup(view);
-
         setAcceptAllFileFilterUsed(true);
         csvFilter = new FileNameExtensionFilter("Comma separated values (*.csv)", CSV_EXT);
         addChoosableFileFilter(csvFilter);
+        setFileFilter(csvFilter);
     }
 
         /**

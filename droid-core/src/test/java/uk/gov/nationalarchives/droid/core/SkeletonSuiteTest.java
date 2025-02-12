@@ -84,7 +84,7 @@ public class SkeletonSuiteTest {
 
     private static final String TEST_FILES_DIR = "test-skeletons/";
     //TODO: Read latest signature file by default where required in this and other tests.
-    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V109.xml";
+    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V119.xml";
     private static final Pattern PuidInFilenamePattern = Pattern.compile("^(x-)?fmt-\\d{1,4}");
     private static final Pattern PuidPattern = Pattern.compile("^(x-)?fmt/\\d{1,4}");
 
@@ -153,6 +153,105 @@ public class SkeletonSuiteTest {
 
     @Test
     public void testBinarySkeletonMatch() throws Exception {
+
+        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
+        droid.setSignatureFile(SIGFILE);
+
+        try {
+            droid.init();
+        } catch (SignatureParseException x) {
+            assertEquals("Can't parse signature file", x.getMessage());
+        }
+
+        int errorCount = 0;
+
+        //Go through all the skeleton files.  Check if the PUID that DROId identifies for the file matches the beginning
+        // of the file name. Or if not, that it is expected to return a different PUID, or none at all.
+        for(final Path skeletonPath : this.allPaths) {
+            AmazonS3URI amazonS3URI = new AmazonS3URI("s3://dp-sam-test-bucket/" + skeletonPath.toString());
+
+            String filename = skeletonPath.getFileName().toString();
+
+            RequestMetaData metaData = new RequestMetaData(
+                    Files.size(skeletonPath), Files.getLastModifiedTime(skeletonPath).toMillis(), filename);
+            RequestIdentifier identifier = new RequestIdentifier(amazonS3URI.getURI());
+            identifier.setParentId(1L);
+
+            IdentificationRequest<URI> request = new S3IdentificationRequest(metaData, identifier);
+            request.open(amazonS3URI.getURI());
+
+            IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
+            List<IdentificationResult> results = resultsCollection.getResults();
+            String expectedPuid = filesWithPuids.get(filename);
+
+            assertNotEquals(expectedPuid, null);
+
+            if (!ArrayUtils.contains(this.currentKnownUnidentifiedFiles, filename)) {
+
+                // Check if we have any results from DROID - we should have as the file is not in the list of known
+                // unidentified files.
+                try {
+                    // Catch assertion failure so we can print an error and continue, checking the total
+                    // error count after all files are processed.
+                    assertTrue(results.size() >= 1);
+                } catch (AssertionError e) {
+                    System.out.println("No results found for file: " + filename + ". Expected: " + expectedPuid);
+                    errorCount++;
+                    continue;
+                }
+
+                //If we reach here, we have at least one result from DROID for the current file.
+                //Allow for more than one identification to be returned by DROID.  This is fine as long as one of them
+                //matches the expected PUID.
+                String[] puidsIdentified = getPuidsFromIdentification(results);
+
+                try {
+                    //Catch assertion failure so we can print error and continue, checking the total error count after
+                    // all files are processed.
+                    Assert.assertTrue(ArrayUtils.contains(puidsIdentified,expectedPuid));
+                } catch( AssertionError e) {
+                    //Is this a file where we're expecting a different PUID to the one the filename starts with?
+                    if(this.currentMisidentifiedFiles.containsKey(filename)) {
+                        String expectedWrongPuid = currentMisidentifiedFiles.get(filename);
+                        if(ArrayUtils.contains(puidsIdentified, expectedWrongPuid)) {
+                            System.out.println(String.format("INFO: Skeleton file %s identified by expected \"wrong\"" +
+                                    " PUID %s instead of %s.", filename, expectedWrongPuid, expectedPuid));
+                        } else {
+                            System.out.println(printError(filename, expectedWrongPuid, puidsIdentified));
+                            errorCount++;
+                        }
+                    } else {
+                        // We expected DROID to identify this file with a PUID matching the start of the filename - so
+                        // this is an unexpected result.
+                        System.out.println(printError(filename, expectedPuid, puidsIdentified));
+                        errorCount++;
+                    }
+
+                }
+            } else {
+                //We expect this file not be identified by its name derived PUID, or by any alternative PUID
+                try {
+                    //Catch assertion failure so we can print error and continue, checking the total error count after
+                    // all files are processed.
+                    assertTrue(results.size() == 0);
+                }  catch ( AssertionError e) {
+
+                    String[] puidsIdentifiedForFile = getPuidsFromIdentification(results);
+
+                    System.out.println(printError(filename, NO_PUID, puidsIdentifiedForFile));
+                    errorCount++;
+                }
+
+            }
+        }
+
+        assertEquals(String.format("%1$d error(s) occurred in skeleton file identifications, see earlier messages.",
+                errorCount), 0, errorCount);
+    }
+
+    @Test
+    @Ignore
+    public void testS3BinarySkeletonMatch() throws Exception {
 
         BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
         droid.setSignatureFile(SIGFILE);

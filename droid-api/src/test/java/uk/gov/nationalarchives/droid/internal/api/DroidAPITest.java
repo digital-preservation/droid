@@ -88,7 +88,7 @@ public class DroidAPITest {
         ApiResult identificationResult = results.get(0);
 
         assertThat(identificationResult.getPuid(), is("fmt/291"));
-        assertThat(identificationResult.getName(), is("Open Document Text 1.2"));
+        assertThat(identificationResult.getName(), is("OpenDocument Text"));
         assertThat(identificationResult.getMethod(), is(IdentificationMethod.CONTAINER));
     }
 
@@ -133,9 +133,9 @@ public class DroidAPITest {
 
     @Test
     public void should_report_correct_version_for_the_binary_and_container_signature() {
-        assertThat(api.getContainerSignatureVersion(), is("20221102"));
+        assertThat(api.getContainerSignatureVersion(), is("20240715"));
         assertThat(api.getDroidVersion(), is(ResourceBundle.getBundle("options").getString("version_no")));
-        assertThat(api.getBinarySignatureVersion(), is("109"));
+        assertThat(api.getBinarySignatureVersion(), is("119"));
     }
 
     @Test
@@ -154,5 +154,12 @@ public class DroidAPITest {
             acc += results.size();
         }
         assertThat(acc, is(MAX_ITER));
+    }
+
+    @Test
+    public void should_identify_fmt_40_correctly_with_container_identification_method() throws IOException {
+        List<ApiResult> results = api.submit(
+                Paths.get("../droid-container/src/test/resources/word97.doc"));
+        assertThat(results.get(0).getName(), is("Microsoft Word Document"));
     }
 }

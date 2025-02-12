@@ -1,3 +1,28 @@
+Version 6.8.1
+ * #1148 Improvement: Update the internal database to the latest version
+ * #1148 Improvement: Drop support for Java versions below 21. Updated the bundled java version to 21.0.5
+ * #1151 Improvement: Replace javax.xml with jakarta.xml. This will allow us to upgrade other libraries to later versions
+
+Version 6.8.0
+ * Feature: Export Templates - Ability to customise the Droid CSV export by defining templates
+ * #932 Improvement: Prompt for a new profile creation on closing the preferences dialog
+ * #938 Improvement: The Windows distributable now includes a 64 bit Java 17 JRE
+ * #1063 Improvement: Updated commons-httpclient dependecy used for signature download
+ * #561 Bugfix: On Windows, when a profile is closed, the associated profile folder is not deleted
+ * #1072 Bugfix: Empty columns are not populated with a blank when a file has more than one format identification
+ * #1011 Bugfix: Mismatch in the format name between GUI and API when identification method is 'Container'
+ * #1100 Bugfix: Cancelling the preferences dialog still makes changes to the preferences
+ * #1072 Bugfix: Fewer elements in data row when exporting profiles per file when some of them have more than one identification
+
+Version 6.7.0
+* #898 Improvement: Sigtool uses the version of java bundled with Droid on the Windows OS
+* #938 Improvement: Internal API result includes whether there is an extension mismatch in identification
+* #861 Improvement: CSV export has column headers when there is more than one PUID per file
+* #952 Improvement: SHA512 is available as an option for checksums
+* #977 Improvement: Added an `About Droid` dialog to the GUI
+* Improvement: Moved to using a different zip library for opening the zip archives
+* #953 Bugfix: On CLI, -At and -Wt options without any arguments do not analyse archives or web archives
+
 Version 6.6.1
 * #898 Bugfix: Use backslash on Windows OS in no profile output
 * #900 Bugfix: Failure to consistently output HASH column in CSV

@@ -89,7 +89,7 @@ You can read an existing binary or container signature file, and output a new si
 
 For example, if you ran:
 ```
-sigtool --file "DROID_SignatureFile_V109.xml"
+sigtool --file "DROID_SignatureFile_V119.xml"
 ```
 It would write a new XML file to the console.  You can pipe this into a new file using your shell.  The signature file will be transformed to use the new syntax, e.g.:
 ```
@@ -106,7 +106,7 @@ It would write a new XML file to the console.  You can pipe this into a new file
 ```
 You can see that it's transformed a binary signature file using container syntax (the default).  If we wanted to use the older binary syntax for this transformation, we could write:
 ```
-sigtool --binary --file "DROID_SignatureFile_V109.xml"
+sigtool --binary --file "DROID_SignatureFile_V119.xml"
 ```
 It would give this output (snippet):
 ```
@@ -125,7 +125,7 @@ It would give this output (snippet):
 ## Summarise all signatures in a syntax file.
 You can obtain a summary of all signatures in a signature file into a tab-delimited format, by specifying the --expression option.  For example, running:
 ```
-sigtool --expression --file "DROID_SignatureFile_V109.xml"
+sigtool --expression --file "DROID_SignatureFile_V119.xml"
 ```
 Would give the following output (snippet):
 
@@ -143,7 +143,7 @@ Would give the following output (snippet):
 
 You can also specify --binary signature syntax or use --container syntax (the default).  This also works for container files, where you get a little more metadata:
 ```
-sigtool --expression --file "container-signature-20221102.xml"
+sigtool --expression --file "container-signature-20230822.xml"
 ```
 Gives the following output (snippet):
 

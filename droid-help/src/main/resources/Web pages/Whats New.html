@@ -65,6 +65,53 @@
       </tr>
     </table>
     <p>
+      Droid 6.8.1 offers the following improvements:
+    </p>
+    <ul>
+      <li>#1148 Improvement: Update the internal database to the latest version</li>
+      <li>#1148 Improvement: Drop support for Java versions below 21. Updated the bundled java version to 21.0.5</li>
+      <li>#1151 Improvement: Replace javax.xml with jakarta.xml. This will allow us to upgrade other libraries to later versions</li>
+    </ul>
+    <p>
+      For a full list of the included changes with this version, please check the <a href="http://www.github.com/digital-preservation/droid/releases/tag/droid-6.8.1/">changelog</a>
+      <img src="../Images/Icon_External_Link.png"> on github
+    </p>
+    <p>
+      Droid 6.8.0 offers the following features, improvements and bugfixes:
+    </p>
+    <ul>
+      <li>Feature: Export Templates - Ability to customise the Droid CSV export by defining templates </li>
+      <li>#932 Improvement: Prompt for a new profile creation on closing the preferences dialog</li>
+      <li>#938 Improvement: The Windows distributable now includes a 64 bit JRE </li>
+      <li>#1063 Improvement: Updated commons-httpclient dependecy used for signature download</li>
+      <li>#561 Bugfix: On Windows, when a profile is closed, the associated profile folder is not deleted </li>
+      <li>#1072 Bugfix: Empty columns are not populated with a blank when a file has more than one format identification </li>
+      <li>#1011 Bugfix: Mismatch in the format name between GUI and API when identification method is 'Container' </li>
+      <li>#1100 Bugfix: Cancelling the preferences dialog still makes changes to the preferences</li>
+      <li>#1072 Bugfix: Fewer elements in data row when exporting profiles per file when some of them have more than one identification</li>
+    </ul>
+    <p>
+      For a full list of the included changes with this version, please check the <a href="http://www.github.com/digital-preservation/droid/releases/tag/droid-6.8.0/">changelog</a>
+      <img src="../Images/Icon_External_Link.png"> on github
+    </p>
+    <p>
+      Droid 6.7.0 offers the following fixes and improvements:
+    </p>
+    <ul>
+      <li>#898 Improvement: Sigtool uses the version of java bundled with Droid on the Windows OS</li>
+      <li>#938 Improvement: Internal API result includes whether there is an extension mismatch in identification</li>
+      <li>#861 Improvement: CSV export has column headers when there is more than one PUID per file </li>
+      <li>#952 Improvement: SHA512 is available as an option for checksums</li>
+      <li>#977 Improvement: Added an `About Droid` dialog to the GUI</li>
+      <li>Improvement: Moved to using a different zip library for opening the zip archives</li>
+      <li>#953 Bugfix: On CLI, -At and -Wt options without any arguments do not analyse archives or web archives </li>
+    </ul>
+    <p>
+      For a full list of the included changes with this version, please check the <a href="http://www.github.com/digital-preservation/droid/releases/tag/droid-6.7.0/">changelog</a>
+      <img src="../Images/Icon_External_Link.png"> on github
+    </p>
+
+    <p>
       Droid 6.6.1 offers the following fixes and improvements:
     </p>
     <ul>
