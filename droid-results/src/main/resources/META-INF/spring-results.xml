@@ -259,6 +259,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="httpEventHandler" ref="httpEventHandler"/>
         <property name="directoryEventHandler" ref="dirEventHandler"/>
         <property name="progressMonitor" ref="progressMonitor"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
     </bean>
 
     <bean id="profileWalkerDao" class="uk.gov.nationalarchives.droid.submitter.ProfileWalkerDao">

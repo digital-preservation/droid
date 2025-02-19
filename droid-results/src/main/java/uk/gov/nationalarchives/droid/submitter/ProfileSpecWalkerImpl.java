@@ -39,6 +39,7 @@ import java.util.List;
 
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.ProfileSpec;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
@@ -60,6 +61,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
     private S3EventHandler s3EventHandler;
     private HttpEventHandler httpEventHandler;
     private DirectoryEventHandler directoryEventHandler;
+    private ResultHandler resultHandler;
     private ProgressMonitor progressMonitor;
 
     private transient volatile boolean cancelled;
@@ -80,10 +82,11 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
      * @param progressMonitor       The progress monitor.
      */
     public ProfileSpecWalkerImpl(FileEventHandler fileEventHandler, DirectoryEventHandler directoryEventHandler,
-                                 ProgressMonitor progressMonitor) {
+                                 ProgressMonitor progressMonitor, ResultHandler resultHandler) {
         setFileEventHandler(fileEventHandler);
         setDirectoryEventHandler(directoryEventHandler);
         setProgressMonitor(progressMonitor);
+        setResultHandler(resultHandler);
     }
 
     @Override
@@ -111,7 +114,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
             }
 
             if (resource.isS3Object()) {
-                S3Walker s3Walker = new S3Walker(progressMonitor, directoryEventHandler, s3EventHandler);
+                S3Walker s3Walker = new S3Walker(progressMonitor, resultHandler, s3EventHandler);
                 s3Walker.walk(resource);
             } else if (resource.isDirectory()) {
                 processDirectory(resource, fastForward, walkState);
@@ -233,5 +236,9 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
         walkState.setWalkStatus(WalkStatus.IN_PROGRESS);
         fileWalker.walk();
+    }
+
+    public void setResultHandler(ResultHandler resultHandler) {
+        this.resultHandler = resultHandler;
     }
 }
