@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
+import uk.gov.nationalarchives.droid.core.interfaces.http.S3ClientFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.ResourceUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
@@ -62,7 +63,8 @@ import uk.gov.nationalarchives.droid.gui.export.ExportDialog;
 import uk.gov.nationalarchives.droid.gui.export.ExportFileChooser;
 import uk.gov.nationalarchives.droid.gui.export.ExportProgressDialog;
 import uk.gov.nationalarchives.droid.gui.filechooser.ProfileFileChooser;
-import uk.gov.nationalarchives.droid.gui.filechooser.ResourceSelectorDialog;
+import uk.gov.nationalarchives.droid.gui.filechooser.FileResourceSelectorDialog;
+import uk.gov.nationalarchives.droid.gui.filechooser.S3ResourceSelectorDialog;
 import uk.gov.nationalarchives.droid.gui.filter.FilterDialog;
 import uk.gov.nationalarchives.droid.gui.filter.FilterFileChooser;
 import uk.gov.nationalarchives.droid.gui.help.AboutDialog;
@@ -92,12 +94,15 @@ import javax.help.SwingHelpUtilities;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -139,7 +144,7 @@ public class DroidMainFrame extends JFrame {
     private DroidUIContext droidContext;
     private JFileChooser profileFileChooser = new ProfileFileChooser();
     private JFileChooser filterFileChooser;
-    private ResourceSelectorDialog resourceFileChooser;
+    private FileResourceSelectorDialog resourceFileChooser;
     private ButtonManager buttonManager;
     private GlobalContext globalContext;
     private JFileChooser exportFileChooser;
@@ -297,7 +302,7 @@ public class DroidMainFrame extends JFrame {
             }
         });
 
-
+        globalContext = new SpringGuiContext();
         initComponents();
         setLocationRelativeTo(null);
 
@@ -317,13 +322,12 @@ public class DroidMainFrame extends JFrame {
             log.error(e.getMessage(), e);
         }
 
-        globalContext = new SpringGuiContext();
         profileManager = globalContext.getProfileManager();
         droidContext = new DroidUIContext(jProfilesTabbedPane, profileManager);
         exportFileChooser = new ExportFileChooser();
         filterFileChooser = new FilterFileChooser(globalContext.getGlobalConfig().getFilterDir().toFile());
-        signatureInstallDialog = new SignatureInstallDialog(this);
-        resourceFileChooser = new ResourceSelectorDialog(this);
+
+        resourceFileChooser = new FileResourceSelectorDialog(this);
         resourceFileChooser.setModal(true);
 
         AboutDialogData data = populateAboutDialogData();
@@ -442,7 +446,6 @@ public class DroidMainFrame extends JFrame {
         jButtonSaveProfile = new javax.swing.JButton();
         jButtonExport = new javax.swing.JButton();
         jSeparator13 = new javax.swing.JToolBar.Separator();
-        jButtonAddFile = new javax.swing.JButton();
         jButtonRemoveFilesAndFolder = new javax.swing.JButton();
         jSeparator12 = new javax.swing.JToolBar.Separator();
         jButtonStart = new javax.swing.JButton();
@@ -554,15 +557,25 @@ public class DroidMainFrame extends JFrame {
         jSeparator13.setSeparatorSize(new java.awt.Dimension(20, 40));
         droidToolBar.add(jSeparator13);
 
-        jButtonAddFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Add.png"))); // NOI18N
-        jButtonAddFile.setText("Add");
-        jButtonAddFile.setToolTipText("Add files or folders to profile");
-        jButtonAddFile.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Add disabled.png"))); // NOI18N
-        jButtonAddFile.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Add disabled.png"))); // NOI18N
-        jButtonAddFile.setFocusable(false);
-        jButtonAddFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonAddFile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonAddFile.addActionListener(evt -> jButtonAddFileActionPerformed(evt));
+        if (globalContext.getGlobalConfig().getBooleanProperty(DroidGlobalProperty.FILES_FROM_S3)) {
+            createAddButton();
+            JMenuItem fromS3MenuItem = new JMenuItem("From S3");
+            fromS3MenuItem.addActionListener(this::addFileFromS3);
+            JMenuItem fromFileSystemMenuItem = new JMenuItem("From FileSystem");
+            fromFileSystemMenuItem.addActionListener(this::jButtonAddFileActionPerformed);
+            JPopupMenu popupMenu = new JPopupMenu();
+            popupMenu.add(fromS3MenuItem);
+            popupMenu.add(fromFileSystemMenuItem);
+
+            jButtonAddFile.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            });
+        } else {
+            createAddButton();
+            jButtonAddFile.addActionListener(this::jButtonAddFileActionPerformed);
+        }
         droidToolBar.add(jButtonAddFile);
 
         jButtonRemoveFilesAndFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Remove.png"))); // NOI18N
@@ -1172,14 +1185,19 @@ public class DroidMainFrame extends JFrame {
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_settingsMenuItemActionPerformed
         // create the dialog and initialise the dialog's values
         Map<String, Object> settings = globalContext.getGlobalConfig().getPropertiesMap();
-
+        boolean loadFromS3 = (boolean) settings.getOrDefault(DroidGlobalProperty.FILES_FROM_S3.getName(), false);
         ConfigDialog configDialog = new ConfigDialog(this, globalContext);
         try {
             configDialog.init(settings);
             configDialog.setVisible(true);
             if (configDialog.getResponse() == ConfigDialog.OK) {
                 try {
-                    globalContext.getGlobalConfig().update(configDialog.getGlobalConfig());
+                    Map<String, Object> newConfig = configDialog.getGlobalConfig();
+                    if ((boolean) newConfig.getOrDefault(DroidGlobalProperty.FILES_FROM_S3.getName(), false) != loadFromS3) {
+
+                        JOptionPane.showMessageDialog(this, "Setting will be applied after a restart of DROID");
+                    }
+                    globalContext.getGlobalConfig().update(newConfig);
                 } catch (ConfigurationException e) {
                     log.error("Error updating properties: " + e.getMessage(), e);
                     JOptionPane.showMessageDialog(configDialog, NbBundle.getMessage(ConfigDialog.class,
@@ -1287,6 +1305,33 @@ public class DroidMainFrame extends JFrame {
             newProfileAction.execute();
         } catch (ProfileManagerException e) {
             DialogUtils.showGeneralErrorDialog(this, ERROR_TITLE, e.getMessage());
+        }
+    }
+
+    public void addFileFromS3(ActionEvent evt) {
+        S3ClientFactory s3ClientFactory = new S3ClientFactory(globalContext.getGlobalConfig());
+        S3ResourceSelectorDialog s3ResourceSelectorDialog = new S3ResourceSelectorDialog(this, s3ClientFactory);
+        s3ResourceSelectorDialog.setModal(true);
+        int returnVal = s3ResourceSelectorDialog.showDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            List<File> selectedFiles = s3ResourceSelectorDialog.getSelectedFiles();
+            log.info("Found {} files", selectedFiles.size());
+            //CHECKSTYLE:OFF
+            try {
+                for (File file: selectedFiles) {
+                    log.info(file.getPath().replaceAll("\\\\", "/"));
+                    log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                    log.info("URI {}", file.toURI());
+                    log.info("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+                    log.info(file.toURI().getPath());
+                    log.info("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            addFilesAndFolders(selectedFiles);
+            //CHECKSTYLE:ON
         }
     }
 
@@ -1411,7 +1456,7 @@ public class DroidMainFrame extends JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void openProfileAction(ActionEvent event) {
-
+        profileFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         int result = profileFileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             final Path selectedFile = profileFileChooser.getSelectedFile().toPath();
@@ -1448,6 +1493,19 @@ public class DroidMainFrame extends JFrame {
             updateFilterControls();
         }
         profileForm.start();
+    }
+
+    private void createAddButton() {
+        jButtonAddFile = new javax.swing.JButton();
+        jButtonAddFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/Add.png"))); // NOI18N
+        jButtonAddFile.setText("Add");
+        jButtonAddFile.setToolTipText("Add files or folders to profile");
+        String addDisabledImage = "/uk/gov/nationalarchives/droid/OldIcons/Add disabled.png";
+        jButtonAddFile.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource(addDisabledImage))); // NOI18N
+        jButtonAddFile.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource(addDisabledImage))); // NOI18N
+        jButtonAddFile.setFocusable(false);
+        jButtonAddFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonAddFile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
     }
 
     private void stopProfile() {

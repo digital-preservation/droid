@@ -38,18 +38,13 @@ import java.util.Collection;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.NodeStatus;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.gui.DroidUIContext;
 import uk.gov.nationalarchives.droid.gui.ProfileForm;
-import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
-import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
-import uk.gov.nationalarchives.droid.profile.FileProfileResource;
-import uk.gov.nationalarchives.droid.profile.NodeMetaData;
-import uk.gov.nationalarchives.droid.profile.ProfileInstance;
-import uk.gov.nationalarchives.droid.profile.ProfileManager;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
-import uk.gov.nationalarchives.droid.profile.ProfileSpec;
+import uk.gov.nationalarchives.droid.profile.*;
 
 /**
  * Action class for adding file s/folders to a profile spec.
@@ -58,6 +53,7 @@ import uk.gov.nationalarchives.droid.profile.ProfileSpec;
  */
 public class AddFilesAndFoldersAction {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AddFilesAndFoldersAction.class);
     private DroidUIContext droidContext;
     private ProfileManager profileManager;
 
@@ -77,7 +73,7 @@ public class AddFilesAndFoldersAction {
      * @param recursive if any directories should be conisdered as recursive profile spec resources.
      */
     public void add(Collection<File> selectedFiles, boolean recursive) {
-        
+
         ProfileForm selectedProfile = droidContext.getSelectedProfile();
         DefaultTreeModel treeModel = selectedProfile.getTreeModel();
         ProfileInstance profile = selectedProfile.getProfile();
@@ -88,9 +84,14 @@ public class AddFilesAndFoldersAction {
             AbstractProfileResource newResource;
             // VERY basic shortcut detection:
             boolean isShortcut = !selectedFile.toURI().getPath().endsWith("/");
-            if (selectedFile.isDirectory() && !isShortcut) {
+            if ("s3".equals(selectedFile.toURI().getScheme())) {
+                LOG.info("Adding S3 File: {}", selectedFile.toURI());
+                newResource = new S3ProfileResource(selectedFile);
+            } else if (selectedFile.isDirectory() && !isShortcut) {
+                LOG.info("Adding Directory: {}", selectedFile.toURI());
                 newResource = new DirectoryProfileResource(Paths.get(selectedFile.toURI()), recursive);
             } else {
+                LOG.info("Adding File: {}", selectedFile.toURI());
                 newResource = new FileProfileResource(Paths.get(selectedFile.toURI()));
             }
 

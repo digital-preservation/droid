@@ -47,7 +47,7 @@ public class ResourceSelectorTest {
     public void testResourceSelector() throws Exception {
         
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        ResourceSelectorDialog selector = new ResourceSelectorDialog(null);
+        FileResourceSelectorDialog selector = new FileResourceSelectorDialog(null);
         selector.setModal(true);
         selector.setVisible(true);
     }

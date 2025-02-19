@@ -271,6 +271,8 @@ public class ConfigDialog extends JDialog {
         askToDownloadCheckBox = new JCheckBox();
         autoSetDefaultSignatureFileCheckBox = new JCheckBox();
         pronomUrlResetButton = new JButton();
+        jPanel7 = new JPanel();
+        loadFromS3Checkbox = new JCheckBox();
         cancelButton = new JButton();
         okButton = new JButton();
 
@@ -864,6 +866,27 @@ public class ConfigDialog extends JDialog {
         );
 
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel3.TabConstraints.tabTitle"), jPanel5); // NOI18N
+        loadFromS3Checkbox.setSelected(globalConfig.get(DroidGlobalProperty.FILES_FROM_S3.getName()).equals(true));
+        loadFromS3Checkbox.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.loadFromS3Checkbox.text")); // NOI18N
+        loadFromS3Checkbox.setToolTipText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.loadFromS3Checkbox.toolTipText")); // NOI18N
+        loadFromS3Checkbox.addActionListener(this::loadFromS3CheckboxActionPerformed);
+
+        GroupLayout jPanel7Layout = new GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(jPanel7Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addComponent(loadFromS3Checkbox, GroupLayout.PREFERRED_SIZE, 471, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(42, Short.MAX_VALUE))
+        );
+        jPanel7Layout.setVerticalGroup(jPanel7Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addComponent(loadFromS3Checkbox)
+                .addContainerGap(640, Short.MAX_VALUE))
+        );
+
+        generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel7.TabConstraints.tabTitle"), jPanel7); // NOI18N
 
         cancelButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.cancelButton.text")); // NOI18N
         cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
@@ -1066,6 +1089,10 @@ public class ConfigDialog extends JDialog {
         }
     }//GEN-LAST:event_toggleWebArchivesButtonActionPerformed
 
+    private void loadFromS3CheckboxActionPerformed(ActionEvent evt) {
+        globalConfig.put(DroidGlobalProperty.FILES_FROM_S3.getName(), ((JCheckBox) evt.getSource()).isSelected());
+    }                                                  
+
     private void setPanelComponents(JPanel panel, boolean enabled) {
         panel.setEnabled(enabled);
         for (Component c : panel.getComponents()) {
@@ -1112,8 +1139,10 @@ public class ConfigDialog extends JDialog {
     private JPanel jPanel4;
     private JPanel jPanel5;
     private JPanel jPanel6;
+    private JPanel jPanel7;
     private JTextField jTextField1;
     private JTextField jTextField2;
+    private JCheckBox loadFromS3Checkbox;
     private JButton okButton;
     private JCheckBox process7zipCheckBox;
     private JCheckBox processArcCheckBox;

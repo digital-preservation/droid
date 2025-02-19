@@ -91,7 +91,7 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
  *
  * @author rflitcroft
  */
-public class ResourceSelectorDialog extends JDialog {
+public class FileResourceSelectorDialog extends JDialog {
     
     private static final int FILE_COLUMN_INDEX = 0;
     private static final int SIZE_COLUMN_INDEX = 1;
@@ -120,7 +120,7 @@ public class ResourceSelectorDialog extends JDialog {
      * Creates new form ResourceSelector.
      * @param parent parent window
      */
-    public ResourceSelectorDialog(Window parent) {
+    public FileResourceSelectorDialog(Window parent) {
         super(parent);
         initComponents();
         initTree();
@@ -346,16 +346,16 @@ public class ResourceSelectorDialog extends JDialog {
         fileColumn.setPreferredWidth(WIDE_COLUMN);
         fileColumn.setHeaderValue(
                 NbBundle.getMessage(
-                        ResourceSelectorDialog.class, "ResourceSelector.table.columnModel.title0")); // NOI18N
+                        FileResourceSelectorDialog.class, "ResourceSelector.table.columnModel.title0")); // NOI18N
         
         columnModel.getColumn(SIZE_COLUMN_INDEX).setPreferredWidth(NARROW_COLUMN);
         columnModel.getColumn(SIZE_COLUMN_INDEX).setHeaderValue(
                 NbBundle.getMessage(
-                        ResourceSelectorDialog.class, "ResourceSelector.table.columnModel.title1")); // NOI18N
+                        FileResourceSelectorDialog.class, "ResourceSelector.table.columnModel.title1")); // NOI18N
         
         columnModel.getColumn(DATE_COLUMN_INDEX).setPreferredWidth(WIDE_COLUMN);
         columnModel.getColumn(DATE_COLUMN_INDEX).setHeaderValue(
-                NbBundle.getMessage(ResourceSelectorDialog.class, 
+                NbBundle.getMessage(FileResourceSelectorDialog.class,
                         "ResourceSelector.table.columnModel.title3")); // NOI18N
     }
     
@@ -455,7 +455,7 @@ public class ResourceSelectorDialog extends JDialog {
         okButton = new JButton();
         cancelButton = new JButton();
 
-        setTitle(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelectorDialog.title")); // NOI18N
+        setTitle(NbBundle.getMessage(FileResourceSelectorDialog.class, "ResourceSelectorDialog.title")); // NOI18N
         jSplitPane1.setDividerLocation(200);
 
         table.setModel(new DefaultTableModel());
@@ -470,7 +470,7 @@ public class ResourceSelectorDialog extends JDialog {
 
         jPanel3.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 
-        jLabel1.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.jLabel1.text")); // NOI18N
+        jLabel1.setText(NbBundle.getMessage(FileResourceSelectorDialog.class, "ResourceSelector.jLabel1.text")); // NOI18N
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -526,20 +526,20 @@ public class ResourceSelectorDialog extends JDialog {
 
         selectedFilesTextBox.setEditable(false);
 
-        selectedFilesTextBox.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.jTextField1.text")); // NOI18N
+        selectedFilesTextBox.setText(NbBundle.getMessage(FileResourceSelectorDialog.class, "ResourceSelector.jTextField1.text")); // NOI18N
         subfoldersCheckBox.setSelected(true);
 
 
-        subfoldersCheckBox.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.jCheckBox1.text")); // NOI18N
-        jLabel2.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.jLabel2.text")); // NOI18N
-        okButton.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.okButton.text")); // NOI18N
+        subfoldersCheckBox.setText(NbBundle.getMessage(FileResourceSelectorDialog.class, "ResourceSelector.jCheckBox1.text")); // NOI18N
+        jLabel2.setText(NbBundle.getMessage(FileResourceSelectorDialog.class, "ResourceSelector.jLabel2.text")); // NOI18N
+        okButton.setText(NbBundle.getMessage(FileResourceSelectorDialog.class, "ResourceSelector.okButton.text")); // NOI18N
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
 
-        cancelButton.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.cancelButton.text")); // NOI18N
+        cancelButton.setText(NbBundle.getMessage(FileResourceSelectorDialog.class, "ResourceSelector.cancelButton.text")); // NOI18N
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
