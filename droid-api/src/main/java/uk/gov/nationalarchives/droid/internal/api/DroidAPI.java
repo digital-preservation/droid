@@ -31,6 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.internal.api;
 
+import java.net.URI;
 import java.nio.file.Files;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -42,16 +43,19 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Uri;
+import software.amazon.awssdk.services.s3.S3Utilities;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
-import uk.gov.nationalarchives.droid.core.interfaces.DroidCore;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
-import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.*;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
 
 
 /**
@@ -117,14 +121,53 @@ public final class DroidAPI {
         return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion);
     }
 
+
+    public List<ApiResult> submit(final Path file) throws IOException {
+        return submit(file.toUri());
+    }
+
     /**
      * Submit file for identification. It's important that file has proper file extension. If file
      * can't be identified via binary or container signature, then we use file extension for identification.
-     * @param file Full path to file for identification.
+     * @param uri Full URI of the file for identification.
      * @return File identification result. File can have multiple matching signatures.
      * @throws IOException If File can't be read or there is IO error.
      */
-    public List<ApiResult> submit(final Path file) throws IOException {
+    public List<ApiResult> submit(final URI uri) throws IOException {
+        if ("s3".equals(uri.getScheme())) {
+            return submitS3Identification(uri);
+        } else {
+            return submitFileSystemIdentification(Path.of(uri));
+        }
+    }
+
+    private List<ApiResult> submitS3Identification(final URI uri) throws IOException {
+        S3Uri s3Uri = S3Utilities.builder().region(Region.EU_WEST_2).build().parseUri(uri);
+        String bucket = s3Uri.bucket().orElseThrow(() -> new RuntimeException("Bucket not found in uri " + uri));
+        String key = s3Uri.key().orElseThrow(() -> new RuntimeException("Key not found in uri " + uri));
+        S3Client client = S3Client.builder().region(Region.EU_WEST_2).build();
+
+        HeadObjectResponse headObjectResponse = client.headObject(HeadObjectRequest.builder().bucket(bucket).key(key).build());
+
+        final RequestMetaData metaData = new RequestMetaData(
+                headObjectResponse.contentLength(),
+                headObjectResponse.lastModified().getEpochSecond(),
+                s3Uri.uri().toString()
+        );
+
+        final RequestIdentifier id = new RequestIdentifier(uri);
+        id.setParentId(ID_GENERATOR.getAndIncrement());
+        id.setNodeId(ID_GENERATOR.getAndIncrement());
+
+
+        try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, client)) {
+            request.open(s3Uri);
+            return getApiResults(request);
+        }
+    }
+
+
+    private List<ApiResult> submitFileSystemIdentification(final Path file) throws IOException {
         final RequestMetaData metaData = new RequestMetaData(
                 Files.size(file),
                 Files.getLastModifiedTime(file).toMillis(),
@@ -135,33 +178,36 @@ public final class DroidAPI {
         id.setParentId(ID_GENERATOR.getAndIncrement());
         id.setNodeId(ID_GENERATOR.getAndIncrement());
 
-        IdentificationResultCollection resultCollection;
-
         try (final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, id)) {
             request.open(file);
-            String extension = request.getExtension();
-
-            IdentificationResultCollection binaryResult = droidCore.matchBinarySignatures(request);
-            Optional<String> containerPuid = getContainerPuid(binaryResult);
-
-            if (containerPuid.isPresent()) {
-                resultCollection = handleContainer(binaryResult, request, containerPuid.get());
-            } else {
-                droidCore.removeLowerPriorityHits(binaryResult);
-                droidCore.checkForExtensionsMismatches(binaryResult, request.getExtension());
-                if (binaryResult.getResults().isEmpty()) {
-                    resultCollection = identifyByExtension(request);
-                } else {
-                    resultCollection = binaryResult;
-                }
-            }
-
-            boolean fileExtensionMismatch = resultCollection.getExtensionMismatch();
-
-            return resultCollection.getResults()
-                    .stream().map(res -> createApiResult(res, extension, fileExtensionMismatch))
-                    .collect(Collectors.toList());
+            return getApiResults(request);
         }
+    }
+
+    private <T> List<ApiResult> getApiResults(IdentificationRequest<T> request) throws IOException {
+        IdentificationResultCollection resultCollection;
+        String extension = request.getExtension();
+
+        IdentificationResultCollection binaryResult = droidCore.matchBinarySignatures(request);
+        Optional<String> containerPuid = getContainerPuid(binaryResult);
+
+        if (containerPuid.isPresent()) {
+            resultCollection = handleContainer(binaryResult, request, containerPuid.get());
+        } else {
+            droidCore.removeLowerPriorityHits(binaryResult);
+            droidCore.checkForExtensionsMismatches(binaryResult, request.getExtension());
+            if (binaryResult.getResults().isEmpty()) {
+                resultCollection = identifyByExtension(request);
+            } else {
+                resultCollection = binaryResult;
+            }
+        }
+
+        boolean fileExtensionMismatch = resultCollection.getExtensionMismatch();
+
+        return resultCollection.getResults()
+                .stream().map(res -> createApiResult(res, extension, fileExtensionMismatch))
+                .collect(Collectors.toList());
     }
 
     private ApiResult createApiResult(IdentificationResult result, String extension, boolean extensionMismatch) {
@@ -173,7 +219,7 @@ public final class DroidAPI {
         return new ApiResult(extension, result.getMethod(), result.getPuid(), name, extensionMismatch);
     }
 
-    private IdentificationResultCollection identifyByExtension(final FileSystemIdentificationRequest identificationRequest) {
+    private <T> IdentificationResultCollection identifyByExtension(final IdentificationRequest<T> identificationRequest) {
         IdentificationResultCollection extensionResult = droidCore.matchExtensions(identificationRequest, false);
         droidCore.removeLowerPriorityHits(extensionResult);
         return extensionResult;
@@ -185,8 +231,8 @@ public final class DroidAPI {
         ).map(IdentificationResult::getPuid).findFirst();
     }
 
-    private IdentificationResultCollection handleContainer(final IdentificationResultCollection binaryResult,
-                                                           final FileSystemIdentificationRequest identificationRequest, final String containerPuid) throws IOException {
+    private <T> IdentificationResultCollection handleContainer(final IdentificationResultCollection binaryResult,
+                                                           final IdentificationRequest<T> identificationRequest, final String containerPuid) throws IOException {
         ContainerIdentifier identifier;
 
         switch (containerPuid) {

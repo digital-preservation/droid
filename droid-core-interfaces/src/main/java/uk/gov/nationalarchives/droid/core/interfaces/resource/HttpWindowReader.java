@@ -36,11 +36,6 @@ import net.byteseek.io.reader.cache.WindowCache;
 import net.byteseek.io.reader.windows.SoftWindow;
 import net.byteseek.io.reader.windows.SoftWindowRecovery;
 import net.byteseek.io.reader.windows.Window;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 
 import java.io.IOException;
 import java.net.URI;
@@ -89,7 +84,7 @@ public class HttpWindowReader extends AbstractReader implements SoftWindowRecove
     @Override
     protected Window createWindow(long windowStart) throws IOException {
         if (windowStart >= 0) {
-            byte[] bytes  = responseWithRange(windowStart, (windowStart + this.windowSize -1) ).body();
+            byte[] bytes  = responseWithRange(windowStart, (windowStart + this.windowSize -1)).body();
             int totalRead = bytes.length;
             if (totalRead > 0) {
                 return new SoftWindow(bytes, windowStart, totalRead, this);

@@ -45,7 +45,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Path;
 
 
@@ -59,9 +58,9 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
 
     private final S3Client s3client;
 
-    public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier) {
+    public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, final S3Client s3Client) {
         this.identifier = identifier;
-        this.s3client = buildClient();
+        this.s3client = s3Client;
         this.requestMetaData = requestMetaData;
         S3Uri s3Uri = S3Utilities.builder().region(Region.EU_WEST_2).build().parseUri(identifier.getUri());
         String bucket = s3Uri.bucket().orElseThrow(() -> new RuntimeException("Bucket not found in uri " + identifier.getUri()));
@@ -69,12 +68,7 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
         HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucket).key(key).build();
         this.size = s3client.headObject(request).contentLength();
         this.s3Reader = buildWindowReader(s3Uri);
-    }
 
-    private S3Client buildClient() {
-        return S3Client.builder()
-                .region(Region.EU_WEST_2)
-                .build();
     }
 
     private WindowReader buildWindowReader(final S3Uri theFile) {

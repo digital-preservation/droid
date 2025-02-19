@@ -31,32 +31,45 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
 import java.util.Date;
 import java.util.regex.Pattern;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "S3")
-public class S3ProfileResource extends AbstractProfileResource {
+public class S3ProfileResource extends FileProfileResource {
 
-    public S3ProfileResource(final String s3uriString) {
-        try {
-            setUri(new URI(s3uriString));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    private boolean isDirectory;
+
+    public S3ProfileResource() {}
+
+    public S3ProfileResource(final String uri) {
+        setUri(URI.create(uri));
+        setName(uri.substring(uri.lastIndexOf('/') + 1));
+
+        setLastModifiedDate(new Date(0));
+
+        int dotLastIndex = uri.lastIndexOf('.');
+
+        setExtension(dotLastIndex > -1 ? uri.substring(uri.lastIndexOf('.')): "");
+    }
+
+    public S3ProfileResource(final File file) {
+        this.isDirectory = file.isDirectory();
+        setUri(file.toURI());
+        String s3uriString = getUri().toString();
 
         // TODO Find the filename
         setName(s3uriString.substring(s3uriString.lastIndexOf('/') + 1));
 
-        final FileTime lastModified = null;
-        setLastModifiedDate(lastModified == null ? new Date(0) : new Date(lastModified.toMillis()));
+        setLastModifiedDate(new Date(0));
 
-        setExtension(s3uriString.substring(s3uriString.lastIndexOf('.')));
+        int dotLastIndex = s3uriString.lastIndexOf('.');
+
+        setExtension(dotLastIndex > -1 ? s3uriString.substring(s3uriString.lastIndexOf('.')): "");
     }
 
     /**
@@ -64,7 +77,7 @@ public class S3ProfileResource extends AbstractProfileResource {
      */
     @Override
     public boolean isDirectory() {
-        return false;
+        return isDirectory;
     }
 
     @Override

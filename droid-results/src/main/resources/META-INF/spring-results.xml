@@ -251,6 +251,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <lookup-method name="getNodeItemReader" bean="nodeItemReader"/>
     </bean>
 
+    <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
+
     <bean id="profileSpecWalker" class="uk.gov.nationalarchives.droid.submitter.ProfileSpecWalkerImpl">
         <property name="fileEventHandler" ref="fileEventHandler"/>
         <property name="s3EventHandler" ref="s3EventHandler"/>
@@ -294,6 +296,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     <bean id="s3EventHandler" class="uk.gov.nationalarchives.droid.submitter.S3EventHandler">
         <property name="submissionThrottle" ref="submissionThrottle"/>
         <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+        <property name="config" ref="globalConfig"/>
     </bean>
 
     <bean id="httpEventHandler" class="uk.gov.nationalarchives.droid.submitter.HttpEventHandler">

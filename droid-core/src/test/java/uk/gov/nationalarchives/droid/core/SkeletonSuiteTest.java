@@ -48,6 +48,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.S3Utilities;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -275,7 +276,7 @@ public class SkeletonSuiteTest {
             RequestIdentifier identifier = new RequestIdentifier(uri);
             identifier.setParentId(1L);
 
-            IdentificationRequest<S3Uri> request = new S3IdentificationRequest(metaData, identifier);
+            IdentificationRequest<S3Uri> request = new S3IdentificationRequest(metaData, identifier, S3Client.builder().build());
             request.open(s3Uri);
 
             IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);

@@ -32,7 +32,6 @@
 package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
@@ -50,8 +49,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
-import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
@@ -112,7 +109,7 @@ public class FileEventHandler {
      * @param parentId the ID of the node's parent
      * @param nodeId   an optional node ID for the request.
      */
-    public void onEvent(final Path file, ResourceId parentId, ResourceId nodeId) {
+    public void  onEvent(final Path file, ResourceId parentId, ResourceId nodeId) {
 
         final FileTime lastModified = FileUtil.lastModifiedQuietly(file);
         RequestMetaData metaData = new RequestMetaData(

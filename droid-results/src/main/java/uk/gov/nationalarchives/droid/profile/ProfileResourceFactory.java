@@ -31,7 +31,6 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -59,7 +58,7 @@ public class ProfileResourceFactory {
         } else if (Files.isDirectory(f)) {
             return new DirectoryProfileResource(f, recursive);
         } else if (S3ProfileResource.isS3uri(location)) {
-        	return new S3ProfileResource(location);
+            return new S3ProfileResource(location);
         } else if (HttpProfileResource.isHttpUrl(location)) {
             return new HttpProfileResource(location);
         } else {

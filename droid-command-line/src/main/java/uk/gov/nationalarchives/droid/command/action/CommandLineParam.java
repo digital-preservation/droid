@@ -275,7 +275,7 @@ public enum CommandLineParam {
     },
 
     /** Runs without a profile and with the specified S3 object. */
-    RUN_S3("S3", "S3-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "id") {
+    RUN_S3("S3", "S3-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "s3Url") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
                 throws CommandLineSyntaxException {
@@ -284,7 +284,7 @@ public enum CommandLineParam {
     },
 
     /** Runs without a profile and with the specified http(s) url. */
-    RUN_HTTP("HTTP", "HTTP-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "id") {
+    RUN_HTTP("HTTP", "HTTP-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "httpUrl") {
         @Override
         public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
                 throws CommandLineSyntaxException {

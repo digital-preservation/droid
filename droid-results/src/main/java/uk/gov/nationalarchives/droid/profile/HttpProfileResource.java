@@ -13,7 +13,7 @@ public class HttpProfileResource extends AbstractProfileResource {
         try {
             String scheme = URI.create(url).getScheme();
             return scheme != null && (scheme.equals("http") || scheme.equals("https"));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }

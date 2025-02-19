@@ -37,8 +37,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
@@ -57,8 +55,6 @@ import uk.gov.nationalarchives.droid.submitter.ProfileWalkState.WalkStatus;
 public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     private static final int URI_BUILDER_SIZE = 1204;
-
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private FileEventHandler fileEventHandler;
     private S3EventHandler s3EventHandler;
@@ -114,56 +110,11 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
                 break;
             }
 
-            if (resource.isDirectory()) {
-                FileWalker fileWalker;
-                if (!fastForward) {
-                    walkState.setCurrentFileWalker(new FileWalker(resource.getUri(), resource.isRecursive()));
-                }
-
-                fileWalker = walkState.getCurrentFileWalker();
-
-                fileWalker.setFileHandler(new FileWalkerHandler() {
-
-                    @Override
-                    public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
-                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
-                                || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
-                            progressMonitor.startJob(toURI(file));
-                        }
-                        ResourceId parentId = parent == null ? null : parent.getResourceId();
-                        fileEventHandler.onEvent(file, parentId, null);
-                        return null;
-                    }
-                });
-
-                fileWalker.setDirectoryHandler(new FileWalkerHandler() {
-                    @Override
-                    public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
-                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
-                                || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
-                            progressMonitor.startJob(toURI(file));
-                        }
-                        ResourceId parentId = parent == null ? null : parent.getResourceId();
-                        return directoryEventHandler.onEvent(file, parentId, depth, false);
-                    }
-                });
-
-                fileWalker.setRestrictedDirectoryHandler(new FileWalkerHandler() {
-                    @Override
-                    public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
-                        if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
-                                || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
-                            progressMonitor.startJob(toURI(file));
-                        }
-                        ResourceId parentId = parent == null ? null : parent.getResourceId();
-                        return directoryEventHandler.onEvent(file, parentId, depth, true);
-                    }
-                });
-
-                walkState.setWalkStatus(WalkStatus.IN_PROGRESS);
-                fileWalker.walk();
-            } else if (resource.isS3Object()) {
-                s3EventHandler.onS3Event(resource);
+            if (resource.isS3Object()) {
+                S3Walker s3Walker = new S3Walker(progressMonitor, directoryEventHandler, s3EventHandler);
+                s3Walker.walk(resource);
+            } else if (resource.isDirectory()) {
+                processDirectory(resource, fastForward, walkState);
             } else if (resource.isHttpObject()) {
                 httpEventHandler.onHttpEvent(resource);
             } else {
@@ -232,5 +183,55 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     public void setHttpEventHandler(HttpEventHandler httpEventHandler) {
         this.httpEventHandler = httpEventHandler;
+    }
+
+    private void processDirectory(AbstractProfileResource resource, boolean fastForward, ProfileWalkState walkState) throws IOException {
+        FileWalker fileWalker;
+        if (!fastForward) {
+            walkState.setCurrentFileWalker(new FileWalker(resource.getUri(), resource.isRecursive()));
+        }
+
+        fileWalker = walkState.getCurrentFileWalker();
+
+        fileWalker.setFileHandler(new FileWalkerHandler() {
+
+            @Override
+            public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
+                if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
+                        || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
+                    progressMonitor.startJob(toURI(file));
+                }
+                ResourceId parentId = parent == null ? null : parent.getResourceId();
+                fileEventHandler.onEvent(file, parentId, null);
+                return null;
+            }
+        });
+
+        fileWalker.setDirectoryHandler(new FileWalkerHandler() {
+            @Override
+            public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
+                if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
+                        || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
+                    progressMonitor.startJob(toURI(file));
+                }
+                ResourceId parentId = parent == null ? null : parent.getResourceId();
+                return directoryEventHandler.onEvent(file, parentId, depth, false);
+            }
+        });
+
+        fileWalker.setRestrictedDirectoryHandler(new FileWalkerHandler() {
+            @Override
+            public ResourceId handle(final Path file, final int depth, final ProgressEntry parent) {
+                if (ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT < 0
+                        || depth <= ProfileSpecJobCounter.PROGRESS_DEPTH_LIMIT) {
+                    progressMonitor.startJob(toURI(file));
+                }
+                ResourceId parentId = parent == null ? null : parent.getResourceId();
+                return directoryEventHandler.onEvent(file, parentId, depth, true);
+            }
+        });
+
+        walkState.setWalkStatus(WalkStatus.IN_PROGRESS);
+        fileWalker.walk();
     }
 }
