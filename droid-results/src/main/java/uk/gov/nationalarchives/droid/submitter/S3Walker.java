@@ -6,19 +6,17 @@ import software.amazon.awssdk.services.s3.S3Utilities;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
-import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
+import uk.gov.nationalarchives.droid.core.interfaces.*;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.S3ProfileResource;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
+import uk.gov.nationalarchives.droid.util.FileUtil;
 
 import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 
 public class S3Walker {
 
@@ -27,13 +25,13 @@ public class S3Walker {
 
     private final ProgressMonitor progressMonitor;
 
-    private final DirectoryEventHandler directoryEventHandler;
+    private final ResultHandler resultHandler;
 
     private final S3EventHandler s3EventHandler;
 
-    public S3Walker(final ProgressMonitor progressMonitor, final DirectoryEventHandler directoryEventHandler, final S3EventHandler s3EventHandler) {
+    public S3Walker(final ProgressMonitor progressMonitor, final ResultHandler resultHandler, final S3EventHandler s3EventHandler) {
         this.progressMonitor = progressMonitor;
-        this.directoryEventHandler = directoryEventHandler;
+        this.resultHandler = resultHandler;
         this.s3EventHandler = s3EventHandler;
     }
 
@@ -47,13 +45,26 @@ public class S3Walker {
             URI dirUri = URI.create(keysList.get(i));
             Path dirPath = getPath(dirUri);
             progressMonitor.startJob(dirUri);
-            ResourceId fileParentNode = directoryEventHandler.onEvent(dirPath, pathToResourceId.get(dirPath.getParent().toUri().toString()), i+1, false);
+            ResourceId fileParentNode = handleS3Directory(dirPath, pathToResourceId.get(dirPath.getParent().toUri().toString()), i+1);
             pathToResourceId.put(dirUri + FORWARD_SLASH, fileParentNode);
             for (String objectUri: s3Result.dirToFileMap().get(keysList.get(i))) {
                 progressMonitor.startJob(URI.create(objectUri));
                 s3EventHandler.onS3Event(new S3ProfileResource(objectUri), fileParentNode);
             }
         }
+    }
+
+    private ResourceId handleS3Directory(final Path dir, ResourceId parentId, int depth) {
+        IdentificationResultImpl result = new IdentificationResultImpl();
+        result.setMethod(IdentificationMethod.NULL);
+
+        RequestMetaData metaData = new RequestMetaData(-1L, new Date(0).getTime(), depth == 0 ? dir.toAbsolutePath().toString() : FileUtil.fileName(dir));
+
+        RequestIdentifier identifier = new RequestIdentifier(dir.toUri());
+        identifier.setParentResourceId(parentId);
+        result.setRequestMetaData(metaData);
+        result.setIdentifier(identifier);
+        return resultHandler.handleDirectory(result, parentId, false);
     }
 
     private S3Result getS3Result(AbstractProfileResource resource) {
