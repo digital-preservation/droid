@@ -101,6 +101,7 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
                 }
             }
         }
+
         return false;
     }
 

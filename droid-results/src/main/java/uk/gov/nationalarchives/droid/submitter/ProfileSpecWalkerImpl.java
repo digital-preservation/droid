@@ -52,6 +52,7 @@ import uk.gov.nationalarchives.droid.submitter.ProfileWalkState.WalkStatus;
  * any concurrent walking.
  *
  * @author rflitcroft
+ *
  */
 public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
@@ -76,8 +77,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
 
     /**
      * Parameterized constructor.
-     *
-     * @param fileEventHandler      The file event handler.
+     * @param fileEventHandler The file event handler.
      * @param directoryEventHandler The directory event handler.
      * @param progressMonitor       The progress monitor.
      * @param resultHandler         The result handler.

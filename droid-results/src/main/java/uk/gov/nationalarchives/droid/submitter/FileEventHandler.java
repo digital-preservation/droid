@@ -54,6 +54,7 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
+ *
  */
 public class FileEventHandler {
 
@@ -72,12 +73,12 @@ public class FileEventHandler {
     /**
      * Default Constructor.
      */
-    public FileEventHandler() {
-    }
+    public FileEventHandler() { }
 
 
     /**
-     * @param droidCore an identification engine for this event handler to submit to
+     * @param droidCore
+     *            an identification engine for this event handler to submit to
      */
     public FileEventHandler(AsynchDroid droidCore) {
         this.droidCore = droidCore;
@@ -85,10 +86,9 @@ public class FileEventHandler {
 
     /**
      * Paramaterized constructor.
-     *
-     * @param droidCore          The engine to submit to.
-     * @param resultHandler      The result handler
-     * @param requestFactory     The request factory.
+     * @param droidCore The engine to submit to.
+     * @param resultHandler The result handler
+     * @param requestFactory The request factory.
      * @param submissionThrottle The submission throttle.
      */
     public FileEventHandler(AsynchDroid droidCore, ResultHandler resultHandler,
@@ -99,17 +99,18 @@ public class FileEventHandler {
         setSubmissionThrottle(submissionThrottle);
     }
 
-
-
     /**
      * Creates a job in the database and submits the job to the identification
      * engine.
      *
-     * @param file     the node file to handle
-     * @param parentId the ID of the node's parent
-     * @param nodeId   an optional node ID for the request.
+     * @param file
+     *            the node file to handle
+     * @param parentId
+     *            the ID of the node's parent
+     * @param nodeId
+     *            an optional node ID for the request.
      */
-    public void  onEvent(final Path file, ResourceId parentId, ResourceId nodeId) {
+    public void onEvent(final Path file, ResourceId parentId, ResourceId nodeId) {
 
         final FileTime lastModified = FileUtil.lastModifiedQuietly(file);
         RequestMetaData metaData = new RequestMetaData(
