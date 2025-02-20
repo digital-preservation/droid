@@ -183,7 +183,7 @@ public class ThreadPoolExecutorTest {
         }
     }
 
-    private final class ExceptionTask implements Callable<Object> {
+    private static final class ExceptionTask implements Callable<Object> {
         
         @Override
         public Object call() {
