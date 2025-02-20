@@ -44,9 +44,13 @@ public class S3Walker {
         for (int i=0; i < keysList.size(); i++) {
             URI dirUri = URI.create(keysList.get(i));
             Path dirPath = getPath(dirUri);
-            progressMonitor.startJob(dirUri);
-            ResourceId fileParentNode = handleS3Directory(dirPath, pathToResourceId.get(dirPath.getParent().toUri().toString()), i+1);
-            pathToResourceId.put(dirUri + FORWARD_SLASH, fileParentNode);
+            ResourceId fileParentNode = null;
+            if (dirPath.getParent() != null) {
+                progressMonitor.startJob(dirUri);
+                ResourceId parent = dirPath.getParent() == null ? null : pathToResourceId.get(dirPath.getParent().toUri().toString());
+                fileParentNode = handleS3Directory(dirPath, parent, i+1);
+                pathToResourceId.put(dirUri + FORWARD_SLASH, fileParentNode);
+            }
             for (String objectUri: s3Result.dirToFileMap().get(keysList.get(i))) {
                 progressMonitor.startJob(URI.create(objectUri));
                 s3EventHandler.onS3Event(new S3ProfileResource(objectUri), fileParentNode);
@@ -82,12 +86,23 @@ public class S3Walker {
         for (S3Object s3Object: responseIterable.contents()) {
             int lastSlashIndex = (FORWARD_SLASH + s3Object.key()).lastIndexOf(FORWARD_SLASH);
             String keyUri = S3_SCHEME + bucket + FORWARD_SLASH + s3Object.key();
-            String parent = S3_SCHEME + bucket + FORWARD_SLASH + s3Object.key().substring(0, lastSlashIndex -1);
+            String parent;
+            if (lastSlashIndex == 0) {
+                parent = S3_SCHEME + bucket + FORWARD_SLASH;
+            } else {
+                parent = S3_SCHEME + bucket + FORWARD_SLASH + s3Object.key().substring(0, lastSlashIndex -1);
+            }
+
             if (!dirToFileMap.containsKey(parent)) {
                 List<String> existingKeys = new ArrayList<>();
                 existingKeys.add(keyUri);
                 dirToFileMap.put(parent, existingKeys);
-                totalCount = totalCount + 2;
+                if ("/".equals(URI.create(parent).getPath())) {
+                    totalCount = totalCount + 1;
+                } else {
+                    totalCount = totalCount + 2;
+                }
+
             } else {
                 List<String> existingKeys = dirToFileMap.get(parent);
                 existingKeys.add(keyUri);

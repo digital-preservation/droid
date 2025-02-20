@@ -43,9 +43,13 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class S3WindowReader extends AbstractReader implements SoftWindowRecovery {
+
+    private static final int BUFFER_LENGTH = 8192;
 
     private final S3Object s3Object;
 
@@ -78,7 +82,7 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
 
 
             ResponseInputStream<GetObjectResponse> response = s3Client.getObject(getS3ObjectRequest);
-            byte[] bytes  = response.readAllBytes();
+            byte[] bytes  = toByteArray(response);
             int totalRead = bytes.length;
             response.close();
             if (totalRead > 0) {
@@ -86,6 +90,17 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
             }
         }
         return null;
+    }
+
+    public static byte[] toByteArray(ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
+        try (InputStream in = inputStream; ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[BUFFER_LENGTH];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+            return out.toByteArray();
+        }
     }
 
     @Override
