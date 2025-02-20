@@ -80,6 +80,7 @@ public class ProfileSpecWalkerImpl implements ProfileSpecWalker {
      * @param fileEventHandler      The file event handler.
      * @param directoryEventHandler The directory event handler.
      * @param progressMonitor       The progress monitor.
+     * @param resultHandler         The result handler.
      */
     public ProfileSpecWalkerImpl(FileEventHandler fileEventHandler, DirectoryEventHandler directoryEventHandler,
                                  ProgressMonitor progressMonitor, ResultHandler resultHandler) {

@@ -335,17 +335,17 @@
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>s3</artifactId>
-			<version>2.30.17</version>
+			<version>${aws.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>software.amazon.nio.s3</groupId>
-			<artifactId>aws-java-nio-spi-for-s3</artifactId>
-			<version>2.2.0</version>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>regions</artifactId>
+			<version>${aws.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents.client5</groupId>
-			<artifactId>httpclient5</artifactId>
-			<version>5.4.2</version>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>sdk-core</artifactId>
+			<version>${aws.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
