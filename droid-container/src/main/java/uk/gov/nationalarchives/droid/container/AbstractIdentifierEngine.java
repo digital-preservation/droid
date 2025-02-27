@@ -43,7 +43,7 @@ import uk.gov.nationalarchives.droid.core.signature.ByteReader;
  *
  * @author rbrennan
  */
-public abstract class AbstractIdentifierEngine implements IdentifierEngine {
+public abstract class AbstractIdentifierEngine implements IdentifierEngine<InputStream> {
     
     private IdentificationRequestFactory<InputStream> requestFactory;
     
@@ -62,14 +62,14 @@ public abstract class AbstractIdentifierEngine implements IdentifierEngine {
      /**
      * @param requestFactory the requestFactory to set
      */
-    public void setRequestFactory(IdentificationRequestFactory requestFactory) {
+    public void setRequestFactory(IdentificationRequestFactory<InputStream> requestFactory) {
         this.requestFactory = requestFactory;
     }
     
     /**
      * @return the requestFactory
      */
-    protected IdentificationRequestFactory getRequestFactory() {
+    protected IdentificationRequestFactory<InputStream> getRequestFactory() {
         return requestFactory;
     }
 }
