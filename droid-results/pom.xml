@@ -111,6 +111,7 @@
 							<failOnWarning>true</failOnWarning>
 							<ignoredUnusedDeclaredDependencies>
 								<ignoredUnusedDeclaredDependency>uk.gov.nationalarchives:droid-container:jar:${project.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.derby:derby:jar:${derby.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>javax.transaction:jta:jar:${jta.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-frontend-jaxws:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-bindings-soap:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
