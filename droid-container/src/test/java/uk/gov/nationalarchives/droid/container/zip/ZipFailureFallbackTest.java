@@ -52,6 +52,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ZipFailureFallbackTest {
 
@@ -104,5 +105,6 @@ public class ZipFailureFallbackTest {
 
         assertEquals(containerSignatureMatches.size(), 1);
         assertEquals(containerSignatureMatches.getFirst().getSignature().getId(), 1);
+        assertTrue(containerSignatureMatches.getFirst().isMatch());
     }
 }
