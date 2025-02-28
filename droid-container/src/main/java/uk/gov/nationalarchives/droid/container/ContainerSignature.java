@@ -88,7 +88,8 @@ public class ContainerSignature {
         if (this.filesMap == null) {
             Map<String, ContainerFile> containerFileMap = new HashMap<String, ContainerFile>();
             for (ContainerFile file : files) {
-                containerFileMap.put(file.getPath(), file);
+                String path = file.getPath() == null ? "." : file.getPath();
+                containerFileMap.put(path, file);
             }
             this.filesMap = containerFileMap;
         }

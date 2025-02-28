@@ -57,7 +57,7 @@ public class ContainerFile {
     @XmlTransient
     private boolean compileError;
     
-    @XmlElement(name = "Path")
+    @XmlElement(name = "Path", required = false)
     private String path;
 
     //@XmlElement(name = "TextSignature")

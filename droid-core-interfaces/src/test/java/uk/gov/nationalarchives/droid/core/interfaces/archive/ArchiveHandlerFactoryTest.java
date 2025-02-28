@@ -72,7 +72,7 @@ public class ArchiveHandlerFactoryTest {
 
         handlers.put("ZIP", zipHandler);
         handlers.put("TAR", tarHandler);
-        handlers.put("GZ", gzHandler);
+        handlers.put("GZIP", gzHandler);
         handlers.put("ARC", arcHandler);
         handlers.put("BZ", bzHandler);
 
@@ -87,7 +87,7 @@ public class ArchiveHandlerFactoryTest {
      
         assertEquals(zipHandler, factory.getHandler("ZIP"));
         assertEquals(tarHandler, factory.getHandler("TAR"));
-        assertEquals(gzHandler, factory.getHandler("GZ"));
+        assertEquals(gzHandler, factory.getHandler("GZIP"));
         assertEquals(arcHandler, factory.getHandler("ARC"));
         assertEquals(bzHandler, factory.getHandler("BZ"));
         assertEquals(sevenZipHandler, factory.getHandler("7Z"));

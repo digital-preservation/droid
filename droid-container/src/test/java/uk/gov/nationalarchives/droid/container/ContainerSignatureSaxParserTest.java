@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.container;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,43 +54,71 @@ import jakarta.xml.bind.JAXBException;
 public class ContainerSignatureSaxParserTest {
 
     @Test
+    public void testParseSignatureNoPath() throws Exception {
+        String xml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                        + "<ContainerSignatureMapping>"
+                        + "    <ContainerSignatures>"
+                        + "        <ContainerSignature Id=\"9\">"
+                        + "            <Files>"
+                        + "                <File>"
+                        + "                </File>"
+                        + "            </Files>"
+                        + "        </ContainerSignature>"
+                        + "    </ContainerSignatures>"
+                        + "</ContainerSignatureMapping>";
+        ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
+        InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+
+        List<ContainerSignature> signatures = parser.parse(in).getContainerSignatures();
+
+        assertEquals(1, signatures.size());
+
+        ContainerSignature signatureNoPath = signatures.get(0);
+
+        Map<String, ContainerFile> files = signatureNoPath.getFiles();
+        assertEquals(1, files.size());
+        assertTrue(files.containsKey("."));
+    }
+
+    @Test
     public void testParseSignatures() throws Exception {
-        
-        String xml = 
-              "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
-            + "<ContainerSignatureMapping>" 
+
+        String xml =
+              "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<ContainerSignatureMapping>"
             + "    <ContainerSignatures>"
             + "        <ContainerSignature Id=\"9\">"
             + "            <Description>Microsoft Word 97</Description>"
-            + "            <Files>" 
+            + "            <Files>"
             + "                <File Required=\"true\">"
             + "                   <Path>WordDocument</Path>"
             + "                </File>"
-            + "            </Files>" 
-            + "        </ContainerSignature>" 
+            + "            </Files>"
+            + "        </ContainerSignature>"
             + "        <ContainerSignature Id=\"10\">"
             + "            <Description>Microsoft Excel 97</Description>"
-            + "            <Files>" 
+            + "            <Files>"
             + "                <File Required=\"false\">"
             + "                   <Path>Workbook</Path>"
             + "                </File>"
-            + "            </Files>" 
-            + "        </ContainerSignature>" 
+            + "            </Files>"
+            + "        </ContainerSignature>"
             + "    </ContainerSignatures>"
             + "</ContainerSignatureMapping>";
-        
+
         ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
         InputStream in = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-        
+
         List<ContainerSignature> signatures = parser.parse(in).getContainerSignatures();
         assertEquals(2, signatures.size());
-        
+
         ContainerSignature wordSignature = signatures.get(0);
         assertEquals("Microsoft Word 97", wordSignature.getDescription());
         assertEquals(9, wordSignature.getId());
         assertEquals(1, wordSignature.getFiles().size());
         assertEquals("WordDocument", wordSignature.listFiles().get(0).getPath());
-        
+
         ContainerSignature excelSignature = signatures.get(1);
         assertEquals("Microsoft Excel 97", excelSignature.getDescription());
         assertEquals(10, excelSignature.getId());

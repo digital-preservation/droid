@@ -348,7 +348,7 @@ public class SubmissionGateway implements AsynchDroid {
     private boolean isProcessedArchiveOrWebArchiveFormat(String format) {
         return "ZIP".equals(format) && !processZip
                 || "TAR".equals(format) && !processTar
-                || "GZ".equals(format) && !processGzip
+                || "GZIP".equals(format) && !processGzip
                 || "RAR".equals(format) && !processRar
                 || "7Z".equals(format) && !process7zip
                 || "ISO".equals(format) && !processIso

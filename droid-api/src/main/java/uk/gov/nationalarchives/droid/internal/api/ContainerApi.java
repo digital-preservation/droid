@@ -37,6 +37,8 @@ import java.nio.file.Path;
 import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader;
 import uk.gov.nationalarchives.droid.container.IdentifierEngine;
+import uk.gov.nationalarchives.droid.container.gz.GzIdentifier;
+import uk.gov.nationalarchives.droid.container.gz.GzIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ole2.Ole2Identifier;
 import uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine;
 import uk.gov.nationalarchives.droid.container.zip.ZipIdentifier;
@@ -70,8 +72,14 @@ public final class ContainerApi {
         return new ContainerFileIdentificationRequestFactory();
     }
 
-    private IdentifierEngine identifierEngine() {
+    private IdentifierEngine zipIdentifierEngine() {
         ZipIdentifierEngine engine = new ZipIdentifierEngine();
+        engine.setRequestFactory(requestFactory());
+        return engine;
+    }
+
+    private IdentifierEngine gzIdentifierEngine() {
+        GzIdentifierEngine engine = new GzIdentifierEngine();
         engine.setRequestFactory(requestFactory());
         return engine;
     }
@@ -84,13 +92,30 @@ public final class ContainerApi {
         return new ContainerIdentifierFactoryImpl();
     }
 
+    public GzIdentifier gzIdentifier() {
+        GzIdentifier gz = new GzIdentifier();
+        gz.setContainerType("GZIP");
+        gz.setContainerIdentifierFactory(identifierFactory());
+        gz.setContainerFormatResolver(archiveFormatResolver());
+        gz.setDroidCore(droid);
+        gz.setIdentifierEngine(gzIdentifierEngine());
+        gz.setSignatureReader(signatureReader());
+
+        try {
+            gz.init();
+        } catch (SignatureFileException e) {
+            throw new RuntimeException("Unable to init gz identifier", e);
+        }
+        return gz;
+    }
+
     public ZipIdentifier zipIdentifier() {
         ZipIdentifier zip = new ZipIdentifier();
         zip.setContainerType("ZIP");
         zip.setContainerIdentifierFactory(identifierFactory());
         zip.setContainerFormatResolver(archiveFormatResolver());
         zip.setDroidCore(droid);
-        zip.setIdentifierEngine(identifierEngine());
+        zip.setIdentifierEngine(zipIdentifierEngine());
         zip.setSignatureReader(signatureReader());
 
         try {
