@@ -49,6 +49,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 import uk.gov.nationalarchives.droid.util.FileUtil;
@@ -204,6 +205,9 @@ public class ProfileContextLocator {
 
         ExportOptions options = profile.getExportOptions() == null? ExportOptions.ONE_ROW_PER_FILE : profile.getExportOptions();
         props.setProperty("exportOptions", options.name());
+
+        ExportOutputOptions outputOptions = profile.getExportOutputOptions() == null ? ExportOutputOptions.CSV_OUTPUT : profile.getExportOutputOptions();
+        props.setProperty("exportOutputOptions", outputOptions.name());
 
         String createUrl = globalConfig.getProperties().getString("database.createUrl");
         if (createUrl == null || createUrl.isEmpty()) {
@@ -432,6 +436,8 @@ public class ProfileContextLocator {
             URI proxy = URI.create("http://" + mergedConfig.getString(DroidGlobalProperty.UPDATE_PROXY_HOST.getName()) + ":" + mergedConfig.getInt(DroidGlobalProperty.UPDATE_PROXY_PORT.getName()));
             profileInstance.setProxy(proxy);
         }
+        profileInstance.setExportOutputOptions(ExportOutputOptions.valueOf(mergedConfig.getString(DroidGlobalProperty.EXPORT_OUTPUT_OPTIONS.getName(),
+                ExportOutputOptions.CSV_OUTPUT.name())));
         addProfileContext(profileInstance);
         return profileInstance;
     }
