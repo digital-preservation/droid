@@ -111,6 +111,7 @@
 							<failOnWarning>true</failOnWarning>
 							<ignoredUnusedDeclaredDependencies>
 								<ignoredUnusedDeclaredDependency>uk.gov.nationalarchives:droid-container:jar:${project.version}</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.derby:derby:jar:${derby.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>javax.transaction:jta:jar:${jta.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-frontend-jaxws:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-bindings-soap:jar:${cxf.version}</ignoredUnusedDeclaredDependency>
@@ -296,12 +297,6 @@
 			<artifactId>truevfs-comp-zip</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>${derby.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 		</dependency>
@@ -321,6 +316,11 @@
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP-java7</artifactId>
 			<version>2.4.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>${derby.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
