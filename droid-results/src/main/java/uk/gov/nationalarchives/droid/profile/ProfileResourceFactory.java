@@ -57,6 +57,10 @@ public class ProfileResourceFactory {
             return new FileProfileResource(f);
         } else if (Files.isDirectory(f)) {
             return new DirectoryProfileResource(f, recursive);
+        } else if (S3ProfileResource.isS3uri(location)) {
+            return new S3ProfileResource(location);
+        } else if (HttpProfileResource.isHttpUrl(location)) {
+            return new HttpProfileResource(location);
         } else {
             throw new IllegalArgumentException(
                     String.format("Unknown location [%s]", location));

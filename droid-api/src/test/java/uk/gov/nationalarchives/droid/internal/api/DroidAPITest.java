@@ -31,41 +31,73 @@
  */
 package uk.gov.nationalarchives.droid.internal.api;
 
-import org.junit.Before;
-import org.junit.Test;
+import com.sun.net.httpserver.HttpServer;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.*;
+import static uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.*;
 
 public class DroidAPITest {
 
-    private DroidAPI api;
+    private static DroidAPI api;
+    private static HttpServer s3Server;
+    private static HttpServer httpServer;
 
-    @Before
-    public void setup() throws SignatureParseException {
-        api = DroidAPITestUtils.createApi();
+    private static Stream<URI> getUris(String path) {
+        URI fileUri = Paths.get(path).toUri();
+        URI s3Uri = URI.create("s3://localhost" + ":" + s3Server.getAddress().getPort() + fileUri.getPath());
+        URI httpUri = URI.create("http://localhost" + ":" + httpServer.getAddress().getPort() + fileUri.getPath());
+        return Stream.of(fileUri, s3Uri, httpUri);
     }
+
+    @BeforeAll
+    public static void setup() throws SignatureParseException, IOException {
+        s3Server = createS3Server();
+        httpServer = createHttpServer();
+        URI uri = URI.create("http://localhost" + ":" + s3Server.getAddress().getPort());
+        api = DroidAPITestUtils.createApi(uri);
+    }
+
+
 
     @Test
     public void should_create_non_null_instance_using_test_utility_class() {
         assertThat(api, is(notNullValue()));
     }
 
-    @Test
-    public void should_identify_given_file_with_binary_signature() throws IOException {
-        List<ApiResult> results = api.submit(
-                Paths.get("src/test/resources/persistence.zip"));
+
+    static Stream<URI> binarySignatureUris() {
+        return getUris("src/test/resources/persistence.zip");
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("binarySignatureUris")
+    public void should_identify_given_file_with_binary_signature(URI uri) throws IOException {
+        List<ApiResult> results = api.submit(uri);
         assertThat(results, is(notNullValue()));
 
         assertThat(results.size(), is(1));
@@ -75,12 +107,18 @@ public class DroidAPITest {
         assertThat(identificationResult.getPuid(), is("x-fmt/263"));
         assertThat(identificationResult.getName(), is("ZIP Format"));
         assertThat(identificationResult.getMethod(), is(IdentificationMethod.BINARY_SIGNATURE));
+
     }
 
-    @Test
-    public void should_identify_given_file_using_container_signature() throws IOException {
-        List<ApiResult> results = api.submit(
-                Paths.get("../droid-container/src/test/resources/odf_text.odt"));
+    static Stream<URI> containerSignatureUris() {
+        return getUris("../droid-container/src/test/resources/odf_text.odt");
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("containerSignatureUris")
+    public void should_identify_given_file_using_container_signature(URI uri) throws IOException {
+        List<ApiResult> results = api.submit(uri);
         assertThat(results, is(notNullValue()));
 
         assertThat(results.size(), is(1));
@@ -92,30 +130,54 @@ public class DroidAPITest {
         assertThat(identificationResult.getMethod(), is(IdentificationMethod.CONTAINER));
     }
 
-    @Test
-    public void should_identify_given_file_using_file_extension() throws IOException {
-        List<ApiResult> results = api.submit(Paths.get("src/test/resources/test.txt"));
+    static Stream<URI> fileExtensionUris() {
+        return getUris("src/test/resources/test.txt");
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("fileExtensionUris")
+    public void should_identify_given_file_using_file_extension(URI uri) throws IOException {
+        List<ApiResult> results = api.submit(uri);
         assertThat(results, is(notNullValue()));
         assertThat(results, hasSize(1));
 
-        ApiResult singleResult = results.get(0);
+        ApiResult singleResult = results.getFirst();
 
         assertThat(singleResult.getPuid(), is("x-fmt/111"));
         assertThat(singleResult.getMethod(), is(IdentificationMethod.EXTENSION));
     }
 
-    @Test
-    public void should_report_extension_of_the_file_under_identification_test() throws IOException {
-        List<ApiResult> resultsWithExtension = api.submit(Paths.get("src/test/resources/test.txt"));
-        List<ApiResult> resultsWithoutExtension = api.submit(Paths.get("src/test/resources/word97"));
+    static Stream<Pair<URI, URI>> correctExtensionUris() {
+        List<URI> withExtensionList = getUris("src/test/resources/test.txt").toList();
+        List<URI> withoutExtensionList = getUris("src/test/resources/word97").toList();
 
-        assertThat(resultsWithExtension.get(0).getExtension(), is("txt"));
-        assertThat(resultsWithoutExtension.get(0).getExtension(), is(""));
+        Pair<URI, URI> firstUriPair = Pair.of(withExtensionList.getFirst(), withoutExtensionList.getFirst());
+        Pair<URI, URI> secondUriPair = Pair.of(withExtensionList.get(1), withoutExtensionList.get(1));
+        Pair<URI, URI> thirdUriPair = Pair.of(withExtensionList.getLast(), withoutExtensionList.getLast());
+        return Stream.of(firstUriPair, secondUriPair, thirdUriPair);
     }
 
-    @Test
-    public void should_report_all_puids_when_there_are_more_than_one_identification_hits() throws IOException {
-        List<ApiResult> results = api.submit(Paths.get("src/test/resources/double-identification.jpg"));
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("correctExtensionUris")
+    public void should_report_extension_of_the_file_under_identification_test(Pair<URI, URI> uriPair) throws IOException {
+        List<ApiResult> resultsWithExtension = api.submit(uriPair.getLeft());
+        List<ApiResult> resultsWithoutExtension = api.submit(uriPair.getRight());
+
+        assertThat(resultsWithExtension.getFirst().getExtension(), is("txt"));
+        assertThat(resultsWithoutExtension.getFirst().getExtension(), is(""));
+    }
+
+    static Stream<URI> doubleIdentificationUris() {
+        return getUris("src/test/resources/double-identification.jpg");
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("doubleIdentificationUris")
+    public void should_report_all_puids_when_there_are_more_than_one_identification_hits(URI uri) throws IOException {
+        List<ApiResult> results = api.submit(uri);
         assertThat(results.size(), is(2));
         assertThat(results.stream().map(ApiResult::getPuid).collect(Collectors.toList()),
                 containsInAnyOrder("fmt/96", "fmt/41"));
@@ -123,9 +185,15 @@ public class DroidAPITest {
                 containsInAnyOrder("Raw JPEG Stream", "Hypertext Markup Language"));
     }
 
-    @Test
+    static Stream<URI> extensionMismatchUris() {
+        return getUris("src/test/resources/docx-file-as-xls.xlsx");
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("extensionMismatchUris")
     public void should_report_when_there_is_an_extension_mismatch() throws IOException {
-        List<ApiResult> results = api.submit(Paths.get("src/test/resources/docx-file-as-xls.xlsx"));
+        List<ApiResult> results = api.submit(Paths.get("src/test/resources/docx-file-as-xls.xlsx").toUri());
         assertThat(results.size(), is(1));
         assertThat(results.get(0).getPuid(), is("fmt/412"));
         assertThat(results.get(0).isFileExtensionMismatch(), is(true));
@@ -138,28 +206,72 @@ public class DroidAPITest {
         assertThat(api.getBinarySignatureVersion(), is("119"));
     }
 
-    @Test
-    public void should_produce_zero_results_for_an_empty_file() throws IOException {
-        List<ApiResult> results = api.submit(Paths.get("src/test/resources/test"));
-        assertThat(results, hasSize(0));
+    static Stream<URI> emptyFileUris() {
+        return getUris("src/test/resources/test");
     }
 
     @Test
+    public void should_produce_zero_results_for_an_empty_file() throws IOException {
+        List<ApiResult> results = api.submit(Paths.get("src/test/resources/test").toUri());
+        assertThat(results, hasSize(0));
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("emptyFileUris")
     public void should_produce_results_for_every_time_a_file_is_submitted_for_identification() throws IOException {
         final int MAX_ITER = 5000;
         int acc = 0;
         for (int i = 0; i < MAX_ITER; i++) {
             List<ApiResult> results = api.submit(
-                    Paths.get("../droid-container/src/test/resources/odf_text.odt"));
+                    Paths.get("../droid-container/src/test/resources/odf_text.odt").toUri());
             acc += results.size();
         }
         assertThat(acc, is(MAX_ITER));
     }
 
-    @Test
+    static Stream<URI> fmtFortyUris() {
+        return getUris("../droid-container/src/test/resources/word97.doc");
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("fmtFortyUris")
     public void should_identify_fmt_40_correctly_with_container_identification_method() throws IOException {
         List<ApiResult> results = api.submit(
-                Paths.get("../droid-container/src/test/resources/word97.doc"));
-        assertThat(results.get(0).getName(), is("Microsoft Word Document"));
+                Paths.get("../droid-container/src/test/resources/word97.doc").toUri());
+        assertThat(results.getFirst().getName(), is("Microsoft Word Document"));
+    }
+
+    @Test
+    public void should_return_an_error_if_signature_paths_are_not_set() {
+        assertThrows(IllegalArgumentException.class, () -> DroidAPI.builder().build());
+        assertThrows(IllegalArgumentException.class, () -> DroidAPI.builder().containerSignature(containerPath).build());
+        assertThrows(IllegalArgumentException.class, () -> DroidAPI.builder().binarySignature(signaturePath).build());
+    }
+
+    @Test
+    public void should_provide_default_clients_if_none_are_provided() throws SignatureParseException {
+        DroidAPI.builder().binarySignature(signaturePath).containerSignature(containerPath).build();
+        assertNotNull(api.getS3Client());
+        assertNotNull(api.getHttpClient());
+    }
+
+    @Test
+    public void should_default_to_london_region_if_no_region_provided() throws SignatureParseException {
+        DroidAPI api = DroidAPI.builder().binarySignature(signaturePath).containerSignature(containerPath).build();
+        assertEquals(api.getS3Region(), Region.EU_WEST_2);
+    }
+
+    @Test
+    public void should_close_clients_after_use() throws SignatureParseException {
+        S3Client s3Client;
+        HttpClient httpClient;
+        try (DroidAPI api = DroidAPI.builder().binarySignature(signaturePath).containerSignature(containerPath).build()) {
+            httpClient = api.getHttpClient();
+            s3Client = api.getS3Client();
+        }
+        assertTrue(httpClient.isTerminated());
+        assertThrows(IllegalStateException.class, s3Client::listBuckets);
     }
 }

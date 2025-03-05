@@ -34,7 +34,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import org.apache.ant.compress.util.SevenZStreamFactory;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;

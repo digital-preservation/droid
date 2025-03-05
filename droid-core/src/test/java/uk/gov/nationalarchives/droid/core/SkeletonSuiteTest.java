@@ -36,27 +36,35 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.junit.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Uri;
+import software.amazon.awssdk.services.s3.S3Utilities;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.HttpIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
 /**
  * Created by boreilly on 09/11/2016.
  *
@@ -84,16 +92,28 @@ public class SkeletonSuiteTest {
     private static final Pattern PuidInFilenamePattern = Pattern.compile("^(x-)?fmt-\\d{1,4}");
     private static final Pattern PuidPattern = Pattern.compile("^(x-)?fmt/\\d{1,4}");
 
-    private HashMap<String, String> filesWithPuids;
-    private HashMap<String, String> currentMisidentifiedFiles = new HashMap<>();
-    private String[] currentKnownUnidentifiedFiles;
-    private final List<Path> allPaths = new ArrayList<>();
+    private static HashMap<String, String> filesWithPuids;
+    private static HashMap<String, String> currentMisidentifiedFiles = new HashMap<>();
+    private static String[] currentKnownUnidentifiedFiles;
+    private static final List<Path> allPaths = new ArrayList<>();
+    private static BinarySignatureIdentifier droid;
 
-    @Before
-    public void setup() throws IOException{
+    @BeforeAll
+    public static void initDroid() {
+        droid = new BinarySignatureIdentifier();
+        droid.setSignatureFile(SIGFILE);
+
+        try {
+            droid.init();
+        } catch (SignatureParseException x) {
+            assertEquals("Can't parse signature file", x.getMessage());
+        }
+    }
+
+    public static void setup() throws IOException{
 
         //Hashmap to store filenames and the PUID with which DROId is expected to identify the file.
-        this.filesWithPuids = new HashMap<>();
+        filesWithPuids = new HashMap<>();
 
         final Path fmtDirectory = Paths.get(TEST_FILES_DIR + "fmt");
         final Path xfmtDirectory = Paths.get(TEST_FILES_DIR + "x-fmt");
@@ -130,8 +150,8 @@ public class SkeletonSuiteTest {
                 }
                 // If we haven't got a PUID from the filename in the expected format for any file, don't go any further.
                 assertNotEquals(expectedPuid, NO_PUID);
-                assertTrue(expectedPuid.matches(this.PuidPattern.pattern()));
-                this.filesWithPuids.put(filename, expectedPuid);
+                assertTrue(expectedPuid.matches(PuidPattern.pattern()));
+                filesWithPuids.put(filename, expectedPuid);
             }
         }
 
@@ -143,109 +163,126 @@ public class SkeletonSuiteTest {
                 "One or more skeleton files is listed for both \"no identifications\" and \"other\" identifications!\n";
         inBothLists += "Please review your skeleton file test configuration.";
         for(String s: currentMisidentifiedFiles.keySet()) {
-            assertTrue(inBothLists, !ArrayUtils.contains(currentKnownUnidentifiedFiles,s));
+            Assertions.assertFalse(ArrayUtils.contains(currentKnownUnidentifiedFiles, s), inBothLists);
         }
     }
 
-    @Test
-    public void testBinarySkeletonMatch() throws Exception {
-
-        BinarySignatureIdentifier droid = new BinarySignatureIdentifier();
-        droid.setSignatureFile(SIGFILE);
-
+    public static Stream<IdentificationRequest<?>> identificationRequests() {
+        Stream.Builder<IdentificationRequest<?>> builder = Stream.builder();
         try {
-            droid.init();
-        } catch (SignatureParseException x) {
-            assertEquals("Can't parse signature file", x.getMessage());
-        }
+            setup();
+            for (Path skeletonPath: allPaths) {
+                String filename = skeletonPath.getFileName().toString();
+                URI resourceUri = skeletonPath.toUri();
+                String escapedPath = skeletonPath.toString().replaceAll(" ", "%20");
+                URI httpUri = URI.create("https://test/" + escapedPath);
+                URI uri = URI.create("s3://test-bucket/" + escapedPath);
+                S3Uri s3Uri = S3Utilities.builder().region(Region.EU_WEST_2).build().parseUri(uri);
+                RequestMetaData metaData = new RequestMetaData(
+                        Files.size(skeletonPath), Files.getLastModifiedTime(skeletonPath).toMillis(), filename);
+                RequestIdentifier fileIdentifier = new RequestIdentifier(resourceUri);
+                fileIdentifier.setParentId(1L);
+                RequestIdentifier s3Identifier = new RequestIdentifier(uri);
+                s3Identifier.setParentId(1L);
+                RequestIdentifier httpIdentifier = new RequestIdentifier(httpUri);
+                httpIdentifier.setParentId(1L);
+                FileSystemIdentificationRequest fileSystemIdentificationRequest = new FileSystemIdentificationRequest(metaData, fileIdentifier);
+                fileSystemIdentificationRequest.open(skeletonPath);
+                builder.add(fileSystemIdentificationRequest);
+                S3IdentificationRequest s3IdentificationRequest = new S3IdentificationRequest(metaData, s3Identifier, new TestS3Client());
+                s3IdentificationRequest.open(s3Uri);
+                builder.add(s3IdentificationRequest);
 
+                HttpIdentificationRequest httpIdentificationRequest = new HttpIdentificationRequest(metaData, httpIdentifier, new TestHttpClient());
+                httpIdentificationRequest.open(httpUri);
+                builder.add(httpIdentificationRequest);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return builder.build();
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest
+    @MethodSource("identificationRequests")
+    public void testBinarySkeletonMatch(IdentificationRequest<?> request) throws Exception {
         int errorCount = 0;
 
         //Go through all the skeleton files.  Check if the PUID that DROId identifies for the file matches the beginning
         // of the file name. Or if not, that it is expected to return a different PUID, or none at all.
-        for(final Path skeletonPath : this.allPaths) {
+        String filename = request.getRequestMetaData().getName();
 
-            URI resourceUri = skeletonPath.toUri();
-            String filename = skeletonPath.getFileName().toString();
 
-            RequestMetaData metaData = new RequestMetaData(
-                    Files.size(skeletonPath), Files.getLastModifiedTime(skeletonPath).toMillis(), filename);
-            RequestIdentifier identifier = new RequestIdentifier(resourceUri);
-            identifier.setParentId(1L);
+        IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
+        List<IdentificationResult> results = resultsCollection.getResults();
+        String expectedPuid = filesWithPuids.get(filename);
 
-            IdentificationRequest<Path> request = new FileSystemIdentificationRequest(metaData, identifier);
-            request.open(skeletonPath);
+        assertNotEquals(expectedPuid, null);
 
-            IdentificationResultCollection resultsCollection = droid.matchBinarySignatures(request);
-            List<IdentificationResult> results = resultsCollection.getResults();
-            String expectedPuid = filesWithPuids.get(filename);
+        if (!ArrayUtils.contains(this.currentKnownUnidentifiedFiles, filename)) {
 
-            assertNotEquals(expectedPuid, null);
+            // Check if we have any results from DROID - we should have as the file is not in the list of known
+            // unidentified files.
+            try {
+                // Catch assertion failure so we can print an error and continue, checking the total
+                // error count after all files are processed.
+                assertTrue(results.size() >= 1);
+            } catch (AssertionError e) {
+                System.out.println("No results found for file: " + filename + ". Expected: " + expectedPuid);
+                errorCount++;
+            }
 
-            if (!ArrayUtils.contains(this.currentKnownUnidentifiedFiles, filename)) {
+            //If we reach here, we have at least one result from DROID for the current file.
+            //Allow for more than one identification to be returned by DROID.  This is fine as long as one of them
+            //matches the expected PUID.
+            String[] puidsIdentified = getPuidsFromIdentification(results);
 
-                // Check if we have any results from DROID - we should have as the file is not in the list of known
-                // unidentified files.
-                try {
-                    // Catch assertion failure so we can print an error and continue, checking the total
-                    // error count after all files are processed.
-                    assertTrue(results.size() >= 1);
-                } catch (AssertionError e) {
-                    System.out.println("No results found for file: " + filename + ". Expected: " + expectedPuid);
-                    errorCount++;
-                    continue;
-                }
-
-                //If we reach here, we have at least one result from DROID for the current file.
-                //Allow for more than one identification to be returned by DROID.  This is fine as long as one of them
-                //matches the expected PUID.
-                String[] puidsIdentified = getPuidsFromIdentification(results);
-
-                try {
-                    //Catch assertion failure so we can print error and continue, checking the total error count after
-                    // all files are processed.
-                    Assert.assertTrue(ArrayUtils.contains(puidsIdentified,expectedPuid));
-                } catch( AssertionError e) {
-                    //Is this a file where we're expecting a different PUID to the one the filename starts with?
-                    if(this.currentMisidentifiedFiles.containsKey(filename)) {
-                        String expectedWrongPuid = currentMisidentifiedFiles.get(filename);
-                        if(ArrayUtils.contains(puidsIdentified, expectedWrongPuid)) {
-                            System.out.println(String.format("INFO: Skeleton file %s identified by expected \"wrong\"" +
-                                    " PUID %s instead of %s.", filename, expectedWrongPuid, expectedPuid));
-                        } else {
-                            System.out.println(printError(filename, expectedWrongPuid, puidsIdentified));
-                            errorCount++;
-                        }
+            try {
+                //Catch assertion failure so we can print error and continue, checking the total error count after
+                // all files are processed.
+                assertTrue(ArrayUtils.contains(puidsIdentified,expectedPuid));
+            } catch( AssertionError e) {
+                //Is this a file where we're expecting a different PUID to the one the filename starts with?
+                if(this.currentMisidentifiedFiles.containsKey(filename)) {
+                    String expectedWrongPuid = currentMisidentifiedFiles.get(filename);
+                    if(ArrayUtils.contains(puidsIdentified, expectedWrongPuid)) {
+                        System.out.println(String.format("INFO: Skeleton file %s identified by expected \"wrong\"" +
+                                " PUID %s instead of %s.", filename, expectedWrongPuid, expectedPuid));
                     } else {
-                        // We expected DROID to identify this file with a PUID matching the start of the filename - so
-                        // this is an unexpected result.
-                        System.out.println(printError(filename, expectedPuid, puidsIdentified));
+                        System.out.println(printError(filename, expectedWrongPuid, puidsIdentified));
                         errorCount++;
                     }
-
-                }
-            } else {
-                //We expect this file not be identified by its name derived PUID, or by any alternative PUID
-                try {
-                    //Catch assertion failure so we can print error and continue, checking the total error count after
-                    // all files are processed.
-                    assertTrue(results.size() == 0);
-                }  catch ( AssertionError e) {
-
-                    String[] puidsIdentifiedForFile = getPuidsFromIdentification(results);
-
-                    System.out.println(printError(filename, NO_PUID, puidsIdentifiedForFile));
+                } else {
+                    // We expected DROID to identify this file with a PUID matching the start of the filename - so
+                    // this is an unexpected result.
+                    System.out.println(printError(filename, expectedPuid, puidsIdentified));
                     errorCount++;
                 }
 
             }
+        } else {
+            //We expect this file not be identified by its name derived PUID, or by any alternative PUID
+            try {
+                //Catch assertion failure so we can print error and continue, checking the total error count after
+                // all files are processed.
+                assertTrue(results.size() == 0);
+            }  catch ( AssertionError e) {
+
+                String[] puidsIdentifiedForFile = getPuidsFromIdentification(results);
+
+                System.out.println(printError(filename, NO_PUID, puidsIdentifiedForFile));
+                errorCount++;
+            }
+
         }
 
-        assertEquals(String.format("%1$d error(s) occurred in skeleton file identifications, see earlier messages.",
-                errorCount), 0, errorCount);
+        assertEquals(0, errorCount, String.format("%1$d error(s) occurred in skeleton file identifications, see earlier messages.",
+                errorCount));
+
     }
 
-    private void populateNonAndDifferentlyIdentifiedFiles() throws IOException {
+    private static void populateNonAndDifferentlyIdentifiedFiles() throws IOException {
 
         final List<String> unidentifiedFiles = new ArrayList<>();
 
@@ -264,7 +301,7 @@ public class SkeletonSuiteTest {
 
         }
 
-        this.currentKnownUnidentifiedFiles = unidentifiedFiles.toArray(new String[0]);
+        currentKnownUnidentifiedFiles = unidentifiedFiles.toArray(new String[0]);
 
         //Populate files whihc ar expected to be identified by DROId but the PUID identified is not currently
         //expected to match the beginning of the file name.
@@ -279,7 +316,7 @@ public class SkeletonSuiteTest {
                 if (!strLine.startsWith("//")) {
                     String filename = strLine.split("\\s+")[0];
                     String puid = strLine.split("\\s+")[1];
-                    this.currentMisidentifiedFiles.put(filename, puid);
+                    currentMisidentifiedFiles.put(filename, puid);
                 }
             }
         }

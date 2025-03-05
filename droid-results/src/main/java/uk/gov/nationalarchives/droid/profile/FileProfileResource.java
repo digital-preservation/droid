@@ -80,6 +80,16 @@ public class FileProfileResource extends AbstractProfileResource {
     }
 
     @Override
+    public boolean isS3Object() {
+        return false;
+    }
+
+    @Override
+    public boolean isHttpObject() {
+        return false;
+    }
+
+    @Override
     public void setSize(Path filePath) {
         setSize(FileUtil.sizeQuietly(filePath));
     }

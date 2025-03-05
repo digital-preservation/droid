@@ -33,7 +33,7 @@ package uk.gov.nationalarchives.droid.core.interfaces;
 
 import net.byteseek.io.reader.WindowReader;
 import org.joda.time.LocalDateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.BasicFilterCriterion;
@@ -49,7 +49,9 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class IdentificationRequestFilterTest {
 

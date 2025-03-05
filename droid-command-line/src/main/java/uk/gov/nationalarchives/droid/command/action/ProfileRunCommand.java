@@ -44,11 +44,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileExce
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
-import uk.gov.nationalarchives.droid.profile.ProfileInstance;
-import uk.gov.nationalarchives.droid.profile.ProfileManager;
-import uk.gov.nationalarchives.droid.profile.ProfileResourceFactory;
-import uk.gov.nationalarchives.droid.profile.ProfileManagerException;
-import uk.gov.nationalarchives.droid.profile.ProfileState;
+import uk.gov.nationalarchives.droid.profile.*;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 
 /**
@@ -84,7 +80,9 @@ public class ProfileRunCommand implements DroidCommand {
             profile.changeState(ProfileState.VIRGIN);
 
             for (String resource : resources) {
-                profile.addResource(getProfileResourceFactory().getResource(resource, recursive));
+                AbstractProfileResource profileResource = getProfileResourceFactory().getResource(resource, recursive);
+                profileResource.setProxy(profile.getProxy());
+                profile.addResource(profileResource);
             }
             profileManager.setProgressObserver(profile.getUuid(), null);
             Future<?> future = profileManager.start(profile.getUuid());

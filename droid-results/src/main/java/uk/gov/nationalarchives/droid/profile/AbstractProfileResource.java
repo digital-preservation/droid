@@ -70,7 +70,10 @@ public abstract class AbstractProfileResource {
     
     @XmlElement(name = "Path")
     private String path;
-    
+
+    @XmlElement(name = "Proxy")
+    private URI proxy;
+
     /**
      * Default Constructor.
      */
@@ -139,6 +142,16 @@ public abstract class AbstractProfileResource {
      * @return true if the resource is a directory of files, false otherwise
      */
     public abstract boolean isDirectory();
+
+    /**
+     * @return true if the resource is an S3 object
+     */
+    public abstract boolean isS3Object();
+
+    /**
+     * @return true if the resource is an HTTP object
+     */
+    public abstract boolean isHttpObject();
 
     /**
      * @return true if the resource should be recursed into; false otherwise
@@ -252,6 +265,12 @@ public abstract class AbstractProfileResource {
     public void setName(String name) {
         this.name = name;
     }
-    
 
+    public URI getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(URI proxy) {
+        this.proxy = proxy;
+    }
 }

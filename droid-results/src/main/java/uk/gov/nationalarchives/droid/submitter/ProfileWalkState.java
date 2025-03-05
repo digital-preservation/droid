@@ -39,9 +39,7 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlElementRefs;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
-import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
-import uk.gov.nationalarchives.droid.profile.FileProfileResource;
+import uk.gov.nationalarchives.droid.profile.*;
 
 /**
  * @author rflitcroft
@@ -53,7 +51,10 @@ public class ProfileWalkState {
 
     @XmlElementRefs({
         @XmlElementRef(name = "File", type = FileProfileResource.class), 
-        @XmlElementRef(name = "Dir", type = DirectoryProfileResource.class) })
+        @XmlElementRef(name = "Dir", type = DirectoryProfileResource.class),
+        @XmlElementRef(name = "S3", type = S3ProfileResource.class),
+        @XmlElementRef(name = "Http", type = HttpProfileResource.class)
+    })
     private AbstractProfileResource currentResource;
     
     @XmlElement(name = "FileWalker")

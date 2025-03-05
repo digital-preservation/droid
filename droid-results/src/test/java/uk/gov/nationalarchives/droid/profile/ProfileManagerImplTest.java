@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.profile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -262,6 +263,12 @@ public class ProfileManagerImplTest {
         overridden = createOverriddenProfile("profile.maxBytesToScan", maxBytes);
         assertEquals(maxBytes, mainInstance.getMaxBytesToScan());
         assertEquals((Long) (maxBytes + 1000L), (Long) overridden.getMaxBytesToScan());
+
+        // Test setting proxy:
+        Thread.sleep(10);
+        overridden = createOverriddenProfile(Map.of("update.proxy", true, "update.proxy.host", "localhost", "update.proxy.port", "8080"));
+        assertNull(mainInstance.getProxy());
+        assertEquals(overridden.getProxy(), URI.create("http://localhost:8080"));
     }
 
 
@@ -278,6 +285,16 @@ public class ProfileManagerImplTest {
         } else {
             overrides.setProperty(propertyName, "true");
         }
+        return profileManager.createProfile(sigInfo, overrides);
+    }
+
+    private ProfileInstance createOverriddenProfile(Map<String, Object> properties) throws ProfileManagerException {
+        Map<SignatureType, SignatureFileInfo> sigInfo = new HashMap<>();
+        PropertiesConfiguration overrides = new PropertiesConfiguration();
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            overrides.setProperty(entry.getKey(), entry.getValue());
+        }
+
         return profileManager.createProfile(sigInfo, overrides);
     }
 

@@ -41,44 +41,42 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZipEntryIdentificationRequestTest {
 
     private static Path tmpDir;
 
-    private ZipEntryIdentificationRequest zipResource;
-    private URI droidZipFileName;
-    private InputStream in;
-    private ZipEntry entry;
+    private static ZipEntryIdentificationRequest zipResource;
+    private static URI droidZipFileName;
+    private static InputStream in;
+    private static ZipEntry entry;
 
-    private RequestMetaData metaData;
-    private RequestIdentifier identifier;
+    private static RequestMetaData metaData;
+    private static RequestIdentifier identifier;
     
     
-    @BeforeClass
+    @BeforeAll
     public static void createTmpFileDirectory() throws IOException {
         tmpDir = Paths.get("tmp");
         Files.createDirectories(tmpDir);
     }
     
-    @AfterClass
+    @AfterAll
     public static void removeTmpDir() {
         FileUtils.deleteQuietly(tmpDir.toFile());
     }
     
-    @Before
-    public void setup() throws Exception {
+    @BeforeAll
+    public static void setup() throws Exception {
         
-        droidZipFileName = getClass().getResource("/saved.zip").toURI();
+        droidZipFileName = ZipEntryIdentificationRequestTest.class.getResource("/saved.zip").toURI();
         ZipFile zip = new ZipFile(Paths.get(droidZipFileName).toFile());
         entry = zip.getEntry("profile.xml");
         in = zip.getInputStream(entry);
@@ -99,8 +97,8 @@ public class ZipEntryIdentificationRequestTest {
         //assertNotNull(zipResource.getCache().getSourceFile());
     }
     
-    @After
-    public void tearDown() throws IOException {
+    @AfterAll
+    public static void tearDown() throws IOException {
         zipResource.close();
         in.close();
     }

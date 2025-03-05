@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.profile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -427,6 +428,10 @@ public class ProfileContextLocator {
         profileInstance.setColumnsToWrite(mergedConfig.getString(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), ""));
         profileInstance.setExportOptions(ExportOptions.valueOf(mergedConfig.getString(DroidGlobalProperty.EXPORT_OPTIONS.getName(),
                 ExportOptions.ONE_ROW_PER_FILE.name())));
+        if (mergedConfig.containsKey(DroidGlobalProperty.UPDATE_USE_PROXY.getName()) && mergedConfig.getBoolean(DroidGlobalProperty.UPDATE_USE_PROXY.getName())) {
+            URI proxy = URI.create("http://" + mergedConfig.getString(DroidGlobalProperty.UPDATE_PROXY_HOST.getName()) + ":" + mergedConfig.getInt(DroidGlobalProperty.UPDATE_PROXY_PORT.getName()));
+            profileInstance.setProxy(proxy);
+        }
         addProfileContext(profileInstance);
         return profileInstance;
     }
