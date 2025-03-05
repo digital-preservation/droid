@@ -31,14 +31,10 @@
  */
 package uk.gov.nationalarchives.droid.submitter;
 
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Uri;
-import software.amazon.awssdk.services.s3.S3Utilities;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 import uk.gov.nationalarchives.droid.core.interfaces.*;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.S3Utils;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.S3ProfileResource;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
@@ -83,7 +79,7 @@ public class S3Walker {
                 pathToResourceId.put(dirUri + FORWARD_SLASH, fileParentNode);
             }
             for (String objectUri: s3Result.dirToFileMap().get(keysList.get(i))) {
-                progressMonitor.startJob(URI.create(objectUri));
+                progressMonitor.startJob(URI.create(objectUri.replaceAll(" ", "%20")));
                 s3EventHandler.onS3Event(new S3ProfileResource(objectUri), fileParentNode);
             }
         }
@@ -104,17 +100,16 @@ public class S3Walker {
 
     private S3Result getS3Result(AbstractProfileResource resource) {
         URI uri = resource.getUri();
-        S3Uri s3Uri = S3Utilities.builder().region(Region.EU_WEST_2).build().parseUri(uri);
-        String bucket = s3Uri.bucket().orElseThrow(() -> new RuntimeException("Bucket not found in uri " + uri));
-        String prefix = s3Uri.key().orElseThrow(() -> new RuntimeException("Key not found in uri " + uri));
+        S3Utils s3Utils = new S3Utils(this.s3EventHandler.getS3Client(resource));
 
-        ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(bucket).prefix(prefix).build();
-        ListObjectsV2Iterable responseIterable = this.s3EventHandler.getS3Client().listObjectsV2Paginator(request);
+        S3Utils.S3ObjectList objectList = s3Utils.listObjects(uri);
+        Iterable<S3Object> contents = objectList.contents();
+        String bucket = objectList.bucket();
 
         Map<String, List<String>> dirToFileMap = new HashMap<>();
         int totalCount = 0;
 
-        for (S3Object s3Object: responseIterable.contents()) {
+        for (S3Object s3Object: contents) {
             int lastSlashIndex = (FORWARD_SLASH + s3Object.key()).lastIndexOf(FORWARD_SLASH);
             String keyUri = S3_SCHEME + bucket + FORWARD_SLASH + s3Object.key();
             String parent;

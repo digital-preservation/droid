@@ -127,6 +127,9 @@ public final class I18N {
     /** Run a profile outputting to a csv file or console. */
     public static final String RUN_FILE_PROFILE_HELP = "profile.run.file.help";
 
+    /** Configure a proxy to send http requests through for S3 or HTTP identification. */
+    public static final String PROXY_HELP = "proxy.help";
+
     /** Help for signature file. */
     public static final String SIGNATURE_FILE_HELP = "signature_file.help";
     

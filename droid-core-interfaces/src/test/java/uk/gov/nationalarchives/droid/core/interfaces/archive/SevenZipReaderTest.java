@@ -33,9 +33,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.WindowReader;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -44,27 +42,28 @@ import java.nio.channels.NonWritableChannelException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class SevenZipReaderTest {
 
-    private static String RESOURCE_NAME = "saved.7z";
+    private static final String RESOURCE_NAME = "saved.7z";
     private WindowReader reader;
     private SevenZipReader zip;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         reader = getFileReader(RESOURCE_NAME);
         zip = new SevenZipReader(reader);
     }
 
-    @After
+    @AfterEach
     public void close() throws Exception {
         zip.close();
         reader.close();
     }
 
-    private WindowReader getFileReader(String resourceName) throws IOException {
+    private static WindowReader getFileReader(String resourceName) throws IOException {
         Path p = Paths.get("./src/test/resources/" + resourceName);
         return new FileReader(p.toFile(), 127); // use a small odd window size so we cross window boundaries.
     }
@@ -99,10 +98,10 @@ public class SevenZipReaderTest {
         assertArrayEquals(backing, expected);
     }
 
-    @Test(expected = NonWritableChannelException.class)
+    @Test
     public void testWrite() throws Exception {
         ByteBuffer buf = ByteBuffer.wrap(new byte[1024]);
-        zip.write(buf);
+        assertThrows(NonWritableChannelException.class, () -> zip.write(buf));
     }
 
     @Test
@@ -119,9 +118,9 @@ public class SevenZipReaderTest {
         assertEquals(reader.length(), zip.size());
     }
 
-    @Test(expected = NonWritableChannelException.class)
+    @Test
     public void testTruncate() throws Exception {
-        zip.truncate(128);
+        assertThrows(NonWritableChannelException.class, () -> zip.truncate(128));
     }
 
     @Test

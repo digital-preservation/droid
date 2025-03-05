@@ -42,8 +42,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
-import java.util.Map;
 
 public class HttpWindowReader extends AbstractReader implements SoftWindowRecovery {
 
@@ -53,18 +51,11 @@ public class HttpWindowReader extends AbstractReader implements SoftWindowRecove
 
     private final URI uri;
 
-    private record S3Object(String bucket, String key) {}
-
-    public HttpWindowReader(WindowCache cache, URI uri, HttpClient httpClient) {
+    public HttpWindowReader(WindowCache cache, HttpUtils.HttpMetadata httpMetadata, HttpClient httpClient) {
         super(cache);
-        this.uri = uri;
+        this.uri = httpMetadata.uri();
         this.httpClient = httpClient;
-        this.length = getContentLength();
-    }
-
-    protected Long getContentLength() {
-        Map<String, List<String>> headersMap = responseWithRange(0, 1).headers().map();
-        return Long.parseLong(headersMap.getOrDefault("content-length", List.of("0")).get(0));
+        this.length = httpMetadata.fileSize();
     }
 
     private HttpResponse<byte[]> responseWithRange(long rangeStart, long rangeEnd) {

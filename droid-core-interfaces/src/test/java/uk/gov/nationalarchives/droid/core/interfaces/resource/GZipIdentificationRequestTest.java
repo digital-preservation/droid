@@ -44,15 +44,13 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rflitcroft
@@ -63,19 +61,19 @@ public class GZipIdentificationRequestTest {
 
     private static String fileData;
 
-    private GZipIdentificationRequest gzRequest;
-    private Path file;
+    private static GZipIdentificationRequest gzRequest;
+    private static Path file;
 
-    private RequestMetaData metaData;
-    private RequestIdentifier identifier;
+    private static RequestMetaData metaData;
+    private static RequestIdentifier identifier;
     
     
-    @AfterClass
+    @AfterAll
     public static void removeTmpDir() {
         FileUtils.deleteQuietly(tmpDir.toFile());
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void setupTestData() throws IOException, URISyntaxException {
         tmpDir = Paths.get("tmp");
         Files.createDirectories(tmpDir);
@@ -94,10 +92,10 @@ public class GZipIdentificationRequestTest {
         }
     }    
     
-    @Before
-    public void setup() throws Exception {
+    @BeforeAll
+    public static void setup() throws Exception {
     
-        file = Paths.get(getClass().getResource("/testXmlFile.xml.gz").toURI());
+        file = Paths.get(GZipIdentificationRequestTest.class.getResource("/testXmlFile.xml.gz").toURI());
         
         metaData = new RequestMetaData(null, null, "foo");
         identifier = new RequestIdentifier(URI.create(GzipUtils.getUncompressedFilename(file.toUri().toString())));
@@ -108,8 +106,8 @@ public class GZipIdentificationRequestTest {
         gzRequest.open(in);
     }
     
-    @After
-    public void tearDown() throws IOException {
+    @AfterAll
+    public static void tearDown() throws IOException {
         gzRequest.close();
     }
 

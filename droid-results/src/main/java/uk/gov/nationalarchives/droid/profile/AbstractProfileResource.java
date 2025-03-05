@@ -70,7 +70,10 @@ public abstract class AbstractProfileResource {
     
     @XmlElement(name = "Path")
     private String path;
-    
+
+    @XmlElement(name = "Proxy")
+    private URI proxy;
+
     /**
      * Default Constructor.
      */
@@ -262,6 +265,12 @@ public abstract class AbstractProfileResource {
     public void setName(String name) {
         this.name = name;
     }
-    
 
+    public URI getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(URI proxy) {
+        this.proxy = proxy;
+    }
 }

@@ -31,10 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.net.URI;
+import java.util.*;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.configuration.CombinedConfiguration;
@@ -267,6 +265,13 @@ public class CommandFactoryImpl implements CommandFactory {
 
         overrides.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
         overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "FILE_PATH PUID");
+
+        if (cli.hasOption(CommandLineParam.HTTP_PROXY.toString())) {
+            URI proxyUri = URI.create(cli.getOptionValue(CommandLineParam.HTTP_PROXY.toString()));
+            overrides.setProperty(DroidGlobalProperty.UPDATE_USE_PROXY.getName(), true);
+            overrides.setProperty(DroidGlobalProperty.UPDATE_PROXY_HOST.getName(), proxyUri.getHost());
+            overrides.setProperty(DroidGlobalProperty.UPDATE_PROXY_PORT.getName(), proxyUri.getPort());
+        }
         command.setResources(resources);
         command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));

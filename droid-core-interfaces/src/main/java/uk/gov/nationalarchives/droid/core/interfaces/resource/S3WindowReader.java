@@ -38,10 +38,8 @@ import net.byteseek.io.reader.windows.SoftWindowRecovery;
 import net.byteseek.io.reader.windows.Window;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,32 +49,26 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
 
     private static final int BUFFER_LENGTH = 8192;
 
-    private final S3Object s3Object;
+    private final S3Utils.S3ObjectMetadata s3ObjectMetadata;
 
     private final S3Client s3Client;
 
     private final Long length;
 
-    //private final Integer windowSize; TODO Allow override from CLI
-
-    private record S3Object(String bucket, String key) {}
-
-    public S3WindowReader(WindowCache cache, S3Uri uri, S3Client s3Client) {
+    public S3WindowReader(WindowCache cache, S3Utils.S3ObjectMetadata s3ObjectMetadata, S3Client s3Client) {
         super(cache);
         this.s3Client = s3Client;
-        String bucket = uri.bucket().orElseThrow(() -> new RuntimeException("Bucket not found in uri " + uri));
-        String key = uri.key().orElseThrow(() -> new RuntimeException("Key not found in uri " + uri));
-        HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucket).key(key).build();
-        this.length = s3Client.headObject(request).contentLength();
-        this.s3Object = new S3Object(bucket, key);
+        this.length = s3ObjectMetadata.contentLength();
+        this.s3ObjectMetadata = s3ObjectMetadata;
     }
 
     @Override
     protected Window createWindow(long windowStart) throws IOException {
         if (windowStart >= 0) {
+            String key = this.s3ObjectMetadata.key().orElseThrow(() -> new RuntimeException(this.s3ObjectMetadata.key() + " not found"));
             GetObjectRequest getS3ObjectRequest = GetObjectRequest.builder()
-                    .bucket(this.s3Object.bucket)
-                    .key(this.s3Object.key)
+                    .bucket(this.s3ObjectMetadata.bucket())
+                    .key(key)
                     .range("bytes=" + windowStart + "-" + (windowStart + this.windowSize -1))
                     .build();
 
@@ -92,7 +84,7 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
         return null;
     }
 
-    public static byte[] toByteArray(ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
+    private static byte[] toByteArray(ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
         try (InputStream in = inputStream; ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[BUFFER_LENGTH];
             int bytesRead;

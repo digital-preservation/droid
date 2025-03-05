@@ -283,6 +283,13 @@ public enum CommandLineParam {
         }
     },
 
+    /** Sets a proxy for use with the HTTP and S3 options. */
+    HTTP_PROXY("proxy", "http-proxy", true, -1, I18N.PROXY_HELP, "proxyUrl") {
+        @Override public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+
     /** Runs without a profile and with the specified http(s) url. */
     RUN_HTTP("HTTP", "HTTP-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "httpUrl") {
         @Override
@@ -530,6 +537,7 @@ public enum CommandLineParam {
         options.addOption(COLUMNS_TO_WRITE.newOption());
         options.addOption(QUOTE_COMMAS.newOption());
         options.addOption(ROW_PER_FORMAT.newOption());
+        options.addOption(HTTP_PROXY.newOption());
 
         options.addOptionGroup(getFilterOptionGroup());
         options.addOptionGroup(getFileFilterOptionGroup());

@@ -31,18 +31,29 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Date;
 
-public class HttpProfileResource extends AbstractProfileResource {
+@XmlRootElement(name = "Http")
+public class HttpProfileResource extends FileProfileResource {
 
-    public HttpProfileResource(String uri) {
-        super.setUri(URI.create(uri));
+    public HttpProfileResource() {}
+
+    public HttpProfileResource(String uriString) {
+        URI uri = URI.create(uriString);
+        super.setUri(uri);
+        setName(uri.getPath().startsWith("/") ? uri.getPath().substring(1) : uri.getPath());
+        setLastModifiedDate(new Date(0));
+        int dotLastIndex = uriString.lastIndexOf('.');
+        setExtension(dotLastIndex > -1 ? uriString.substring(uriString.lastIndexOf('.')): "");
     }
 
     public static boolean isHttpUrl(String url) {
         try {
-            String scheme = URI.create(url).getScheme();
+            String scheme = URI.create(url.replaceAll(" ", "%20")).getScheme();
             return scheme != null && (scheme.equals("http") || scheme.equals("https"));
         } catch (IllegalArgumentException e) {
             return false;
@@ -71,4 +82,5 @@ public class HttpProfileResource extends AbstractProfileResource {
     public void setUri(URI uri) {
         super.setUri(uri);
     }
+
 }

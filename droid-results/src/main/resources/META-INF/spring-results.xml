@@ -304,6 +304,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     <bean id="httpEventHandler" class="uk.gov.nationalarchives.droid.submitter.HttpEventHandler">
         <property name="submissionThrottle" ref="submissionThrottle"/>
         <property name="droidCore" ref="submissionGateway"/>
+        <property name="config" ref="globalConfig"/>
     </bean>
 
     <bean id="dirEventHandler" class="uk.gov.nationalarchives.droid.submitter.DirectoryEventHandler">

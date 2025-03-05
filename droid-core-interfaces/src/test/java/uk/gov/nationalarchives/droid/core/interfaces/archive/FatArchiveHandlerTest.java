@@ -39,9 +39,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import uk.gov.nationalarchives.droid.core.interfaces.*;
@@ -58,10 +58,10 @@ import static org.mockito.Mockito.verify;
 
 public class FatArchiveHandlerTest {
 
-    private Path tmpDir;
+    private static Path tmpDir;
 
-    @Before
-    public void setup() throws IOException {
+    @BeforeAll
+    public static void setup() throws IOException {
         tmpDir = Files.createTempDirectory("fat-test");
     }
 
@@ -111,8 +111,8 @@ public class FatArchiveHandlerTest {
 
     }
 
-    @After
-    public void tearDown(){
+    @AfterAll
+    public static void tearDown(){
         FileUtils.deleteQuietly(tmpDir.toFile());
     }
 

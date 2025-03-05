@@ -36,12 +36,8 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -49,21 +45,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.S3Utilities;
-import software.amazon.awssdk.services.s3.model.*;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.HttpIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
 
@@ -180,7 +174,9 @@ public class SkeletonSuiteTest {
             for (Path skeletonPath: allPaths) {
                 String filename = skeletonPath.getFileName().toString();
                 URI resourceUri = skeletonPath.toUri();
-                URI uri = URI.create("s3://test-bucket/" + skeletonPath.toString().replaceAll(" ", "%20"));
+                String escapedPath = skeletonPath.toString().replaceAll(" ", "%20");
+                URI httpUri = URI.create("https://test/" + escapedPath);
+                URI uri = URI.create("s3://test-bucket/" + escapedPath);
                 S3Uri s3Uri = S3Utilities.builder().region(Region.EU_WEST_2).build().parseUri(uri);
                 RequestMetaData metaData = new RequestMetaData(
                         Files.size(skeletonPath), Files.getLastModifiedTime(skeletonPath).toMillis(), filename);
@@ -188,12 +184,18 @@ public class SkeletonSuiteTest {
                 fileIdentifier.setParentId(1L);
                 RequestIdentifier s3Identifier = new RequestIdentifier(uri);
                 s3Identifier.setParentId(1L);
+                RequestIdentifier httpIdentifier = new RequestIdentifier(httpUri);
+                httpIdentifier.setParentId(1L);
                 FileSystemIdentificationRequest fileSystemIdentificationRequest = new FileSystemIdentificationRequest(metaData, fileIdentifier);
                 fileSystemIdentificationRequest.open(skeletonPath);
                 builder.add(fileSystemIdentificationRequest);
-                S3IdentificationRequest s3IdentificationRequest = new S3IdentificationRequest(metaData, s3Identifier, createTestS3Client());
+                S3IdentificationRequest s3IdentificationRequest = new S3IdentificationRequest(metaData, s3Identifier, new TestS3Client());
                 s3IdentificationRequest.open(s3Uri);
                 builder.add(s3IdentificationRequest);
+
+                HttpIdentificationRequest httpIdentificationRequest = new HttpIdentificationRequest(metaData, httpIdentifier, new TestHttpClient());
+                httpIdentificationRequest.open(httpUri);
+                builder.add(httpIdentificationRequest);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -201,6 +203,7 @@ public class SkeletonSuiteTest {
         return builder.build();
     }
 
+    @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest
     @MethodSource("identificationRequests")
     public void testBinarySkeletonMatch(IdentificationRequest<?> request) throws Exception {
@@ -276,46 +279,7 @@ public class SkeletonSuiteTest {
 
         assertEquals(0, errorCount, String.format("%1$d error(s) occurred in skeleton file identifications, see earlier messages.",
                 errorCount));
-    }
 
-    private static S3Client createTestS3Client() {
-        return new S3Client() {
-
-            @Override
-            public ResponseInputStream<GetObjectResponse> getObject(GetObjectRequest getObjectRequest) throws NoSuchKeyException {
-                try {
-                    String[] range = getObjectRequest.range().split("=")[1].split("-");
-                    int rangeStart = Integer.parseInt(range[0]);
-                    int rangeEnd = Integer.parseInt(range[1]);
-                    int length = rangeEnd - rangeStart + 1;
-                    try (RandomAccessFile raf = new RandomAccessFile(getObjectRequest.key(), "r")) {
-                        raf.seek(rangeStart);
-                        byte[] buffer = new byte[length];
-                        int bytesRead = raf.read(buffer);
-                        byte[] outputBytes = bytesRead == length ? buffer : Arrays.copyOf(buffer, bytesRead);
-                        ByteArrayInputStream bais = new ByteArrayInputStream(outputBytes);
-                        return new ResponseInputStream<>(GetObjectResponse.builder().build(), bais);
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            public HeadObjectResponse headObject(HeadObjectRequest headObjectRequest) throws NoSuchKeyException, AwsServiceException,
-                    SdkClientException, S3Exception {
-                long size = FileUtils.sizeOf(new File(headObjectRequest.key()));
-                return HeadObjectResponse.builder().contentLength(size).build();
-            }
-
-            @Override
-            public void close() {}
-
-            @Override
-            public String serviceName() {
-                return "test-s3";
-            }
-        };
     }
 
     private static void populateNonAndDifferentlyIdentifiedFiles() throws IOException {

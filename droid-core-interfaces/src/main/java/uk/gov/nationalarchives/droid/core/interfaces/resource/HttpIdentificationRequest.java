@@ -53,19 +53,21 @@ public class HttpIdentificationRequest implements IdentificationRequest<URI> {
     private final RequestMetaData requestMetaData;
     private final long size;
     private final HttpClient client;
+    private HttpUtils.HttpMetadata httpMetadata;
 
-    public HttpIdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier) {
+    public HttpIdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, HttpClient httpClient) {
         this.identifier = identifier;
-        this.client = HttpClient.newHttpClient();
+        this.client = httpClient;
         this.requestMetaData = requestMetaData;
+        this.httpMetadata = new HttpUtils(httpClient).getHttpMetadata(identifier.getUri());
         this.httpReader = buildWindowReader(identifier.getUri());
-        this.size = this.httpReader.getContentLength();
-        System.out.println(size);
+        this.size = httpMetadata.fileSize();
     }
 
     private HttpWindowReader buildWindowReader(final URI theFile) {
         final WindowCache cache = new TopAndTailFixedLengthCache(this.size, TOP_TAIL_BUFFER_CAPACITY);
-        return new HttpWindowReader(cache, theFile, this.client);
+        HttpUtils.HttpMetadata currentMetadata = this.httpMetadata == null ? new HttpUtils(client).getHttpMetadata(theFile) : this.httpMetadata;
+        return new HttpWindowReader(cache, currentMetadata, this.client);
     }
 
     /**

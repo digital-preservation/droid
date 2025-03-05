@@ -35,9 +35,11 @@ import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.regex.Pattern;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
+import software.amazon.awssdk.services.s3.S3Utilities;
 
 @XmlRootElement(name = "S3")
 public class S3ProfileResource extends FileProfileResource {
@@ -46,15 +48,16 @@ public class S3ProfileResource extends FileProfileResource {
 
     public S3ProfileResource() {}
 
-    public S3ProfileResource(final String uri) {
-        setUri(URI.create(uri));
-        setName(uri.substring(uri.lastIndexOf('/') + 1));
+    public S3ProfileResource(final String uriString) {
+        URI uri = URI.create(replaceSpaces(uriString));
+        setUri(uri);
+        setName(uri.getPath().startsWith("/") ? uri.getPath().substring(1) : uri.getPath());
 
         setLastModifiedDate(new Date(0));
 
-        int dotLastIndex = uri.lastIndexOf('.');
+        int dotLastIndex = uriString.lastIndexOf('.');
 
-        setExtension(dotLastIndex > -1 ? uri.substring(uri.lastIndexOf('.')): "");
+        setExtension(dotLastIndex > -1 ? uriString.substring(uriString.lastIndexOf('.')): "");
     }
 
     public S3ProfileResource(final File file) {
@@ -72,6 +75,11 @@ public class S3ProfileResource extends FileProfileResource {
         setExtension(dotLastIndex > -1 ? s3uriString.substring(s3uriString.lastIndexOf('.')): "");
     }
 
+    @Override
+    public String toString() {
+        return "Name: " + getName() + ", Uri: " + getUri();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -86,16 +94,21 @@ public class S3ProfileResource extends FileProfileResource {
     }
 
     @Override
-    public boolean isHttpObject() {
-        return false;
-    }
-
-    @Override
     public void setSize(Path s3Path) {
         System.out.println("S3ProfileResource setSize called");
     }
 
+    private static String replaceSpaces(String uriString) {
+        return uriString.replaceAll(" ", "%20");
+    }
+
     public static boolean isS3uri(String candidateS3uri) {
-        return Pattern.matches("^s3://([^/]+)/(.*?([^/]+))$", candidateS3uri);
+        try {
+            Region region = DefaultAwsRegionProviderChain.builder().build().getRegion();
+            S3Utilities.builder().region(region).build().parseUri(URI.create(replaceSpaces(candidateS3uri)));
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

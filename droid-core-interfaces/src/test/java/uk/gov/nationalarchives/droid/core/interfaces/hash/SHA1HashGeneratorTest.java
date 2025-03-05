@@ -34,10 +34,10 @@ package uk.gov.nationalarchives.droid.core.interfaces.hash;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author gseaman
@@ -45,10 +45,10 @@ import org.junit.Test;
  */
 public class SHA1HashGeneratorTest {
 
-    private SHA1HashGenerator hashGenerator;
+    private static SHA1HashGenerator hashGenerator;
 
-    @Before
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         hashGenerator = new SHA1HashGenerator();
     }
 

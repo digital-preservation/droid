@@ -34,26 +34,34 @@ package uk.gov.nationalarchives.droid.submitter;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.HttpIdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.HttpUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
+import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
-import java.util.Date;
+import java.net.http.HttpClient;
 
 public class HttpEventHandler {
 
     private AsynchDroid droidCore;
     private SubmissionThrottle submissionThrottle;
+    private DroidGlobalConfig config;
 
-    public HttpEventHandler(final AsynchDroid droidCore) {
+    public HttpEventHandler(final AsynchDroid droidCore, final DroidGlobalConfig config) {
         this.droidCore = droidCore;
+        this.config = config;
     }
 
 
     public void onHttpEvent(AbstractProfileResource resource) {
-        RequestMetaData metaData = new RequestMetaData(-1L, new Date(0).getTime(), resource.getUri().getPath());
+        HttpUtils.HttpMetadata httpMetadata = new HttpUtils(getHttpClient(resource)).getHttpMetadata(resource.getUri());
+        RequestMetaData metaData = new RequestMetaData(httpMetadata.fileSize(), httpMetadata.lastModified(), resource.getUri().getPath());
 
         // Prepare the identifier
         RequestIdentifier identifier = new RequestIdentifier(resource.getUri());
@@ -61,16 +69,30 @@ public class HttpEventHandler {
         identifier.setResourceId(null);
 
         // Prepare the request
-        IdentificationRequest<URI> request = new HttpIdentificationRequest(metaData, identifier);
+        IdentificationRequest<URI> request = new HttpIdentificationRequest(metaData, identifier, HttpClient.newHttpClient());
 
         if (droidCore.passesIdentificationFilter(request)) {
             try {
                 droidCore.submit(request);
                 submissionThrottle.apply();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
+    }
+
+    public HttpClient getHttpClient(AbstractProfileResource resource) {
+        ProxyUtils proxyUtils = new ProxyUtils(this.config);
+        ProxySettings proxySettings = proxyUtils.getProxySettings(resource);
+        HttpClient.Builder httpBuilder = HttpClient.newBuilder();
+        HttpClient httpClient;
+        if (proxySettings.isEnabled()) {
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(proxySettings.getProxyHost(), proxySettings.getProxyPort());
+            httpClient = httpBuilder.proxy(ProxySelector.of(inetSocketAddress)).build();
+        } else {
+            httpClient = httpBuilder.build();
+        }
+        return httpClient;
     }
 
     public void setSubmissionThrottle(SubmissionThrottle submissionThrottle) {
@@ -79,5 +101,9 @@ public class HttpEventHandler {
 
     public void setDroidCore(AsynchDroid droidCore) {
         this.droidCore = droidCore;
+    }
+
+    public void setConfig(DroidGlobalConfig config) {
+        this.config = config;
     }
 }
