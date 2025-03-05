@@ -69,6 +69,7 @@ public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
 
     private CsvWriter csvWriter;
     private Writer writer;
+    private FormattedDataWriter.OutputJson outputJson;
     private ExportOptions options = ExportOptions.ONE_ROW_PER_FILE;
     private ExportOutputOptions outputOptions;
 
@@ -121,7 +122,7 @@ public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
         switch (options) {
             case ONE_ROW_PER_FILE: {
                 if (outputOptions == ExportOutputOptions.JSON_OUTPUT) {
-                    dataWriter.writeJsonForOneRowPerFile(nodes, allHeaders, this.writer);
+                    dataWriter.writeJsonForOneRowPerFile(nodes, allHeaders, this.outputJson);
                 } else {
                     writeOneRowPerFile(nodes, dataWriter);
                 }
@@ -129,7 +130,7 @@ public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
             }
             case ONE_ROW_PER_FORMAT: {
                 if (outputOptions == ExportOutputOptions.JSON_OUTPUT) {
-                    dataWriter.writeJsonForOneRowPerFormat(nodes, allHeaders, this.writer);
+                    dataWriter.writeJsonForOneRowPerFormat(nodes, allHeaders, this.outputJson);
                 } else {
                     writeOneRowPerFormat(nodes, dataWriter);
                 }
@@ -179,6 +180,7 @@ public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
     @Override
     public void open(final Writer outputWriter) {
         this.writer = outputWriter;
+        this.outputJson = new FormattedDataWriter.OutputJson(outputWriter);
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
         csvWriterSettings.setQuoteAllFields(quoteAllFields);
         CsvFormat format = new CsvFormat();
@@ -207,6 +209,7 @@ public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
     @Override
     public void close() {
         try {
+            outputJson.completeStream();
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

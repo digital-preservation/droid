@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.command.action;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -39,11 +39,13 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureManager;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 import uk.gov.nationalarchives.droid.profile.ProfileInstance;
 import uk.gov.nationalarchives.droid.profile.ProfileManager;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceFactory;
@@ -100,18 +102,30 @@ public class ProfileRunCommand implements DroidCommand {
 
             profileManager.save(profile.getUuid(), Paths.get(destination), progressCallback);
             profileManager.closeProfile(profile.getUuid());
-        } catch (ProfileManagerException e) {
-            throw new CommandExecutionException(e);
-        } catch (InterruptedException e) {
+            terminateJsonArray();
+        } catch (ProfileManagerException | InterruptedException | IOException | SignatureFileException e) {
             throw new CommandExecutionException(e);
         } catch (ExecutionException e) {
             throw new CommandExecutionException(e.getCause());
-        } catch (IOException e) {
-            throw new CommandExecutionException(e);
-        } catch (SignatureFileException e) {
-            throw new CommandExecutionException(e);
         }
-        
+
+    }
+
+    public Writer getWriter(String outputFilePath) throws IOException {
+        if (outputFilePath != null && !outputFilePath.trim().isEmpty()) {
+            File outputFile = new File(outputFilePath);
+            return new FileWriter(outputFile, true);
+        }
+        return new PrintWriter(System.out);
+    }
+
+    public void terminateJsonArray() throws IOException {
+        if (getProperties() != null && getProperties().getString(DroidGlobalProperty.EXPORT_OUTPUT_OPTIONS.getName()).equals(ExportOutputOptions.JSON_OUTPUT.name())) {
+            String outputFilePath = getProperties().getString(DroidGlobalProperty.OUTPUT_FILE_PATH.getName());
+            Writer writer = getWriter(outputFilePath);
+            writer.write("]");
+            writer.flush();
+        }
     }
 
     /**
