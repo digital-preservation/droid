@@ -48,6 +48,7 @@ public class Ole2Identifier extends AbstractContainerIdentifier {
      */
     public Ole2Identifier() {
         setIdentifierEngine(new Ole2IdentifierEngine());
+        setContainerType("OLE2");
     }
 
     @Override

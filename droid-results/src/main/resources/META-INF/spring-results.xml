@@ -70,6 +70,10 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
     </bean>
 
+    <bean id="gzIdentifierEngine" class="uk.gov.nationalarchives.droid.container.gz.GzIdentifierEngine">
+        <property name="requestFactory" ref="containerFileIdentificationRequestFactory"/>
+    </bean>
+
     <bean id="signatureFileReader" class="uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader">
         <property name="filePath" value="${containerSigPath}"/>
     </bean>
@@ -80,6 +84,15 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="containerFormatResolver" ref="containerPuidResolver"/>
         <property name="droidCore" ref="droid"/>
         <property name="identifierEngine" ref="zipIdentifierEngine"/>
+        <property name="signatureReader" ref="signatureFileReader"/>
+    </bean>
+
+    <bean id="gzContainerHandler" class="uk.gov.nationalarchives.droid.container.gz.GzIdentifier" init-method="init">
+        <property name="containerType" value="GZIP"/>
+        <property name="containerIdentifierFactory" ref="containerIdentifierLocator"/>
+        <property name="containerFormatResolver" ref="containerPuidResolver"/>
+        <property name="droidCore" ref="droid"/>
+        <property name="identifierEngine" ref="gzIdentifierEngine"/>
         <property name="signatureReader" ref="signatureFileReader"/>
     </bean>
 

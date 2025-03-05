@@ -48,6 +48,7 @@ public class ZipIdentifier extends AbstractContainerIdentifier {
      */
     public ZipIdentifier() {
         setIdentifierEngine(new ZipIdentifierEngine());
+        setContainerType("ZIP");
     }
 
     @Override
