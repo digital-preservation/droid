@@ -231,6 +231,7 @@ public class ExportTask implements Runnable {
             cancelled = true;
         } finally {
             log.info(String.format("Closing export file: %s", destinationDescription));
+            itemWriter.writeJson();
             itemWriter.close();
             if (cancelled && destination != null) {
                 final Path toDelete = Paths.get(destination);

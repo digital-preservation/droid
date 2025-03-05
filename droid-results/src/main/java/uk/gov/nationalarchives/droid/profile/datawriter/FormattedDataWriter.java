@@ -66,10 +66,10 @@ public abstract  class FormattedDataWriter {
 
     public abstract void writeHeadersForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, CsvWriter csvWriter);
     public abstract void writeDataRowsForOneRowPerFile(List<? extends ProfileResourceNode> nodes, CsvWriter csvWriter);
-    public abstract void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers,  Writer writer);
+    public abstract void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers,  OutputJson outputJson);
     public abstract void writeHeadersForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, CsvWriter csvWriter);
     public  abstract void writeDataRowsForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, CsvWriter csvWriter);
-    public  abstract void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer);
+    public  abstract void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, OutputJson outputJson);
 
     protected static String nullSafeName(Enum<?> value) {
         return value == null ? WriterConstants.EMPTY_STRING : value.toString();
@@ -127,18 +127,20 @@ public abstract  class FormattedDataWriter {
         return this.customisedHeaders;
     }
 
-    protected static class OutputJson {
+    public static class OutputJson {
         private final ArrayNode arrayNode;
         private final ObjectMapper objectMapper;
+        private final Writer writer;
 
-        public OutputJson() {
+        public OutputJson(Writer writer) {
             this.objectMapper = new ObjectMapper();
             this.arrayNode = objectMapper.createArrayNode();
+            this.writer = writer;
         }
 
-        public void writeJson(Writer writer) {
+        public void writeJson() {
             try {
-                objectMapper.writeValue(writer, arrayNode);
+                writer.write(objectMapper.writeValueAsString(arrayNode));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
