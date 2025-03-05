@@ -538,6 +538,19 @@ public enum CommandLineParam {
             topGroup.addOption(param.newOption());
         }
 
+        addOptions(options);
+
+        options.addOptionGroup(getFilterOptionGroup());
+        options.addOptionGroup(getFileFilterOptionGroup());
+        options.addOptionGroup(getExportOptionGroup());
+        options.addOptionGroup(getExportOutputOptionsGroup());
+        options.addOptionGroup(topGroup);
+
+        return options;
+
+    }
+
+    private static void addOptions(Options options) {
         options.addOption(PROFILES.newOption());
         options.addOption(OUTPUT_FILE.newOption());
         options.addOption(PROFILE_PROPERTY.newOption());
@@ -560,15 +573,6 @@ public enum CommandLineParam {
         options.addOption(HTTP_PROXY.newOption());
         options.addOption(JSON_OUTPUT.newOption());
         options.addOption(CSV_OUTPUT.newOption());
-
-        options.addOptionGroup(getFilterOptionGroup());
-        options.addOptionGroup(getFileFilterOptionGroup());
-        options.addOptionGroup(getExportOptionGroup());
-        options.addOptionGroup(getExportOutputOptionsGroup());
-        options.addOptionGroup(topGroup);
-
-        return options;
-
     }
 
     private static OptionGroup getFileFilterOptionGroup() {
