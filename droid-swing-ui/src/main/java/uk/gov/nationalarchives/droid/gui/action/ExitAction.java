@@ -159,7 +159,4 @@ public class ExitAction extends SwingWorker<Void, Void> {
         }
         
     }
-
-    private class Path {
-    }
 }

@@ -239,10 +239,11 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="outputFilePath" value="${outputFilePath}"/>
     </bean>
 
-    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.profile.CsvItemWriter">
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.profile.ItemWriterImpl">
         <property name="quoteAllFields" value="${quoteAllFields}"/>
         <property name="columnsToWrite" value="${columnsToWrite}"/>
         <property name="options" value="${exportOptions}"/>
+        <property name="outputOptions" value="${exportOutputOptions}"/>
     </bean>
 
     <bean id="rerferenceDataDao" class="uk.gov.nationalarchives.droid.profile.referencedata.ReferenceDataDaoImpl">

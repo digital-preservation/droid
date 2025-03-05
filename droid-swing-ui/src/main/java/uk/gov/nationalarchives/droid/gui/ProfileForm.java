@@ -904,7 +904,7 @@ public class ProfileForm extends JPanel {
         return String.format(puidUrl, puid);
     }
 
-    private class OutlineMouseAdapter extends MouseAdapter {
+    private final class OutlineMouseAdapter extends MouseAdapter {
         @Override
         public void mouseReleased(MouseEvent e) {
 

@@ -39,12 +39,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 import uk.gov.nationalarchives.droid.profile.datawriter.DataWriterProvider;
 import uk.gov.nationalarchives.droid.profile.datawriter.FormattedDataWriter;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,7 +60,7 @@ import java.util.stream.Collectors;
  * @author rflitcroft
  *
  */
-public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
+public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
 
     private static final String BLANK_SPACE_DELIMITER       = " ";
     private final Map<String, Boolean> columnsToWriteMap = new HashMap<>();
@@ -66,7 +68,10 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private CsvWriter csvWriter;
+    private Writer writer;
     private ExportOptions options = ExportOptions.ONE_ROW_PER_FILE;
+    private ExportOutputOptions outputOptions;
+
     
     private String[] allHeaders;
     private boolean quoteAllFields;
@@ -75,7 +80,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     /**
      * Empty bean constructor.
      */
-    public CsvItemWriter() {
+    public ItemWriterImpl() {
        this(null);
     }
 
@@ -83,31 +88,31 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
      * Constructor taking parameters.
      * @param writer The CsvWriter to use.
      */
-    public CsvItemWriter(CsvWriter writer) {
+    public ItemWriterImpl(CsvWriter writer) {
         this.csvWriter = writer;
         this.quoteAllFields = true;
         populateDefaultColumnsToWrite();
     }
 
     private void populateDefaultColumnsToWrite() {
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_ID, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_PARENT_ID, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_URI, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_FILE_PATH, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_NAME, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_METHOD, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_STATUS, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_SIZE, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_TYPE, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_EXT, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_LAST_MODIFIED, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_EXTENSION_MISMATCH, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_HASH, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_FORMAT_COUNT, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_PUID, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_MIME_TYPE, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_FORMAT_NAME, true);
-        columnsToWriteMap.put(CsvWriterConstants.HEADER_NAME_FORMAT_VERSION, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_ID, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_PARENT_ID, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_URI, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_FILE_PATH, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_NAME, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_METHOD, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_STATUS, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_SIZE, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_TYPE, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_EXT, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_LAST_MODIFIED, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_EXTENSION_MISMATCH, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_HASH, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_FORMAT_COUNT, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_PUID, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_MIME_TYPE, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_FORMAT_NAME, true);
+        columnsToWriteMap.put(WriterConstants.HEADER_NAME_FORMAT_VERSION, true);
     }
 
     @Override
@@ -115,11 +120,20 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         FormattedDataWriter dataWriter = DataWriterProvider.getDataWriter(columnsToWriteMap, exportTemplate);
         switch (options) {
             case ONE_ROW_PER_FILE: {
-                writeOneRowPerFile(nodes, dataWriter);
+                if (outputOptions == ExportOutputOptions.JSON_OUTPUT) {
+                    dataWriter.writeJsonForOneRowPerFile(nodes, allHeaders, this.writer);
+                } else {
+                    writeOneRowPerFile(nodes, dataWriter);
+                }
                 break;
             }
             case ONE_ROW_PER_FORMAT: {
-                writeOneRowPerFormat(nodes, dataWriter);
+                if (outputOptions == ExportOutputOptions.JSON_OUTPUT) {
+                    dataWriter.writeJsonForOneRowPerFormat(nodes, allHeaders, this.writer);
+                } else {
+                    writeOneRowPerFormat(nodes, dataWriter);
+                }
+
                 break;
             }
             default: {
@@ -163,16 +177,17 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     }
 
     @Override
-    public void open(final Writer writer) {
+    public void open(final Writer outputWriter) {
+        this.writer = outputWriter;
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
         csvWriterSettings.setQuoteAllFields(quoteAllFields);
         CsvFormat format = new CsvFormat();
         // following Unix convention about line separators as previously
         format.setLineSeparator("\n");
         csvWriterSettings.setFormat(format);
-        csvWriter = new CsvWriter(writer, csvWriterSettings);
+        csvWriter = new CsvWriter(outputWriter, csvWriterSettings);
         if (allHeaders == null) {
-            allHeaders = Arrays.copyOf(CsvWriterConstants.HEADERS, CsvWriterConstants.HEADERS.length) ;
+            allHeaders = Arrays.copyOf(WriterConstants.HEADERS, WriterConstants.HEADERS.length) ;
         }
     }
 
@@ -180,12 +195,22 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     public void setOptions(ExportOptions options) {
         this.options = options;
     }
+
+    @Override
+    public void setOutputOptions(ExportOutputOptions outputOptions) {
+        this.outputOptions = outputOptions;
+    }
     
     /**
      * Closes the CSV writer.
      */
     @Override
     public void close() {
+        try {
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         csvWriter.close();
     }
     
@@ -203,7 +228,7 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
     public void setHeaders(Map<String, String> headersToSet) {
 
         if (this.allHeaders == null) {
-            this.allHeaders = Arrays.copyOf(CsvWriterConstants.HEADERS, CsvWriterConstants.HEADERS.length);
+            this.allHeaders = Arrays.copyOf(WriterConstants.HEADERS, WriterConstants.HEADERS.length);
         }
 
         // The header for hash is modified based on algorithm used to generate the hash
@@ -216,13 +241,13 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
                         .filter(e -> e.getValue().getColumnType() == ExportTemplateColumnDef.ColumnType.ProfileResourceNode)
                         .collect(Collectors.toList());
                 List<Map.Entry<Integer, ExportTemplateColumnDef>> hashEntry = profileCols.stream()
-                        .filter(entry -> entry.getValue().getOriginalColumnName().equals(CsvWriterConstants.HEADER_NAME_HASH))
+                        .filter(entry -> entry.getValue().getOriginalColumnName().equals(WriterConstants.HEADER_NAME_HASH))
                         .collect(Collectors.toList());
                 if (!hashEntry.isEmpty()) {
-                    this.allHeaders[CsvWriterConstants.HASH_ARRAY_INDEX] = hashHeader;
+                    this.allHeaders[WriterConstants.HASH_ARRAY_INDEX] = hashHeader;
                 }
             } else {
-                this.allHeaders[CsvWriterConstants.HASH_ARRAY_INDEX] = hashHeader;
+                this.allHeaders[WriterConstants.HASH_ARRAY_INDEX] = hashHeader;
             }
         }
     }
@@ -238,8 +263,8 @@ public class CsvItemWriter implements ItemWriter<ProfileResourceNode> {
         if (headersToWrite == null) {
             populateDefaultColumnsToWrite();
         } else {
-            for (int i = 0; i < CsvWriterConstants.HEADERS.length; i++) {
-                String currentHeader = CsvWriterConstants.HEADERS[i];
+            for (int i = 0; i < WriterConstants.HEADERS.length; i++) {
+                String currentHeader = WriterConstants.HEADERS[i];
                 if (headersToWrite.contains(currentHeader)) {
                     columnsToWriteMap.put(currentHeader, true);
                     headersToWrite.remove(currentHeader);

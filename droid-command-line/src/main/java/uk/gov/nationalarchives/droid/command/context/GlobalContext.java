@@ -42,6 +42,7 @@ import uk.gov.nationalarchives.droid.command.action.ProfileRunCommand;
 import uk.gov.nationalarchives.droid.command.action.ReportCommand;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 
 
 /**
@@ -63,9 +64,10 @@ public interface GlobalContext extends AutoCloseable {
 
     /**
      * @param opt the Export options to use when exporting.
+     * @param exportOutputOptions the Export output options to use when exporting.
      * @return an export command
      */
-    ExportCommand getExportCommand(ExportOptions opt);
+    ExportCommand getExportCommand(ExportOptions opt, ExportOutputOptions exportOutputOptions);
     
     /**
      * @return an report command
