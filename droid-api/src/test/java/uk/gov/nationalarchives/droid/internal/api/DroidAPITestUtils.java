@@ -63,9 +63,10 @@ import java.util.zip.ZipEntry;
  * It makes use of hardcoded signature paths for current version
  */
 public class DroidAPITestUtils {
+    static Path signaturePath = Paths.get("../droid-results/custom_home/signature_files/DROID_SignatureFile_V119.xml");
+    static Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20240715.xml");
+
     public static DroidAPI createApi() throws SignatureParseException {
-        Path signaturePath = Paths.get("../droid-results/custom_home/signature_files/DROID_SignatureFile_V119.xml");
-        Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20240715.xml");
         return DroidAPI.getInstance(signaturePath, containerPath);  //Create only once instance of Droid.
     }
 
@@ -76,9 +77,9 @@ public class DroidAPITestUtils {
         return Long.toString(Math.round(Math.random() * 1000));
     }
 
-    private static Path generateFile(String suffix) {
+    private static Path generateFile(String extension) {
         try {
-            return Files.createTempDirectory("test").resolve("test.%sm".formatted(suffix));
+            return Files.createTempDirectory("test").resolve("test.%sm".formatted(extension));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.internal.api;
 import java.nio.file.Files;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -184,28 +185,20 @@ public final class DroidAPI {
     }
 
     private Optional<String> getContainerPuid(final IdentificationResultCollection binaryResult) {
-        return binaryResult.getResults().stream().filter(x ->
-                ZIP_PUID.equals(x.getPuid()) || OLE2_PUID.equals(x.getPuid()) || GZIP_PUID.equals(x.getPuid())
-        ).map(IdentificationResult::getPuid).findFirst();
+        List<String> containerPuids = Arrays.asList(ZIP_PUID, OLE2_PUID, GZIP_PUID);
+        return binaryResult.getResults().stream()
+                .map(IdentificationResult::getPuid)
+                .filter(containerPuids::contains).findFirst();
     }
 
     private IdentificationResultCollection handleContainer(final IdentificationResultCollection binaryResult,
                                                            final FileSystemIdentificationRequest identificationRequest, final String containerPuid) throws IOException {
-        ContainerIdentifier identifier;
-
-        switch (containerPuid) {
-            case ZIP_PUID:
-                identifier = zipIdentifier;
-                break;
-            case OLE2_PUID:
-                identifier = ole2Identifier;
-                break;
-            case GZIP_PUID:
-                identifier = gzIdentifier;
-                break;
-            default:
-                throw new RuntimeException("Unknown container PUID : " + containerPuid);
-        }
+        ContainerIdentifier identifier = switch (containerPuid) {
+            case ZIP_PUID -> zipIdentifier;
+            case OLE2_PUID -> ole2Identifier;
+            case GZIP_PUID -> gzIdentifier;
+            default -> throw new RuntimeException("Unknown container PUID : " + containerPuid);
+        };
 
         IdentificationResultCollection containerResults = identifier.submit(identificationRequest);
         droidCore.removeLowerPriorityHits(containerResults);

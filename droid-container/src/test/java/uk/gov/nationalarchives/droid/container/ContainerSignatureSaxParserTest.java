@@ -56,17 +56,18 @@ public class ContainerSignatureSaxParserTest {
     @Test
     public void testParseSignatureNoPath() throws Exception {
         String xml =
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                        + "<ContainerSignatureMapping>"
-                        + "    <ContainerSignatures>"
-                        + "        <ContainerSignature Id=\"9\">"
-                        + "            <Files>"
-                        + "                <File>"
-                        + "                </File>"
-                        + "            </Files>"
-                        + "        </ContainerSignature>"
-                        + "    </ContainerSignatures>"
-                        + "</ContainerSignatureMapping>";
+                """
+                        <?xml version="1.0" encoding="UTF-8"?>
+                        <ContainerSignatureMapping>
+                          <ContainerSignatures>
+                            <ContainerSignature Id="9">
+                              <Files>
+                                <File/>
+                              </Files>
+                            </ContainerSignature>
+                          </ContainerSignatures>
+                        </ContainerSignatureMapping>
+                        """;
         ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
         InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
 
@@ -84,28 +85,29 @@ public class ContainerSignatureSaxParserTest {
     @Test
     public void testParseSignatures() throws Exception {
 
-        String xml =
-              "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            + "<ContainerSignatureMapping>"
-            + "    <ContainerSignatures>"
-            + "        <ContainerSignature Id=\"9\">"
-            + "            <Description>Microsoft Word 97</Description>"
-            + "            <Files>"
-            + "                <File Required=\"true\">"
-            + "                   <Path>WordDocument</Path>"
-            + "                </File>"
-            + "            </Files>"
-            + "        </ContainerSignature>"
-            + "        <ContainerSignature Id=\"10\">"
-            + "            <Description>Microsoft Excel 97</Description>"
-            + "            <Files>"
-            + "                <File Required=\"false\">"
-            + "                   <Path>Workbook</Path>"
-            + "                </File>"
-            + "            </Files>"
-            + "        </ContainerSignature>"
-            + "    </ContainerSignatures>"
-            + "</ContainerSignatureMapping>";
+        String xml = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <ContainerSignatureMapping>
+                  <ContainerSignatures>
+                    <ContainerSignature Id="9">
+                      <Description>Microsoft Word 97</Description>
+                      <Files>
+                        <File Required="true">
+                          <Path>WordDocument</Path>
+                        </File>
+                      </Files>
+                    </ContainerSignature>
+                    <ContainerSignature Id="10">
+                      <Description>Microsoft Excel 97</Description>
+                      <Files>
+                        <File Required="false">
+                          <Path>Workbook</Path>
+                        </File>
+                      </Files>
+                    </ContainerSignature>
+                  </ContainerSignatures>
+                </ContainerSignatureMapping>
+                """;
 
         ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
         InputStream in = new ByteArrayInputStream(xml.getBytes("UTF-8"));
@@ -129,38 +131,40 @@ public class ContainerSignatureSaxParserTest {
     @Test
     public void folderBasedContainerSignaturesShouldKeepThePathsAsPresentedInSignatureFileForContainerFileMap() throws JAXBException, UnsupportedEncodingException, SignatureParseException {
         String xml =
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                        + "<ContainerSignatureMapping>"
-                        + "    <ContainerSignatures>"
-                        + "        <ContainerSignature ContainerType=\"ZIP\" Id=\"31020\">"
-                        + "            <Description>SIARD 2.1</Description>"
-                        + "            <Files>"
-                        + "                <File>"
-                        + "                   <Path>header/siardversion/2.1/</Path>"
-                        + "                </File>"
-                        + "            </Files>"
-                        + "        </ContainerSignature>"
-                        + "        <ContainerSignature ContainerType=\"ZIP\" Id=\"31010\">"
-                        + "            <Description>SIARD 2.0</Description>"
-                        + "            <Files>"
-                        + "                <File>"
-                        + "                    <Path>header/metadata.xml</Path>"
-                        + "                    <BinarySignatures>"
-                        + "                         <InternalSignatureCollection>"
-                        + "                             <InternalSignature ID=\"31010\">"
-                        + "                                 <ByteSequence Reference=\"BOFoffset\">"
-                        + "                                     <SubSequence Position=\"1\" SubSeqMaxOffset=\"256\"\n SubSeqMinOffset=\"50\">"
-                        + "                                         <Sequence>'xmlns=\"http://www.bar.admin.ch/xmlns/siard/2.0/metadata.xsd\"'</Sequence>"
-                        + "                                     </SubSequence>"
-                        + "                                 </ByteSequence>"
-                        + "                             </InternalSignature>"
-                        + "                         </InternalSignatureCollection>"
-                        + "                    </BinarySignatures>"
-                        + "                </File>"
-                        + "            </Files>"
-                        + "        </ContainerSignature>"
-                        + "    </ContainerSignatures>"
-                        + "</ContainerSignatureMapping>";
+                """
+                        <?xml version="1.0" encoding="UTF-8"?>
+                        <ContainerSignatureMapping>
+                          <ContainerSignatures>
+                            <ContainerSignature ContainerType="ZIP" Id="31020">
+                              <Description>SIARD 2.1</Description>
+                              <Files>
+                                <File>
+                                  <Path>header/siardversion/2.1/</Path>
+                                </File>
+                              </Files>
+                            </ContainerSignature>
+                            <ContainerSignature ContainerType="ZIP" Id="31010">
+                              <Description>SIARD 2.0</Description>
+                              <Files>
+                                <File>
+                                  <Path>header/metadata.xml</Path>
+                                  <BinarySignatures>
+                                    <InternalSignatureCollection>
+                                      <InternalSignature ID="31010">
+                                        <ByteSequence Reference="BOFoffset">
+                                          <SubSequence Position="1" SubSeqMaxOffset="256" SubSeqMinOffset="50">
+                                            <Sequence>'xmlns="http://www.bar.admin.ch/xmlns/siard/2.0/metadata.xsd"'</Sequence>
+                                          </SubSequence>
+                                        </ByteSequence>
+                                      </InternalSignature>
+                                    </InternalSignatureCollection>
+                                  </BinarySignatures>
+                                </File>
+                              </Files>
+                            </ContainerSignature>
+                          </ContainerSignatures>
+                        </ContainerSignatureMapping>
+                        """;
         ContainerSignatureSaxParser parser = new ContainerSignatureSaxParser();
         InputStream in = new ByteArrayInputStream(xml.getBytes("UTF-8"));
         List<ContainerSignature> signatures = parser.parse(in).getContainerSignatures();

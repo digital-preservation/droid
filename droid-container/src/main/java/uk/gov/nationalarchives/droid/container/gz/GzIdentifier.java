@@ -41,6 +41,7 @@ public class GzIdentifier extends AbstractContainerIdentifier {
 
     public GzIdentifier() {
         setIdentifierEngine(new GzIdentifierEngine());
+        setContainerType("GZIP");
     }
 
     @Override

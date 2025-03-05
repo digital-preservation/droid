@@ -34,9 +34,7 @@ package uk.gov.nationalarchives.droid.internal.api;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import uk.gov.nationalarchives.droid.container.ContainerFileIdentificationRequestFactory;
-import uk.gov.nationalarchives.droid.container.ContainerSignatureFileReader;
-import uk.gov.nationalarchives.droid.container.IdentifierEngine;
+import uk.gov.nationalarchives.droid.container.*;
 import uk.gov.nationalarchives.droid.container.gz.GzIdentifier;
 import uk.gov.nationalarchives.droid.container.gz.GzIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ole2.Ole2Identifier;
@@ -84,6 +82,12 @@ public final class ContainerApi {
         return engine;
     }
 
+    private Ole2IdentifierEngine ole2IdentifierEngine() {
+        Ole2IdentifierEngine engine = new Ole2IdentifierEngine();
+        engine.setRequestFactory(requestFactory());
+        return engine;
+    }
+
     private ArchiveFormatResolver archiveFormatResolver() {
         return new ArchiveFormatResolverImpl();
     }
@@ -93,58 +97,28 @@ public final class ContainerApi {
     }
 
     public GzIdentifier gzIdentifier() {
-        GzIdentifier gz = new GzIdentifier();
-        gz.setContainerType("GZIP");
-        gz.setContainerIdentifierFactory(identifierFactory());
-        gz.setContainerFormatResolver(archiveFormatResolver());
-        gz.setDroidCore(droid);
-        gz.setIdentifierEngine(gzIdentifierEngine());
-        gz.setSignatureReader(signatureReader());
-
-        try {
-            gz.init();
-        } catch (SignatureFileException e) {
-            throw new RuntimeException("Unable to init gz identifier", e);
-        }
-        return gz;
+        return initialiseContainerIdentifier(new GzIdentifier(), gzIdentifierEngine());
     }
 
     public ZipIdentifier zipIdentifier() {
-        ZipIdentifier zip = new ZipIdentifier();
-        zip.setContainerType("ZIP");
-        zip.setContainerIdentifierFactory(identifierFactory());
-        zip.setContainerFormatResolver(archiveFormatResolver());
-        zip.setDroidCore(droid);
-        zip.setIdentifierEngine(zipIdentifierEngine());
-        zip.setSignatureReader(signatureReader());
-
-        try {
-            zip.init();
-        } catch (SignatureFileException e) {
-            throw new RuntimeException("Unable to init zip identifier", e);
-        }
-        return zip;
-    }
-
-    private Ole2IdentifierEngine ole2IdentifierEngine() {
-        Ole2IdentifierEngine engine = new Ole2IdentifierEngine();
-        engine.setRequestFactory(requestFactory());
-        return engine;
+        return initialiseContainerIdentifier(new ZipIdentifier(), zipIdentifierEngine());
     }
 
     public Ole2Identifier ole2Identifier() {
-        Ole2Identifier ole2 = new Ole2Identifier();
-        ole2.setContainerType("OLE2");
-        ole2.setContainerIdentifierFactory(identifierFactory());
-        ole2.setContainerFormatResolver(archiveFormatResolver());
-        ole2.setDroidCore(droid);
-        ole2.setIdentifierEngine(ole2IdentifierEngine());
-        ole2.setSignatureReader(signatureReader());
+        return initialiseContainerIdentifier(new Ole2Identifier(), ole2IdentifierEngine());
+    }
+
+    private <T extends AbstractContainerIdentifier, U extends IdentifierEngine> T initialiseContainerIdentifier(T containerIdentifier, U identifierEngine) {
+        containerIdentifier.setContainerIdentifierFactory(identifierFactory());
+        containerIdentifier.setContainerFormatResolver(archiveFormatResolver());
+        containerIdentifier.setDroidCore(droid);
+        containerIdentifier.setIdentifierEngine(identifierEngine);
+        containerIdentifier.setSignatureReader(signatureReader());
         try {
-            ole2.init();
+            containerIdentifier.init();
         } catch (SignatureFileException ex) {
             throw new RuntimeException("Unable to init Ole2Identifier", ex);
         }
-        return ole2;
+        return containerIdentifier;
     }
 }

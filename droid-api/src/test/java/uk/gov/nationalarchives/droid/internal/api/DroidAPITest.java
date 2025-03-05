@@ -37,6 +37,7 @@ import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 import uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.ContainerType;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +49,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.generateId;
+import static uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.*;
 
 public class DroidAPITest {
 
@@ -109,6 +110,20 @@ public class DroidAPITest {
         }
     }
 
+    @Test(expected = IOException.class)
+    public void should_throw_an_exception_if_file_cannot_be_read() throws IOException {
+        api.submit(Path.of("/invalidpath"));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void should_throw_an_exception_if_container_file_cannot_be_read() throws SignatureParseException {
+        DroidAPI.getInstance(signaturePath, Path.of("/invalidContainerPath"));
+    }
+
+    @Test(expected = SignatureParseException.class)
+    public void should_throw_an_exception_if_signature_file_cannot_be_read() throws SignatureParseException {
+        DroidAPI.getInstance(Path.of("/invalidSignaturePath"), containerPath);
+    }
 
     @Test
     public void should_identify_given_file_with_binary_signature() throws IOException {
