@@ -100,4 +100,9 @@ public interface ItemWriter<T> {
      */
     void setExportTemplate(ExportTemplate template);
 
+    /**
+     * Writes the json output to the Writer.
+     */
+    void writeJson();
+
 }

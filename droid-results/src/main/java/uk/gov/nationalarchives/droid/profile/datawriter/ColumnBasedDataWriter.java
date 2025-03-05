@@ -39,7 +39,6 @@ import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -76,8 +75,7 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
     }
 
     @Override
-    public void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
-        OutputJson outputJson = new OutputJson();
+    public void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, OutputJson outputJson) {
         int maxIdCount = getMaxIdentificationCount(nodes);
         String hashHeader = headers[WriterConstants.HASH_ARRAY_INDEX];
         for (ProfileResourceNode node : nodes) {
@@ -93,7 +91,7 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
             }
             outputJson.getArrayNode().add(objectNode);
         }
-        outputJson.writeJson(writer);
+
 
     }
 
@@ -114,8 +112,7 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
     }
 
     @Override
-    public void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
-        OutputJson outputJson = new OutputJson();
+    public void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, OutputJson outputJson) {
         String hashHeader = headers[WriterConstants.HASH_ARRAY_INDEX];
         for (ProfileResourceNode node : nodes) {
             for (Format format : node.getFormatIdentifications()) {
@@ -129,7 +126,6 @@ public class ColumnBasedDataWriter extends FormattedDataWriter {
                 outputJson.getArrayNode().add(objectNode);
             }
         }
-        outputJson.writeJson(writer);
     }
 
     @Override

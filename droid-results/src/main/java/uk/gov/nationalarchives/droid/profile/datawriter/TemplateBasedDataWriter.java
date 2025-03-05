@@ -41,7 +41,6 @@ import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,9 +68,7 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
     }
 
     @Override
-    public void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
-        OutputJson outputJson = new OutputJson();
-
+    public void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, OutputJson outputJson) {
         int maxIdCount = getMaxIdentificationCount(nodes);
         List<String> headersToWrite = getHeadersToWrite(maxIdCount);
         Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
@@ -84,7 +81,6 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
             }
             outputJson.getArrayNode().add(rowNode);
         }
-        outputJson.writeJson(writer);
 
     }
 
@@ -102,9 +98,8 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
     }
 
     @Override
-    public void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
+    public void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, OutputJson outputJson) {
         super.setCustomisedHeaders(headers);
-        OutputJson outputJson = new OutputJson();
         int maxIdCount = 1;
         List<String> headersToWrite = getHeadersToWrite(maxIdCount);
         Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
@@ -119,7 +114,6 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
                 outputJson.getArrayNode().add(rowNode);
             }
         }
-        outputJson.writeJson(writer);
     }
 
     @Override

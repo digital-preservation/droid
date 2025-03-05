@@ -136,6 +136,7 @@ public class WriterResultHandlerDao extends JDBCBatchResultHandlerDao {
     @Override
     public synchronized void commit() {
         try {
+            itemWriter.writeJson();
             writer.flush();
         } catch (IOException e) {
             LOG.error("Error flushing writer: " + e.getMessage(), e);
