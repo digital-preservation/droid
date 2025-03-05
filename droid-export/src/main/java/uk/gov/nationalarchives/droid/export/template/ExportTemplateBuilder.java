@@ -33,7 +33,7 @@ package uk.gov.nationalarchives.droid.export.template;
 
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
-import uk.gov.nationalarchives.droid.profile.CsvWriterConstants;
+import uk.gov.nationalarchives.droid.profile.WriterConstants;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -192,7 +192,7 @@ public class ExportTemplateBuilder {
             throw new ExportTemplateParseException(String.format(messageFormat, param2));
         }
         String originalColumnName = param2.substring(1);
-        if (!(Arrays.stream(CsvWriterConstants.HEADERS).collect(Collectors.toList()).contains(originalColumnName))) {
+        if (!(Arrays.stream(WriterConstants.HEADERS).collect(Collectors.toList()).contains(originalColumnName))) {
             throw new ExportTemplateParseException(String.format(messageFormat, originalColumnName));
         }
         return new ProfileResourceNodeColumnDef(originalColumnName, header);

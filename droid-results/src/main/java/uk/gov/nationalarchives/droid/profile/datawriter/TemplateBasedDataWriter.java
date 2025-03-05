@@ -31,15 +31,17 @@
  */
 package uk.gov.nationalarchives.droid.profile.datawriter;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.univocity.parsers.csv.CsvWriter;
 import uk.gov.nationalarchives.droid.core.interfaces.util.DroidUrlFormat;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplate;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportTemplateColumnDef;
-import uk.gov.nationalarchives.droid.profile.CsvWriterConstants;
+import uk.gov.nationalarchives.droid.profile.WriterConstants;
 import uk.gov.nationalarchives.droid.profile.NodeMetaData;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,23 +62,30 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
         Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
         int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
         for (ProfileResourceNode node : nodes) {
-            List<String> nodeEntries = new ArrayList<>();
-            for (int i = 0; i <= maxCols; i++) {
-                ExportTemplateColumnDef def = columnPositions.get(i);
-                if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
-                    nodeEntries.add(def.getDataValue());
-                } else {
-                    String columnName = def.getOriginalColumnName();
-                    if (CsvWriterConstants.PER_FORMAT_HEADERS.contains(columnName)) {
-                        addFormatColumnTemplate(nodeEntries, node, def, maxIdCount);
-                    } else {
-                        addNodeColumn(nodeEntries, node, def);
-                    }
-                }
-            }
+            List<String> nodeEntries = getOneRowPerFileNodeEntries(node, maxCols, columnPositions, maxIdCount);
             csvWriter.writeRow(nodeEntries);
         }
         csvWriter.flush();
+    }
+
+    @Override
+    public void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
+        OutputJson outputJson = new OutputJson();
+
+        int maxIdCount = getMaxIdentificationCount(nodes);
+        List<String> headersToWrite = getHeadersToWrite(maxIdCount);
+        Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
+        int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
+        for (ProfileResourceNode node : nodes) {
+            List<String> nodeEntries = getOneRowPerFileNodeEntries(node, maxCols, columnPositions, maxIdCount);
+            ObjectNode rowNode = outputJson.createObjectNode();
+            for (int i=0; i < headersToWrite.size(); i++) {
+                rowNode.put(headersToWrite.get(i), nodeEntries.get(i));
+            }
+            outputJson.getArrayNode().add(rowNode);
+        }
+        outputJson.writeJson(writer);
+
     }
 
     @Override
@@ -85,25 +94,32 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
         int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
         for (ProfileResourceNode node : nodes) {
             for (Format format : node.getFormatIdentifications()) {
-                List<String> nodeEntries = new ArrayList<>();
-                for (int i = 0; i <= maxCols; i++) {
-                    ExportTemplateColumnDef def = columnPositions.get(i);
-                    if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
-                        nodeEntries.add(def.getDataValue());
-                    } else {
-                        String columnName = def.getOriginalColumnName();
-                        if (CsvWriterConstants.PER_FORMAT_HEADERS.contains(columnName)) {
-                            String columnValue = getFormatValue(columnName, format);
-                            nodeEntries.add(columnValue);
-                        } else {
-                            addNodeColumn(nodeEntries, node, def);
-                        }
-                    }
-                }
+                List<String> nodeEntries = getOneRowPerFormatNodeEntries(node, format, maxCols, columnPositions);
                 csvWriter.writeRow(nodeEntries);
             }
         }
         csvWriter.flush();
+    }
+
+    @Override
+    public void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer) {
+        super.setCustomisedHeaders(headers);
+        OutputJson outputJson = new OutputJson();
+        int maxIdCount = 1;
+        List<String> headersToWrite = getHeadersToWrite(maxIdCount);
+        Map<Integer, ExportTemplateColumnDef> columnPositions = template.getColumnOrderMap();
+        int maxCols = columnPositions.keySet().stream().max(Integer::compare).get();
+        for (ProfileResourceNode node : nodes) {
+            for (Format format : node.getFormatIdentifications()) {
+                List<String> nodeEntries = getOneRowPerFormatNodeEntries(node, format, maxCols, columnPositions);
+                ObjectNode rowNode = outputJson.createObjectNode();
+                for (int i=0; i < headersToWrite.size(); i++) {
+                    rowNode.put(headersToWrite.get(i), nodeEntries.get(i));
+                }
+                outputJson.getArrayNode().add(rowNode);
+            }
+        }
+        outputJson.writeJson(writer);
     }
 
     @Override
@@ -124,6 +140,43 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
         csvWriter.flush();
     }
 
+    private List<String> getOneRowPerFormatNodeEntries(ProfileResourceNode node, Format format, int maxCols, Map<Integer, ExportTemplateColumnDef> columnPositions) {
+        List<String> nodeEntries = new ArrayList<>();
+        for (int i = 0; i <= maxCols; i++) {
+            ExportTemplateColumnDef def = columnPositions.get(i);
+            if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
+                nodeEntries.add(def.getDataValue());
+            } else {
+                String columnName = def.getOriginalColumnName();
+                if (WriterConstants.PER_FORMAT_HEADERS.contains(columnName)) {
+                    String columnValue = getFormatValue(columnName, format);
+                    nodeEntries.add(columnValue);
+                } else {
+                    addNodeColumn(nodeEntries, node, def);
+                }
+            }
+        }
+        return nodeEntries;
+    }
+
+    private List<String> getOneRowPerFileNodeEntries(ProfileResourceNode node, int maxCols, Map<Integer, ExportTemplateColumnDef> columnPositions, int maxIdCount) {
+        List<String> nodeEntries = new ArrayList<>();
+        for (int i = 0; i <= maxCols; i++) {
+            ExportTemplateColumnDef def = columnPositions.get(i);
+            if (def.getColumnType() == ExportTemplateColumnDef.ColumnType.ConstantString) {
+                nodeEntries.add(def.getDataValue());
+            } else {
+                String columnName = def.getOriginalColumnName();
+                if (WriterConstants.PER_FORMAT_HEADERS.contains(columnName)) {
+                    addFormatColumnTemplate(nodeEntries, node, def, maxIdCount);
+                } else {
+                    addNodeColumn(nodeEntries, node, def);
+                }
+            }
+        }
+        return nodeEntries;
+    }
+
     private void addFormatColumnTemplate(List<String> nodeEntries, ProfileResourceNode node, ExportTemplateColumnDef def, int maxIdCount) {
         List<Format> formats = node.getFormatIdentifications();
         for (int i = 0; i < maxIdCount; i++) {
@@ -134,19 +187,19 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
 
     //CHECKSTYLE:OFF Swith without default
     private String getFormatValue(String columnName, Format format) {
-        String retVal = CsvWriterConstants.EMPTY_STRING;
+        String retVal = WriterConstants.EMPTY_STRING;
         switch (columnName) {
-            case CsvWriterConstants.HEADER_NAME_PUID:
-                retVal = format == null ? CsvWriterConstants.EMPTY_STRING : format.getPuid();
+            case WriterConstants.HEADER_NAME_PUID:
+                retVal = format == null ? WriterConstants.EMPTY_STRING : format.getPuid();
                 break;
-            case CsvWriterConstants.HEADER_NAME_MIME_TYPE:
-                retVal = format == null ? CsvWriterConstants.EMPTY_STRING : format.getMimeType();
+            case WriterConstants.HEADER_NAME_MIME_TYPE:
+                retVal = format == null ? WriterConstants.EMPTY_STRING : format.getMimeType();
                 break;
-            case CsvWriterConstants.HEADER_NAME_FORMAT_NAME:
-                retVal = format == null ? CsvWriterConstants.EMPTY_STRING : format.getName();
+            case WriterConstants.HEADER_NAME_FORMAT_NAME:
+                retVal = format == null ? WriterConstants.EMPTY_STRING : format.getName();
                 break;
-            case CsvWriterConstants.HEADER_NAME_FORMAT_VERSION:
-                retVal = format == null ? CsvWriterConstants.EMPTY_STRING : format.getVersion();
+            case WriterConstants.HEADER_NAME_FORMAT_VERSION:
+                retVal = format == null ? WriterConstants.EMPTY_STRING : format.getVersion();
         }
         return retVal;
     }
@@ -158,46 +211,46 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
 
         String columnValue = "";
         switch (def.getOriginalColumnName()) {
-            case CsvWriterConstants.HEADER_NAME_ID:
+            case WriterConstants.HEADER_NAME_ID:
                 columnValue = nullSafeNumber(node.getId());
                 break;
-            case CsvWriterConstants.HEADER_NAME_PARENT_ID:
+            case WriterConstants.HEADER_NAME_PARENT_ID:
                 columnValue = nullSafeNumber(node.getParentId());
                 break;
-            case CsvWriterConstants.HEADER_NAME_URI:
+            case WriterConstants.HEADER_NAME_URI:
                 columnValue = DroidUrlFormat.format(node.getUri());
                 break;
-            case CsvWriterConstants.HEADER_NAME_FILE_PATH:
+            case WriterConstants.HEADER_NAME_FILE_PATH:
                 columnValue = toFilePath(node.getUri());
                 break;
-            case CsvWriterConstants.HEADER_NAME_NAME:
+            case WriterConstants.HEADER_NAME_NAME:
                 columnValue = toFileName(metaData.getName());
                 break;
-            case CsvWriterConstants.HEADER_NAME_METHOD:
+            case WriterConstants.HEADER_NAME_METHOD:
                 columnValue = nullSafeName(metaData.getIdentificationMethod());
                 break;
-            case CsvWriterConstants.HEADER_NAME_STATUS:
+            case WriterConstants.HEADER_NAME_STATUS:
                 columnValue = metaData.getNodeStatus().getStatus();
                 break;
-            case CsvWriterConstants.HEADER_NAME_SIZE:
+            case WriterConstants.HEADER_NAME_SIZE:
                 columnValue = nullSafeNumber(metaData.getSize());
                 break;
-            case CsvWriterConstants.HEADER_NAME_TYPE:
+            case WriterConstants.HEADER_NAME_TYPE:
                 columnValue = metaData.getResourceType().getResourceType();
                 break;
-            case CsvWriterConstants.HEADER_NAME_EXT:
+            case WriterConstants.HEADER_NAME_EXT:
                 columnValue = metaData.getExtension();
                 break;
-            case CsvWriterConstants.HEADER_NAME_LAST_MODIFIED:
-                columnValue = nullSafeDate(metaData.getLastModifiedDate(), CsvWriterConstants.DATE_FORMAT);
+            case WriterConstants.HEADER_NAME_LAST_MODIFIED:
+                columnValue = nullSafeDate(metaData.getLastModifiedDate(), WriterConstants.DATE_FORMAT);
                 break;
-            case CsvWriterConstants.HEADER_NAME_EXTENSION_MISMATCH:
+            case WriterConstants.HEADER_NAME_EXTENSION_MISMATCH:
                 columnValue = node.getExtensionMismatch().toString();
                 break;
-            case CsvWriterConstants.HEADER_NAME_HASH:
+            case WriterConstants.HEADER_NAME_HASH:
                 columnValue = metaData.getHash();
                 break;
-            case CsvWriterConstants.HEADER_NAME_FORMAT_COUNT:
+            case WriterConstants.HEADER_NAME_FORMAT_COUNT:
                 columnValue = nullSafeNumber(node.getIdentificationCount());
                 break;
         }
@@ -216,7 +269,7 @@ public class TemplateBasedDataWriter extends FormattedDataWriter{
             ExportTemplateColumnDef def = columnOrderMap.get(i);
             retVal.add(def.getHeaderLabel());
             if (def.getColumnType() != ExportTemplateColumnDef.ColumnType.ConstantString) {
-                if (CsvWriterConstants.PER_FORMAT_HEADERS.contains(def.getOriginalColumnName())) {
+                if (WriterConstants.PER_FORMAT_HEADERS.contains(def.getOriginalColumnName())) {
                     for (int newColumnSuffix = 1; newColumnSuffix < maxIdCount; newColumnSuffix++) {
                         retVal.add(def.getHeaderLabel() + newColumnSuffix);
                     }

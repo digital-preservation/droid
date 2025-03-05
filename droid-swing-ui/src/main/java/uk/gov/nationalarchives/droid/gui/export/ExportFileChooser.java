@@ -31,6 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.gui.export;
 
+import java.awt.Component;
+import java.awt.HeadlessException;
 import java.io.File;
 
 import javax.swing.JFileChooser;
@@ -39,6 +41,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.io.FilenameUtils;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 
 /**
  *
@@ -47,33 +50,56 @@ import org.apache.commons.io.FilenameUtils;
 public class ExportFileChooser extends JFileChooser {
 
     private static final String CSV_EXT = "csv";
-    
+    private static final String JSON_EXT = "json";
+
     private static final long serialVersionUID = -3733290468455212962L;
 
-    private FileNameExtensionFilter csvFilter;
+    private ExportOutputOptions exportOutputOptions;
 
     @Override
     protected void setup(FileSystemView view) {
         super.setup(view);
         setAcceptAllFileFilterUsed(true);
-        csvFilter = new FileNameExtensionFilter("Comma separated values (*.csv)", CSV_EXT);
-        addChoosableFileFilter(csvFilter);
-        setFileFilter(csvFilter);
     }
 
-        /**
+    /**
+     *
+     * @param exportOutputOptions The output options
+     */
+    public void setExportOutputOptions(final ExportOutputOptions exportOutputOptions) {
+        this.exportOutputOptions = exportOutputOptions;
+    }
+
+    @Override
+    public int showSaveDialog(Component parent) throws HeadlessException {
+        FileNameExtensionFilter extensionFilter = getFileNameExtensionFilter();
+        addChoosableFileFilter(extensionFilter);
+        setFileFilter(extensionFilter);
+        return super.showSaveDialog(parent);
+    }
+
+    private FileNameExtensionFilter getFileNameExtensionFilter() {
+        if (exportOutputOptions == ExportOutputOptions.JSON_OUTPUT) {
+            return new FileNameExtensionFilter("JSON (*.json)", JSON_EXT);
+        } else {
+            return new FileNameExtensionFilter("Comma separated values (*.csv)", CSV_EXT);
+        }
+    }
+
+    /**
      * Pops up a warning dialog if the selected file exists.
      */
     @Override
     public void approveSelection() {
-
+        FileNameExtensionFilter extensionFilter = getFileNameExtensionFilter();
         int confirm = JOptionPane.YES_OPTION;
-        if (!getSelectedFile().exists() && getFileFilter().equals(csvFilter)) {
+        if (!getSelectedFile().exists() && getFileFilter().getDescription().equals(extensionFilter.getDescription())) {
             final String filename = getSelectedFile().getName();
             String ext = FilenameUtils.getExtension(filename);
-            if (!CSV_EXT.equals(ext)) {
+            String expectedExtension = exportOutputOptions == ExportOutputOptions.JSON_OUTPUT ? JSON_EXT : CSV_EXT;
+            if (!expectedExtension.equals(ext)) {
                 setSelectedFile(new File(getSelectedFile().getParentFile(), 
-                        filename + "." + CSV_EXT));
+                        filename + "." + expectedExtension));
             }
         }
 

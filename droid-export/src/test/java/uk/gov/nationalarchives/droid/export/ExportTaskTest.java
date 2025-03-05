@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportDetails;
 import uk.gov.nationalarchives.droid.export.interfaces.ItemWriter;
 
 import java.io.File;
@@ -68,12 +69,12 @@ public class ExportTaskTest {
     public void testEncodingDefault() throws IOException {
         File tempFile = temporaryFolder.newFile("export-task-test-default-encoding");
         final String destination = tempFile.getAbsolutePath();
-        final String encoding = null; //i.e. platform dependent
+        ExportDetails exportDetails = new ExportDetails.ExportDetailsBuilder().build();
 
-        final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, false, itemWriter, null));
+        final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, exportDetails, itemWriter, null));
         pmExportTask.run();
 
-        verify(pmExportTask, never()).newOutputFileWriterEncoded(encoding, tempFile.toPath());
+        verify(pmExportTask, never()).newOutputFileWriterEncoded(null, tempFile.toPath());
     }
 
     @Test
@@ -81,8 +82,9 @@ public class ExportTaskTest {
         File tempFile = temporaryFolder.newFile("export-task-test-specific-encoding");
         final String destination = tempFile.getAbsolutePath();
         final String encoding = "UTF-8";
-
-        final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, null, encoding, false, itemWriter, null));
+        ExportDetails.ExportDetailsBuilder builder = new ExportDetails.ExportDetailsBuilder();
+        ExportDetails exportDetails = builder.withOutputEncoding("UTF-8").build();
+        final ExportTask pmExportTask = spy(new ExportTask(destination, new ArrayList<String>(), null, exportDetails, itemWriter, null));
         pmExportTask.run();
 
         verify(pmExportTask, times(1)).newOutputFileWriterEncoded(encoding, tempFile.toPath());
