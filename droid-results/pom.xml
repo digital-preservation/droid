@@ -119,6 +119,7 @@
 								<ignoredUnusedDeclaredDependency>javax.annotation:javax.annotation-api</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>com.sun.activation:javax.activation</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j2-impl</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>software.amazon.nio.s3:aws-java-nio-spi-for-s3:jar</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
 							<ignoredUsedUndeclaredDependencies>
 								<ignoredUsedUndeclaredDependency>org.slf4j:slf4j-api</ignoredUsedUndeclaredDependency>
@@ -347,6 +348,11 @@
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>regions</artifactId>
 			<version>${aws.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.nio.s3</groupId>
+			<artifactId>aws-java-nio-spi-for-s3</artifactId>
+			<version>2.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wiremock</groupId>
