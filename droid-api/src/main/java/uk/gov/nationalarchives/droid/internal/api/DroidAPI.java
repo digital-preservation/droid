@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -82,6 +83,7 @@ public final class DroidAPI implements AutoCloseable {
     private static final String ZIP_PUID = "x-fmt/263";
     private static final String OLE2_PUID = "fmt/111";
     private static final String S3_SCHEME = "s3";
+    private static final String GZIP_PUID = "x-fmt/266";
 
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
@@ -90,6 +92,8 @@ public final class DroidAPI implements AutoCloseable {
     private final ContainerIdentifier zipIdentifier;
 
     private final ContainerIdentifier ole2Identifier;
+
+    private final ContainerIdentifier gzIdentifier;
 
     private final String containerSignatureVersion;
 
@@ -104,10 +108,11 @@ public final class DroidAPI implements AutoCloseable {
     private final HttpClient httpClient;
 
 
-    private DroidAPI(DroidCore droidCore, ContainerIdentifier zipIdentifier, ContainerIdentifier ole2Identifier, String containerSignatureVersion, String binarySignatureVersion, String droidVersion, S3Client s3Client, HttpClient httpClient, Region s3Region) {
+    private DroidAPI(DroidCore droidCore, ContainerIdentifier zipIdentifier, ContainerIdentifier ole2Identifier, ContainerIdentifier gzIdentifier, String containerSignatureVersion, String binarySignatureVersion, String droidVersion, S3Client s3Client, HttpClient httpClient, Region s3Region) {
         this.droidCore = droidCore;
         this.zipIdentifier = zipIdentifier;
         this.ole2Identifier = ole2Identifier;
+        this.gzIdentifier = gzIdentifier;
         this.containerSignatureVersion = containerSignatureVersion;
         this.binarySignatureVersion = binarySignatureVersion;
         this.droidVersion = droidVersion;
@@ -191,7 +196,7 @@ public final class DroidAPI implements AutoCloseable {
             String containerVersion = StringUtils.substringAfterLast(containerSignature.getFileName().toString(), "-").split("\\.")[0];
             String droidVersion = ResourceBundle.getBundle("options").getString("version_no");
             ContainerApi containerApi = new ContainerApi(droidCore, containerSignature);
-            return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion, this.s3Client, this.httpClient, this.s3Region);
+            return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerApi.gzIdentifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion, this.s3Client, this.httpClient, this.s3Region);
         }
     }
 
@@ -334,9 +339,10 @@ public final class DroidAPI implements AutoCloseable {
     }
 
     private Optional<String> getContainerPuid(final IdentificationResultCollection binaryResult) {
-        return binaryResult.getResults().stream().filter(x ->
-                ZIP_PUID.equals(x.getPuid()) || OLE2_PUID.equals(x.getPuid())
-        ).map(IdentificationResult::getPuid).findFirst();
+        List<String> containerPuids = Arrays.asList(ZIP_PUID, OLE2_PUID, GZIP_PUID);
+        return binaryResult.getResults().stream()
+                .map(IdentificationResult::getPuid)
+                .filter(containerPuids::contains).findFirst();
     }
 
     private <T> IdentificationResultCollection handleContainer(final IdentificationResultCollection binaryResult,
@@ -344,6 +350,7 @@ public final class DroidAPI implements AutoCloseable {
         ContainerIdentifier identifier = switch (containerPuid) {
             case ZIP_PUID -> zipIdentifier;
             case OLE2_PUID -> ole2Identifier;
+            case GZIP_PUID -> gzIdentifier;
             default -> throw new RuntimeException("Unknown container PUID : " + containerPuid);
         };
 

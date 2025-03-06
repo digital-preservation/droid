@@ -43,12 +43,15 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
-
+import uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.ContainerType;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Paths;
-import java.util.*;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,9 +65,12 @@ import static uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.*;
 
 public class DroidAPITest {
 
+    private static final String DATA = "TEST";
+
     private static DroidAPI api;
     private static HttpServer s3Server;
     private static HttpServer httpServer;
+    private static URI endpointOverride;
 
     private static Stream<URI> getUris(String path) {
         URI fileUri = Paths.get(path).toUri();
@@ -77,8 +83,8 @@ public class DroidAPITest {
     public static void setup() throws SignatureParseException, IOException {
         s3Server = createS3Server();
         httpServer = createHttpServer();
-        URI uri = URI.create("http://localhost" + ":" + s3Server.getAddress().getPort());
-        api = DroidAPITestUtils.createApi(uri);
+        endpointOverride = URI.create("http://localhost" + ":" + s3Server.getAddress().getPort());
+        api = DroidAPITestUtils.createApi(endpointOverride);
     }
 
 
@@ -88,6 +94,55 @@ public class DroidAPITest {
         assertThat(api, is(notNullValue()));
     }
 
+    public record ContainerTest(URI uri, ContainerType containerType, Optional<String> path) {}
+
+    static Stream<ContainerTest> signatureTests() {
+        ContainerType gzipContainerType = new ContainerType("GZIP", generateId(),"x-fmt/266");
+        ContainerType zipContainerType = new ContainerType("ZIP", generateId(),"x-fmt/263");
+        ContainerType ole2ContainerType = new ContainerType("OLE2", generateId(),"fmt/111");
+        Stream<ContainerTest> gzipStream = getUris(generateGzFile(DATA).toString()).map(uri -> new ContainerTest(uri, gzipContainerType, Optional.empty()));
+        Stream<ContainerTest> zipStream = getUris(generateZipFile(DATA, DATA).toString()).map(uri -> new ContainerTest(uri, zipContainerType, Optional.of(DATA)));
+        Stream<ContainerTest> ole2Stream = getUris(generateOle2File(DATA, DATA).toString()).map(uri -> new ContainerTest(uri, ole2ContainerType, Optional.of(DATA)));
+        return Stream.concat(Stream.concat(gzipStream, zipStream), ole2Stream);
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("signatureTests")
+    public void should_match_container_files(ContainerTest containerTest) throws IOException {
+        ContainerFile containerFile = new ContainerFile(containerTest.containerType, DATA, "fmt/12345", containerTest.path);
+        try (DroidAPI api = DroidAPITestUtils.createApiForContainer(endpointOverride, containerFile)) {
+            List<ApiResult> results = api.submit(containerTest.uri);
+            assertThat(results, hasSize(1));
+            assertThat(results.getFirst().getPuid(), is("fmt/12345"));
+            assertThat(results.getFirst().getMethod(), is(IdentificationMethod.CONTAINER));
+        }
+    }
+
+    @Test
+    public void should_throw_an_exception_if_file_cannot_be_read() {
+        assertThrows(IOException.class, () -> api.submit(Path.of("/invalidpath").toUri()));
+    }
+
+    @Test
+    public void should_throw_an_exception_if_container_file_cannot_be_read() {
+        assertThrows(RuntimeException.class, () -> {
+            DroidAPI.builder()
+                    .binarySignature(signaturePath)
+                    .containerSignature(Path.of("/invalidContainerPath"))
+                    .build();
+        });
+    }
+
+    @Test
+    public void should_throw_an_exception_if_signature_file_cannot_be_read() {
+        assertThrows(SignatureParseException.class, () -> {
+            DroidAPI.builder()
+                    .binarySignature(Path.of("/invalidSignaturePath"))
+                    .containerSignature(containerPath)
+                    .build();
+        });
+    }
 
     static Stream<URI> binarySignatureUris() {
         return getUris("src/test/resources/persistence.zip");
@@ -123,7 +178,7 @@ public class DroidAPITest {
 
         assertThat(results.size(), is(1));
 
-        ApiResult identificationResult = results.get(0);
+        ApiResult identificationResult = results.getFirst();
 
         assertThat(identificationResult.getPuid(), is("fmt/291"));
         assertThat(identificationResult.getName(), is("OpenDocument Text"));
@@ -151,11 +206,10 @@ public class DroidAPITest {
     static Stream<Pair<URI, URI>> correctExtensionUris() {
         List<URI> withExtensionList = getUris("src/test/resources/test.txt").toList();
         List<URI> withoutExtensionList = getUris("src/test/resources/word97").toList();
-
-        Pair<URI, URI> firstUriPair = Pair.of(withExtensionList.getFirst(), withoutExtensionList.getFirst());
-        Pair<URI, URI> secondUriPair = Pair.of(withExtensionList.get(1), withoutExtensionList.get(1));
-        Pair<URI, URI> thirdUriPair = Pair.of(withExtensionList.getLast(), withoutExtensionList.getLast());
-        return Stream.of(firstUriPair, secondUriPair, thirdUriPair);
+        return Stream.of(
+                Pair.of(withExtensionList.getFirst(), withoutExtensionList.getFirst()),
+                Pair.of(withExtensionList.getLast(), withoutExtensionList.getLast())
+        );
     }
 
     @Execution(ExecutionMode.CONCURRENT)
@@ -195,8 +249,8 @@ public class DroidAPITest {
     public void should_report_when_there_is_an_extension_mismatch() throws IOException {
         List<ApiResult> results = api.submit(Paths.get("src/test/resources/docx-file-as-xls.xlsx").toUri());
         assertThat(results.size(), is(1));
-        assertThat(results.get(0).getPuid(), is("fmt/412"));
-        assertThat(results.get(0).isFileExtensionMismatch(), is(true));
+        assertThat(results.getFirst().getPuid(), is("fmt/412"));
+        assertThat(results.getFirst().isFileExtensionMismatch(), is(true));
     }
 
     @Test

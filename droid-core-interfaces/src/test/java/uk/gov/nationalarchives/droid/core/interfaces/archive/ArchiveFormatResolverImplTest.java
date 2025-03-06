@@ -63,7 +63,7 @@ public class ArchiveFormatResolverImplTest {
     public void testForPuid() {
         assertEquals("ZIP", formatResolver.forPuid("x-fmt/263"));
         assertEquals("TAR", formatResolver.forPuid("x-fmt/265"));
-        assertEquals("GZ", formatResolver.forPuid("x-fmt/266"));
+        assertEquals("GZIP", formatResolver.forPuid("x-fmt/266"));
         assertNull(formatResolver.forPuid(""));
     }
 }
