@@ -112,13 +112,18 @@ public class ProfileRunCommand implements DroidCommand {
     }
 
     public Writer getWriter(String outputFilePath) throws IOException {
-        if (outputFilePath != null && !outputFilePath.trim().isEmpty()) {
+        if (outputFilePath != null && !outputFilePath.trim().isEmpty() && !"stdout".equals(outputFilePath)) {
             File outputFile = new File(outputFilePath);
             return new FileWriter(outputFile, true);
         }
         return new PrintWriter(System.out);
     }
 
+    /**
+     * If json output is configured, we need to close the json array after the profile has finished running.
+     * This writes the closing square bracket to either the console or the file depending on which is configured.
+     * @throws IOException if there is a problem opening the output file or writing to the writer.
+     */
     public void terminateJsonArray() throws IOException {
         if (getProperties() != null && getProperties().getString(DroidGlobalProperty.EXPORT_OUTPUT_OPTIONS.getName()).equals(ExportOutputOptions.JSON_OUTPUT.name())) {
             String outputFilePath = getProperties().getString(DroidGlobalProperty.OUTPUT_FILE_PATH.getName());
