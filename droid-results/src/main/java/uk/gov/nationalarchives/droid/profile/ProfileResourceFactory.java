@@ -52,18 +52,21 @@ public class ProfileResourceFactory {
      * @throws IllegalArgumentException if the location passed in is not a file or a directory.
      */
     public AbstractProfileResource getResource(String location, boolean recursive) {
-        final Path f = Paths.get(location);
-        if (Files.isRegularFile(f)) {
-            return new FileProfileResource(f);
-        } else if (Files.isDirectory(f)) {
-            return new DirectoryProfileResource(f, recursive);
-        } else if (S3ProfileResource.isS3uri(location)) {
+        // Linux is happy trying to parse a url as a path because of the forward slashes but Windows can't, so we check for URIs first
+        if (S3ProfileResource.isS3uri(location)) {
             return new S3ProfileResource(location);
         } else if (HttpProfileResource.isHttpUrl(location)) {
             return new HttpProfileResource(location);
         } else {
-            throw new IllegalArgumentException(
-                    String.format("Unknown location [%s]", location));
+            final Path f = Paths.get(location);
+            if (Files.isRegularFile(f)) {
+                return new FileProfileResource(f);
+            } else if (Files.isDirectory(f)) {
+                return new DirectoryProfileResource(f, recursive);
+            }else {
+                throw new IllegalArgumentException(
+                        String.format("Unknown location [%s]", location));
+            }
         }
     }
 }
