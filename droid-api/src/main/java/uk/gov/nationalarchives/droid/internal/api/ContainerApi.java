@@ -117,7 +117,7 @@ public final class ContainerApi {
         try {
             containerIdentifier.init();
         } catch (SignatureFileException ex) {
-            throw new RuntimeException("Unable to init Ole2Identifier", ex);
+            throw new RuntimeException("Unable to init " + containerIdentifier.getClass().getSimpleName(), ex);
         }
         return containerIdentifier;
     }
