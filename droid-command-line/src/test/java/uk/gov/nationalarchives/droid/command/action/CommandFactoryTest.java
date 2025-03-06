@@ -43,6 +43,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterCriterion;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testExportCommand() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-E",
                 "out.csv",
@@ -111,7 +112,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testExportCommandWithBom() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-B",
                 "-E",
@@ -133,7 +134,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testExportCommandWithNoExportArgument() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-E",
                 "-p",
@@ -151,7 +152,7 @@ public class CommandFactoryTest {
 
     @Test (expected = CommandLineSyntaxException.class)
     public void testExportCommandWithNoProfiles() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-E"
         };
@@ -162,7 +163,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testExportCommandFile() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
             "-e",
             "out.csv",
@@ -182,7 +183,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testExportCommandWithBomFile() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-B",
                 "-e",
@@ -204,7 +205,7 @@ public class CommandFactoryTest {
     
     @Test
     public void testExportCommandWithNoExportArgumentFile() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
             "-e",
             "-p",
@@ -222,7 +223,7 @@ public class CommandFactoryTest {
     
     @Test (expected = CommandLineSyntaxException.class)
     public void testExportCommandWithNoProfilesFile() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
             "-e",
         };
@@ -233,7 +234,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testExportCommandWithColumns() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-E",
                 "out.csv",
@@ -256,7 +257,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testExportCommandQuoteCommasOnly() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FORMAT, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-E",
                 "out.csv",
@@ -277,7 +278,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testExportCommandFileWithColumns() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-e",
                 "out.csv",
@@ -369,7 +370,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testAllFilteredExportCommand() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-e",
                 "out.csv",
@@ -412,7 +413,7 @@ public class CommandFactoryTest {
 
     @Test
     public void testAnyFilteredExportCommand() throws Exception {
-        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE)).thenReturn(exportCommand);
+        when(context.getExportCommand(ExportOptions.ONE_ROW_PER_FILE, ExportOutputOptions.CSV_OUTPUT)).thenReturn(exportCommand);
         String[] args = new String[] {
                 "-e",
                 "out.csv",
@@ -576,8 +577,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -602,8 +604,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -629,8 +632,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(3, propertyNames.size());
+        assertEquals(4, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertTrue(propertyNames.contains("profile.quoteAllFields"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
@@ -656,8 +660,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -682,8 +687,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FORMAT", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -710,8 +716,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("/home/user/Results/results.csv", profileRunCommand.getDestination());
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("/home/user/Results/results.csv", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -740,8 +747,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("/home/user/Results/results.csv", profileRunCommand.getDestination());
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(3, propertyNames.size());
+        assertEquals(4, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertTrue(propertyNames.contains("profile.columnsToWrite"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
@@ -770,8 +778,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("/home/user/Results/results.droid", profileRunCommand.getDestination());
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(1, propertyNames.size());
+        assertEquals(2, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
     }
 
@@ -797,8 +806,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getResultsFilter());
         assertEquals("/home/user/Results/results.droid", profileRunCommand.getDestination());
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(1, propertyNames.size());
+        assertEquals(2, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertNull(profileRunCommand.getResultsFilter());
         Filter filter = profileRunCommand.getIdentificationFilter();
@@ -837,8 +847,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getResultsFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -895,8 +906,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(4, propertyNames.size());
+        assertEquals(5, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.maxBytesToScan"));
         assertTrue(propertyNames.contains("profile.matchAllExtensions"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
@@ -927,8 +939,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(5, propertyNames.size());
+        assertEquals(6, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertTrue(propertyNames.contains("profile.maxBytesToScan"));
         assertTrue(propertyNames.contains("profile.matchAllExtensions"));
@@ -964,8 +977,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(6, propertyNames.size());
+        assertEquals(7, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertTrue(propertyNames.contains("profile.maxBytesToScan"));
         assertTrue(propertyNames.contains("profile.matchAllExtensions"));
@@ -1000,10 +1014,12 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
+        assertEquals("CSV_OUTPUT", profileRunCommand.getProperties().getProperty("profile.exportOutputOptions"));
+
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
 
         Filter filter = profileRunCommand.getResultsFilter();
@@ -1026,7 +1042,19 @@ public class CommandFactoryTest {
         assertEquals("fmt/101", values[0]);
         assertEquals("fmt/102", values[1]);
         assertEquals("fmt/103", values[2]);
+    }
 
+    @Test
+    public void testSetExportOutputToJson() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-a",
+                "/home/user/Documents/test.doc",
+                "-json"
+        };
+        CommandLine cli = parse(args);
+        factory.getProfileCommand(cli);
+        assertEquals("JSON_OUTPUT", profileRunCommand.getProperties().getProperty("profile.exportOutputOptions"));
     }
 
     @Test
@@ -1049,8 +1077,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -1097,8 +1126,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getResultsFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -1134,8 +1164,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getResultsFilter());
         assertEquals("stdout", profileRunCommand.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(2, propertyNames.size());
+        assertEquals(3, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
         assertEquals("stdout", profileRunCommand.getProperties().getProperty("profile.outputFilePath"));
@@ -1169,8 +1200,9 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(13, propertyNames.size());
+        assertEquals(14, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertTrue(propertyNames.contains("profile.outputFilePath"));
         assertTrue(propertyNames.contains("profile.columnsToWrite"));
         assertTrue(propertyNames.contains("profile.quoteAllFields"));
@@ -1208,7 +1240,7 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(13, propertyNames.size());
+        assertEquals(14, propertyNames.size());
         assertFalse((boolean)e1.getProperties().getProperty("profile.processTar"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.processZip"));
         assertFalse((boolean)e1.getProperties().getProperty("profile.processGzip"));
@@ -1237,7 +1269,7 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(13, propertyNames.size());
+        assertEquals(14, propertyNames.size());
         assertTrue((boolean)e1.getProperties().getProperty("profile.processTar"));
         assertTrue((boolean)e1.getProperties().getProperty("profile.processZip"));
         assertTrue((boolean)e1.getProperties().getProperty("profile.processGzip"));
@@ -1268,7 +1300,7 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(13, propertyNames.size());
+        assertEquals(14, propertyNames.size());
 
         // -W should not affect the archive types
         assertFalse((boolean)e1.getProperties().getProperty("profile.processTar"));
@@ -1302,7 +1334,7 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(13, propertyNames.size());
+        assertEquals(14, propertyNames.size());
 
         // -Only the 3 archives passed to -At should expand
         assertTrue((boolean)e1.getProperties().getProperty("profile.processTar"));
@@ -1335,7 +1367,7 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(13, propertyNames.size());
+        assertEquals(14, propertyNames.size());
 
         // All archive types should be set to do not process
         assertFalse((boolean)e1.getProperties().getProperty("profile.processTar"));
@@ -1369,7 +1401,7 @@ public class CommandFactoryTest {
 
         assertEquals("stdout", e1.getDestination()); // output file not specified, so defaults to stdout.
         List<String> propertyNames = getPropertyNames(e1.getProperties());
-        assertEquals(13, propertyNames.size());
+        assertEquals(14, propertyNames.size());
 
         //All archives should be processed
         assertTrue((boolean)e1.getProperties().getProperty("profile.processTar"));
@@ -1571,8 +1603,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("/home/user/Results/results.droid", profileRunCommand.getDestination());
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(8, propertyNames.size());
+        assertEquals(9, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
 
         assertTrue(propertyNames.contains("profile.processZip"));
@@ -1619,8 +1652,9 @@ public class CommandFactoryTest {
         assertNull(profileRunCommand.getIdentificationFilter());
         assertEquals("/home/user/Results/results.droid", profileRunCommand.getDestination());
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
-        assertEquals(3, propertyNames.size());
+        assertEquals(4, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
 
         assertTrue(propertyNames.contains("profile.processArc"));
@@ -1664,8 +1698,9 @@ public class CommandFactoryTest {
         assertEquals("/home/user/Results/results.droid", profileRunCommand.getDestination());
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
 
-        assertEquals(8, propertyNames.size());
+        assertEquals(9, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
 
         for (String archive : allArchives) {
@@ -1710,8 +1745,9 @@ public class CommandFactoryTest {
         assertEquals("/home/user/Results/results.droid", profileRunCommand.getDestination());
         List<String> propertyNames = getPropertyNames(profileRunCommand.getProperties());
 
-        assertEquals(3, propertyNames.size());
+        assertEquals(4, propertyNames.size());
         assertTrue(propertyNames.contains("profile.exportOptions"));
+        assertTrue(propertyNames.contains("profile.exportOutputOptions"));
         assertEquals("ONE_ROW_PER_FILE", profileRunCommand.getProperties().getProperty("profile.exportOptions"));
 
         for (String archive : allArchives) {

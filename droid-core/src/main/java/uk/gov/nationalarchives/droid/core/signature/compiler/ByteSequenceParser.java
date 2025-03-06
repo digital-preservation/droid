@@ -297,7 +297,7 @@ public final class ByteSequenceParser implements Parser<ParseTree> {
 
         int nextChar;
         SETVALUES: while ((nextChar = reader.read()) >= 0) {
-            switch(nextChar) {
+            switch (nextChar) {
 
                 // Whitespace (ignore)
                 case SPACE: case NEWLINE: case CARRIAGE_RETURN: case TAB: {

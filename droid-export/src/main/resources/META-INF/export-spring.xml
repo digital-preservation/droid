@@ -42,7 +42,7 @@ http://www.springframework.org/schema/batch http://www.springframework.org/schem
 
     <bean id="globalConfig" class="uk.gov.nationalarchives.droid.profile.config.DroidGlobalConfig" init-method="init"/>
 
-    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.profile.CsvItemWriter">
+    <bean id="itemWriter" class="uk.gov.nationalarchives.droid.profile.ItemWriterImpl">
         <property name="config" ref="globalConfig"/>
     </bean>
     

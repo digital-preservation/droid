@@ -277,7 +277,7 @@ public class ResourceSelectorDialog extends JDialog {
         return sb.toString();
     }
     
-    private class DoubleClickMouseAdapter extends MouseAdapter {
+    private final class DoubleClickMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent event) {
             if (event.getClickCount() == 2) {
@@ -359,7 +359,7 @@ public class ResourceSelectorDialog extends JDialog {
                         "ResourceSelector.table.columnModel.title3")); // NOI18N
     }
     
-    private class FileTreeCellRenderer extends DefaultTreeCellRenderer {
+    private final class FileTreeCellRenderer extends DefaultTreeCellRenderer {
         private static final long serialVersionUID = -971847725978939749L;
 
         @Override
@@ -383,7 +383,7 @@ public class ResourceSelectorDialog extends JDialog {
         }
     }
     
-    private class FileTreeSelectionListener implements TreeSelectionListener {
+    private final class FileTreeSelectionListener implements TreeSelectionListener {
         @Override
         public void valueChanged(TreeSelectionEvent e) {
             TreePath treePath = e.getNewLeadSelectionPath();

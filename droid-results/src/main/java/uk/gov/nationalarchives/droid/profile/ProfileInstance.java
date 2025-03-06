@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.Filter;
 import uk.gov.nationalarchives.droid.export.interfaces.ExportOptions;
+import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 
 /**
  * Base class for a profile.
@@ -166,6 +167,9 @@ public class ProfileInstance {
 
     @XmlTransient
     private ExportOptions exportOptions;
+
+    @XmlTransient
+    private ExportOutputOptions exportOutputOptions;
 
     @XmlTransient
     private Set<ProfileEventListener> eventListeners = new HashSet<ProfileEventListener>();
@@ -868,4 +872,21 @@ public class ProfileInstance {
     public ExportOptions getExportOptions() {
         return exportOptions;
     }
+
+    /**
+     * Sets the export output options - CSV or JSON.
+     * @param options the output options
+     */
+    public void setExportOutputOptions(ExportOutputOptions options) {
+        this.exportOutputOptions = options;
+    }
+
+    /**
+     *
+     * @return The export output options
+     */
+    public ExportOutputOptions getExportOutputOptions() {
+        return exportOutputOptions;
+    }
+
 }
