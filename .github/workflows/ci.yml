@@ -30,4 +30,4 @@ jobs:
       - name: Maven Build
         run: mvn -V -B -DskipTests=true install -DnvdApiKey=${{ secrets.NVD_API_KEY }}
       - name: Maven Test
-        run: mvn -B verify -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+        run: AWS_REGION=eu-west-2 mvn -B verify -DnvdApiKey=${{ secrets.NVD_API_KEY }}
