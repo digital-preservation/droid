@@ -64,6 +64,7 @@ import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureSaxParser;
 import uk.gov.nationalarchives.droid.container.IdentifierEngine;
+import uk.gov.nationalarchives.droid.container.gz.GzIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ole2.Ole2IdentifierEngine;
 import uk.gov.nationalarchives.droid.container.zip.ZipIdentifierEngine;
 import uk.gov.nationalarchives.droid.core.IdentificationRequestByteReaderAdapter;
@@ -111,6 +112,7 @@ public final class SigUtils {
     private static final String IO_EXCEPTION_PROCESSING = "IO exception processing: ";
 
     private static final int ZIP_SIG_ID = 200;
+    private static final int GZ_SIG_ID = 201;
     private static final int OLE2_SIG_ID = 170;
 
     static {
@@ -128,6 +130,7 @@ public final class SigUtils {
     }
 
     private static final IdentifierEngine ZIP_IDENTIFIER_ENGINE = new ZipIdentifierEngine();
+    private static final IdentifierEngine GZ_IDENTIFIER_ENGINE = new GzIdentifierEngine();
     private static final IdentifierEngine OLE2_IDENTIFIER_ENGINE = new Ole2IdentifierEngine();
 
     /**
@@ -660,9 +663,9 @@ public final class SigUtils {
     }
 
     /**
-     * Returns an identification engine (zip or ole2) for a file, or null if it can' be recognised.
+     * Returns an identification engine (zip, ole2 or gzip) for a file, or null if it can't be recognised.
      * @param filename The filename to get an identifier engine for.
-     * @return an identification engine (zip or ole2) for a file, or null if it can' be recognised.
+     * @return an identification engine (zip, ole2 or gzip) for a file, or null if it can't be recognised.
      * @throws IOException If an IO problem happens reading the file.
      */
     public static IdentifierEngine getContainerIdentifierEngine(String filename) throws IOException {
@@ -677,6 +680,10 @@ public final class SigUtils {
                 }
                 case OLE2_SIG_ID: { // ole2 sig identifier.
                     engine = OLE2_IDENTIFIER_ENGINE;
+                    break;
+                }
+                case GZ_SIG_ID: {
+                    engine = GZ_IDENTIFIER_ENGINE;
                     break;
                 }
                 default : engine = null;

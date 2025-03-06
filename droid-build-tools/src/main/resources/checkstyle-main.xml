@@ -155,7 +155,7 @@
     </module>
     <module name="ArrayTypeStyle"/>
     <module name="ClassDataAbstractionCoupling">
-      <property name="max" value="9"/>
+      <property name="max" value="10"/>
     </module>
     <module name="ClassFanOutComplexity">
       <property name="max" value="27"/>
