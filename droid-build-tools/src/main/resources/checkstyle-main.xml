@@ -53,7 +53,6 @@
 
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
-    <module name="AvoidStarImport"/>
     <module name="ConstantName"/>
     <module name="EmptyBlock"/>
     <module name="EmptyForIteratorPad"/>

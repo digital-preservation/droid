@@ -76,7 +76,7 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
     }
 
     private void processFallback(IdentificationRequest<InputStream> request, ContainerSignatureMatchCollection matches) throws IOException {
-        try (org.apache.commons.compress.archivers.zip.ZipFile zipFile = org.apache.commons.compress.archivers.zip.ZipFile.builder()
+        try (var zipFile = org.apache.commons.compress.archivers.zip.ZipFile.builder()
                 .setIgnoreLocalFileHeader(true)
                 .setSeekableByteChannel(new ByteseekWindowWrapper(request.getWindowReader()))
                 .get()) {
