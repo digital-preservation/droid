@@ -45,6 +45,12 @@ import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipException;
 
@@ -62,7 +68,7 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
         try (ZipFile zipFile = new ZipFile(new ByteseekWindowWrapper(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false)) {
             // For each entry:
             for (String entryName : matches.getAllFileEntries()) {
-                final ZipEntry entry = zipFile.entry(entryName);
+                final ZipEntry entry = getEntry(entryName, zipFile);
                 if (entry != null) {
                     // Get a stream for the entry and a byte reader over the stream:
                     InputStream stream = zipFile.getInputStream(entry.getName());
@@ -82,7 +88,7 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
                 .get()) {
             // For each entry:
             for (String entryName : matches.getAllFileEntries()) {
-                final ZipArchiveEntry entry = zipFile.getEntry(entryName);
+                final ZipArchiveEntry entry = getFallbackEntry(entryName, zipFile);
                 if (entry != null) {
                     // Get a stream for the entry and a byte reader over the stream:
                     InputStream stream = zipFile.getInputStream(entry);
@@ -93,21 +99,52 @@ public class ZipIdentifierEngine extends AbstractIdentifierEngine {
     }
 
     private void matchEntry(ContainerSignatureMatchCollection matches, String entryName, InputStream stream) throws IOException {
-        ByteReader reader = null;
-        try {
-            reader = newByteReader(stream);
+        try (ByteReader reader = newByteReader(stream)) {
             // For each signature to match:
             List<ContainerSignatureMatch> matchList = matches.getContainerSignatureMatches();
             for (ContainerSignatureMatch match : matchList) {
                 match.matchBinaryContent(entryName, reader);
             }
         } finally {
-            if (reader != null) {
-                reader.close();
-            }
             if (stream != null) {
                 stream.close();
             }
         }
+    }
+
+    private static ZipEntry getEntry(String entryName, ZipFile zipFile) {
+        ZipEntry entry = zipFile.entry(entryName);
+        if (entry == null) {
+            FileSystem fileSystem = FileSystems.getFileSystem(URI.create("file:///"));
+            PathMatcher pathMatcher = fileSystem.getPathMatcher("glob:" + entryName);
+            for (Iterator<? extends ZipEntry> it = zipFile.entries().asIterator(); it.hasNext();) {
+                ZipEntry eachEntry = it.next();
+                if (!eachEntry.isDirectory()) {
+                    if (pathMatcher.matches(Path.of(eachEntry.getName()))) {
+                        return eachEntry;
+                    }
+
+                }
+            }
+        }
+        return entry;
+    }
+
+    private static ZipArchiveEntry getFallbackEntry(String entryName, org.apache.commons.compress.archivers.zip.ZipFile zipFile) {
+        ZipArchiveEntry entry = zipFile.getEntry(entryName);
+        if (entry == null) {
+            FileSystem fileSystem = FileSystems.getFileSystem(URI.create("file:///"));
+            PathMatcher pathMatcher = fileSystem.getPathMatcher("glob:" + entryName);
+            for (Iterator<? extends ZipArchiveEntry> it = zipFile.getEntries().asIterator(); it.hasNext();) {
+                ZipArchiveEntry eachEntry = it.next();
+                if (!eachEntry.isDirectory()) {
+                    if (pathMatcher.matches(Path.of(eachEntry.getName()))) {
+                        return eachEntry;
+                    }
+
+                }
+            }
+        }
+        return entry;
     }
 }

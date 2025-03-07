@@ -33,6 +33,10 @@ package uk.gov.nationalarchives.droid.container.ole2;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -71,6 +75,7 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
         //CHECKSTYLE:ON
         InputStream in = null;
         POIFSFileSystem reader = null;
+        FileSystem fileSystem = FileSystems.getFileSystem(URI.create("file:///"));
         try {
             if (FileSystemIdentificationRequest.class.isAssignableFrom(request.getClass())) {
                 FileSystemIdentificationRequest req = FileSystemIdentificationRequest.class.cast(request);

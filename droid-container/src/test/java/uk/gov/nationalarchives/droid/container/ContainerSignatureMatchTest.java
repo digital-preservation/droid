@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.container;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -93,6 +94,28 @@ public class ContainerSignatureMatchTest {
         match.matchFileEntry("entry1");
         assertFalse(match.isMatch());
         
+        match.matchFileEntry("entry2");
+        assertTrue(match.isMatch());
+    }
+
+    public record GlobTest(String pattern, List<String> willMatch, List<String> willNotMatch) {}
+
+    @Test
+    public void testGlobFileEntry() {
+        new GlobTest("*.txt", List.of("file.txt", "notes.txt"), List.of("file.md"));
+
+        Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
+        files.put("entry*", new ContainerFile());
+
+        ContainerSignature sig = mock(ContainerSignature.class);
+        when(sig.getFiles()).thenReturn(files);
+
+        match = new ContainerSignatureMatch(sig, -1L);
+        assertFalse(match.isMatch());
+
+        match.matchFileEntry("entry1");
+        assertTrue(match.isMatch());
+
         match.matchFileEntry("entry2");
         assertTrue(match.isMatch());
     }

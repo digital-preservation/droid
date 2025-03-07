@@ -31,7 +31,13 @@
  */
 package uk.gov.nationalarchives.droid.container;
 
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +55,8 @@ public class ContainerSignatureMatch {
     private long maxBytesToScan = -1;
 
     private Set<String> unmatchedFiles = new HashSet<>();
+
+    private final FileSystem fileSystem = FileSystems.getFileSystem(URI.create("file:///"));
 
     /**
      * Constructs a new Container signature match.
@@ -84,10 +92,15 @@ public class ContainerSignatureMatch {
      * @param entryName the name of the container file entry
      */
     public void matchFileEntry(String entryName) {
-        if (unmatchedFiles.contains(entryName)) {
-            InternalSignatureCollection binSigs = signature.getFiles().get(entryName).getCompiledBinarySignatures();
-            if (binSigs == null) {
-                unmatchedFiles.remove(entryName);
+        for (Iterator<String> it = unmatchedFiles.iterator(); it.hasNext(); ) {
+            String unmatchedFile = it.next();
+            PathMatcher pathMatcher = fileSystem.getPathMatcher("glob:" + unmatchedFile);
+            if (pathMatcher.matches(Path.of(entryName))) {
+                InternalSignatureCollection binSigs = signature.getFiles().get(unmatchedFile).getCompiledBinarySignatures();
+                if (binSigs == null) {
+                    it.remove();
+                    break;
+                }
             }
         }
     }
