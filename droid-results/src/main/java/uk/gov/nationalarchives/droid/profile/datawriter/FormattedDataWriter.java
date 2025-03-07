@@ -31,8 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.profile.datawriter;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.univocity.parsers.csv.CsvWriter;
 import org.apache.commons.io.FilenameUtils;
@@ -66,10 +67,10 @@ public abstract  class FormattedDataWriter {
 
     public abstract void writeHeadersForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers, CsvWriter csvWriter);
     public abstract void writeDataRowsForOneRowPerFile(List<? extends ProfileResourceNode> nodes, CsvWriter csvWriter);
-    public abstract void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers,  Writer writer);
+    public abstract void writeJsonForOneRowPerFile(List<? extends ProfileResourceNode> nodes, String[] headers,  OutputJson outputJson);
     public abstract void writeHeadersForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, CsvWriter csvWriter);
     public  abstract void writeDataRowsForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, CsvWriter csvWriter);
-    public  abstract void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, Writer writer);
+    public  abstract void writeJsonForOneRowPerFormat(List<? extends ProfileResourceNode> nodes, String[] headers, OutputJson outputJson);
 
     protected static String nullSafeName(Enum<?> value) {
         return value == null ? WriterConstants.EMPTY_STRING : value.toString();
@@ -127,25 +128,37 @@ public abstract  class FormattedDataWriter {
         return this.customisedHeaders;
     }
 
-    protected static class OutputJson {
-        private final ArrayNode arrayNode;
+    public static class OutputJson {
         private final ObjectMapper objectMapper;
+        private final JsonGenerator jsonGenerator;
 
-        public OutputJson() {
+        public OutputJson(Writer writer) {
             this.objectMapper = new ObjectMapper();
-            this.arrayNode = objectMapper.createArrayNode();
-        }
-
-        public void writeJson(Writer writer) {
+            JsonFactory jsonFactory = new JsonFactory();
             try {
-                objectMapper.writeValue(writer, arrayNode);
+                this.jsonGenerator = jsonFactory.createGenerator(writer);
+                jsonGenerator.writeStartArray();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        public ArrayNode getArrayNode() {
-            return arrayNode;
+        public void writeObject(ObjectNode objectNode) {
+            try {
+                jsonGenerator.writeRawValue(objectMapper.writeValueAsString(objectNode));
+                jsonGenerator.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public void completeStream() {
+            try {
+                jsonGenerator.writeEndArray();
+                jsonGenerator.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         public ObjectNode createObjectNode() {
