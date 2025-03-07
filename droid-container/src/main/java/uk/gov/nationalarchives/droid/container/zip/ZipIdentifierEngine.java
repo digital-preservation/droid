@@ -33,6 +33,9 @@ package uk.gov.nationalarchives.droid.container.zip;
 
 import net.java.truevfs.comp.zip.ZipEntry;
 import net.java.truevfs.comp.zip.ZipFile;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.container.AbstractIdentifierEngine;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatch;
 import uk.gov.nationalarchives.droid.container.ContainerSignatureMatchCollection;
@@ -43,6 +46,7 @@ import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.zip.ZipException;
 
 /**
  *
@@ -50,37 +54,60 @@ import java.util.List;
  */
 public class ZipIdentifierEngine extends AbstractIdentifierEngine {
 
-    @Override
-    public void process(IdentificationRequest request, ContainerSignatureMatchCollection matches) throws IOException {
-        ZipFile zipFile = new ZipFile(new ByteseekWindowWrapper(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false);
+    private static final Logger LOG = LoggerFactory.getLogger(ZipIdentifierEngine.class);
 
-        try {
+    @Override
+    public void process(IdentificationRequest<InputStream> request, ContainerSignatureMatchCollection matches) throws IOException {
+
+        try (ZipFile zipFile = new ZipFile(new ByteseekWindowWrapper(request.getWindowReader()), ZipFile.DEFAULT_CHARSET, true, false)) {
             // For each entry:
             for (String entryName : matches.getAllFileEntries()) {
                 final ZipEntry entry = zipFile.entry(entryName);
                 if (entry != null) {
                     // Get a stream for the entry and a byte reader over the stream:
                     InputStream stream = zipFile.getInputStream(entry.getName());
-                    ByteReader reader = null;
-                    try {
-                        reader = newByteReader(stream);
-                        // For each signature to match:
-                        List<ContainerSignatureMatch> matchList = matches.getContainerSignatureMatches();
-                        for (ContainerSignatureMatch match : matchList) {
-                            match.matchBinaryContent(entryName, reader);
-                        }
-                    } finally {
-                        if (reader != null) {
-                            reader.close();
-                        }
-                        if (stream != null) {
-                            stream.close();
-                        }
-                    }
+                    matchEntry(matches, entryName, stream);
                 }
             }
+        } catch (ZipException ze) {
+            LOG.warn("Initial zip file parsing failed. Will try again with commons-compress {}", ze.getMessage());
+            processFallback(request, matches);
+        }
+    }
+
+    private void processFallback(IdentificationRequest<InputStream> request, ContainerSignatureMatchCollection matches) throws IOException {
+        try (var zipFile = org.apache.commons.compress.archivers.zip.ZipFile.builder()
+                .setIgnoreLocalFileHeader(true)
+                .setSeekableByteChannel(new ByteseekWindowWrapper(request.getWindowReader()))
+                .get()) {
+            // For each entry:
+            for (String entryName : matches.getAllFileEntries()) {
+                final ZipArchiveEntry entry = zipFile.getEntry(entryName);
+                if (entry != null) {
+                    // Get a stream for the entry and a byte reader over the stream:
+                    InputStream stream = zipFile.getInputStream(entry);
+                    matchEntry(matches, entryName, stream);
+                }
+            }
+        }
+    }
+
+    private void matchEntry(ContainerSignatureMatchCollection matches, String entryName, InputStream stream) throws IOException {
+        ByteReader reader = null;
+        try {
+            reader = newByteReader(stream);
+            // For each signature to match:
+            List<ContainerSignatureMatch> matchList = matches.getContainerSignatureMatches();
+            for (ContainerSignatureMatch match : matchList) {
+                match.matchBinaryContent(entryName, reader);
+            }
         } finally {
-            zipFile.close();
+            if (reader != null) {
+                reader.close();
+            }
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 }
