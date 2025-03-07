@@ -106,6 +106,7 @@
         <checkstyle.version>10.21.2</checkstyle.version>
         <aws.version>2.30.17</aws.version>
         <junit.version>5.11.4</junit.version>
+        <commons.version>2.18.0</commons.version>
     </properties>
   
     <build>
@@ -666,7 +667,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                <groupId>commons-io</groupId>
                <artifactId>commons-io</artifactId>
-               <version>2.18.0</version>
+               <version>${commons.version}</version>
             </dependency>
             <dependency>
                <groupId>commons-lang</groupId>
