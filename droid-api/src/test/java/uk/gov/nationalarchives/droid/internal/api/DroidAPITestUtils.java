@@ -50,7 +50,6 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -128,8 +127,7 @@ public class DroidAPITestUtils {
 
             if (exchange.getRequestMethod().equals("GET") && queryParams.containsKey("list-type") && queryParams.get("list-type").equals("2")) {
                 String fileName = queryParams.get("prefix");
-                FileSystems.getDefault().getPath(fileName);
-                long size = Files.size(Paths.get(URI.create("file:///" + fileName)));
+                long size = Files.size(Paths.get(URI.create("file:///" + fileName.replaceAll(" ", "%20"))));
                 String response =
                         "<ListBucketResult>" +
                                 "<Contents>" +
