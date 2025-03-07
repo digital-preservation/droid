@@ -39,22 +39,23 @@ import uk.gov.nationalarchives.droid.core.interfaces.archive.IdentificationReque
 /**
  *
  * @author rbrennan
+ * @param <T> The type of the byte source for the engine.
  */
-public interface IdentifierEngine {
+public interface IdentifierEngine<T> {
 
     /**
      * Process the identification request.
      * 
      * @param request The identification request
      * @param matches the Container signature match collection
-     * 
+     *
      * @throws IOException if a problem occurred with processing
      */
-    void process(IdentificationRequest  request, ContainerSignatureMatchCollection matches) throws IOException;
+    void process(IdentificationRequest<T>  request, ContainerSignatureMatchCollection matches) throws IOException;
 
     /**
      * Sets the identification request factory to use to obtain new readers for internal byte streams.
      * @param requestFactory The IdentificationRequestFactory to set.
      */
-    void setRequestFactory(IdentificationRequestFactory requestFactory);
+    void setRequestFactory(IdentificationRequestFactory<T> requestFactory);
 }
