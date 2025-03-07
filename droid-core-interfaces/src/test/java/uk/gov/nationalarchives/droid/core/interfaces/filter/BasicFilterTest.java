@@ -31,14 +31,15 @@
  */
 package uk.gov.nationalarchives.droid.core.interfaces.filter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BasicFilterTest {
 
@@ -46,7 +47,7 @@ public class BasicFilterTest {
     FilterCriterion bmpCriterion = new BasicFilterCriterion(CriterionFieldEnum.FILE_EXTENSION, CriterionOperator.EQ, "bmp");
     FilterCriterion sizeCriterion = new BasicFilterCriterion(CriterionFieldEnum.FILE_SIZE, CriterionOperator.LT, 1000L);
 
-    @Before
+    @BeforeEach
     public void setup() {
         criteria.add(bmpCriterion);
         criteria.add(sizeCriterion);

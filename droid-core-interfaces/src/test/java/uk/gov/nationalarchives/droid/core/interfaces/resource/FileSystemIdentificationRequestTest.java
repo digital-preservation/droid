@@ -38,29 +38,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
 public class FileSystemIdentificationRequestTest {
 
-    private String fileData;
+    private static String fileData;
 
-    private FileSystemIdentificationRequest fileRequest;
-    private Path file;
+    private static FileSystemIdentificationRequest fileRequest;
+    private static Path file;
 
-    private RequestMetaData metaData;
-    private RequestIdentifier identifier;
+    private static RequestMetaData metaData;
+    private static RequestIdentifier identifier;
     
-    @Before
-    public void setup() throws IOException, URISyntaxException {
+    @BeforeAll
+    public static void setup() throws IOException, URISyntaxException {
     
-        file = Paths.get(getClass().getResource("/testXmlFile.xml").toURI());
+        file = Paths.get(FileSystemIdentificationRequestTest.class.getResource("/testXmlFile.xml").toURI());
         metaData = new RequestMetaData(Files.size(file), Files.getLastModifiedTime(file).toMillis(), "testXmlFile.xml");
         identifier = new RequestIdentifier(file.toUri());
         fileRequest = new FileSystemIdentificationRequest(
@@ -70,8 +69,8 @@ public class FileSystemIdentificationRequestTest {
         fileData = new String(Files.readAllBytes(file), UTF_8);
     }
     
-    @After
-    public void tearDown() throws IOException {
+    @AfterAll
+    public static void tearDown() throws IOException {
         fileRequest.close();
     }
 

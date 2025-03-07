@@ -143,8 +143,9 @@
             <artifactId>commons-compress</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>3.0.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

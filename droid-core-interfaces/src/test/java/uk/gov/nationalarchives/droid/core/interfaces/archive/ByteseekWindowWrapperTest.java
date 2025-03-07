@@ -33,10 +33,9 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.WindowReader;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -44,7 +43,8 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ByteseekWindowWrapperTest {
@@ -52,10 +52,7 @@ public class ByteseekWindowWrapperTest {
     private WindowReader reader;
     private ByteseekWindowWrapper windowWrapper;
 
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         reader = getFileReader(RESOURCE_NAME);
         windowWrapper = new ByteseekWindowWrapper(reader);
@@ -100,27 +97,29 @@ public class ByteseekWindowWrapperTest {
 
     @Test
     public void should_throw_exception_indicating_that_write_method_is_not_implemented() throws IOException {
-        expectedEx.expect(IOException.class);
-        expectedEx.expectMessage("This method from the SeekableByteChannel interface is not implemented");
-        windowWrapper.write(ByteBuffer.allocate(10));
+        IOException ioException = assertThrows(IOException.class, () -> windowWrapper.write(ByteBuffer.allocate(10)));
+        assertEquals(ioException.getMessage(), "This method from the SeekableByteChannel interface is not implemented");
     }
 
     @Test
     public void should_throw_exception_indicating_that_truncate_method_is_not_implemented() throws IOException {
-        expectedEx.expect(IOException.class);
-        expectedEx.expectMessage("This method from the SeekableByteChannel interface is not implemented");
-        windowWrapper.truncate(2);
+        IOException ioException = assertThrows(IOException.class, () -> windowWrapper.truncate(2));
+        assertEquals(ioException.getMessage(), "This method from the SeekableByteChannel interface is not implemented");
     }
     @Test
     public void should_throw_exception_when_trying_to_read_after_closing_the_channel() throws IOException {
-        expectedEx.expect(ClosedChannelException.class);
-        ByteBuffer buffer = ByteBuffer.allocate(10);
-        windowWrapper.read(buffer);
-        windowWrapper.close();
-        buffer.clear();
-        windowWrapper.read(buffer);
+        assertThrows(
+            ClosedChannelException.class,
+            () -> {
+                ByteBuffer buffer = ByteBuffer.allocate(10);
+                windowWrapper.read(buffer);
+                windowWrapper.close();
+                buffer.clear();
+                windowWrapper.read(buffer);
+            }
+        );
     }
-    private WindowReader getFileReader(String resourceName) throws IOException {
+    private static WindowReader getFileReader(String resourceName) throws IOException {
         Path p = Paths.get("./src/test/resources/" + resourceName);
         return new FileReader(p.toFile(), 127); // use a small window.
     }

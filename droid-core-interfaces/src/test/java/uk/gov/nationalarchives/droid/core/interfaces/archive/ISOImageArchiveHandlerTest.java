@@ -34,8 +34,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileEntry;
 import com.github.stephenc.javaisotools.loopfs.iso9660.Iso9660FileSystem;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.nationalarchives.droid.core.interfaces.*;
@@ -50,14 +49,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
  * Created by rhubner on 2/15/17.
  */
 
-@RunWith(MockitoJUnitRunner.class)
 public class ISOImageArchiveHandlerTest {
 
 
