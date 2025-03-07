@@ -174,7 +174,9 @@ public class SkeletonSuiteTest {
             for (Path skeletonPath: allPaths) {
                 String filename = skeletonPath.getFileName().toString();
                 URI resourceUri = skeletonPath.toUri();
-                String escapedPath = skeletonPath.toString().replaceAll(" ", "%20");
+                String escapedPath = skeletonPath.toString()
+                        .replaceAll(" ", "%20")
+                        .replaceAll("\\\\", "/");
                 URI httpUri = URI.create("https://test/" + escapedPath);
                 URI uri = URI.create("s3://test-bucket/" + escapedPath);
                 S3Uri s3Uri = S3Utilities.builder().region(Region.EU_WEST_2).build().parseUri(uri);
