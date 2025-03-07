@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.container;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,12 +51,15 @@ public class ContainerSignatureMatch {
 
     private Set<String> unmatchedFiles = new HashSet<>();
 
+    private final FileMatcher fileMatcher;
+
     /**
      * Constructs a new Container signature match.
      * @param sig the signature to match against
      * @param maxBytesToScan - the max bytes to binary match on, or negative meaning unlimited.
      */
     public ContainerSignatureMatch(ContainerSignature sig, long maxBytesToScan) {
+        fileMatcher = new FileMatcher();
         unmatchedFiles.addAll(sig.getFiles().keySet());
         this.signature = sig;
         this.maxBytesToScan = maxBytesToScan;
@@ -82,12 +86,17 @@ public class ContainerSignatureMatch {
      * If there are no signatures defined, just having the
      * filename is enough to match it.
      * @param entryName the name of the container file entry
+     * @param containerFileName the name of the container file
      */
-    public void matchFileEntry(String entryName) {
-        if (unmatchedFiles.contains(entryName)) {
-            InternalSignatureCollection binSigs = signature.getFiles().get(entryName).getCompiledBinarySignatures();
-            if (binSigs == null) {
-                unmatchedFiles.remove(entryName);
+    public void matchFileEntry(String entryName, String containerFileName) {
+        for (Iterator<String> it = unmatchedFiles.iterator(); it.hasNext();) {
+            String unmatchedFile = it.next();
+            if (fileMatcher.fileMatches(unmatchedFile, entryName, containerFileName)) {
+                InternalSignatureCollection binSigs = signature.getFiles().get(unmatchedFile).getCompiledBinarySignatures();
+                if (binSigs == null) {
+                    it.remove();
+                    break;
+                }
             }
         }
     }

@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.container.zip;
 
 import net.java.truevfs.comp.zip.ZipEntry;
 import net.java.truevfs.comp.zip.ZipOutputStream;
+import org.junit.Assert;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.container.*;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -50,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 
@@ -63,7 +65,7 @@ public class ZipFailureFallbackTest {
         //14 bytes from the end is the file count. Setting it to zero causes truevfs to fail but commons-compress succeeds.
         zipBytes[zipBytes.length - 14] = 0x00;
 
-        List<ContainerSignatureMatch> containerSignatureMatches = getContainerSignatureMatches(zipBytes, fileName);
+        List<ContainerSignatureMatch> containerSignatureMatches = getContainerSignatureMatches(zipBytes, fileName, "test.zip");
 
         assertEquals(containerSignatureMatches.size(), 1);
         assertEquals(containerSignatureMatches.getFirst().getSignature().getId(), 1);
@@ -71,33 +73,44 @@ public class ZipFailureFallbackTest {
     }
 
     @Test
-    public void testValidZipFileMatches() throws IOException {
+    public void testFileMatching() {
+        ContainerMatchUtils.getContainerTestData().forEach(globTestData -> {
+            globTestData.willMatch().forEach(willMatch -> checkMatches(willMatch, globTestData.pattern(), globTestData.containerName(), Assert::assertTrue));
+            globTestData.willNotMatch().forEach(willNotMatch -> checkMatches(willNotMatch, globTestData.pattern(), globTestData.containerName(), Assert::assertFalse));
+        });
+
+    }
+
+    @Test
+    public void testValidZipFileMatches() {
         String fileName = "file.txt";
-        byte[] zipBytes = createZipBytes(fileName);
-
-        List<ContainerSignatureMatch> containerSignatureMatches = getContainerSignatureMatches(zipBytes, fileName);
-
-        assertEquals(containerSignatureMatches.size(), 1);
-        assertEquals(containerSignatureMatches.getFirst().getSignature().getId(), 1);
-        assertTrue(containerSignatureMatches.getFirst().isMatch());
+        checkMatches(fileName, fileName, "test.zip", Assert::assertTrue);
     }
 
     @Test
-    public void testNoMatchesIfFileNotFound() throws IOException {
+    public void testNoMatchesIfFileNotFound() {
         String fileName = "file.txt";
         String missingFileName = "missingFile.txt";
-        byte[] zipBytes = createZipBytes(fileName);
-
-        List<ContainerSignatureMatch> containerSignatureMatches = getContainerSignatureMatches(zipBytes, missingFileName);
-
-        assertEquals(containerSignatureMatches.size(), 1);
-        assertFalse(containerSignatureMatches.getFirst().isMatch());
+        checkMatches(fileName, missingFileName, "test.zip", Assert::assertFalse);
     }
 
-    private static List<ContainerSignatureMatch> getContainerSignatureMatches(byte[] zipBytes, String filePath) throws IOException {
+    private static void checkMatches(String filePath, String signatureFileName, String containerFileName, Consumer<Boolean> check) {
+        try {
+            byte[] zipBytes = createZipBytes(filePath);
+            List<ContainerSignatureMatch> containerSignatureMatches = getContainerSignatureMatches(zipBytes, signatureFileName, containerFileName);
+
+            assertEquals(containerSignatureMatches.size(), 1);
+            assertEquals(containerSignatureMatches.getFirst().getSignature().getId(), 1);
+            check.accept(containerSignatureMatches.getFirst().isMatch());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static List<ContainerSignatureMatch> getContainerSignatureMatches(byte[] zipBytes, String filePath, String containerFileName) throws IOException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(zipBytes);
 
-        RequestMetaData metaData = new RequestMetaData(1L, 1L, "");
+        RequestMetaData metaData = new RequestMetaData(1L, 1L, containerFileName);
         IdentificationRequest<InputStream> request = new ZipEntryIdentificationRequest(metaData, null, Files.createTempDirectory("test"));
         request.open(inputStream);
 
@@ -129,13 +142,15 @@ public class ZipFailureFallbackTest {
         return matchCollection.getContainerSignatureMatches();
     }
 
-    private static byte[] createZipBytes(String filePath) throws IOException {
+    private static byte[] createZipBytes(String filePath) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zos = new ZipOutputStream(baos)) {
             ZipEntry entry1 = new ZipEntry(filePath);
             zos.putNextEntry(entry1);
             zos.write("Test".getBytes());
             zos.closeEntry();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         return baos.toByteArray();
