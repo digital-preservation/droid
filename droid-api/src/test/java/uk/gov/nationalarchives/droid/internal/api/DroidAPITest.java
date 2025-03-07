@@ -74,8 +74,8 @@ public class DroidAPITest {
 
     private static Stream<URI> getUris(String path) {
         URI fileUri = Paths.get(path).toUri();
-        URI s3Uri = URI.create("s3://localhost" + ":" + s3Server.getAddress().getPort() + fileUri.getPath());
-        URI httpUri = URI.create("http://localhost" + ":" + httpServer.getAddress().getPort() + fileUri.getPath());
+        URI s3Uri = URI.create("s3://127.0.0.1" + ":" + s3Server.getAddress().getPort() + fileUri.getPath());
+        URI httpUri = URI.create("http://127.0.0.1" + ":" + httpServer.getAddress().getPort() + fileUri.getPath());
         return Stream.of(fileUri, s3Uri, httpUri);
     }
 
@@ -83,7 +83,7 @@ public class DroidAPITest {
     public static void setup() throws SignatureParseException, IOException {
         s3Server = createS3Server();
         httpServer = createHttpServer();
-        endpointOverride = URI.create("http://localhost" + ":" + s3Server.getAddress().getPort());
+        endpointOverride = URI.create("http://127.0.0.1" + ":" + s3Server.getAddress().getPort());
         api = DroidAPITestUtils.createApi(endpointOverride);
     }
 

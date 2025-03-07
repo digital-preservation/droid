@@ -40,6 +40,7 @@ import jakarta.xml.bind.JAXBException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 
 import java.io.IOException;
@@ -90,11 +91,12 @@ public class DroidAPITestUtils {
                 .binarySignature(signaturePath)
                 .containerSignature(containerPath)
                 .httpClient(HttpClient.newHttpClient());
+        S3ClientBuilder builder = S3Client.builder().region(Region.EU_WEST_2);
         if(endpointOverride != null) {
-            S3Client s3Client = S3Client.builder().region(Region.EU_WEST_2).endpointOverride(endpointOverride).build();
+            S3Client s3Client = builder.endpointOverride(endpointOverride).build();
             return droidAPIBuilder.s3Client(s3Client).build();
         }
-        return droidAPIBuilder.build();
+        return droidAPIBuilder.s3Client(builder.build()).build();
     }
 
     static HttpServer createHttpServer() throws IOException {
@@ -162,10 +164,6 @@ public class DroidAPITestUtils {
         s3Server.bind(new InetSocketAddress(0), 0);
         s3Server.start();
         return s3Server;
-    }
-
-    public static DroidAPI createApi() throws SignatureParseException {
-        return createApi(null);
     }
 
     public static byte[] getBytesForRange(String filePath, String range) {
