@@ -94,7 +94,9 @@ public class DroidAPISkeletonTest {
                         if (ignorePuid.contains(puid)) {
                             return null;
                         }
-                        String uriPath = x.toUri().getPath().replaceAll(" ", "%20");
+                        String uriPath = x.toUri().getPath()
+                                .replaceAll(" ", "%20")
+                                .replaceAll("\\\\", "/");
                         return Stream.of(
                             new SkeletonTest(puid, x.toUri()),
                             new SkeletonTest(puid, URI.create("s3://localhost:" + s3Server.getAddress().getPort() + uriPath)),
