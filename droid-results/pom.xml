@@ -121,6 +121,7 @@
 								<ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j2-impl</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>software.amazon.nio.s3:aws-java-nio-spi-for-s3:jar</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.derby:derby</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.httpcomponents:httpclient:jar</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
 							<ignoredUsedUndeclaredDependencies>
 								<ignoredUsedUndeclaredDependency>org.slf4j:slf4j-api</ignoredUsedUndeclaredDependency>
@@ -205,6 +206,11 @@
 		<dependency>
 			<groupId>jakarta.xml.ws</groupId>
 			<artifactId>jakarta.xml.ws-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.14</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
