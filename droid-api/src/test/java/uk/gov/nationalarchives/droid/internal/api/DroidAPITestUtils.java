@@ -42,7 +42,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -143,7 +142,7 @@ public class DroidAPITestUtils {
             } else if (exchange.getRequestMethod().equals("HEAD")) {
                 String fullPath = exchange.getRequestURI().getPath().substring(1);
                 String filePath = fullPath.substring(fullPath.indexOf("/"));
-                long size = Files.size(Path.of("/" + filePath));
+                long size = Files.size(Paths.get(URI.create("file:///" + filePath.replaceAll(" ", "%20"))));
                 exchange.getResponseHeaders().add("Content-Length", Long.toString(size));
                 exchange.getResponseHeaders().add("Last-Modified", "Mon, 03 Mar 2025 17:29:48 GMT");
                 exchange.sendResponseHeaders(200, -1);
