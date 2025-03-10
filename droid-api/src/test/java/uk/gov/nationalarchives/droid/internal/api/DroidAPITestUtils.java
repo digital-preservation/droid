@@ -49,6 +49,7 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -123,10 +124,10 @@ public class DroidAPITestUtils {
             Map<String, String> queryParams = URLEncodedUtils
                     .parse(exchange.getRequestURI(), Charset.defaultCharset())
                     .stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
-
             if (exchange.getRequestMethod().equals("GET") && queryParams.containsKey("list-type") && queryParams.get("list-type").equals("2")) {
                 String fileName = queryParams.get("prefix");
-                long size = Files.size(Paths.get(URI.create("file:///" + fileName.replaceAll(" ", "%20"))));
+                Path filePath = getFilePathFromUriPath("/" + fileName);
+                long size = Files.size(filePath);
                 String response =
                         "<ListBucketResult>" +
                                 "<Contents>" +
@@ -141,8 +142,8 @@ public class DroidAPITestUtils {
                 responseBody.close();
             } else if (exchange.getRequestMethod().equals("HEAD")) {
                 String fullPath = exchange.getRequestURI().getPath().substring(1);
-                String filePath = fullPath.substring(fullPath.indexOf("/"));
-                long size = Files.size(Paths.get(URI.create("file:///" + filePath.replaceAll(" ", "%20"))));
+                Path filePath = getFilePathFromUriPath(fullPath.substring(fullPath.indexOf("/")));
+                long size = Files.size(filePath);
                 exchange.getResponseHeaders().add("Content-Length", Long.toString(size));
                 exchange.getResponseHeaders().add("Last-Modified", "Mon, 03 Mar 2025 17:29:48 GMT");
                 exchange.sendResponseHeaders(200, -1);
@@ -151,9 +152,9 @@ public class DroidAPITestUtils {
                 responseBody.close();
             } else if (exchange.getRequestMethod().equals("GET")) {
                 String fullPath = exchange.getRequestURI().getPath().substring(1);
-                String filePath = fullPath.substring(fullPath.indexOf("/"));
+                Path filePath = getFilePathFromUriPath(fullPath.substring(fullPath.indexOf("/")));
                 String range = exchange.getRequestHeaders().get("Range").getFirst();
-                byte[] bytesForRange = getBytesForRange(filePath, range);
+                byte[] bytesForRange = getBytesForRange(filePath.toString(), range);
                 exchange.sendResponseHeaders(200, bytesForRange.length);
                 OutputStream responseBody = exchange.getResponseBody();
                 responseBody.write(bytesForRange);
@@ -163,6 +164,15 @@ public class DroidAPITestUtils {
         s3Server.bind(new InetSocketAddress(0), 0);
         s3Server.start();
         return s3Server;
+    }
+
+    private static Path getFilePathFromUriPath(String uriPath) {
+        if(FileSystems.getDefault().getSeparator().equals("\\")) {
+            return Path.of(uriPath.substring(1)
+            );
+        } else {
+            return Path.of(uriPath);
+        }
     }
 
     public static byte[] getBytesForRange(String filePath, String range) {
