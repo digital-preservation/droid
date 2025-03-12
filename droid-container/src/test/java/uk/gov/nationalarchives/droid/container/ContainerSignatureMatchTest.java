@@ -39,7 +39,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.droid6.InternalSignatureCollection;
@@ -65,14 +64,15 @@ public class ContainerSignatureMatchTest {
         
         Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
         files.put("entry0", new ContainerFile());
-        
-        
+
+        String containerFileName = "test.zip";
+
         ContainerSignature sig = mock(ContainerSignature.class);
         when(sig.getFiles()).thenReturn(files);
         
         match = new ContainerSignatureMatch(sig, -1L);
         
-        match.matchFileEntry("entry1");
+        match.matchFileEntry("entry1", containerFileName);
         assertFalse(match.isMatch());
         
     }
@@ -83,20 +83,44 @@ public class ContainerSignatureMatchTest {
         Map<String, ContainerFile> files = new HashMap<String, ContainerFile>();
         files.put("entry1", new ContainerFile());
         files.put("entry2", new ContainerFile());
-        
+
+        String containerFileName = "test.zip";
+
         ContainerSignature sig = mock(ContainerSignature.class);
         when(sig.getFiles()).thenReturn(files);
         
         match = new ContainerSignatureMatch(sig, -1L);
         assertFalse(match.isMatch());
         
-        match.matchFileEntry("entry1");
+        match.matchFileEntry("entry1", containerFileName);
         assertFalse(match.isMatch());
         
-        match.matchFileEntry("entry2");
+        match.matchFileEntry("entry2", containerFileName);
         assertTrue(match.isMatch());
     }
-    
+
+    @Test
+    public void testFileMatches() {
+        ContainerMatchUtils.getContainerTestData().forEach(testData -> {
+            Map<String, ContainerFile> files = new HashMap<>();
+            files.put(testData.pattern(), new ContainerFile());
+
+            ContainerSignature sig = mock(ContainerSignature.class);
+            when(sig.getFiles()).thenReturn(files);
+
+            testData.willMatch().forEach(willMatch -> {
+                ContainerSignatureMatch match = new ContainerSignatureMatch(sig, -1L);
+                match.matchFileEntry(willMatch, testData.containerName());
+                assertTrue(match.isMatch());
+            });
+
+            testData.willNotMatch().forEach(willNotMatch -> {
+                ContainerSignatureMatch match = new ContainerSignatureMatch(sig, -1L);
+                match.matchFileEntry(willNotMatch, testData.containerName());
+                assertFalse(match.isMatch());
+            });
+        });
+    }
 
     @Test
     public void shouldMatchBinaryContentByFileNameWithTheFullPathWhenNoBinaryContent() {
