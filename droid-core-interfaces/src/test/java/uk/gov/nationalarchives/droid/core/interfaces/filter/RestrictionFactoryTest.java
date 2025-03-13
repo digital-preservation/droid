@@ -33,15 +33,14 @@ package uk.gov.nationalarchives.droid.core.interfaces.filter;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.joda.time.DateMidnight;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBuilder;
 
@@ -51,14 +50,14 @@ import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.QueryBui
  */
 public class RestrictionFactoryTest {
 
-    private FilterCriterion filterCriterion;
-    private QueryBuilder queryBuilder;
-    private Date date;
+    private static FilterCriterion filterCriterion;
+    private static QueryBuilder queryBuilder;
+    private static Date date;
     
-    private Date from;
-    private Date to;
+    private static Date from;
+    private static Date to;
     
-    @Before
+    @BeforeEach
     public void setup() {
         queryBuilder = QueryBuilder.forAlias("foo");
         

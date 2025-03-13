@@ -265,10 +265,15 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <lookup-method name="getNodeItemReader" bean="nodeItemReader"/>
     </bean>
 
+    <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
+
     <bean id="profileSpecWalker" class="uk.gov.nationalarchives.droid.submitter.ProfileSpecWalkerImpl">
         <property name="fileEventHandler" ref="fileEventHandler"/>
+        <property name="s3EventHandler" ref="s3EventHandler"/>
+        <property name="httpEventHandler" ref="httpEventHandler"/>
         <property name="directoryEventHandler" ref="dirEventHandler"/>
         <property name="progressMonitor" ref="progressMonitor"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
     </bean>
 
     <bean id="profileWalkerDao" class="uk.gov.nationalarchives.droid.submitter.ProfileWalkerDao">
@@ -301,6 +306,19 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
             <bean class="uk.gov.nationalarchives.droid.submitter.FileIdentificationRequestFactory">
             </bean>
         </property>
+    </bean>
+
+    <bean id="s3EventHandler" class="uk.gov.nationalarchives.droid.submitter.S3EventHandler">
+        <property name="submissionThrottle" ref="submissionThrottle"/>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="resultHandler" ref="databaseResultHandler"/>
+        <property name="config" ref="globalConfig"/>
+    </bean>
+
+    <bean id="httpEventHandler" class="uk.gov.nationalarchives.droid.submitter.HttpEventHandler">
+        <property name="submissionThrottle" ref="submissionThrottle"/>
+        <property name="droidCore" ref="submissionGateway"/>
+        <property name="config" ref="globalConfig"/>
     </bean>
 
     <bean id="dirEventHandler" class="uk.gov.nationalarchives.droid.submitter.DirectoryEventHandler">

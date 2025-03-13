@@ -34,9 +34,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.archive;
 import de.waldheinz.fs.ReadOnlyException;
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.WindowReader;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -45,28 +43,28 @@ import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FatReaderTest {
 
-    private static String RESOURCE_NAME = "saved.zip";
+    private static final String RESOURCE_NAME = "saved.zip";
     private WindowReader reader;
     private FatReader fat;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         reader = getFileReader(RESOURCE_NAME);
         fat = new FatReader(reader);
     }
 
-    @After
+    @AfterEach
     public void close() throws Exception {
         fat.close();
         reader.close();
     }
 
 
-    private WindowReader getFileReader(String resourceName) throws IOException {
+    private static WindowReader getFileReader(String resourceName) throws IOException {
         Path p = Paths.get("./src/test/resources/" + resourceName);
         return new FileReader(p.toFile(), 127); // use a small odd window size so we cross window boundaries.
     }
@@ -88,9 +86,9 @@ public class FatReaderTest {
         testRead(33, 2);
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadPastEnd() throws Exception {
-        testRead(943, 100000);
+        assertThrows(EOFException.class, () -> testRead(943, 100000));
     }
 
     private void testRead(long position, int bufferSize) throws Exception {
@@ -109,32 +107,31 @@ public class FatReaderTest {
         assertArrayEquals(backing, expected);
     }
 
-    @Test(expected = ReadOnlyException.class)
+    @Test
     public void testwrite() throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(new byte[1024]);
-        fat.write(21, buffer);
+        assertThrows(ReadOnlyException.class, () -> fat.write(21, buffer));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testwriteAfterClose() throws Exception {
         fat.close();
         ByteBuffer buffer = ByteBuffer.wrap(new byte[1024]);
-        fat.write(21, buffer);
+        assertThrows(IllegalStateException.class, () -> fat.write(21, buffer));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testflush() throws Exception {
         fat.flush(); // flushing while open does nothing.
         fat.close();
-        fat.flush(); // should throw IllegalStateException.
-
+        assertThrows(IllegalStateException.class, () -> fat.flush());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testgetSectorSize() throws Exception {
         assertEquals(512, fat.getSectorSize());
         fat.close();
-        fat.getSectorSize(); // should throw IllegalStateException after closing.
+        assertThrows(IllegalStateException.class, () -> fat.getSectorSize());
     }
 
     @Test
