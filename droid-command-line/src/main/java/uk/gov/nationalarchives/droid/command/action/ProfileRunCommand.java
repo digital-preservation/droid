@@ -112,7 +112,7 @@ public class ProfileRunCommand implements DroidCommand {
     }
 
     public Writer getWriter(String outputFilePath) throws IOException {
-        if (outputFilePath != null && !outputFilePath.trim().isEmpty() && !"stdout".equals(outputFilePath)) {
+        if (outputFilePath != null && !outputFilePath.trim().isEmpty() && !outputFilePath.trim().equals("stdout")) {
             File outputFile = new File(outputFilePath);
             return new FileWriter(outputFile, true);
         }
