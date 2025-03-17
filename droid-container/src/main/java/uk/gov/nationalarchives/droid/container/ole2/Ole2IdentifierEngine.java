@@ -104,7 +104,7 @@ public class Ole2IdentifierEngine extends AbstractIdentifierEngine {
                 boolean needsBinaryMatch = false;
 
                 for (ContainerSignatureMatch match : matches.getContainerSignatureMatches()) {
-                    match.matchFileEntry(entryName);
+                    match.matchFileEntry(entryName, request.getFileName());
                     if (match.needsBinaryMatch(entryName)) {
                         needsBinaryMatch = true;
                     }

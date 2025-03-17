@@ -483,7 +483,6 @@ public class ResourceSelectorDialog extends JDialog {
                 .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 14, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
         tree.setModel(getTreeModel());
         tree.setLargeModel(true);
         tree.setRootVisible(false);
