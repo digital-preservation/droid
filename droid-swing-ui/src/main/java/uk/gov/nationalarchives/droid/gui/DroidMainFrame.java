@@ -192,7 +192,7 @@ public class DroidMainFrame extends JFrame {
     /**
      * 
      */
-    void checkSignatureUpdates() {
+    public void checkSignatureUpdates() {
         final PropertiesConfiguration properties = globalContext.getGlobalConfig().getProperties();
         boolean autoCheck = properties.getBoolean(DroidGlobalProperty.UPDATE_AUTO_CHECK.getName());
         boolean checkNow = properties.getBoolean(DroidGlobalProperty.UPDATE_ON_STARTUP.getName());
@@ -265,7 +265,7 @@ public class DroidMainFrame extends JFrame {
         return filesToUpdate;
     }
 
-    private void createDefaultProfile() {
+    public void createDefaultProfile() {
         final NewProfileAction newProfileAction = 
             new NewProfileAction(droidContext, profileManager, jProfilesTabbedPane);
         newProfileAction.addPropertyChangeListener(evt -> {
@@ -283,7 +283,7 @@ public class DroidMainFrame extends JFrame {
         }
     }
 
-    private void init() {
+    public void init() {
         log.info("Starting DROID.");
         URL icon = getClass().getResource("/uk/gov/nationalarchives/droid/icons/DROID16.gif");
         setIconImage(new ImageIcon(icon).getImage());

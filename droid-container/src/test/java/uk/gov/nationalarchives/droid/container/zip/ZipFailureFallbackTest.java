@@ -75,8 +75,8 @@ public class ZipFailureFallbackTest {
     @Test
     public void testFileMatching() {
         ContainerMatchUtils.getContainerTestData().forEach(globTestData -> {
-            globTestData.willMatch().forEach(willMatch -> checkMatches(willMatch, globTestData.pattern(), globTestData.containerName(), Assert::assertTrue));
-            globTestData.willNotMatch().forEach(willNotMatch -> checkMatches(willNotMatch, globTestData.pattern(), globTestData.containerName(), Assert::assertFalse));
+            globTestData.willMatch().forEach(willMatch -> checkContainerSignatureMatches(willMatch, globTestData.pattern(), globTestData.containerName(), Assert::assertTrue));
+            globTestData.willNotMatch().forEach(willNotMatch -> checkContainerSignatureMatches(willNotMatch, globTestData.pattern(), globTestData.containerName(), Assert::assertFalse));
         });
 
     }
@@ -84,17 +84,17 @@ public class ZipFailureFallbackTest {
     @Test
     public void testValidZipFileMatches() {
         String fileName = "file.txt";
-        checkMatches(fileName, fileName, "test.zip", Assert::assertTrue);
+        checkContainerSignatureMatches(fileName, fileName, "test.zip", Assert::assertTrue);
     }
 
     @Test
     public void testNoMatchesIfFileNotFound() {
         String fileName = "file.txt";
         String missingFileName = "missingFile.txt";
-        checkMatches(fileName, missingFileName, "test.zip", Assert::assertFalse);
+        checkContainerSignatureMatches(fileName, missingFileName, "test.zip", Assert::assertFalse);
     }
 
-    private static void checkMatches(String filePath, String signatureFileName, String containerFileName, Consumer<Boolean> check) {
+    private static void checkContainerSignatureMatches(String filePath, String signatureFileName, String containerFileName, Consumer<Boolean> check) {
         try {
             byte[] zipBytes = createZipBytes(filePath);
             List<ContainerSignatureMatch> containerSignatureMatches = getContainerSignatureMatches(zipBytes, signatureFileName, containerFileName);

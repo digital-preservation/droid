@@ -48,12 +48,12 @@ public class FileMatcher {
         this.fileSystem = FileSystems.getFileSystem(URI.create("file:///"));
     }
 
-    public boolean fileMatches(String fileName, String toMatch, String containerFileName) {
-        return fileName.equals(toMatch) || globMatches(fileName, toMatch) || matchesName(fileName, toMatch, containerFileName);
+    public boolean fileMatches(String filePath, String toMatch, String containerFileName) {
+        return filePath.equals(toMatch) || matchesContainerName(filePath, toMatch, containerFileName) || globMatches(filePath, toMatch);
     }
 
-    private boolean matchesName(String fileName, String toMatch, String containerFileName) {
-        if (fileName != null && fileName.startsWith(CONTAINER_NAME_PLACEHOLDER)) {
+    private boolean matchesContainerName(String fileName, String toMatch, String containerFileName) {
+        if (fileName != null && toMatch != null && containerFileName != null && fileName.startsWith(CONTAINER_NAME_PLACEHOLDER)) {
             return toMatch.equals(fileName.replace(CONTAINER_NAME_PLACEHOLDER, FilenameUtils.removeExtension(containerFileName)));
         }
         return false;
