@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

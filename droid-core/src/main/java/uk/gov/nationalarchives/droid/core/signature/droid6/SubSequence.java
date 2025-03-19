@@ -115,7 +115,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.byteseek.compiler.CompileException;
 import net.byteseek.compiler.matcher.SequenceMatcherCompiler;

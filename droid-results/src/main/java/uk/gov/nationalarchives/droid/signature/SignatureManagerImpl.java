@@ -45,11 +45,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.event.ConfigurationEvent;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -110,7 +111,7 @@ public class SignatureManagerImpl implements SignatureManager {
      * Initailisation post-construct.
      */
     public void init() {
-        config.getProperties().addConfigurationListener(proxySettings);
+        config.getProperties().addEventListener(ConfigurationEvent.ANY, proxySettings);
         Configuration configuration = config.getProperties();
         
         proxySettings = new ProxySettings();
@@ -119,12 +120,12 @@ public class SignatureManagerImpl implements SignatureManager {
         proxySettings.setProxyPort(configuration.getInt(DroidGlobalProperty.UPDATE_PROXY_PORT.getName()));
         proxySettings.setEnabled(configuration.getBoolean(DroidGlobalProperty.UPDATE_USE_PROXY.getName()));
         
-        config.getProperties().addConfigurationListener(proxySettings);
+        config.getProperties().addEventListener(ConfigurationEvent.ANY, proxySettings);
         
         for (SignatureUpdateService subscriber : signatureUpdateServices.values()) {
             subscriber.init(config);
             proxySettings.addProxySubscriber(subscriber);
-            config.getProperties().addConfigurationListener(subscriber);
+            config.getProperties().addEventListener(ConfigurationEvent.ANY, subscriber);
         }
         
         proxySettings.notifyProxySubscribers();
@@ -375,7 +376,7 @@ public class SignatureManagerImpl implements SignatureManager {
                 props.setProperty(defaultVersionProperties.get(type).getName(), 
                         FilenameUtils.getBaseName(FileUtil.fileName(info.getFile())));
                 try {
-                    config.getProperties().save();
+                    config.getPropertiesFileHandler().save();
                 } catch (ConfigurationException e) {
                     log.error(e.getMessage(), e);
                     throw new SignatureManagerException(e);

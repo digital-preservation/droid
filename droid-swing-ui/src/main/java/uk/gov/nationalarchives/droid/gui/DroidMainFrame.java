@@ -31,8 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.gui;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.io.FileHandler;
 import org.joda.time.DateTime;
 import org.openide.util.NbBundle;
 import org.slf4j.Logger;
@@ -194,6 +195,7 @@ public class DroidMainFrame extends JFrame {
      */
     public void checkSignatureUpdates() {
         final PropertiesConfiguration properties = globalContext.getGlobalConfig().getProperties();
+        final FileHandler propertiesFileHandler = globalContext.getGlobalConfig().getPropertiesFileHandler();
         boolean autoCheck = properties.getBoolean(DroidGlobalProperty.UPDATE_AUTO_CHECK.getName());
         boolean checkNow = properties.getBoolean(DroidGlobalProperty.UPDATE_ON_STARTUP.getName());
 
@@ -237,9 +239,9 @@ public class DroidMainFrame extends JFrame {
                 
                 properties.setProperty(DroidGlobalProperty.LAST_UPDATE_CHECK.getName(), System.currentTimeMillis());
                 try {
-                    properties.save();
+                    propertiesFileHandler.save();
                 } catch (ConfigurationException e) {
-                    log.warn("Could not save the last update check time to the file: " + properties.getPath());
+                    log.warn("Could not save the last update check time to the file: " + propertiesFileHandler.getPath());
                 }
             }
         }

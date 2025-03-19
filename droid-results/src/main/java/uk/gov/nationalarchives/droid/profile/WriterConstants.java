@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 import java.util.Arrays;
 import java.util.List;

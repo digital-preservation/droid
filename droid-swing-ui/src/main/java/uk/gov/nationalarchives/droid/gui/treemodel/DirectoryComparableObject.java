@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.gui.treemodel;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;

@@ -48,7 +48,7 @@ import net.java.truevfs.comp.zip.ZipEntry;
 import net.java.truevfs.comp.zip.ZipFile;
 import net.java.truevfs.comp.zip.ZipOutputStream;
 import org.apache.commons.io.DirectoryWalker;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

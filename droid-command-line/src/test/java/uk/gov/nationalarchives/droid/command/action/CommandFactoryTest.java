@@ -33,7 +33,7 @@ package uk.gov.nationalarchives.droid.command.action;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;

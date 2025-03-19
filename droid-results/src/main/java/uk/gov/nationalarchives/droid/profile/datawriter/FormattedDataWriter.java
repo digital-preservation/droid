@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.univocity.parsers.csv.CsvWriter;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.nationalarchives.droid.profile.WriterConstants;

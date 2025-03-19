@@ -36,9 +36,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 
+import org.apache.commons.configuration2.io.FileHandler;
 import uk.gov.nationalarchives.droid.command.i18n.I18N;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
@@ -114,9 +115,10 @@ public class ConfigureDefaultSignatureFileVersionCommand implements DroidCommand
      */
     private void updateDefaultVersion(String key, SignatureType type) throws CommandExecutionException {
         final PropertiesConfiguration properties = globalConfig.getProperties();
+        final FileHandler propertiesFileHandler = globalConfig.getPropertiesFileHandler();
         properties.setProperty(mapping.get(type).getName(), key);
         try {
-            properties.save();
+            propertiesFileHandler.save();
             SignatureFileInfo sigFileInfo = signatureManager.getDefaultSignatures().get(type);
             String version = Integer.toString(sigFileInfo.getVersion());
             printWriter.println(I18N.getResource(I18N.CONFIGURE_SIGNATURE_FILE_VERSION_SUCCESS,

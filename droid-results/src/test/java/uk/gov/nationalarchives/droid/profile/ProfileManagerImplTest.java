@@ -49,9 +49,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;

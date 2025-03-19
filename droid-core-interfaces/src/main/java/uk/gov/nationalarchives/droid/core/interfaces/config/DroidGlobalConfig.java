@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,9 +49,12 @@ import java.util.ArrayList;
 
 //BNO new libraries
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.io.FileHandler;
+import org.apache.commons.configuration2.io.FileLocator;
+import org.apache.commons.configuration2.io.FileLocatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +103,7 @@ public class DroidGlobalConfig {
     private Path exportTemplatesDir;
 
     private PropertiesConfiguration props;
+    private FileHandler propsFileHandler;
     private PropertiesConfiguration defaultProps;
 
     private Path profilesDir;
@@ -177,13 +182,28 @@ public class DroidGlobalConfig {
 
         final Path droidProperties = droidWorkDir.resolve(DROID_PROPERTIES);
         // Read the properties form the configuration file
-        props = new PropertiesConfiguration(droidProperties.toFile());
+        props = new PropertiesConfiguration();
+        try {
+            FileLocator fileLocator = FileLocatorUtils.fileLocator().sourceURL(droidProperties.toUri().toURL()).create();
+            propsFileHandler = new FileHandler(props);
+            propsFileHandler.setFileLocator(fileLocator);
+            if (droidProperties.toFile().exists()) {
+                propsFileHandler.load(droidProperties.toFile());
+            }
+        } catch (MalformedURLException e) {
+            throw new ConfigurationException(e);
+        }
+
 
         URL defaultPropsUrl = getClass().getClassLoader().getResource(
                 DEFAULT_DROID_PROPERTIES);
-        defaultProps = new PropertiesConfiguration(
-                defaultPropsUrl);
 
+
+        defaultProps = new PropertiesConfiguration();
+        FileHandler defaultPropsFileHandler = new FileHandler(defaultProps);
+        FileLocator fileLocator = FileLocatorUtils.fileLocator().sourceURL(defaultPropsUrl).create();
+        defaultPropsFileHandler.setFileLocator(fileLocator);
+        defaultPropsFileHandler.load(defaultPropsUrl);
         /**
         if (!droidProperties.exists()) {
             try {
@@ -200,6 +220,7 @@ public class DroidGlobalConfig {
         // properties file, or creates it if it was not there to begin 
         // with.
         boolean saveProperties = false;
+
         for (Iterator<String> it = defaultProps.getKeys(); it.hasNext();) {
             String key = it.next();
             if (!props.containsKey(key)) {
@@ -209,7 +230,7 @@ public class DroidGlobalConfig {
         }
 
         if (saveProperties) {
-            props.save();
+            propsFileHandler.save();
         }
         
         if (props.containsKey(DATABASE_DURABILITY)) {
@@ -249,6 +270,10 @@ public class DroidGlobalConfig {
         return props;
     }
 
+    public FileHandler getPropertiesFileHandler() {
+        return propsFileHandler;
+    }
+
     /**
      * Return properties with droid default setting.
      * Useful for proton URL reset ...
@@ -272,7 +297,7 @@ public class DroidGlobalConfig {
             }
         }
         
-        props.save();
+        propsFileHandler.save();
     }
 
     /**

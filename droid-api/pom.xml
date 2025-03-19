@@ -76,7 +76,7 @@
 							<ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api:jar</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
               <ignoredUsedUndeclaredDependencies>
-                <ignoredUsedUndeclaredDependency>commons-lang:commons-lang:jar</ignoredUsedUndeclaredDependency>
+                <ignoredUsedUndeclaredDependency>org.apache.commons:commons-lang3:jar</ignoredUsedUndeclaredDependency>
               </ignoredUsedUndeclaredDependencies>
 						</configuration>
 					</execution>
