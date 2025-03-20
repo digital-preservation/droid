@@ -670,9 +670,9 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                <version>${commons.version}</version>
             </dependency>
             <dependency>
-               <groupId>commons-lang</groupId>
-               <artifactId>commons-lang</artifactId>
-               <version>2.6</version>
+               <groupId>org.apache.commons</groupId>
+               <artifactId>commons-lang3</artifactId>
+               <version>3.17.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -685,9 +685,9 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
                 <version>4.4</version>
             </dependency>
             <dependency>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
-                <version>1.10</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
+                <version>2.11.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

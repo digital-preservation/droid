@@ -34,7 +34,7 @@ package uk.gov.nationalarchives.droid.profile.throttle;
 import static org.hamcrest.Matchers.closeTo;
 import static org.junit.Assert.assertThat;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.*;
 
 import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;

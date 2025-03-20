@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import net.byteseek.io.reader.WindowReader;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;

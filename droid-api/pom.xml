@@ -79,7 +79,7 @@
 								<nonTestScopedDependency>software.amazon.awssdk:sdk-core:jar</nonTestScopedDependency>
 							</ignoredNonTestScopedDependencies>
               <ignoredUsedUndeclaredDependencies>
-                <ignoredUsedUndeclaredDependency>commons-lang:commons-lang:jar</ignoredUsedUndeclaredDependency>
+                <ignoredUsedUndeclaredDependency>org.apache.commons:commons-lang3:jar</ignoredUsedUndeclaredDependency>
               </ignoredUsedUndeclaredDependencies>
 						</configuration>
 					</execution>
@@ -182,7 +182,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.17.0</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

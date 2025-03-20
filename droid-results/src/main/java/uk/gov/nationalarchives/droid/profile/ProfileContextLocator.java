@@ -39,9 +39,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.tree.OverrideCombiner;
+import org.apache.commons.configuration2.CombinedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.tree.OverrideCombiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

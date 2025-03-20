@@ -31,8 +31,8 @@
  */
 package uk.gov.nationalarchives.droid.profile;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import uk.gov.nationalarchives.droid.profile.referencedata.Format;
 
 import java.net.URI;

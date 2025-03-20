@@ -44,7 +44,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.io.FileHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -101,14 +102,16 @@ public class ConfigureDefaultSignatureFileVersionCommandTest {
         when(signatureManager.getDefaultSignatures()).thenReturn(defaultSigFiles);
         
         PropertiesConfiguration properties = mock(PropertiesConfiguration.class);
+        FileHandler propertiesFileHandler = mock(FileHandler.class);
         
         when(globalConfig.getProperties()).thenReturn(properties);
+        when(globalConfig.getPropertiesFileHandler()).thenReturn(propertiesFileHandler);
         
         command.setSignatureFileVersion(45);
         command.execute();
         
         verify(properties).setProperty(DroidGlobalProperty.DEFAULT_BINARY_SIG_FILE_VERSION.getName(), "v45");
-        verify(properties).save();
+        verify(propertiesFileHandler).save();
         
         verify(printWriter).println("Default signature file updated. Version: 45  File name: version_45.xml");
     }
