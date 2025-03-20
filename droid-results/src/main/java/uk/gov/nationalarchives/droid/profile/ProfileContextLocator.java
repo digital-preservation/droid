@@ -432,7 +432,8 @@ public class ProfileContextLocator {
         profileInstance.setColumnsToWrite(mergedConfig.getString(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), ""));
         profileInstance.setExportOptions(ExportOptions.valueOf(mergedConfig.getString(DroidGlobalProperty.EXPORT_OPTIONS.getName(),
                 ExportOptions.ONE_ROW_PER_FILE.name())));
-        if (mergedConfig.containsKey(DroidGlobalProperty.UPDATE_USE_PROXY.getName()) && mergedConfig.getBoolean(DroidGlobalProperty.UPDATE_USE_PROXY.getName())) {
+        String updateUseProxyName = DroidGlobalProperty.UPDATE_USE_PROXY.getName();
+        if (mergedConfig.containsKey(updateUseProxyName) && mergedConfig.getBoolean(updateUseProxyName)) {
             URI proxy = URI.create("http://" + mergedConfig.getString(DroidGlobalProperty.UPDATE_PROXY_HOST.getName()) + ":" + mergedConfig.getInt(DroidGlobalProperty.UPDATE_PROXY_PORT.getName()));
             profileInstance.setProxy(proxy);
         }

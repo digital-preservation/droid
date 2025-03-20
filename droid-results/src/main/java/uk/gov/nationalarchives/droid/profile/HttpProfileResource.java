@@ -53,7 +53,10 @@ public class HttpProfileResource extends FileProfileResource {
 
     public static boolean isHttpUrl(String url) {
         try {
-            String scheme = URI.create(url.replaceAll(" ", "%20")).getScheme();
+            if (url == null) {
+                return false;
+            }
+            String scheme = URI.create(url.trim().replaceAll(" ", "%20")).getScheme();
             return scheme != null && (scheme.equals("http") || scheme.equals("https"));
         } catch (IllegalArgumentException e) {
             return false;

@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.nio.file.Path;
 
 
 public class HttpIdentificationRequest implements IdentificationRequest<URI> {
@@ -147,14 +146,5 @@ public class HttpIdentificationRequest implements IdentificationRequest<URI> {
     @Override
     public WindowReader getWindowReader() {
         return this.httpReader;
-    }
-
-    /**
-     * Return file associate with identification request.
-     *
-     * @return File
-     */
-    public Path getFile() {
-        return null;
     }
 }

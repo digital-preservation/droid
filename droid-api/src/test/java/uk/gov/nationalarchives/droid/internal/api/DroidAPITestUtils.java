@@ -168,8 +168,7 @@ public class DroidAPITestUtils {
 
     private static Path getFilePathFromUriPath(String uriPath) {
         if(FileSystems.getDefault().getSeparator().equals("\\")) {
-            return Path.of(uriPath.substring(1)
-            );
+            return Path.of(uriPath.substring(1));
         } else {
             return Path.of(uriPath);
         }

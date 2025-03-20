@@ -264,7 +264,7 @@ public class ProfileManagerImplTest {
         assertEquals(maxBytes, mainInstance.getMaxBytesToScan());
         assertEquals((Long) (maxBytes + 1000L), (Long) overridden.getMaxBytesToScan());
 
-        // Test setting proxy:
+        // Sleep for 10ms between each assertion to enable each profile instance creation
         Thread.sleep(10);
         overridden = createOverriddenProfile(Map.of("update.proxy", true, "update.proxy.host", "localhost", "update.proxy.port", "8080"));
         assertNull(mainInstance.getProxy());

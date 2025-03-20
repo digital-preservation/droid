@@ -44,7 +44,7 @@ import java.util.Optional;
 
 public class S3Utils {
 
-    private static final String BUCKET_NOT_FOUND = "Bucket not found in uri ";
+    private static final String BUCKET_NOT_FOUND = "Bucket not found in uri: ";
 
     private final S3Client s3Client;
     private final Region region;

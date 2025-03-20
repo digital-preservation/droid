@@ -85,20 +85,20 @@ public class DroidAPISkeletonTest {
         return Stream.concat(
                         Files.list(Paths.get("../droid-core/test-skeletons/fmt")),
                         Files.list(Paths.get("../droid-core/test-skeletons/x-fmt"))
-                ).flatMap(x -> {
-                    Matcher z = FILENAME.matcher(x.getFileName().toString());
-                    if (!z.matches()) {
+                ).flatMap(path -> {
+                    Matcher matcher = FILENAME.matcher(path.getFileName().toString());
+                    if (!matcher.matches()) {
                         return null;
                     } else {
-                        String puid = z.group(1) + "/" + z.group(2);
+                        String puid = matcher.group(1) + "/" + matcher.group(2);
                         if (ignorePuid.contains(puid)) {
                             return null;
                         }
-                        String uriPath = x.toUri().getPath()
+                        String uriPath = path.toUri().getPath()
                                 .replaceAll(" ", "%20")
                                 .replaceAll("\\\\", "/");
                         return Stream.of(
-                            new SkeletonTest(puid, x.toUri()),
+                            new SkeletonTest(puid, path.toUri()),
                             new SkeletonTest(puid, URI.create("s3://localhost:" + s3Server.getAddress().getPort() + uriPath)),
                             new SkeletonTest(puid, URI.create("s3://localhost:" + httpServer.getAddress().getPort() + uriPath))
                         );

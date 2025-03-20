@@ -73,7 +73,6 @@ public class HttpIdentificationRequestTest {
         request.open(request.getIdentifier().getUri());
 
         assertEquals(request.size(), 4);
-        assertNull(request.getFile());
         assertEquals(request.getFileName(), "file.txt");
         assertEquals(request.getExtension(), "txt");
     }

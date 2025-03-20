@@ -46,7 +46,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -80,7 +79,6 @@ public class S3IdentificationRequestTest {
         request.open(s3Uri);
 
         assertEquals(request.size(), 1);
-        assertNull(request.getFile());
         assertEquals(request.getFileName(), "entry.txt");
         assertEquals(request.getExtension(), "txt");
     }

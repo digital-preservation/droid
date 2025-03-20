@@ -65,7 +65,6 @@ public class S3ProfileResource extends FileProfileResource {
         setUri(file.toURI());
         String s3uriString = getUri().toString();
 
-        // TODO Find the filename
         setName(s3uriString.substring(s3uriString.lastIndexOf('/') + 1));
 
         setLastModifiedDate(new Date(0));

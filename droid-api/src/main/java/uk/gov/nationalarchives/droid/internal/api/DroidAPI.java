@@ -122,17 +122,13 @@ public final class DroidAPI implements AutoCloseable {
     }
 
     private HttpClient getHttpClientOrDefault(HttpClient httpClient) {
-        if (httpClient == null) {
-            return HttpClient.newHttpClient();
-        }
-        return httpClient;
+        return Optional.ofNullable(httpClient)
+                .orElse(HttpClient.newHttpClient());
     }
 
     private S3Client getS3ClientOrDefault(S3Client s3Client) {
-        if (s3Client == null) {
-            return S3Client.builder().region(this.s3Region).build();
-        }
-        return s3Client;
+        return Optional.ofNullable(s3Client)
+                .orElse(S3Client.builder().region(this.s3Region).build());
     }
 
     private Region getRegionOrDefault(Region region) {
@@ -244,14 +240,7 @@ public final class DroidAPI implements AutoCloseable {
     }
 
     private List<ApiResult> submitS3Identification(final URI uri) throws IOException {
-        Region region = this.s3Region == null ? DefaultAwsRegionProviderChain.builder().build().getRegion() : this.s3Region;
-        S3Client client;
-        if (this.s3Client == null) {
-            client = S3Client.builder().region(region).build();
-        } else {
-            client = this.s3Client;
-        }
-        S3Utils s3Utils = new S3Utils(client);
+        S3Utils s3Utils = new S3Utils(s3Client);
         S3Utils.S3ObjectList objectList = s3Utils.listObjects(uri);
         List<ApiResult> apiResults = new ArrayList<>();
 
@@ -263,10 +252,10 @@ public final class DroidAPI implements AutoCloseable {
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
-            S3Uri s3Uri = S3Utilities.builder().region(region).build().parseUri(objectUri);
+            S3Uri s3Uri = S3Utilities.builder().region(s3Region).build().parseUri(objectUri);
             final RequestIdentifier id = getRequestIdentifier(s3Uri.uri());
             RequestMetaData metaData = new RequestMetaData(s3Object.size(), s3Object.lastModified().getEpochSecond(), s3Uri.uri().toString());
-            try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, client)) {
+            try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, s3Client)) {
                 request.open(s3Uri);
                 apiResults.addAll(getApiResults(request));
             }

@@ -1427,7 +1427,7 @@ public class CommandFactoryTest {
         };
         CommandLine cli = parse(args);
         ProfileRunCommand e1 = (ProfileRunCommand) factory.getS3Command(cli);
-        assertEquals(e1.getResources()[0], "s3://bucket/test.doc");
+        assertEquals("s3://bucket/test.doc", e1.getResources()[0]);
     }
 
     @Test
@@ -1440,7 +1440,10 @@ public class CommandFactoryTest {
         };
         CommandLine cli = parse(args);
         ProfileRunCommand e1 = (ProfileRunCommand) factory.getHttpCommand(cli);
-        assertEquals(e1.getResources()[0], "https://example.com/test.doc");
+        assertEquals("https://example.com/test.doc", e1.getResources()[0]);
+        assertNull(e1.getProperties().getProperty("update.proxy"));
+        assertNull(e1.getProperties().getProperty("update.proxy.host"));
+        assertNull(e1.getProperties().getProperty("update.proxy.port"));
     }
 
     @Test
@@ -1455,7 +1458,7 @@ public class CommandFactoryTest {
         };
         CommandLine cli = parse(args);
         ProfileRunCommand e1 = (ProfileRunCommand) factory.getHttpCommand(cli);
-        assertEquals(e1.getResources()[0], "https://example.com/test.doc");
+        assertEquals("https://example.com/test.doc", e1.getResources()[0]);
         assertEquals(e1.getProperties().getProperty("update.proxy"), true);
         assertEquals(e1.getProperties().getProperty("update.proxy.host"), "localhost");
         assertEquals(e1.getProperties().getProperty("update.proxy.port"), 8080);

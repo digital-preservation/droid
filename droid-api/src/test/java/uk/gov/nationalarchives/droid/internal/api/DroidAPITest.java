@@ -109,7 +109,7 @@ public class DroidAPITest {
 
     @ParameterizedTest
     @MethodSource("signatureTests")
-    public void should_match_container_files(ContainerTest containerTest) throws IOException {
+    public void should_match_container_files_if_provided_with_matching_signature(ContainerTest containerTest) throws IOException {
         ContainerFile containerFile = new ContainerFile(containerTest.containerType, DATA, "fmt/12345", containerTest.path);
         try (DroidAPI api = DroidAPITestUtils.createApiForContainer(endpointOverride, containerFile)) {
             List<ApiResult> results = api.submit(containerTest.uri);
@@ -298,7 +298,7 @@ public class DroidAPITest {
     }
 
     @Test
-    public void should_return_an_error_if_signature_paths_are_not_set() {
+    public void should_return_an_error_if_both_signature_paths_are_not_set() {
         assertThrows(IllegalArgumentException.class, () -> DroidAPI.builder().build());
         assertThrows(IllegalArgumentException.class, () -> DroidAPI.builder().containerSignature(containerPath).build());
         assertThrows(IllegalArgumentException.class, () -> DroidAPI.builder().binarySignature(signaturePath).build());

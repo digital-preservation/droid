@@ -42,7 +42,6 @@ import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 
 
 public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
@@ -148,14 +147,5 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
     @Override
     public WindowReader getWindowReader() {
         return this.s3Reader;
-    }
-
-    /**
-     * Return file associate with identification request.
-     *
-     * @return File
-     */
-    public Path getFile() {
-        return null;
     }
 }

@@ -108,15 +108,16 @@ public class S3Walker {
 
         Map<String, List<String>> dirToFileMap = new HashMap<>();
         int totalCount = 0;
+        String uriWithBucket = S3_SCHEME + bucket + FORWARD_SLASH;
 
         for (S3Object s3Object: contents) {
             int lastSlashIndex = (FORWARD_SLASH + s3Object.key()).lastIndexOf(FORWARD_SLASH);
-            String keyUri = S3_SCHEME + bucket + FORWARD_SLASH + s3Object.key();
+            String keyUri = uriWithBucket + s3Object.key();
             String parent;
             if (lastSlashIndex == 0) {
-                parent = S3_SCHEME + bucket + FORWARD_SLASH;
+                parent = uriWithBucket;
             } else {
-                parent = S3_SCHEME + bucket + FORWARD_SLASH + s3Object.key().substring(0, lastSlashIndex -1);
+                parent = uriWithBucket + s3Object.key().substring(0, lastSlashIndex -1);
             }
 
             if (!dirToFileMap.containsKey(parent)) {
