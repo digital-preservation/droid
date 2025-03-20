@@ -107,7 +107,7 @@
     </li>
     <ul>
         <li>
-            <a href="#WritingCSVFile">Writing to a file</a>
+            <a href="#WritingFile">Writing to a file</a>
         </li>
         <li>
             <a href="#WritingDatabase">Writing to a database</a>
@@ -135,7 +135,7 @@
         </li>
     </ul>
     <li>
-        <a href="#ConfigureOutput">Configuring CSV output</a>
+        <a href="#ConfigureOutput">Configuring output</a>
     </li>
         <ul>
             <li>
@@ -153,7 +153,7 @@
     </li>
     <ul>
         <li>
-            <a href="#ExportingProfiles">Exporting profiles to CSV</a>
+            <a href="#ExportingProfiles">Exporting profiles</a>
         </li>
         <li>
             <a href="#FilteringProfiles">Filtering exports</a>
@@ -222,6 +222,17 @@ To identify files from the command line, run droid with a list of files or folde
     <tr>
         <td>
             <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid <b>-a</b> “C:\Files\A Folder” "C:\Files\A File”</font>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
+            <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
+        </td>
+    </tr>
+</table>
+<p>
+    If you want to output to JSON instead of CSV, set the <b>--json</b> flag on any command.
+<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
+    <tr>
+        <td>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid <b>-a</b> “C:\Files\A Folder” "C:\Files\A File” --json</font>
             <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
             <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
         </td>
@@ -298,12 +309,27 @@ To identify files from the command line, run droid with a list of files or folde
 <code class="dark-mode">droid --HTTP http://example.com/file1</code><p>
 <code class="dark-mode">droid --HTTP https://example.com/file1</code>
 <p>All options relating to output format and container expansion will work with the HTTP identification</p>
-<h3><a id="WritingCSVFile" name="WritingCSVFile">Writing to a file</a></h3>
+<h3>
+    <a id="WritingFile">Writing to a file</a></h3>
 To output the CSV results to a file rather than the console, you can use the <b>-o</b> option:
 <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
     <tr>
         <td>
             <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid “C:\Files\A Folder” "C:\Files\A File” -R <b>-o "C:\Results\identifications.csv"</b></font>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
+            <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
+        </td>
+    </tr>
+</table>
+<p>
+    <i>Note:</i> if you specify "stdout" as the filename for the -o option, it will also write to the console.  But it's easier to simply not specify the -o option.
+</p>
+<p>
+    To output results as JSON instead of CSV, you can use the <b>--json</b> option:
+<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
+    <tr>
+        <td>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid “C:\Files\A Folder” "C:\Files\A File” -R <b>-o "C:\Results\identifications.json"</b> --json</font>
             <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
             <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
         </td>
@@ -383,7 +409,7 @@ If you want to only include files in the output (after filtering which files to 
 <p>
 
 <h3><a id="FilteringResults" name="FilteringResults">Filtering results once identified</a></h3>
-To filter out results from being written to a CSV file or to the console after they have been identified, you can use the <b>-f</b> (must meet all criteria) or <b>-F</b> (must meet any criteria) options.
+To filter out results from being written to a file or to the console after they have been identified, you can use the <b>-f</b> (must meet all criteria) or <b>-F</b> (must meet any criteria) options.
 Results can be filtered out on all available metadata, not just basic file metadata:
 <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
     <tr>
@@ -509,7 +535,7 @@ For full control over the profile properties used when identifying files, you ca
 <p>
 
 <h3><a id="NoProfileMode" name="NoProfileMode">No Profile Mode</a></h3>
-This version of DROID allows identification results to be written directly to a CSV file or the console, not only a profile database.
+This version of DROID allows identification results to be written directly to a file or the console, not only a profile database.
 In prior versions, "No Profile Mode" gave a more limited capability that wrote only the name and PUID
 of identifications straight to the console.  It did not identify files in exactly the same way as the other identification modes and had various other limitations.
 <p>
@@ -537,9 +563,9 @@ It can be run using the <b>-Nr</b> option:
 In general, there is little reason to use this mode unless it is required for backwards compatibility with existing scripts.
 The standard identification mode writing to the console or file gives much greater control over the output and configuration.
 <p>
-<h2><a id="ConfigureOutput" name="ConfigureOutput">Configuring CSV output</a></h2>
-You can configure how DROID will output Comma Separated Values (CSV) to either the console or a file.
-These options will work either when outputting CSV during format identification, or when exporting a saved profile.
+<h2><a id="ConfigureOutput" name="ConfigureOutput">Configuring output</a></h2>
+You can configure how DROID will output Comma Separated Values (CSV) or JSON to either the console or a file.
+These options will work either when outputting during format identification, or when exporting a saved profile.
 
 <h3><a id="RowsPerFileOrFormat" name="RowsPerFileOrFormat">Writing a row per file or per identification</a></h3>
 By default, DROID will write out a single row for each file identified.  If there is more than one identification,
@@ -555,7 +581,16 @@ there will be multiple rows for the same file, with a different identification:
     </tr>
 </table>
 <p>
-
+    To output as JSON, use the <b>--json</b> flag.
+<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
+    <tr>
+        <td>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid “C:\Files\A Folder” "C:\Files\A File" <b>-ri --json</b></font>
+            <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
+        </td>
+    </tr>
+</table>
+<p>
 <h3><a id="QuotingFields" name="QuotingFields">Quoting CSV fields</a></h3>
 By default, all fields written will be quoted inside double quotes.  If you only want quotes when a field value
 contains a comma, use the <b>-qc</b> option:
@@ -590,16 +625,27 @@ By convention, DROID database profiles have the file extension ".droid".
     To work with previously saved profiles, we again use the <b>-p</b> option to specify where the profile files are to be
     loaded from.  You can specify more than one profile when working with saved profiles.
 
-<h3><a id="ExportingProfiles" name="ExportingProfiles">Exporting profiles to CSV</a></h3>
-To export one or more profiles to a CSV file, use the <b>-e</b> or <b>-E</b> options.  To write out one row for
-each file, use the -e option.  If a file has multiple identifications, they will be added as additional columns
-in the CSV output.  To write out one row per format identification, use the -E option.  If a file has multiple
+<h3><a id="ExportingProfiles" name="ExportingProfiles">Exporting profiles</a></h3>
+To export one or more profiles to a file, use the <b>-e</b> or <b>-E</b> options.  To write out one row for
+each file, use the -e option.  If a file has multiple identifications, they will be added as additional entries
+in the file.  To write out one row per format identification, use the -E option.  If a file has multiple
 identifications, then there will be more than one row for that file, with different format identifications.
 For example:
 <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
     <tr>
         <td>
             <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid -p "C:\Results\myprofile1.droid" "C:\Results\myprofile2.droid" <b>-e "C:\Exports\myprofiles.csv"</b></font>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
+            <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
+        </td>
+    </tr>
+</table>
+<p>
+If you want to output as JSON, pass the <b>--json</b> flag.
+<table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
+    <tr>
+        <td>
+            <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;droid -p "C:\Results\myprofile1.droid" "C:\Results\myprofile2.droid" <b>-e "C:\Exports\myprofiles.json" --json</b></font>
             <font style=" background-color: #000000;" size="3" color="#ffffff" face="Monospaced, Courier New, Courier, mono"></font>
             <font style=" background-color: #000000;" color="#ffffff" face="Monospaced, Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;</font>
         </td>
@@ -1437,7 +1483,16 @@ This table lists all the command line options available:
         <td style="border:1px solid #000" bgcolor="#000000"><font color="#ffffff" face="Monospaced, Courier New, Courier, mono"/>
             droid -s 97
             <p>
-            droid -s 20200121
+            droid
+        </td>
+    </tr>
+    <tr>
+        <td>-json</td>
+        <td>--json-output</td>
+        <td>{none}</td>
+        <td>Sets the output to JSON. This will work for any command which outputs to console or to a file</td>
+        <td style="border:1px solid #000" bgcolor="#000000"><font color="#ffffff" face="Monospaced, Courier New, Courier, mono"/>
+                droid C:\More\spreadsheet.xls --json
         </td>
     </tr>
 </table>
