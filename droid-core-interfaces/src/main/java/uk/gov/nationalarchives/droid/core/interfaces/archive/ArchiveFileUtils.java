@@ -51,7 +51,7 @@ import java.util.List;
 import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import de.waldheinz.fs.FsDirectoryEntry;
 import net.byteseek.io.reader.WindowReader;

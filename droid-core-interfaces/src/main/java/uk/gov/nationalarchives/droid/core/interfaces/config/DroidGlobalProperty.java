@@ -34,7 +34,7 @@ package uk.gov.nationalarchives.droid.core.interfaces.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration2.Configuration;
 
 /**
  * All DROID global properties.

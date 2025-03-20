@@ -30,18 +30,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package uk.gov.nationalarchives.droid.command.action;
+import java.io.File;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.tree.OverrideCombiner;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.configuration2.CombinedConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.io.FileHandler;
+import org.apache.commons.configuration2.io.FileLocator;
+import org.apache.commons.configuration2.io.FileLocatorUtils;
+import org.apache.commons.configuration2.tree.OverrideCombiner;
+import org.apache.commons.lang3.StringUtils;
 
 import uk.gov.nationalarchives.droid.command.context.GlobalContext;
 import uk.gov.nationalarchives.droid.command.filter.DqlCriterionFactory;
@@ -343,8 +348,12 @@ public class CommandFactoryImpl implements CommandFactory {
         final String propertyFile = cli.getOptionValue(CommandLineParam.PROPERTY_FILE.toString());
         if (propertyFile != null && !propertyFile.isEmpty()) {
             try {
-                overrideProperties = new PropertiesConfiguration(propertyFile);
-            } catch (ConfigurationException e) {
+                overrideProperties = new PropertiesConfiguration();
+                FileHandler overridePropertiesFileHandler = new FileHandler(overrideProperties);
+                FileLocator fileLocator = FileLocatorUtils.fileLocator().sourceURL(new File(propertyFile).toURI().toURL()).create();
+                overridePropertiesFileHandler.setFileLocator(fileLocator);
+                overridePropertiesFileHandler.load(propertyFile);
+            } catch (ConfigurationException | MalformedURLException e) {
                 throw new CommandLineSyntaxException(e);
             }
         }

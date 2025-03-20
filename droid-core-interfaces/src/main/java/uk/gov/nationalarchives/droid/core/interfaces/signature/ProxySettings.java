@@ -34,8 +34,8 @@ package uk.gov.nationalarchives.droid.core.interfaces.signature;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.configuration.event.ConfigurationEvent;
-import org.apache.commons.configuration.event.ConfigurationListener;
+import org.apache.commons.configuration2.event.ConfigurationEvent;
+import org.apache.commons.configuration2.event.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
  * @author rflitcroft
  *
  */
-public class ProxySettings implements ConfigurationListener {
+public class ProxySettings implements EventListener<ConfigurationEvent> {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     
@@ -123,7 +123,7 @@ public class ProxySettings implements ConfigurationListener {
      * {@inheritDoc}
      */
     @Override
-    public void configurationChanged(ConfigurationEvent event) {
+    public void onEvent(ConfigurationEvent event) {
         final String propertyName = event.getPropertyName();
         if (propertyName.startsWith("update.proxy")) {
             DroidGlobalProperty property = DroidGlobalProperty.forName(propertyName);
@@ -161,4 +161,5 @@ public class ProxySettings implements ConfigurationListener {
     public void addProxySubscriber(ProxySubscriber proxySubscriber) {
         proxySubscribers.add(proxySubscriber);
     }
+
 }

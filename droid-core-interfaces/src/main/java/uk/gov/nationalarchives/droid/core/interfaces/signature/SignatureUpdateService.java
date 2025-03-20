@@ -33,15 +33,16 @@ package uk.gov.nationalarchives.droid.core.interfaces.signature;
 
 import java.nio.file.Path;
 
-import org.apache.commons.configuration.event.ConfigurationListener;
+import org.apache.commons.configuration2.event.ConfigurationEvent;
 
+import org.apache.commons.configuration2.event.EventListener;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 
 /**
  * @author rflitcroft
  *
  */
-public interface SignatureUpdateService extends ConfigurationListener, ProxySubscriber {
+public interface SignatureUpdateService extends EventListener<ConfigurationEvent>, ProxySubscriber {
 
     /**
      * Imports a signature file.

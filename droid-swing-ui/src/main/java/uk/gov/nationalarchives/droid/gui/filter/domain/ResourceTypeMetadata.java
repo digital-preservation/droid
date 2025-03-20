@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.gui.filter.domain;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceType;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;

@@ -42,7 +42,8 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.io.FileHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -112,7 +113,9 @@ public class DroidGlobalConfigTest {
         DroidGlobalConfig config = new DroidGlobalConfig();
         config.init();
         
-        PropertiesConfiguration props = new PropertiesConfiguration(droidProperties.toFile());
+        PropertiesConfiguration props = new PropertiesConfiguration();
+        FileHandler propsFileHandler = new FileHandler(props);
+        propsFileHandler.load(droidProperties.toFile());
         assertEquals(0, props.getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName()));
     }
 
@@ -137,8 +140,11 @@ public class DroidGlobalConfigTest {
         config.update(changedProperties);
         
         assertEquals(123, config.getProperties().getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName()));
-        
-        PropertiesConfiguration props = new PropertiesConfiguration(droidProperties.toFile());
+
+        PropertiesConfiguration props = new PropertiesConfiguration();
+        FileHandler propsFileHandler = new FileHandler(props);
+        propsFileHandler.load(droidProperties.toFile());
+
         assertEquals(123, props.getInt(DroidGlobalProperty.DEFAULT_THROTTLE.getName()));
     }
 }
