@@ -181,19 +181,18 @@ public class DroidGlobalConfig {
     public void init() throws ConfigurationException {
 
         final Path droidProperties = droidWorkDir.resolve(DROID_PROPERTIES);
-        // Read the properties form the configuration file
         props = new PropertiesConfiguration();
         try {
             FileLocator fileLocator = FileLocatorUtils.fileLocator().sourceURL(droidProperties.toUri().toURL()).create();
             propsFileHandler = new FileHandler(props);
             propsFileHandler.setFileLocator(fileLocator);
             if (droidProperties.toFile().exists()) {
+                // Read the properties form the configuration file
                 propsFileHandler.load(droidProperties.toFile());
             }
         } catch (MalformedURLException e) {
             throw new ConfigurationException(e);
         }
-
 
         URL defaultPropsUrl = getClass().getClassLoader().getResource(
                 DEFAULT_DROID_PROPERTIES);
