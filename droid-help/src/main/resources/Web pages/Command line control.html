@@ -36,6 +36,17 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="Helen" name="generator">
     <title>Command line control</title>
+    <style>
+        code.line-break {
+            display: block;
+            white-space: pre-wrap;
+        }
+        .dark-mode {
+            font-family: "Monospaced","Courier New", "Courier", mono,serif;
+            color: white;
+            background-color: black;
+        }
+    </style>
 </head>
 <body>
 <table cellpadding="0" bgcolor="#555555" border="0" cellspacing="0" width="100%">
@@ -81,7 +92,18 @@
 </table>
 <ul>
     <li>
-        <a href="#Format identification">Format identification</a>
+        <a href="#FormatIdentification">Format identification</a>
+        <ul>
+            <li>
+                <a href="#fileSystemFormatIdentification">File system identification</a>
+            </li>
+            <li>
+                <a href="#s3FormatIdentification">AWS S3 identification</a>
+            </li>
+            <li>
+                <a href="#httpFormatIdentification">HTTP(S) identification</a>
+            </li>
+        </ul>
     </li>
     <ul>
         <li>
@@ -182,6 +204,7 @@
 <p>
 
 <h2><a id="FormatIdentification" name="Identification">Format identification</a></h2>
+<h3><a id="fileSystemFormatIdentification">File system identification</a></h3>
 To identify files from the command line, run droid with a list of files or folders to process:
 <table cellpadding="8" bgcolor="#000000" border="0" cellspacing="0">
     <tr>
@@ -226,6 +249,66 @@ To identify files from the command line, run droid with a list of files or folde
     </tr>
 </table>
 <p>
+<h3><a id="s3FormatIdentification">AWS S3 Identification</a></h3>
+<p>DROID will identify files from an AWS S3 bucket.</p>
+<p>You will need credentials to the bucket you are trying to access and you will need a profile set up with a configured region matching the region of your bucket</p>
+<p>There is AWS documentation on <a target="_blank" href="https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-files.html#cli-configure-files-format-profile">configuring profiles</a></p>
+<p>Your credentials must have at least the <code>s3:GetObject</code> permission for the bucket you are trying to access. For more information, see <a target="_blank" href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Integrating.Authorizing.IAM.S3CreatePolicy.html">the AWS documentation on S3 permissions.</a></p>
+<p>S3 doesn't store folder information. Every object in a bucket has a single path although the S3 UI will split this into folders if the path contains a <code>/</code></p>
+<p>Given the following objects in S3</p>
+<code class="line-break">
+    /folder1/object.txt
+    /folder1/object.pdf
+    /folder11/object.csv
+    /folder2/object.docx
+    /folder3/object.xlsx
+</code>
+<p>This would be rendered on a traditional file system like this:</p>
+<code class="line-break">
+    ├── folder1
+    │   ├── object.pdf
+    │   └── object.txt
+    ├── folder11
+    │   └── object.csv
+    ├── folder2
+    │   └── object.docx
+    └── folder3
+    └── object.xlsx
+</code>
+<p>S3 works on object prefixes. You make a request using an s3 object url which has the form <code>s3://{bucket}/{path}</code> This command:</p>
+<code class="dark-mode">
+    droid --S3 s3://bucket.name/folder
+</code>
+<p> will return</p>
+<code class="line-break">
+    /folder1/object.txt
+    /folder1/object.pdf
+    /folder11/object.csv
+    /folder2/object.docx
+    /folder3/object.xlsx
+</code>
+<p>Every object has the prefix <code>/folder</code> This command:</p>
+<code class="dark-mode">droid --S3 s3://bucket.name/folder1</code>
+<p> will return</p>
+<code class="line-break">
+    /folder1/object.txt
+    /folder1/object.pdf
+    /folder11/object.csv
+</code>
+<p>These commands:</p>
+<code class="dark-mode">droid --S3 s3://bucket.name/folder1/</code>
+<code class="dark-mode">droid --S3 s3://bucket.name/folder1/object</code>
+<p> will both return</p>
+<code class="line-break">
+    /folder1/object.txt
+    /folder1/object.pdf
+</code>
+<p>All options relating to output format and container expansion will work with the S3 identification</p>
+<h3><a id="httpFormatIdentification">HTTP(S) Identification</a></h3>
+<p>HTTP format identification is simpler than S3 identification. It is not possible to generically get a list of files from a URL prefix so HTTP identification only works on individual files.</p>
+<code class="dark-mode">droid --HTTP http://example.com/file1</code><p>
+<code class="dark-mode">droid --HTTP https://example.com/file1</code>
+<p>All options relating to output format and container expansion will work with the HTTP identification</p>
 <h3>
     <a id="WritingFile">Writing to a file</a></h3>
 To output the CSV results to a file rather than the console, you can use the <b>-o</b> option:

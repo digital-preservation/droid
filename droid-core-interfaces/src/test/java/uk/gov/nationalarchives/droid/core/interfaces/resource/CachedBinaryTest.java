@@ -35,9 +35,9 @@ import net.byteseek.io.reader.InputStreamReader;
 import net.byteseek.io.reader.cache.AllWindowsCache;
 import net.byteseek.io.reader.cache.TempFileCache;
 import net.byteseek.io.reader.windows.Window;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.nio.file.Files;
@@ -45,7 +45,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -59,8 +60,8 @@ public class CachedBinaryTest {
 
     //private CachedByteBuffers cache;
     
-    @Before
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
     }
     /*
     @Test 
@@ -90,7 +91,7 @@ public class CachedBinaryTest {
         assertEquals(800, count);
     }
     */
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testGetInputStreamWithNoBackingFileCache1() throws Exception {
 
         byte[] rawBytes = new byte[800];
@@ -114,11 +115,11 @@ public class CachedBinaryTest {
 
             for (int count = 0; count < rawBytes.length; count++) {
                 byteIn = window.getByte(count);
-                assertEquals("Incorrect byte: " + count, rawBytes[count], (byte) byteIn);
+                assertEquals(rawBytes[count], (byte) byteIn, "Incorrect byte: " + count);
             }
 
             //This should throw the IndexOutOfBoundsException
-            byteIn = window.getByte(rawBytes.length);
+            assertThrows(IndexOutOfBoundsException.class, () -> window.getByte(rawBytes.length));
         }
     }
     /*
@@ -152,8 +153,8 @@ public class CachedBinaryTest {
         assertEquals(8500, count);
     }
     */
-    @Ignore
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Disabled
+    @Test
     public void testGetInputStreamWithBackingFileCache1() throws Exception {
 
         byte[] rawBytes = new byte[8500];
@@ -180,7 +181,7 @@ public class CachedBinaryTest {
 
             for (int count = 0; count < rawBytes.length; count++) {
                 byteIn = window.getByte(count);
-                assertEquals("Incorrect byte: " + count, rawBytes[count], (byte) byteIn);
+                assertEquals(rawBytes[count], (byte) byteIn, "Incorrect byte: " + count);
             }
 
             //This should throw the IndexOutOfBoundsException

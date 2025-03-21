@@ -54,7 +54,7 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
 
 /**
  * @author rflitcroft
- * 
+ *
  */
 public class FileEventHandler {
 
@@ -74,8 +74,8 @@ public class FileEventHandler {
      * Default Constructor.
      */
     public FileEventHandler() { }
-    
-    
+
+
     /**
      * @param droidCore
      *            an identification engine for this event handler to submit to
@@ -102,7 +102,7 @@ public class FileEventHandler {
     /**
      * Creates a job in the database and submits the job to the identification
      * engine.
-     * 
+     *
      * @param file
      *            the node file to handle
      * @param parentId
@@ -148,14 +148,14 @@ public class FileEventHandler {
     public SubmissionThrottle getSubmissionThrottle() {
         return submissionThrottle;
     }
-    
+
     /**
      * @param submissionThrottle the submissionThrottle to set
      */
     public void setSubmissionThrottle(SubmissionThrottle submissionThrottle) {
         this.submissionThrottle = submissionThrottle;
     }
-    
+
     /**
      * @param droidCore the droidCore to set
      */
@@ -169,7 +169,7 @@ public class FileEventHandler {
     public void setResultHandler(ResultHandler resultHandler) {
         this.resultHandler = resultHandler;
     }
-    
+
     /**
      * @param requestFactory the requestFactory to set
      */

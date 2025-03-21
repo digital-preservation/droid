@@ -75,6 +75,9 @@
                 			<ignoredUnusedDeclaredDependency>org.glassfish.jaxb:jaxb-runtime</ignoredUnusedDeclaredDependency>
 							<ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api:jar</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
+							<ignoredNonTestScopedDependencies>
+								<nonTestScopedDependency>software.amazon.awssdk:sdk-core:jar</nonTestScopedDependency>
+							</ignoredNonTestScopedDependencies>
               <ignoredUsedUndeclaredDependencies>
                 <ignoredUsedUndeclaredDependency>org.apache.commons:commons-lang3:jar</ignoredUsedUndeclaredDependency>
               </ignoredUsedUndeclaredDependencies>
@@ -100,7 +103,15 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
+        </plugins>
 
 		<testResources>
 			<testResource>
@@ -130,9 +141,57 @@
 			<artifactId>jaxb-runtime</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>${junit.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>${aws.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>regions</artifactId>
+			<version>${aws.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>aws-core</artifactId>
+			<version>${aws.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>sdk-core</artifactId>
+			<version>${aws.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.16</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.17.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.14</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.hamcrest</groupId>
+		  <artifactId>hamcrest</artifactId>
+		  <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.xml.bind</groupId>
@@ -149,11 +208,6 @@
 			<artifactId>poi</artifactId>
 			<version>5.4.0</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-		  <groupId>org.hamcrest</groupId>
-		  <artifactId>hamcrest</artifactId>
-		  <scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

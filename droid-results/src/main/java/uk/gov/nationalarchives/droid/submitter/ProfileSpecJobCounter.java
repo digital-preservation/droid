@@ -75,7 +75,7 @@ public class ProfileSpecJobCounter implements Callable<Long> {
             if (cancelled) {
                 break;
             }
-            if (resource.isDirectory()) {
+            if (resource.isDirectory() && !resource.isS3Object() || resource.isHttpObject()) {
                 LukeFileWalker walker = new LukeFileWalker(resource.getUri(), resource.isRecursive());
                 walker.walk();
             } else {

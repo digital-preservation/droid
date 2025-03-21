@@ -32,12 +32,9 @@
 package uk.gov.nationalarchives.droid.command.action;
 import java.io.File;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.util.*;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -253,6 +250,20 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public DroidCommand getNoProfileCommand(final CommandLine cli) throws CommandLineSyntaxException {
+        return getCommand(cli, getNoProfileResources(cli));
+    }
+
+    @Override
+    public DroidCommand getS3Command(CommandLine cli) throws CommandLineSyntaxException {
+        return getCommand(cli, getS3Resources(cli));
+    }
+
+    @Override
+    public DroidCommand getHttpCommand(CommandLine cli) throws CommandLineSyntaxException {
+        return getCommand(cli, getHttpResources(cli));
+    }
+
+    private DroidCommand getCommand(CommandLine cli, String[] resources) throws CommandLineSyntaxException {
         final ProfileRunCommand command = context.getProfileRunCommand();
         PropertiesConfiguration overrides = getOverrideProperties(cli);
 
@@ -263,7 +274,14 @@ public class CommandFactoryImpl implements CommandFactory {
 
         overrides.setProperty(DroidGlobalProperty.QUOTE_ALL_FIELDS.getName(), false);
         overrides.setProperty(DroidGlobalProperty.COLUMNS_TO_WRITE.getName(), "FILE_PATH PUID");
-        command.setResources(getNoProfileResources(cli));
+
+        if (cli.hasOption(CommandLineParam.HTTP_PROXY.toString())) {
+            URI proxyUri = URI.create(cli.getOptionValue(CommandLineParam.HTTP_PROXY.toString()));
+            overrides.setProperty(DroidGlobalProperty.UPDATE_USE_PROXY.getName(), true);
+            overrides.setProperty(DroidGlobalProperty.UPDATE_PROXY_HOST.getName(), proxyUri.getHost());
+            overrides.setProperty(DroidGlobalProperty.UPDATE_PROXY_PORT.getName(), proxyUri.getPort());
+        }
+        command.setResources(resources);
         command.setDestination(getDestination(cli, overrides)); // will also set the output csv file in overrides if present.
         command.setRecursive(cli.hasOption(CommandLineParam.RECURSIVE.toString()));
         command.setProperties(overrides); // must be called after we set destination.
@@ -333,6 +351,28 @@ public class CommandFactoryImpl implements CommandFactory {
 
     private String[] getNoProfileResources(CommandLine cli) throws CommandLineSyntaxException {
         String[] resources = cli.getOptionValues(CommandLineParam.RUN_NO_PROFILE.toString());
+        if (resources == null || resources.length == 0) {
+            resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
+            if (resources == null || resources.length == 0) {
+                throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+            }
+        }
+        return resources;
+    }
+
+    private String[] getS3Resources(CommandLine cli) throws CommandLineSyntaxException {
+        String[] resources = cli.getOptionValues(CommandLineParam.RUN_S3.toString());
+        if (resources == null || resources.length == 0) {
+            resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
+            if (resources == null || resources.length == 0) {
+                throw new CommandLineSyntaxException(NO_RESOURCES_SPECIFIED);
+            }
+        }
+        return resources;
+    }
+
+    private String[] getHttpResources(CommandLine cli) throws CommandLineSyntaxException {
+        String[] resources = cli.getOptionValues(CommandLineParam.RUN_HTTP.toString());
         if (resources == null || resources.length == 0) {
             resources = cli.getArgs(); // if no profile resources specified, use unbound arguments:
             if (resources == null || resources.length == 0) {
