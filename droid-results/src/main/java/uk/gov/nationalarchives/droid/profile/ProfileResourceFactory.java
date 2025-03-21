@@ -53,10 +53,11 @@ public class ProfileResourceFactory {
      */
     public AbstractProfileResource getResource(String location, boolean recursive) {
         // Linux is happy trying to parse a url as a path because of the forward slashes but Windows can't, so we check for URIs first
-        if (S3ProfileResource.isS3uri(location)) {
-            return new S3ProfileResource(location);
-        } else if (HttpProfileResource.isHttpUrl(location)) {
+        if (HttpProfileResource.isHttpUrl(location)) {
             return new HttpProfileResource(location);
+        } else if (S3ProfileResource.isS3uri(location)) {
+            return new S3ProfileResource(location);
+
         } else {
             final Path f = Paths.get(location);
             if (Files.isRegularFile(f)) {
