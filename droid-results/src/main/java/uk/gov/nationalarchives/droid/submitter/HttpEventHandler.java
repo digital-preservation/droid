@@ -69,7 +69,7 @@ public class HttpEventHandler {
         identifier.setResourceId(null);
 
         // Prepare the request
-        IdentificationRequest<URI> request = new HttpIdentificationRequest(metaData, identifier, HttpClient.newHttpClient());
+        IdentificationRequest<URI> request = new HttpIdentificationRequest(metaData, identifier, getHttpClient(resource));
 
         if (droidCore.passesIdentificationFilter(request)) {
             try {
