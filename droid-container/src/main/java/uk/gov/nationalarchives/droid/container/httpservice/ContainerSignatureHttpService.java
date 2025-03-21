@@ -31,7 +31,7 @@
  */
 package uk.gov.nationalarchives.droid.container.httpservice;
 
-import org.apache.commons.configuration.event.ConfigurationEvent;
+import org.apache.commons.configuration2.event.ConfigurationEvent;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -186,7 +186,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
     }
 
     @Override
-    public void configurationChanged(ConfigurationEvent evt) {
+    public void onEvent(ConfigurationEvent evt) {
         final String propertyName = evt.getPropertyName();
         if (propertyName.equals(DroidGlobalProperty.CONTAINER_UPDATE_URL.getName())) {
             setEndpointUrl((String) evt.getPropertyValue());
