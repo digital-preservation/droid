@@ -294,30 +294,13 @@ public enum CommandLineParam {
         }
     },
 
-    /** Runs without a profile and with the specified S3 object. */
-    RUN_S3("S3", "S3-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "s3Url") {
-        @Override
-        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-                throws CommandLineSyntaxException {
-            return commandFactory.getS3Command(cli);
-        }
-    },
-
-    /** Sets a proxy for use with the HTTP and S3 options. */
+    /** Sets a proxy for use with HTTP and S3 URLs. */
     HTTP_PROXY("proxy", "http-proxy", true, -1, I18N.PROXY_HELP, "proxyUrl") {
         @Override public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
             return null;
         }
     },
 
-    /** Runs without a profile and with the specified http(s) url. */
-    RUN_HTTP("HTTP", "HTTP-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "httpUrl") {
-        @Override
-        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
-                throws CommandLineSyntaxException {
-            return commandFactory.getHttpCommand(cli);
-        }
-    },
 
     /** Container signature file. */
     CONTAINER_SIGNATURE_FILE("Nc", "container-file", true, 1,
@@ -437,8 +420,6 @@ public enum CommandLineParam {
         addTopLevelCommand(REPORT);
         addTopLevelCommand(LIST_FILTER_FIELD);
         addTopLevelCommand(RUN_PROFILE);
-        addTopLevelCommand(RUN_S3);
-        addTopLevelCommand(RUN_HTTP);
         addTopLevelCommand(RUN_NO_PROFILE);
         addTopLevelCommand(CHECK_SIGNATURE_UPDATE);
         addTopLevelCommand(DOWNLOAD_SIGNATURE_UPDATE);

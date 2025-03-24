@@ -1421,12 +1421,11 @@ public class CommandFactoryTest {
     public void testS3Mode() throws Exception {
         when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
         String[] args = new String[] {
-                "-S3",
                 "s3://bucket/test.doc",
                 "-A"
         };
         CommandLine cli = parse(args);
-        ProfileRunCommand e1 = (ProfileRunCommand) factory.getS3Command(cli);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getProfileCommand(cli);
         assertEquals("s3://bucket/test.doc", e1.getResources()[0]);
     }
 
@@ -1434,12 +1433,11 @@ public class CommandFactoryTest {
     public void testHttpMode() throws Exception {
         when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
         String[] args = new String[] {
-                "-HTTP",
                 "https://example.com/test.doc",
                 "-A"
         };
         CommandLine cli = parse(args);
-        ProfileRunCommand e1 = (ProfileRunCommand) factory.getHttpCommand(cli);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getProfileCommand(cli);
         assertEquals("https://example.com/test.doc", e1.getResources()[0]);
         assertNull(e1.getProperties().getProperty("update.proxy"));
         assertNull(e1.getProperties().getProperty("update.proxy.host"));
@@ -1450,14 +1448,13 @@ public class CommandFactoryTest {
     public void testProxyOverride() throws Exception {
         when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
         String[] args = new String[] {
-                "-HTTP",
                 "https://example.com/test.doc",
                 "-proxy",
                 "http://localhost:8080",
                 "-A"
         };
         CommandLine cli = parse(args);
-        ProfileRunCommand e1 = (ProfileRunCommand) factory.getHttpCommand(cli);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getProfileCommand(cli);
         assertEquals("https://example.com/test.doc", e1.getResources()[0]);
         assertEquals(e1.getProperties().getProperty("update.proxy"), true);
         assertEquals(e1.getProperties().getProperty("update.proxy.host"), "localhost");
