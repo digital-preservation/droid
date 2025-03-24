@@ -277,7 +277,7 @@ To identify files from the command line, run droid with a list of files or folde
 </code>
 <p>S3 works on object prefixes. You make a request using an s3 object url which has the form <code>s3://{bucket}/{path}</code> This command:</p>
 <code class="dark-mode">
-    droid --S3 s3://bucket.name/folder
+    droid s3://bucket.name/folder
 </code>
 <p> will return</p>
 <code class="line-break">
@@ -288,7 +288,7 @@ To identify files from the command line, run droid with a list of files or folde
     /folder3/object.xlsx
 </code>
 <p>Every object has the prefix <code>/folder</code> This command:</p>
-<code class="dark-mode">droid --S3 s3://bucket.name/folder1</code>
+<code class="dark-mode">droid s3://bucket.name/folder1</code>
 <p> will return</p>
 <code class="line-break">
     /folder1/object.txt
@@ -296,8 +296,8 @@ To identify files from the command line, run droid with a list of files or folde
     /folder11/object.csv
 </code>
 <p>These commands:</p>
-<code class="dark-mode">droid --S3 s3://bucket.name/folder1/</code>
-<code class="dark-mode">droid --S3 s3://bucket.name/folder1/object</code>
+<code class="dark-mode">droid s3://bucket.name/folder1/</code>
+<code class="dark-mode">droid s3://bucket.name/folder1/object</code>
 <p> will both return</p>
 <code class="line-break">
     /folder1/object.txt
@@ -306,8 +306,8 @@ To identify files from the command line, run droid with a list of files or folde
 <p>All options relating to output format and container expansion will work with the S3 identification</p>
 <h3><a id="httpFormatIdentification">HTTP(S) Identification</a></h3>
 <p>HTTP format identification is simpler than S3 identification. It is not possible to generically get a list of files from a URL prefix so HTTP identification only works on individual files.</p>
-<code class="dark-mode">droid --HTTP http://example.com/file1</code><p>
-<code class="dark-mode">droid --HTTP https://example.com/file1</code>
+<code class="dark-mode">droid http://example.com/file1</code><p>
+<code class="dark-mode">droid https://example.com/file1</code>
 <p>All options relating to output format and container expansion will work with the HTTP identification</p>
 <h3>
     <a id="WritingFile">Writing to a file</a></h3>
