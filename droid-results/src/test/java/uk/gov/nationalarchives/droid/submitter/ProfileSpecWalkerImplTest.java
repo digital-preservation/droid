@@ -32,32 +32,30 @@
 package uk.gov.nationalarchives.droid.submitter;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.mockito.ArgumentMatcher;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
-import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
-import uk.gov.nationalarchives.droid.profile.DirectoryProfileResource;
-import uk.gov.nationalarchives.droid.profile.FileProfileResource;
-import uk.gov.nationalarchives.droid.profile.ProfileInstance;
-import uk.gov.nationalarchives.droid.profile.ProfileSpec;
+import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.profile.*;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
 import uk.gov.nationalarchives.droid.util.FileUtil;
 
@@ -125,7 +123,7 @@ public class ProfileSpecWalkerImplTest {
     }
 
     @Test
-    public void testIterateFileResources() throws Exception {
+    public void testIterateResources() throws Exception {
 
         String[] locations = new String[] {
             "dir1/file11.ext",
@@ -145,19 +143,64 @@ public class ProfileSpecWalkerImplTest {
         walker.setProgressMonitor(progressMonitor);
 
         FileEventHandler fileEventHandler = mock(FileEventHandler.class);
+        S3EventHandler s3EventHandler = getS3EventHandler(resources);
+        HttpEventHandler httpEventHandler = getHttpEventHandler();
+        ResultHandler resultHandler = mock(ResultHandler.class);
+        when(resultHandler.handleDirectory(any(IdentificationResult.class), any(ResourceId.class), anyBoolean())).thenReturn(new ResourceId(1, "/"));
+
         walker.setFileEventHandler(fileEventHandler);
+        walker.setResultHandler(resultHandler);
+        walker.setS3EventHandler(s3EventHandler);
+        walker.setHttpEventHandler(httpEventHandler);
 
         walker.walk(profileSpec, new ProfileWalkState());
 
+        verify(s3EventHandler).onS3Event(argThat(newNameMatcher("dir1/file11.ext")), any());
+        verify(s3EventHandler).onS3Event(argThat(newNameMatcher("dir1/file12.ext")), any());
+        verify(s3EventHandler).onS3Event(argThat(newNameMatcher("dir2/file13.ext")), any());
+
+        verify(httpEventHandler).onHttpEvent(argThat(newNameMatcher("dir1/file11.ext")));
+        verify(httpEventHandler).onHttpEvent(argThat(newNameMatcher("dir1/file12.ext")));
+        verify(httpEventHandler).onHttpEvent(argThat(newNameMatcher("dir2/file13.ext")));
+
         verify(fileEventHandler).onEvent(
                 argThat(newFileUriMatcher("dir1/file11.ext")), (ResourceId) any(),
-                (ResourceId) isNull());
+                isNull());
         verify(fileEventHandler).onEvent(
                 argThat(newFileUriMatcher("dir1/file12.ext")), (ResourceId) any(),
-                (ResourceId) isNull());
+                isNull());
         verify(fileEventHandler).onEvent(
                 argThat(newFileUriMatcher("dir2/file13.ext")), (ResourceId) any(),
-                (ResourceId) isNull());
+                isNull());
+    }
+
+    private static S3EventHandler getS3EventHandler(List<AbstractProfileResource> resources) {
+        S3EventHandler s3EventHandler = mock(S3EventHandler.class);
+
+        S3Client s3Client = mock(S3Client.class);
+        List<AbstractProfileResource> s3Resources = resources.stream().filter(AbstractProfileResource::isS3Object).toList();
+
+        for (AbstractProfileResource resource : s3Resources) {
+            String key = resource.getName().startsWith("/") ? resource.getName().substring(1) : resource.getName();
+            S3Object s3Object = S3Object.builder().key(key).build();
+            ArgumentMatcher<ListObjectsV2Request> requestArgumentMatcher = argument ->
+                    argument != null && resource.getName().equals(argument.prefix());
+            ListObjectsV2Response response = ListObjectsV2Response.builder().contents(List.of(s3Object)).build();
+            when(s3Client.listObjectsV2(argThat(requestArgumentMatcher))).thenReturn(response);
+            ListObjectsV2Iterable listObjectsV2Iterable = new ListObjectsV2Iterable(s3Client, ListObjectsV2Request.builder().prefix(resource.getName()).build());
+            when(s3Client.listObjectsV2Paginator(argThat(requestArgumentMatcher))).thenReturn(listObjectsV2Iterable);
+        }
+
+        when(s3EventHandler.getS3Client(any(AbstractProfileResource.class))).thenReturn(s3Client);
+        doNothing().when(s3EventHandler).onS3Event(any(AbstractProfileResource.class), any(ResourceId.class));
+
+        return s3EventHandler;
+    }
+
+    private static HttpEventHandler getHttpEventHandler() {
+        HttpEventHandler httpEventHandler = mock(HttpEventHandler.class);
+        doNothing().when(httpEventHandler).onHttpEvent(any(AbstractProfileResource.class));
+        return httpEventHandler;
     }
 
     @Test
@@ -241,9 +284,15 @@ public class ProfileSpecWalkerImplTest {
         List<AbstractProfileResource> resources = new ArrayList<AbstractProfileResource>();
 
         for (String location : locations) {
-            FileProfileResource resource = new FileProfileResource(Paths.get(
-                    location));
+            Path locationPath = Paths.get(location);
+            FileProfileResource resource = new FileProfileResource(locationPath);
             resources.add(resource);
+            URI s3Uri = URI.create("s3://bucket/" + location);
+            S3ProfileResource s3ProfileResource = new S3ProfileResource(s3Uri.toString());
+            resources.add(s3ProfileResource);
+            URI httpUri = URI.create("https://example.com/" + location);
+            HttpProfileResource httpProfileResource = new HttpProfileResource(httpUri.toString());
+            resources.add(httpProfileResource);
         }
 
         return resources;
@@ -416,6 +465,11 @@ public class ProfileSpecWalkerImplTest {
                 return "Matches" + ((Paths.get(fileName)).toString());
             }
         };
+    }
+
+    private static ArgumentMatcher<AbstractProfileResource> newNameMatcher(final String fileName) {
+        return argument ->
+                argument.getName().equals(fileName);
     }
     
     private static Path canonicalFile(final Path parent, String child) throws IOException {

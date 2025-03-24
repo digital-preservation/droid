@@ -32,6 +32,7 @@
 package uk.gov.nationalarchives.droid.profile;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,6 +48,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
@@ -141,14 +143,18 @@ public class ProfileSpecToXmlPersistenceTest {
 
         final Path resource1 = Paths.get("file/1");
         final Path resource2 = Paths.get("file/2");
-        final Path resource3 = Paths.get("dir/1");
-        final Path resource4 = Paths.get("dir/2");
+        final URI resource3 = URI.create("s3://bucket/file/3");
+        final URI resource4 = URI.create("http://bucket/file/4");
+        final Path resource5 = Paths.get("dir/1");
+        final Path resource6 = Paths.get("dir/2");
 
         final ProfileSpec profileSpec = new ProfileSpec();
         profileSpec.addResource(new FileProfileResource(resource1));
         profileSpec.addResource(new FileProfileResource(resource2));
-        profileSpec.addResource(new DirectoryProfileResource(resource3, false));
-        profileSpec.addResource(new DirectoryProfileResource(resource4, true));
+        profileSpec.addResource(new S3ProfileResource(resource3.toString()));
+        profileSpec.addResource(new HttpProfileResource(resource4.toString()));
+        profileSpec.addResource(new DirectoryProfileResource(resource5, false));
+        profileSpec.addResource(new DirectoryProfileResource(resource6, true));
 
         final ProfileInstance profile = new ProfileInstance(ProfileState.INITIALISING);
         profile.changeState(ProfileState.STOPPED);
@@ -181,21 +187,37 @@ public class ProfileSpecToXmlPersistenceTest {
                 + "      <Uri>" + resource2.toUri() + "</Uri>\n"
                 + "      <Path>" + getPath(resource2) + "</Path>\n"
                 + "     </File>\n"
+                + "     <File>\n"
+                + "       <Size>0</Size>\n"
+                + "       <LastModifiedDate>1970-01-01T01:00:00+01:00</LastModifiedDate>\n"
+                + "       <Extension></Extension>\n"
+                + "       <Name>" + resource3.getPath().substring(1) + "</Name>\n"
+                + "       <Uri>" + resource3 + "</Uri>\n"
+                + "       <Path>/" + resource3.getHost() + resource3.getPath() + "</Path>\n"
+                + "     </File>\n"
+                + "     <File>\n"
+                + "       <Size>0</Size>\n"
+                + "       <LastModifiedDate>1970-01-01T01:00:00+01:00</LastModifiedDate>\n"
+                + "       <Extension></Extension>\n"
+                + "       <Name>" + resource4.getPath().substring(1) + "</Name>\n"
+                + "       <Uri>" + resource4 + "</Uri>\n"
+                + "       <Path>/" + resource4.getHost() + resource4.getPath() + "</Path>\n"
+                + "     </File>\n"
                 + "     <Dir Recursive=\"false\">\n"
                 + "      <Size>-1</Size>\n"
                 + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>\n"
                 + "      <Extension></Extension>\n"
                 + "      <Name>1</Name>\n"
-                + "      <Uri>" + resource3.toUri() + "</Uri>\n"
-                + "      <Path>" + getPath(resource3) + "</Path>\n"
+                + "      <Uri>" + resource5.toUri() + "</Uri>\n"
+                + "      <Path>" + getPath(resource5) + "</Path>\n"
                 + "     </Dir>\n"
                 + "     <Dir Recursive=\"true\">\n"
                 + "      <Size>-1</Size>\n"
                 + "      <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>\n"
                 + "      <Extension></Extension>\n"
                 + "      <Name>2</Name>\n"
-                + "      <Uri>" + resource4.toUri() + "</Uri>\n"
-                + "      <Path>" + getPath(resource4) + "</Path>\n"
+                + "      <Uri>" + resource6.toUri() + "</Uri>\n"
+                + "      <Path>" + getPath(resource6) + "</Path>\n"
                 + "     </Dir>\n"
                 + "    </Resources>\n"
                 + "  </ProfileSpec>\n"

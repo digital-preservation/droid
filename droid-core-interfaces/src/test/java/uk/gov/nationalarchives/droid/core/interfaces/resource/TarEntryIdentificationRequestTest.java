@@ -41,45 +41,43 @@ import java.util.Date;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ArchiveFileUtils;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TarEntryIdentificationRequestTest {
 
     private static Path tmpDir;
-    private TarEntryIdentificationRequest tarResource;
-    private URI fileName;
-    private TarArchiveInputStream in;
-    private String entryName;
-    private long size;
-    private Date modTime;
-    private RequestMetaData metaData;
-    private RequestIdentifier identifier;
+    private static TarEntryIdentificationRequest tarResource;
+    private static URI fileName;
+    private static TarArchiveInputStream in;
+    private static String entryName;
+    private static long size;
+    private static Date modTime;
+    private static RequestMetaData metaData;
+    private static RequestIdentifier identifier;
     
-    @BeforeClass
+    @BeforeAll
     public static void createTmpFileDirectory() throws IOException {
         tmpDir = Paths.get("tmp");
         Files.createDirectories(tmpDir);
     }
     
-    @AfterClass
+    @AfterAll
     public static void removeTmpDir() {
         FileUtils.deleteQuietly(tmpDir.toFile());
     }
     
-    @Before
-    public void setup() throws Exception {
+    @BeforeAll
+    public static void setup() throws Exception {
         
-        fileName = getClass().getResource("/saved.tar").toURI();
+        fileName = TarEntryIdentificationRequestTest.class.getResource("/saved.tar").toURI();
         
         in = new TarArchiveInputStream(Files.newInputStream(Paths.get(fileName)));
         TarArchiveEntry entry;
@@ -97,8 +95,8 @@ public class TarEntryIdentificationRequestTest {
         tarResource.open(in);
     }
     
-    @After
-    public void tearDown() throws IOException {
+    @AfterAll
+    public static void tearDown() throws IOException {
         in.close();
         tarResource.close();
     }

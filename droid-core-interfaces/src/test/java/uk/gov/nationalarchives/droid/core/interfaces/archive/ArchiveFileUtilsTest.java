@@ -38,7 +38,7 @@ import de.waldheinz.fs.FsDirectoryEntry;
 import de.waldheinz.fs.util.FileDisk;
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.WindowReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,8 +53,8 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 /**

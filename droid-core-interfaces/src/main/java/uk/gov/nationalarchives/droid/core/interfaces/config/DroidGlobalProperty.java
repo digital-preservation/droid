@@ -162,7 +162,10 @@ public enum DroidGlobalProperty {
     /** Whether the database plays safe (=true), or gains performance
      * but loses resilience in the face of failures (=false).
      */
-    DATABASE_DURABILITY("database.durability", PropertyType.BOOLEAN, true); 
+    DATABASE_DURABILITY("database.durability", PropertyType.BOOLEAN, true),
+
+    /** Whether to allow loading files from S3. */
+    FILES_FROM_S3("profile.s3", PropertyType.BOOLEAN, true);
     
     private static Map<String, DroidGlobalProperty> allValues = new HashMap<String, DroidGlobalProperty>(); 
     

@@ -36,16 +36,14 @@ import com.github.junrar.volume.Volume;
 import com.github.junrar.io.SeekableReadOnlyByteChannel;
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.WindowReader;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RarReaderTest {
 
@@ -56,7 +54,7 @@ public class RarReaderTest {
     private Volume vol;
     private SeekableReadOnlyByteChannel access;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         reader = getFileReader(RESOURCE_NAME);
         rar = new RarReader(reader);
@@ -65,13 +63,13 @@ public class RarReaderTest {
         access = vol.getChannel();
     }
 
-    @After
+    @AfterEach
     public void close() throws Exception {
         archive.close();
         reader.close();
     }
 
-    private WindowReader getFileReader(String resourceName) throws IOException {
+    private static WindowReader getFileReader(String resourceName) throws IOException {
         Path p = Paths.get("./src/test/resources/" + resourceName);
         return new FileReader(p.toFile(), 127); // use a small odd window size so we cross window boundaries.
     }
@@ -101,9 +99,9 @@ public class RarReaderTest {
         assertEquals(257, access.getPosition());
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testSetNegativePosition() throws Exception {
-        access.setPosition(-23);
+        assertThrows(IOException.class, () -> access.setPosition(-23));
     }
 
     @Test

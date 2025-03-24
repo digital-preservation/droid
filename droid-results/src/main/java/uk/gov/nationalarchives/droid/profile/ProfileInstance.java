@@ -174,6 +174,9 @@ public class ProfileInstance {
     @XmlTransient
     private Set<ProfileEventListener> eventListeners = new HashSet<ProfileEventListener>();
 
+    @XmlTransient
+    private URI proxy;
+
     /**
      * Constructs a profile instance in a default state.
      * @param state the default state.
@@ -873,6 +876,14 @@ public class ProfileInstance {
         return exportOptions;
     }
 
+    public URI getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(URI proxy) {
+        this.proxy = proxy;
+    }
+
     /**
      * Sets the export output options - CSV or JSON.
      * @param options the output options
@@ -888,5 +899,4 @@ public class ProfileInstance {
     public ExportOutputOptions getExportOutputOptions() {
         return exportOutputOptions;
     }
-
 }

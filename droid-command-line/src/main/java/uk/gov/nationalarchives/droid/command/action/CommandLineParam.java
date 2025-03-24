@@ -294,6 +294,31 @@ public enum CommandLineParam {
         }
     },
 
+    /** Runs without a profile and with the specified S3 object. */
+    RUN_S3("S3", "S3-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "s3Url") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
+                throws CommandLineSyntaxException {
+            return commandFactory.getS3Command(cli);
+        }
+    },
+
+    /** Sets a proxy for use with the HTTP and S3 options. */
+    HTTP_PROXY("proxy", "http-proxy", true, -1, I18N.PROXY_HELP, "proxyUrl") {
+        @Override public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return null;
+        }
+    },
+
+    /** Runs without a profile and with the specified http(s) url. */
+    RUN_HTTP("HTTP", "HTTP-resource", true, -1, I18N.RUN_NO_PROFILE_HELP, "httpUrl") {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli)
+                throws CommandLineSyntaxException {
+            return commandFactory.getHttpCommand(cli);
+        }
+    },
+
     /** Container signature file. */
     CONTAINER_SIGNATURE_FILE("Nc", "container-file", true, 1,
             I18N.CONTAINER_SIGNATURE_FILE_HELP, filename()) {
@@ -412,6 +437,8 @@ public enum CommandLineParam {
         addTopLevelCommand(REPORT);
         addTopLevelCommand(LIST_FILTER_FIELD);
         addTopLevelCommand(RUN_PROFILE);
+        addTopLevelCommand(RUN_S3);
+        addTopLevelCommand(RUN_HTTP);
         addTopLevelCommand(RUN_NO_PROFILE);
         addTopLevelCommand(CHECK_SIGNATURE_UPDATE);
         addTopLevelCommand(DOWNLOAD_SIGNATURE_UPDATE);
@@ -511,6 +538,19 @@ public enum CommandLineParam {
             topGroup.addOption(param.newOption());
         }
 
+        addOptions(options);
+
+        options.addOptionGroup(getFilterOptionGroup());
+        options.addOptionGroup(getFileFilterOptionGroup());
+        options.addOptionGroup(getExportOptionGroup());
+        options.addOptionGroup(getExportOutputOptionsGroup());
+        options.addOptionGroup(topGroup);
+
+        return options;
+
+    }
+
+    private static void addOptions(Options options) {
         options.addOption(PROFILES.newOption());
         options.addOption(OUTPUT_FILE.newOption());
         options.addOption(PROFILE_PROPERTY.newOption());
@@ -530,17 +570,9 @@ public enum CommandLineParam {
         options.addOption(COLUMNS_TO_WRITE.newOption());
         options.addOption(QUOTE_COMMAS.newOption());
         options.addOption(ROW_PER_FORMAT.newOption());
+        options.addOption(HTTP_PROXY.newOption());
         options.addOption(JSON_OUTPUT.newOption());
         options.addOption(CSV_OUTPUT.newOption());
-
-        options.addOptionGroup(getFilterOptionGroup());
-        options.addOptionGroup(getFileFilterOptionGroup());
-        options.addOptionGroup(getExportOptionGroup());
-        options.addOptionGroup(getExportOutputOptionsGroup());
-        options.addOptionGroup(topGroup);
-
-        return options;
-
     }
 
     private static OptionGroup getFileFilterOptionGroup() {

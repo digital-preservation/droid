@@ -33,9 +33,9 @@ package uk.gov.nationalarchives.droid.core.interfaces.filter.expressions;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author rflitcroft

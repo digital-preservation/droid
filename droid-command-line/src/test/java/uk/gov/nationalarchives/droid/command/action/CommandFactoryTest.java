@@ -1417,6 +1417,53 @@ public class CommandFactoryTest {
         assertFalse((boolean)e1.getProperties().getProperty("profile.processWarc"));
     }
 
+    @Test
+    public void testS3Mode() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-S3",
+                "s3://bucket/test.doc",
+                "-A"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getS3Command(cli);
+        assertEquals("s3://bucket/test.doc", e1.getResources()[0]);
+    }
+
+    @Test
+    public void testHttpMode() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-HTTP",
+                "https://example.com/test.doc",
+                "-A"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getHttpCommand(cli);
+        assertEquals("https://example.com/test.doc", e1.getResources()[0]);
+        assertNull(e1.getProperties().getProperty("update.proxy"));
+        assertNull(e1.getProperties().getProperty("update.proxy.host"));
+        assertNull(e1.getProperties().getProperty("update.proxy.port"));
+    }
+
+    @Test
+    public void testProxyOverride() throws Exception {
+        when(context.getProfileRunCommand()).thenReturn(profileRunCommand);
+        String[] args = new String[] {
+                "-HTTP",
+                "https://example.com/test.doc",
+                "-proxy",
+                "http://localhost:8080",
+                "-A"
+        };
+        CommandLine cli = parse(args);
+        ProfileRunCommand e1 = (ProfileRunCommand) factory.getHttpCommand(cli);
+        assertEquals("https://example.com/test.doc", e1.getResources()[0]);
+        assertEquals(e1.getProperties().getProperty("update.proxy"), true);
+        assertEquals(e1.getProperties().getProperty("update.proxy.host"), "localhost");
+        assertEquals(e1.getProperties().getProperty("update.proxy.port"), 8080);
+    }
+
     /**
     @Test
     public void testListReports() throws Exception {
