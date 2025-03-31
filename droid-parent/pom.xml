@@ -103,8 +103,8 @@
         <slf4j.version>2.0.17</slf4j.version>
         <log4j2.version>2.24.3</log4j2.version>
         <checkstyle.version>10.21.2</checkstyle.version>
-        <aws.version>2.30.17</aws.version>
-        <junit.version>5.11.4</junit.version>
+        <aws.version>2.31.10</aws.version>
+        <junit.version>5.12.1</junit.version>
         <commons.version>2.18.0</commons.version>
     </properties>
   
