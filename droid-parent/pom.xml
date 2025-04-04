@@ -766,7 +766,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>5.16.1</version>
+                <version>5.17.0</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
