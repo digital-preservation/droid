@@ -105,7 +105,7 @@
         <checkstyle.version>10.21.2</checkstyle.version>
         <aws.version>2.31.11</aws.version>
         <junit.version>5.12.1</junit.version>
-        <commons.version>2.18.0</commons.version>
+        <commons.version>2.19.0</commons.version>
     </properties>
   
     <build>
