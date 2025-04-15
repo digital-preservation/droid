@@ -103,9 +103,9 @@
         <slf4j.version>2.0.17</slf4j.version>
         <log4j2.version>2.24.3</log4j2.version>
         <checkstyle.version>10.21.2</checkstyle.version>
-        <aws.version>2.31.11</aws.version>
-        <junit.version>5.12.1</junit.version>
-        <commons.version>2.18.0</commons.version>
+        <aws.version>2.31.21</aws.version>
+        <junit.version>5.12.2</junit.version>
+        <commons.version>2.19.0</commons.version>
     </properties>
   
     <build>
@@ -161,7 +161,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.12</version>
+                    <version>0.8.13</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -766,7 +766,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>5.16.1</version>
+                <version>5.17.0</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
