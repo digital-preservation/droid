@@ -53,6 +53,7 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
 
     private final S3Client s3client;
     private final S3Utils.S3ObjectMetadata s3ObjectMetadata;
+    private String extension;
 
     public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, final S3Client s3Client) {
         this.identifier = identifier;
@@ -84,7 +85,15 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
      */
     @Override
     public final String getExtension() {
-        return ResourceUtils.getExtension(requestMetaData.getName());
+        return this.extension != null ? this.extension : ResourceUtils.getExtension(requestMetaData.getName());
+    }
+
+    /**
+     * Sets the file extension. This is used when it can't be determined from the file name
+     * @param extension The extension to set
+     */
+    public final void setExtension(String extension) {
+        this.extension = extension;
     }
 
     /**

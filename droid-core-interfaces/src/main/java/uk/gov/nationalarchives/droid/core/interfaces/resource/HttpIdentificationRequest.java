@@ -53,6 +53,7 @@ public class HttpIdentificationRequest implements IdentificationRequest<URI> {
     private final long size;
     private final HttpClient client;
     private HttpUtils.HttpMetadata httpMetadata;
+    private String extension;
 
     public HttpIdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, HttpClient httpClient) {
         this.identifier = identifier;
@@ -83,7 +84,15 @@ public class HttpIdentificationRequest implements IdentificationRequest<URI> {
      */
     @Override
     public final String getExtension() {
-        return ResourceUtils.getExtension(requestMetaData.getName());
+        return extension == null ? ResourceUtils.getExtension(requestMetaData.getName()) : extension;
+    }
+
+    /**
+     * Sets the file extension. This is used when it can't be determined from the file name
+     * @param extension The extension to set
+     */
+    public final void setExtension(final String extension) {
+        this.extension =  extension;
     }
 
     /**

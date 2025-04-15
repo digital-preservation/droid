@@ -184,10 +184,10 @@ public class DroidAPITestUtils {
             byte[] buffer = new byte[length];
             int bytesRead = raf.read(buffer);
             return bytesRead == length ? buffer : Arrays.copyOf(buffer, bytesRead);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException | NegativeArraySizeException e) {
+            return new byte[0];
         }
-        }
+    }
 
     public record ContainerType(String name, String id, String puid) {}
     public record ContainerFile(ContainerType containerType, String sequence, String puid, Optional<String> path) {}

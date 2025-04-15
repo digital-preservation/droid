@@ -201,6 +201,23 @@ public final class DroidAPI implements AutoCloseable {
     }
 
     /**
+     * Submit file for identification. If the file has no extension, one can be provided
+     * @param uri Full URI of the file for identification.
+     * @param extension The extension of the file. Only necessary if the object in the uri doesn't have one.
+     * @return File identification result. File can have multiple matching signatures.
+     * @throws IOException If File can't be read or there is IO error.
+     */
+    public List<ApiResult> submit(final URI uri, String extension) throws IOException {
+        if (S3_SCHEME.equals(uri.getScheme())) {
+            return submitS3Identification(uri, extension);
+        } else if (List.of("http", "https").contains(uri.getScheme())) {
+            return submitHttpIdentification(uri, extension);
+        } else {
+            return submitFileSystemIdentification(Path.of(uri), extension);
+        }
+    }
+
+    /**
      * Submit file for identification. It's important that file has proper file extension. If file
      * can't be identified via binary or container signature, then we use file extension for identification.
      * @param uri Full URI of the file for identification.
@@ -208,16 +225,10 @@ public final class DroidAPI implements AutoCloseable {
      * @throws IOException If File can't be read or there is IO error.
      */
     public List<ApiResult> submit(final URI uri) throws IOException {
-        if (S3_SCHEME.equals(uri.getScheme())) {
-            return submitS3Identification(uri);
-        } else if (List.of("http", "https").contains(uri.getScheme())) {
-            return submitHttpIdentification(uri);
-        } else {
-            return submitFileSystemIdentification(Path.of(uri));
-        }
+        return submit(uri, null);
     }
 
-    private List<ApiResult> submitHttpIdentification(final URI uri) throws IOException {
+    private List<ApiResult> submitHttpIdentification(final URI uri, String extension) throws IOException {
         HttpClient httpClient = this.httpClient == null ? HttpClient.newHttpClient() : this.httpClient;
         HttpUtils httpUtils = new HttpUtils(httpClient);
         HttpUtils.HttpMetadata httpMetadata = httpUtils.getHttpMetadata(uri);
@@ -234,12 +245,13 @@ public final class DroidAPI implements AutoCloseable {
 
 
         try (final HttpIdentificationRequest request = new HttpIdentificationRequest(metaData, id, httpClient)) {
+            request.setExtension(extension);
             request.open(uri);
             return getApiResults(request);
         }
     }
 
-    private List<ApiResult> submitS3Identification(final URI uri) throws IOException {
+    private List<ApiResult> submitS3Identification(final URI uri, String extension) throws IOException {
         S3Utils s3Utils = new S3Utils(s3Client);
         S3Utils.S3ObjectList objectList = s3Utils.listObjects(uri);
         List<ApiResult> apiResults = new ArrayList<>();
@@ -256,6 +268,7 @@ public final class DroidAPI implements AutoCloseable {
             final RequestIdentifier id = getRequestIdentifier(s3Uri.uri());
             RequestMetaData metaData = new RequestMetaData(s3Object.size(), s3Object.lastModified().getEpochSecond(), s3Uri.uri().toString());
             try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, s3Client)) {
+                request.setExtension(extension);
                 request.open(s3Uri);
                 apiResults.addAll(getApiResults(request));
             }
@@ -271,7 +284,7 @@ public final class DroidAPI implements AutoCloseable {
     }
 
 
-    private List<ApiResult> submitFileSystemIdentification(final Path file) throws IOException {
+    private List<ApiResult> submitFileSystemIdentification(final Path file, String extension) throws IOException {
         final RequestMetaData metaData = new RequestMetaData(
                 Files.size(file),
                 Files.getLastModifiedTime(file).toMillis(),
@@ -281,6 +294,7 @@ public final class DroidAPI implements AutoCloseable {
         final RequestIdentifier id = getRequestIdentifier(file.toAbsolutePath().toUri());
 
         try (final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, id)) {
+            request.setExtension(extension);
             request.open(file);
             return getApiResults(request);
         }

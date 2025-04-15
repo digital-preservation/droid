@@ -52,7 +52,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
 
     private static final int TOP_TAIL_BUFFER_CAPACITY = 8 * 1024 * 1024; // buffer 8Mb on the top and tail of files.
 
-    private final String extension;
+    private String extension;
     private final String fileName;
     private final long size;
     private WindowReader fileReader;
@@ -70,7 +70,6 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
         requestMetaData = metaData;
         size = metaData.getSize();
         fileName = metaData.getName();
-        extension = ResourceUtils.getExtension(fileName);
     }
     
     /**
@@ -92,7 +91,15 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
      */
     @Override
     public final String getExtension() {
-        return extension;
+        return extension == null ? ResourceUtils.getExtension(fileName) : extension;
+    }
+
+    /**
+     * Sets the file extension. This is used when it can't be determined from the file name
+     * @param extension The extension to set
+     */
+    public final void setExtension(final String extension) {
+        this.extension =  extension;
     }
     
     /**
