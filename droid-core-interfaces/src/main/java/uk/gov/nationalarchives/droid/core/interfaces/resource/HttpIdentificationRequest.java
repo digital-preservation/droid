@@ -35,6 +35,7 @@ import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.cache.TopAndTailFixedLengthCache;
 import net.byteseek.io.reader.cache.WindowCache;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
@@ -84,11 +85,11 @@ public class HttpIdentificationRequest implements IdentificationRequest<URI> {
      */
     @Override
     public final String getExtension() {
-        return extension == null ? ResourceUtils.getExtension(requestMetaData.getName()) : extension;
+        return StringUtils.isBlank(this.extension) ? ResourceUtils.getExtension(requestMetaData.getName()) : this.extension;
     }
 
     /**
-     * Sets the file extension. This is used when it can't be determined from the file name
+     * Sets the file extension. If this is set, this will be used as the file extension instead of an extension derived from the name
      * @param extension The extension to set
      */
     public final void setExtension(final String extension) {
