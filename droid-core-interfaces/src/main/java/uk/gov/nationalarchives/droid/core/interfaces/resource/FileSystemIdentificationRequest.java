@@ -40,6 +40,7 @@ import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.FileReader;
 import net.byteseek.io.reader.cache.TopAndTailFixedLengthCache;
 import net.byteseek.io.reader.cache.WindowCache;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
@@ -52,7 +53,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
 
     private static final int TOP_TAIL_BUFFER_CAPACITY = 8 * 1024 * 1024; // buffer 8Mb on the top and tail of files.
 
-    private final String extension;
+    private String extension;
     private final String fileName;
     private final long size;
     private WindowReader fileReader;
@@ -70,7 +71,6 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
         requestMetaData = metaData;
         size = metaData.getSize();
         fileName = metaData.getName();
-        extension = ResourceUtils.getExtension(fileName);
     }
     
     /**
@@ -92,7 +92,15 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
      */
     @Override
     public final String getExtension() {
-        return extension;
+        return StringUtils.isBlank(this.extension) ? ResourceUtils.getExtension(requestMetaData.getName()) : this.extension;
+    }
+
+    /**
+     * Sets the file extension. If this is set, this will be used as the file extension instead of an extension derived from the name
+     * @param extension The extension to set
+     */
+    public final void setExtension(final String extension) {
+        this.extension =  extension;
     }
     
     /**
