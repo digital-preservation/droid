@@ -35,6 +35,7 @@ import net.byteseek.io.reader.ReaderInputStream;
 import net.byteseek.io.reader.WindowReader;
 import net.byteseek.io.reader.cache.TopAndTailFixedLengthCache;
 import net.byteseek.io.reader.cache.WindowCache;
+import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Uri;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
@@ -53,6 +54,7 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
 
     private final S3Client s3client;
     private final S3Utils.S3ObjectMetadata s3ObjectMetadata;
+    private String extension;
 
     public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, final S3Client s3Client) {
         this.identifier = identifier;
@@ -84,7 +86,15 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
      */
     @Override
     public final String getExtension() {
-        return ResourceUtils.getExtension(requestMetaData.getName());
+        return StringUtils.isBlank(this.extension) ? ResourceUtils.getExtension(requestMetaData.getName()) : this.extension;
+    }
+
+    /**
+     * Sets the file extension. If this is set, this will be used as the file extension instead of an extension derived from the name
+     * @param extension The extension to set
+     */
+    public final void setExtension(String extension) {
+        this.extension = extension;
     }
 
     /**

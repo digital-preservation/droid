@@ -61,7 +61,7 @@ public class HttpWindowReader extends AbstractReader implements SoftWindowRecove
     private HttpResponse<byte[]> responseWithRange(long rangeStart, long rangeEnd) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(this.uri)
-                .header("Range", "bytes=" + rangeStart + "-" + (rangeEnd + this.windowSize - 1))
+                .header("Range", "bytes=" + rangeStart + "-" + rangeEnd)
                 .GET()
                 .build();
 

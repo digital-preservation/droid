@@ -212,6 +212,35 @@ public class DroidAPITest {
         );
     }
 
+    static Stream<URI> noFileExtensionUris() {
+        return getUris("src/test/resources/test");
+    }
+
+    @ParameterizedTest
+    @MethodSource("noFileExtensionUris")
+    public void should_report_extension_only_match_if_extension_is_provided(URI uri) throws IOException {
+        List<ApiResult> results = api.submit(uri, "docx");
+
+        ApiResult result = results.getFirst();
+        assertThat(result.getExtension(), is("docx"));
+        assertThat(result.getMethod(), is(IdentificationMethod.EXTENSION));
+        assertThat(result.getPuid(), is("fmt/494"));
+    }
+
+    static Stream<URI> docxWithoutExtensionUris() {return getUris("src/test/resources/word97");}
+
+    @ParameterizedTest
+    @MethodSource("docxWithoutExtensionUris")
+    public void should_return_extension_mismatch_if_extension_passed_does_not_match(URI uri) throws IOException {
+        List<ApiResult> results = api.submit(uri, "pdf");
+
+        ApiResult result = results.getFirst();
+        assertThat(result.getExtension(), is("pdf"));
+        assertThat(result.getMethod(), is(IdentificationMethod.CONTAINER));
+        assertThat(result.getPuid(), is("fmt/40"));
+        assertThat(result.isFileExtensionMismatch(), is(true));
+    }
+
     @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest
     @MethodSource("correctExtensionUris")
