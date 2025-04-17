@@ -515,6 +515,7 @@ public class DroidMainFrame extends JFrame {
         });
 
         jButtonNewProfile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/New.png"))); // NOI18N
+        jButtonNewProfile.setName("New Profile");
         jButtonNewProfile.setText("New");
         jButtonNewProfile.setToolTipText("Create new profile");
         jButtonNewProfile.setFocusable(false);

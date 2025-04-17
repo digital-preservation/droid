@@ -177,6 +177,12 @@
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
+            <artifactId>assertj-swing</artifactId>
+            <version>3.9.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
             <artifactId>assertj-swing-junit</artifactId>
             <version>3.9.2</version>
             <scope>test</scope>
