@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - ui-tests-for-droid
   pull_request:
 
 jobs:
