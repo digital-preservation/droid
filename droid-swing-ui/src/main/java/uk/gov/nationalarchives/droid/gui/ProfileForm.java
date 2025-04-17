@@ -389,6 +389,7 @@ public class ProfileForm extends JPanel {
         jScrollPane1.setViewportView(resultsOutline);
 
         statusLabel.setLabelFor(statusProgressBar);
+        statusProgressBar.setName("profileProgressBar");
         statusLabel.setText(
                 org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.statusLabel.text")); // NOI18N
 

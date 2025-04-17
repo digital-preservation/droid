@@ -663,12 +663,14 @@ public class DroidMainFrame extends JFrame {
 
         jMenuFile.setMnemonic('F');
         jMenuFile.setText("File");
+        jMenuFile.setName("File");
         jMenuFile.setActionCommand("file");
         jMenuFile.addActionListener(evt -> jMenuFileActionPerformed(evt));
 
         jMenuItemNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/gov/nationalarchives/droid/OldIcons/New small.png"))); // NOI18N
         jMenuItemNew.setText("New");
+        jMenuItemNew.setName("New");
         jMenuItemNew.setToolTipText("New profile");
         jMenuItemNew.addActionListener(evt -> jMenuItemNewActionPerformed(evt));
         jMenuFile.add(jMenuItemNew);

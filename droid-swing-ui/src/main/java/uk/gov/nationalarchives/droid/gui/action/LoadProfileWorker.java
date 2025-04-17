@@ -85,7 +85,6 @@ public class LoadProfileWorker extends SwingWorker<ProfileInstance, Void> {
         this.profileManager = profileManager;
         this.context = context;
         this.tabbedPane = tabbedPane;
-
     }
     
     /**
