@@ -175,6 +175,18 @@
             <artifactId>org-openide-util</artifactId>
             <version>RELEASE250</version>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-swing</artifactId>
+            <version>3.17.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-swing-junit</artifactId>
+            <version>3.17.1</version>
+            <scope>test</scope>
+        </dependency>
         <!--
             droid-swing-ui has hotfix of org-netbeans-swing-outline:org.netbeans.swing.outline.TreePathSupport
             If you need to update this library:

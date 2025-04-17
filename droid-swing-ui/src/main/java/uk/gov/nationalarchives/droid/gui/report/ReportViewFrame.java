@@ -98,6 +98,7 @@ public class ReportViewFrame extends JFrame {
         //super(parent);
         //setModal(true);
         initComponents();
+        setName("Report view frame");
         URL icon = getClass().getResource("/uk/gov/nationalarchives/droid/icons/DROID16.gif");
         setIconImage(new ImageIcon(icon).getImage());
 
@@ -175,6 +176,7 @@ public class ReportViewFrame extends JFrame {
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(NbBundle.getMessage(ReportViewFrame.class, "ReportViewDialog.title")); // NOI18N
+        exportButton.setName("Report export button");
         exportButton.setText(NbBundle.getMessage(ReportViewFrame.class, "ReportViewDialog.exportButton.text")); // NOI18N
         exportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -182,6 +184,7 @@ public class ReportViewFrame extends JFrame {
             }
         });
 
+        closeButton.setName("Report export close");
         closeButton.setText(NbBundle.getMessage(ReportViewFrame.class, "ReportViewDialog.closeButton.text")); // NOI18N
         closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {

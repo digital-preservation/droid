@@ -50,9 +50,13 @@
                     <excludes>
                         <exclude>.idea/**</exclude>
                         <exclude>pom.xml</exclude>
+                        <exclude>/cli-tests/**</exclude>
+                        <exclude>/ui-tests/**</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>appveyor.yml</exclude>
                         <exclude>.gitattributes</exclude>
+                        <exclude>Dockerfile</exclude>
+                        <exclude>ui-test-startup.sh</exclude>
                         <exclude>.github/**</exclude>
                         <exclude>**/suppressions.xml</exclude>
                     </excludes>

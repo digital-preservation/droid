@@ -115,7 +115,7 @@
           <Group type="102" alignment="1" attributes="0">
               <Component id="jScrollPane1" pref="495" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel3" min="-2" pref="45" max="-2" attributes="0"/>
+              <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -160,7 +160,7 @@
                       <Component id="statusProgressPanel" alignment="0" min="-2" max="-2" attributes="1"/>
                       <Component id="progressPanel" alignment="0" min="-2" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="15" max="32767" attributes="0"/>
               </Group>
               <Component id="throttlePanel" alignment="1" max="32767" attributes="1"/>
           </Group>
@@ -206,6 +206,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JProgressBar" name="statusProgressBar">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="profileProgressBar" noResource="true"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

@@ -304,10 +304,14 @@
                         <exclude>**/resources/**</exclude>
                         <exclude>**/bin/</exclude>
                         <exclude>**/.github/**</exclude>
+                        <exclude>**/Dockerfile</exclude>
+                        <exclude>ui-test-startup.sh</exclude>
                         <exclude>pom.xml</exclude>
                         <exclude>**/pom.xml</exclude>
                         <exclude>header.txt</exclude>
                         <exclude>LICENSE</exclude>
+                        <exclude>/cli-tests/**</exclude>
+                        <exclude>/ui-tests/**</exclude>
                         <exclude>src-header.txt</exclude>
                         <exclude>**/test_sig_files/**</exclude>
                         <exclude>**/test-skeletons/**</exclude>
@@ -375,7 +379,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <excludes>**/*SwingUiTest.java</excludes>
                     <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                    <argLine>--add-opens=java.base/java.util=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
             <plugin>

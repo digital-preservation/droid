@@ -365,6 +365,7 @@ public class ExportDialog extends JDialog {
         jPanelBottomControl.setBorder(BorderFactory.createEmptyBorder(1, 1, 10, 1));
 
         cancelButton.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.cancelButton.text")); // NOI18N
+        cancelButton.setName("Export cancel");
         cancelButton.setVerticalAlignment(SwingConstants.BOTTOM);
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -373,6 +374,7 @@ public class ExportDialog extends JDialog {
         });
 
         exportButton.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.generateButton.text")); // NOI18N
+        exportButton.setName("Export profiles");
         exportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 exportButtonActionPerformed(evt);
@@ -382,10 +384,12 @@ public class ExportDialog extends JDialog {
         buttonGroup1.add(RadioOneRowPerFile);
         RadioOneRowPerFile.setSelected(true);
         RadioOneRowPerFile.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerFile.text")); // NOI18N
+        RadioOneRowPerFile.setName("One row per file"); // NOI18N
         RadioOneRowPerFile.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerFile.toolTipText")); // NOI18N
 
         buttonGroup1.add(RadioOneRowPerIdentification);
         RadioOneRowPerIdentification.setText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerIdentification.text")); // NOI18N
+        RadioOneRowPerIdentification.setName("One row per format");
         RadioOneRowPerIdentification.setToolTipText(NbBundle.getMessage(ExportDialog.class, "ExportDialog.RadioOneRowPerIdentification.toolTipText")); // NOI18N
 
         cmdEncoding.setModel(getOutputEncodings());

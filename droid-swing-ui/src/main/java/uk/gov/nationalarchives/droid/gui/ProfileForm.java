@@ -389,6 +389,7 @@ public class ProfileForm extends JPanel {
         jScrollPane1.setViewportView(resultsOutline);
 
         statusLabel.setLabelFor(statusProgressBar);
+        statusProgressBar.setName("profileProgressBar");
         statusLabel.setText(
                 org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.statusLabel.text")); // NOI18N
 
@@ -451,7 +452,7 @@ public class ProfileForm extends JPanel {
                         .addComponent(throttleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-
+        profileProgressBar.setName("profileProgress");
         profileProgressBar.setToolTipText(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.profileProgressBar.toolTipText")); // NOI18N
         profileProgressBar.setString(org.openide.util.NbBundle.getMessage(ProfileForm.class, "ProfileForm.profileProgressBar.string")); // NOI18N
         profileProgressBar.setStringPainted(true);
@@ -974,7 +975,10 @@ public class ProfileForm extends JPanel {
             final int rowIndex = resultsOutline.rowAtPoint(mousePoint);
             final int colModelIndex = resultsOutline.convertColumnIndexToModel(
                     resultsOutline.columnAtPoint(mousePoint));
-            final Object cellObject = resultsOutline.getValueAt(rowIndex, colIndex);
+            Object cellObject = null;
+            try {
+                cellObject = resultsOutline.getValueAt(rowIndex, colIndex);
+            } catch (AssertionError ignored) {}
             if (cellObject != null) {
                 String cellValue = cellObject.toString();
                 resultsOutline.setToolTipText(cellValue);

@@ -609,13 +609,14 @@ public class ConfigDialog extends JDialog {
                     .addComponent(jLabel4))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
-
+        generalTabbedPane1.setName("Preferences pane");
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel2.TabConstraints.tabTitle"), jPanel3); // NOI18N
 
         jPanel1.setBorder(BorderFactory.createTitledBorder(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel1.border.title_1"))); // NOI18N
 
         csvExportButtonGroup.add(rowPerFileButton1);
         rowPerFileButton1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton1.text")); // NOI18N
+        rowPerFileButton1.setName(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFileButton1.text")); // NOI18N
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ, this, ELProperty.create("${!globalConfig[\"export.rowPerFormat\"]}"),
@@ -624,6 +625,7 @@ public class ConfigDialog extends JDialog {
 
         csvExportButtonGroup.add(rowPerFormatButton1);
         rowPerFormatButton1.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFormatButton1.text")); // NOI18N
+        rowPerFormatButton1.setName(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.rowPerFormatButton1.text")); // NOI18N
 
         binding =
                 Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, this, ELProperty.create("${globalConfig[\"export.rowPerFormat\"]}"),
@@ -866,9 +868,11 @@ public class ConfigDialog extends JDialog {
         generalTabbedPane1.addTab(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.jPanel3.TabConstraints.tabTitle"), jPanel5); // NOI18N
 
         cancelButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.cancelButton.text")); // NOI18N
+        cancelButton.setName("Preferences cancel");
         cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
 
         okButton.setText(NbBundle.getMessage(ConfigDialog.class, "ConfigDialog.okButton.text")); // NOI18N
+        okButton.setName("Preferences ok");
         okButton.addActionListener(evt -> okButtonActionPerformed(evt));
 
         GroupLayout layout = new GroupLayout(getContentPane());

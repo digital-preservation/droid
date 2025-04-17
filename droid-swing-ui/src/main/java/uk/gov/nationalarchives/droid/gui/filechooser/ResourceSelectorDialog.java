@@ -177,7 +177,6 @@ public class ResourceSelectorDialog extends JDialog {
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) treeModel.getRoot();
-        
         File[] roots = fsv.getRoots();
         //File[] roots = File.listRoots();
         for (int i = 0; i < roots.length; i++) {
@@ -459,6 +458,7 @@ public class ResourceSelectorDialog extends JDialog {
         jSplitPane1.setDividerLocation(200);
 
         table.setModel(new DefaultTableModel());
+        table.setName("File system table");
         table.setFillsViewportHeight(true);
         table.setIntercellSpacing(new Dimension(4, 1));
         table.setShowHorizontalLines(false);
@@ -527,10 +527,12 @@ public class ResourceSelectorDialog extends JDialog {
 
         selectedFilesTextBox.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.jTextField1.text")); // NOI18N
         subfoldersCheckBox.setSelected(true);
+        subfoldersCheckBox.setName("Sub-folders checkbox");
 
 
         subfoldersCheckBox.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.jCheckBox1.text")); // NOI18N
         jLabel2.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.jLabel2.text")); // NOI18N
+        okButton.setName("Resource selector ok button");
         okButton.setText(NbBundle.getMessage(ResourceSelectorDialog.class, "ResourceSelector.okButton.text")); // NOI18N
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {

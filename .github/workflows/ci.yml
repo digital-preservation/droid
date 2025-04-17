@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - ui-tests-for-droid
   pull_request:
 
 jobs:
@@ -35,3 +36,25 @@ jobs:
           AWS_REGION: eu-west-2
           AWS_ACCESS_KEY_ID: test
           AWS_SECRET_ACCESS_KEY: test
+  ui-tests:
+    name: Run UI tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          docker build -t ui-tests -f ui-tests/Dockerfile .
+          docker run ui-tests
+  cli-tests:
+    name: Run CLI tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: 21
+          distribution: temurin
+      - run: |
+          mvn clean package -DskipTests=true
+          docker build -t cli-tests -f cli-tests/Dockerfile .
+          docker run -v "$PWD:/code" cli-tests /code/cli-tests/test

@@ -399,8 +399,8 @@ public class SignatureManagerImpl implements SignatureManager {
         
         final Map<SignatureType, SortedMap<String, SignatureFileInfo>> 
             availableSignatureFiles = getAvailableSignatureFiles();
-        
-        final String errorMessagePattern = 
+
+        final String errorMessagePattern =
             "Default signature file %s could not be found. Please check your signature settings.";
 
         for (Map.Entry<SignatureType, SortedMap<String, SignatureFileInfo>> sigFileEntry
