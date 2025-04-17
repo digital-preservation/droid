@@ -304,6 +304,7 @@
                         <exclude>**/resources/**</exclude>
                         <exclude>**/bin/</exclude>
                         <exclude>**/.github/**</exclude>
+                        <exclude>**/Dockerfile</exclude>
                         <exclude>pom.xml</exclude>
                         <exclude>**/pom.xml</exclude>
                         <exclude>header.txt</exclude>

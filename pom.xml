@@ -53,6 +53,7 @@
                         <exclude>LICENSE</exclude>
                         <exclude>appveyor.yml</exclude>
                         <exclude>.gitattributes</exclude>
+                        <exclude>Dockerfile</exclude>
                         <exclude>.github/**</exclude>
                         <exclude>**/suppressions.xml</exclude>
                     </excludes>

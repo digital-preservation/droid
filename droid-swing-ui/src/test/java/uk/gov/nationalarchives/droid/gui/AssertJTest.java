@@ -38,6 +38,8 @@ import static org.assertj.swing.finder.WindowFinder.findFrame;
 import static org.assertj.swing.launcher.ApplicationLauncher.*;
 import static org.assertj.swing.timing.Pause.pause;
 
+import org.assertj.swing.edt.GuiActionRunner;
+import org.assertj.swing.edt.GuiTask;
 import org.assertj.swing.fixture.*;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.assertj.swing.timing.Condition;
@@ -69,33 +71,8 @@ public class AssertJTest extends AssertJSwingJUnitTestCase {
         pause(condition);
     }
 
-    private void cleanProfiles() {
-        Path droidHomePath = Paths.get(System.getProperty("user.home"), ".droid6");
-        try {
-            FileUtils.deleteDirectory(droidHomePath.resolve("profiles").toFile());
-            FileUtils.deleteDirectory(droidHomePath.resolve("profile_templates").toFile());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private GenericTypeMatcher<JButton> matchButtonByText(String text) {
-        return new GenericTypeMatcher<>(JButton.class) {
-            @Override
-            protected boolean isMatching(JButton jButton) {
-                return jButton.getText().equals(text);
-            }
-        };
-    }
-
     @Override
     protected void onSetUp() {
-        cleanProfiles();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         application(DroidMainFrame.class).start();
         frame = findFrame(new GenericTypeMatcher<>(Frame.class, true) {
             protected boolean isMatching(Frame frame) {
