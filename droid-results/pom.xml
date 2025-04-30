@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>droid-parent</artifactId>
 		<groupId>uk.gov.nationalarchives</groupId>
-		<version>6.8.2-SNAPSHOT</version>
+		<version>6.9.0-RC2-SNAPSHOT</version>
 		<relativePath>../droid-parent</relativePath>
 	</parent>
 
@@ -363,6 +363,11 @@
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>s3</artifactId>
+			<version>${aws.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>sdk-core</artifactId>
 			<version>${aws.version}</version>
 		</dependency>
 		<dependency>

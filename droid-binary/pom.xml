@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.8.2-SNAPSHOT</version>
+        <version>6.9.0-RC2-SNAPSHOT</version>
   	    <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -34,7 +34,7 @@
                         </goals>
                         <configuration>
                             <!-- To update, retrieve link for 64 bit Windows jre from https://adoptium.net -->
-                            <url>https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jre_x64_windows_hotspot_21.0.5_11.zip</url>
+                            <url>https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7%2B6/OpenJDK21U-jre_x64_windows_hotspot_21.0.7_6.zip</url>
                             <unpack>false</unpack>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
@@ -55,9 +55,9 @@
                         <configuration>
                             <target>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK21U-jre_x64_windows_hotspot_21.0.5_11.zip" />
+                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK21U-jre_x64_windows_hotspot_21.0.7_6.zip" />
                                 <move todir="${project.build.directory}/jre-windows/">
-                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-21.0.5+11-jre/">
+                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-21.0.7+6-jre/">
                                         <include name="**/*" />
                                     </fileset>
                                 </move>

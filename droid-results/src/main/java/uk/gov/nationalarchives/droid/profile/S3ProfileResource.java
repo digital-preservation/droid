@@ -37,6 +37,7 @@ import java.nio.file.Path;
 import java.util.Date;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.services.s3.S3Utilities;
@@ -103,7 +104,12 @@ public class S3ProfileResource extends FileProfileResource {
 
     public static boolean isS3uri(String candidateS3uri) {
         try {
-            Region region = DefaultAwsRegionProviderChain.builder().build().getRegion();
+            Region region;
+            try {
+                region = DefaultAwsRegionProviderChain.builder().build().getRegion();
+            } catch (SdkClientException sce) {
+                region = Region.EU_WEST_2;
+            }
             S3Utilities.builder().region(region).build().parseUri(URI.create(replaceSpaces(candidateS3uri)));
             return true;
         } catch (IllegalArgumentException e) {
