@@ -21,7 +21,7 @@
     </scm>
 
     <properties>
-        <openhtml.version>1.1.26</openhtml.version>
+        <openhtml.version>1.1.28</openhtml.version>
     </properties>
   
     <build>
@@ -86,10 +86,6 @@
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.openhtmltopdf</groupId>

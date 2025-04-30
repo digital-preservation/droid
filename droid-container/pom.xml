@@ -111,10 +111,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-        </dependency>
-        <dependency>
             <groupId>net.byteseek</groupId>
             <artifactId>byteseek</artifactId>
         </dependency>
@@ -145,7 +141,7 @@
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>3.12.1</version>
+            <version>3.13.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
