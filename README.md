@@ -1,4 +1,4 @@
-# DROID (Digital Record Object Identification) 
+# DROID (Digital Record Object Identification)  
 
 [![CI](https://github.com/digital-preservation/droid/workflows/CI/badge.svg)](https://github.com/digital-preservation/droid/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/github/digital-preservation/droid/badge.svg?branch=master)](https://coveralls.io/github/digital-preservation/droid?branch=master)
