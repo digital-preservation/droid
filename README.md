@@ -169,3 +169,4 @@ The full syntax can be used in either binary or container signature files.
 ## Developer related guidance
 
 For any detais about contributing, testing, releasing, please check the [wiki](https://github.com/digital-preservation/droid/wiki)
+
