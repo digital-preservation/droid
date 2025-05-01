@@ -171,6 +171,48 @@ public class ItemWriterImplTest {
         }
     }
 
+    @Test
+    public void should_write_node_file_name_with_space_at_the_end() throws IOException {
+        when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
+
+        try(final Writer writer = new StringWriter()) {
+            List<ProfileResourceNode> nodes = new ArrayList<>();
+            Format id = buildFormat(1);
+            File f = isNotWindows() ? new File("/my/file1.txt  ") : new File("C:/my/file1.txt  ");
+            ProfileResourceNode node = buildProfileResourceNode(1, 1001L, f.toURI());
+            node.addFormatIdentification(id);
+            nodes.add(node);
+            itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
+            itemWriter.open(writer);
+            itemWriter.write(nodes);
+
+            final String expectedEntry = toCsvRow(new String[]{
+                    "", "",
+                    isNotWindows() ? "file:/my/file1.txt%20%20" : "file:/C:/my/file1.txt%20%20",
+                    isNotWindows() ? "/my/file1.txt  " : "C:\\my\\file1.txt  ",
+                    "file1.txt",
+                    "Signature",
+                    "Done",
+                    "1001",
+                    "File",
+                    "foo",
+                    testDateTimeString,
+                    "false",
+                    "11111111111111111111111111111111",
+                    "1",
+                    "fmt/1",
+                    "text/plain",
+                    "Plain Text",
+                    "1.0",
+            });
+
+            final String[] lines = writer.toString().split(LINE_SEPARATOR);
+            assertEquals(2, lines.length);
+            assertEquals(defaultHeaders, lines[0]);
+            assertEquals(expectedEntry, lines[1]);
+        }
+    }
+
 
     @Test
     public void should_write_one_node_as_one_row_per_format_export() throws IOException {
