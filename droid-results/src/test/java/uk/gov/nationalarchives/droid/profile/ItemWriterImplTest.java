@@ -178,7 +178,7 @@ public class ItemWriterImplTest {
         try(final Writer writer = new StringWriter()) {
             List<ProfileResourceNode> nodes = new ArrayList<>();
             Format id = buildFormat(1);
-            File f = isNotWindows() ? new File("/my/file1.txt ") : new File("C:/my/file1.txt ");
+            File f = isNotWindows() ? new File("/my/file1.txt  ") : new File("C:/my/file1.txt  ");
             ProfileResourceNode node = buildProfileResourceNode(1, 1001L, f.toURI());
             node.addFormatIdentification(id);
             nodes.add(node);
@@ -188,8 +188,8 @@ public class ItemWriterImplTest {
 
             final String expectedEntry = toCsvRow(new String[]{
                     "", "",
-                    isNotWindows() ? "file:/my/file1.txt%20" : "file:/C:/my/file1.txt%20",
-                    isNotWindows() ? "/my/file1.txt " : "C:\\my\\file1.txt ",
+                    isNotWindows() ? "file:/my/file1.txt%20%20" : "file:/C:/my/file1.txt%20%20",
+                    isNotWindows() ? "/my/file1.txt  " : "C:\\my\\file1.txt  ",
                     "file1.txt",
                     "Signature",
                     "Done",

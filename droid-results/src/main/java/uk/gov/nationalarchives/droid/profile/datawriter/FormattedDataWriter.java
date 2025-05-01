@@ -89,6 +89,16 @@ public abstract  class FormattedDataWriter {
         return FilenameUtils.getName(name);
     }
 
+    private int countCharactersAtEndOfFileUri(URI uri, String character) {
+        String uriString = uri.toString();
+        int count = 0;
+        while (uriString.endsWith(character)) {
+            count++;
+            uriString = uriString.substring(0, uriString.length() - character.length());
+        }
+        return count;
+    }
+
     protected String toFilePath(URI uri) {
         if (uri == null) {
             log.warn("[URI not set]");
@@ -97,8 +107,9 @@ public abstract  class FormattedDataWriter {
         if (WriterConstants.FILE_URI_SCHEME.equals(uri.getScheme())) {
             String uriString = uri.toString();
             String urlSpace = "%20";
-            if (uriString.endsWith(urlSpace) && SystemUtils.IS_OS_WINDOWS) {
-                return Paths.get(URI.create(uriString.substring(0, uriString.length() - urlSpace.length()))).toAbsolutePath() + " ";
+            int spaceCount = countCharactersAtEndOfFileUri(uri, urlSpace);
+            if (spaceCount > 0 && !SystemUtils.IS_OS_WINDOWS) {
+                return Paths.get(URI.create(uriString.substring(0, uriString.length() - urlSpace.length() * spaceCount))).toAbsolutePath() + String.format("%" + spaceCount + "s", "");
             }
             return Paths.get(uri).toAbsolutePath().toString();
         }
