@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.univocity.parsers.csv.CsvWriter;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +95,11 @@ public abstract  class FormattedDataWriter {
             return WriterConstants.EMPTY_STRING;
         }
         if (WriterConstants.FILE_URI_SCHEME.equals(uri.getScheme())) {
+            String uriString = uri.toString();
+            String urlSpace = "%20";
+            if (uriString.endsWith(urlSpace) && SystemUtils.IS_OS_WINDOWS) {
+                return Paths.get(URI.create(uriString.substring(0, uriString.length() - urlSpace.length()))).toAbsolutePath().toString();
+            }
             return Paths.get(uri).toAbsolutePath().toString();
         }
 
