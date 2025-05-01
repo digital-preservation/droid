@@ -189,7 +189,7 @@ public class ItemWriterImplTest {
             final String expectedEntry = toCsvRow(new String[]{
                     "", "",
                     isNotWindows() ? "file:/my/file1.txt%20" : "file:/C:/my/file1.txt%20",
-                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+                    isNotWindows() ? "/my/file1.txt " : "C:\\my\\file1.txt ",
                     "file1.txt",
                     "Signature",
                     "Done",

@@ -98,7 +98,7 @@ public abstract  class FormattedDataWriter {
             String uriString = uri.toString();
             String urlSpace = "%20";
             if (uriString.endsWith(urlSpace) && SystemUtils.IS_OS_WINDOWS) {
-                return Paths.get(URI.create(uriString.substring(0, uriString.length() - urlSpace.length()))).toAbsolutePath().toString();
+                return Paths.get(URI.create(uriString.substring(0, uriString.length() - urlSpace.length()))).toAbsolutePath() + " ";
             }
             return Paths.get(uri).toAbsolutePath().toString();
         }
