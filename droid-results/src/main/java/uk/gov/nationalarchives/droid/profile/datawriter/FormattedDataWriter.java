@@ -171,8 +171,10 @@ public abstract  class FormattedDataWriter {
 
         public void completeStream() {
             try {
-                jsonGenerator.writeEndArray();
-                jsonGenerator.flush();
+                if (jsonGenerator.getOutputContext().inArray()) {
+                    jsonGenerator.writeEndArray();
+                    jsonGenerator.flush();
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
