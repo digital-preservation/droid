@@ -40,7 +40,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
@@ -103,16 +102,11 @@ public class ItemWriterImplTest {
         File destination = new File(dir, "test1.csv");
         destination.delete();
         itemWriter = new ItemWriterImpl();
-        
+
         config = mock(DroidGlobalConfig.class);
         itemWriter.setConfig(config);
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
         testDateTimeString = dtf.print(testDateTime);
-    }
-
-    @After
-    public void tearDown() {
-        itemWriter.close();
     }
 
     private static String toCsvRow(final String[] values) {
@@ -149,6 +143,7 @@ public class ItemWriterImplTest {
             List<ProfileResourceNode> nodes = new ArrayList<>();
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             String[] writtenLines = writer.toString().split(LINE_SEPARATOR);
             assertEquals(1, writtenLines.length);
@@ -164,6 +159,7 @@ public class ItemWriterImplTest {
             List<ProfileResourceNode> nodes = new ArrayList<>();
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             String[] writtenLines = writer.toString().split(LINE_SEPARATOR);
             assertEquals(1, writtenLines.length);
@@ -227,6 +223,7 @@ public class ItemWriterImplTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedEntry = toCsvRow(new String[] {
                     "", "",
@@ -268,6 +265,7 @@ public class ItemWriterImplTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedEntry = toJsonRow(defaultHeadersArray, new Object[] {
                     null, null,
@@ -310,6 +308,7 @@ public class ItemWriterImplTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedEntry = toCsvRow(new String[] {
                     "", "",
@@ -353,6 +352,7 @@ public class ItemWriterImplTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedEntry = toJsonRow(defaultHeadersArray, new Object[] {
                     null, null,
@@ -395,6 +395,7 @@ public class ItemWriterImplTest {
             nodes.add(node);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedEntry = toCsvRow(new String[] {
                     "", "",
@@ -438,6 +439,7 @@ public class ItemWriterImplTest {
             nodes.add(node);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedEntry = toJsonRow(defaultHeadersArray, new Object[] {
                     null, null,
@@ -484,6 +486,7 @@ public class ItemWriterImplTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedHeaders = toCsvRow(new String[] {
                     "ID","PARENT_ID","URI","FILE_PATH","NAME","METHOD","STATUS","SIZE","TYPE","EXT","LAST_MODIFIED","EXTENSION_MISMATCH","HASH","FORMAT_COUNT",
@@ -542,6 +545,7 @@ public class ItemWriterImplTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FILE);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] expectedHeaders = new String[] {
                     "ID","PARENT_ID","URI","FILE_PATH","NAME","METHOD","STATUS","SIZE","TYPE","EXT","LAST_MODIFIED","EXTENSION_MISMATCH","HASH","FORMAT_COUNT",
@@ -618,6 +622,7 @@ public class ItemWriterImplTest {
             itemWriter.setExportTemplate(template);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedHeaders = toCsvRow(new String[] {
                     "Identifier", "Puid", "Puid1", "Hash123", "Format_Name", "Format_Name1", "Simple_Header"
@@ -669,6 +674,7 @@ public class ItemWriterImplTest {
             itemWriter.setExportTemplate(template);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] expectedHeaders = new String[] {
                     "Identifier", "Puid", "Puid1", "Hash123", "Format_Name", "Format_Name1", "Simple_Header"
@@ -717,6 +723,7 @@ public class ItemWriterImplTest {
             itemWriter.setExportTemplate(template);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedHeaders = toCsvRow(new String[] {
                     "Identifier", "Language", "Format_Name"
@@ -770,6 +777,7 @@ public class ItemWriterImplTest {
             itemWriter.setExportTemplate(template);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] expectedHeaders = new String[] {
                     "Identifier", "Language", "Format_Name"
@@ -823,6 +831,7 @@ public class ItemWriterImplTest {
             itemWriter.setExportTemplate(template);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedHeaders = toCsvRow(new String[] {
                     "Identifier", "Language", "Format_Name"
@@ -877,6 +886,7 @@ public class ItemWriterImplTest {
             itemWriter.setExportTemplate(template);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] expectedHeaders = new String[] {
                     "Identifier", "Language", "Format_Name"
@@ -916,6 +926,7 @@ public class ItemWriterImplTest {
             itemWriter.setColumnsToWrite("ID FORMAT_NAME");
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedHeaders = toCsvRow(new String[] {
                     "ID", "FORMAT_NAME", "FORMAT_NAME1" //per format columns
@@ -954,6 +965,7 @@ public class ItemWriterImplTest {
             itemWriter.setColumnsToWrite("ID FORMAT_NAME");
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] expectedHeaders = new String[] {
                     "ID", "FORMAT_NAME", "FORMAT_NAME1" //per format columns
@@ -992,6 +1004,7 @@ public class ItemWriterImplTest {
             itemWriter.setColumnsToWrite("ID NAME FORMAT_NAME FORMAT_VERSION");
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedHeaders = toCsvRow(new String[] {
                     "ID", "NAME", "FORMAT_NAME", "FORMAT_VERSION" //per format columns
@@ -1032,6 +1045,7 @@ public class ItemWriterImplTest {
             itemWriter.setColumnsToWrite("ID NAME FORMAT_NAME FORMAT_VERSION");
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] expectedHeaders = new String[] {
                     "ID", "NAME", "FORMAT_NAME", "FORMAT_VERSION" //per format columns
@@ -1072,6 +1086,7 @@ public class ItemWriterImplTest {
             itemWriter.setColumnsToWrite("ID NAME FORMAT_NAME HASH");
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedHeaders = toCsvRow(new String[] {
                     "ID", "NAME", "XTRA_STRONG_HASH", "FORMAT_NAME"
@@ -1113,6 +1128,7 @@ public class ItemWriterImplTest {
             itemWriter.setColumnsToWrite("ID NAME FORMAT_NAME HASH");
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] expectedHeaders = new String[] {
                     "ID", "NAME", "XTRA_STRONG_HASH", "FORMAT_NAME"
@@ -1153,6 +1169,7 @@ public class ItemWriterImplTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedEntry1 = toCsvRow(new String[] {
                     "", "",
@@ -1221,6 +1238,7 @@ public class ItemWriterImplTest {
             itemWriter.setOutputOptions(ExportOutputOptions.JSON_OUTPUT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final Object[] expectedEntry1 = new Object[] {
                     null, null,
@@ -1287,6 +1305,7 @@ public class ItemWriterImplTest {
 
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] lines = writer.toString().split("\n");
 
@@ -1310,6 +1329,7 @@ public class ItemWriterImplTest {
 
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] lines = writer.toString().split("\n");
 
@@ -1339,6 +1359,7 @@ public class ItemWriterImplTest {
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
             final String[] lines = writer.toString().split(LINE_SEPARATOR);
             String expectedFilePath = isNotWindows() ?
                     "\"7z:/home/user/test-data/droid/archives/samples.7z!/Screenshot from 2020-01-22 21-36-16.png\"" :
@@ -1373,6 +1394,7 @@ public class ItemWriterImplTest {
             itemWriter.setOutputOptions(ExportOutputOptions.JSON_OUTPUT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
             final String[] lines = writer.toString().split(LINE_SEPARATOR);
 
             JsonNode jsonNode = new ObjectMapper().readTree(lines[0]);
@@ -1416,6 +1438,7 @@ public class ItemWriterImplTest {
             itemWriter.setColumnsToWrite("ID PUID FORMAT_NAME METHOD");
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String expectedHeaders = toCsvRow(new String[] {
                     "ID","METHOD","PUID","FORMAT_NAME","PUID1","FORMAT_NAME1"
@@ -1474,6 +1497,7 @@ public class ItemWriterImplTest {
             itemWriter.setColumnsToWrite("ID PUID FORMAT_NAME METHOD");
             itemWriter.open(writer);
             itemWriter.write(nodes);
+            itemWriter.close();
 
             final String[] expectedHeaders = new String[] {
                     "ID","METHOD","PUID","FORMAT_NAME","PUID1","FORMAT_NAME1"
@@ -1535,9 +1559,9 @@ public class ItemWriterImplTest {
     private static boolean isNotWindows() {
         return !SystemUtils.IS_OS_WINDOWS;
     }
-    
+
     private static ProfileResourceNode buildProfileResourceNode(int i, Long size) {
-        
+
         File f = isNotWindows() ? new File("/my/file" + i + ".txt") : new File("C:/my/file" + i + ".txt");
         return buildProfileResourceNode(i, size, f.toURI());
     }
@@ -1559,7 +1583,7 @@ public class ItemWriterImplTest {
         return node;
     }
 
-    
+
     private static Format buildFormat(int i) {
         return buildFormat(i, "1.0");
     }
