@@ -62,6 +62,7 @@ import org.assertj.swing.core.Robot;
 
 import static org.assertj.swing.timing.Pause.pause;
 import static org.junit.Assert.assertEquals;
+import static uk.gov.nationalarchives.droid.gui.ui.SwingUiTest.TEST_HOME;
 
 public class SwingUiTestUtils {
     
@@ -87,9 +88,9 @@ public class SwingUiTestUtils {
         }
     };
 
-    void waitForProgressLabelInvisible(JLabelFixture labelFixture) {
+    void waitForInvisibleProgressLabel(JLabelFixture labelFixture) {
 
-        Condition condition = new Condition("Wait for invisible initialising progress bar label") {
+        Condition condition = new Condition("Wait for invisible 'initialising' progress bar label") {
             public boolean test() {
                 return !labelFixture.target().isVisible();
             }
@@ -134,7 +135,7 @@ public class SwingUiTestUtils {
 
     void runProfile() {
         frame.button("Add File").click();
-        String path = "/home/test/test-subfolders";
+        String path = TEST_HOME + "/test-subfolders";
         selectFolder(path);
         frame.button("Start").click();
         waitForProfileProgressBarRemovedOrCompleted();
@@ -197,7 +198,7 @@ public class SwingUiTestUtils {
     }
 
     List<ResultRow> getResultRows() {
-        return getResultRows(true, List.of("/home/test"));
+        return getResultRows(true, List.of(TEST_HOME));
     }
 
     List<ResultRow> getResultRows(boolean waitForProgressBar, List<String> cellsToClick) {

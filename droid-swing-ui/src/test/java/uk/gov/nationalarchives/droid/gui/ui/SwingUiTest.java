@@ -72,6 +72,8 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     private FrameFixture frame;
     private SwingUiTestUtils utils;
 
+    static final String TEST_HOME = "/home/test";
+
     @Override
     protected void onSetUp() {
         setAutoUpdateFalse();
@@ -86,7 +88,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
         frame.target().setLocation(0, 0);
         frame.resizeTo(screenSize);
         utils = new SwingUiTestUtils(frame, robot());
-        utils.waitForProgressLabelInvisible(frame.label(progressBarMatcher));
+        utils.waitForInvisibleProgressLabel(frame.label(progressBarMatcher));
         robot().waitForIdle();
     }
 
@@ -97,7 +99,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
         var newProfilePanels = utils.getProfilePanels();
         newProfilePanels.stream()
                 .filter(Component::isShowing)
-                .forEach(panel -> utils.waitForProgressLabelInvisible(frame.panel(panel.getName()).label(progressBarMatcher)));
+                .forEach(panel -> utils.waitForInvisibleProgressLabel(frame.panel(panel.getName()).label(progressBarMatcher)));
         Assert.assertEquals(utils.getProfilePanels().size(), existingPanelCount + 1);
         robot().waitForIdle();
     }
@@ -111,7 +113,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
         var newProfilePanels = utils.getProfilePanels();
         newProfilePanels.stream()
                 .filter(Component::isShowing)
-                .forEach(panel -> utils.waitForProgressLabelInvisible(frame.panel(panel.getName()).label(progressBarMatcher)));
+                .forEach(panel -> utils.waitForInvisibleProgressLabel(frame.panel(panel.getName()).label(progressBarMatcher)));
         Assert.assertEquals(utils.getProfilePanels().size(), existingPanelCount + 1);
         robot().waitForIdle();
     }
@@ -123,7 +125,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
         var newProfilePanels = utils.getProfilePanels();
         newProfilePanels.stream()
                 .filter(Component::isShowing)
-                .forEach(panel -> utils.waitForProgressLabelInvisible(frame.panel(panel.getName()).label(progressBarMatcher)));
+                .forEach(panel -> utils.waitForInvisibleProgressLabel(frame.panel(panel.getName()).label(progressBarMatcher)));
         Assert.assertEquals(utils.getProfilePanels().size(), existingPanelCount + 1);
         robot().waitForIdle();
     }
@@ -131,8 +133,8 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     @Test
     public void should_add_files_with_add_files_button() {
         frame.button("Add File").click();
-        utils.selectFolder("/home/test");
-        List<SwingUiTestUtils.ResultRow> resultRows = utils.getResultRows(false, List.of("/home/test"));
+        utils.selectFolder(TEST_HOME);
+        List<SwingUiTestUtils.ResultRow> resultRows = utils.getResultRows(false, List.of(TEST_HOME));
         Assert.assertEquals(resultRows.size(), 1);
     }
 
@@ -140,15 +142,15 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     public void should_add_files_with_edit_menu() {
         utils.selectMenuItem("Edit", "Add file/folders");
 
-        utils.selectFolder("/home/test");
-        List<SwingUiTestUtils.ResultRow> resultRows = utils.getResultRows(false, List.of("/home/test"));
+        utils.selectFolder(TEST_HOME);
+        List<SwingUiTestUtils.ResultRow> resultRows = utils.getResultRows(false, List.of(TEST_HOME));
         Assert.assertEquals(resultRows.size(), 1);
     }
 
     @Test
     public void should_show_correct_results_on_10000_files() {
         frame.button("Add File").click();
-        utils.selectFolder("/home/test");
+        utils.selectFolder(TEST_HOME);
         frame.button("Start").click();
         List<SwingUiTestUtils.ResultRow> resultRows = utils.getResultRows().stream().filter(row -> !row.puid().isEmpty()).toList();
         for (SwingUiTestUtils.ResultRow resultRow : resultRows) {
@@ -160,14 +162,14 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
             assertEquals(resultRow.ids(), "1");
             assertEquals(resultRow.size(), "5");
             assertEquals(resultRow.extension(), "txt");
-            assertTrue(resultRow.resource().startsWith("/home/test/file-"));
+            assertTrue(resultRow.resource().startsWith(TEST_HOME + "/file-"));
         }
 
     }
 
     @Test
     public void should_show_subfolders_by_default() {
-        String path = "/home/test/test-subfolders";
+        String path = TEST_HOME + "/test-subfolders";
         frame.button("Add File").click();
         utils.selectFolder(path);
         frame.button("Start").click();
@@ -182,7 +184,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
 
     @Test
     public void should_not_show_subfolders_if_box_unchecked() {
-        String path = "/home/test/test-subfolders";
+        String path = TEST_HOME + "/test-subfolders";
         frame.button("Add File").click();
         utils.selectFolder(path, false);
         frame.button("Start").click();
@@ -193,7 +195,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     @Test
     public void should_remove_files_when_remove_is_clicked() {
         frame.button("Add File").click();
-        String path = "/home/test";
+        String path = TEST_HOME;
         utils.selectFolder(path);
         JTableFixture resultsTableFixture = utils.getResultsTableFixture();
         resultsTableFixture.cell(path).click();
@@ -205,7 +207,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     @Test
     public void should_remove_files_when_edit_remove_is_clicked() {
         frame.button("Add File").click();
-        String path = "/home/test";
+        String path = TEST_HOME;
         utils.selectFolder(path);
         JTableFixture resultsTableFixture = utils.getResultsTableFixture();
         resultsTableFixture.cell(path).click();
@@ -217,7 +219,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     @Test
     public void pause_and_resume_button_should_pause_and_resume() {
         frame.button("Add File").click();
-        utils.selectFolder("/home/test");
+        utils.selectFolder(TEST_HOME);
         JButtonFixture startButton = frame.button("Start");
         JButtonFixture pauseButton = frame.button("Pause");
         startButton.click();
@@ -235,7 +237,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     @Test
     public void pause_and_resume_menu_items_should_pause_and_resume() {
         frame.button("Add File").click();
-        utils.selectFolder("/home/test");
+        utils.selectFolder(TEST_HOME);
         JMenuItemFixture runMenuItem = frame.menuItem("Run");
         JMenuItemFixture startIdentification = frame.menuItem("Start identification");
         JMenuItemFixture pauseIdentification = frame.menuItem("Pause identification");
@@ -258,7 +260,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     public void a_paused_profile_can_be_saved_loaded_and_resumed() {
         String fileName = UUID.randomUUID().toString();
         frame.button("Add File").click();
-        utils.selectFolder("/home/test");
+        utils.selectFolder(TEST_HOME);
         JButtonFixture startButton = frame.button("Start");
         JButtonFixture pauseButton = frame.button("Pause");
         JButtonFixture saveButton = frame.button("Save");
@@ -283,7 +285,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     public void profiles_can_be_saved_with_ctrl_s() throws IOException {
         String fileName = UUID.randomUUID().toString();
         frame.button("Add File").click();
-        utils.selectFolder("/home/test");
+        utils.selectFolder(TEST_HOME);
         robot().pressKey(KeyEvent.VK_CONTROL);
         robot().pressAndReleaseKey(KeyEvent.VK_S);
         robot().releaseKey(KeyEvent.VK_CONTROL);
@@ -293,7 +295,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
         saveProfileFileChooser.fileNameTextBox().enterText(fileName);
         saveProfileFileChooser.approve();
         Path profileFilePath = profileDirectory.resolve(fileName + ".droid");
-        utils.waitForProgressLabelInvisible(frame.label(saveProfileMatcher));
+        utils.waitForInvisibleProgressLabel(frame.label(saveProfileMatcher));
         assertTrue(Files.exists(profileFilePath));
         Files.deleteIfExists(profileFilePath);
     }
@@ -310,7 +312,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
         saveAsProfileFileChooser.fileNameTextBox().enterText(fileName);
         saveAsProfileFileChooser.approve();
 
-        utils.waitForProgressLabelInvisible(frame.label(saveProfileMatcher));
+        utils.waitForInvisibleProgressLabel(frame.label(saveProfileMatcher));
         assertTrue(Files.exists(profileFilePath));
         Files.deleteIfExists(profileFilePath);
     }
@@ -318,7 +320,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     @Test
     public void should_copy_results_information_to_clipboard() throws IOException, UnsupportedFlavorException {
         frame.button("Add File").click();
-        String path = "/home/test/test-subfolders";
+        String path = TEST_HOME + "/test-subfolders";
         utils.selectFolder(path);
         frame.button("Start").click();
         JTableFixture resultsTableFixture = utils.getResultsTableFixture();
@@ -403,7 +405,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
         frame.button("New Profile").click();
         utils.getProfilePanels().stream()
                 .filter(Component::isShowing)
-                .forEach(panel -> utils.waitForProgressLabelInvisible(frame.panel(panel.getName()).label(progressBarMatcher)));
+                .forEach(panel -> utils.waitForInvisibleProgressLabel(frame.panel(panel.getName()).label(progressBarMatcher)));
         frame.button("Report").click();
         DialogFixture reportDialog = utils.findVisibleDialog();
         JTableFixture profileSelectTable = reportDialog.table("Profile select table");

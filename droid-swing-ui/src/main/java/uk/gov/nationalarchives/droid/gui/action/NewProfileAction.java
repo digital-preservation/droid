@@ -147,7 +147,6 @@ public class NewProfileAction extends SwingWorker<Void, Void> implements ExitLis
     
     @Override
     protected Void doInBackground() {
-
         profileManager.openProfile(profile.getUuid());
         return null;
 
