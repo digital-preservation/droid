@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FFSignatureFile xmlns="http://www.nationalarchives.gov.uk/pronom/SignatureFile" Version="1" DateCreated="2025-04-25T13:32:13">
+ <InternalSignatureCollection>
+  <InternalSignature ID="2" Specificity="Specific">
+   <ByteSequence Reference="BOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="0" SubSeqMaxOffset="4">
+     <Sequence>504B0304</Sequence>
+    </SubSequence>
+   </ByteSequence>
+   <ByteSequence Reference="EOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="61" SubSeqMaxOffset="65565">
+     <Sequence>504B01</Sequence>
+    </SubSequence>
+   </ByteSequence>
+   <ByteSequence Reference="EOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="0" SubSeqMaxOffset="65535">
+     <Sequence>504B0506</Sequence>
+    </SubSequence>
+   </ByteSequence>
+  </InternalSignature>
+  <InternalSignature ID="3" Specificity="Specific">
+   <ByteSequence Reference="BOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+     <Sequence>504B0304</Sequence>
+    </SubSequence>
+   </ByteSequence>
+   <ByteSequence Reference="BOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="4" SubSeqMaxOffset="30">
+     <Sequence>5B436F6E74656E745F54797065735D2E786D6C20A2</Sequence>
+    </SubSequence>
+   </ByteSequence>
+   <ByteSequence Reference="EOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="0" SubSeqMaxOffset="65535">
+     <Sequence>504B0102</Sequence>
+    </SubSequence>
+   </ByteSequence>
+   <ByteSequence Reference="EOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="0" SubSeqMaxOffset="65535">
+     <Sequence>504B0506</Sequence>
+    </SubSequence>
+   </ByteSequence>
+  </InternalSignature>
+  <InternalSignature ID="4" Specificity="Specific">
+   <ByteSequence Reference="BOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+     <Sequence>D0CF11E0A1B11AE1</Sequence>
+    </SubSequence>
+   </ByteSequence>
+   <ByteSequence Reference="BOFoffset">
+    <SubSequence Position="1" MinFragLength="0" SubSeqMinOffset="0" SubSeqMaxOffset="28">
+     <Sequence>FEFF</Sequence>
+    </SubSequence>
+   </ByteSequence>
+  </InternalSignature>
+ </InternalSignatureCollection>
+ <FileFormatCollection>
+  <FileFormat ID="100" Name="Development Signature" PUID="dev/1" Version="1.0" MIMEType="application/zip">
+   <Extension>test</Extension>
+  </FileFormat>
+  <FileFormat ID="2" Name="ZIP Format" PUID="x-fmt/263" Version="" MIMEType="application/zip">
+   <InternalSignatureID>2</InternalSignatureID>
+   <Extension>zip</Extension>
+  </FileFormat>
+  <FileFormat ID="3" Name="Microsoft Office Open XML" PUID="fmt/189" Version="" MIMEType="application/octet-stream">
+   <InternalSignatureID>3</InternalSignatureID>
+  </FileFormat>
+  <FileFormat ID="4" Name="OLE2 Compound Document Format" PUID="fmt/111" Version="" MIMEType="application/octet-stream">
+   <InternalSignatureID>4</InternalSignatureID>
+  </FileFormat>
+ </FileFormatCollection>
+</FFSignatureFile>
