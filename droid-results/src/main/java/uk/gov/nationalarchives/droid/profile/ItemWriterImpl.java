@@ -180,7 +180,9 @@ public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
     @Override
     public void open(final Writer outputWriter) {
         this.writer = outputWriter;
-        this.outputJson = new FormattedDataWriter.OutputJson(outputWriter);
+        if (outputOptions == ExportOutputOptions.JSON_OUTPUT) {
+            this.outputJson = new FormattedDataWriter.OutputJson(outputWriter);
+        }
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
         csvWriterSettings.setQuoteAllFields(quoteAllFields);
         CsvFormat format = new CsvFormat();
@@ -209,7 +211,9 @@ public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
     @Override
     public void close() {
         try {
-            outputJson.completeStream();
+            if (outputJson != null) {
+                outputJson.completeStream();
+            }
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
