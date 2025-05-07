@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ContainerSignatureMapping SchemaVersion="1.0" SignatureVersion="1">
+  <ContainerSignatures>
+    <ContainerSignature Id="100" ContainerType="ZIP">
+      <Description>Test</Description>
+      <Files>
+        <File>
+          <Path>test</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="100">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0"
+                               SubSeqMaxOffset="4096">
+                    <Sequence>'TEST'</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+      </Files>
+    </ContainerSignature>
+  </ContainerSignatures>
+  <FileFormatMappings>
+    <FileFormatMapping signatureId="100" Puid="dev/1"/>
+  </FileFormatMappings>
+  <TriggerPuids>
+    <TriggerPuid ContainerType="OLE2" Puid="fmt/111"/>
+    <TriggerPuid ContainerType="ZIP" Puid="fmt/189"/>
+    <TriggerPuid ContainerType="ZIP" Puid="x-fmt/263"/>
+  </TriggerPuids>
+</ContainerSignatureMapping>
+

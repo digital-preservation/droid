@@ -98,6 +98,8 @@ public class ReportProgressDialog extends JDialog implements ProgressObserver {
         progressBar = new JProgressBar();
         cancelButton = new JButton();
 
+        progressBar.setName("Generate report progress bar");
+
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel1.setText(NbBundle.getMessage(ReportProgressDialog.class, "ReportProgressDialog.jLabel1.text")); // NOI18N

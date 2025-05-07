@@ -121,8 +121,9 @@ public class ReportDialog extends JDialog {
             tableModel.addRow(row);
         }
         
+        profileSelectTable.setName("Profile select table");
         profileSelectTable.setModel(tableModel);
-        
+
         profileSelectTable.setDefaultEditor(ProfileForm.class, new CheckBoxEditor());
         profileSelectTable.setDefaultRenderer(ProfileForm.class, new CheckBoxRenderer());
         
@@ -189,6 +190,7 @@ public class ReportDialog extends JDialog {
 
         setTitle(NbBundle.getMessage(ReportDialog.class, "ReportDialog.title_1")); // NOI18N
 
+        cancelButton.setName("Report dialog cancel"); // NOI18N
         cancelButton.setText(NbBundle.getMessage(ReportDialog.class, "ReportDialog.cancelButton.text")); // NOI18N
         cancelButton.setVerticalAlignment(SwingConstants.BOTTOM);
         cancelButton.addActionListener(new ActionListener() {
@@ -197,6 +199,7 @@ public class ReportDialog extends JDialog {
             }
         });
 
+        generateButton.setName("Report dialog generate");
         generateButton.setText(NbBundle.getMessage(ReportDialog.class, "ReportDialog.generateButton.text")); // NOI18N
         generateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -224,6 +227,7 @@ public class ReportDialog extends JDialog {
         reportSelectLabel.setText(NbBundle.getMessage(ReportDialog.class, "ReportDialog.reportSelectLabel.text")); // NOI18N
 
         reportSelectCombo.setModel(new DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        reportSelectCombo.setName("Report select combo");
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -313,8 +317,8 @@ public class ReportDialog extends JDialog {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             ProfileWrapper profile = (ProfileWrapper) value;
-            
             setSelected(profile.isSelected());
+            setName(profile.getProfile().getName());
             setText(profile.getProfile().getName());
             setOpaque(false);
             
@@ -325,7 +329,7 @@ public class ReportDialog extends JDialog {
         }
     }
     
-    private final class CheckBoxEditor extends DefaultCellEditor {
+    public final class CheckBoxEditor extends DefaultCellEditor {
 
         private static final long serialVersionUID = 8023412072260282004L;
         private ProfileWrapper profile;
@@ -341,7 +345,7 @@ public class ReportDialog extends JDialog {
             profile = (ProfileWrapper) value;
             
             final JCheckBox checkBox = (JCheckBox) getComponent();
-            
+            checkBox.setName(profile.getProfile().getName());
             checkBox.setText(profile.getProfile().getName());
             checkBox.setSelected(profile.isSelected());
             checkBox.setOpaque(false);
@@ -359,7 +363,7 @@ public class ReportDialog extends JDialog {
         }
     }
     
-    private final class ProfileWrapper {
+    public final class ProfileWrapper {
         
         private ProfileForm profile;
         private boolean selected;
@@ -389,6 +393,7 @@ public class ReportDialog extends JDialog {
         public ProfileForm getProfile() {
             return profile;
         }
+
     }
     
     private final class ReportSpecRenderer extends JLabel implements ListCellRenderer {

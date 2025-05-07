@@ -54,7 +54,7 @@ public class ProfileFileChooser extends JFileChooser {
     @Override
     protected void setup(FileSystemView view) {
         super.setup(view);
-        
+        setName("Profile File Chooser");
         setAcceptAllFileFilterUsed(true);
         FileNameExtensionFilter filter = new FileNameExtensionFilter("DROID 6 profile", "droid");
         addChoosableFileFilter(filter);
