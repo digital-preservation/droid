@@ -33,6 +33,8 @@ package uk.gov.nationalarchives.droid.profile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import java.util.Properties;
 
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.OverrideCombiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +56,8 @@ import uk.gov.nationalarchives.droid.export.interfaces.ExportOutputOptions;
 import uk.gov.nationalarchives.droid.results.handlers.JDBCBatchResultHandlerDao;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressObserver;
 import uk.gov.nationalarchives.droid.util.FileUtil;
+
+import static uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty.BINARY_SIGNATURE_LAST_UPDATED;
 
 
 /**
@@ -220,6 +225,7 @@ public class ProfileContextLocator {
         if (newDatabase) {
             final Path profileTemplate = getProfileTemplateFile(profile);
             status = getTemplateStatus(profileTemplate);
+            status = checkModificationOfBinarySignature(profile.getSignatureFileName(), status);
             status = setupDatabaseTemplate(status, profileTemplate, databasePath);
         }
         /*
@@ -303,7 +309,7 @@ public class ProfileContextLocator {
             packProfileTemplate(databasePath, getTemplateFile(BLANK_PROFILE));
             thawDatabase(profile.getUuid());
         }
-        // If we don't have a signature template, then we need to 
+        // If we don't have a signature template, then we need to
         // populate the database with signature file metadata.
         if (status != TemplateStatus.SIGNATURE_TEMPLATE) {
             try {
@@ -321,6 +327,28 @@ public class ProfileContextLocator {
                 throw new ProfileException(message, e);
             }
         } 
+    }
+
+    private TemplateStatus checkModificationOfBinarySignature(String signatureFileName, TemplateStatus status) {
+
+        try {
+            Path binarySignaturePath = globalConfig.getSignatureFileDir().resolve(signatureFileName);
+            String binarySignatureLastUpdatedName = BINARY_SIGNATURE_LAST_UPDATED.getName() + "." + URLEncoder.encode(signatureFileName, Charset.defaultCharset());
+            long lastModifiedTime = Files.getLastModifiedTime(binarySignaturePath).toMillis();
+            if (!globalConfig.getProperties().containsKey(binarySignatureLastUpdatedName)) {
+                globalConfig.update(Map.of(binarySignatureLastUpdatedName, lastModifiedTime));
+                return status;
+            } else {
+                long lastModifiedFromConfig = globalConfig.getProperties().getLong(binarySignatureLastUpdatedName);
+                if (lastModifiedTime > lastModifiedFromConfig) {
+                    globalConfig.update(Map.of(binarySignatureLastUpdatedName, lastModifiedTime));
+                    return TemplateStatus.NO_TEMPLATE;
+                }
+            }
+            return status;
+        } catch (ConfigurationException | IOException e) {
+            throw new RuntimeException("Error checking the last modified status of the binary signature file", e);
+        }
     }
     
     private TemplateStatus getTemplateStatus(final Path profileTemplateFile) {
