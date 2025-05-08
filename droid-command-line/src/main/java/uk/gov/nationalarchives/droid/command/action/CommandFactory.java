@@ -134,4 +134,5 @@ public interface CommandFactory {
     DroidCommand getListReportCommand();
 
 
+    DroidCommand getCleanCommand();
 }
