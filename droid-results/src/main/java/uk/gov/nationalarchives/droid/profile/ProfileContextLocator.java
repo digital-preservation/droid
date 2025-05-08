@@ -333,16 +333,18 @@ public class ProfileContextLocator {
 
         try {
             Path binarySignaturePath = globalConfig.getSignatureFileDir().resolve(signatureFileName);
-            String binarySignatureLastUpdatedName = BINARY_SIGNATURE_LAST_UPDATED.getName() + "." + URLEncoder.encode(signatureFileName, Charset.defaultCharset());
-            long lastModifiedTime = Files.getLastModifiedTime(binarySignaturePath).toMillis();
-            if (!globalConfig.getProperties().containsKey(binarySignatureLastUpdatedName)) {
-                globalConfig.update(Map.of(binarySignatureLastUpdatedName, lastModifiedTime));
-                return status;
-            } else {
-                long lastModifiedFromConfig = globalConfig.getProperties().getLong(binarySignatureLastUpdatedName);
-                if (lastModifiedTime > lastModifiedFromConfig) {
+            if (binarySignaturePath.toFile().exists()) {
+                String binarySignatureLastUpdatedName = BINARY_SIGNATURE_LAST_UPDATED.getName() + "." + URLEncoder.encode(signatureFileName, Charset.defaultCharset());
+                long lastModifiedTime = Files.getLastModifiedTime(binarySignaturePath).toMillis();
+                if (!globalConfig.getProperties().containsKey(binarySignatureLastUpdatedName)) {
                     globalConfig.update(Map.of(binarySignatureLastUpdatedName, lastModifiedTime));
-                    return TemplateStatus.NO_TEMPLATE;
+                    return status;
+                } else {
+                    long lastModifiedFromConfig = globalConfig.getProperties().getLong(binarySignatureLastUpdatedName);
+                    if (lastModifiedTime > lastModifiedFromConfig) {
+                        globalConfig.update(Map.of(binarySignatureLastUpdatedName, lastModifiedTime));
+                        return TemplateStatus.NO_TEMPLATE;
+                    }
                 }
             }
             return status;
