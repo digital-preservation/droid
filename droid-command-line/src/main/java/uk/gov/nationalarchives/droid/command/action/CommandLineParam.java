@@ -63,6 +63,14 @@ public enum CommandLineParam {
         }
     },
 
+    /** Clean. */
+    CLEAN("C", "clean", I18N.CLEAN_HELP) {
+        @Override
+        public DroidCommand getCommand(CommandFactory commandFactory, CommandLine cli) {
+            return commandFactory.getCleanCommand();
+        }
+    },
+
     /** Export with one row per file. */
     EXPORT_ONE_ROW_PER_FILE("e", "export-file", false, 1, I18N.EXPORT_FILE_HELP, filename()) {
         @Override
@@ -415,6 +423,7 @@ public enum CommandLineParam {
     static {
         addTopLevelCommand(HELP);
         addTopLevelCommand(VERSION);
+        addTopLevelCommand(CLEAN);
         addTopLevelCommand(EXPORT_ONE_ROW_PER_FILE);
         addTopLevelCommand(EXPORT_ONE_ROW_PER_FORMAT);
         addTopLevelCommand(REPORT);
@@ -597,6 +606,7 @@ public enum CommandLineParam {
         options.addOption(LIST_REPORTS.newOption());
         options.addOption(CONFIGURE_DEFAULT_SIGNATURE_VERSION.newOption());
         options.addOption(VERSION.newOption());
+        options.addOption(CLEAN.newOption());
         options.addOption(DEFAULT_SIGNATURE_VERSION.newOption());
         options.addOption(LIST_SIGNATURE_VERSIONS.newOption());
         return options;

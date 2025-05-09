@@ -533,6 +533,11 @@ public class CommandFactoryImpl implements CommandFactory {
         return command;
     }
 
+    @Override
+    public DroidCommand getCleanCommand() {
+        return new CleanCommand(context.getGlobalConfig().getDroidWorkDir());
+    }
+
     private PropertiesConfiguration createProperties(String[] properties) {
         PropertiesConfiguration result = new PropertiesConfiguration();
         for (String property : properties) {

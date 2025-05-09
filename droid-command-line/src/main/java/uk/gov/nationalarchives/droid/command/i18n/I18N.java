@@ -218,6 +218,9 @@ public final class I18N {
     /** Export contains BOM. */
     public static final String EXPORT_WITH_BOM = "help.bom";
 
+    /** Clean command. */
+    public static final String CLEAN_HELP = "clean.help";
+
     private I18N() { }
     
     /**

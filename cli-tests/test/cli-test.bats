@@ -21,6 +21,22 @@ setup() {
   assert_output --partial 'usage: droid [options]'
 }
 
+@test "clean removes folders from droid home" {
+  $DROID_BIN --clean
+  run ls ~/.droid6
+  assert_output -p 'export_templates'
+  assert_output -p 'filter_definitions'
+  assert_output -p 'logs'
+  assert_output -p 'report_definitions'
+  refute_output -p 'container_sigs'
+  refute_output -p 'signature_files'
+  refute_output -p 'profiles'
+  refute_output -p 'profile_templates'
+  refute_output -p 'droid.properties'
+  refute_output -p 'log4j2.properties'
+  refute_output -p 'tmp'
+}
+
 @test "list the reports" {
   run $DROID_BIN -l
   assert_output -p "Report:	'Total unreadable folders'"
