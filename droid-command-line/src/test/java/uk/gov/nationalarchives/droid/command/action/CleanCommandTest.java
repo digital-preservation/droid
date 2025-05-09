@@ -38,6 +38,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class CleanCommandTest {
@@ -55,7 +56,7 @@ public class CleanCommandTest {
         Stream.of("droid.properties", "log4j2.properties", "not-included-file").forEach(this::createFile);
         new CleanCommand(droidHome).execute();
         Assert.assertEquals(2, Files.list(droidHome).count());
-        String[] fileNames = Files.list(droidHome).map(Path::getFileName).map(Path::toString).toArray(String[]::new);
+        String[] fileNames = Files.list(droidHome).map(Path::getFileName).map(Path::toString).sorted().toArray(String[]::new);
         Assert.assertArrayEquals(fileNames, new String[]{"not-included-directory", "not-included-file"});
     }
 
