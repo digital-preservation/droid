@@ -38,7 +38,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class CleanCommandTest {
@@ -51,7 +50,7 @@ public class CleanCommandTest {
     }
 
     @Test
-    public void testCleanDeletesDirectories() throws CommandExecutionException, IOException {
+    public void testCleanDeletesDirectoriesAndFiles() throws CommandExecutionException, IOException {
         Stream.of("container_sigs", "signature_files", "profiles", "profile_templates", "tmp", "not-included-directory").forEach(this::createDirectory);
         Stream.of("droid.properties", "log4j2.properties", "not-included-file").forEach(this::createFile);
         new CleanCommand(droidHome).execute();
