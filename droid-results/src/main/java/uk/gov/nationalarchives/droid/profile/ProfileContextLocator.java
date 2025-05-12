@@ -330,7 +330,6 @@ public class ProfileContextLocator {
     }
 
     private TemplateStatus checkModificationOfBinarySignature(String signatureFileName, TemplateStatus status) {
-
         try {
             Path binarySignaturePath = globalConfig.getSignatureFileDir().resolve(signatureFileName);
             if (binarySignaturePath.toFile().exists()) {
@@ -347,10 +346,10 @@ public class ProfileContextLocator {
                     }
                 }
             }
-            return status;
         } catch (ConfigurationException | IOException e) {
-            throw new RuntimeException("Error checking the last modified status of the binary signature file", e);
+            log.warn("Error checking last modification date of signature file", e);
         }
+        return status;
     }
     
     private TemplateStatus getTemplateStatus(final Path profileTemplateFile) {

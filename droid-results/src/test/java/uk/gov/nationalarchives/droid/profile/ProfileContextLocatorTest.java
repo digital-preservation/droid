@@ -36,7 +36,9 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 
@@ -53,6 +55,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class ProfileContextLocatorTest {
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void testOpenProfileInstanceManagerCreatesNewTemplateIfNewProfile() throws IOException, SignatureFileException, ConfigurationException {
@@ -71,6 +76,7 @@ public class ProfileContextLocatorTest {
         List<String> templateFiles = Files.list(templatesDirectory)
                 .map(Path::getFileName)
                 .map(Path::toString)
+                .sorted()
                 .toList();
         Assert.assertArrayEquals(templateFiles.toArray(), new String[]{"profile.1.template", "profile.template"});
     }
