@@ -134,4 +134,8 @@ public interface CommandFactory {
     DroidCommand getListReportCommand();
 
 
+    /**
+     * @return command to clean DROID configuration folder.
+     */
+    DroidCommand getCleanCommand();
 }
