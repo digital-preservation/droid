@@ -114,6 +114,7 @@ public class ProfileContextLocatorTest {
         List<String> templateFiles = Files.list(templatesDirectory)
                 .map(Path::getFileName)
                 .map(Path::toString)
+                .sorted()
                 .toList();
         Assert.assertArrayEquals(templateFiles.toArray(), new String[]{"profile.1.template"});
     }
@@ -140,6 +141,7 @@ public class ProfileContextLocatorTest {
         List<String> templateFiles = Files.list(templatesDirectory)
                 .map(Path::getFileName)
                 .map(Path::toString)
+                .sorted()
                 .toList();
         Assert.assertArrayEquals(templateFiles.toArray(), new String[]{"profile.1.template", "profile.template"});
     }
