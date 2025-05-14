@@ -79,6 +79,14 @@ public class CommandLineParamTest {
     }
 
     @Test
+    public void testCleanHasNoArguments() {
+        Option option = CommandLineParam.CLEAN.newOption();
+        assertFalse(option.hasArg());
+        assertFalse(option.hasOptionalArg());
+        assertEquals(0, option.getArgs());
+    }
+
+    @Test
     public void testHelpHasNoArguments() {
         Option option = CommandLineParam.HELP.newOption();
         
