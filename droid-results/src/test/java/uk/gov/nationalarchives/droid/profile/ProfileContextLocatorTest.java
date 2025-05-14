@@ -43,6 +43,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,7 +63,8 @@ public class ProfileContextLocatorTest {
     @Test
     public void testOpenProfileInstanceManagerCreatesNewTemplateIfNewProfile() throws IOException, SignatureFileException, ConfigurationException {
         String profileId = UUID.randomUUID().toString();
-        Path profileHome = Files.createDirectory(Files.createTempDirectory("profiles").resolve(profileId));
+        File droidHome = temporaryFolder.newFolder();
+        Path profileHome = Files.createDirectory(Path.of(droidHome.getPath(), profileId));
         Path templatesDirectory = Files.createDirectory(profileHome.resolve("profile_templates"));
         DroidGlobalConfig globalConfig = createTestConfig(profileHome);
         Path signatureFilePath = profileHome.resolve("signature_files").resolve("testsigfile.xml");
@@ -84,7 +86,8 @@ public class ProfileContextLocatorTest {
     @Test
     public void testOpenProfileInstanceManagerSetsLastUpdatedInProperties() throws IOException, ConfigurationException, SignatureFileException {
         String profileId = UUID.randomUUID().toString();
-        Path profileHome = Files.createDirectory(Files.createTempDirectory("profiles").resolve(profileId));
+        File droidHome = temporaryFolder.newFolder();
+        Path profileHome = Files.createDirectory(Path.of(droidHome.getPath(), profileId));
         DroidGlobalConfig globalConfig = createTestConfig(profileHome);
         Path signatureFilePath = profileHome.resolve("signature_files").resolve("testsigfile.xml");
 
@@ -97,7 +100,8 @@ public class ProfileContextLocatorTest {
     @Test
     public void testOpenProfileInstanceManagerUsesExistingTemplateIfExists() throws IOException, SignatureFileException {
         String profileId = UUID.randomUUID().toString();
-        Path profileHome = Files.createDirectory(Files.createTempDirectory("profiles").resolve(profileId));
+        File droidHome = temporaryFolder.newFolder();
+        Path profileHome = Files.createDirectory(Path.of(droidHome.getPath(), profileId));
         Path templatesDirectory = Files.createDirectory(profileHome.resolve("profile_templates"));
         DroidGlobalConfig globalConfig = createTestConfig(profileHome);
 
@@ -117,7 +121,8 @@ public class ProfileContextLocatorTest {
     @Test
     public void testOpenProfileInstanceManagerUsesNewTemplateIfSigFileLastModifiedHasChanged() throws IOException, SignatureFileException, ConfigurationException {
         String profileId = UUID.randomUUID().toString();
-        Path profileHome = Files.createDirectory(Files.createTempDirectory("profiles").resolve(profileId));
+        File droidHome = temporaryFolder.newFolder();
+        Path profileHome = Files.createDirectory(Path.of(droidHome.getPath(), profileId));
         Path templatesDirectory = Files.createDirectory(profileHome.resolve("profile_templates"));
         DroidGlobalConfig globalConfig = createTestConfig(profileHome);
         String sigFileLastUpdatedKey = "profile.binarySignatureLastUpdated.testsigfile.xml";
