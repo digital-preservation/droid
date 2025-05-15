@@ -1,0 +1,48 @@
+name: Release DROID
+on:
+  push:
+    branches:
+      - main
+      - 6.9.1
+permissions:
+  contents: write
+jobs:
+  maven-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Apache Maven Central
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          server-id: maven
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+      - run: cat ~/.m2/settings.xml && gpg --list-keys
+      - name: Publish to Apache Maven Central
+        run: |
+          git config user.name tna-da-bot
+          git config user.email "181243999+tna-da-bot@users.noreply.github.com"
+          mvn clean install -DskipTests -q -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+          mvn -B release:prepare -q
+          mvn -B release:perform -q
+        env:
+          AWS_REGION: eu-west-2
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+  github-release:
+    needs: maven-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          git config user.name tna-da-bot
+          git config user.email "181243999+tna-da-bot@users.noreply.github.com"
+          mvn clean package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+          gh release create $(git describe --tags --abbrev=0) --generate-notes droid-binary/target/droid-binary*.zip
