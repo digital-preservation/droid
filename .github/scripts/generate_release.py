@@ -1,106 +1,121 @@
 import os
+import sys
 import subprocess
 import requests
-import datetime
-import json
-from pathlib import Path
+from datetime import datetime, timezone
+import glob
 
-REPO = "digital-preservation/droid"
-RELEASE_TAG = "develop"
-API_BASE = "https://api.github.com"
-TOKEN = os.environ["GITHUB_TOKEN"]
-HEADERS = {
-    "Authorization": f"Bearer {TOKEN}",
-    "Accept": "application/vnd.github+json"
-}
+# === CONFIGURATION ===
+REPO = "digital-preservation/droid"  # e.g., "octocat/Hello-World"
+ASSET_FILES = sorted(
+    glob.glob("droid-binary/target/droid-binary-*-bin-win64-with-jre.zip") +
+    glob.glob("droid-binary/target/droid-binary-*-bin.zip")
+)
 
-def run(cmd):
-    return subprocess.check_output(cmd, text=True).strip()
+if not ASSET_FILES:
+    print("No matching files found for upload.")
+    sys.exit(1)
 
-def get_commit_sha(branch):
-    return run(["git", "rev-parse", f"origin/{branch}"])
+TOKEN = os.getenv("GITHUB_TOKEN")
 
-def is_ancestor(ancestor, descendant):
-    return subprocess.call(["git", "merge-base", "--is-ancestor", ancestor, descendant]) == 0
+if not TOKEN:
+    print("GITHUB_TOKEN environment variable not set.")
+    sys.exit(1)
 
-def fetch_merged_prs():
-    url = f"{API_BASE}/repos/{REPO}/pulls"
-    params = {"state": "closed", "base": "develop", "per_page": 100}
-    r = requests.get(url, headers=HEADERS, params=params)
-    r.raise_for_status()
-    return [pr for pr in r.json() if pr.get("merged_at")]
+if len(sys.argv) != 2:
+    print("Usage: python create_github_release_raw.py <release_version>")
+    sys.exit(1)
 
-def get_release():
-    url = f"{API_BASE}/repos/{REPO}/releases/tags/{RELEASE_TAG}"
-    r = requests.get(url, headers=HEADERS)
-    r.raise_for_status()
-    return r.json()
+RELEASE_VERSION = sys.argv[1]
+API_BASE = f"https://api.github.com/repos/{REPO}"
+HEADERS = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json"}
 
-def update_release_notes(release_id, body):
-    url = f"{API_BASE}/repos/{REPO}/releases/{release_id}"
-    data = {"body": body}
-    r = requests.patch(url, headers=HEADERS, json=data)
-    r.raise_for_status()
+# === FETCH RELEASES ===
+print("Fetching existing releases...")
+releases_resp = requests.get(f"{API_BASE}/releases", headers=HEADERS)
+releases_resp.raise_for_status()
+releases = releases_resp.json()
 
-def delete_assets(asset_ids):
-    for asset_id in asset_ids:
-        url = f"{API_BASE}/repos/{REPO}/releases/assets/{asset_id}"
-        r = requests.delete(url, headers=HEADERS)
-        r.raise_for_status()
-        print(f"🗑️  Deleted asset {asset_id}")
+def parse_github_datetime(dt_str):
+    # Format: "2023-12-01T10:00:00Z"
+    return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
 
-def upload_asset(upload_url, file_path):
-    file_name = Path(file_path).name
-    with open(file_path, "rb") as f:
-        print(f"⬆️  Uploading {file_name}...")
-        headers = HEADERS.copy()
-        headers["Content-Type"] = "application/zip"
-        r = requests.post(f"{upload_url}?name={file_name}", headers=headers, data=f)
-        r.raise_for_status()
+last_release_date = datetime(1970, 1, 1, tzinfo=timezone.utc)
+for r in releases:
+    if r["tag_name"] != RELEASE_VERSION and r["tag_name"] != 'develop':
+        last_release_date = parse_github_datetime(r["created_at"])
+        break
 
-def main():
-    # Ensure Git branches are up to date
-    run(["git", "fetch", "origin", "develop", "main"])
-    develop_sha = get_commit_sha("develop")
-    main_sha = get_commit_sha("main")
+print(f"Last release date: {last_release_date.isoformat()}")
 
-    print("🔍 Fetching merged PRs...")
-    prs = fetch_merged_prs()
-    new_prs = ""
+# === GET MERGED PRs SINCE LAST RELEASE ===
+print("Fetching merged pull requests...")
+merged_prs = []
+page = 1
+while True:
+    resp = requests.get(
+        f"{API_BASE}/pulls",
+        headers=HEADERS,
+        params={"state": "closed", "sort": "updated", "direction": "desc", "per_page": 100, "page": page}
+    )
+    resp.raise_for_status()
+    prs = resp.json()
+    if not prs:
+        break
 
     for pr in prs:
-        pr_number = pr["number"]
-        pr_title = pr["title"]
-        pr_author = pr["user"]["login"]
-        merge_commit = pr["merge_commit_sha"]
+        merged_at = pr.get("merged_at")
+        if not merged_at:
+            continue
+        merged_dt = parse_github_datetime(merged_at)
+        if merged_dt <= last_release_date:
+            break
+        if pr["user"]["login"].startswith("dependabot"):
+            continue
+        merged_prs.append(f"- #{pr['number']} {pr['title']}")
 
-        if not is_ancestor(merge_commit, main_sha):
-            new_prs += f"- PR [#{pr_number}] {pr_title} (@{pr_author})\n"
+    page += 1
 
-    if not new_prs:
-        print("✅ No new PRs to include.")
-        return
+release_notes = "\n".join(reversed(merged_prs)) or "No non-Dependabot PRs since last release."
 
-    timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    body = f"### Changes not yet in main:\n\n{new_prs}\n_Last updated: {timestamp}_"
+# === CREATE RELEASE ===
+print(f"Creating GitHub release for {RELEASE_VERSION}...")
+release_resp = requests.post(
+    f"{API_BASE}/releases",
+    headers=HEADERS,
+    json={
+        "tag_name": RELEASE_VERSION,
+        "name": f"Release {RELEASE_VERSION}",
+        "body": release_notes,
+        "draft": False,
+        "prerelease": False
+    }
+)
+release_resp.raise_for_status()
+release = release_resp.json()
+upload_url = release["upload_url"].split("{")[0]
 
-    release = get_release()
-    release_id = release["id"]
-    upload_url = release["upload_url"].split("{")[0]
+# === UPLOAD FILES ===
+for file_path in ASSET_FILES:
+    if not os.path.exists(file_path):
+        print(f"File not found: {file_path}")
+        continue
 
-    update_release_notes(release_id, body)
+    file_name = os.path.basename(file_path)
+    print(f"Uploading {file_name}...")
+    with open(file_path, "rb") as f:
+        upload_resp = requests.post(
+            f"{upload_url}?name={file_name}",
+            headers={
+                "Authorization": f"Bearer {TOKEN}",
+                "Content-Type": "application/octet-stream"
+            },
+            data=f.read()
+        )
 
-    print("📦 Deleting existing assets...")
-    asset_ids = [a["id"] for a in release.get("assets", [])]
-    delete_assets(asset_ids)
+        if upload_resp.status_code == 201:
+            print(f"Uploaded {file_name}")
+        else:
+            print(f"Failed to upload {file_name}: {upload_resp.status_code}\n{upload_resp.text}")
 
-    print("📦 Uploading new assets...")
-    windows_jar = next(Path("droid-binary/target").glob("*win64-with-jre.zip"))
-    generic_jar = next(Path("droid-binary/target").glob("*bin.zip"))
-    upload_asset(upload_url, windows_jar)
-    upload_asset(upload_url, generic_jar)
-
-    print("✅ Release updated successfully.")
-
-if __name__ == "__main__":
-    main()
+print(f"✅ Release {RELEASE_VERSION} created and assets uploaded.")

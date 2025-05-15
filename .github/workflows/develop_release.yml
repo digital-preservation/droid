@@ -28,7 +28,7 @@ jobs:
         run: |
           mvn -V -B package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
           pip install requests
-          python .github/scripts/generate_release.py
+          python .github/scripts/generate_develop_release.py
 
         env:
           AWS_REGION: eu-west-2

@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-  
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-        <relativePath />
-    </parent>
-  
+
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.9.0-RC2-SNAPSHOT</version>
+    <version>6.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-  
+
     <name>droid-parent</name>
     <description>A tool developed by the UK National Archives to perform automated batch identification of file formats.</description>
     <url>http://digital-preservation.github.com/droid/</url>
     <inceptionYear>2016</inceptionYear>
-  
+
     <organization>
         <name>The National Archives</name>
         <url>http://www.nationalarchives.gov.uk</url>
     </organization>
-    
+
     <developers>
         <developer>
           <name>Graham Seaman</name>
@@ -58,8 +51,11 @@
         <developer>
             <name>Saurabh Parkhi</name>
         </developer>
+        <developer>
+            <name>Sam Palmer</name>
+        </developer>
     </developers>
-  
+
     <licenses>
         <license>
             <name>The BSD 3-Clause License</name>
@@ -67,21 +63,30 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
- 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     <scm>
         <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
         <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
         <url>scm:git:https://github.com/digital-preservation/droid.git</url>
       <tag>HEAD</tag>
   </scm>
-    
+
     <mailingLists>
         <mailingList>
             <name>droid-list</name>
             <archive>https://groups.google.com/forum/#!forum/droid-list</archive>
         </mailingList>
     </mailingLists>
-  
+
     <properties>
         <project.build.source>21</project.build.source>
         <project.build.target>21</project.build.target>
@@ -107,7 +112,7 @@
         <junit.version>5.12.2</junit.version>
         <commons.version>2.19.0</commons.version>
     </properties>
-  
+
     <build>
         <pluginManagement>
             <plugins>
@@ -237,8 +242,33 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        
+
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.7.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -437,9 +467,8 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <phase>verify</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -448,11 +477,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <source>21</source>
                 </configuration>
             </plugin>
-<!-- N.B. sourceFileExcludes won't work till version 2.11 is released 
+<!-- N.B. sourceFileExcludes won't work till version 2.11 is released
             <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-javadoc-plugin</artifactId>
@@ -461,7 +498,7 @@
             <link>${project.url}</link>
             <link>${project.organization.url}</link>
         </links>
-                  
+
             <sourceFileExcludes>
                 <exclude>**/package-info.java</exclude>
             </sourceFileExcludes>
@@ -541,36 +578,8 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             </plugin>
         </plugins>
     </reporting>
-    
-    <profiles>
-        <profile>
-          <id>release-sign-artifacts</id>
-          <activation>
-            <property>
-              <!-- performRelease will be true when mvn:release-perform is executed -->
-              <name>performRelease</name>
-              <value>true</value>
-            </property>
-          </activation>
-          <build>
-            <plugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>sign-artifacts</id>
-                    <phase>verify</phase>
-                    <goals>
-                      <goal>sign</goal>
-                    </goals>
-                  </execution>
-                </executions>
-              </plugin>
-            </plugins>
-          </build>
-        </profile>
 
+    <profiles>
         <profile>
             <id>upload-jacoco-to-coveralls</id>
             <activation>
