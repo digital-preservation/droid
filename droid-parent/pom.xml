@@ -4,7 +4,7 @@
 
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.9.0-RC3-SNAPSHOT</version>
+    <version>6.9.0-RC2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>droid-parent</name>
@@ -63,7 +63,16 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     <scm>
         <connection>scm:git:https://github.com/digital-preservation/droid.git</connection>
         <developerConnection>scm:git:https://github.com/digital-preservation/droid.git</developerConnection>
