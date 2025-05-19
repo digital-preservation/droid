@@ -33,10 +33,13 @@ jobs:
           git config user.email "181243999+tna-da-bot@users.noreply.github.com"
           git checkout -b $BRANCH_NAME
           git push -u origin $BRANCH_NAME
+          cd droid-parent
+          mvn versions:set -DnewVersion=${{ github.event.inputs.to-deploy }}
+          cd ..
           mvn -q clean install -DskipTests -q -DnvdApiKey=${{ secrets.NVD_API_KEY }}
-          mvn -q -B release:prepare -q -DreleaseVersion=${{ github.event.inputs.to-deploy }} -DdevelopmentVersion=${{ github.event.inputs.next-version }}
+          mvn -q -B release:clean release:prepare
           mvn javadoc:javadoc
-          mvn -q -B release:perform -q -Prelease-sign-artifacts
+          mvn -B release:perform
           curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
