@@ -48,6 +48,7 @@ jobs:
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       - name: Archive logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: output-logs
