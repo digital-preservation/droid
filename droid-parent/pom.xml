@@ -562,13 +562,6 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     <profiles>
         <profile>
           <id>release-sign-artifacts</id>
-          <activation>
-            <property>
-              <!-- performRelease will be true when mvn:release-perform is executed -->
-              <name>performRelease</name>
-              <value>true</value>
-            </property>
-          </activation>
           <build>
             <plugins>
               <plugin>

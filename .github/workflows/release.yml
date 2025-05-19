@@ -33,9 +33,9 @@ jobs:
           git config user.email "181243999+tna-da-bot@users.noreply.github.com"
           git checkout -b $BRANCH_NAME
           git push -u origin $BRANCH_NAME
-          mvn -X clean install -DskipTests -q -DnvdApiKey=${{ secrets.NVD_API_KEY }} >> out.log 2>&1
-          mvn -X -B release:prepare -q -DreleaseVersion=${{ github.event.inputs.to-deploy }} -DdevelopmentVersion=${{ github.event.inputs.next-version }}  >> out.log 2>&1
-          mvn -X -B release:perform -q  >> out.log 2>&1
+          mvn -X clean install -DskipTests -q -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+          mvn -X -B release:prepare -q -DreleaseVersion=${{ github.event.inputs.to-deploy }} -DdevelopmentVersion=${{ github.event.inputs.next-version }}
+          mvn -X -B release:perform -q -Prelease-sign-artifacts
           curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
@@ -47,12 +47,6 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-      - name: Archive logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: output-logs
-          path: out.log
 #  github-release:
 #    runs-on: ubuntu-latest
 #    steps:
