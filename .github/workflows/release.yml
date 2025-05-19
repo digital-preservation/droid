@@ -10,6 +10,8 @@ on:
         required: true
 permissions:
   contents: write
+env:
+  BRANCH_NAME: version-bump-${{ github.run_id }}${{ github.run_attempt }}
 jobs:
   maven-release:
     runs-on: ubuntu-latest
@@ -59,3 +61,6 @@ jobs:
           python generate_release ${{ github.event.inputs.to-deploy }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_REGION: eu-west-2
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
