@@ -1,9 +1,13 @@
 name: Release DROID
 on:
-  push:
-    branches:
-      - main
-      - 6.9.1
+  workflow_dispatch:
+    inputs:
+      to-deploy:
+        description: 'Version to deploy'
+        required: true
+      next-version:
+        description: 'Next version'
+        required: true
 permissions:
   contents: write
 jobs:
@@ -25,9 +29,15 @@ jobs:
         run: |
           git config user.name tna-da-bot
           git config user.email "181243999+tna-da-bot@users.noreply.github.com"
+          git checkout -b $BRANCH_NAME
+          git push -u origin $BRANCH_NAME
           mvn clean install -DskipTests -q -DnvdApiKey=${{ secrets.NVD_API_KEY }}
           mvn -B release:prepare -q
           mvn -B release:perform -q
+          curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            -d '{"title": "Version bump for ${{ github.event.inputs.to-deploy }}","head": "$BRANCH_NAME","base": "main"}'
         env:
           AWS_REGION: eu-west-2
           AWS_ACCESS_KEY_ID: test
@@ -36,13 +46,16 @@ jobs:
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
   github-release:
-    needs: maven-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
       - run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
-          git config user.name tna-da-bot
-          git config user.email "181243999+tna-da-bot@users.noreply.github.com"
           mvn clean package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
-          gh release create $(git describe --tags --abbrev=0) --generate-notes droid-binary/target/droid-binary*.zip
+          pip install requests
+          python generate_release ${{ github.event.inputs.to-deploy }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
