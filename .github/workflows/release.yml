@@ -39,8 +39,8 @@ jobs:
           git checkout -b $BRANCH_NAME
           git push -u origin $BRANCH_NAME
       - run: mvn -q clean install -DskipTests -q -DnvdApiKey=${{ secrets.NVD_API_KEY }}
-      - run: mvn -q -B release:prepare -q -DreleaseVersion=${{ github.event.inputs.to-deploy }} -DdevelopmentVersion=${{ github.event.inputs.next-version }}
-      - run: mvn -B release:perform
+      - run: mvn -q -B release:prepare -DskipTests -DreleaseVersion=${{ github.event.inputs.to-deploy }} -DdevelopmentVersion=${{ github.event.inputs.next-version }} -Dtag=${{ github.event.inputs.to-deploy }}
+      - run: mvn -B release:perform -DskipTests
       - run: |
           curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
                       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
