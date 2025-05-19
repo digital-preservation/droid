@@ -58,7 +58,7 @@ jobs:
       - run: |
           mvn clean package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
           pip install requests
-          python generate_release ${{ github.event.inputs.to-deploy }}
+          python .github/scripts/generate_release ${{ github.event.inputs.to-deploy }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_REGION: eu-west-2
