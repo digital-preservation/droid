@@ -465,6 +465,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <source>21</source>
                 </configuration>
@@ -562,6 +570,13 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     <profiles>
         <profile>
           <id>release-sign-artifacts</id>
+          <activation>
+            <property>
+              <!-- performRelease will be true when mvn:release-perform is executed -->
+              <name>performRelease</name>
+              <value>true</value>
+            </property>
+          </activation>
           <build>
             <plugins>
               <plugin>

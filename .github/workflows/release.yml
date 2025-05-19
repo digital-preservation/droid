@@ -40,7 +40,6 @@ jobs:
           git push -u origin $BRANCH_NAME
       - run: mvn -q clean install -DskipTests -q -DnvdApiKey=${{ secrets.NVD_API_KEY }}
       - run: mvn -q -B release:prepare -q -DreleaseVersion=${{ github.event.inputs.to-deploy }} -DdevelopmentVersion=${{ github.event.inputs.next-version }}
-      - run: mvn javadoc:javadoc
       - run: mvn -B release:perform
       - run: |
           curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
