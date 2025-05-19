@@ -26,9 +26,9 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_CENTRAL_TOKEN
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-      - run: cat ~/.m2/settings.xml && gpg --list-keys
       - name: Publish to Apache Maven Central
         run: |
+          cp .github/scripts/settings.xml ~/.m2/settings.xml
           git config user.name tna-da-bot
           git config user.email "181243999+tna-da-bot@users.noreply.github.com"
           git checkout -b $BRANCH_NAME
