@@ -115,8 +115,20 @@
 
     <build>
         <pluginManagement>
-
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
@@ -568,34 +580,6 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     </reporting>
 
     <profiles>
-        <profile>
-          <id>release-sign-artifacts</id>
-          <activation>
-            <property>
-              <!-- performRelease will be true when mvn:release-perform is executed -->
-              <name>performRelease</name>
-              <value>true</value>
-            </property>
-          </activation>
-          <build>
-            <plugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>sign-artifacts</id>
-                    <phase>verify</phase>
-                    <goals>
-                      <goal>sign</goal>
-                    </goals>
-                  </execution>
-                </executions>
-              </plugin>
-            </plugins>
-          </build>
-        </profile>
-
         <profile>
             <id>upload-jacoco-to-coveralls</id>
             <activation>
