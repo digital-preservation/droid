@@ -54,11 +54,11 @@ jobs:
       - run: |
           export NEW_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//')
           cd droid-parent
-          mvn versions:set -DnewVersion=$NEW_VERSION
+          mvn versions:set -DnewVersion=6.9.0
           cd ..
           mvn clean package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
           pip install requests
-          python .github/scripts/generate_release.py $NEW_VERSION
+          python .github/scripts/generate_release.py 6.9.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_REGION: eu-west-2
