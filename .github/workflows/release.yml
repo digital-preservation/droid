@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - 6.9.1
+      - 6.9.0
 permissions:
   contents: write
   pull-requests: write
@@ -37,12 +37,12 @@ jobs:
           git push -u origin $BRANCH_NAME
       - run: mvn -q clean install -DskipTests -q -DnvdApiKey=${{ secrets.NVD_API_KEY }}
       - run: mvn -q -B release:prepare -DskipTests
-      - run: mvn -B release:perform -DskipTests
+      - run: mvn -B release:perform -DskipTests -DperformRelease=true
       - run: |
           curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
                       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                       -H "Accept: application/vnd.github+json" \
-                      -d '{"title": "Version bump for ${{ github.event.inputs.to-deploy }}","head": "$BRANCH_NAME","base": "main"}'
+                      -d '{"title": "Version bump","head": "$BRANCH_NAME","base": "main"}'
   github-release:
     runs-on: ubuntu-latest
     steps:
