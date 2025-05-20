@@ -569,12 +569,6 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     <profiles>
         <profile>
           <id>release-sign-artifacts</id>
-          <activation>
-            <property>
-              <name>performRelease</name>
-              <value>true</value>
-            </property>
-          </activation>
           <build>
             <plugins>
               <plugin>
