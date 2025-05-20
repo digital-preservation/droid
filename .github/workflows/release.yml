@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - 6.9.0-release-latest
 permissions:
   contents: write
   pull-requests: write
@@ -15,33 +16,33 @@ env:
   MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
   MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 jobs:
-  maven-release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Apache Maven Central
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-      - run: |
-          cp .github/scripts/settings.xml ~/.m2/settings.xml
-          git config user.name tna-da-bot
-          git config user.email "181243999+tna-da-bot@users.noreply.github.com"
-          git checkout -b $BRANCH_NAME
-          git push -u origin $BRANCH_NAME
-      - run: mvn -q clean install -DnvdApiKey=${{ secrets.NVD_API_KEY }}
-      - run: mvn -q -B release:prepare -Prelease-sign-artifacts
-      - run: mvn -B release:perform -DskipTests -Prelease-sign-artifacts
-      - run: |
-          curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
-                      -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                      -H "Accept: application/vnd.github+json" \
-                      -d '{"title": "Version bump","head": "$BRANCH_NAME","base": "main"}'
+#  maven-release:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: Set up Apache Maven Central
+#        uses: actions/setup-java@v4
+#        with:
+#          distribution: 'temurin'
+#          java-version: '21'
+#          server-id: ossrh
+#          server-username: MAVEN_USERNAME
+#          server-password: MAVEN_CENTRAL_TOKEN
+#          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+#      - run: |
+#          cp .github/scripts/settings.xml ~/.m2/settings.xml
+#          git config user.name tna-da-bot
+#          git config user.email "181243999+tna-da-bot@users.noreply.github.com"
+#          git checkout -b $BRANCH_NAME
+#          git push -u origin $BRANCH_NAME
+#      - run: mvn -q clean install -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+#      - run: mvn -q -B release:prepare -Prelease-sign-artifacts
+#      - run: mvn -B release:perform -DskipTests -Prelease-sign-artifacts
+#      - run: |
+#          curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
+#                      -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+#                      -H "Accept: application/vnd.github+json" \
+#                      -d '{"title": "Version bump","head": "$BRANCH_NAME","base": "main"}'
   github-release:
     runs-on: ubuntu-latest
     steps:
@@ -51,9 +52,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
       - run: |
+          export NEW_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//')
+          mvn versions:set -DnewVersion=$NEW_VERSION
           mvn clean package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
           pip install requests
-          python .github/scripts/generate_release.py $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//')
+          python .github/scripts/generate_release.py $NEW_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_REGION: eu-west-2
