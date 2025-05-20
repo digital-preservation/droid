@@ -31,48 +31,9 @@
  */
 package uk.gov.nationalarchives.droid.internal.api;
 
-import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
-
-import java.net.URI;
-
-public class ApiResult {
-    private final String extension;
-    private final IdentificationMethod method;
-    private final String puid;
-    private final String name;
-    private final boolean fileExtensionMismatch;
-    private final URI uri;
-
-    public ApiResult(String extension, IdentificationMethod method, String puid, String name, boolean fileExtensionMismatch, URI uri) {
-        this.extension = extension;
-        this.method = method;
-        this.puid = puid;
-        this.name = name;
-        this.fileExtensionMismatch = fileExtensionMismatch;
-        this.uri = uri;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPuid() {
-        return puid;
-    }
-
-    public IdentificationMethod getMethod() {
-        return method;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public boolean isFileExtensionMismatch() {
-        return fileExtensionMismatch;
-    }
-
-    public URI getUri() {
-        return uri;
-    }
+public enum HashAlgorithm {
+    MD5,
+    SHA1,
+    SHA256,
+    SHA512
 }
