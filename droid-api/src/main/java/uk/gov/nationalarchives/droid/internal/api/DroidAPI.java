@@ -31,34 +31,42 @@
  */
 package uk.gov.nationalarchives.droid.internal.api;
 
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.S3Utilities;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.nationalarchives.droid.core.BinarySignatureIdentifier;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
 import uk.gov.nationalarchives.droid.core.interfaces.*;
 import uk.gov.nationalarchives.droid.core.interfaces.archive.ContainerIdentifier;
+import uk.gov.nationalarchives.droid.core.interfaces.hash.MD5HashGenerator;
+import uk.gov.nationalarchives.droid.core.interfaces.hash.SHA1HashGenerator;
+import uk.gov.nationalarchives.droid.core.interfaces.hash.SHA256HashGenerator;
+import uk.gov.nationalarchives.droid.core.interfaces.hash.SHA512HashGenerator;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.*;
 
 
@@ -107,8 +115,21 @@ public final class DroidAPI implements AutoCloseable {
 
     private final HttpClient httpClient;
 
+    private final List<HashAlgorithm> hashAlgorithms;
 
-    private DroidAPI(DroidCore droidCore, ContainerIdentifier zipIdentifier, ContainerIdentifier ole2Identifier, ContainerIdentifier gzIdentifier, String containerSignatureVersion, String binarySignatureVersion, String droidVersion, S3Client s3Client, HttpClient httpClient, Region s3Region) {
+    private DroidAPI(
+            DroidCore droidCore,
+            ContainerIdentifier zipIdentifier,
+            ContainerIdentifier ole2Identifier,
+            ContainerIdentifier gzIdentifier,
+            String containerSignatureVersion,
+            String binarySignatureVersion,
+            String droidVersion,
+            S3Client s3Client,
+            HttpClient httpClient,
+            Region s3Region,
+            List<HashAlgorithm> hashAlgorithms
+    ) {
         this.droidCore = droidCore;
         this.zipIdentifier = zipIdentifier;
         this.ole2Identifier = ole2Identifier;
@@ -119,6 +140,7 @@ public final class DroidAPI implements AutoCloseable {
         this.s3Region = getRegionOrDefault(s3Region);
         this.s3Client = getS3ClientOrDefault(s3Client);
         this.httpClient = getHttpClientOrDefault(httpClient);
+        this.hashAlgorithms = hashAlgorithms;
     }
 
     private HttpClient getHttpClientOrDefault(HttpClient httpClient) {
@@ -154,6 +176,7 @@ public final class DroidAPI implements AutoCloseable {
         private S3Client s3Client;
         private Region s3Region;
         private HttpClient httpClient;
+        private List<HashAlgorithm> hashAlgorithms;
 
         public DroidAPIBuilder binarySignature(final Path binarySignature) {
             this.binarySignature = binarySignature;
@@ -180,6 +203,11 @@ public final class DroidAPI implements AutoCloseable {
             return this;
         }
 
+        public DroidAPIBuilder hashAlgorithms(final List<HashAlgorithm> hashAlgorithms) {
+            this.hashAlgorithms = hashAlgorithms;
+            return this;
+        }
+
         public DroidAPI build() throws SignatureParseException {
             if (this.binarySignature == null || this.containerSignature == null) {
                 throw new IllegalArgumentException("Container signature and binary signature are mandatory arguments");
@@ -192,7 +220,7 @@ public final class DroidAPI implements AutoCloseable {
             String containerVersion = StringUtils.substringAfterLast(containerSignature.getFileName().toString(), "-").split("\\.")[0];
             String droidVersion = ResourceBundle.getBundle("options").getString("version_no");
             ContainerApi containerApi = new ContainerApi(droidCore, containerSignature);
-            return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerApi.gzIdentifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion, this.s3Client, this.httpClient, this.s3Region);
+            return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerApi.gzIdentifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion, this.s3Client, this.httpClient, this.s3Region, this.hashAlgorithms);
         }
     }
 
@@ -243,11 +271,61 @@ public final class DroidAPI implements AutoCloseable {
 
         final RequestIdentifier id = getRequestIdentifier(uri);
 
+        Map<HashAlgorithm, String> hashResults = generateHashResults(uri, this::getHttpHash);
 
         try (final HttpIdentificationRequest request = new HttpIdentificationRequest(metaData, id, httpClient)) {
             request.setExtension(extension);
             request.open(uri);
-            return getApiResults(request);
+            return getApiResults(request, hashResults);
+        }
+    }
+
+    private <T> Map<HashAlgorithm, String> generateHashResults(T identifier, BiFunction<HashAlgorithm, T, String> hashFunction) {
+        return hashAlgorithms.stream().collect(Collectors.toMap(
+                algorithm -> algorithm,
+                algorithm -> hashFunction.apply(algorithm, identifier)
+        ));
+    }
+
+    private String getFileHash(HashAlgorithm hashAlgorithm, Path path) {
+        try {
+            return getHash(hashAlgorithm, new FileInputStream(path.toFile()));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getS3Hash(HashAlgorithm algorithm, S3Uri s3Uri) {
+        String key = s3Uri.key().orElseThrow(() -> new RuntimeException("Key not found in uri " + s3Uri.uri()));
+        String bucket = s3Uri.bucket().orElseThrow(() -> new RuntimeException("Bucket not found in uri " + s3Uri.uri()));
+        ResponseInputStream<GetObjectResponse> responseInputStream = s3Client.getObject(GetObjectRequest.builder().bucket(bucket).key(key).build());
+        return getHash(algorithm, responseInputStream);
+    }
+
+    private String getHttpHash(HashAlgorithm algorithm, URI httpUri) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(httpUri)
+                .GET()
+                .build();
+        try {
+            try (InputStream responseStream = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream()).body()) {
+                return getHash(algorithm, responseStream);
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getHash(HashAlgorithm algorithm, InputStream inputStream) {
+        try {
+            return switch (algorithm) {
+                case MD5 -> new MD5HashGenerator().hash(inputStream);
+                case SHA1 -> new SHA1HashGenerator().hash(inputStream);
+                case SHA256 -> new SHA256HashGenerator().hash(inputStream);
+                case SHA512 -> new SHA512HashGenerator().hash(inputStream);
+            };
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -265,12 +343,14 @@ public final class DroidAPI implements AutoCloseable {
                 throw new RuntimeException(e);
             }
             S3Uri s3Uri = S3Utilities.builder().region(s3Region).build().parseUri(objectUri);
+            Map<HashAlgorithm, String> hashResults = generateHashResults(s3Uri, this::getS3Hash);
+
             final RequestIdentifier id = getRequestIdentifier(s3Uri.uri());
             RequestMetaData metaData = new RequestMetaData(s3Object.size(), s3Object.lastModified().getEpochSecond(), s3Uri.uri().toString());
             try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, s3Client)) {
                 request.setExtension(extension);
                 request.open(s3Uri);
-                apiResults.addAll(getApiResults(request));
+                apiResults.addAll(getApiResults(request, hashResults));
             }
         }
         return apiResults;
@@ -293,14 +373,16 @@ public final class DroidAPI implements AutoCloseable {
 
         final RequestIdentifier id = getRequestIdentifier(file.toAbsolutePath().toUri());
 
+        Map<HashAlgorithm, String> hashResults = generateHashResults(file, this::getFileHash);
+
         try (final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, id)) {
             request.setExtension(extension);
             request.open(file);
-            return getApiResults(request);
+            return getApiResults(request, hashResults);
         }
     }
 
-    private <T> List<ApiResult> getApiResults(IdentificationRequest<T> request) throws IOException {
+    private <T> List<ApiResult> getApiResults(IdentificationRequest<T> request, Map<HashAlgorithm, String> hashResults) throws IOException {
         IdentificationResultCollection resultCollection;
         String extension = request.getExtension();
 
@@ -322,17 +404,17 @@ public final class DroidAPI implements AutoCloseable {
         boolean fileExtensionMismatch = resultCollection.getExtensionMismatch();
 
         return resultCollection.getResults()
-                .stream().map(res -> createApiResult(res, extension, fileExtensionMismatch, request.getIdentifier().getUri()))
+                .stream().map(res -> createApiResult(res, extension, fileExtensionMismatch, request.getIdentifier().getUri(), hashResults))
                 .collect(Collectors.toList());
     }
 
-    private ApiResult createApiResult(IdentificationResult result, String extension, boolean extensionMismatch, URI uri) {
+    private ApiResult createApiResult(IdentificationResult result, String extension, boolean extensionMismatch, URI uri, Map<HashAlgorithm, String> hashResults) {
         String name = result.getName();
         if (result.getMethod().equals(IdentificationMethod.CONTAINER)
                 && (droidCore.formatNameByPuid(result.getPuid()) != null)) {
             name = droidCore.formatNameByPuid(result.getPuid());
         }
-        return new ApiResult(extension, result.getMethod(), result.getPuid(), name, extensionMismatch, uri);
+        return new ApiResult(extension, result.getMethod(), result.getPuid(), name, extensionMismatch, uri, hashResults);
     }
 
     private <T> IdentificationResultCollection identifyByExtension(final IdentificationRequest<T> identificationRequest) {

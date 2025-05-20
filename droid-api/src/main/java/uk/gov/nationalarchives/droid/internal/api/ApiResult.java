@@ -34,6 +34,7 @@ package uk.gov.nationalarchives.droid.internal.api;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
 
 import java.net.URI;
+import java.util.Map;
 
 public class ApiResult {
     private final String extension;
@@ -42,14 +43,24 @@ public class ApiResult {
     private final String name;
     private final boolean fileExtensionMismatch;
     private final URI uri;
+    private final Map<HashAlgorithm, String> hashResults;
 
-    public ApiResult(String extension, IdentificationMethod method, String puid, String name, boolean fileExtensionMismatch, URI uri) {
+    public ApiResult(
+            String extension,
+            IdentificationMethod method,
+            String puid,
+            String name,
+            boolean fileExtensionMismatch,
+            URI uri,
+            Map<HashAlgorithm, String> hashResults
+    ) {
         this.extension = extension;
         this.method = method;
         this.puid = puid;
         this.name = name;
         this.fileExtensionMismatch = fileExtensionMismatch;
         this.uri = uri;
+        this.hashResults = hashResults;
     }
 
     public String getName() {
@@ -70,6 +81,10 @@ public class ApiResult {
 
     public boolean isFileExtensionMismatch() {
         return fileExtensionMismatch;
+    }
+
+    public Map<HashAlgorithm, String> getHashResults() {
+        return hashResults;
     }
 
     public URI getUri() {

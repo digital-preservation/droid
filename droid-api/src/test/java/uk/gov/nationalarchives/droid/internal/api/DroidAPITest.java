@@ -62,6 +62,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.*;
+import static uk.gov.nationalarchives.droid.internal.api.HashAlgorithm.*;
 
 public class DroidAPITest {
 
@@ -162,6 +163,7 @@ public class DroidAPITest {
         assertThat(identificationResult.getPuid(), is("x-fmt/263"));
         assertThat(identificationResult.getName(), is("ZIP Format"));
         assertThat(identificationResult.getMethod(), is(IdentificationMethod.BINARY_SIGNATURE));
+        assertThat(identificationResult.getHashResults().isEmpty(), is(true));
 
     }
 
@@ -239,6 +241,31 @@ public class DroidAPITest {
         assertThat(result.getMethod(), is(IdentificationMethod.CONTAINER));
         assertThat(result.getPuid(), is("fmt/40"));
         assertThat(result.isFileExtensionMismatch(), is(true));
+    }
+
+    @ParameterizedTest
+    @MethodSource("docxWithoutExtensionUris")
+    public void should_return_requested_checksums(URI uri) throws IOException, SignatureParseException {
+        DroidAPI apiWithChecksums = createApi(endpointOverride, List.of(MD5, SHA1, SHA256, SHA512));
+        List<ApiResult> results = apiWithChecksums.submit(uri, "docx");
+        ApiResult result = results.getFirst();
+
+        assertThat(result.getHashResults().size(), is(4));
+        assertThat(result.getHashResults().get(MD5), is("6aff1fe59798e3ab4da40e50b21312ca"));
+        assertThat(result.getHashResults().get(SHA1), is("51fc5ba38e9762a0a64ef1ebe44b42651ef0799e"));
+        assertThat(result.getHashResults().get(SHA256), is("f59669d5c045b1a25b09cdd68c6f269901522cbff1fe3c1802bfcc8b25d47e44"));
+        assertThat(result.getHashResults().get(SHA512), is("64f4c15f9e56064c37b874ddf22958e9983bc9ff5f939d6fc16b06824d25a174e696c39ccd55b8cb1964110e16763fcd8855e319e069416e33249c8c59ed5b81"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("docxWithoutExtensionUris")
+    public void should_return_single_checksum_if_one_requested(URI uri) throws IOException, SignatureParseException {
+        DroidAPI apiWithChecksums = createApi(endpointOverride, List.of(MD5));
+        List<ApiResult> results = apiWithChecksums.submit(uri, "docx");
+        ApiResult result = results.getFirst();
+        result.getHashResults();
+        assertThat(result.getHashResults().size(), is(1));
+        assertThat(result.getHashResults().get(MD5), is("6aff1fe59798e3ab4da40e50b21312ca"));
     }
 
     @Execution(ExecutionMode.CONCURRENT)

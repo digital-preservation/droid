@@ -54,6 +54,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
@@ -83,13 +84,18 @@ public class DroidAPITestUtils {
     static Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20240715.xml");
 
     public static DroidAPI createApi(URI endpointOverride) throws SignatureParseException {
-        return createApi(endpointOverride, signaturePath, containerPath);
+        return createApi(endpointOverride, signaturePath, containerPath, List.of());
     }
 
-    public static DroidAPI createApi(URI endpointOverride, Path signaturePath, Path containerPath) throws SignatureParseException {
+    public static DroidAPI createApi(URI endpointOverride, List<HashAlgorithm> hashAlgorithms) throws SignatureParseException {
+        return createApi(endpointOverride, signaturePath, containerPath, hashAlgorithms);
+    }
+
+    public static DroidAPI createApi(URI endpointOverride, Path signaturePath, Path containerPath, List<HashAlgorithm> hashAlgorithms) throws SignatureParseException {
         DroidAPI.DroidAPIBuilder droidAPIBuilder = DroidAPI.builder()
                 .binarySignature(signaturePath)
                 .containerSignature(containerPath)
+                .hashAlgorithms(hashAlgorithms)
                 .httpClient(HttpClient.newHttpClient());
         S3ClientBuilder builder = S3Client.builder().region(Region.EU_WEST_2);
         if(endpointOverride != null) {
@@ -102,15 +108,19 @@ public class DroidAPITestUtils {
     static HttpServer createHttpServer() throws IOException {
         HttpServer httpServer = HttpServer.create();
         httpServer.createContext("/", exchange -> {
-            String range = exchange.getRequestHeaders().get("Range").getFirst();
-            long size = Files.size(Paths.get(URI.create("file://" + exchange.getRequestURI().toString())));
-            byte[] bytesForRange = getBytesForRange(exchange.getRequestURI().getPath(), range);
-
-            exchange.getResponseHeaders().add("Content-Range", range.replace("=", " ") + "/" + size);
+            byte[] bytes;
+            if (exchange.getRequestHeaders().containsKey("Range")) {
+                String range = exchange.getRequestHeaders().get("Range").getFirst();
+                long size = Files.size(Paths.get(URI.create("file://" + exchange.getRequestURI().toString())));
+                bytes = getBytesForRange(exchange.getRequestURI().getPath(), range);
+                exchange.getResponseHeaders().add("Content-Range", range.replace("=", " ") + "/" + size);
+            } else {
+                bytes = Files.readAllBytes(Path.of(exchange.getRequestURI().getPath()));
+            }
             exchange.getResponseHeaders().add("Last-Modified", "1970-01-01T00:00:00.000Z");
-            exchange.sendResponseHeaders(200, bytesForRange.length);
+            exchange.sendResponseHeaders(200, bytes.length);
             OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(bytesForRange);
+            outputStream.write(bytes);
             outputStream.close();
         });
         httpServer.bind(new InetSocketAddress(0), 0);
@@ -153,11 +163,16 @@ public class DroidAPITestUtils {
             } else if (exchange.getRequestMethod().equals("GET")) {
                 String fullPath = exchange.getRequestURI().getPath().substring(1);
                 Path filePath = getFilePathFromUriPath(fullPath.substring(fullPath.indexOf("/")));
-                String range = exchange.getRequestHeaders().get("Range").getFirst();
-                byte[] bytesForRange = getBytesForRange(filePath.toString(), range);
-                exchange.sendResponseHeaders(200, bytesForRange.length);
+                byte[] bytes;
+                if (exchange.getRequestHeaders().containsKey("Range")) {
+                    String range = exchange.getRequestHeaders().get("Range").getFirst();
+                    bytes = getBytesForRange(filePath.toString(), range);
+                } else {
+                    bytes = Files.readAllBytes(filePath);
+                }
+                exchange.sendResponseHeaders(200, bytes.length);
                 OutputStream responseBody = exchange.getResponseBody();
-                responseBody.write(bytesForRange);
+                responseBody.write(bytes);
                 responseBody.close();
             }
         });
@@ -252,7 +267,7 @@ public class DroidAPITestUtils {
         try {
             Path containerFilePath = generateContainerSignatureFile(signatureFile);
             Path signatureFilePath = generateSignatureFile(signatureFile.puid, signatureFile.containerType);
-            return createApi(endpointOverride, signatureFilePath, containerFilePath);
+            return createApi(endpointOverride, signatureFilePath, containerFilePath, List.of());
         } catch (ParserConfigurationException | IOException | TransformerException | JAXBException |
                  SignatureParseException e) {
             throw new RuntimeException(e);
