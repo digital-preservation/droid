@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - 6.9.0
+      - 6.9.0-release-latest
 permissions:
   contents: write
   pull-requests: write
