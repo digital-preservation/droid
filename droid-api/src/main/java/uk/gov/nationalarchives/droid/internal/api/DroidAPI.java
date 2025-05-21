@@ -207,7 +207,7 @@ public final class DroidAPI implements AutoCloseable {
         }
 
         public DroidAPIBuilder hashAlgorithms(final List<HashAlgorithm> hashAlgorithms) {
-            this.hashAlgorithms = hashAlgorithms;
+            this.hashAlgorithms = hashAlgorithms == null ? Collections.emptyList() : hashAlgorithms;
             return this;
         }
 
