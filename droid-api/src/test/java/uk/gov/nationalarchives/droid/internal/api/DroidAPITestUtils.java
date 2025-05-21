@@ -42,9 +42,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import uk.gov.nationalarchives.droid.core.SignatureParseException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
+
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -66,10 +65,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.util.Optional;
+import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipEntry;
@@ -84,7 +81,7 @@ public class DroidAPITestUtils {
     static Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20240715.xml");
 
     public static DroidAPI createApi(URI endpointOverride) throws SignatureParseException {
-        return createApi(endpointOverride, signaturePath, containerPath, List.of());
+        return createApi(endpointOverride, signaturePath, containerPath, null);
     }
 
     public static DroidAPI createApi(URI endpointOverride, List<HashAlgorithm> hashAlgorithms) throws SignatureParseException {
@@ -115,7 +112,7 @@ public class DroidAPITestUtils {
                 bytes = getBytesForRange(exchange.getRequestURI().getPath(), range);
                 exchange.getResponseHeaders().add("Content-Range", range.replace("=", " ") + "/" + size);
             } else {
-                bytes = Files.readAllBytes(Path.of(exchange.getRequestURI().getPath()));
+                bytes = Files.readAllBytes(new File(exchange.getRequestURI().getPath()).toPath());
             }
             exchange.getResponseHeaders().add("Last-Modified", "1970-01-01T00:00:00.000Z");
             exchange.sendResponseHeaders(200, bytes.length);
@@ -128,6 +125,20 @@ public class DroidAPITestUtils {
         return httpServer;
     }
 
+    private static String createContents(Path path, String fileName) {
+        try {
+            long size = Files.size(path);
+            return "<Contents>" +
+                    "<Key>" + fileName + "</Key>" +
+                    "<LastModified>1970-01-01T00:00:00.000Z</LastModified>" +
+                    "<Size>" + size + "</Size>" +
+                    "</Contents>";
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     static HttpServer createS3Server() throws IOException {
         HttpServer s3Server = HttpServer.create();
         s3Server.createContext("/", exchange -> {
@@ -137,15 +148,18 @@ public class DroidAPITestUtils {
             if (exchange.getRequestMethod().equals("GET") && queryParams.containsKey("list-type") && queryParams.get("list-type").equals("2")) {
                 String fileName = queryParams.get("prefix");
                 Path filePath = getFilePathFromUriPath("/" + fileName);
-                long size = Files.size(filePath);
-                String response =
-                        "<ListBucketResult>" +
-                                "<Contents>" +
-                                "<Key>" + fileName + "</Key>" +
-                                "<LastModified>1970-01-01T00:00:00.000Z</LastModified>" +
-                                "<Size>" + size + "</Size>" +
-                                "</Contents>" +
-                                "</ListBucketResult>";
+                StringBuilder responseBuilder = new StringBuilder("<ListBucketResult>");
+                if (Files.isDirectory(filePath)) {
+                    try (Stream<Path> stream = Files.walk(filePath)) {
+                        stream.filter(Files::isRegularFile)
+                                .forEach(path -> responseBuilder.append(createContents(path, path.toString())));
+                    }
+                } else {
+                    responseBuilder.append(createContents(filePath, fileName));
+                }
+
+                String response = responseBuilder.append("</ListBucketResult>").toString();
+
                 exchange.sendResponseHeaders(200, response.getBytes().length);
                 OutputStream responseBody = exchange.getResponseBody();
                 responseBody.write(response.getBytes());

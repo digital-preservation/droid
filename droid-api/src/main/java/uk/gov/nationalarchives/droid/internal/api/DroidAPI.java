@@ -141,6 +141,11 @@ public final class DroidAPI implements AutoCloseable {
         this.hashAlgorithms = hashAlgorithms;
     }
 
+    public record APIResult(List<IdentificationResult> identificationResults, Map<HashAlgorithm, String> hashResults) {}
+
+    public record IdentificationResult(String extension, IdentificationMethod method, String puid, String name,
+                                       boolean fileExtensionMismatch, URI uri) { }
+
     private HttpClient getHttpClientOrDefault(HttpClient httpClient) {
         return Optional.ofNullable(httpClient)
                 .orElse(HttpClient.newHttpClient());
@@ -218,7 +223,8 @@ public final class DroidAPI implements AutoCloseable {
             String containerVersion = StringUtils.substringAfterLast(containerSignature.getFileName().toString(), "-").split("\\.")[0];
             String droidVersion = ResourceBundle.getBundle("options").getString("version_no");
             ContainerApi containerApi = new ContainerApi(droidCore, containerSignature);
-            return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerApi.gzIdentifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion, this.s3Client, this.httpClient, this.s3Region, this.hashAlgorithms);
+            List<HashAlgorithm> hashAlgorithmsOrEmptyList = this.hashAlgorithms == null ? Collections.emptyList() : this.hashAlgorithms;
+            return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerApi.gzIdentifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion, this.s3Client, this.httpClient, this.s3Region, hashAlgorithmsOrEmptyList);
         }
     }
 
@@ -233,7 +239,7 @@ public final class DroidAPI implements AutoCloseable {
      * @return File identification result. File can have multiple matching signatures.
      * @throws IOException If File can't be read or there is IO error.
      */
-    public List<ApiResult> submit(final URI uri, String extension) throws IOException {
+    public List<APIResult> submit(final URI uri, String extension) throws IOException {
         if (S3_SCHEME.equals(uri.getScheme())) {
             return submitS3Identification(uri, extension);
         } else if (List.of("http", "https").contains(uri.getScheme())) {
@@ -250,11 +256,11 @@ public final class DroidAPI implements AutoCloseable {
      * @return File identification result. File can have multiple matching signatures.
      * @throws IOException If File can't be read or there is IO error.
      */
-    public List<ApiResult> submit(final URI uri) throws IOException {
+    public List<APIResult> submit(final URI uri) throws IOException {
         return submit(uri, null);
     }
 
-    private List<ApiResult> submitHttpIdentification(final URI uri, String extension) throws IOException {
+    private List<APIResult> submitHttpIdentification(final URI uri, String extension) throws IOException {
         HttpClient httpClient = this.httpClient == null ? HttpClient.newHttpClient() : this.httpClient;
         HttpUtils httpUtils = new HttpUtils(httpClient);
         HttpUtils.HttpMetadata httpMetadata = httpUtils.getHttpMetadata(uri);
@@ -274,7 +280,7 @@ public final class DroidAPI implements AutoCloseable {
         try (final HttpIdentificationRequest request = new HttpIdentificationRequest(metaData, id, httpClient)) {
             request.setExtension(extension);
             request.open(uri);
-            return getApiResults(request, hashResults);
+            return List.of(new APIResult(getIdentificationResults(request), hashResults));
         }
     }
 
@@ -327,10 +333,10 @@ public final class DroidAPI implements AutoCloseable {
         }
     }
 
-    private List<ApiResult> submitS3Identification(final URI uri, String extension) throws IOException {
+    private List<APIResult> submitS3Identification(final URI uri, String extension) throws IOException {
         S3Utils s3Utils = new S3Utils(s3Client);
         S3Utils.S3ObjectList objectList = s3Utils.listObjects(uri);
-        List<ApiResult> apiResults = new ArrayList<>();
+        List<APIResult> apiResults = new ArrayList<>();
 
         for (S3Object s3Object: objectList.contents()) {
             URIBuilder uriBuilder = new URIBuilder();
@@ -348,7 +354,7 @@ public final class DroidAPI implements AutoCloseable {
             try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, s3Client)) {
                 request.setExtension(extension);
                 request.open(s3Uri);
-                apiResults.addAll(getApiResults(request, hashResults));
+                apiResults.add(new APIResult(getIdentificationResults(request), hashResults));
             }
         }
         return apiResults;
@@ -362,25 +368,42 @@ public final class DroidAPI implements AutoCloseable {
     }
 
 
-    private List<ApiResult> submitFileSystemIdentification(final Path file, String extension) throws IOException {
-        final RequestMetaData metaData = new RequestMetaData(
-                Files.size(file),
-                Files.getLastModifiedTime(file).toMillis(),
-                file.toAbsolutePath().toString()
-        );
-
-        final RequestIdentifier id = getRequestIdentifier(file.toAbsolutePath().toUri());
-
-        Map<HashAlgorithm, String> hashResults = generateHashResults(file, this::getFileHash);
-
-        try (final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, id)) {
-            request.setExtension(extension);
-            request.open(file);
-            return getApiResults(request, hashResults);
+    private List<APIResult> submitFileSystemIdentification(final Path file, String extension) throws IOException {
+        if (Files.isDirectory(file)) {
+            return Files.walk(file).filter(Files::isRegularFile)
+                    .map(eachFile -> getApiResultForFile(extension, eachFile))
+                    .toList();
+        } else {
+            return List.of(getApiResultForFile(extension, file));
         }
     }
 
-    private <T> List<ApiResult> getApiResults(IdentificationRequest<T> request, Map<HashAlgorithm, String> hashResults) throws IOException {
+    private APIResult getApiResultForFile(String extension, Path eachFile) {
+        final RequestMetaData metaData;
+        try {
+            metaData = new RequestMetaData(
+                    Files.size(eachFile),
+                    Files.getLastModifiedTime(eachFile).toMillis(),
+                    eachFile.toAbsolutePath().toString()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        final RequestIdentifier id = getRequestIdentifier(eachFile.toAbsolutePath().toUri());
+
+        Map<HashAlgorithm, String> hashResults = generateHashResults(eachFile, this::getFileHash);
+
+        try (final FileSystemIdentificationRequest request = new FileSystemIdentificationRequest(metaData, id)) {
+            request.setExtension(extension);
+            request.open(eachFile);
+            return new APIResult(getIdentificationResults(request), hashResults);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T> List<IdentificationResult> getIdentificationResults(IdentificationRequest<T> request) throws IOException {
         IdentificationResultCollection resultCollection;
         String extension = request.getExtension();
 
@@ -402,17 +425,17 @@ public final class DroidAPI implements AutoCloseable {
         boolean fileExtensionMismatch = resultCollection.getExtensionMismatch();
 
         return resultCollection.getResults()
-                .stream().map(res -> createApiResult(res, extension, fileExtensionMismatch, request.getIdentifier().getUri(), hashResults))
+                .stream().map(res -> createIdentificationResult(res, extension, fileExtensionMismatch, request.getIdentifier().getUri()))
                 .collect(Collectors.toList());
     }
 
-    private ApiResult createApiResult(IdentificationResult result, String extension, boolean extensionMismatch, URI uri, Map<HashAlgorithm, String> hashResults) {
+    private IdentificationResult createIdentificationResult(uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult result, String extension, boolean extensionMismatch, URI uri) {
         String name = result.getName();
         if (result.getMethod().equals(IdentificationMethod.CONTAINER)
                 && (droidCore.formatNameByPuid(result.getPuid()) != null)) {
             name = droidCore.formatNameByPuid(result.getPuid());
         }
-        return new ApiResult(extension, result.getMethod(), result.getPuid(), name, extensionMismatch, uri, hashResults);
+        return new IdentificationResult(extension, result.getMethod(), result.getPuid(), name, extensionMismatch, uri);
     }
 
     private <T> IdentificationResultCollection identifyByExtension(final IdentificationRequest<T> identificationRequest) {
@@ -424,7 +447,7 @@ public final class DroidAPI implements AutoCloseable {
     private Optional<String> getContainerPuid(final IdentificationResultCollection binaryResult) {
         List<String> containerPuids = Arrays.asList(ZIP_PUID, OLE2_PUID, GZIP_PUID);
         return binaryResult.getResults().stream()
-                .map(IdentificationResult::getPuid)
+                .map(uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult::getPuid)
                 .filter(containerPuids::contains).findFirst();
     }
 
