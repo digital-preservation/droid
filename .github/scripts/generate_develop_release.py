@@ -26,15 +26,15 @@ def is_ancestor(ancestor, descendant):
 def fetch_merged_prs():
     url = f"{API_BASE}/repos/{REPO}/pulls"
     params = {"state": "closed", "base": "develop", "per_page": 100}
-    r = requests.get(url, headers=HEADERS, params=params)
-    r.raise_for_status()
-    return [pr for pr in r.json() if pr.get("merged_at")]
+    prs = requests.get(url, headers=HEADERS, params=params)
+    prs.raise_for_status()
+    return [pr for pr in prs.json() if pr.get("merged_at")]
 
 def get_release():
     url = f"{API_BASE}/repos/{REPO}/releases/tags/{RELEASE_TAG}"
-    r = requests.get(url, headers=HEADERS)
-    r.raise_for_status()
-    return r.json()
+    release = requests.get(url, headers=HEADERS)
+    release.raise_for_status()
+    return release.json()
 
 def update_release_notes(release_id, body):
     url = f"{API_BASE}/repos/{REPO}/releases/{release_id}"
@@ -90,12 +90,14 @@ def main():
 
     update_release_notes(release_id, body)
 
-    print("📦 Deleting existing assets...")
+    print("🗑️ Deleting existing assets...")
     asset_ids = [a["id"] for a in release.get("assets", [])]
     delete_assets(asset_ids)
 
-    print("📦 Uploading new assets...")
+    print("⬆️ Uploading new assets...")
+    print("⬆️ Uploading Windows Jar...")
     windows_jar = next(Path("droid-binary/target").glob("*win64-with-jre.zip"))
+    print("⬆️ Uploading Generic Jar...")
     generic_jar = next(Path("droid-binary/target").glob("*bin.zip"))
     upload_asset(upload_url, windows_jar)
     upload_asset(upload_url, generic_jar)

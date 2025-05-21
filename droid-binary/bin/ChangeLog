@@ -1,14 +1,14 @@
 Version 6.9.0
- #1166 Improvement: Add JSON output
- #1170 Improvement: Add GZIP container identification.
- #1206 Improvement: Add ZIP file fallback.
- #1220 Improvement: Add glob matching and container file name matching.
- #1224 Improvement: Replace outdated libraries
- #1217 Improvement: S3 and HTTP identification
- #1324 Improvement: Signature file change detection
- #1165 Bugfix: Do not increment loop counter to fix infinite loop bug.
- #1275 Bugfix: Add option for enableExtensionFunctions for Mac
- #1308 Bugfix: Manage filenames with spaces at the end for Windows
+ * #1166 Improvement: Add JSON output
+ * #1170 Improvement: Add GZIP container identification.
+ * #1206 Improvement: Add ZIP file fallback.
+ * #1220 Improvement: Add glob matching and container file name matching.
+ * #1224 Improvement: Replace outdated libraries
+ * #1217 Improvement: S3 and HTTP identification
+ * #1324 Improvement: Signature file change detection
+ * #1165 Bugfix: Do not increment loop counter to fix infinite loop bug.
+ * #1275 Bugfix: Add option for enableExtensionFunctions for Mac
+ * #1308 Bugfix: Manage filenames with spaces at the end for Windows
 
 Version 6.8.1
  * #1148 Improvement: Update the internal database to the latest version
