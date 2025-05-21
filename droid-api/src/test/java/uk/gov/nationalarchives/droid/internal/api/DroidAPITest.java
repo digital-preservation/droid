@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -119,7 +118,7 @@ public class DroidAPITest {
             List<DroidAPI.APIResult> results = api.submit(containerTest.uri);
             assertThat(results, hasSize(1));
             assertThat(results.getFirst().identificationResults(), hasSize(1));
-            DroidAPI.IdentificationResult result = results.getFirst().identificationResults().getFirst();
+            DroidAPI.APIIdentificationResult result = results.getFirst().identificationResults().getFirst();
             assertThat(result.puid(), is("fmt/12345"));
             assertThat(result.method(), is(IdentificationMethod.CONTAINER));
         }
@@ -160,7 +159,7 @@ public class DroidAPITest {
         assertThat(results.size(), is(1));
         assertThat(results.getFirst().identificationResults().size(), is(1));
 
-        DroidAPI.IdentificationResult identificationResult = results.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult identificationResult = results.getFirst().identificationResults().getFirst();
 
         assertThat(identificationResult.puid(), is("x-fmt/263"));
         assertThat(identificationResult.name(), is("ZIP Format"));
@@ -183,7 +182,7 @@ public class DroidAPITest {
         assertThat(results.size(), is(1));
         assertThat(results.getFirst().identificationResults().size(), is(1));
 
-        DroidAPI.IdentificationResult identificationResult = results.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult identificationResult = results.getFirst().identificationResults().getFirst();
 
         assertThat(identificationResult.puid(), is("fmt/291"));
         assertThat(identificationResult.name(), is("OpenDocument Text"));
@@ -203,7 +202,7 @@ public class DroidAPITest {
         assertThat(results.size(), is(1));
         assertThat(results.getFirst().identificationResults().size(), is(1));
 
-        DroidAPI.IdentificationResult singleResult = results.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult singleResult = results.getFirst().identificationResults().getFirst();
 
         assertThat(singleResult.puid(), is("x-fmt/111"));
         assertThat(singleResult.method(), is(IdentificationMethod.EXTENSION));
@@ -227,7 +226,7 @@ public class DroidAPITest {
     public void should_report_extension_only_match_if_extension_is_provided(URI uri) throws IOException {
         List<DroidAPI.APIResult> results = api.submit(uri, "docx");
 
-        DroidAPI.IdentificationResult result = results.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult result = results.getFirst().identificationResults().getFirst();
         assertThat(result.extension(), is("docx"));
         assertThat(result.method(), is(IdentificationMethod.EXTENSION));
         assertThat(result.puid(), is("fmt/494"));
@@ -240,7 +239,7 @@ public class DroidAPITest {
     public void should_return_extension_mismatch_if_extension_passed_does_not_match(URI uri) throws IOException {
         List<DroidAPI.APIResult> results = api.submit(uri, "pdf");
 
-        DroidAPI.IdentificationResult result = results.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult result = results.getFirst().identificationResults().getFirst();
         assertThat(result.extension(), is("pdf"));
         assertThat(result.method(), is(IdentificationMethod.CONTAINER));
         assertThat(result.puid(), is("fmt/40"));
@@ -278,8 +277,8 @@ public class DroidAPITest {
         List<DroidAPI.APIResult> resultsWithExtension = api.submit(uriPair.getLeft());
         List<DroidAPI.APIResult> resultsWithoutExtension = api.submit(uriPair.getRight());
 
-        DroidAPI.IdentificationResult resultWithExtension = resultsWithExtension.getFirst().identificationResults().getFirst();
-        DroidAPI.IdentificationResult resultWithoutExtension = resultsWithoutExtension.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult resultWithExtension = resultsWithExtension.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult resultWithoutExtension = resultsWithoutExtension.getFirst().identificationResults().getFirst();
         assertThat(resultWithExtension.extension(), is("txt"));
         assertThat(resultWithoutExtension.extension(), is(""));
     }
@@ -295,13 +294,13 @@ public class DroidAPITest {
         List<DroidAPI.APIResult> results = api.submit(uri);
         assertThat(results.size(), is(1));
         assertThat(results.getFirst().identificationResults().size(), is(2));
-        Supplier<Stream<DroidAPI.IdentificationResult>> identificationsStream = () -> results.stream()
+        Supplier<Stream<DroidAPI.APIIdentificationResult>> identificationsStream = () -> results.stream()
                 .flatMap(result -> result.identificationResults().stream());
 
         assertThat(identificationsStream.get()
-                        .map(DroidAPI.IdentificationResult::puid).collect(Collectors.toList()),
+                        .map(DroidAPI.APIIdentificationResult::puid).collect(Collectors.toList()),
                 containsInAnyOrder("fmt/96", "fmt/41"));
-        assertThat(identificationsStream.get().map(DroidAPI.IdentificationResult::name).collect(Collectors.toList()),
+        assertThat(identificationsStream.get().map(DroidAPI.APIIdentificationResult::name).collect(Collectors.toList()),
                 containsInAnyOrder("Raw JPEG Stream", "Hypertext Markup Language"));
     }
 
@@ -316,7 +315,7 @@ public class DroidAPITest {
         List<DroidAPI.APIResult> results = api.submit(uri);
         assertThat(results.size(), is(1));
 
-        DroidAPI.IdentificationResult result = results.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult result = results.getFirst().identificationResults().getFirst();
         assertThat(result.puid(), is("fmt/412"));
         assertThat(result.fileExtensionMismatch(), is(true));
     }
@@ -335,7 +334,7 @@ public class DroidAPITest {
         BiFunction<String, List<String>, Boolean> checkPuid = (fileName, expectedPuids) -> results.stream()
                 .flatMap(result -> result.identificationResults().stream())
                 .filter(result -> result.uri().toString().endsWith(fileName))
-                .map(DroidAPI.IdentificationResult::puid)
+                .map(DroidAPI.APIIdentificationResult::puid)
                 .allMatch(expectedPuids::contains);
         checkPuid.apply("persistence.zip", List.of("x-fmt/263"));
         checkPuid.apply("docx-file-as-xls.xlsx", List.of("fmt/412"));

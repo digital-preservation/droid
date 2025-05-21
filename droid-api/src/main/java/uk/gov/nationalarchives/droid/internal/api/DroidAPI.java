@@ -43,6 +43,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -141,10 +142,10 @@ public final class DroidAPI implements AutoCloseable {
         this.hashAlgorithms = hashAlgorithms;
     }
 
-    public record APIResult(List<IdentificationResult> identificationResults, Map<HashAlgorithm, String> hashResults) {}
+    public record APIResult(List<APIIdentificationResult> identificationResults, Map<HashAlgorithm, String> hashResults) {}
 
-    public record IdentificationResult(String extension, IdentificationMethod method, String puid, String name,
-                                       boolean fileExtensionMismatch, URI uri) { }
+    public record APIIdentificationResult(String extension, IdentificationMethod method, String puid, String name,
+                                          boolean fileExtensionMismatch, URI uri) { }
 
     private HttpClient getHttpClientOrDefault(HttpClient httpClient) {
         return Optional.ofNullable(httpClient)
@@ -291,9 +292,9 @@ public final class DroidAPI implements AutoCloseable {
     }
 
     private String getFileHash(HashAlgorithm hashAlgorithm, Path path) {
-        try {
-            return getHash(hashAlgorithm, new FileInputStream(path.toFile()));
-        } catch (FileNotFoundException e) {
+        try (InputStream fileInputStream = new FileInputStream(path.toFile())) {
+            return getHash(hashAlgorithm, fileInputStream);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -301,8 +302,12 @@ public final class DroidAPI implements AutoCloseable {
     private String getS3Hash(HashAlgorithm algorithm, S3Uri s3Uri) {
         String key = s3Uri.key().orElseThrow(() -> new RuntimeException("Key not found in uri " + s3Uri.uri()));
         String bucket = s3Uri.bucket().orElseThrow(() -> new RuntimeException("Bucket not found in uri " + s3Uri.uri()));
-        ResponseInputStream<GetObjectResponse> responseInputStream = s3Client.getObject(GetObjectRequest.builder().bucket(bucket).key(key).build());
-        return getHash(algorithm, responseInputStream);
+
+        try (ResponseInputStream<GetObjectResponse> responseInputStream = s3Client.getObject(GetObjectRequest.builder().bucket(bucket).key(key).build())) {
+            return getHash(algorithm, responseInputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String getHttpHash(HashAlgorithm algorithm, URI httpUri) {
@@ -369,9 +374,12 @@ public final class DroidAPI implements AutoCloseable {
 
     private List<APIResult> submitFileSystemIdentification(final Path file, String extension) throws IOException {
         if (Files.isDirectory(file)) {
-            return Files.walk(file).filter(Files::isRegularFile)
-                    .map(eachFile -> getApiResultForFile(extension, eachFile))
-                    .toList();
+            try (Stream<Path> files = Files.walk(file)) {
+                return files.filter(Files::isRegularFile)
+                        .map(eachFile -> getApiResultForFile(extension, eachFile))
+                        .toList();
+            }
+
         } else {
             return List.of(getApiResultForFile(extension, file));
         }
@@ -402,7 +410,7 @@ public final class DroidAPI implements AutoCloseable {
         }
     }
 
-    private <T> List<IdentificationResult> getIdentificationResults(IdentificationRequest<T> request) throws IOException {
+    private <T> List<APIIdentificationResult> getIdentificationResults(IdentificationRequest<T> request) throws IOException {
         IdentificationResultCollection resultCollection;
         String extension = request.getExtension();
 
@@ -428,13 +436,13 @@ public final class DroidAPI implements AutoCloseable {
                 .collect(Collectors.toList());
     }
 
-    private IdentificationResult createIdentificationResult(uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult result, String extension, boolean extensionMismatch, URI uri) {
+    private APIIdentificationResult createIdentificationResult(IdentificationResult result, String extension, boolean extensionMismatch, URI uri) {
         String name = result.getName();
         if (result.getMethod().equals(IdentificationMethod.CONTAINER)
                 && (droidCore.formatNameByPuid(result.getPuid()) != null)) {
             name = droidCore.formatNameByPuid(result.getPuid());
         }
-        return new IdentificationResult(extension, result.getMethod(), result.getPuid(), name, extensionMismatch, uri);
+        return new APIIdentificationResult(extension, result.getMethod(), result.getPuid(), name, extensionMismatch, uri);
     }
 
     private <T> IdentificationResultCollection identifyByExtension(final IdentificationRequest<T> identificationRequest) {
@@ -446,7 +454,7 @@ public final class DroidAPI implements AutoCloseable {
     private Optional<String> getContainerPuid(final IdentificationResultCollection binaryResult) {
         List<String> containerPuids = Arrays.asList(ZIP_PUID, OLE2_PUID, GZIP_PUID);
         return binaryResult.getResults().stream()
-                .map(uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult::getPuid)
+                .map(IdentificationResult::getPuid)
                 .filter(containerPuids::contains).findFirst();
     }
 
