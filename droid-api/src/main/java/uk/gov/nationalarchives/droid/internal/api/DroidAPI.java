@@ -179,7 +179,7 @@ public final class DroidAPI implements AutoCloseable {
         private S3Client s3Client;
         private Region s3Region;
         private HttpClient httpClient;
-        private List<HashAlgorithm> hashAlgorithms;
+        private List<HashAlgorithm> hashAlgorithms = Collections.emptyList();
 
         public DroidAPIBuilder binarySignature(final Path binarySignature) {
             this.binarySignature = binarySignature;
@@ -223,8 +223,7 @@ public final class DroidAPI implements AutoCloseable {
             String containerVersion = StringUtils.substringAfterLast(containerSignature.getFileName().toString(), "-").split("\\.")[0];
             String droidVersion = ResourceBundle.getBundle("options").getString("version_no");
             ContainerApi containerApi = new ContainerApi(droidCore, containerSignature);
-            List<HashAlgorithm> hashAlgorithmsOrEmptyList = this.hashAlgorithms == null ? Collections.emptyList() : this.hashAlgorithms;
-            return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerApi.gzIdentifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion, this.s3Client, this.httpClient, this.s3Region, hashAlgorithmsOrEmptyList);
+            return new DroidAPI(droidCore, containerApi.zipIdentifier(), containerApi.ole2Identifier(), containerApi.gzIdentifier(), containerVersion, droidCore.getSigFile().getVersion(), droidVersion, this.s3Client, this.httpClient, this.s3Region, this.hashAlgorithms);
         }
     }
 

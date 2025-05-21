@@ -92,13 +92,17 @@ public class DroidAPITestUtils {
         DroidAPI.DroidAPIBuilder droidAPIBuilder = DroidAPI.builder()
                 .binarySignature(signaturePath)
                 .containerSignature(containerPath)
-                .hashAlgorithms(hashAlgorithms)
                 .httpClient(HttpClient.newHttpClient());
+
+        if (hashAlgorithms != null) {
+            droidAPIBuilder = droidAPIBuilder.hashAlgorithms(hashAlgorithms);
+        }
         S3ClientBuilder builder = S3Client.builder().region(Region.EU_WEST_2);
         if(endpointOverride != null) {
             S3Client s3Client = builder.endpointOverride(endpointOverride).build();
             return droidAPIBuilder.s3Client(s3Client).build();
         }
+
         return droidAPIBuilder.s3Client(builder.build()).build();
     }
 
