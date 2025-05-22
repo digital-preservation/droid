@@ -35,9 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -97,6 +95,7 @@ public class DroidGlobalConfig {
     private Path profileTemplateDir;
     private Path containerSignatureDir;
     private Path textSignatureFileDir;
+    private Path helpPagesDir;
     private Path reportDefinitionDir;
     private Path filterDir;
 
@@ -126,7 +125,17 @@ public class DroidGlobalConfig {
         containerSignatureDir = droidWorkDir.resolve("container_sigs");
         Files.createDirectories(containerSignatureDir);
         createResourceFile(containerSignatureDir, CONTAINER_SIGNATURE_FILE, CONTAINER_SIGNATURE_FILE);
-        
+
+        URL developmentHelpPages = getClass().getResource("/pages");
+
+        if (developmentHelpPages != null) {
+            Path help = Path.of("help");
+            if (Files.exists(help)) {
+                helpPagesDir = help;
+            } else {
+                helpPagesDir = Path.of(developmentHelpPages.getPath());
+            }
+        }
         /*
         signatureFilesDir = new File(droidWorkDir, "signature_files");
         if (signatureFilesDir.mkdir()) {
@@ -385,6 +394,10 @@ public class DroidGlobalConfig {
      */
     public Path getTempDir() {
         return tempDir;
+    }
+
+    public Path getHelpPagesDir() {
+        return helpPagesDir;
     }
 
     /**

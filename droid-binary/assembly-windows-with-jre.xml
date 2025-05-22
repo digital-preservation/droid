@@ -92,6 +92,10 @@
     	<outputDirectory>/</outputDirectory>
         <fileMode>644</fileMode>
     </fileSet>
+    <fileSet>
+      <directory>../droid-help/src/main/resources/pages</directory>
+      <outputDirectory>/help</outputDirectory>
+    </fileSet>
   </fileSets>
 
   <files>

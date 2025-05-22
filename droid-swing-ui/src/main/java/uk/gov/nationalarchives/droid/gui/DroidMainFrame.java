@@ -90,7 +90,7 @@ import javax.help.HelpSet;
 import javax.help.HelpSetException;
 import javax.help.SwingHelpUtilities;
 import javax.swing.*;
-import java.awt.EventQueue;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -98,7 +98,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOError;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -299,7 +301,15 @@ public class DroidMainFrame extends JFrame {
             CSH.setHelpIDString(helpMenuItem, "Welcome to DROID");
 
             // 3. handle events
-            helpMenuItem.addActionListener(new CSH.DisplayHelpFromSource(hb));
+//            helpMenuItem.addActionListener(new CSH.DisplayHelpFromSource(hb));
+            helpMenuItem.addActionListener(evt -> {
+                try {
+                    URI uri = globalContext.getGlobalConfig().getHelpPagesDir().resolve("FAQ.html").toUri();
+                    Desktop.getDesktop().browse(uri);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (HelpSetException e) {
             log.error(e.getMessage(), e);
         }

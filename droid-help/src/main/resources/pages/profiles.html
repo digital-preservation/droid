@@ -1,0 +1,407 @@
+<!--
+
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html class="js tna-template tna-template--light-theme tna-template--js-enabled" lang="en">
+<head>
+    <meta content="text/html; charset=Cp1252" http-equiv="Content-Type">
+    <meta content="Helen" name="generator">
+    <link rel="stylesheet" href="styles/print.css" media="print">
+    <link rel="stylesheet" href="styles/all.css">
+    <script src="javascript/all.js"></script>
+    <script>
+        window.onload = () => {
+            window.TNAFrontend.initAll()
+        }
+    </script>
+    <title>Profiles</title>
+</head>
+<body class="home page-template page-template-page-home page-template-page-home-php page page-id-2 tna-template__body">
+<header class="tna-header" data-module="tna-header">
+    <div class="tna-container tna-header__contents">
+        <div class="tna-column tna-header__logo-wrapper">
+            <a href="/" class="tna-header__logo tna-header__logo--link" title="DROID - Help" aria-label="DROID - Help">
+        <span class="tna-logo tna-logo--adornable">
+          <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 160 160" width="96" height="96"
+               aria-hidden="true" focusable="false">
+            <path fill="transparent" d="M0 0h160v160H0z" class="tna-logo__background"></path>
+            <g class="tna-logo__foreground" fill="currentColor">
+              <path d="M1.9 107.2h156.3V158H1.9v-50.8zm0-52.7h156.3v50.8H1.9V54.5zm0-52.6h77.2v50.8H1.9V1.9zm79 0h77.2v50.8H80.9V1.9zm0-1.9H0v160h160V0H80.9z"></path>
+              <path d="M21.3 19.5h-5.4v-3h14.3v3h-5.4v18.4h-3.5zM31.6 16.5H35v9h8.4v-9h3.4v21.4h-3.4v-9.3H35v9.3h-3.4zM50.9 16.5h12.2v3h-8.8v6.1h7.4v3h-7.4v6.3h8.8v3H50.9zM19.7 69.2h3.8l6.4 12.5c.6 1.1 1.1 2.7 1.6 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.5v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2H23c.2 1.4.3 3.3.3 5v11.5h-3.5c-.1 0-.1-21.4-.1-21.4zM47.8 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8H45c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zM43 69.2h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6L43 69.2zM57.2 72.3h-5.4v-3.1H66v3.1h-5.4v18.4h-3.4zM67.8 69.2h3.5v21.4h-3.5zM87.5 80c0-5.3-1.7-8-4.8-8-3.2 0-4.8 2.7-4.8 8 0 5.2 1.6 7.9 4.8 7.9 3.2 0 4.8-2.7 4.8-7.9m-13.3 0c0-7 3-11.1 8.5-11.1 5.4 0 8.4 4.1 8.4 11.1 0 6.9-3 11-8.4 11s-8.5-4.1-8.5-11M94.3 69.2H98l6.4 12.5c.6 1.1 1.2 2.7 1.7 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.4v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2h-.2c.2 1.4.3 3.3.3 5v11.5h-3.5V69.2zM122.4 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM129.9 69.2h3.5v18.4h8.4v3.1h-11.9zM26.9 135.2l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4H29l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM39.9 132.5c2.5 0 3.4-1.6 3.4-3.9 0-2.2-1-3.8-3.4-3.8h-2.7v7.7h2.7zm-6.1-10.7h6.4c4.5 0 6.7 2.4 6.7 6.6 0 3.1-1.5 5.6-3.7 6.3v.2c1 1.1 4 7.5 4.8 7.9v.5h-3.8c-1-.6-3.6-7.2-4.4-7.8h-2.5v7.8h-3.5v-21.5zM52.9 132.5c0 5.3 1.9 8 4.8 8s4-2 4-5.2l3.5.1c0 .2.1.4.1.6 0 4.4-2.1 7.5-7.5 7.5-5.2 0-8.5-3.9-8.5-11.1 0-7.1 3.3-11 8.5-11 6.4 0 7.5 4.6 7.5 7.2 0 .3 0 .7-.1.9l-3.5.1c0-3.3-1.2-5.2-4-5.2-2.9.2-4.8 2.9-4.8 8.1M68 121.8h3.5v9.1h8.3v-9.1h3.5v21.5h-3.5v-9.4h-8.3v9.4H68zM87.9 121.8h3.5v21.4h-3.5zM94.2 121.8h3.6l3.2 12.3c.5 1.9.8 3.6 1.1 5.6h.2c.3-2 .6-3.7 1.1-5.6l3.2-12.3h3.6l-6.1 21.4H100l-5.8-21.4zM112.7 121.8H125v3.1h-8.8v6h7.4v3h-7.4v6.3h8.8v3.1h-12.3zM130.4 136c0 .2-.1.5-.1.8 0 1.9.8 3.7 3.4 3.7 2.1 0 3.3-1.2 3.3-2.9 0-1.6-.7-2.4-2.2-3l-3.4-1.3c-2.4-.9-4.2-2.4-4.2-5.7 0-3.5 2.3-6.1 6.6-6.1 5.5 0 6.4 3.6 6.4 5.9 0 .3 0 .7-.1 1.1l-3.4.1c0-.2.1-.5.1-.7 0-1.7-.6-3.2-3-3.2-2.1 0-3 1.2-3 2.8 0 1.7.9 2.5 2.2 2.9l3.5 1.3c2.6 1 4.3 2.6 4.3 5.8 0 3.6-2.4 6.1-7 6.1-5.9 0-6.8-3.9-6.8-6.5 0-.3 0-.6.1-1l3.3-.1z"></path>
+            </g>
+          </svg>
+        </span><span class="tna-header__logo-strapline">DROID</span>
+            </a>
+        </div>
+        <div class="tna-column tna-header__navigation-button-wrapper">
+            <button class="tna-header__navigation-button tna-header__navigation-button--opened" type="button"
+                    aria-controls="tna-header__navigation" aria-expanded="true" title="Close menu">
+                Menu
+                <span class="tna-header__hamburger"></span>
+            </button>
+        </div>
+        <nav class="tna-column tna-column--flex-1 tna-column--full-small tna-column--full-tiny tna-header__navigation tna-header__navigation--open"
+             id="tna-header__navigation" aria-label="Primary" aria-hidden="false">
+            <ul class="tna-header__top-navigation-items">
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/releases" class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Releases
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/blob/main/license.md" class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Licence
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="tna-main" id="main-content">
+    <nav class="tna-secondary-navigation" aria-label="Sections">
+        <h2 class="tna-secondary-navigation__heading tna-heading-s">
+            Sections
+        </h2>
+        <ul class="tna-secondary-navigation__items">
+            <li class="tna-secondary-navigation__item--current"><a href="profiles.html" class="tna-secondary-navigation__link">Profiles</a></li>
+            <li class="tna-secondary-navigation__item tna-secondary-navigation__item">
+                <a href="#" class="tna-secondary-navigation__link">Results</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="#" class="tna-secondary-navigation__link">About</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="faq.html" class="tna-secondary-navigation__link">FAQ</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="#" class="tna-secondary-navigation__link">Configuration</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="export.html" class="tna-secondary-navigation__link">Export</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="tna-container"><h1 class="tna-heading-l--space-above">Profiles</h1></div>
+    <div class="tna-container">
+        <div class="tna-column tna-column--width-1-3 tna-column--full-small tna-column--full-tiny tna-section"
+             role="navigation" aria-label="Table of contents">
+            <nav class="tna-sidebar tna-sidebar--contents" aria-label="Sidebar">
+                <h2 class="tna-sidebar__heading tna-heading-m">
+                    Contents
+                </h2>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#create-a-new-profile" class="tna-sidebar__link">Create a new profile</a>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#create-a-new-profile" class="tna-sidebar__link">Choose files and folders</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#include-subfolders" class="tna-sidebar__link">Include subfolders</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#adding-your-selection" class="tna-sidebar__link">Adding your selection</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#removing-your-selection" class="tna-sidebar__link">Removing your selection</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#running-a-profile" class="tna-sidebar__link">Running a profile</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#progress" class="tna-sidebar__link">Progress</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#throttling-back" class="tna-sidebar__link">Throttling back</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#restrictions-while-profiling" class="tna-sidebar__link">Restrictions while profiling</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#pausing" class="tna-sidebar__link">Pausing</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#resuming" class="tna-sidebar__link">Resuming</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#saving-and-loading-a-profile" class="tna-sidebar__link">Saving and loading a profile</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#opening-a-profile" class="tna-sidebar__link">Opening a profile</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#saving-a-profile" class="tna-sidebar__link">Saving a profile</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#profile-files" class="tna-sidebar__link">Profile files</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="tna-column tna-column--width-2-3 tna-column--full-small tna-column--full-tiny tna-section">
+            <h2 class="tna-heading-m" id="create-a-new-profile">Create a new profile</h2>
+            <p>
+                A profile is the files and folders you want to find out about, and the results of
+                profiling them. You can create profiles by clicking the <code>New</code> button, or selecting the
+                <code>File / New </code> menu item. DROID automatically creates a blank profile for you when it starts.
+            </p>
+            <img src="images/creating_a_new_profile.png" alt="Creating a new profile">
+            <p>
+                You can create as many profiles as you like. Each profile appears in its own tab,
+                underneath the toolbar. You can<a href="Choose files and folders.html"> choose files and
+                folders</a> as soon as the tab appears using the <code>Add</code> command,
+                but it takes a few seconds for a new profile to be ready to <a href="#running-a-profile">run</a>. By default, profiles are "Untitled" until they are <a href="load-and-save-profiles.html">saved</a> with a filename.
+            </p>
+            <p>
+                Once a profile is created, its settings are fixed from the <a href="#change-preferences.html">Profile Defaults</a> specified in the preferences window.
+            </p>
+
+            <h2 class="tna-heading-m" id="selecting-files">Choose files and folders</h2>
+            <p>
+                To add files and folders to a profile, click the <code>Add</code> button, or
+                select the <code>Edit / Add files and folders</code> menu.
+                You can also right-click with your mouse on the main profile window, and
+                select the Add option from the popup menu.
+            </p>
+            <p>
+                A selection window will appear. On the left-hand side is a navigator to explore
+                your folders. The example below shows the "Internet Explorer" folder selected on
+                the left-hand side, and the contents of this folder are shown on the right.
+            </p>
+            <p>
+                Any files or folders selected on the right will appear in the "<i>Selected resources</i>"
+                text box at the bottom. Select multiple files and folders at the same time by
+                holding down theSHIFT key to select a list, or the CTRL key to individually select or
+                deselect files or folders.
+            </p>
+            <p>
+                
+            </p>
+            <img alt="Choose files and folders" src="../Images/Choose files and folders.png">
+            <p>
+                
+            </p>
+            <h3 class="tna-heading-s" id="include-subfolders">Include subfolders</h3>
+            <p>
+                When a folder is added to a profile, it is often useful to also profile all of its
+                subfolders. Underneath the selected resources text box, <img alt="Include subfolders checkbox" src="images/Checkbox.png">is checked by default. Uncheck this box if you only want
+                to profile the files directly inside a folder and to ignore any subfolders. If
+                you are only selecting files, this setting makes no difference. Note that if you are <a href="Change preferences.html#AnalyseArchive">profiling inside archival files</a>, they will
+                still be profiled regardless of this setting, which only applies to folders in the file
+                system you are profiling.
+            </p>
+            <p>
+                
+            </p>
+            <h3 class="tna-heading-s" id="adding-your-selection">Adding your selection</h3>
+            <p>
+                Press the <code>OK</code>
+                button to add the selected files and folders to your profile, or the <code>Cancel</code>
+                button to leave the selection window with no changes made. <code>Add</code>can be used repeatedly to add files and
+                folders from different locations in your file system to your profile.
+            </p>
+            <h3 class="tna-heading-s" id="removing-your-selection">Removing your selection</h3>
+            <p>
+                To remove files or folders from the profile, select them in the main window, and either
+                press the <code>Remove</code> button, or use the <code>Edit / Remove</code> files or folders menu item. You can also
+                right-click with your mouse on the main profile window, and select the Remove option
+                from the popup menu.
+            </p>
+            <img alt="Remove top level resources" src="images/Remove top level resources2.png">
+            <p>
+                Only the top-level files and folders you have added to a profile can be removed.
+                When you <a href="Running a profile.html">run</a> a profile with a folder, the
+                profiling process will automatically add the files and folders it finds underneath it.
+                After you run a profile, you cannot add or remove files or folders from the profile
+                anymore—its specification becomes fixed.
+            </p>
+            <h2 class="tna-heading-m" id="running-a-profile">Running a profile</h2>
+            <p>
+                You can start profiling files or folders using the  <code>Start</code> button, or by selecting the <code>Run / Start Identification</code> menu item.
+            </p>
+            <img alt="A running profile" src="images/profile_running.png">
+            <p>
+                As files and folders are identified, they are added to the profile, and you can see all
+                the results obtained so far. If you expand a folder, it will show all the files and
+                folders found so far.  If you happen to open the folder that is being profiled at that
+                time, you will see its child files and sub-folders appearing under it.
+            </p>
+            <p>
+                Once you have started a profile running, you cannot <a href="#selecting-files">choose</a> any further files or folders in it. The
+                specification of which files and folders to process in your profile becomes fixed at the
+                point it first begins running.  If you want to subsequently profile other files or
+                folders, then you can do this in a <a href="#create-a-new-profile">new profile</a>.
+                Results held in multiple profiles can be <a href="#exporting-profiles">exported</a> and <a href="Summary reporting.html">reported</a> on
+                together.
+            </p>
+            <h2 class="tna-heading-s" id="progress">Progress</h2>
+            <p>
+                When your profile first starts running, it counts all the files and folders in your
+                profile, including those in sub-folders.  Once it has counted them, a progress bar will
+                show how much work has been completed, and how much more there is to do.  
+            </p>
+            <p>
+                The progress bar only gives an <i>estimate</i> of progress.  Files which
+                exist inside other files (e.g. zip files) are not accounted for, and in any case, files
+                can be added or removed from your file system while your profile is still running.
+                 In most cases, the progress bar gives a fairly good indication of the amount of
+                work remaining to be done.  The current file being analysed is also displayed, so even
+                if the progress bar doesn't seem to be moving, you can see that it is still profiling.
+            </p>
+            <h2 class="tna-heading-s" id="throttling-back">Throttling back</h2>
+            <p>
+                You can control how quickly or slowly DROID processes the files in your profile, and this
+                can be done at any time, whether your profile is running or not.  This can take the load
+                off your computer, network or disks if running it would impact you, or other users.
+                  By default, DROID works as quickly as it can, but you can tell DROID to delay for
+                a short amount of time between each file it processes.
+            </p>
+            <p>
+                To slow down or speed up DROID, use the slider control at the bottom right of the main
+                window.  When the slider is at the far left of the control, DROID will work as fast as
+                it can (a delay of zero).  When the slider is at the far right, DROID will wait for one
+                second between processing each file.  Even very small delays can reduce the load on
+                networks and file servers, so the normal useful range for throttling is usually between zero
+                and a hundred milliseconds.
+            </p>
+            <h2 class="tna-heading-s" id="restrictions-while-profiling">Restrictions while profiling</h2>
+            <p>
+                While your profile is running, its filter cannot be enabled, and you cannot save
+                it. If you had enabled a filter previously, it will be automatically disabled
+                when your profile is started. Disabling a filter doesn't get rid of it - it just turns
+                it off temporarily.  You can turn it on again when the profile is finished, or paused.
+            </p>
+            <p>
+                In addition, you cannot run any <a href="Summary reporting.html">reports</a> or <a href="#exporting-profiles">export</a> a profile while it is running.  You can report and
+                export other profiles which are not running.
+            </p>
+            <p>
+                If you want to do any of the above tasks while a profile is running, you can
+                temporarily <a href="#pausing">pause</a> it, carry out the task, and then resume profiling
+                later.
+            </p>
+            <h2 class="tna-heading-s" id="pausing">Pausing</h2>
+            <p>
+                You can pause your profile at any time by pressing the <code>Pause</code> button, or by selecting the <code>Run / Pause</code> menu item.
+            </p>
+            <img src="images/profile_paused.png">
+            <p>
+                The <a href="#progress">progress</a> bar will freeze at whatever point it reached,
+                and you will see no further messages about files being analysed in the status bar. Your
+                profile may not pause straight away, as there may be a few outstanding items to be processed
+                in its work queue, particularly if it is in the middle of uncompressing a large archival
+                file.  Once paused, there are no <a href="#restrictions-while-profiling">restrictions</a> on what you
+                can do with your profile (except that you cannot <a href="#selecting-files">choose</a> further files or folders once you have
+                started profiling).
+            </p>
+            <h2 class="tna-heading-s" id="resuming">Resuming</h2>
+            <p>
+                You can resume profiling by simple <a href="#running-a-profile">running</a> it again, using
+                the <code>Start</code> command.  Profiling will pick up running
+                from the point it left off, leaving all results so far intact. You can also <a href="#load-and-save-profiles">save</a> a
+                paused profile, and then <a href="#load-and-save-profiles">open</a> and resume it at a later date.  If the files
+                where your profile was last paused are now different, DROID will attempt to resume by
+                locating the nearest place it can successfully re-start from.
+            </p>
+            <h2 class="tna-heading-m" id="saving-and-loading-a-profile">Saving and loading a profile</h2>
+            <p>
+                DROID can open and save profiles to a file with a <b>.droid</b> filename extension.
+                 Note that DROID 6 cannot open profiles created by earlier versions of DROID.  
+            </p>
+            <h3 class="tna-heading-s" id="opening-a-profile">Opening a profile</h3>
+            <p>
+                To open a saved profile, press the <code>Open</code> button,
+                or select the <code>File / Open</code> menu item.  A standard file
+                open selection dialog will appear.  Navigate to the droid profile you want to open,
+                and press the <code>OK</code> button. The profile will open in a
+                new tab.  If it is a large profile (containing hundreds of thousands of files and
+                folders), it may take a few minutes to open.  A progress bar at the bottom of the screen
+                shows how much of the profile has been opened so far.
+            </p>
+            <h3 class="tna-heading-s" id="saving-a-profile">Saving a profile</h3>
+            <p>
+                To save a profile, press the <code>Save</code> button, or
+                select the <code>File / Save</code> menu item.  If your profile has
+                never been saved before, a standard file save dialog will appear, and you can choose where to
+                save the file and what name it has. If your profile has
+                been saved before, it will be saved to the place it was opened from, and no file save dialog
+                will appear.  It is a large profile (containing hundreds of thousands of files and
+                folders), it may take a few minutes to save.   A progress bar at the bottom of the
+                screen shows how much of the profile has been saved so far.
+            </p>
+            <p>
+                To save an existing profile to another file, select the <code>File / Save As...</code>
+                menu item.  This will always bring up a file save dialog, allowing you
+                to choose a different file to save to. 
+            </p>
+            <h3 class="tna-heading-s" id="profile-files">Profile files</h3>
+            <p>
+                Profile files are actually zip files, which contain some XML files describing the
+                profile, and a database containing any results of profiling so far.  DROID currently
+                uses the <a href="http://db.apache.org/derby/">Apache Derby</a> database, version 10.7, which can be opened using
+                various third-party tools, such as <a href="http://www.dbvis.com/">DB Visualizer</a> The username to connect to a droid database is
+                <code>droid_user</code>, and the password is the same as the username.
+            </p>
+            <p>
+                It is possible to manually edit the profile settings contained within the <code>profile.xml</code> file.  However, it is
+                <b>not recommended</b> that you do this, as changing settings within a profile may mean that
+                inconsistent results are returned (if the profile is paused and there are remaining results
+                to process), or may even cause DROID to crash if the settings conflict with the profile
+                state.  In particular, you must not change which signatures are used by a profile.
+                We cannot guarantee that other settings are safe to change.  Changing this file is
+                entirely at your own risk.
+            </p>
+            
+        </div>
+    </div>
+
+
+</main>
+</body>
+</html>
