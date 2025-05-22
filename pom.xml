@@ -59,6 +59,7 @@
                         <exclude>ui-test-startup.sh</exclude>
                         <exclude>.github/**</exclude>
                         <exclude>**/suppressions.xml</exclude>
+                        <exclude>**/generate_search_index.py</exclude>
                     </excludes>
                 </configuration>
             </plugin>

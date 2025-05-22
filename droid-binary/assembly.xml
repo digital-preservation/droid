@@ -82,6 +82,10 @@
       <fileMode>644</fileMode>
     </fileSet>
     <fileSet>
+      <directory>../droid-help/src/main/resources/pages</directory>
+      <outputDirectory>/help</outputDirectory>
+    </fileSet>
+    <fileSet>
     	<includes>
     		<include>LICENSE</include>
     	</includes>
