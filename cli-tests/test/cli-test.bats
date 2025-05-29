@@ -9,7 +9,7 @@ setup_file() {
 }
 
 setup() {
-  DROID_HOEBIN=/code/cli-tests/binary/droid.sh
+  DROID_BIN=/code/cli-tests/binary/droid.sh
   bats_load_library bats-support
   bats_load_library bats-assert
   mkdir -p folder/subfolder
