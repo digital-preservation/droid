@@ -83,14 +83,8 @@ import uk.gov.nationalarchives.droid.profile.ProfileManagerException;
 import uk.gov.nationalarchives.droid.profile.ProfileResourceNode;
 import uk.gov.nationalarchives.droid.profile.ProfileState;
 import uk.gov.nationalarchives.droid.report.ReportTransformerImpl;
-
-import javax.help.CSH;
-import javax.help.HelpBroker;
-import javax.help.HelpSet;
-import javax.help.HelpSetException;
-import javax.help.SwingHelpUtilities;
 import javax.swing.*;
-import java.awt.EventQueue;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -98,7 +92,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOError;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -288,21 +284,14 @@ public class DroidMainFrame extends JFrame {
         initComponents();
         setLocationRelativeTo(null);
 
-        // 1. create HelpSet and HelpBroker objects
-        try {
-            SwingHelpUtilities.setContentViewerUI("uk.gov.nationalarchives.droid.gui.help.ExternalLinkContentViewerUI");
-
-            HelpSet hs = getHelpSet("helpset.hs");
-            HelpBroker hb = hs.createHelpBroker();
-
-            // 2. assign help to components
-            CSH.setHelpIDString(helpMenuItem, "Welcome to DROID");
-
-            // 3. handle events
-            helpMenuItem.addActionListener(new CSH.DisplayHelpFromSource(hb));
-        } catch (HelpSetException e) {
-            log.error(e.getMessage(), e);
-        }
+        helpMenuItem.addActionListener(evt -> {
+            try {
+                URI uri = globalContext.getGlobalConfig().getHelpPagesDir().resolve("home.html").toUri();
+                Desktop.getDesktop().browse(uri);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         globalContext = new SpringGuiContext();
         profileManager = globalContext.getProfileManager();
@@ -355,19 +344,6 @@ public class DroidMainFrame extends JFrame {
             log.warn("Failed to get profile count because " + re.getMessage());
             return -1;
         }
-    }
-
-    /**
-     * Find the helpset file and create a HelpSet object.
-     * @param helpsetfile
-     * @return  the help set
-     */
-    private HelpSet getHelpSet(String helpsetfile) throws HelpSetException {
-        HelpSet hs = null;
-        ClassLoader cl = this.getClass().getClassLoader();
-        URL hsURL = HelpSet.findHelpSet(cl, helpsetfile);
-        hs = new HelpSet(null, hsURL);
-        return hs;
     }
 
     private void initButtons() {

@@ -26,9 +26,12 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Maven Build
         run: |
+          pip install requests beautifulsoup4
+          cd droid-help
+          python generate_search_index.py
+          cd ..
           mvn -V -B package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
-          pip install requests
-          python .github/scripts/generate_release.py
+          python .github/scripts/generate_develop_release.py
 
         env:
           AWS_REGION: eu-west-2

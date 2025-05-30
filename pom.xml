@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.9.0-RC2-SNAPSHOT</version>
+        <version>6.9.1-SNAPSHOT</version>
         <relativePath>droid-parent</relativePath>
     </parent>
 
@@ -59,6 +59,7 @@
                         <exclude>ui-test-startup.sh</exclude>
                         <exclude>.github/**</exclude>
                         <exclude>**/suppressions.xml</exclude>
+                        <exclude>**/generate_search_index.py</exclude>
                     </excludes>
                 </configuration>
             </plugin>
