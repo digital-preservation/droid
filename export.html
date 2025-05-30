@@ -1,0 +1,650 @@
+<!--
+
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html class="js tna-template tna-template--light-theme tna-template--js-enabled" lang="en">
+<head>
+    <link rel="stylesheet" href="styles/print.css" media="print">
+    <link rel="stylesheet" href="styles/all.css">
+    <link rel="icon" href="images/favicon.png">
+    <title>Export</title>
+</head>
+<body class="home page-template page-template-page-home page-template-page-home-php page page-id-2 tna-template__body">
+<header class="tna-header" data-module="tna-header">
+    <div class="tna-container tna-header__contents">
+        <div class="tna-column tna-header__logo-wrapper">
+            <a href="home.html" class="tna-header__logo tna-header__logo--link" title="DROID - Help" aria-label="DROID - Help">
+        <span class="tna-logo tna-logo--adornable">
+          <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 160 160" width="96" height="96"
+               aria-hidden="true" focusable="false">
+            <path fill="transparent" d="M0 0h160v160H0z" class="tna-logo__background"></path>
+            <g class="tna-logo__foreground" fill="currentColor">
+              <path d="M1.9 107.2h156.3V158H1.9v-50.8zm0-52.7h156.3v50.8H1.9V54.5zm0-52.6h77.2v50.8H1.9V1.9zm79 0h77.2v50.8H80.9V1.9zm0-1.9H0v160h160V0H80.9z"></path>
+              <path d="M21.3 19.5h-5.4v-3h14.3v3h-5.4v18.4h-3.5zM31.6 16.5H35v9h8.4v-9h3.4v21.4h-3.4v-9.3H35v9.3h-3.4zM50.9 16.5h12.2v3h-8.8v6.1h7.4v3h-7.4v6.3h8.8v3H50.9zM19.7 69.2h3.8l6.4 12.5c.6 1.1 1.1 2.7 1.6 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.5v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2H23c.2 1.4.3 3.3.3 5v11.5h-3.5c-.1 0-.1-21.4-.1-21.4zM47.8 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8H45c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zM43 69.2h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6L43 69.2zM57.2 72.3h-5.4v-3.1H66v3.1h-5.4v18.4h-3.4zM67.8 69.2h3.5v21.4h-3.5zM87.5 80c0-5.3-1.7-8-4.8-8-3.2 0-4.8 2.7-4.8 8 0 5.2 1.6 7.9 4.8 7.9 3.2 0 4.8-2.7 4.8-7.9m-13.3 0c0-7 3-11.1 8.5-11.1 5.4 0 8.4 4.1 8.4 11.1 0 6.9-3 11-8.4 11s-8.5-4.1-8.5-11M94.3 69.2H98l6.4 12.5c.6 1.1 1.2 2.7 1.7 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.4v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2h-.2c.2 1.4.3 3.3.3 5v11.5h-3.5V69.2zM122.4 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM129.9 69.2h3.5v18.4h8.4v3.1h-11.9zM26.9 135.2l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4H29l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM39.9 132.5c2.5 0 3.4-1.6 3.4-3.9 0-2.2-1-3.8-3.4-3.8h-2.7v7.7h2.7zm-6.1-10.7h6.4c4.5 0 6.7 2.4 6.7 6.6 0 3.1-1.5 5.6-3.7 6.3v.2c1 1.1 4 7.5 4.8 7.9v.5h-3.8c-1-.6-3.6-7.2-4.4-7.8h-2.5v7.8h-3.5v-21.5zM52.9 132.5c0 5.3 1.9 8 4.8 8s4-2 4-5.2l3.5.1c0 .2.1.4.1.6 0 4.4-2.1 7.5-7.5 7.5-5.2 0-8.5-3.9-8.5-11.1 0-7.1 3.3-11 8.5-11 6.4 0 7.5 4.6 7.5 7.2 0 .3 0 .7-.1.9l-3.5.1c0-3.3-1.2-5.2-4-5.2-2.9.2-4.8 2.9-4.8 8.1M68 121.8h3.5v9.1h8.3v-9.1h3.5v21.5h-3.5v-9.4h-8.3v9.4H68zM87.9 121.8h3.5v21.4h-3.5zM94.2 121.8h3.6l3.2 12.3c.5 1.9.8 3.6 1.1 5.6h.2c.3-2 .6-3.7 1.1-5.6l3.2-12.3h3.6l-6.1 21.4H100l-5.8-21.4zM112.7 121.8H125v3.1h-8.8v6h7.4v3h-7.4v6.3h8.8v3.1h-12.3zM130.4 136c0 .2-.1.5-.1.8 0 1.9.8 3.7 3.4 3.7 2.1 0 3.3-1.2 3.3-2.9 0-1.6-.7-2.4-2.2-3l-3.4-1.3c-2.4-.9-4.2-2.4-4.2-5.7 0-3.5 2.3-6.1 6.6-6.1 5.5 0 6.4 3.6 6.4 5.9 0 .3 0 .7-.1 1.1l-3.4.1c0-.2.1-.5.1-.7 0-1.7-.6-3.2-3-3.2-2.1 0-3 1.2-3 2.8 0 1.7.9 2.5 2.2 2.9l3.5 1.3c2.6 1 4.3 2.6 4.3 5.8 0 3.6-2.4 6.1-7 6.1-5.9 0-6.8-3.9-6.8-6.5 0-.3 0-.6.1-1l3.3-.1z"></path>
+            </g>
+          </svg>
+        </span><span class="tna-header__logo-strapline">DROID</span>
+            </a>
+        </div>
+        <div class="tna-column tna-header__navigation-button-wrapper">
+            <button class="tna-header__navigation-button tna-header__navigation-button--opened" type="button"
+                    aria-controls="tna-header__navigation" aria-expanded="true" title="Close menu">
+                Menu
+                <span class="tna-header__hamburger"></span>
+            </button>
+        </div>
+        <nav class="tna-column tna-column--flex-1 tna-column--full-small tna-column--full-tiny tna-header__navigation tna-header__navigation--open"
+             id="tna-header__navigation" aria-label="Primary" aria-hidden="false">
+            <ul class="tna-header__top-navigation-items">
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/releases"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Releases
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/blob/main/license.md"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Licence
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a href="search.html"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        Search
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="tna-main" id="main-content">
+    <nav class="tna-secondary-navigation" aria-label="Sections">
+        <h2 class="tna-secondary-navigation__heading tna-heading-s">
+        </h2>
+        <ul class="tna-secondary-navigation__items">
+            <li class="tna-secondary-navigation__item">
+                <a href="home.html" class="tna-secondary-navigation__link">Home</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="profiles.html" class="tna-secondary-navigation__link">Profiles</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="faq.html" class="tna-secondary-navigation__link">FAQ</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="configuration.html" class="tna-secondary-navigation__link">Configuration</a>
+            </li>
+            <li class="tna-secondary-navigation__item--current">
+                <a href="export.html" class="tna-secondary-navigation__link">Export</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="cli.html" class="tna-secondary-navigation__link">CLI</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="tna-container"><h1 class="tna-heading-l--space-above">Export</h1></div>
+    <div class="tna-container">
+        <div class="tna-column tna-column--width-1-3 tna-column--full-small tna-column--full-tiny tna-section"
+             role="navigation" aria-label="Table of contents">
+            <nav class="tna-sidebar tna-sidebar--contents" aria-label="Sidebar">
+                <h2 class="tna-sidebar__heading tna-heading-m">
+                    Contents
+                </h2>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#exporting-a-profile" class="tna-sidebar__link">Exporting a profile</a>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#selecting-columns-for-export" class="tna-sidebar__link">Selecting the columns for
+                            export</a>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#csv-file-columns" class="tna-sidebar__link">CSV File Columns</a>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#predefined-template-for-export" class="tna-sidebar__link">Export templates</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#export-template-features">Features</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#export-template-syntax">Syntax</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#export-template-putting-it-all-together">Putting it all together</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#other-options" class="tna-sidebar__link">Other options</a>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#json-output" class="tna-sidebar__link">JSON Output</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="tna-column tna-column--width-2-3 tna-column--full-small tna-column--full-tiny tna-section">
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="exporting-a-profile">Exporting a profile</h2>
+                <p>
+                    DROID can export all open profiles (which are not currently running) to a CSV file. To
+                    export a profile, press the <code>Export</code> button, or select the <code>File / Export</code> menu
+                    item. This shows the export dialog. The profiles you have open are listed
+                    in the export window. If a profile is empty, or in the process of running, it is greyed out.
+                    Select all the profiles you want to export into a single CSV file by checking the boxes next to
+                    them. If any of your profiles have active <a href="profiles.html#results">filters</a>, then
+                    the results will also be filtered. Each profile can have different filters defined and enabled.
+                </p>
+                <p>
+                    There are two possible ways of exporting the profiles.
+                <ul class="tna-ul">
+                    <li>
+                        <a href="#selecting-columns-for-export">Selecting the columns for export</a>
+                    </li>
+                    <li>
+                        <a href="#predefined-template-for-export">Selecting a predefined Export Template for export</a>
+                    </li>
+                </ul>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="selecting-columns-for-export">Selecting the columns for export</h2>
+                <p>
+                    When the "Use export template" checkbox is unchecked, you are presented with an option to select
+                    one or more columns that you wish to export, as shown below:
+                </p>
+                <img alt="Export dialog" src="images/export_dialog.png">
+            </section>
+            <section class="tna-section">
+                <h2 class="tna-heading-m" id="csv-file-columns">CSV File Columns</h2>
+                <p>
+                    The following table describes the columns which can be exported from DROID.
+                <p>
+                <table class="tna-table">
+                    <thead class="tna-table__head">
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">Column Name</th>
+                        <th class="tna-table__header">Description</th>
+                        <th class="tna-table__header">Notes</th>
+                    </tr>
+                    </thead>
+
+                    <tbody class="tna-table__body">
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">ID</td>
+                        <td class="tna-table__cell">This is a unique number assigned to each file, folder or archival file
+                            processed by DROID.
+                        </td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">PARENT_ID</td>
+                        <td class="tna-table__cell">This is the id of the archival file or folder in which this file is
+                            contained.
+                        </td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">URI</td>
+                        <td class="tna-table__cell">Uniform Resource Identifier: This provides a standard, cross-platform
+                            way of describing where resources are located.
+                            URIs are described in more detail in <a href="profiles.html#location">Information
+                                collected by DROID</a></td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">FILE_PATH</td>
+                        <td class="tna-table__cell">The file system location of the resource being profiled. If the resource
+                            was directly
+                            in a file system. Some files are not on the file system - for example, files inside a
+                            zip file. In this case, the file paths are written relative to the parent file which
+                            exists on the file system. Such paths also include the type of archive as a prefix.
+                        </td>
+                        <td class="tna-table__cell">File paths are platform-dependent (they are different on Windows and
+                            unix).
+                            DROID will write out file paths for the system on which it is currently running.
+                            This means that if you profile files on a unix machine, then export the profiles on a
+                            Windows machine, the file paths will be written out as if they were Windows file paths, and
+                            vice versa.
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">NAME</td>
+                        <td class="tna-table__cell">The file name of the resource being profiled.</td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">METHOD</td>
+                        <td class="tna-table__cell">This field gives the method by which a resource identification has been
+                            made.
+                        </td>
+                        <td class="tna-table__cell">
+                            Possible values:
+                            <ul class="tna-ul">
+                                <li>
+                                    <b>Extension</b> - the file format was identified only by its filename extension.
+                                    This method may not be very reliable, as the filename extension may be wrong.
+                                    It is only used when DROID cannot identify a resource by another method,
+                                    and cannot usually identify what the version of a file format is, only its broad type.
+                                </li>
+                                <li>
+                                    <b>Signature</b> - the file format was identified by finding a file format signature
+                                    inside
+                                    the file itself. This method is more reliable than filename extensions, and can
+                                    identify the precise version of a file format.
+                                </li>
+                                <li>
+                                    <b>Container</b> - the file format was identified by finding embedded files and patterns
+                                    within them. This method is as reliable as signature identifications, and can be more
+                                    reliable.
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">STATUS</td>
+                        <td class="tna-table__cell">This field gives the identification status of a resource.</td>
+                        <td class="tna-table__cell">
+                            Possible values:
+                            <ul class="tna-ul">
+                                <li>
+                                    <b>Not done</b> - the resource has not yet been profiled.
+                                </li>
+                                <li>
+                                    <b>Done</b> - the resource was processed with no errors.
+                                </li>
+                                <li>
+                                    <b>Access denied</b> - the operating system refused to give DROID read permissions to
+                                    the
+                                    resource.
+                                </li>
+                                <li>
+                                    <b>Not found</b> - the resource was moved or deleted before DROID could read it.
+                                </li>
+                                <li>
+                                    <b>Error</b> - an error occurred while trying to profile a resource. For example, if
+                                    DROID is prevented from reading a file due to the user not having read permissions to
+                                    it,
+                                    this will result in a profiling error for that file.
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">SIZE</td>
+                        <td class="tna-table__cell">The size in bytes of a file.</td>
+                        <td class="tna-table__cell">Only files have a size, folders do not have a size. However, some files
+                            can contain other files inside them, for example zip files. In this case, the zip file has a
+                            size (as it is a file), and so do the files inside it. The size reported in all cases is the
+                            uncompressed size of each file, as it would appear if extracted from the container file.
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">TYPE</td>
+                        <td class="tna-table__cell">The type of the resource</td>
+                        <td class="tna-table__cell"><p>
+                            DROID categorises the files and folders it profiles as being one of three types:
+                        </p>
+                            <ul class="tna-ul">
+                                <li>
+                                    File
+                                </li>
+                                <li>
+                                    Folder
+                                </li>
+                                <li>
+                                    Archival file (e.g. zip)
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">EXT</td>
+                        <td class="tna-table__cell">The file extension of the resource</td>
+                        <td class="tna-table__cell">Extension is the last part of a filename following a full stop. Only
+                            files have extensions, as they indicate the type of the file. Even if a folder has a full stop
+                            in its name, it will not be assigned an extension.
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">LAST_MODIFIED</td>
+                        <td class="tna-table__cell">The date and time on which a resource was last modified.</td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">EXTENSION_MISMATCH</td>
+                        <td class="tna-table__cell">Whether there is a mismatch between the extension of the resource and
+                            its identification by signature
+                        </td>
+                        <td class="tna-table__cell">
+                            Possible values:
+                            <ul class="tna-ul">
+                                <li>
+                                    <b>true</b> - the extension of the file is different from the expected extension as
+                                    identified by DROID.
+                                </li>
+                                <li>
+                                    <b>false</b> - the extension of the file matches the expected extension as identified by
+                                    DROID.
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">HASH</td>
+                        <td class="tna-table__cell">Hash is a fixed-size string of characters that is generated by running
+                            the contents of a file through a mathematical algorithm. DROID supports MD%, SHA1, SHA256 and
+                            SHA512 algorithms
+                        </td>
+                        <td class="tna-table__cell">
+                            If you have enabled <a href="configuration.html#generate-md5-hash">hash generation</a> in
+                            the preferences, then this column will contain the MD5, SHA1, SHA256 or SHA512 hash for each
+                            file and archival file
+                            processed. See "<a href="configuration.html#detecting-duplicate-files">Detecting duplicate files</a>"
+                            for more information on hashes.
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">FORMAT_COUNT</td>
+                        <td class="tna-table__cell">The number of identifications made to the resource.</td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">PUID</td>
+                        <td class="tna-table__cell">The PRONOM Unique Identifier of the resource, which identifies the
+                            format
+                        </td>
+                        <td class="tna-table__cell">
+                            The PRONOM Unique IDentifier (PUID) identifies the precise file format of a profiled
+                            file. When a resource has been identified, it is assigned a PUID. A unique
+                            identifier exists for every file format that DROID can recognise, and these identifiers are
+                            maintained in the <a href="https://www.nationalarchives.gov.uk/pronom">PRONOM</a> technical
+                            registry database, hosted at the UK National Archives.
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">MIME_TYPE</td>
+                        <td class="tna-table__cell">The mime type of the resource where known.</td>
+                        <td class="tna-table__cell">
+                            The mime-type of an identified file format is a high level format identifier assigned by the
+                            <a href="https://www.iana.org/assignments/media-types/">Internet Assigned Numbers</a>. It is
+                            widely used in email and other internet protocols to identify the type of resource. Not all file
+                            formats identified by DROID
+                            have an assigned mime-type, and different PUIDs assigned by DROID can have the same mime-type
+                        </td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">FORMAT_NAME</td>
+                        <td class="tna-table__cell">
+                            The name of an identified file format, as listed in the <a
+                                href="https://nationalarchives.gov.uk/pronom">PRONOM</a> technical registry against its
+                            PUID.
+                        </td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">FORMAT_VERSION</td>
+                        <td class="tna-table__cell">
+                            The version of an identified file format, as listed in the <a
+                                href="https://www.nationalarchives.gov.uk/pronom">PRONOM</a>
+                            technical registry against its PUID.
+                            Not all file formats have a defined version, so this field can be blank even when a file has a
+                            PUID.
+                        </td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="predefined-template-for-export">Export Templates</h2>
+                <p>
+                    If you have configured any export templates for use with DROID, the "Use export template" checkbox
+                    is enabled. Checking this checkbox shows you a view to select one of the configured templates
+                    to be used for export as shown below:
+                </p>
+                <img alt="Export dialog template" src="images/export_dialog_template.png">
+                <p>
+                    An export template is a simple text file, with a .template extension, which defines customisations of
+                    columns to be exported. Using a template, you can customise headers for the data columns, add new
+                    columns
+                    to the export, convert the data in a column to be uppercase / lowercase and change the order in which
+                    columns
+                    appear in the export. You can make an export template available to Droid by copying it into the
+                    <code>.droid6\export_templates</code> folder. You can customise the columns listed in the <a
+                        href="#csv-file-columns">CSV Columns</a> section.
+                </p>
+                <h3 class="tna-heading-s" id="export-template-features">Features</h3>
+                <p>The current syntax for the export template is referred to as version 1.0. This version of the export
+                    template, when exporting the data, gives better control for the following</p>
+                <ul class="tna-ul">
+                    <li>Ordering the columns within the CSV as desired</li>
+                    <li>Changing the header of a column</li>
+                    <li>Adding columns with constant string values</li>
+                    <li>Converting the data from an underlying column to uppercase or lowercase</li>
+                </ul>
+                <h3 class="tna-heading-s" id="export-template-syntax">Syntax</h3>
+                <p>Syntactically, the export template is simple to define. The details for defining various customisations
+                    are explained below.</p>
+                <ul class="tna-ul">
+                    <li>
+                        <b>version line</b>: The very first line of the Export Template defines the version number. For now
+                        it simply needs to be version 1.0
+                    </li>
+                    <li>
+                        <b>Modifying a header</b>: If you intend to use a different column header instead of one of the
+                        well-known column names used by Droid, you can do so by defining a line such as Identifier: $ID this
+                        instruction changes the header of the ID column to be “Identifier”
+                    </li>
+                    <li>
+                        <b>Adding a column</b>: If you need to add a blank column to the export, it can be done by defining
+                        it with a header without any data. e.g. If you want to add a column named “ProcessDate”, but the
+                        date is actually populated using some other method later in the workflow, you can define a line in
+                        the template as <code>ProcessDate: </code>
+                    </li>
+
+                    <li>
+                        <b>Adding a column and populating it with some value</b>: If you need to add a column to the export
+                        and populate it with some value, it can be done by defining it with a header and the value in double
+                        quotes. e.g. If you want to add a column named “Submitter” and populate it with a value of
+                        “Librarian”, you can define a line in the template as Submitter: "Librarian" Please note that the
+                        value is enclosed in double quotes.
+                    </li>
+                    <li>
+                        <b>Modifying a header and data</b>: If you intend to use same or different column header and want to
+                        modify the data that is populated from the profile results, you can do so by defining a modifier
+                        line such as: Path: LCASE($FILE_PATH) This line will export the value of FILE_PATH in lowercase.
+                        <p>Please note: In version 1.0 the only supported modifications are conversion to uppercase or
+                            lowercase. Please also note that the LCASE or UCASE modifiers can only be used with the profile
+                            columns. These modifications are not supported on custom columns.</p>
+                    </li>
+                    <li>
+                        <b>Order of the columns</b>:
+                        <p>When using an Export Template, Droid exports only those columns which appear in the template and
+                            in the same order as they appear in the template. This gives you the control over ordering
+                            of columns in the export file.</p>
+                    </li>
+                </ul>
+                <h3 class="tna-heading-s" id="export-template-putting-it-all-together">Putting it all together</h3>
+                <p>Consider the following template</p>
+                <pre class="notranslate"><code>version 1.0
+Identifier: $ID
+Name: $NAME
+LowerName: LCASE($NAME)
+Language: "Simplified English"
+Submitter: "Government Dept."
+Background:
+FormatName: $FORMAT_NAME
+FormatVersion: $FORMAT_VERSION
+Export Tool:
+</code></pre>
+                <p>It indicates the following:</p>
+                <ul class="tna-ul">
+                    <li>
+                        <p>The version of the template is 1.0</p>
+                    </li>
+                    <li>
+                        <p>The desired order of columns in the export file is: Identifier, Name, LowerName, Language,
+                            Submitter, Background, FormatName, FormatVersion, Export Tool</p>
+                    </li>
+                    <li>
+                        <p>Identifier, Name, FormatName and FormatVersion columns are populated with data from the ID, NAME,
+                            FORMAT_NAME and FORMAT_VERSION column respectively</p>
+                    </li>
+                    <li>
+                        <p>LowerName column is populated with the data from NAME column after converting it to lower
+                            case.</p>
+                    </li>
+                    <li>
+                        <p>Language and Submitter columns are populated with the string values of "Simplified English" and
+                            "Government Dept." respectively</p>
+                    </li>
+                    <li>
+                        <p>Background and Export Tool columns are left blank.</p>
+                    </li>
+                </ul>
+                <p>The potential output, depending on actual data, may appear as :</p>
+                <table class="tna-table" role="table">
+                    <thead class="tna-table__head">
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header  tna-table__header--numeric">Identifier</th>
+                        <th class="tna-table__header">Name</th>
+                        <th class="tna-table__header">LowerName</th>
+                        <th class="tna-table__header">Language</th>
+                        <th class="tna-table__header">Submitter</th>
+                        <th class="tna-table__header">Background</th>
+                        <th class="tna-table__header">FormatName</th>
+                        <th class="tna-table__header">FormatVersion</th>
+                        <th class="tna-table__header">Export Tool</th>
+                    </tr>
+                    </thead>
+                    <tbody class="tna-table__body">
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell tna-table__cell--numeric">2</td>
+                        <td class="tna-table__cell">GP-led-sites-may21.csv</td>
+                        <td class="tna-table__cell">gp-led-sites-may21.csv</td>
+                        <td class="tna-table__cell">Simplified English</td>
+                        <td class="tna-table__cell">Government Dept.</td>
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell">Comma Separated Values</td>
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell tna-table__cell--numeric">3</td>
+                        <td class="tna-table__cell">Hospital-Hubs-may21.csv</td>
+                        <td class="tna-table__cell">hospital-hubs-may21.csv</td>
+                        <td class="tna-table__cell">Simplified English</td>
+                        <td class="tna-table__cell">Government Dept.</td>
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell">Comma Separated Values</td>
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell tna-table__cell--numeric">4</td>
+                        <td class="tna-table__cell">Pharmacies-May21.csv</td>
+                        <td class="tna-table__cell">pharmacies-may21.csv</td>
+                        <td class="tna-table__cell">Simplified English</td>
+                        <td class="tna-table__cell">Government Dept.</td>
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell">Comma Separated Values</td>
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell tna-table__cell--numeric">5</td>
+                        <td class="tna-table__cell">All-Sites.xlsx</td>
+                        <td class="tna-table__cell">all-sites.xlsx</td>
+                        <td class="tna-table__cell">Simplified English</td>
+                        <td class="tna-table__cell">Government Dept.</td>
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell">Microsoft Excel for Windows</td>
+                        <td class="tna-table__cell">2007 onwards</td>
+                        <td class="tna-table__cell"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+            <section class="tna-section">
+                <h3 class="tna-heading-m" id="other-options">Other options</h3>
+                <p>
+                    Once you have selected the columns to export or selected a template that you wish to use,
+                    you can also select other options such as whether the values should be enclosed in quotes
+                    when exporting. You can also select whether the export should produce one row per file,
+                    or one row per format. When exporting one row per file, each row in the CSV file will
+                    represent a single file, folder or archival file profiled with DROID. If exporting one
+                    row per format, each row in the CSV file will be a single format identification made by
+                    DROID. Since a file can be identified as being more than one possible format, this option
+                    will produce CSV files with multiple rows for the same file (but with different identifications
+                    for it).
+                </p>
+                <p>
+                    The characters of the export will be encoded as UTF-8 by default. If you need to set this
+                    to the encoding used on your local machine instead, select 'Platform specific' instead.
+                </p>
+                <p>
+                    When you are happy you want to export your profiles, press the <code>profiles...</code> button. This will bring up a standard file-save
+                    dialog, in which you can specify where you want your CSV file to be saved.
+                </p>    
+            </section>
+             <section class="tna-section">
+                <h3 class="tna-heading-m" id="json-output">JSON output</h3>
+                <p>
+                    By default, the export is a CSV file. You can instead select the <code>JSON output</code> button and DROID will save the export as a JSON file.
+                    All of the standard filtering and template options work as they do with the CSV output.
+                </p>    
+            </section>
+            
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!--
+
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html class="js tna-template tna-template--light-theme tna-template--js-enabled" lang="en">
+<head>
+    <link rel="stylesheet" href="styles/print.css" media="print">
+    <link rel="stylesheet" href="styles/all.css">
+    <link rel="icon" href="images/favicon.png">
+    <title>FAQ</title>
+</head>
+<body class="home page-template page-template-page-home page-template-page-home-php page page-id-2 tna-template__body">
+<header class="tna-header" data-module="tna-header">
+    <div class="tna-container tna-header__contents">
+        <div class="tna-column tna-header__logo-wrapper">
+            <a href="home.html" class="tna-header__logo tna-header__logo--link" title="DROID - Help" aria-label="DROID - Help">
+        <span class="tna-logo tna-logo--adornable">
+          <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 160 160" width="96" height="96"
+               aria-hidden="true" focusable="false">
+            <path fill="transparent" d="M0 0h160v160H0z" class="tna-logo__background"></path>
+            <g class="tna-logo__foreground" fill="currentColor">
+              <path d="M1.9 107.2h156.3V158H1.9v-50.8zm0-52.7h156.3v50.8H1.9V54.5zm0-52.6h77.2v50.8H1.9V1.9zm79 0h77.2v50.8H80.9V1.9zm0-1.9H0v160h160V0H80.9z"></path>
+              <path d="M21.3 19.5h-5.4v-3h14.3v3h-5.4v18.4h-3.5zM31.6 16.5H35v9h8.4v-9h3.4v21.4h-3.4v-9.3H35v9.3h-3.4zM50.9 16.5h12.2v3h-8.8v6.1h7.4v3h-7.4v6.3h8.8v3H50.9zM19.7 69.2h3.8l6.4 12.5c.6 1.1 1.1 2.7 1.6 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.5v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2H23c.2 1.4.3 3.3.3 5v11.5h-3.5c-.1 0-.1-21.4-.1-21.4zM47.8 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8H45c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zM43 69.2h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6L43 69.2zM57.2 72.3h-5.4v-3.1H66v3.1h-5.4v18.4h-3.4zM67.8 69.2h3.5v21.4h-3.5zM87.5 80c0-5.3-1.7-8-4.8-8-3.2 0-4.8 2.7-4.8 8 0 5.2 1.6 7.9 4.8 7.9 3.2 0 4.8-2.7 4.8-7.9m-13.3 0c0-7 3-11.1 8.5-11.1 5.4 0 8.4 4.1 8.4 11.1 0 6.9-3 11-8.4 11s-8.5-4.1-8.5-11M94.3 69.2H98l6.4 12.5c.6 1.1 1.2 2.7 1.7 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.4v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2h-.2c.2 1.4.3 3.3.3 5v11.5h-3.5V69.2zM122.4 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM129.9 69.2h3.5v18.4h8.4v3.1h-11.9zM26.9 135.2l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4H29l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM39.9 132.5c2.5 0 3.4-1.6 3.4-3.9 0-2.2-1-3.8-3.4-3.8h-2.7v7.7h2.7zm-6.1-10.7h6.4c4.5 0 6.7 2.4 6.7 6.6 0 3.1-1.5 5.6-3.7 6.3v.2c1 1.1 4 7.5 4.8 7.9v.5h-3.8c-1-.6-3.6-7.2-4.4-7.8h-2.5v7.8h-3.5v-21.5zM52.9 132.5c0 5.3 1.9 8 4.8 8s4-2 4-5.2l3.5.1c0 .2.1.4.1.6 0 4.4-2.1 7.5-7.5 7.5-5.2 0-8.5-3.9-8.5-11.1 0-7.1 3.3-11 8.5-11 6.4 0 7.5 4.6 7.5 7.2 0 .3 0 .7-.1.9l-3.5.1c0-3.3-1.2-5.2-4-5.2-2.9.2-4.8 2.9-4.8 8.1M68 121.8h3.5v9.1h8.3v-9.1h3.5v21.5h-3.5v-9.4h-8.3v9.4H68zM87.9 121.8h3.5v21.4h-3.5zM94.2 121.8h3.6l3.2 12.3c.5 1.9.8 3.6 1.1 5.6h.2c.3-2 .6-3.7 1.1-5.6l3.2-12.3h3.6l-6.1 21.4H100l-5.8-21.4zM112.7 121.8H125v3.1h-8.8v6h7.4v3h-7.4v6.3h8.8v3.1h-12.3zM130.4 136c0 .2-.1.5-.1.8 0 1.9.8 3.7 3.4 3.7 2.1 0 3.3-1.2 3.3-2.9 0-1.6-.7-2.4-2.2-3l-3.4-1.3c-2.4-.9-4.2-2.4-4.2-5.7 0-3.5 2.3-6.1 6.6-6.1 5.5 0 6.4 3.6 6.4 5.9 0 .3 0 .7-.1 1.1l-3.4.1c0-.2.1-.5.1-.7 0-1.7-.6-3.2-3-3.2-2.1 0-3 1.2-3 2.8 0 1.7.9 2.5 2.2 2.9l3.5 1.3c2.6 1 4.3 2.6 4.3 5.8 0 3.6-2.4 6.1-7 6.1-5.9 0-6.8-3.9-6.8-6.5 0-.3 0-.6.1-1l3.3-.1z"></path>
+            </g>
+          </svg>
+        </span><span class="tna-header__logo-strapline">DROID</span>
+            </a>
+        </div>
+        <div class="tna-column tna-header__navigation-button-wrapper">
+            <button class="tna-header__navigation-button tna-header__navigation-button--opened" type="button"
+                    aria-controls="tna-header__navigation" aria-expanded="true" title="Close menu">
+                Menu
+                <span class="tna-header__hamburger"></span>
+            </button>
+        </div>
+        <nav class="tna-column tna-column--flex-1 tna-column--full-small tna-column--full-tiny tna-header__navigation tna-header__navigation--open"
+             id="tna-header__navigation" aria-label="Primary" aria-hidden="false">
+            <ul class="tna-header__top-navigation-items">
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/releases"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Releases
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/blob/main/license.md"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Licence
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a href="search.html"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        Search
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="tna-main" id="main-content">
+    <nav class="tna-secondary-navigation" aria-label="Sections">
+         <h2 class="tna-secondary-navigation__heading tna-heading-s">
+        </h2>
+        <ul class="tna-secondary-navigation__items">
+            <li class="tna-secondary-navigation__item">
+                <a href="home.html" class="tna-secondary-navigation__link">Home</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="profiles.html" class="tna-secondary-navigation__link">Profiles</a>
+            </li>
+            <li class="tna-secondary-navigation__item--current">
+                <a href="faq.html" class="tna-secondary-navigation__link">FAQ</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="configuration.html" class="tna-secondary-navigation__link">Configuration</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="export.html" class="tna-secondary-navigation__link">Export</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="cli.html" class="tna-secondary-navigation__link">CLI</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="tna-container"><h1 class="tna-heading-l--space-above">Frequently asked questions</h1></div>
+
+    <div class="tna-container">
+        <div class="tna-column tna-column--width-1-3 tna-column--full-small tna-column--full-tiny tna-section"
+             role="navigation" aria-label="Table of contents">
+            <nav class="tna-sidebar tna-sidebar--contents" aria-label="Sidebar">
+                <h2 class="tna-sidebar__heading tna-heading-m">
+                    Contents
+                </h2>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#" class="tna-sidebar__link">Frequently asked questions</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#java-version" class="tna-sidebar__link">What version of Java do I need? </a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#open-profiles-earlier-version" class="tna-sidebar__link">Can I open profiles
+                                    created in earlier versions of DROID? </a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#why-not-recognise-formats" class="tna-sidebar__link">Why isn't DROID
+                                    recognising certain formats?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#why-time-different" class="tna-sidebar__link">Why are some file times an hour
+                                    different to those on my system?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#can-i-configure-droid-more-accurate" class="tna-sidebar__link">Can I configure
+                                    DROID to give more accurate results?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#can-i-use-the-file-system-while-profiling" class="tna-sidebar__link">Can I
+                                    continue to use the information in the file system whilst I am profiling it?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#how-long-does-profiling-take" class="tna-sidebar__link">How long does
+                                    profiling take?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#can-i-leave-droid-running" class="tna-sidebar__link">Can I set it up and just
+                                    leave DROID running?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#will-droid-impact-performance" class="tna-sidebar__link">Will DROID 6 impact
+                                    on the performance of my systems?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#how-much-disk-space-do-i-need" class="tna-sidebar__link">How much disk space
+                                    do I need to run DROID?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#are-there-limitations-to-where-droid-can-run" class="tna-sidebar__link">Are
+                                    there any limitations to where DROID can profile?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#does-droid-store-copies" class="tna-sidebar__link">Does DROID 6 store copies
+                                    of the files that it is profiling?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#why-has-droid-stopped-profiling" class="tna-sidebar__link">Why has DROID
+                                    stopped profiling before completion?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#why-cannot-resume-paused-profile" class="tna-sidebar__link">Why can't I resume
+                                    a paused profile?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#why-does-filtering-on-not-done-no-results" class="tna-sidebar__link">Why does
+                                    filtering on a Not Done status give no results?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#why-opening-folders-take-a-long-time" class="tna-sidebar__link">Why does
+                                    opening some filtered folders take a long time?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#droid-fails-to-start" class="tna-sidebar__link">What can I do if DROID fails
+                                    to start up?</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="tna-column tna-column--width-2-3 tna-column--full-small tna-column--full-tiny tna-section">
+             <section class="tna-section">
+                <h3 class="tna-heading-m" id="java-version">What version of Java do I need?</h3>
+                <p>
+                    If you are on Windows, a package is provided which also includes JRE with the droid binary. To use the
+                    version
+                    without Java bundled, you will need to have Java 21 installed on your machine in order to run DROID.
+                    The latest JAVA updates can be obtained from <a
+                        href="https://github.com/adoptium/temurin21-binaries/releases">GitHub</a>.
+                </p>
+                <h3 class="tna-heading-m" id="open-profiles-earlier-version">Can I open profiles created in earlier versions
+                    of DROID?</h3>
+                <p>
+                    No. Because of the expanded functionality incorporated in to DROID 6, you will not be able
+                    to load profiles from previous versions in DROID 6&#44; and vice-versa. &nbsp;If you need to
+                    re-analyse results in DROID 6 which were already obtained in earlier versions of DROID, you
+                    will have to re-profile your files using DROID 6.
+                </p>
+                <h3 class="tna-heading-m" id=why-not-recognise-formats>Why isn't DROID recognising certain formats?</h3>
+                <p>
+                    DROID can only recognise files for which there is a defined signature or known extension.
+                    &nbsp;Signatures are regularly updated by The National Archives, and DROID can download them
+                    to improve the range of formats it can identify. &nbsp;In some cases, an existing signature
+                    may fail to recognise a file because the file is unusual in some way. &nbsp;If you know of
+                    such files, please email <i><a href="mailto:pronom@nationalarchives.gov.uk">pronom@nationalarchives.gov.uk</a></i>
+                    so we can develop better
+                    signatures. &nbsp;Note that we usually require&nbsp;a sample of a failing file to find out
+                    why it is not being recognised. &nbsp;Please make sure that there is no sensitive or personal
+                    content in such files before sending them.
+                </p>
+                <h3 class="tna-heading-m" id="why-time-different">Why are some file times an hour different to those on my
+                    system?</h3>
+                <p>
+                    DROID&nbsp;does not record or&nbsp;display dates and times using local daylight savings
+                    time, if any is configured on your system. &nbsp;The underlying dates and times are correct,
+                    but represented as universal time. &nbsp;This means that, if your operating system is
+                    configured to display times using daylight savings time settings, then some times can appear
+                    to be one hour different to those displayed in DROID.
+                </p>
+                <h3 class="tna-heading-m" id="can-i-configure-droid-more-accurate">Can I configure DROID to give more
+                    accurate results?</h3>
+                <p>
+                    Yes. DROID 6 currently makes identifications of files based on scanning a limited amount of
+                    the file. The default configuration is set to 64kb (you can change this in the
+                    Tools&gt;Preferences menu). This is sufficient to return accurate identifications for most
+                    file-types. There are some exceptions, for example in order to identify some uncommon formats
+                    (e.g. SIARD files), you will need to scan more or all of the file. If you choose to increase
+                    the amount of the file that you scan, this is likely to significantly affect the performance
+                    of DROID, particularly if you have numerous large files.
+                </p>
+                <p>
+                    You can also configure whether DROID should match file extensions on all known formats for a
+                    given file extension, or only on file extensions for which there is no other signature.
+                    &nbsp;By default, DROID will only match a file extension if there is no other signature
+                    defined, on the grounds that if the other (usually more accurate) signature failed, it is
+                    unlikely to be the file format with that extension. &nbsp;Sometimes the more accurate
+                    signatures will fail to identify a format (e.g. if a newer version has recently become
+                    available). &nbsp;In these cases, you may want to turn on matching for all extensions.
+                    &nbsp;This will tend to produce more identifications for&nbsp;a larger number of&nbsp;files.
+                    &nbsp;More files will have identifications where they did not before, and more files will
+                    have multiple identifications, instead of a single identification. &nbsp;Whether this is more
+                    accurate is debatable and will depend on the files and signatures you currently have.
+                </p>
+                <h3 class="tna-heading-m" id="can-i-use-the-file-system-while-profiling">Can I continue to use the
+                    information in the file system whilst I am profiling it?</h3>
+                <p>
+                    Yes. If you are running DROID over large file stores, it is conceivable that you may need to
+                    leave it running for a number of days or weeks. DROID will profile what is there at the time,
+                    and so over large active locations the results will be gradually built up even while change
+                    is happening. The eventual profile will therefore not reflect the entire state of your system
+                    at any one time, but rather the state of each file or folder at the time DROID&nbsp;profiled
+                    it.
+                </p>
+                <p>
+                    You don&#39;t need to worry about users then changing files in the location that DROID is
+                    profiling; if a file is identified in the file tree but then deleted or moved, it will be
+                    recorded as an error.
+                </p>
+                <h3 class="tna-heading-m" id="how-long-does-profiling-take">How long does profiling take?</h3>
+                <p>
+                    DROID 6 is much faster than earlier versions of DROID. &nbsp;However, it depends on how much
+                    and what type of information you are profiling, what level of accuracy you choose and what
+                    information you need to get from the results. &nbsp;As a general rule, the larger the volume
+                    of data you profile the longer it will take for the profile to complete. However DROID will
+                    also take longer to complete if you chose to:
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        Analyse the contents of archive files (e.g. zip, gzip, tar, rar)
+                    </li>
+                    <li>
+                        Create an <a href="https://en.wikipedia.org/wiki/MD5">MD5 hash</a>for each file
+                    </li>
+                    <li>
+                        Increase the number of bytes that DROID scans in order to return an identification
+                    </li>
+                    <li>
+                        Set a delay between identifying files using the throttle (to reduce the&nbsp;load on your
+                        network or servers).
+                    </li>
+                </ul>
+                <p>
+                    You will need to weigh up your requirements for accuracy, speed and what use you want to
+                    make of the profiling information, setting your preferences accordingly before you begin to
+                    profile your information.
+                </p>
+                <h3 class="tna-heading-m" id="can-i-leave-droid-running">Can I set it up and just leave DROID running?</h3>
+                <p>
+                    Yes. Although you need to ensure that DROID has the correct access permissions to profile
+                    the locations that you have identified. Also, it is good practice to pause and save your
+                    profiling at regular intervals, to ensure that if you experience an unexpected problem (such
+                    as power shortage or the area that DROID is running in is affected) you can pick up your
+                    profiling again without losing all your results so far.
+                </p>
+                <p>
+                    It is also possible to set up batch files or shell scripts to automate the process and
+                    produce reports when running DROID through the <a href="cli.html">command
+                    line</a>. You should speak to technical specialist in your organisation for more information
+                    about this.
+                </p>
+                <h3 class="tna-heading-m" id="will-droid-impact-performance">Will DROID 6 impact on the performance of my
+                    systems?</h3>
+                <p>
+                    Yes, there will be some impact, but this depends on a number of factors. &nbsp;DROID does
+                    not typically&nbsp;exert a high load on the file systems and networks it is running over, but
+                    this will obviously depend on your particular environment and usages.
+                </p>
+                <p>
+                    DROID 6 has dynamic throttling (configurable only&nbsp;in the GUI), so if you want to limit
+                    the impact on your systems you can increase the amount of time that DROID pauses between
+                    identifying each file. Because it is dynamic, you can for example slow down the rate at which
+                    DROID works during the day, to reduce the load on your network, then increase its speed in
+                    the evening. Remember that the more you ask DROID to pause, the longer it will take to
+                    complete profiling.
+                </p>
+                <h3 class="tna-heading-m" id="how-much-disk-space-do-i-need">How much disk space do I need to run
+                    DROID?</h3>
+                <p>
+                    DROID needs disk space in its working area to process <a href="#does-droid-store-copies">temporary
+                    files</a>, and to
+                    record the database of results it builds
+                    up as it profiles. &nbsp;Profiles can require up to a gigabyte per two million files
+                    processed.
+                </p>
+                <h3 class="tna-heading-m" id="are-there-limitations-to-where-droid-can-run">Are there any limitations to
+                    where DROID can profile?</h3>
+                <p>
+                    You will need to ensure that DROID 6 has the appropriate access permissions to scan the
+                    repositories that it is you have requested. DROID can only profile files held in file systems
+                    or systems which provide a file-system view of its files to your operating system (e.g. a
+                    network share). &nbsp;
+                </p>
+                <h3 class="tna-heading-m" id="does-droid-store-copies">Does DROID 6 store copies of the files that it is
+                    profiling?</h3>
+                <p>
+                    DROID 6 creates temporary files when profiling inside archival files, such as zip, tar or
+                    gzip files. &nbsp;These are written out by default as ~tmp files in the <b>.droid6</b> tmp
+                    directory, unless the <a href="configuration.html#temporary-files-folder">temporary folder
+                    area</a> has been configured to be somewhere else. &nbsp;There are automatic cleanup
+                    processes to remove information from this directory when the temporary file is no longer
+                    needed, however on some occasions (such as if DROID stops unexpectedly), some files may not
+                    be deleted. It is good practice to check this location regularly and remove any ~tmp files
+                    that are no longer required by DROID. &nbsp;DROID&nbsp;will log a warning if it cannot delete
+                    a temporary file.
+                </p>
+                <p>
+                    It is not possible to say how much space is required for temporary files while processing,
+                    as this will depend on the size of your archival files and their contents. &nbsp;DROID also
+                    profiles more than one file at a time, so more than one archival file may be being processed
+                    simultaneously. &nbsp;It is prudent to ensure that you have enough space in your droid
+                    working area to handle decompressing several archival files at any one point in time.
+                    &nbsp;If processing very large file systems, we would recommend that at least
+                    10&nbsp;gigabytes of disk space should be reserved for temporary file processing, but you may
+                    require more or less depending on your files.
+                </p>
+                <h3 class="tna-heading-m" id="why-has-droid-stopped-profiling">Why has DROID stopped profiling before
+                    completion?</h3>
+                <p>
+                    This may be for a number of reasons. DROID 6 has crash recovery built in, which means as
+                    long as DROID has sufficient warning that a file system has become unavailable (which it may
+                    not have in some instances, such as a power shortage) it will pause the current profile ready
+                    to be saved and / or resumed at a later date.
+                </p>
+                <p>
+                    It is good practice to pause and save your profiling at regular intervals, to ensure that if
+                    you experience an unexpected problem (such as power shortage or the area that DROID is
+                    running in is affected) you can pick up your profiling again without losing data.
+                </p>
+                <h3 class="tna-heading-m" id="why-cannot-resume-paused-profile">Why can't I resume a paused profile?</h3>
+                <p>
+                    Because of the crash-recovery capability built in to DROID, it is important that any of the
+                    top level folders&nbsp;that are selected are not deleted, removed or renamed either during
+                    profiling (if the profile is paused) or before DROID has begun to profile them. This will
+                    cause the profile to pause and you will not be able to be resume it. &nbsp;This is because
+                    DROID interprets a missing top-level folder as a missing file system, and it automatically
+                    puts the profile into a pause mode to enable you to save your work and to resume when the
+                    file system becomes available again.
+                </p>
+                <p>
+                    It is best practice to select the highest folder possible when selecting the top-level
+                    folders&nbsp;that you intend to profile and ensure that these are not moved, deleted or
+                    renamed during or before profiling. &nbsp;If you do experience your profile stopping for this
+                    reason, you can still interrogate the data that you do have. &nbsp;You can also create a new
+                    profile that contains the remaining top-level items which were not profiled. &nbsp;Multiple
+                    profiles can be reported on and exported together, so you will achieve the same results.
+                </p>
+                <h3 class="tna-heading-m" id="why-does-filtering-on-not-done-no-results">Why does filtering on a Not Done
+                    status give no results?</h3>
+                <p>
+                    Files or folders which have not yet been processed have a Not Done status in DROID.
+                    &nbsp;These files and folders have not yet been recorded in the database, only in the
+                    specification of what to eventually profile. &nbsp;Filtering works by querying the underlying
+                    database in which DROID records its results, therefore filtering on the Not Done status
+                    returns no results, even if there are files and folders visible in the main view which have
+                    not yet been processed.
+                </p>
+                <h3 class="tna-heading-m" id="why-opening-folders-take-a-long-time">Why does opening some filtered folders
+                    take a long time?</h3>
+                <p>
+                    When a filter is applied to a profile, the user interface has to do a lot of work
+                    determining the status of each file or folder in the opening folder. &nbsp;Folders with lots
+                    of direct files or other folders in them (i.e. many thousands) can take quite a long time to
+                    open. &nbsp;This does not affect the filtering speed for exporting or reporting, so if you
+                    are having problems opening a large folder with a filter, consider exporting the profile to a
+                    CSV file, or running a report over it, rather than trying to open it in the user interface.
+                </p>
+                <h3 class="tna-heading-m" id="droid-fails-to-start">What can I do if DROID fails to start up?</h3>
+                <ul class="tna-ul">
+                    <li>
+                        If DROID fails to start up, you may be running the wrong <a href="#java-version">version of Java</a>.
+                    </li>
+                    <li>
+                        You can try moving, deleting or renaming your <code>.droid6</code> folder, as described below.
+                        &nbsp;DROID will recreate a new working folder with all the default files it needs when it
+                        starts up again.
+                    </li>
+                    <li>
+                        Ensure that your installed version of Java is accessible from where DROID is installed.
+                        &nbsp;From a command-line in your droid installation folder, type "java -version". &nbsp;If
+                        you don&#39;t see the Java version being displayed, you may have to configure the path to your
+                        Java installation. &nbsp;Please consult the installation instructions for Java for your
+                        operating system for details on how to do this.
+                    </li>
+                </ul>
+                <p>
+                    <b>&nbsp;Deleting your .droid6 folder</b>
+                </p>
+                <p>
+                    By default, your <code>.droid6</code> folder is set to be created in your home directory. &nbsp;On
+                    Windows, this is often found at <code>C:\Documents and Settings\USERNAME\.droid6</code> or <code>C:\Users\USERNAME\.droid6</code>
+                    On UNIX systems, this may be found under <code>/home/USERNAME/.droid6</code>
+                </p>
+                <p>
+                    If you are running DROID on a Mac or other Linux based system, please note that the
+                    <b>.droid6</b> folder will be in the same location but will be &#39;hidden&#39;. Note that Mac
+                    systems do not make hidden files easily accessible from your computer. You can delete the
+                    folder&nbsp;from your machine using the command line. &nbsp;Please refer to your operating
+                    system instructions for doing this.
+                </p>
+                <p>
+                    &nbsp;(Please note: the location of the <b>.droid6</b> folder is <a href="configuration.html">configurable
+                    using a batch file or shell script</a>, and may
+                    have been set to a different location on your machine)
+                </p>
+                <p>
+                    By default, the <b>.droid6</b> folder contains any downloaded&nbsp;binary and container
+                    signature files, log files, settings, report definitions, and temporary working area,
+                    although some of these can be <a href="configuration.html">configured to be in
+                    different locations</a>. Please make sure you no longer require any of this information
+                    before deleting. &nbsp;However, DROID will recreate all the default&nbsp;information it needs
+                    by default when it runs again, effectively resetting to a new installation.
+                </p>    
+            </section>
+            
+        </div>
+    </div>
+</main>
+</body>
+</html>
