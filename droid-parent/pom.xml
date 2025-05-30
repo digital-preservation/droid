@@ -346,6 +346,7 @@
                         <exclude>*.GIF</exclude>
                         <exclude>*.PNG</exclude>
                         <exclude>**/suppressions.xml</exclude>
+                        <exclude>**/generate_search_index.py</exclude>
                     </excludes>
                 </configuration>
                 <executions>

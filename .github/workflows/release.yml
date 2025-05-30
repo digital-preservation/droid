@@ -34,6 +34,11 @@ jobs:
           git config user.email "181243999+tna-da-bot@users.noreply.github.com"
           git checkout -b $BRANCH_NAME
           git push -u origin $BRANCH_NAME
+      - run: |
+          pip install beautifulsoup4
+          cd droid-help
+          python generate_search_index.py
+          cd ..
       - run: mvn -q clean install -DnvdApiKey=${{ secrets.NVD_API_KEY }}
       - run: mvn -q -B release:prepare -Prelease-sign-artifacts
       - run: mvn -B release:perform -DskipTests -Prelease-sign-artifacts
