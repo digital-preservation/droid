@@ -1,0 +1,742 @@
+<!--
+
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html class="js tna-template tna-template--light-theme tna-template--js-enabled" lang="en">
+<head>
+    <link rel="stylesheet" href="styles/print.css" media="print">
+    <link rel="stylesheet" href="styles/all.css">
+    <link rel="icon" href="images/favicon.png">
+    <title>Configuration</title>
+</head>
+<body class="home page-template page-template-page-home page-template-page-home-php page page-id-2 tna-template__body">
+<header class="tna-header" data-module="tna-header">
+    <div class="tna-container tna-header__contents">
+        <div class="tna-column tna-header__logo-wrapper">
+            <a href="home.html" class="tna-header__logo tna-header__logo--link" title="DROID - Help" aria-label="DROID - Help">
+        <span class="tna-logo tna-logo--adornable">
+          <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 160 160" width="96" height="96"
+               aria-hidden="true" focusable="false">
+            <path fill="transparent" d="M0 0h160v160H0z" class="tna-logo__background"></path>
+            <g class="tna-logo__foreground" fill="currentColor">
+              <path d="M1.9 107.2h156.3V158H1.9v-50.8zm0-52.7h156.3v50.8H1.9V54.5zm0-52.6h77.2v50.8H1.9V1.9zm79 0h77.2v50.8H80.9V1.9zm0-1.9H0v160h160V0H80.9z"></path>
+              <path d="M21.3 19.5h-5.4v-3h14.3v3h-5.4v18.4h-3.5zM31.6 16.5H35v9h8.4v-9h3.4v21.4h-3.4v-9.3H35v9.3h-3.4zM50.9 16.5h12.2v3h-8.8v6.1h7.4v3h-7.4v6.3h8.8v3H50.9zM19.7 69.2h3.8l6.4 12.5c.6 1.1 1.1 2.7 1.6 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.5v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2H23c.2 1.4.3 3.3.3 5v11.5h-3.5c-.1 0-.1-21.4-.1-21.4zM47.8 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8H45c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zM43 69.2h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6L43 69.2zM57.2 72.3h-5.4v-3.1H66v3.1h-5.4v18.4h-3.4zM67.8 69.2h3.5v21.4h-3.5zM87.5 80c0-5.3-1.7-8-4.8-8-3.2 0-4.8 2.7-4.8 8 0 5.2 1.6 7.9 4.8 7.9 3.2 0 4.8-2.7 4.8-7.9m-13.3 0c0-7 3-11.1 8.5-11.1 5.4 0 8.4 4.1 8.4 11.1 0 6.9-3 11-8.4 11s-8.5-4.1-8.5-11M94.3 69.2H98l6.4 12.5c.6 1.1 1.2 2.7 1.7 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.4v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2h-.2c.2 1.4.3 3.3.3 5v11.5h-3.5V69.2zM122.4 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM129.9 69.2h3.5v18.4h8.4v3.1h-11.9zM26.9 135.2l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4H29l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM39.9 132.5c2.5 0 3.4-1.6 3.4-3.9 0-2.2-1-3.8-3.4-3.8h-2.7v7.7h2.7zm-6.1-10.7h6.4c4.5 0 6.7 2.4 6.7 6.6 0 3.1-1.5 5.6-3.7 6.3v.2c1 1.1 4 7.5 4.8 7.9v.5h-3.8c-1-.6-3.6-7.2-4.4-7.8h-2.5v7.8h-3.5v-21.5zM52.9 132.5c0 5.3 1.9 8 4.8 8s4-2 4-5.2l3.5.1c0 .2.1.4.1.6 0 4.4-2.1 7.5-7.5 7.5-5.2 0-8.5-3.9-8.5-11.1 0-7.1 3.3-11 8.5-11 6.4 0 7.5 4.6 7.5 7.2 0 .3 0 .7-.1.9l-3.5.1c0-3.3-1.2-5.2-4-5.2-2.9.2-4.8 2.9-4.8 8.1M68 121.8h3.5v9.1h8.3v-9.1h3.5v21.5h-3.5v-9.4h-8.3v9.4H68zM87.9 121.8h3.5v21.4h-3.5zM94.2 121.8h3.6l3.2 12.3c.5 1.9.8 3.6 1.1 5.6h.2c.3-2 .6-3.7 1.1-5.6l3.2-12.3h3.6l-6.1 21.4H100l-5.8-21.4zM112.7 121.8H125v3.1h-8.8v6h7.4v3h-7.4v6.3h8.8v3.1h-12.3zM130.4 136c0 .2-.1.5-.1.8 0 1.9.8 3.7 3.4 3.7 2.1 0 3.3-1.2 3.3-2.9 0-1.6-.7-2.4-2.2-3l-3.4-1.3c-2.4-.9-4.2-2.4-4.2-5.7 0-3.5 2.3-6.1 6.6-6.1 5.5 0 6.4 3.6 6.4 5.9 0 .3 0 .7-.1 1.1l-3.4.1c0-.2.1-.5.1-.7 0-1.7-.6-3.2-3-3.2-2.1 0-3 1.2-3 2.8 0 1.7.9 2.5 2.2 2.9l3.5 1.3c2.6 1 4.3 2.6 4.3 5.8 0 3.6-2.4 6.1-7 6.1-5.9 0-6.8-3.9-6.8-6.5 0-.3 0-.6.1-1l3.3-.1z"></path>
+            </g>
+          </svg>
+        </span><span class="tna-header__logo-strapline">DROID</span>
+            </a>
+        </div>
+        <div class="tna-column tna-header__navigation-button-wrapper">
+            <button class="tna-header__navigation-button tna-header__navigation-button--opened" type="button"
+                    aria-controls="tna-header__navigation" aria-expanded="true" title="Close menu">
+                Menu
+                <span class="tna-header__hamburger"></span>
+            </button>
+        </div>
+        <nav class="tna-column tna-column--flex-1 tna-column--full-small tna-column--full-tiny tna-header__navigation tna-header__navigation--open"
+             id="tna-header__navigation" aria-label="Primary" aria-hidden="false">
+            <ul class="tna-header__top-navigation-items">
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/releases"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Releases
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/blob/main/license.md"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Licence
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a href="search.html"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        Search
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="tna-main" id="main-content">
+    <nav class="tna-secondary-navigation" aria-label="Sections">
+        <h2 class="tna-secondary-navigation__heading tna-heading-s">
+        </h2>
+        <ul class="tna-secondary-navigation__items">
+            <li class="tna-secondary-navigation__item">
+                <a href="home.html" class="tna-secondary-navigation__link">Home</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="profiles.html" class="tna-secondary-navigation__link">Profiles</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="faq.html" class="tna-secondary-navigation__link">FAQ</a>
+            </li>
+            <li class="tna-secondary-navigation__item--current">
+                <a href="configuration.html" class="tna-secondary-navigation__link">Configuration</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="export.html" class="tna-secondary-navigation__link">Export</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="cli.html" class="tna-secondary-navigation__link">CLI</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="tna-container"><h1 class="tna-heading-l--space-above">Configuration</h1></div>
+
+    <div class="tna-container">
+        <div class="tna-column tna-column--width-1-3 tna-column--full-small tna-column--full-tiny tna-section"
+             role="navigation" aria-label="Table of contents">
+            <nav class="tna-sidebar tna-sidebar--contents" aria-label="Sidebar">
+                <h2 class="tna-sidebar__heading tna-heading-m">
+                    Contents
+                </h2>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#profile-defaults" class="tna-sidebar__link">Profile defaults</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#binary-signature-file">Binary signature file</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#container-signature-file">Container signature file</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#analyse-archive-files">Analyse contents of archive files</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#analyse-web-archive-files">Analyse contents of web archive files</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#generate-md5-hash">Generate MD5 hash for each file</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#max-bytes-to-scan">Maximum bytes to scan</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#max-extension-no-signature">Match extensions if no other
+                                    signatures defined</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#match-extension-all-known-extensions">Match extensions against all known
+                                    extensions</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#default-throttle">Default throttle</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="tna-sidebar__item">
+                        <a href="#signature-updates" class="tna-sidebar__link">Signature updates</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#binary-signatures-url">Binary signatures URL</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#container-signatures-url">Container signatures URL</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#proxy-settings">Proxy settings</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#automatically-check-for-updates">Automatically check for updates</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#update-settings">Update settings</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#puid-url-pattern">PUID URL pattern</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="tna-sidebar__item">
+                        <a href="#export-defaults" class="tna-sidebar__link">Export defaults</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#default-csv-export-options">Default CSV export options</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="tna-sidebar__item">
+                        <a href="#startup-configuration" class="tna-sidebar__link">Startup configuration</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#startup-scripts">Startup scripts</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#environment-variables">System environment variables</a>
+                                <ul class="tna-sidebar__item-children">
+                                    <li class="tna-sidebar__item-child">
+                                        <a class="tna-sidebar__link" href="#maximum-memory-to-use">Maximum memory to use</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a class="tna-sidebar__link" href="#user-settings-folder">User settings folder</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a class="tna-sidebar__link" href="#temporary-files-folder">Temporary files folder</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a class="tna-sidebar__link" href="#logging-folder">Logging folder</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a class="tna-sidebar__link" href="#log-configuration">Log configuration</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a class="tna-sidebar__link" href="#console-log-level">Console log level</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="tna-sidebar__item">
+                        <a href="#update-file-format-signatures" class="tna-sidebar__link">Update file format signatures</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#update-binary-signatures">Binary signatures</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#update-container-signatures">Container signatures</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="tna-sidebar__item">
+                        <a href="#detecting-duplicate-files" class="tna-sidebar__link">Detecting duplicate files</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#what-are-hashes">What are hashes?</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a class="tna-sidebar__link" href="#forensic-hash-databases">Forensic hash databases</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="tna-column tna-column--width-2-3 tna-column--full-small tna-column--full-tiny tna-section">
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="profile-defaults">Profile defaults</h2>
+                <p>The Profile Defaults tab contains the settings used when creating a new profile. </p>
+                <h3 class="tna-heading-s" id="binary-signature-file">Binary signature file</h3>
+                <p>
+                    The binary signature file is the version of the binary signatures to use when trying to
+                    identify file formats.  Binary signatures are patterns to find inside the file in order
+                    to identify its file format.  Once a profile has been created, you cannot change the
+                    binary signature file it uses.  It is recorded with the profile when you save it.
+                </p>
+                <h3 class="tna-heading-s" id="container-signature-file">Container signature file</h3>
+                <p>
+                    The container signature file is the version of the container signatures to use when trying
+                    to identify file formats.  Container signatures identify file formats by looking for
+                    embedded files inside the main files.  Binary signatures can be applied to these
+                    embedded files.  This improves the accuracy of recognition for these types of file
+                    formats, as the search is confined to the specified embedded files, not to the entire
+                    containing file.  Once a profile has been created, you cannot change the container
+                    signature file it uses.  It is recorded with the profile when you save it.
+                </p>
+                <h3 class="tna-heading-s" id="analyse-archive-files">Analyse contents of archive files</h3>
+                <p>
+                    If this option is checked, then DROID will look inside zip, tar and gzip files and profile
+                    the files it finds inside them.
+                </p>
+                <h3 class="tna-heading-s" id="analyse-web-archive-files">Analyse contents of web archive files</h3>
+                <p>
+                    If this option is checked, then DROID will look inside arc and warc files produced by crawling web pages, and profile
+                    the files it finds inside them. If the <a href="#analyse-archive-files">Analyse archive</a> option is not checked as well,
+                    DROID will only look inside unzipped arc and warc files. Note that the file type stored in a web archive file will often not be the same as the file
+                    type of the web page that produced it (eg. a GIF image generated by a PHP page).
+                </p>
+                <h3 class="tna-heading-s" id="generate-md5-hash">Generate MD5 hash for each file</h3>
+                <p>
+                    If this option is checked, then DROID will produce a hash (checksum) for the content of the file.
+                    By default this option is off, as generating hashes slows down profiling significantly.
+                    The hash type defaults to MD5, but other options (e.g. SHA256, SHA512) can be selected as an alternative.
+                    Read "<a href="configuration.html#detecting-duplicate-files">Detecting duplicate files</a>" for more
+                    information on why you may want to generate hashes.
+                </p>
+                <h3 class="tna-heading-s" id="max-bytes-to-scan">Maximum bytes to scan</h3>
+                <p>
+                    When DROID is trying to identify files, it looks inside the files for common patterns. This
+                    setting allows you to configure how far from the beginning or end of the file DROID will
+                    scan before it stops trying to identify the file. This has a large effect on the performance
+                    of DROID, and a smaller effect on the accuracy of its identifications.
+                </p>
+                <p>
+                    Almost all patterns which identify the format of files are found fairly close to
+                    the start or end of the file. By default, this setting is 65536 bytes (64KB).  You can
+                    make it smaller, and DROID's performance will increase, but the accuracy of identifications
+                    may go down.  Alternatively, you can make it bigger, and the performance of DROID will
+                    go down, and the identification accuracy may go up.
+                </p>
+                <p>
+                    Setting this value to a negative number (e.g. -1), will cause DROID to scan the entire
+                    file (possibly more than once, if different patterns trigger those scans).  This setting
+                    gives the maximum possible accuracy DROID can achieve, but can cause DROID to profile very
+                    slowly, particularly if you have large files.
+                </p>
+                <p>
+                    If you do have files which are not being identified, you can increase this value, or set it
+                    to -1, to see if this has any effect on identification accuracy.  If it still can't
+                    identify those files on a large setting (or the unlimited -1 setting), then you should
+                    probably choose a smaller value to increase the identification performance.
+                </p>
+                <h3 class="tna-heading-s" id="max-extension-no-signature">Match extensions if no other signatures defined</h3>
+                <p>
+                    If this option is selected, DROID will only attempt to match file extensions for
+                    formats for which no other binary or container signatures are defined.  The thinking
+                    here is that, if a presumably more accurate signature failed to match the file format, then
+                    matching against the extension alone would give potentially misleading results.  This is
+                    the default behavior, and is the same as previous versions of DROID.
+                </p>
+                <h3 class="tna-heading-s" id="match-extension-all-known-extensions">Match extensions against all known extensions</h3>
+                <p>
+                    If this option is selected, DROID will attempt to match a file extensions against all known
+                    extensions. This may be helpful if you find you have files in newer formats, for which
+                    there is currently no good binary or container signature, or you have unusual files for which
+                    the existing signatures fail to match.  Using this option will produce identifications
+                    for more files, and more multiple identifications for files.
+                </p>
+                <h3 class="tna-heading-s" id="default-throttle">Default throttle</h3>
+                <p>
+                    This is the delay in milliseconds that DROID should pause between identifying files read
+                    from the file system.  Specifying a higher delay will cause DROID to work slower,
+                    placing less load on your computer, network or disk storage. It does not cause a pause
+                    between identifying files inside archival files.
+                </p>
+                <p>
+                    Unless you need to slow DROID down, this should be set to zero.  Unlike the other
+                    profile preferences, this value can be dynamically adjusted while running using the throttle
+                    slider control on the main window. The throttle setting can be different for each
+                    profile, and will be saved with the profile.
+                </p>
+                <img alt="Profile defaults" src="images/profile_defaults.png">
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="signature-updates">Signature updates</h2>
+                <p>This tab allows you to configure where DROID should try to update its signatures from, and how often.</p>
+                <h3 class="tna-heading-s" id="binary-signatures-url">Binary signatures URL</h3>
+                <p>
+                    The web address where DROID can find a PRONOM-compatible web service to download binary
+                    signature updates.
+                </p>
+                <h3 class="tna-heading-s" id="container-signatures-url">Container signatures URL</h3>
+                <p>
+                    The web address where DROID can find the container signature file.  Container
+                    signature files do not require specialised PRONOM web services to download from - a file
+                    available on a standard web server is sufficient.
+                </p>
+                <h3 class="tna-heading-s" id="proxy-settings">Proxy settings</h3>
+                <p>
+                    Clicking this button will allow you to configure network proxy settings if your network has
+                    a proxy. Please consult your network administrator for details of any proxy settings
+                    you may need to make.
+                </p>
+                <h3 class="tna-heading-s" id="automatically-check-for-updates">Automatically check for updates</h3>
+                <p>
+                    If this box is checked, then DROID will automatically attempt to look for updated signatures
+                    according to the schedule you specify:
+                </p>
+                <h3 class="tna-heading-s" id="update-settings">Update settings</h3>
+                <ul class="tna-ul">
+                    <li>
+                        <b>Every time DROID starts up</b> - DROID will try to check for signature updates when it
+                        starts.
+                    </li>
+                    <li>
+                        <b>Every X days</b> - on starting up, DROID will check for signature updates after the
+                        number of days since the last check.  Note that if you leave DROID running for more
+                        days than is specified, it will not automatically try to update its signatures.  The
+                        check is still only made on startup, but only if the number of days since the last time it
+                        checked has elapsed.
+                    </li>
+                    <li>
+                        <b>Prompt before downloading</b> - If this box is checked, DROID will prompt you before
+                        downloading new signatures.
+                    </li>
+                    <li>
+                        <b>Use updated signature files by default</b> - If this box is checked, DROID will
+                        automatically use a newer signature file by default.  If it isn't checked, it will
+                        still download the file, so it is available for selection in the profile default tab, but
+                        it will not automatically make it the default signature file to use.
+                    </li>
+                </ul>
+                <h3 class="tna-heading-s" id="puid-url-pattern">PUID URL pattern</h3>
+                <p>
+                    The PUID URL pattern is the web location which DROID will connect to when clicking
+                    on a PUID hyperlink in the profile tab.  This should contain the URL to connect to, and
+                    the place into which the PUID should be inserted is indicated by <code>%s</code> For example, if we were to click on
+                    a hyperlinked PUID of <code>fmt/111</code> in the main profile results,
+                    DROID would launch your web browser at the address: <code>https://nationalarchives.gov.uk/pronom/fmt/111</code>
+                </p>
+                <img alt="Signature updates" src="images/signature_updates.png">
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="export-defaults">Export defaults</h2>
+                <p>
+                    The Export Defaults tab contains miscellaneous settings, to configure how DROID exports
+                    CSV files by default.
+                </p>
+                <h3 class="tna-heading-s" id="default-csv-export-options">Default CSV export options</h3>
+                <img alt="Export defaults" src="images/export_defaults.png">
+                <p>
+                    DROID can export profiles to CSV files in two ways: one row per file, and one row per
+                    format. See <a href="export.html#exporting-a-profile">exporting profiles</a> for more
+                    information on each of these options.  The settings here only configure the
+                    <em>default</em> for export.  When you export, you can select which you prefer on a
+                    per-export basis.
+                </p>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="startup-configuration">Startup configuration</h2>
+                 <p>
+                     There are some <a href="#environment-variables">settings</a> which
+                     DROID needs to be told at the point it starts up. These either relate to how
+                     Java is started in the first place, or to fundamental settings which DROID needs to know
+                     before it can do anything else. You can configure these settings in several ways, by
+                     <a href="#startup-scripts">editing the startup scripts</a>, or by <a href="#environment-variables">setting system environment variables</a>.
+                     If any of the settings are not configured at all, they have defaults in each case.
+                 </p>
+                <h3 class="tna-heading-s" id="startup-scripts">Startup scripts</h3>
+                 <p>
+                     There are two startup scripts which can be used to run DROID:
+                 </p>
+                 <ul class="tna-ul">
+                     <li>
+                         <code>droid.bat</code> on Windows
+                     </li>
+                     <li>
+                         <code>droid.sh</code> on Mac or Linux
+                     </li>
+                 </ul>
+                 <p>
+                     Each of these files is a simple text file, which has documented sections to configure each
+                     of the settings near the start of the file. Settings provided by the scripts will
+                     override any system environment variables you have set in the system as a whole.
+                 </p>
+                 <p>
+                     Note: be very careful if you edit the Mac or Linux startup scripts on Microsoft Windows
+                     systems, as this will often add Windows-specific line-endings to the file which may prevent
+                     it from working correctly on Mac or Linux systems. Some text editors let you specify
+                     the type of line-ending to write out.
+                 </p>
+                <h3 class="tna-heading-s" id="environment-variables">System environment variables</h3>
+                <h4 class="tna-heading-s" id="maximum-memory-to-use">Maximum memory to use</h4>
+                <p>
+                    Java programs can only use as much memory as the Java Runtime Environment sets aside
+                    for them.  By default, this value is often quite low. We recommend that DROID runs
+                    with up to 1024MB of memory potentially available, which is the default when DROID runs if no
+                    further configuration is done.
+                </p>
+                <p>
+                    This is the only setting which will only take effect if DROID is run using the startup
+                    scripts. This is because it is a setting Java itself needs to know, before DROID is
+                    even run.
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        Default value (running through scripts and the DROID.exe file): 1024MB
+                    </li>
+                    <li>
+                        Environment variable: <code>droidMemory</code>
+                    </li>
+                </ul>
+                <h4 class="tna-heading-s" id="user-settings-folder">User settings folder</h4>
+                <p>
+                    The user settings folder is where DROID stores user settings, including preferences, report
+                    definitions, filter definitions and file format signatures. If not otherwise
+                    configured, all the other folders and files configurable below are also stored under this
+                    folder.
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        Default value: a folder called <code>.droid6</code> directly under the user's home directory
+                    </li>
+                    <li>
+                        Environment variable: <code>droidUserDir</code>
+                    </li>
+                </ul>
+                <h4 class="tna-heading-s" id="temporary-files-folder">Temporary files folder</h4>
+                <p>
+                    The temporary files folder is where DROID creates and deletes temporary files required
+                    during processing. Two subfolders are created underneath this folder:
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        <code>/tmp</code> - for decompressing archival files to be further processed, and any other
+                        temporary files required. These are deleted when no longer required during
+                        processing.
+                    </li>
+                    <li>
+                        <code>/profiles</code> - to store temporary copies of profiles DROID currently has open.
+                        Each temporary profile is deleted when it is closed.
+                    </li>
+                </ul>
+                <p>
+                    Normally there should be no files left in these areas after closing DROID down, but in case
+                    of any problems, any files in these areas can be safely deleted if DROID is not
+                    running.
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        Default value: the droid user settings folder.
+                    </li>
+                    <li>
+                        Environment variable: <code>droidTempDir</code>
+                    </li>
+                </ul>
+                <h4 class="tna-heading-s" id="logging-folder">Logging folder</h4>
+                <p>The logging folder is where DROID writes its log files out during operation.</p>
+                <ul class="tna-ul">
+                    <li>
+                        Default value: a folder called <code>logs</code> under the droid user settings folder
+                    </li>
+                    <li>
+                        Environment variable: <code>droidLogDir</code>
+                    </li>
+                </ul>
+                <h4 class="tna-heading-s" id="log-configuration">Log configuration</h4>
+                <p>
+                    DROID uses a logging system called <a href="https://logging.apache.org/log4j/2.x/index.html">log4j2</a>
+                    You can configure different log settings by providing the path to a log configuration file, or by editing
+                    the settings in the default log configuration file.
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        Default value: a file called <code>log4j2.properties</code> under the droid user settings folder
+                    </li>
+                    <li>
+                        Environment variable: <code>log4j.configurationFile</code>
+                    </li>
+                </ul>
+                <h4 class="tna-heading-s" id="console-log-level">Console log level</h4>
+                <p>
+                    DROID logs events to the console by default at an INFO level.If
+                    DROID is running in quiet mode from the command line, then this property is overridden
+                    to be at an ERROR level.You can configure the default log level to the console
+                    using this property in the start up scripts. Valid logging levels, from most verbose to least
+                    verbose, are DEBUG, INFO, WARN, ERROR, FATAL.
+                </p>
+                <ul class="tna-ul">
+                    <li>Default value: INFO</li>
+                    <li>Environment variable: <code>consoleLogThreshold</code></li>
+                </ul>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="update-file-format-signatures">Update file format signatures</h2>
+                <p>
+                    DROID can update its file format signatures using the <a href="https://nationalarchives.gov.uk/pronom">PRONOM</a> technical registry service hosted at the National
+                    Archives. To manually update your file format signatures, select the <code>Tools / Check for signature updates...</code> menu item.
+                </p>
+                <p>
+                    It is also possible for DROID to automatically check for and update its signatures on a
+                    regular schedule. This can be configured in the <a href="#signature-updates">preferences</a> section.
+                </p>
+                <p>
+                    If you have a <a href="#update-binary-signatures">binary signature</a> file locally that you want to use,
+                    you can install this file in DROID using the <code>Tools / Install signature file...</code> menu item. This will bring up
+                    a dialog as shown below
+                <p>
+                    <img alt="Install signature file" src="images/install_signature.png">
+                </p>
+                <p>
+                    Either enter the file name and path of the signature file you want to install, or press the
+                    <code> Browse... </code>
+                    button to bring up a file selection dialog, from which you can select the signature file
+                    that you want DROID to use. If you check the "Use this signature file
+                    as default", it will become the default for new profiles. If not, the signature will be
+                    available to select in the preferences should you want to use it at some point in the future,
+                    but will not be used by default. When you have selected the file to install, press the
+                    <code> Install </code> button, or <code> Cancel </code> to exit the dialog making no changes.
+                </p>
+
+                <p>Please note: Currently this feature is only available for <a href="#update-binary-signatures"> binary signature</a> files.
+                    It cannot be used to install <a href="#update-container-signatures"> container signatures</a>.
+                </p>
+                <p>
+                    Alternatively, you can manually copy a binary or container signature file into your droid
+                    working area (which is by default located in a folder called <code>.droid</code>, underneath your home folder).
+                    For binary signature files, place them in the <code>signature_files</code> sub-folder. For
+                    container signature files, place them in the <code>container_sigs</code> sub folder. Note that
+                    container signature files have a number appended to them, which is the date on which they are
+                    updated, in the format year, month date. For example, the file <code>container-signature-20110114.xml</code> is the
+                    container signature file last updated on January 14th, 2011.
+                </p>
+                <h3 class="tna-heading-s" id="update-binary-signatures">Update binary signatures</h3>
+                <p>
+                    Most file formats have either
+                    <a href="https://en.wikipedia.org/wiki/File_format#Magic_number">magic numbers</a> embedded within them, or they have regular
+                    structures which always appear in files of that format. The binary signatures define
+                    what patterns to find in order to identify a file format. The signatures can specify
+                    simple sequences of bytes, alternate sequences, or several different possible bytes at the
+                    same position in the file. These patterns may be found at known positions (e.g. at the
+                    start or 20 bytes in from the end of the file), or they may appear at variable positions,
+                    either within a known range of possible positions, or anywhere in the file at all.
+                    Signatures can combine all of these features, sometimes more than one in the same
+                    signature.
+                </p>
+                <p>
+                    Taking a very contrived example, a signature may specify that there are three bytes at the
+                    start of the file: 01, 02 and 03. Then 5 bytes on there is either 04 or 05. After that,
+                    somewhere between 10 and 1000 bytes on is either 06 07 08 09, or 10, 11, 12, 13.
+                    Finally, the bytes ff, ee, dd are found right at the end of the file.
+                </p>
+                <h3 class="tna-heading-s" id="update-container-signatures">Update container signatures</h3>
+                <p>
+                    Some file formats are actually collections of embedded files, each with their own
+                    formats. For example, Microsoft Office 2007 files are actually zip files, which
+                    contain various other files. Taken together, they define an Office 2007 file.
+                    Binary signatures are not very good at identifying files like this, as the contents of
+                    the embedded files are obscured by the containing format (in this case, zip). In order
+                    to provide more accurate identifications, DROID can open files which use either the ZIP
+                    format, or the OLE2 format, and look inside them to see what embedded files are present.
+                </p>
+                <p>
+                    Container signatures are just specifications of which files to look for inside the
+                    containing formats, and optionally, one or more <a href="#update-binary-signatures">binary signatures</a> to run against those
+                    files if they are found.
+                </p>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="detecting-duplicate-files">Detecting duplicate files</h2>
+                <p>
+                    It is very common to find that files are duplicated in different areas of your filing
+                    systems.  Some estimates show that around 30% of all file storage consists of
+                    duplicate files. This can happen because many users save the same files from email
+                    attachments, or they take a backup copy of files while they are working on them, but don't
+                    end up changing most of them.
+                </p>
+                <p>
+                    One method of duplicate detection is to use content hashes. If two files have the same
+                    hash value, then they are overwhelmingly likely to have identical content. The odds of
+                    two arbitrary files having the same hash value by accident are less than 1 in
+                    18,000,000,000,000,000,000, which is very, very low (these odds are for MD5, with SHA1, and then SHA256
+                    the odds become orders of magnitude lower still). DROID can generate content hashes
+                    for your files, but note that DROID will not locate files with the same hash value for you,
+                    only generate them in the first place. If you export your profiles to a CSV file and
+                    import them into software like Excel or Access, you can query for files which have the same
+                    hash.
+                </p>
+                <p>
+                    Another method of locating duplicate files (without using hashes) is to search for folder
+                    names containing words like, 'backup', 'temp' and 'old', as users frequently name folders or
+                    files with these words if they intend them to be temporary copies. Another, more time
+                    consuming method, is by examining the names of files and folders. If there are areas with
+                    very similar (or identical names), then you may have duplicate information within
+                    them. However, both of these methods can only give you an indication that there
+                    may be duplication and a high degree of manual review will still be required to assure
+                    yourself that the file contents are really duplicated.
+                </p>
+                <p>
+                    If you do find duplicate files, you must decide how to deal with them. Clearly you will need
+                    to keep at least one of them, but you will have to decide which, if any, can be safely
+                    removed.  There are risks to digital continuity in deleting files, so you should take
+                    into account several considerations before deleting duplicates:
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        not all users may have access to all copies of a duplicate file
+                    </li>
+                    <li>
+                        the duplicate files may have different metadata. For example, the location of a file in a
+                        filing structure can provide essential context. Or there may be important audit metadata
+                        showing that different people opened the different duplicates
+                    </li>
+                    <li>
+                        a duplicate file may provide context to the surrounding data it was stored next to. The
+                        loss of this context could render the meaning of the surrounding files unclear or
+                        unintelligible
+                    </li>
+                    <li>
+                        large areas of duplication may be for test or development environments, and therefore will
+                        be necessary for systems development.
+                    </li>
+                </ul>
+                <p>
+                    You can mitigate some of the risks related to loss of context by leaving shortcuts (or
+                    symbolic links in a UNIX file system) to the 'master file' when you delete a duplicate.
+                </p>
+                <h3 class="tna-heading-s" id="what-are-hashes">What are hashes?</h3>
+                <p>
+                    Hashes are long numbers, often represented as <a href="https://en.wikipedia.org/wiki/Hexadecimal">hexadecimal</a> text, which can be used as a signature to identify
+                    the content of a file. DROID can generate hashes called <a href="https://en.wikipedia.org/wiki/MD5">MD5</a>,
+                    or <a href="https://en.wikipedia.org/wiki/SHA-1">SHA1</a>,
+                    or <a href="https://en.wikipedia.org/wiki/SHA256">SHA256</a>,
+                    or <a href="https://en.wikipedia.org/wiki/SHA512">SHA512</a>,
+                    which are fairly fast to produce (relative to other hashing algorithms).
+                </p>
+                <p>
+                    Hashes are useful to locate duplicates in the files you profile, and to match with
+                    common files which have published hash values. However, MD5 hashes are not resistant to
+                    malicious attack - an attacker can create files which have the same hash but with different
+                    content. The goal of hashing in DROID is not to provide a cryptographic assurance
+                    of uniqueness, only to locate likely duplicates and to link to forensic hash databases
+                    (most of which use MD5). SHA1 and SHA256 are more recent and more secure than MD5, but should still not be
+                    taken to provide an absolute guarantee of uniqueness.
+                </p>
+                <h3 class="tna-heading-s" id="forensic-hash-databases">Forensic hash databases</h3>
+                <p>
+                    Forensic hash databases are published databases of hash values for files which are widely
+                    found. These can allow you to detect whether the files in your systems are common, well
+                    known files (such as Windows system files), whether they contain known illegal content, and
+                    in some cases, malware such as viruses. Knowing which files are well known
+                    outside your organisation can support information policy and decision making.  For
+                    example, you may discover that a lot of storage space is being taken up with multiple copies
+                    of files which are easily replaced from install CDs. Files which are not well known probably
+                    contain unique content, and would be hard to replace if deleted.
+                </p>
+                <p>
+                    There are a variety of content hash databases available. One such database is:
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        <a href="https://www.nist.gov/software-quality-group/national-software-reference-library-nsrl">National Software Reference Library</a>
+                    </li>
+                </ul>
+                <p>
+                    Note that DROID does not link your files to these hash databases. It merely generates a
+                    compatible hash for each of your files, which you can then use to link with them. You will
+                    require additional technical assistance to perform these links.
+                </p>
+            </section>
+        </div>
+    </div>
+</main>
+</body>
+</html>
