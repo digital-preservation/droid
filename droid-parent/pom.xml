@@ -96,7 +96,7 @@
         <spring.version>6.2.7</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.17.1.0</derby.version>
-        <cxf.version>4.1.1</cxf.version>
+        <cxf.version>4.1.2</cxf.version>
         <java.iso-tools.version>2.1.0</java.iso-tools.version>
         <jaxb.version>4.0.5</jaxb.version>
         <jakarta.version>4.0.2</jakarta.version>
@@ -109,7 +109,7 @@
         <log4j2.version>2.24.3</log4j2.version>
         <checkstyle.version>10.21.2</checkstyle.version>
         <aws.version>2.31.37</aws.version>
-        <junit.version>5.12.2</junit.version>
+        <junit.version>5.13.1</junit.version>
         <commons.version>2.19.0</commons.version>
     </properties>
 
@@ -141,7 +141,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -283,7 +283,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.1</version>
+                <version>12.1.2</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                 </configuration>
@@ -792,7 +792,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>5.17.0</version>
+                <version>5.18.0</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
