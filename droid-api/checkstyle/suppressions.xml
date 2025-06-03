@@ -68,6 +68,12 @@
     <suppress checks="ClassFanOutComplexity|ClassDataAbstractionCoupling"
               files=".*ProfileInstanceManagerImpl\.java$"/>
 
+    <suppress checks="ClassFanOutComplexity|ClassDataAbstractionCoupling"
+              files=".*DroidAPI\.java$"/>
+
+    <suppress checks="JavadocVariable"
+              files=".*HashAlgorithm\.java$"/>
+
     <!-- suppress requirement for @return on enum, which conflicts with new XDocLint -->
     <suppress checks="JavadocMethodCheck"
               files=".*ProfileState\.java$"/>

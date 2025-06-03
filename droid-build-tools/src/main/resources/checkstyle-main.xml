@@ -101,7 +101,7 @@
     <module name="ParameterName"/>
     <module name="ParameterNumber">
       <property name="id" value="paramNum"/>
-      <property name="max" value="10"/>
+      <property name="max" value="11"/>
     </module>
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>

@@ -79,7 +79,7 @@ public class DroidAPISkeletonTest {
 
     public record SkeletonTest(String puid, URI uri) {}
 
-    public static Stream<SkeletonTest> data() throws IOException, SignatureParseException {
+    public static Stream<SkeletonTest> data() throws IOException {
         Pattern FILENAME = Pattern.compile("((?:x-)?fmt)-(\\d+)-signature-id-(\\d+).*");
         Set<String> ignorePuid = getIgnoredPuids();
         return Stream.concat(
@@ -130,11 +130,13 @@ public class DroidAPISkeletonTest {
     @ParameterizedTest
     @MethodSource("data")
     public void skeletonTest(SkeletonTest skeletonTest) throws Exception {
-        List<ApiResult> results = api.submit(skeletonTest.uri);
+        List<DroidAPI.APIIdentificationResult> results = api.submit(skeletonTest.uri)
+                .stream()
+                .flatMap(l -> l.identificationResults().stream()).collect(Collectors.toList());
         assertThat(results, hasItem(ResultMatcher.resultWithPuid(skeletonTest.puid)));
     }
 
-    private static class ResultMatcher extends TypeSafeMatcher<ApiResult> {
+    private static class ResultMatcher extends TypeSafeMatcher<DroidAPI.APIIdentificationResult> {
 
         private final String expectedPuid;
 
@@ -143,13 +145,13 @@ public class DroidAPISkeletonTest {
         }
 
         @Override
-        protected boolean matchesSafely(ApiResult item) {
-            return expectedPuid.equals(item.getPuid());
+        protected boolean matchesSafely(DroidAPI.APIIdentificationResult item) {
+            return expectedPuid.equals(item.puid());
         }
 
         @Override
-        protected void describeMismatchSafely(ApiResult item, Description mismatchDescription) {
-            mismatchDescription.appendText("expected puid " + expectedPuid + " but got: " + item.getPuid());
+        protected void describeMismatchSafely(DroidAPI.APIIdentificationResult item, Description mismatchDescription) {
+            mismatchDescription.appendText("expected puid " + expectedPuid + " but got: " + item.puid());
         }
 
         @Override
@@ -157,7 +159,7 @@ public class DroidAPISkeletonTest {
 
         }
 
-        public static org.hamcrest.Matcher<ApiResult> resultWithPuid(String puid) {
+        public static org.hamcrest.Matcher<DroidAPI.APIIdentificationResult> resultWithPuid(String puid) {
             return new ResultMatcher(puid);
         }
     }
