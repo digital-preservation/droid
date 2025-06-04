@@ -60,6 +60,10 @@ jobs:
           cd droid-parent
           mvn versions:set -DnewVersion=$NEW_VERSION
           cd ..
+          pip install beautifulsoup4
+          cd droid-help
+          python generate_search_index.py
+          cd ..
           mvn clean package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
           pip install requests
           python .github/scripts/generate_release.py $NEW_VERSION
