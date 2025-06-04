@@ -229,6 +229,17 @@ public class DroidMainFrame extends JFrame {
         }
     }
 
+    private void logSystemInformation() {
+        AboutDialogData aboutDialogData = populateAboutDialogData();
+        log.info("DROID Version {}", aboutDialogData.getDroidVersion());
+        log.info("Build TimeStamp {}", aboutDialogData.getBuildTimeStamp());
+        log.info("Java Version {}", aboutDialogData.getJavaVersion());
+        log.info("Java Location {}", aboutDialogData.getJavaLocation());
+        log.info("Operating System {}", aboutDialogData.getOperatingSystem());
+        log.info("DROID Folder {}", aboutDialogData.getDroidFolder());
+        log.info("Log Folder {}", aboutDialogData.getLogFolder());
+    }
+
     /**
      * @param signatureFileInfos
      * @return signature files infos
@@ -269,6 +280,7 @@ public class DroidMainFrame extends JFrame {
 
     public void init() {
         log.info("Starting DROID.");
+        logSystemInformation();
         URL icon = getClass().getResource("/uk/gov/nationalarchives/droid/icons/DROID16.gif");
         setIconImage(new ImageIcon(icon).getImage());
 
