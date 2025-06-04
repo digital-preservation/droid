@@ -57,7 +57,7 @@ public class S3WindowReaderTest {
         WindowCache windowCache = mock(WindowCache.class);
         S3Client s3Client = mockS3Client();
         S3Uri s3Uri = S3Uri.builder().uri(URI.create("s3://bucket/key")).build();
-        S3Utils.S3ObjectMetadata s3ObjectMetadata = new S3Utils.S3ObjectMetadata("bucket", Optional.of("key"), s3Uri, 1L, 1L);
+        S3Utils.S3ObjectMetadata s3ObjectMetadata = new S3Utils.S3ObjectMetadata("bucket", Optional.of("key"), s3Uri, 4L, 1L);
         S3WindowReader s3WindowReader = new S3WindowReader(windowCache, s3ObjectMetadata, s3Client);
 
         byte[] testResponse = "test".getBytes();
@@ -80,6 +80,20 @@ public class S3WindowReaderTest {
 
         assertNull(s3WindowReader.createWindow(-1));
     }
+
+    @Test
+    public void testWindowReaderReturnsNullIfPositionGreaterOrEqualToLength() throws Exception {
+        WindowCache windowCache = mock(WindowCache.class);
+        S3Client s3Client = mockS3Client();
+        S3Uri s3Uri = S3Uri.builder().uri(URI.create("s3://bucket/key")).build();
+        S3Utils.S3ObjectMetadata s3ObjectMetadata = new S3Utils.S3ObjectMetadata("bucket", Optional.of("key"), s3Uri, 4L, 1L);
+        S3WindowReader s3WindowReader = new S3WindowReader(windowCache, s3ObjectMetadata, s3Client);
+
+        assertNotNull(s3WindowReader.createWindow(3));
+        assertNull(s3WindowReader.createWindow(4));
+        assertNull(s3WindowReader.createWindow(5));
+    }
+
 
     @Test
     public void testWindowReaderReturnsErrorOnS3Failure() throws Exception {

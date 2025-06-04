@@ -64,7 +64,7 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
 
     @Override
     protected Window createWindow(long windowStart) throws IOException {
-        if (windowStart >= 0) {
+        if (windowStart >= 0 && windowStart < length) {
             String key = this.s3ObjectMetadata.key().orElseThrow(() -> new RuntimeException(this.s3ObjectMetadata.key() + " not found"));
             GetObjectRequest getS3ObjectRequest = GetObjectRequest.builder()
                     .bucket(this.s3ObjectMetadata.bucket())
