@@ -4,7 +4,7 @@
 
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.9.2-SNAPSHOT</version>
+    <version>6.9.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>droid-parent</name>
@@ -109,7 +109,7 @@
         <log4j2.version>2.24.3</log4j2.version>
         <checkstyle.version>10.21.2</checkstyle.version>
         <aws.version>2.31.37</aws.version>
-        <junit.version>5.13.0</junit.version>
+        <junit.version>5.13.1</junit.version>
         <commons.version>2.19.0</commons.version>
     </properties>
 
@@ -141,7 +141,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -283,7 +283,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.1</version>
+                <version>12.1.2</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                 </configuration>

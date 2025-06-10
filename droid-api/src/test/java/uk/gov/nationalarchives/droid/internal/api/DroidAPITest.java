@@ -52,6 +52,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,6 +64,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.gov.nationalarchives.droid.internal.api.DroidAPITestUtils.*;
+import static uk.gov.nationalarchives.droid.internal.api.HashAlgorithm.*;
 
 public class DroidAPITest {
 
@@ -112,36 +115,34 @@ public class DroidAPITest {
     public void should_match_container_files_if_provided_with_matching_signature(ContainerTest containerTest) throws IOException {
         ContainerFile containerFile = new ContainerFile(containerTest.containerType, DATA, "fmt/12345", containerTest.path);
         try (DroidAPI api = DroidAPITestUtils.createApiForContainer(endpointOverride, containerFile)) {
-            List<ApiResult> results = api.submit(containerTest.uri);
+            List<DroidAPI.APIResult> results = api.submit(containerTest.uri);
             assertThat(results, hasSize(1));
-            assertThat(results.getFirst().getPuid(), is("fmt/12345"));
-            assertThat(results.getFirst().getMethod(), is(IdentificationMethod.CONTAINER));
+            assertThat(results.getFirst().identificationResults(), hasSize(1));
+            DroidAPI.APIIdentificationResult result = results.getFirst().identificationResults().getFirst();
+            assertThat(result.puid(), is("fmt/12345"));
+            assertThat(result.method(), is(IdentificationMethod.CONTAINER));
         }
     }
 
     @Test
     public void should_throw_an_exception_if_file_cannot_be_read() {
-        assertThrows(IOException.class, () -> api.submit(Path.of("/invalidpath").toUri()));
+        assertThrows(RuntimeException.class, () -> api.submit(Path.of("/invalidpath").toUri()));
     }
 
     @Test
     public void should_throw_an_exception_if_container_file_cannot_be_read() {
-        assertThrows(RuntimeException.class, () -> {
-            DroidAPI.builder()
-                    .binarySignature(signaturePath)
-                    .containerSignature(Path.of("/invalidContainerPath"))
-                    .build();
-        });
+        assertThrows(RuntimeException.class, () -> DroidAPI.builder()
+                .binarySignature(signaturePath)
+                .containerSignature(Path.of("/invalidContainerPath"))
+                .build());
     }
 
     @Test
     public void should_throw_an_exception_if_signature_file_cannot_be_read() {
-        assertThrows(SignatureParseException.class, () -> {
-            DroidAPI.builder()
-                    .binarySignature(Path.of("/invalidSignaturePath"))
-                    .containerSignature(containerPath)
-                    .build();
-        });
+        assertThrows(SignatureParseException.class, () -> DroidAPI.builder()
+                .binarySignature(Path.of("/invalidSignaturePath"))
+                .containerSignature(containerPath)
+                .build());
     }
 
     static Stream<URI> binarySignatureUris() {
@@ -152,16 +153,18 @@ public class DroidAPITest {
     @ParameterizedTest
     @MethodSource("binarySignatureUris")
     public void should_identify_given_file_with_binary_signature(URI uri) throws IOException {
-        List<ApiResult> results = api.submit(uri);
+        List<DroidAPI.APIResult> results = api.submit(uri);
         assertThat(results, is(notNullValue()));
 
         assertThat(results.size(), is(1));
+        assertThat(results.getFirst().identificationResults().size(), is(1));
 
-        ApiResult identificationResult = results.get(0);
+        DroidAPI.APIIdentificationResult identificationResult = results.getFirst().identificationResults().getFirst();
 
-        assertThat(identificationResult.getPuid(), is("x-fmt/263"));
-        assertThat(identificationResult.getName(), is("ZIP Format"));
-        assertThat(identificationResult.getMethod(), is(IdentificationMethod.BINARY_SIGNATURE));
+        assertThat(identificationResult.puid(), is("x-fmt/263"));
+        assertThat(identificationResult.name(), is("ZIP Format"));
+        assertThat(identificationResult.method(), is(IdentificationMethod.BINARY_SIGNATURE));
+        assertThat(results.getFirst().hashResults().isEmpty(), is(true));
 
     }
 
@@ -173,16 +176,17 @@ public class DroidAPITest {
     @ParameterizedTest
     @MethodSource("containerSignatureUris")
     public void should_identify_given_file_using_container_signature(URI uri) throws IOException {
-        List<ApiResult> results = api.submit(uri);
+        List<DroidAPI.APIResult> results = api.submit(uri);
         assertThat(results, is(notNullValue()));
 
         assertThat(results.size(), is(1));
+        assertThat(results.getFirst().identificationResults().size(), is(1));
 
-        ApiResult identificationResult = results.getFirst();
+        DroidAPI.APIIdentificationResult identificationResult = results.getFirst().identificationResults().getFirst();
 
-        assertThat(identificationResult.getPuid(), is("fmt/291"));
-        assertThat(identificationResult.getName(), is("OpenDocument Text"));
-        assertThat(identificationResult.getMethod(), is(IdentificationMethod.CONTAINER));
+        assertThat(identificationResult.puid(), is("fmt/291"));
+        assertThat(identificationResult.name(), is("OpenDocument Text"));
+        assertThat(identificationResult.method(), is(IdentificationMethod.CONTAINER));
     }
 
     static Stream<URI> fileExtensionUris() {
@@ -193,14 +197,15 @@ public class DroidAPITest {
     @ParameterizedTest
     @MethodSource("fileExtensionUris")
     public void should_identify_given_file_using_file_extension(URI uri) throws IOException {
-        List<ApiResult> results = api.submit(uri);
+        List<DroidAPI.APIResult> results = api.submit(uri);
         assertThat(results, is(notNullValue()));
-        assertThat(results, hasSize(1));
+        assertThat(results.size(), is(1));
+        assertThat(results.getFirst().identificationResults().size(), is(1));
 
-        ApiResult singleResult = results.getFirst();
+        DroidAPI.APIIdentificationResult singleResult = results.getFirst().identificationResults().getFirst();
 
-        assertThat(singleResult.getPuid(), is("x-fmt/111"));
-        assertThat(singleResult.getMethod(), is(IdentificationMethod.EXTENSION));
+        assertThat(singleResult.puid(), is("x-fmt/111"));
+        assertThat(singleResult.method(), is(IdentificationMethod.EXTENSION));
     }
 
     static Stream<Pair<URI, URI>> correctExtensionUris() {
@@ -219,12 +224,12 @@ public class DroidAPITest {
     @ParameterizedTest
     @MethodSource("noFileExtensionUris")
     public void should_report_extension_only_match_if_extension_is_provided(URI uri) throws IOException {
-        List<ApiResult> results = api.submit(uri, "docx");
+        List<DroidAPI.APIResult> results = api.submit(uri, "docx");
 
-        ApiResult result = results.getFirst();
-        assertThat(result.getExtension(), is("docx"));
-        assertThat(result.getMethod(), is(IdentificationMethod.EXTENSION));
-        assertThat(result.getPuid(), is("fmt/494"));
+        DroidAPI.APIIdentificationResult result = results.getFirst().identificationResults().getFirst();
+        assertThat(result.extension(), is("docx"));
+        assertThat(result.method(), is(IdentificationMethod.EXTENSION));
+        assertThat(result.puid(), is("fmt/494"));
     }
 
     static Stream<URI> docxWithoutExtensionUris() {return getUris("src/test/resources/word97");}
@@ -232,24 +237,50 @@ public class DroidAPITest {
     @ParameterizedTest
     @MethodSource("docxWithoutExtensionUris")
     public void should_return_extension_mismatch_if_extension_passed_does_not_match(URI uri) throws IOException {
-        List<ApiResult> results = api.submit(uri, "pdf");
+        List<DroidAPI.APIResult> results = api.submit(uri, "pdf");
 
-        ApiResult result = results.getFirst();
-        assertThat(result.getExtension(), is("pdf"));
-        assertThat(result.getMethod(), is(IdentificationMethod.CONTAINER));
-        assertThat(result.getPuid(), is("fmt/40"));
-        assertThat(result.isFileExtensionMismatch(), is(true));
+        DroidAPI.APIIdentificationResult result = results.getFirst().identificationResults().getFirst();
+        assertThat(result.extension(), is("pdf"));
+        assertThat(result.method(), is(IdentificationMethod.CONTAINER));
+        assertThat(result.puid(), is("fmt/40"));
+        assertThat(result.fileExtensionMismatch(), is(true));
+    }
+
+    @ParameterizedTest
+    @MethodSource("docxWithoutExtensionUris")
+    public void should_return_requested_checksums(URI uri) throws IOException, SignatureParseException {
+        DroidAPI apiWithChecksums = createApi(endpointOverride, List.of(MD5, SHA1, SHA256, SHA512));
+        List<DroidAPI.APIResult> results = apiWithChecksums.submit(uri, "docx");
+        DroidAPI.APIResult result = results.getFirst();
+
+        assertThat(result.hashResults().size(), is(4));
+        assertThat(result.hashResults().get(MD5), is("6aff1fe59798e3ab4da40e50b21312ca"));
+        assertThat(result.hashResults().get(SHA1), is("51fc5ba38e9762a0a64ef1ebe44b42651ef0799e"));
+        assertThat(result.hashResults().get(SHA256), is("f59669d5c045b1a25b09cdd68c6f269901522cbff1fe3c1802bfcc8b25d47e44"));
+        assertThat(result.hashResults().get(SHA512), is("64f4c15f9e56064c37b874ddf22958e9983bc9ff5f939d6fc16b06824d25a174e696c39ccd55b8cb1964110e16763fcd8855e319e069416e33249c8c59ed5b81"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("docxWithoutExtensionUris")
+    public void should_return_single_checksum_if_one_requested(URI uri) throws IOException, SignatureParseException {
+        DroidAPI apiWithChecksums = createApi(endpointOverride, List.of(MD5));
+        List<DroidAPI.APIResult> results = apiWithChecksums.submit(uri, "docx");
+        DroidAPI.APIResult result = results.getFirst();
+        assertThat(result.hashResults().size(), is(1));
+        assertThat(result.hashResults().get(MD5), is("6aff1fe59798e3ab4da40e50b21312ca"));
     }
 
     @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest
     @MethodSource("correctExtensionUris")
     public void should_report_extension_of_the_file_under_identification_test(Pair<URI, URI> uriPair) throws IOException {
-        List<ApiResult> resultsWithExtension = api.submit(uriPair.getLeft());
-        List<ApiResult> resultsWithoutExtension = api.submit(uriPair.getRight());
+        List<DroidAPI.APIResult> resultsWithExtension = api.submit(uriPair.getLeft());
+        List<DroidAPI.APIResult> resultsWithoutExtension = api.submit(uriPair.getRight());
 
-        assertThat(resultsWithExtension.getFirst().getExtension(), is("txt"));
-        assertThat(resultsWithoutExtension.getFirst().getExtension(), is(""));
+        DroidAPI.APIIdentificationResult resultWithExtension = resultsWithExtension.getFirst().identificationResults().getFirst();
+        DroidAPI.APIIdentificationResult resultWithoutExtension = resultsWithoutExtension.getFirst().identificationResults().getFirst();
+        assertThat(resultWithExtension.extension(), is("txt"));
+        assertThat(resultWithoutExtension.extension(), is(""));
     }
 
     static Stream<URI> doubleIdentificationUris() {
@@ -260,11 +291,16 @@ public class DroidAPITest {
     @ParameterizedTest
     @MethodSource("doubleIdentificationUris")
     public void should_report_all_puids_when_there_are_more_than_one_identification_hits(URI uri) throws IOException {
-        List<ApiResult> results = api.submit(uri);
-        assertThat(results.size(), is(2));
-        assertThat(results.stream().map(ApiResult::getPuid).collect(Collectors.toList()),
+        List<DroidAPI.APIResult> results = api.submit(uri);
+        assertThat(results.size(), is(1));
+        assertThat(results.getFirst().identificationResults().size(), is(2));
+        Supplier<Stream<DroidAPI.APIIdentificationResult>> identificationsStream = () -> results.stream()
+                .flatMap(result -> result.identificationResults().stream());
+
+        assertThat(identificationsStream.get()
+                        .map(DroidAPI.APIIdentificationResult::puid).collect(Collectors.toList()),
                 containsInAnyOrder("fmt/96", "fmt/41"));
-        assertThat(results.stream().map(ApiResult::getName).collect(Collectors.toList()),
+        assertThat(identificationsStream.get().map(DroidAPI.APIIdentificationResult::name).collect(Collectors.toList()),
                 containsInAnyOrder("Raw JPEG Stream", "Hypertext Markup Language"));
     }
 
@@ -275,11 +311,36 @@ public class DroidAPITest {
     @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest
     @MethodSource("extensionMismatchUris")
-    public void should_report_when_there_is_an_extension_mismatch() throws IOException {
-        List<ApiResult> results = api.submit(Paths.get("src/test/resources/docx-file-as-xls.xlsx").toUri());
+    public void should_report_when_there_is_an_extension_mismatch(URI uri) throws IOException {
+        List<DroidAPI.APIResult> results = api.submit(uri);
         assertThat(results.size(), is(1));
-        assertThat(results.getFirst().getPuid(), is("fmt/412"));
-        assertThat(results.getFirst().isFileExtensionMismatch(), is(true));
+
+        DroidAPI.APIIdentificationResult result = results.getFirst().identificationResults().getFirst();
+        assertThat(result.puid(), is("fmt/412"));
+        assertThat(result.fileExtensionMismatch(), is(true));
+    }
+
+    static Stream<URI> directoryUris() {
+        URI fileUri = Paths.get("src/test/resources").toUri();
+        URI s3Uri = URI.create("s3://127.0.0.1" + ":" + s3Server.getAddress().getPort() + fileUri.getPath());
+        return Stream.of(fileUri, s3Uri);
+    }
+
+    @ParameterizedTest
+    @MethodSource("directoryUris")
+    public void should_return_multiple_results_if_a_directory_is_passed_for_file_or_s3(URI uri) throws IOException {
+        List<DroidAPI.APIResult> results = api.submit(uri);
+        assertThat(results.size(), is(6));
+        BiFunction<String, List<String>, Boolean> checkPuid = (fileName, expectedPuids) -> results.stream()
+                .flatMap(result -> result.identificationResults().stream())
+                .filter(result -> result.uri().toString().endsWith(fileName))
+                .map(DroidAPI.APIIdentificationResult::puid)
+                .allMatch(expectedPuids::contains);
+        checkPuid.apply("persistence.zip", List.of("x-fmt/263"));
+        checkPuid.apply("docx-file-as-xls.xlsx", List.of("fmt/412"));
+        checkPuid.apply("double-identification.jpg", List.of("fmt/96", "fmt/41"));
+        checkPuid.apply("test.txt", List.of("x-fmt/111"));
+        checkPuid.apply("word97", List.of("fmt/40"));
     }
 
     @Test
@@ -295,8 +356,8 @@ public class DroidAPITest {
 
     @Test
     public void should_produce_zero_results_for_an_empty_file() throws IOException {
-        List<ApiResult> results = api.submit(Paths.get("src/test/resources/test").toUri());
-        assertThat(results, hasSize(0));
+        List<DroidAPI.APIResult> results = api.submit(Paths.get("src/test/resources/test").toUri());
+        assertThat(results.getFirst().identificationResults(), hasSize(0));
     }
 
     @Execution(ExecutionMode.CONCURRENT)
@@ -306,7 +367,7 @@ public class DroidAPITest {
         final int MAX_ITER = 5000;
         int acc = 0;
         for (int i = 0; i < MAX_ITER; i++) {
-            List<ApiResult> results = api.submit(
+            List<DroidAPI.APIResult> results = api.submit(
                     Paths.get("../droid-container/src/test/resources/odf_text.odt").toUri());
             acc += results.size();
         }
@@ -321,9 +382,9 @@ public class DroidAPITest {
     @ParameterizedTest
     @MethodSource("fmtFortyUris")
     public void should_identify_fmt_40_correctly_with_container_identification_method() throws IOException {
-        List<ApiResult> results = api.submit(
+        List<DroidAPI.APIResult> results = api.submit(
                 Paths.get("../droid-container/src/test/resources/word97.doc").toUri());
-        assertThat(results.getFirst().getName(), is("Microsoft Word Document"));
+        assertThat(results.getFirst().identificationResults().getFirst().name(), is("Microsoft Word Document"));
     }
 
     @Test
@@ -343,7 +404,7 @@ public class DroidAPITest {
     @Test
     public void should_default_to_london_region_if_no_region_provided() throws SignatureParseException {
         DroidAPI api = DroidAPI.builder().binarySignature(signaturePath).containerSignature(containerPath).build();
-        assertEquals(api.getS3Region(), Region.EU_WEST_2);
+        assertEquals(Region.EU_WEST_2, api.getS3Region());
     }
 
     @Test
