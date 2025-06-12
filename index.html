@@ -1,263 +1,153 @@
-<!DOCTYPE html>
-<html>
+﻿<!--
 
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="DROID : DROID (Digital Record and Object Identification)">
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+    All rights reserved.
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
 
-    <title>DROID</title>
-  </head>
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
 
-  <body>
+     * Redistributions in binary
+     form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/digital-preservation/droid">View on GitHub</a>
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
 
-          <h1 id="project_title">DROID</h1>
-          <h2 id="project_tagline">DROID (Digital Record and Object Identification)</h2>
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/digital-preservation/droid/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/digital-preservation/droid/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
+-->
+<html class="js tna-template tna-template--light-theme tna-template--js-enabled" lang="">
+<head>
+    <link rel="stylesheet" href="styles/print.css" media="print">
+    <link rel="stylesheet" href="styles/all.css">
+    <link rel="icon" href="images/favicon.png">
+    <title>Home</title>
+</head>
+<body class="home page-template page-template-page-home page-template-page-home-php page page-id-2 tna-template__body">
+<header class="tna-header" data-module="tna-header">
+    <div class="tna-container tna-header__contents">
+        <div class="tna-column tna-header__logo-wrapper">
+            <a href="index.html" class="tna-header__logo tna-header__logo--link" title="DROID - Help"
+               aria-label="DROID - Help">
+        <span class="tna-logo tna-logo--adornable">
+          <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 160 160" width="96" height="96"
+               aria-hidden="true" focusable="false">
+            <path fill="transparent" d="M0 0h160v160H0z" class="tna-logo__background"></path>
+            <g class="tna-logo__foreground" fill="currentColor">
+              <path d="M1.9 107.2h156.3V158H1.9v-50.8zm0-52.7h156.3v50.8H1.9V54.5zm0-52.6h77.2v50.8H1.9V1.9zm79 0h77.2v50.8H80.9V1.9zm0-1.9H0v160h160V0H80.9z"></path>
+              <path d="M21.3 19.5h-5.4v-3h14.3v3h-5.4v18.4h-3.5zM31.6 16.5H35v9h8.4v-9h3.4v21.4h-3.4v-9.3H35v9.3h-3.4zM50.9 16.5h12.2v3h-8.8v6.1h7.4v3h-7.4v6.3h8.8v3H50.9zM19.7 69.2h3.8l6.4 12.5c.6 1.1 1.1 2.7 1.6 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.5v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2H23c.2 1.4.3 3.3.3 5v11.5h-3.5c-.1 0-.1-21.4-.1-21.4zM47.8 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8H45c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zM43 69.2h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6L43 69.2zM57.2 72.3h-5.4v-3.1H66v3.1h-5.4v18.4h-3.4zM67.8 69.2h3.5v21.4h-3.5zM87.5 80c0-5.3-1.7-8-4.8-8-3.2 0-4.8 2.7-4.8 8 0 5.2 1.6 7.9 4.8 7.9 3.2 0 4.8-2.7 4.8-7.9m-13.3 0c0-7 3-11.1 8.5-11.1 5.4 0 8.4 4.1 8.4 11.1 0 6.9-3 11-8.4 11s-8.5-4.1-8.5-11M94.3 69.2H98l6.4 12.5c.6 1.1 1.2 2.7 1.7 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.4v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2h-.2c.2 1.4.3 3.3.3 5v11.5h-3.5V69.2zM122.4 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM129.9 69.2h3.5v18.4h8.4v3.1h-11.9zM26.9 135.2l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4H29l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM39.9 132.5c2.5 0 3.4-1.6 3.4-3.9 0-2.2-1-3.8-3.4-3.8h-2.7v7.7h2.7zm-6.1-10.7h6.4c4.5 0 6.7 2.4 6.7 6.6 0 3.1-1.5 5.6-3.7 6.3v.2c1 1.1 4 7.5 4.8 7.9v.5h-3.8c-1-.6-3.6-7.2-4.4-7.8h-2.5v7.8h-3.5v-21.5zM52.9 132.5c0 5.3 1.9 8 4.8 8s4-2 4-5.2l3.5.1c0 .2.1.4.1.6 0 4.4-2.1 7.5-7.5 7.5-5.2 0-8.5-3.9-8.5-11.1 0-7.1 3.3-11 8.5-11 6.4 0 7.5 4.6 7.5 7.2 0 .3 0 .7-.1.9l-3.5.1c0-3.3-1.2-5.2-4-5.2-2.9.2-4.8 2.9-4.8 8.1M68 121.8h3.5v9.1h8.3v-9.1h3.5v21.5h-3.5v-9.4h-8.3v9.4H68zM87.9 121.8h3.5v21.4h-3.5zM94.2 121.8h3.6l3.2 12.3c.5 1.9.8 3.6 1.1 5.6h.2c.3-2 .6-3.7 1.1-5.6l3.2-12.3h3.6l-6.1 21.4H100l-5.8-21.4zM112.7 121.8H125v3.1h-8.8v6h7.4v3h-7.4v6.3h8.8v3.1h-12.3zM130.4 136c0 .2-.1.5-.1.8 0 1.9.8 3.7 3.4 3.7 2.1 0 3.3-1.2 3.3-2.9 0-1.6-.7-2.4-2.2-3l-3.4-1.3c-2.4-.9-4.2-2.4-4.2-5.7 0-3.5 2.3-6.1 6.6-6.1 5.5 0 6.4 3.6 6.4 5.9 0 .3 0 .7-.1 1.1l-3.4.1c0-.2.1-.5.1-.7 0-1.7-.6-3.2-3-3.2-2.1 0-3 1.2-3 2.8 0 1.7.9 2.5 2.2 2.9l3.5 1.3c2.6 1 4.3 2.6 4.3 5.8 0 3.6-2.4 6.1-7 6.1-5.9 0-6.8-3.9-6.8-6.5 0-.3 0-.6.1-1l3.3-.1z"></path>
+            </g>
+          </svg>
+        </span><span class="tna-header__logo-strapline">DROID</span>
+            </a>
+        </div>
+        <div class="tna-column tna-header__navigation-button-wrapper">
+            <button class="tna-header__navigation-button tna-header__navigation-button--opened" type="button"
+                    aria-controls="tna-header__navigation" aria-expanded="true" title="Close menu">
+                Menu
+                <span class="tna-header__hamburger"></span>
+            </button>
+        </div>
+        <nav class="tna-column tna-column--flex-1 tna-column--full-small tna-column--full-tiny tna-header__navigation tna-header__navigation--open"
+             id="tna-header__navigation" aria-label="Primary" aria-hidden="false">
+            <ul class="tna-header__top-navigation-items">
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/releases"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Releases
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/blob/main/license.md"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Licence
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a href="search.html"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        Search
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
+</header>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p>DROID is a software tool developed by <a href="http://www.nationalarchives.gov.uk/" title="The National Archives Website">The National Archives</a> to perform automated batch identification of file formats. Developed by its Digital Preservation Department as part of its broader digital preservation activities, DROID is designed to meet the fundamental requirement of any digital repository to be able to identify the precise format of all stored digital objects, and to link that identification to a central registry of technical information about that format and its dependencies.</p>
-
-<p>DROID uses internal signatures to identify and report the specific file format versions of digital files. These signatures are stored in an XML signature file, generated from information recorded in the <a href="http://www.nationalarchives.gov.uk/PRONOM/Default.aspx" title="PRONOM Technical Registry">PRONOM technical registry</a>. New and updated signatures are regularly added to PRONOM, and DROID can be configured to automatically download updated signature files.</p>
-
-<p>The DROID binary zip file is available to download from the <a href="https://www.nationalarchives.gov.uk/information-management/manage-information/preserving-digital-records/droid/" title="DROID download page">dedicated page on The National Archives website</a>.</p>
-
-<p>DROID is a platform-independent Java application. It can be invoked from two interfaces:</p>
-
-<ul>
-<li>Java Swing GUI</li>
-<li>Command line interface</li>
-</ul><p>DROID allows files and folders to be selected from a file system for identification. This file list can be saved at any point. After the identification process had been run, the results can be output in various report formats, including CSV.</p>
-
-<h3>
-<a name="user-requirements" class="anchor" href="#user-requirements"><span class="octicon octicon-link"></span></a>User requirements</h3>
-
-<p>DROID requires a minimum of Java 8 Standard Edition (SE). DROID was built and tested on Java 1.8. DROID version 6.7.x will likely operate with Java 7, but this is not guaranteed.</p>
-
-<p>Signature Files and their release notes can be found at the following links: </p>
-
-<h3>
-<a name="signature-files" class="anchor" href="#signature-files"><span class="octicon octicon-link"></span></a>Signature files</h3>
-
-<p><a href="http://www.nationalarchives.gov.uk/aboutapps/pronom/droid-signature-files.htm">http://www.nationalarchives.gov.uk/aboutapps/pronom/droid-signature-files.htm</a></p>
-
-<h3>
-<a name="signature-file-release-notes" class="anchor" href="#signature-file-release-notes"><span class="octicon octicon-link"></span></a>Signature file release notes</h3>
-
-<p><a href="http://www.nationalarchives.gov.uk/aboutapps/pronom/release-notes.xml">http://www.nationalarchives.gov.uk/aboutapps/pronom/release-notes.xml</a></p>
-
-<h3>
-<a name="code-structure" class="anchor" href="#code-structure"><span class="octicon octicon-link"></span></a>Code structure</h3>
-
-<p>The DROID code base is split up into separate projects, to facilitate only using parts of the DROID code that are required, and to enhance and enforce modularity in its construction:</p>
-
-<pre><code>
-droid-api                             Internal API module to include in third party application for easy file identification
-droid-binary                          Additional files required in a release build
-droid-build-tools                     A maven project to package the release
-droid-command-line                    Command-line control over DROID
-droid-container                       Container signature processing
-droid-core                            Binary signature processing
-droid-core-interfaces                 Resource processing &amp; format recognition
-droid-export                          Export droid profiles to CSV
-droid-export-interfaces               Interfaces for export of DROID profiles
-droid-help                            JavaHelp for DROID
-droid-parent                          An empty parent project for the other projects
-droid-report                          Reporting for DROID profiles
-droid-report-interfaces               Interfaces for DROID reporting
-droid-results                         Profile handling, database and filtering
-droid-tools                           Tools associated with DROID (e.g. signature utility, signature file parsing)
-droid-ui                              Swing GUI control over DROID
-</code></pre>
-
-<h3>
-<a name="third-party-dependencies" class="anchor" href="#third-party-dependencies"><span class="octicon octicon-link"></span></a>Third-party dependencies</h3>
-
-<pre><code>beansbinding-1.2.1                    Binds data to GUI controls
-org.openide.util-1                    Netbeans platform support
-swing-outline-1.4.1                   Netbeans Swing GUI tree table control, part of the Netbeans platform
-</code></pre>
-
-<p>The required jars can be found in the binary distribution of DROID. </p>
-
-<h3>
-<a name="building-droid" class="anchor" href="#building-droid"><span class="octicon octicon-link"></span></a>Building DROID</h3>
-
-<p>DROID was built using Apache Maven 3. First make sure that this is installed
-and if behind a proxy, edit the Maven settings.xml file to reflect the proxy
-server details. </p>
-
-<p>There are an additional three jar files required, as listed in the dependencies
-section above. </p>
-
-<p>These can be installed to your Maven repository from their respective locations 
-using the following commands:</p>
-
-<pre><code>mvn install:install-file -Dfile=beansbinding-1.2.1.jar -DgroupId=beansbinding -DartifactId=beansbinding -Dversion=1.2.1 -Dpackaging=jar 
-mvn install:install-file -Dfile=org-openide-util-1.jar -DgroupId=org.openide -DartifactId=org-openide-util -Dversion=1 -Dpackaging=jar 
-mvn install:install-file -Dfile=swing-outline-1.4.1.jar -DgroupId=org.openide -DartifactId=swing-outline -Dversion=1.4.1 -Dpackaging=jar 
-</code></pre>
-
-<p>Once this is complete you can use the master build file under the main DROID
-project folder to build the project. This is the pom.xml that sits under
-the main DROID folder containing all the sub projects. </p>
-
-<p>Simply run "mvn install" from the command line when in this directory and DROID
-will build. Follow the Maven output to see where Maven has placed the binaries.</p>
-
-<h3>
-<a name="release-notes" class="anchor" href="#release-notes"><span class="octicon octicon-link"></span></a>Release Notes</h3>
-
-<h4>DROID 6.8.1</h4>
-<p>This release has the following improvements</P>
-
-<pre><code>Improvements
-- #1148 Improvement: Update the internal database to the latest version
-- #1148 Improvement: Drop support for Java versions below 21. Updated the bundled java version to 21.0.5
-- #1151 Improvement: Replace javax.xml with jakarta.xml. This will allow us to upgrade other libraries to later versions
-</code></pre>
-
-<h4>DROID 6.8.0</h4>
-<p>This release has following fixes and improvements</P>
-
-<pre><code>Improvements and Fixes
-- Feature: Export Templates - Ability to customise the Droid CSV export by defining templates
-- #932 Improvement: Prompt for a new profile creation on closing the preferences dialog
-- #938 Improvement: The Windows distributable now includes a 64 bit Java 17 JRE
-- #1063 Improvement: Updated commons-httpclient dependecy used for signature download
-- Updated documentation for CSV columns in export
-- Increased the default maximum memory to 1024MB in startup scripts
-- #561 Bugfix: On Windows, when a profile is closed, the associated profile folder is not deleted
-- #1072 Bugfix: Empty columns are not populated with a blank when a file has more than one format identification
-- #1011 Bugfix: Mismatch in the format name between GUI and API when identification method is 'Container'
-- #1100 Bugfix: Cancelling the preferences dialog still makes changes to the preferences
-- #1072 Fewer elements in data row when exporting profiles per file when some of them have more than one identification
-</code></pre>
-
-<h4>DROID 6.7.0</h4>
-<p>This release has following fixes and improvements</P>
-
-<pre><code>Improvements and Fixes
--   #898 Improvement: Sigtool uses the version of java bundled with Droid on the Windows OS
--   #938 Improvement: Internal API result includes whether there is an extension mismatch in identification
--   #861 Improvement: CSV export has column headers when there is more than one PUID per file
--   #952 Improvement: SHA512 is available as an option for checksums
--   #977 Improvement: Added an About Droid dialog to the GUI
--   Improvement: Moved to using a different zip library for opening the zip archives
--   #953 Bugfix: On CLI, -At and -Wt options without any arguments do not analyse archives or web archives
-</code></pre>
-
-
-        <h4>DROID 6.6.0</h4>
-<p>This release has improvements and bug fixes as listed below  </p>
-
-<pre><code>Enhancements and bug fixes
--   Updated to use newer version of Java 11 as bundled JRE
--   Improvement to ?? signature pattern
--   Ability to specify columns to export with the -co option, e.g. -co NAME PUID
--   Configure CSV to only quote if there is a comma in a field, use the -qc option
--   The GUI export dialog also includes column and quoting configuration options.
--   Write a profile straight to a CSV file, not writing to a database, using the -o output option, e.g. -o "/home/user/results.csv"
--   Write a profile straight to the console, by not specifying an output file or a profile to write to.
--   Ability to filter profiles written to CSV file or console just as for an export.
--   Ability to filter a more than one extensions, e.g. -F "file_ext any doc docx xls xlsx".
--   Filter files before they are identified on file metadata (name, extension, last modified, size), using the -ff and -FF filter options.
--   Set both binary and container signature files to use to override profile defaults.
--   Update profile defaults for both binary and container signature files
--   Fix for inverted syntax when the bytes or ranges are inverted
--   Introduced semantic versioning
--   Improved consistency across profile and no profile mode
--   Introduced internal API for making droid easier to use as a dependency
-</code></pre>
-
-<h4>DROID 6.5.0</h4>
-<p>This release has many improvements and bug fixes over the previous release  </p>
-
-<pre><code>Enhancements
--   Only log hikari errors.
--   Manage opening of WARC 1.1 and update identification of WARC 1.0
--   Ability to cherry pick types of archival container to be scanned in CLI and GUI
--   Only parse container sigs once
--   Adds drag drop support for files into a profile GUI window
--   Match signatures in OLE2 sub folders
--   Binary bundle without jre now works for windows too
--   Sort the PUID values in the filter dialog.
--   Full implementation of standard signature syntax in container signatures
--   Bundle jre with windows
--   Let archive files be embedded in any other archive file.
--   Add support for Java 11
--   FatFile support
--   Full implementation of standard signature syntax in container signatures
--   Fix: put back LF (unix) line separators in csv exports
--   Fix filter button on windows on java8
--   Fix: iso prefix in CLI when expanding ISO archives
--   Fix graphical glitches on Windows 10
--   Filter by extension should work when recursing folders
--   Fix support for siard 2.1
--   Fix: .bat script in jre bundle to enable running from network drive
--   Manage special folders (forbidden, shortcuts)
--   Fix .bat file in bundle without jre
--   Fix: processing of the quiet parameter on CLI
--   Fix: CLI can browse again folders recursively
--   Fix: checkbox filter icon display on main screen
--   Added lastmodified for files inside ziparchive
--   Profiles produced now have Windows ends (CR+Newline) rather than just Unix (Newline)
--   Filter on extension in CLI does not work if -R is set
--   Filtering for extension and choosing a single file does not restrict to that file
--   Fix: fmt-1196 SIARD 2.1 is wrongly identified as ZIP
--   cannot open forbidden folders
--   cannot open folder shortcuts on Windows
--   CSV export incorrect
--   UI fails to expand / collapse node in warc after a leaf node is clicked
-
-</code></pre>
-
-
-
-<h4>
-<a name="droid-64" class="anchor" href="#droid-64"><span class="octicon octicon-link"></span></a>DROID 6.4</h4>
-
-<p>The largest change to DROID in this release is the ability to scan more 'archival containers' - 7Zip, RAR, ISO, and BZip2. </p>
-
-<pre><code>-	DROID can now scan contents of RAR, ISO, 7Zip and BZip2 files
--	Will highlight empty folders in GUI display and CSV export
--	CSV export will sort on the URI column for persistent ordering
--	Added custom URI encoder to correctly encode reserved characters
--	Additional option for export CSV with UTF8 BOM
--	Bug fix for errors when using filters
--	ZIP library has been upgraded to allow profiling of zip64 files
--	Increase in memory for DROID when scanning larger files
--	Improved error messages for when DROID is trying to download signatures from the wrong URL
--	Bug fix for issues saving reports as text in Mac OS.
-
-</code></pre>
-      </section>
+<main class="tna-main" id="main-content">
+    <nav class="tna-secondary-navigation" aria-label="Sections">
+        <h2 class="tna-secondary-navigation__heading tna-heading-s">
+        </h2>
+        <ul class="tna-secondary-navigation__items">
+            <li class="tna-secondary-navigation__item--current">
+                <a href="index.html" class="tna-secondary-navigation__link">Home</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="profiles.html" class="tna-secondary-navigation__link">Profiles</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="faq.html" class="tna-secondary-navigation__link">FAQ</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="configuration.html" class="tna-secondary-navigation__link">Configuration</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="export.html" class="tna-secondary-navigation__link">Export</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="cli.html" class="tna-secondary-navigation__link">CLI</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="tna-container">
+        <div class="tna-column tna-column--width-2-3 tna-column--full-small tna-column--full-tiny tna-section">
+            <h1 class="tna-heading-l--space-above">DROID - User guide</h1>
+            <p>
+                DROID (<b>D</b>igital <b>R</b>ecord <b>O</b>bject <b>ID</b>entification) is a file format identification tool developed by The
+                National Archives. It is in widespread use across the world, in cultural memory institutions, local and
+                central government departments and other public bodies, and has been embedded into multiple
+                commercial and open source digital preservation products.
+            </p>
+            <p>
+                The core function of DROID is accurate file format identification, even if the file extension is wrong or
+                missing. Where possible, identifications are made beyond the broad type, down to the version level
+                e.g. Acrobat PDF v.1.6 - Portable Document Format. DROID can currently identify over 1400 file
+                formats, and this number is growing all the time. Information about file formats including the
+                identification signatures utilised by DROID are kept within PRONOM, The National Archives’ file
+                format registry.
+            </p>
+            <p>
+                In addition to identifying the file format DROID also extracts other information about the files it
+                scans, such as, file size, last modified date and file path. This information is presented in a profile
+                which can be analysed on screen in the DROID Graphical User Interface (GUI) using filtering, or
+                exported to a CSV file. DROID also examines the files within container files, such as ‘zip’ files, as well
+                as the container file itself.
+            </p>
+        </div>
     </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Droid maintained by <a href="https://github.com/digital-preservation">digital-preservation</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
+</main>
+</body>
 </html>
+

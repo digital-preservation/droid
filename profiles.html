@@ -1,0 +1,1055 @@
+<!--
+
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html class="js tna-template tna-template--light-theme tna-template--js-enabled" lang="en">
+<head>
+    <link rel="stylesheet" href="styles/print.css" media="print">
+    <link rel="stylesheet" href="styles/all.css">
+    <link rel="icon" href="images/favicon.png">
+    <title>Profiles</title>
+</head>
+<body class="home page-template page-template-page-home page-template-page-home-php page page-id-2 tna-template__body">
+<header class="tna-header" data-module="tna-header">
+    <div class="tna-container tna-header__contents">
+        <div class="tna-column tna-header__logo-wrapper">
+            <a href="index.html" class="tna-header__logo tna-header__logo--link" title="DROID - Help" aria-label="DROID - Help">
+        <span class="tna-logo tna-logo--adornable">
+          <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 160 160" width="96" height="96"
+               aria-hidden="true" focusable="false">
+            <path fill="transparent" d="M0 0h160v160H0z" class="tna-logo__background"></path>
+            <g class="tna-logo__foreground" fill="currentColor">
+              <path d="M1.9 107.2h156.3V158H1.9v-50.8zm0-52.7h156.3v50.8H1.9V54.5zm0-52.6h77.2v50.8H1.9V1.9zm79 0h77.2v50.8H80.9V1.9zm0-1.9H0v160h160V0H80.9z"></path>
+              <path d="M21.3 19.5h-5.4v-3h14.3v3h-5.4v18.4h-3.5zM31.6 16.5H35v9h8.4v-9h3.4v21.4h-3.4v-9.3H35v9.3h-3.4zM50.9 16.5h12.2v3h-8.8v6.1h7.4v3h-7.4v6.3h8.8v3H50.9zM19.7 69.2h3.8l6.4 12.5c.6 1.1 1.1 2.7 1.6 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.5v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2H23c.2 1.4.3 3.3.3 5v11.5h-3.5c-.1 0-.1-21.4-.1-21.4zM47.8 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8H45c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zM43 69.2h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6L43 69.2zM57.2 72.3h-5.4v-3.1H66v3.1h-5.4v18.4h-3.4zM67.8 69.2h3.5v21.4h-3.5zM87.5 80c0-5.3-1.7-8-4.8-8-3.2 0-4.8 2.7-4.8 8 0 5.2 1.6 7.9 4.8 7.9 3.2 0 4.8-2.7 4.8-7.9m-13.3 0c0-7 3-11.1 8.5-11.1 5.4 0 8.4 4.1 8.4 11.1 0 6.9-3 11-8.4 11s-8.5-4.1-8.5-11M94.3 69.2H98l6.4 12.5c.6 1.1 1.2 2.7 1.7 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.4v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2h-.2c.2 1.4.3 3.3.3 5v11.5h-3.5V69.2zM122.4 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM129.9 69.2h3.5v18.4h8.4v3.1h-11.9zM26.9 135.2l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4H29l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM39.9 132.5c2.5 0 3.4-1.6 3.4-3.9 0-2.2-1-3.8-3.4-3.8h-2.7v7.7h2.7zm-6.1-10.7h6.4c4.5 0 6.7 2.4 6.7 6.6 0 3.1-1.5 5.6-3.7 6.3v.2c1 1.1 4 7.5 4.8 7.9v.5h-3.8c-1-.6-3.6-7.2-4.4-7.8h-2.5v7.8h-3.5v-21.5zM52.9 132.5c0 5.3 1.9 8 4.8 8s4-2 4-5.2l3.5.1c0 .2.1.4.1.6 0 4.4-2.1 7.5-7.5 7.5-5.2 0-8.5-3.9-8.5-11.1 0-7.1 3.3-11 8.5-11 6.4 0 7.5 4.6 7.5 7.2 0 .3 0 .7-.1.9l-3.5.1c0-3.3-1.2-5.2-4-5.2-2.9.2-4.8 2.9-4.8 8.1M68 121.8h3.5v9.1h8.3v-9.1h3.5v21.5h-3.5v-9.4h-8.3v9.4H68zM87.9 121.8h3.5v21.4h-3.5zM94.2 121.8h3.6l3.2 12.3c.5 1.9.8 3.6 1.1 5.6h.2c.3-2 .6-3.7 1.1-5.6l3.2-12.3h3.6l-6.1 21.4H100l-5.8-21.4zM112.7 121.8H125v3.1h-8.8v6h7.4v3h-7.4v6.3h8.8v3.1h-12.3zM130.4 136c0 .2-.1.5-.1.8 0 1.9.8 3.7 3.4 3.7 2.1 0 3.3-1.2 3.3-2.9 0-1.6-.7-2.4-2.2-3l-3.4-1.3c-2.4-.9-4.2-2.4-4.2-5.7 0-3.5 2.3-6.1 6.6-6.1 5.5 0 6.4 3.6 6.4 5.9 0 .3 0 .7-.1 1.1l-3.4.1c0-.2.1-.5.1-.7 0-1.7-.6-3.2-3-3.2-2.1 0-3 1.2-3 2.8 0 1.7.9 2.5 2.2 2.9l3.5 1.3c2.6 1 4.3 2.6 4.3 5.8 0 3.6-2.4 6.1-7 6.1-5.9 0-6.8-3.9-6.8-6.5 0-.3 0-.6.1-1l3.3-.1z"></path>
+            </g>
+          </svg>
+        </span><span class="tna-header__logo-strapline">DROID</span>
+            </a>
+        </div>
+        <div class="tna-column tna-header__navigation-button-wrapper">
+            <button class="tna-header__navigation-button tna-header__navigation-button--opened" type="button"
+                    aria-controls="tna-header__navigation" aria-expanded="true" title="Close menu">
+                Menu
+                <span class="tna-header__hamburger"></span>
+            </button>
+        </div>
+        <nav class="tna-column tna-column--flex-1 tna-column--full-small tna-column--full-tiny tna-header__navigation tna-header__navigation--open"
+             id="tna-header__navigation" aria-label="Primary" aria-hidden="false">
+            <ul class="tna-header__top-navigation-items">
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/releases"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Releases
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a target="_blank" href="https://github.com/digital-preservation/droid/blob/main/license.md"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        DROID Licence
+                    </a>
+                </li>
+                <li class="tna-header__top-navigation-item">
+                    <a href="search.html"
+                       class="tna-header__top-navigation-item-link"
+                       tabindex="0">
+                        <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+                        Search
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="tna-main" id="main-content">
+    <nav class="tna-secondary-navigation" aria-label="Sections">
+         <h2 class="tna-secondary-navigation__heading tna-heading-s">
+        </h2>
+        <ul class="tna-secondary-navigation__items">
+            <li class="tna-secondary-navigation__item">
+                <a href="index.html" class="tna-secondary-navigation__link">Home</a>
+            </li>
+            <li class="tna-secondary-navigation__item--current">
+                <a href="profiles.html" class="tna-secondary-navigation__link">Profiles</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="faq.html" class="tna-secondary-navigation__link">FAQ</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="configuration.html" class="tna-secondary-navigation__link">Configuration</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="export.html" class="tna-secondary-navigation__link">Export</a>
+            </li>
+            <li class="tna-secondary-navigation__item">
+                <a href="cli.html" class="tna-secondary-navigation__link">CLI</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="tna-container"><h1 class="tna-heading-l--space-above">Profiles</h1></div>
+    <div class="tna-container">
+        <div class="tna-column tna-column--width-1-3 tna-column--full-small tna-column--full-tiny tna-section"
+             role="navigation" aria-label="Table of contents">
+            <nav class="tna-sidebar tna-sidebar--contents" aria-label="Sidebar">
+                <h2 class="tna-sidebar__heading tna-heading-m">
+                    Contents
+                </h2>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#create-a-new-profile" class="tna-sidebar__link">Create a new profile</a>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#create-a-new-profile" class="tna-sidebar__link">Choose files and folders</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#include-subfolders" class="tna-sidebar__link">Include subfolders</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#adding-your-selection" class="tna-sidebar__link">Adding your selection</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#removing-your-selection" class="tna-sidebar__link">Removing your selection</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#running-a-profile" class="tna-sidebar__link">Running a profile</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#progress" class="tna-sidebar__link">Progress</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#throttling-back" class="tna-sidebar__link">Throttling back</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#restrictions-while-profiling" class="tna-sidebar__link">Restrictions while profiling</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#pausing" class="tna-sidebar__link">Pausing</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#resuming" class="tna-sidebar__link">Resuming</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#information-collected-by-droid" class="tna-sidebar__link">Information collected by DROID</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#file-type" class="tna-sidebar__link">Type</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#file-name" class="tna-sidebar__link">File name</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#file-name-extension" class="tna-sidebar__link">File name extension</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#extension-mismatch-warning" class="tna-sidebar__link">Extension mismatch warning</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#location" class="tna-sidebar__link">Location</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#file-size" class="tna-sidebar__link">File size</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#last-modified-date" class="tna-sidebar__link">Last modified date</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#number-of-format-identifications" class="tna-sidebar__link">Number of format identifications</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#file-formats" class="tna-sidebar__link">File formats</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#identification-method" class="tna-sidebar__link">Identification method</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#content-hash" class="tna-sidebar__link">Content hash</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#status" class="tna-sidebar__link">Status</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#saving-and-loading-a-profile" class="tna-sidebar__link">Saving and loading a profile</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#opening-a-profile" class="tna-sidebar__link">Opening a profile</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#saving-a-profile" class="tna-sidebar__link">Saving a profile</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#profile-files" class="tna-sidebar__link">Profile files</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#results" class="tna-sidebar__link">Explore the results</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#sorting" class="tna-sidebar__link">Sorting</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#filtering" class="tna-sidebar__link">Filtering</a>
+                                <ul class="tna-sidebar__item-children">
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#any-or-all" class="tna-sidebar__link">Any or All</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#filter-enabled" class="tna-sidebar__link">Filter enabled</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#adding-filter-conditions" class="tna-sidebar__link">Adding filter conditions</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#fields" class="tna-sidebar__link">Fields</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#operations" class="tna-sidebar__link">Operations</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#values" class="tna-sidebar__link">Values</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#set-selection-dialog" class="tna-sidebar__link">Set selection dialog</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#removing-filter-conditions" class="tna-sidebar__link">Removing Filter Conditions</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#load-and-save-filters" class="tna-sidebar__link">Removing Filter Conditions</a>
+                                    </li>
+                                    <li class="tna-sidebar__item-child">
+                                        <a href="#apply-and-cancel" class="tna-sidebar__link">Apply and cancel</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="tna-sidebar__items">
+                    <li class="tna-sidebar__item">
+                        <a href="#reports" class="tna-sidebar__link">Report on profiles</a>
+                        <ul class="tna-sidebar__item-children">
+                            <li class="tna-sidebar__item-child">
+                                <a href="#select-profiles" class="tna-sidebar__link">Selecting profiles to report on</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#available-reports" class="tna-sidebar__link">Available reports</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#building-reports" class="tna-sidebar__link">Building your report</a>
+                            </li>
+                            <li class="tna-sidebar__item-child">
+                                <a href="#exporting-reports" class="tna-sidebar__link">Exporting your report</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="tna-column tna-column--width-2-3 tna-column--full-small tna-column--full-tiny tna-section">
+            <section class="tna-section">
+                <h2 class="tna-heading-m" id="create-a-new-profile">Create a new profile</h2>
+                <p>
+                    A profile is the files and folders you want to find out about, and the results of
+                    profiling them. You can create profiles by clicking the <code>New</code> button, or selecting the
+                    <code>File / New </code> menu item. DROID automatically creates a blank profile for you when it starts.
+                </p>
+                <img src="images/creating_a_new_profile.png" alt="Creating a new profile">
+                <p>
+                    You can create as many profiles as you like. Each profile appears in its own tab,
+                    underneath the toolbar. You can<a href="#selecting-files"> choose files and
+                    folders</a> as soon as the tab appears using the <code>Add</code> command,
+                    but it takes a few seconds for a new profile to be ready to <a href="#running-a-profile">run</a>. By default, profiles are "Untitled" until they are <a href="#saving-and-loading-a-profile">saved</a> with a filename.
+                </p>
+                <p>
+                    Once a profile is created, its settings are fixed from the <a href="configuration.html#profile-defaults">Profile Defaults</a> specified in the preferences window.
+                </p>
+
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="selecting-files">Choose files and folders</h2>
+                <p>
+                    To add files and folders to a profile, click the <code>Add</code> button, or
+                    select the <code>Edit / Add files and folders</code> menu.
+                    You can also right-click with your mouse on the main profile window, and
+                    select the Add option from the popup menu.
+                </p>
+                <p>
+                    A selection window will appear. On the left-hand side is a navigator to explore
+                    your folders. The example below shows the "Internet Explorer" folder selected on
+                    the left-hand side, and the contents of this folder are shown on the right.
+                </p>
+                <p>
+                    Any files or folders selected on the right will appear in the "<i>Selected resources</i>"
+                    text box at the bottom. Select multiple files and folders at the same time by
+                    holding down the SHIFT key to select a list, or the CTRL key to individually select or
+                    deselect files or folders.
+                </p>
+                <p>
+                </p>
+                <h3 class="tna-heading-s" id="include-subfolders">Include subfolders</h3>
+                <p>
+                    When a folder is added to a profile, it is often useful to also profile all of its
+                    subfolders. Underneath the selected resources text box is checked by default. Uncheck this box if you only want
+                    to profile the files directly inside a folder and to ignore any subfolders. If
+                    you are only selecting files, this setting makes no difference. Note that if you are <a href="configuration.html#analyse-archive-files">profiling inside archival files</a>, they will
+                    still be profiled regardless of this setting, which only applies to folders in the file
+                    system you are profiling.
+                </p>
+                <p>
+
+                </p>
+                <h3 class="tna-heading-s" id="adding-your-selection">Adding your selection</h3>
+                <p>
+                    Press the <code>OK</code>
+                    button to add the selected files and folders to your profile, or the <code>Cancel</code>
+                    button to leave the selection window with no changes made. <code>Add</code>can be used repeatedly to add files and
+                    folders from different locations in your file system to your profile.
+                </p>
+                <h3 class="tna-heading-s" id="removing-your-selection">Removing your selection</h3>
+                <p>
+                    To remove files or folders from the profile, select them in the main window, and either
+                    press the <code>Remove</code> button, or use the <code>Edit / Remove</code> files or folders menu item. You can also
+                    right-click with your mouse on the main profile window, and select the Remove option
+                    from the popup menu.
+                </p>
+                <img alt="Remove top level resources" src="images/remove_top_level-resources.png">
+                <p>
+                    Only the top-level files and folders you have added to a profile can be removed.
+                    When you <a href="#running-a-profile">run</a> a profile with a folder, the
+                    profiling process will automatically add the files and folders it finds underneath it.
+                    After you run a profile, you cannot add or remove files or folders from the profile
+                    any more-its specification becomes fixed.
+                </p>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="running-a-profile">Running a profile</h2>
+                <p>
+                    You can start profiling files or folders using the  <code>Start</code> button, or by selecting the <code>Run / Start Identification</code> menu item.
+                </p>
+                <img alt="A running profile" src="images/profile_running.png">
+                <p>
+                    As files and folders are identified, they are added to the profile, and you can see all
+                    the results obtained so far. If you expand a folder, it will show all the files and
+                    folders found so far. If you happen to open the folder that is being profiled at that
+                    time, you will see its child files and subfolders appearing under it.
+                </p>
+                <p>
+                    Once you have started a profile running, you cannot <a href="#selecting-files">choose</a> any further files or folders in it. The
+                    specification of which files and folders to process in your profile becomes fixed at the
+                    point it first begins running. If you want to subsequently profile other files or
+                    folders, then you can do this in a <a href="#create-a-new-profile">new profile</a>.
+                    Results held in multiple profiles can be <a href="profiles.html#results">exported</a> and <a href="profiles.html#reports">reported</a> on
+                    together.
+                </p>
+                <h2 class="tna-heading-s" id="progress">Progress</h2>
+                <p>
+                    When your profile first starts running, it counts all the files and folders in your
+                    profile, including those in subfolders. Once it has counted them, a progress bar will
+                    show how much work has been completed, and how much more there is to do.
+                </p>
+                <p>
+                    The progress bar only gives an <i>estimate</i> of progress. Files which
+                    exist inside other files (e.g. zip files) are not accounted for, and in any case, files
+                    can be added or removed from your file system while your profile is still running.
+                    In most cases, the progress bar gives a fairly good indication of the amount of
+                    work remaining to be done. The current file being analysed is also displayed, so even
+                    if the progress bar doesn't seem to be moving, you can see that it is still profiling.
+                </p>
+                <h2 class="tna-heading-s" id="throttling-back">Throttling back</h2>
+                <p>
+                    You can control how quickly or slowly DROID processes the files in your profile, and this
+                    can be done at any time, whether your profile is running or not. This can take the load
+                    off your computer, network or disks if running it would impact you, or other users.
+                    By default, DROID works as quickly as it can, but you can tell DROID to delay for
+                    a short amount of time between each file it processes.
+                </p>
+                <p>
+                    To slow down or speed up DROID, use the slider control at the bottom right of the main
+                    window. When the slider is at the far left of the control, DROID will work as fast as
+                    it can (a delay of zero). When the slider is at the far right, DROID will wait for one
+                    second between processing each file. Even very small delays can reduce the load on
+                    networks and file servers, so the normal useful range for throttling is usually between zero
+                    and a hundred milliseconds.
+                </p>
+                <h2 class="tna-heading-s" id="restrictions-while-profiling">Restrictions while profiling</h2>
+                <p>
+                    While your profile is running, its filter cannot be enabled, and you cannot save
+                    it. If you had enabled a filter previously, it will be automatically disabled
+                    when your profile is started. Disabling a filter doesn't get rid of it - it just turns
+                    it off temporarily. You can turn it on again when the profile is finished, or paused.
+                </p>
+                <p>
+                    In addition, you cannot run any <a href="profiles.html#reports">reports</a> or <a href="profiles.html#exporting-reports">export</a> a profile while it is running. You can report and
+                    export other profiles which are not running.
+                </p>
+                <p>
+                    If you want to do any of the above tasks while a profile is running, you can
+                    temporarily <a href="#pausing">pause</a> it, carry out the task, and then resume profiling
+                    later.
+                </p>
+                <h2 class="tna-heading-s" id="pausing">Pausing</h2>
+                <p>
+                    You can pause your profile at any time by pressing the <code>Pause</code> button, or by selecting the <code>Run / Pause</code> menu item.
+                </p>
+                <img alt="Profile paused" src="images/profile_paused.png">
+                <p>
+                    The <a href="#progress">progress</a> bar will freeze at whatever point it reached,
+                    and you will see no further messages about files being analysed in the status bar. Your
+                    profile may not pause straight away, as there may be a few outstanding items to be processed
+                    in its work queue, particularly if it is in the middle of uncompressing a large archival
+                    file. Once paused, there are no <a href="#restrictions-while-profiling">restrictions</a> on what you
+                    can do with your profile (except that you cannot <a href="#selecting-files">choose</a> further files or folders once you have
+                    started profiling).
+                </p>
+                <h2 class="tna-heading-s" id="resuming">Resuming</h2>
+                <p>
+                    You can resume profiling by simple <a href="#running-a-profile">running</a> it again, using
+                    the <code>Start</code> command. Profiling will pick up running
+                    from the point it left off, leaving all results so far intact. You can also <a href="#saving-and-loading-a-profile">save</a> a
+                    paused profile, and then <a href="#saving-and-loading-a-profile">open</a> and resume it at a later date. If the files
+                    where your profile was last paused are now different, DROID will attempt to resume by
+                    locating the nearest place it can successfully re-start from.
+                </p>
+            </section>
+            <section class="tna-section">
+                <h2 class="tna-heading-m" id="information-collected-by-droid">Information collected by DROID</h2>
+                <h3 class="tna-heading-s" id="file-type">Type</h3>
+                <p>DROID categorises the files and folders it profiles as being one of three types:</p>
+                <ul class="tna-ul">
+                    <li>File</li>
+                    <li>Folder</li>
+                    <li>Archival file</li>
+                </ul>
+                <p>
+                    Files have format identifications, but do not have other files or folders inside them.
+                    Folders do not have any format identifications or sizes, but can contain other folders, files and archival files inside them.
+                    Archival files are like folders, in that they can contain other folders, files and archival files inside them, but they are also files, so they have format identifications and a file size.
+                    In this version, DROID can look inside zip, tar and gzip archival files. Archival files may have other archival files nested inside them.
+                    DROID will also profile inside these, and in any further nested archival files.
+                </p>
+                <h3 class="tna-heading-s" id="file-name">File name</h3>
+                <p>
+                    The name of a file, folder or archival file is its name, independent of its location on a disk or inside an archival file. The file name extension (if any) is part of its name. DROID treats all filenames as case-sensitive.
+                    For example, 'MYDOCUMENT.DOC' and 'mydocument.doc' are regarded as different file names.
+                </p>
+                <h3 class="tna-heading-s" id="file-name-extension">File name extension</h3>
+                <p>
+                    File extensions are a convention to indicate the broad type of a file (or archival file) by appending a short string to a file name, separated by a full stop.
+                    On Microsoft Windows, the filename extension is used to indicate to the operating system what application to run when double-clicking on the file.  Other operating systems do not use the filename extension to determine which application to use.
+                    However, filename extensions have become a de-facto standard for indicating the broad type of a file format, and are usually appended to filenames, even when a file is created on other platforms.
+                </p>
+                <p>
+                    DROID extracts the file extension (if any) from a file name or archival file name and stores it separately, to facilitate reporting, sorting and filtering on the extension alone.
+                </p>
+                <p>
+                    File names which begin with a full stop and have no other full stops in them are not regarded as having an extension.
+                    For example, a file called '.myfile' has a filename of '.myfile' and a blank extension, whereas '.myfile.doc' has a file name of '.myfile.doc'
+                    and an extension of '.doc'.   This is because file names starting with a full stop are hidden files in unix file systems,
+                    and also because it is not likely that a file name would be entirely composed of a file extension, with no name before it.
+                </p>
+                <p>
+                    DROID treats file extensions as case sensitive. However, it converts all file extensions to lower-case to facilitate filtering and reporting.
+                </p>
+                <h3 class="tna-heading-s" id="extension-mismatch-warning">Extension mismatch warning</h3>
+                <p>
+                    Sometimes file extensions are incorrect for the type of the file, or are missing where there should be one. If DROID detects that the file extension for a file name does not match the formats it has identified, it will issue a file extension mismatch warning.
+                    For example, if a file called 'myfile.doc' is identified as a spreadsheet, then a file extension mismatch warning will be issued.
+                </p>
+                <p>
+                    In the graphical user interface, extension mismatch warnings appear as a warning symbol against the file extension itself.
+                    When exported to a CSV file, it will appear as a True or False value in its own column.
+                </p>
+                <h3 class="tna-heading-s" id="location">Location</h3>
+                <p>
+                    DROID records the location of every file and folder it profiles. It records location in two ways, using a file Uniform Resource Indicator (URI) , and a file path where one exists.
+                    Like file names and extensions, DROID treats file paths and URIs as case sensitive.
+                </p>
+                <p>
+                    There are two ways of recording location because not all files and folders have a file path, although this is the usual method of identifying location in a file system.
+                    Any file, folder or archival file which is inside another archival file does not have a defined file path, as it is inside the archival file, not directly in the file system.
+                    For example, if we have:
+                </p>
+                <ol class="tna-ol">
+                    <li>a folder called 'Folder' on the 'C:\' drive of a Windows computer</li>
+                    <li>a file called 'Document.doc' inside 'Folder'</li>
+                    <li>an archival file called 'Archive.zip' inside 'Folder'</li>
+                    <li>a spreadsheet called 'Spreadsheet.xls' inside 'Archive.zip'</li>
+                    <li>a folder called 'Another folder' inside 'Archive.zip'</li>
+                    <li>a picture called 'Large picture.jpg' inside 'Another folder'</li>
+                    <li>Then we have the following file paths and URIs:</li>
+                </ol>
+                <p>Then we have the following file paths and URIs:</p>
+                <table class="tna-table">
+                    <thead class="tna-table__head">
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">File path</th>
+                        <th class="tna-table__header">Uniform Resource Indicator (URI)</th>
+                    </tr>
+                    </thead>
+
+                    <tbody class="tna-table__body">
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">C:\Folder</td>
+                        <td class="tna-table__cell">file:/C:/Folder/</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">C:\Folder\Document.doc</td>
+                        <td class="tna-table__cell">file:/C:/Folder/Document.doc</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">C:\Folder\Archive.zip</td>
+                        <td class="tna-table__cell">file:/C:/Folder/Archive.zip</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell">zip:/file:/C:/Folder/Archive.zip!Spreadsheet.xls</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell">zip:/file:/C:/Folder/Archive.zip!Another%20folder/</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell"></td>
+                        <td class="tna-table__cell">zip:/file:/C:/Folder/Archive.zip!Another%20folder/Large%20picture.jpg</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>
+                    Only files, archival files or folders which are directly accessible in the file system have a file path.
+                    Those files and folders which are inside the zip file do not have a file path, but do have a URI,
+                    which tells you that they are inside the zip file, where they can be found in it, and where the zip file they are inside is to be found.
+                </p>
+
+                <p>
+                    The prefixes of a URI tell you what sort of resource is being described by the URI, and the exclamation marks indicate where one type of resource is contained by another.
+                    For example, for 'Spreadsheet.xls', we can see that there is a file, C:/Folder/Archive.zip, with the prefix file:/.
+                    The exclamation mark (!) tells us that the spreadsheet is contained by the Archive.zip file, and the first prefix zip:/ tells us the type of the containment is a zip file. Note that spaces in URIs are encoded by '%20', and folder separators are always forward slashes.
+                    If zip files are contained inside zip files, inside zip files, more prefixes and exclamation marks are added as needed.
+                </p>
+                <p>
+                    URIs mean that all resources profiled by DROID have a unique reference which tells you where the resource is, even if it is inside an archival file, inside another archival file, and so on.  This is something that file paths cannot do.
+                    However, both are provided, as working with file paths is easier, where they exist for a resource.
+                </p>
+                <h3 class="tna-heading-s" id="file-size">File size</h3>
+                <p>
+                    The size of a file or archival file is recorded as the number of bytes used by the file. Files can have a size of zero (no content, just a record in the file system). Folders do not have a size.
+                </p>
+                <p>
+                    The size of an archival file is the size of the archival file itself, not the sum of the sizes of its contents.
+                    For example, zip files compress their contents, so the sum of the sizes of the files inside a zip file will be bigger than the size of the archival file itself.
+                </p>
+                <h3 class="tna-heading-s" id="last-modified-date">Last modified date</h3>
+                <p>Most files, folders and archival files record the date and time on which they were last modified.</p>
+
+                <p>It is possible that not every file, folder or archival file will have a last modified date. For example, in some cases, resources inside archival files may not record this date.</p>
+
+                <p>It is important to note that last-modified dates can be changed when files are copied from one server to another, so this date may not reflect the last date a user actively modified the content of a file. Also, the content of a file (the data within it) may actually be older than the file itself if a file was copied, or simply typed up manually from an older piece of content.</p>
+
+                <p>Some files may have noticeably inaccurate dates, e.g. 1 Jan 1970. In this case, the files will be newer than indicated. This error will likely be caused by the battery failing on the internal clock of the computer from which the document was uploaded, or some other error which caused the date to be set incorrectly.</p>
+
+
+                <h3 class="tna-heading-s" id="number-of-format-identifications">Number of format identifications</h3>
+                <p>DROID attempts to identify the format of files, including archival files, but not folders. The number of identifications DROID records for a file can vary. It can have</p>
+
+                <ul class="tna-ul">
+                    <li>zero, if DROID can't identify a format at all.</li>
+                    <li>one, if it is unambiguously identified as a single format.</li>
+                    <li>(2)  more than one, if DROID can't unambiguously decide what format it is in.</li>
+                </ul>
+                <p>
+                    In the user interface, the number in brackets indicates the number of possible format identifications made.  Clicking on the link will bring up a window showing all the identifications in a table.
+                    Multiple possible identifications can happen for three reasons.
+                </p>
+                <ul class="tna-ul">
+                    <li>A format is identified purely on the basis of its file extension, so multiple versions of a file format may match the same extension.</li>
+                    <li>A format has several versions which are very similar and hard for DROID to distinguish between, so DROID will simply report all the possible versions.</li>
+                    <li>A file may contain patterns, purely by chance, which appear in more than one file format.</li>
+                </ul>
+
+                <h3 class="tna-heading-s" id="file-formats">File formats</h3>
+                <p>When DROID identifies a file format, it records four pieces of information:</p>
+
+                <ul class="tna-ul">
+                    <li>format name</li>
+                    <li>format version</li>
+                    <li>PRONOM Unique Identifier (PUID)</li>
+                    <li>mime-type</li>
+                </ul>
+                <p>
+                    The format name is simply a human-readable name given to a file format or family of file formats, for example, 'Microsoft Word'.
+                    The format version is the version of the format, for example '97-2003'. The PUID is a globally unique, persistent identifier for a file format and version, assigned by The National Archives through its PRONOM file format registry.
+                    For example, the PUID for the 'Microsoft Word 97-2003' file format is 'fmt/40'.
+                </p>
+                <p>
+                    PUIDs are guaranteed never to change, although new PUIDs may be defined. Clicking on a PUID in DROID will take you to the relevant page for that file format on The National Archives PRONOM website.
+                    The website will also help you with some file format names that you may be unfamiliar with. In particular, you may see files identified as 'OLE2 Compound Document Format' (PUID fmt/111) which you can interpret as 'Microsoft Office generic' .
+                    In these cases, the file is a Microsoft Office file which DROID could not identify any more closely, but the file extension may indicate more precisely.
+                </p>
+                <p>
+                    Finally, the mime-type is another scheme for identifying broad types of files in use on the internet.
+                    They are assigned by a body called the Internet Assigned Numbers Authority.  Mime-types are quite broad classifications, so many different file formats will have the same mime-type. For example, the mime-type for 'fmt/40' is 'application/msword' which is shared by all other binary Microsoft Word formats.
+                </p>
+
+
+                <h3 class="tna-heading-s" id="identification-method">Identification methods</h3>
+                <p>DROID has three different methods of identifying file formats:</p>
+
+                <ul class="tna-ul">
+                    <li>extension</li>
+                    <li>signature</li>
+                    <li>container</li>
+                </ul>
+                <p>An 'extension' identification means that a format was identified purely on the basis of its file extension. Such an identification may not be reliable, as files can be named in any way, and extensions do not identify formats down to the version level, so such identifications can be quite broad, and may result in multiple identifications.</p>
+
+                <p>A 'signature' identification means that a format was identified by finding signature patterns inside the file which are known to occur in particular file formats and versions. This method is quite reliable, as it is fairly unlikely that by chance a file will happen to have a pattern belonging to a different file format than its own.</p>
+
+                <p>A 'container' identification means that a format was identified by finding embedded files (possibly with signatures of their own) inside the main file. For example, Microsoft Office 2007 word processing files are actually zip files containing xml files, images or other resources used in the document. A container identification would identify the main file as a Microsoft Office 2007 file, not a zip file. This method is very reliable, as not only does the broad type of container have to be identified (e.g. zip), but the zip file must then be opened, and files inside scanned for further identifications to be made.  The original zip identification is removed, and replaced by the Office 2007 identification, on the basis of the files discovered within it.</p>
+
+                <p>Note that this is not the same as profiling files inside Archival files, even though container-format files may be based on an archival format like zip.  A container-format is a single file format, whose specification relies on specific files being inside it to define the overarching format. An archival file format is a format whose only purpose is to contain other files, and the particular files inside it has no effect on its identification as an archival format.</p>
+
+
+                <h3 class="tna-heading-s" id="content-hash">Content hash</h3>
+                <p>DROID can optionally generate a content hash of the contents of each file and archival file, using the industry standard 'MD5' 'SHA1' or 'SHA256' algorithms. A content hash is a short signature that can be used to identify the content of the file. It is extremely unlikely that two different files will have the same content hash (although this is a remote possibility).</p>
+
+                <p>Content hashes can be used to detect files with duplicate content, or can be linked to forensic hash databases to find or exclude files which are widely used (and therefore not unique to your organisation) or which contain illegal content.  See <a href="configuration.html#detecting-duplicate-files">detecting duplicate files</a> for more information.</p>
+
+                <p>Content hashing is turned off by default, as producing a hash requires reading the entire file, which will slow down DROID significantly.</p>
+
+
+                <h3 class="tna-heading-s" id="status">Status</h3>
+                <p>As DROID profiles your files and folders, it records whether the profiling was successful or not. There are four different statuses which a file or folder can have:</p>
+                <table class="tna-table">
+                    <thead class="tna-table__head">
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">Status</th>
+                        <th class="tna-table__header">Description</th>
+                    </tr>
+                    </thead>
+
+                    <tbody class="tna-table__body">
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">Done</td>
+                        <td class="tna-table__cell">	The file or folder was read successfully and any results found recorded.</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">Not found</td>
+                        <td class="tna-table__cell">The file or folder was moved or deleted before it could be profiled.</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">Access denied</td>
+                        <td class="tna-table__cell">The operating system refused read access to DROID. You will have to grant read permission to those files or folders if you want DROID to profile them.</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <td class="tna-table__cell">Error</td>
+                        <td class="tna-table__cell">An error occurred while trying to read the file.  You may be able to determine the cause of the error by examining DROID's log files.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="saving-and-loading-a-profile">Saving and loading a profile</h2>
+                <p>
+                    DROID can open and save profiles to a file with a <b>.droid</b> filename extension.
+                    Note that DROID 6 cannot open profiles created by earlier versions of DROID.
+                </p>
+                <h3 class="tna-heading-s" id="opening-a-profile">Opening a profile</h3>
+                <p>
+                    To open a saved profile, press the <code>Open</code> button,
+                    or select the <code>File / Open</code> menu item. A standard file
+                    open selection dialog will appear. Navigate to the droid profile you want to open,
+                    and press the <code>OK</code> button. The profile will open in a
+                    new tab. If it is a large profile (containing hundreds of thousands of files and
+                    folders), it may take a few minutes to open. A progress bar at the bottom of the screen
+                    shows how much of the profile has been opened so far.
+                </p>
+                <h3 class="tna-heading-s" id="saving-a-profile">Saving a profile</h3>
+                <p>
+                    To save a profile, press the <code>Save</code> button, or
+                    select the <code>File / Save</code> menu item. If your profile has
+                    never been saved before, a standard file save dialog will appear, and you can choose where to
+                    save the file and what name it has. If your profile has
+                    been saved before, it will be saved to the place it was opened from, and no file save dialog
+                    will appear. It is a large profile (containing hundreds of thousands of files and
+                    folders), it may take a few minutes to save. A progress bar at the bottom of the
+                    screen shows how much of the profile has been saved so far.
+                </p>
+                <p>
+                    To save an existing profile to another file, select the <code>File / Save As...</code>
+                    menu item. This will always bring up a file save dialog, allowing you
+                    to choose a different file to save to.
+                </p>
+                <h3 class="tna-heading-s" id="profile-files">Profile files</h3>
+                <p>
+                    Profile files are actually zip files, which contain some XML files describing the
+                    profile, and a database containing any results of profiling so far. DROID currently
+                    uses the <a href="https://db.apache.org/derby/">Apache Derby</a> database, version 10.7, which can be opened using
+                    various third-party tools, such as <a href="https://www.dbvis.com/">DB Visualizer</a> The username to connect to a droid database is
+                    <code>droid_user</code>, and the password is the same as the username.
+                </p>
+                <p>
+                    It is possible to manually edit the profile settings contained within the <code>profile.xml</code> file. However, it is
+                    <b>not recommended</b> that you do this, as changing settings within a profile may mean that
+                    inconsistent results are returned (if the profile is paused and there are remaining results
+                    to process), or may even cause DROID to crash if the settings conflict with the profile
+                    state. In particular, you must not change which signatures are used by a profile.
+                    We cannot guarantee that other settings are safe to change. Changing this file is
+                    entirely at your own risk.
+                </p>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="results">Explore the results</h2>
+                <p>
+                    Results appear in your profile tab as soon as they are profiled. If you have
+                    profiled any folders, then you can see the files and subfolders inside them by clicking on
+                    the open folder icon to their left. To the right of each resource are columns
+                    containing <a href="#information-collected-by-droid">information</a> about each resource.
+                </p>
+                <h3 class="tna-heading-s" id="sorting">Sorting</h3>
+                <p>
+                    You can sort the columns by clicking on the column header. Clicking once will sort in
+                    descending order, another click will sort in ascending order, and a third click will remove
+                    the sort. The sort will also group resources that can have resources inside them (e.g.
+                    folders or zip files) together, followed by the files, to keep similar resources together.
+                </p>
+                <h3 class="tna-heading-s" id="filtering">Filtering</h3>
+                <p>
+                    When you have a lot of results, it is useful to be able to filter them, in order to narrow
+                    down on the files or folders of particular interest. You can define a filter for your
+                    results by clicking the <code>Filter</code> button, or by
+                    selecting the <code>Filter / Edit Filter...</code> menu item. In the
+                    filter definition dialog, you can add one or more conditions that a file must meet in order
+                    to be visible in your profile, change whether your files must meet all the conditions you
+                    specify, or any of them, and set whether the filter is enabled or not.
+                </p>
+                <img alt="Filter selection" src="images/filter-selection.png">
+                <h4 class="tna-heading-s" id="any-or-all">Any or All</h4>
+                <ul class="tna-ul">
+                    <li>
+                        <b>All</b> files must meet all filter conditions specified in order to be visible in your profile.
+                    </li>
+                    <li>
+                        <b>Any</b> files can meet any filter condition specified in order to be visible in your profile.
+                    </li>
+                </ul>
+                <h4 class="tna-heading-s" id="filter-enabled">Filter enabled</h4>
+                <p>
+                    This checkbox allows you to set whether your filter is enabled or not. When enabled,
+                    results in your profile will be filtered. When disabled, your filter conditions will simply
+                    not apply (but their definition will remain). You can also enable or disable filters
+                    via the <code>Filter / Filter on</code> menu item.
+                </p>
+                <h4 class="tna-heading-s" id="adding-filter-conditions">Adding filter conditions</h4>
+                <p>
+                    To specify a filter condition, you must fill out three items in a row in the filter table.
+                </p>
+                <ol class="tna-ol">
+                    <li>
+                        Field-the type of information you want to filter on,
+                    </li>
+                    <li>
+                        Operation-the type of comparison to make,
+                    </li>
+                    <li>
+                        Values-what to compare the value of the field to.
+                    </li>
+                </ol>
+                <h4 class="tna-heading-s" id="fields">Fields</h4>
+                <p>
+                    Fields are the kind of information you want to filter on. Click on the first column of
+                    the filter condition table, on the drop-down box that says <code>Please select...</code>.
+                    You can select from the following fields:
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        <b>File name-</b>the (case-sensitive) name of a file or folder
+                    </li>
+                    <li>
+                        <b>File size-</b>the size of a file in bytes
+                    </li>
+                    <li>
+                        <b>File extension-</b>the (case-sensitive) file name extension
+                    </li>
+                    <li>
+                        <b>Last modified date</b> - the data a file or folder was last modified
+                    </li>
+                    <li>
+                        <b>Resource type-</b>whether the resource is a folder, file or archival file (a file that
+                        contains other files - e.g. a zip file).
+                    </li>
+                    <li>
+                        <b>Mime type-</b>the mime-type of a file
+                    </li>
+                    <li>
+                        <b>PUID</b> - the PRONOM Unique Identifier of a file.
+                    </li>
+                    <li>
+                        <b>Format name-</b>the name of a format identified by a PUID.
+                    </li>
+                    <li>
+                        <b>Identification method-</b>the method by which a file or archival file was identified.
+                    </li>
+                    <li>
+                        <b>Job status-</b>whether a file has been processed, or had an error when profiled.
+                    </li>
+                    <li>
+                        <b>Extension mismatch-</b>whether the format identified is consistent with the file extension.
+                    </li>
+                </ul>
+                <p>
+                    For more information on these fields and the information contained in them, please see <a
+                        href="#information-collected-by-droid">Information collected by DROID</a>. You can
+                    specify more than one filter condition on the same field. Notice that if you are
+                    filtering using the <a href="#any-or-all">All</a> method, this makes it possible to create
+                    filters which no file can meet (e.g. size < 100 and size > 100)!
+                </p>
+                <h4 class="tna-heading-s" id="operations">Operations</h4>
+                <p>
+                    Once you have selected the field you want to filter on, you can specify what kind of
+                    comparison operation should be performed on it. The available operations vary by the
+                    type of field you have selected:
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        <b>Numbers and Dates</b>: less than (<b><</b>), less or equal (<b><=</b>),
+                        equals (=), greater than (=), greater or equal (>=), not equals (<>)
+                    </li>
+                    <li>
+                        <b>Text</b> <i>(case-sensitive)</i>: equals (=), not equals (<>), starts with, ends
+                        with, contains, does not start with, does not end with, does not contain.
+                    </li>
+                    <li>
+                        <b>Sets</b>: some types of field can have one or more values. selected out of a
+                        defined set of values (PUID, Mime type, Identification method, Job status). To
+                        compare sets, you can specify that there are "any of" the values in the specified set, or
+                        "none of" the values in the specified set of values.
+                    </li>
+                </ul>
+                <h4 class="tna-heading-s" id="values">Values</h4>
+                <p>
+                    Like the operations, the values you provide depend on the type of <a href="#fields">fields</a> you are filtering on:
+                </p>
+                <ul class="tna-ul">
+                    <li>
+                        <b>Numbers</b>: enter a positive whole number. Only digits can be entered-no
+                        decimal points, plus or minus signs are allowed.
+                    </li>
+                    <li>
+                        <b>Dates</b>: provide the day, month and year in the boxes provided.
+                    </li>
+                    <li>
+                        <b>Text</b>: enter your text into the box provided.
+                    </li>
+                    <li>
+                        <b>Sets</b>: You cannot enter set values directly into the value area-you must select
+                        them using the <a href="#set-selection-dialog">set selection dialog</a>. To bring up
+                        the dialog, click the <code>...</code> button to the right of the value area. Once you have selected
+                        your values, a read-only representation of them will appear in the value area. You
+                        can always edit your sets by bringing up the set selection dialog again.
+                    </li>
+                </ul>
+                <h4 class="tna-heading-s" id="set-selection-dialog">Set selection dialog</h4>
+                <p>
+                    The set selection dialog lets you select one or more values from a list.
+                </p>
+                <img alt="Filter option selected" src="images/filter-option-selected.png">
+                <p>
+                    On the left-hand side of the dialog are all the available values to select. On the
+                    right-hand side are the values you want to filter on. To add values to your selection,
+                    select the values you would like to add on the left-hand side, and press the <code>Add</code> button
+                    between the two panes. You can select values individually, or you can hold down the
+                    SHIFT key to select a list of values. If you hold down the CTRL key, you can select or
+                    deselect multiple items individually. To remove values from your selection, highlight
+                    the values you want to remove on the right-hand side, using the same techniques as adding,
+                    and press the <code>Remove</code> button.
+                </p>
+                <p>
+                    Once you are happy with your selection, press the <code>OK</code> button at the
+                    bottom of the dialog. Your selected values will be placed in the value box in the
+                    filter dialog. If you want to cancel any changes you have made, press the <code>Cancel</code> button.
+                </p>
+                <h4 class="tna-heading-s" id="removing-filter-conditions">Removing Filter Conditions</h4>
+                <p>
+                    To remove a filter condition, click the <code>Remove</code> button at the far right of the row.
+                    You cannot remove the final row in the filter table, which always shows <code>Please select...</code>
+                    in the field column, as this row enables you to add new filter conditions. Unless you actually specify a field,
+                    this row does not contribute to the filter specification.
+                </p>
+                <h4 class="tna-heading-s" id="load-and-save-filters">Load and Save filters</h4>
+                <p>
+                    If you have a filter you want to re-use, you can save filters to a file, and load them back
+                    from a previously saved file. Clicking on these buttons brings up a file selection
+                    dialog window.
+                </p>
+                <h4 class="tna-heading-s" id="apply-and-cancel">Apply and cancel</h4>
+                <p>
+                    If you are happy with your filter definition, press the <code>Apply</code> button at the
+                    bottom of the screen.  Your filter specification will be associated with your profile,
+                    and if you have enabled the filter, it will be applied to the profile immediately. If
+                    you press the <code>Cancel</code> button, all changes you have made to the filter will be discarded, and
+                    any previous filter will be restored as it was before you opened the filter dialog.
+                </p>
+            </section>
+             <section class="tna-section">
+                <h2 class="tna-heading-m" id="reports">Reports</h2>
+                <h3 class="tna-heading-s" id="select-profiles">Selecting profiles to report on</h3>
+                <p>
+                    DROID can create a variety of reports containing statistics about the files and folders
+                    in your profiles, and save the report as several different kinds of file.
+                </p>
+                <p>
+                    To create a summary report of one or more profiles, press the <code>Report</code> button,
+                    or select the <code>Report / Generate Report</code> menu option.
+                    This will bring up the profile selection dialog, which allows you to select which
+                    profiles to report on.
+                </p>
+                <img alt="Select profiles to report" src="images/select_profiles_to_report.png">
+                <p>
+                    If a selected profile has an active filter, this filter will be used when generating the
+                    report. So you can produce different reports on the same profiles, by using different
+                    filters. For example, you could filter out all files which are very large, giving you
+                    averages which are closer to the mean values normally encountered. Or you could filter out
+                    everything except document formats, letting you produce statistical reports on document types
+                    only.
+                </p>
+                <h3 class="tna-heading-s" id="available-reports">Available reports</h3>
+                <p>
+                    Once you have selected some profiles to report on, select which report you wish to generate.
+                    DROID ships with eleven pre-defined reports:
+                </p>
+                <table class="tna-table">
+                    <thead class="tna-table__header">
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">Report Name</th>
+                        <th class="tna-table__header">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody class="tna-table__body">
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">File count and sizes</th>
+                        <td class="tna-table__cell">The count, total size, and minimum, maximum and average size of all files in your profiles</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">Total count of files and folders</th>
+                        <td class="tna-table__cell">A count of all files and folders in your profiles</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">Total unreadable files</th>
+                        <td class="tna-table__cell">A count of all the unreadable files in your profiles</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">Total unreadable folders</th>
+                        <td class="tna-table__cell">A count of all the unreadable folders in your profiles</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">File count and sizes by file extension</th>
+                        <td class="tna-table__cell">The count, total size, and minimum, maximum and average size of all files in your profiles broken down by their file extensions.</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">File count and sizes by file format PUID</th>
+                        <td class="tna-table__cell">The count, total size, and minimum, maximum and average size of all files in your profiles broken down by their file format PUIDs.</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">File count and sizes by mime type</th>
+                        <td class="tna-table__cell">The count, total size, and minimum, maximum and average size of all files in your profiles broken down by their mime types.</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">File count and sizes by month last modified</th>
+                        <td class="tna-table__cell">The count, total size, and minimum, maximum and average size of all files in your profiles broken down by the month they were last modified in. Months are represented as a number from 1 (January) to 12 (December).</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">File count and sizes by year last modified</th>
+                        <td class="tna-table__cell">The count, total size, and minimum, maximum and average size of all files in your profiles broken down by the year they were last modified.</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">File count and sizes by year and month last modified</th>
+                        <td class="tna-table__cell">The count, total size, and minimum, maximum and average size of all files in your  profiles broken down by the year and month they were last modified. Months are represented as a number from 1 (January) to 12 (December).</td>
+                    </tr>
+                    <tr class="tna-table__row">
+                        <th class="tna-table__header">Comprehensive breakdown</th>
+                        <td class="tna-table__cell">A report combining all of the above reports into a single report. This report may take a long time to generate over large profiles.</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <h3 class="tna-heading-s" id="building-reports">Building your report</h3>
+                <p>Next, press the <code>Report on profiles...</code> button to generate your report.</p>
+                <img alt="Report window" src="images/report_window.png">
+                <p>Statistics presented are broken down by profile, and aggregated across all the profiles you have selected to report on.</p>
+                <h3 class="tna-heading-s" id="exporting-reports">Exporting your report</h3>
+                <p>
+                    Finally, if you want to save your report, press the <code>Export...</code> button.
+                    This will enable you to save your report in a variety of file formats. By
+                    default, all reports can be saved as:
+                </p>
+                <ul class="tna-ul">
+                    <li>PDF</li>
+                    <li>Web page</li>
+                    <li>Text</li>
+                    <li>DROID Report XML</li>
+                </ul>
+                <p>
+                    In addition, some reports have special output formats defined. As shipped, DROID 6
+                    includes a PLANETS XML export option for the Comprehensive Breakdown report. All
+                    reports are generated from the DROID Report XML, so you can use this format to transform
+                    into any other formats you require, using XSLT technology. All report definitions, and
+                    any associated transforms are located in the report_definitions subfolder underneath your <a
+                        href="configuration.html#user-settings-folder">user settings</a> folder.
+                </p>
+
+            </section>
+        </div>
+    </div>
+
+
+</main>
+</body>
+</html>
