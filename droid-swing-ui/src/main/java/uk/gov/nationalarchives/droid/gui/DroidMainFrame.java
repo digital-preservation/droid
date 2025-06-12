@@ -298,7 +298,7 @@ public class DroidMainFrame extends JFrame {
 
         helpMenuItem.addActionListener(evt -> {
             try {
-                URI uri = globalContext.getGlobalConfig().getHelpPagesDir().resolve("home.html").toUri();
+                URI uri = globalContext.getGlobalConfig().getHelpPagesDir().resolve("indexs.html").toUri();
                 Desktop.getDesktop().browse(uri);
             } catch (IOException e) {
                 throw new RuntimeException(e);
