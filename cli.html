@@ -1,0 +1,1270 @@
+<!--
+
+    Copyright (c) 2016, The National Archives <pronom@nationalarchives.gov.uk>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following
+    conditions are met:
+
+     * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+     * Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+     * Neither the name of the The National Archives nor the
+       names of its contributors may be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html class="js tna-template tna-template--light-theme tna-template--js-enabled" lang="en"
+      xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <link rel="stylesheet" href="styles/print.css" media="print">
+  <link rel="stylesheet" href="styles/all.css">
+  <link rel="icon" href="images/favicon.png">
+  <style>
+    code.line-break {
+      display: block;
+      white-space: pre-wrap;
+    }
+    code {
+      font-size: 1.0rem;
+    }
+  </style>
+  <title>CLI</title>
+</head>
+<body class="home page-template page-template-page-home page-template-page-home-php page page-id-2 tna-template__body">
+<header class="tna-header" data-module="tna-header">
+  <div class="tna-container tna-header__contents">
+    <div class="tna-column tna-header__logo-wrapper">
+      <a href="index.html" class="tna-header__logo tna-header__logo--link" title="DROID - Help" aria-label="DROID - Help">
+        <span class="tna-logo tna-logo--adornable">
+          <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 160 160" width="96" height="96"
+               aria-hidden="true" focusable="false">
+            <path fill="transparent" d="M0 0h160v160H0z" class="tna-logo__background"></path>
+            <g class="tna-logo__foreground" fill="currentColor">
+              <path d="M1.9 107.2h156.3V158H1.9v-50.8zm0-52.7h156.3v50.8H1.9V54.5zm0-52.6h77.2v50.8H1.9V1.9zm79 0h77.2v50.8H80.9V1.9zm0-1.9H0v160h160V0H80.9z"></path>
+              <path d="M21.3 19.5h-5.4v-3h14.3v3h-5.4v18.4h-3.5zM31.6 16.5H35v9h8.4v-9h3.4v21.4h-3.4v-9.3H35v9.3h-3.4zM50.9 16.5h12.2v3h-8.8v6.1h7.4v3h-7.4v6.3h8.8v3H50.9zM19.7 69.2h3.8l6.4 12.5c.6 1.1 1.1 2.7 1.6 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.5v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2H23c.2 1.4.3 3.3.3 5v11.5h-3.5c-.1 0-.1-21.4-.1-21.4zM47.8 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8H45c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zM43 69.2h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6L43 69.2zM57.2 72.3h-5.4v-3.1H66v3.1h-5.4v18.4h-3.4zM67.8 69.2h3.5v21.4h-3.5zM87.5 80c0-5.3-1.7-8-4.8-8-3.2 0-4.8 2.7-4.8 8 0 5.2 1.6 7.9 4.8 7.9 3.2 0 4.8-2.7 4.8-7.9m-13.3 0c0-7 3-11.1 8.5-11.1 5.4 0 8.4 4.1 8.4 11.1 0 6.9-3 11-8.4 11s-8.5-4.1-8.5-11M94.3 69.2H98l6.4 12.5c.6 1.1 1.2 2.7 1.7 4h.2c-.2-1.7-.3-3.6-.3-4.8V69.2h3.4v21.4h-3.7l-6.3-12.3c-.7-1.4-1.2-2.7-1.7-4.2h-.2c.2 1.4.3 3.3.3 5v11.5h-3.5V69.2zM122.4 82.6l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4h-3.5l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM129.9 69.2h3.5v18.4h8.4v3.1h-11.9zM26.9 135.2l-1.7-6.3c-.3-1.1-.6-2.2-.9-3.8h-.2c-.3 1.6-.5 2.6-.8 3.8l-1.7 6.3h5.3zm-4.8-13.4h4.2l6.2 21.4H29l-1.5-5.2h-6.6l-1.4 5.2h-3.6l6.2-21.4zM39.9 132.5c2.5 0 3.4-1.6 3.4-3.9 0-2.2-1-3.8-3.4-3.8h-2.7v7.7h2.7zm-6.1-10.7h6.4c4.5 0 6.7 2.4 6.7 6.6 0 3.1-1.5 5.6-3.7 6.3v.2c1 1.1 4 7.5 4.8 7.9v.5h-3.8c-1-.6-3.6-7.2-4.4-7.8h-2.5v7.8h-3.5v-21.5zM52.9 132.5c0 5.3 1.9 8 4.8 8s4-2 4-5.2l3.5.1c0 .2.1.4.1.6 0 4.4-2.1 7.5-7.5 7.5-5.2 0-8.5-3.9-8.5-11.1 0-7.1 3.3-11 8.5-11 6.4 0 7.5 4.6 7.5 7.2 0 .3 0 .7-.1.9l-3.5.1c0-3.3-1.2-5.2-4-5.2-2.9.2-4.8 2.9-4.8 8.1M68 121.8h3.5v9.1h8.3v-9.1h3.5v21.5h-3.5v-9.4h-8.3v9.4H68zM87.9 121.8h3.5v21.4h-3.5zM94.2 121.8h3.6l3.2 12.3c.5 1.9.8 3.6 1.1 5.6h.2c.3-2 .6-3.7 1.1-5.6l3.2-12.3h3.6l-6.1 21.4H100l-5.8-21.4zM112.7 121.8H125v3.1h-8.8v6h7.4v3h-7.4v6.3h8.8v3.1h-12.3zM130.4 136c0 .2-.1.5-.1.8 0 1.9.8 3.7 3.4 3.7 2.1 0 3.3-1.2 3.3-2.9 0-1.6-.7-2.4-2.2-3l-3.4-1.3c-2.4-.9-4.2-2.4-4.2-5.7 0-3.5 2.3-6.1 6.6-6.1 5.5 0 6.4 3.6 6.4 5.9 0 .3 0 .7-.1 1.1l-3.4.1c0-.2.1-.5.1-.7 0-1.7-.6-3.2-3-3.2-2.1 0-3 1.2-3 2.8 0 1.7.9 2.5 2.2 2.9l3.5 1.3c2.6 1 4.3 2.6 4.3 5.8 0 3.6-2.4 6.1-7 6.1-5.9 0-6.8-3.9-6.8-6.5 0-.3 0-.6.1-1l3.3-.1z"></path>
+            </g>
+          </svg>
+        </span><span class="tna-header__logo-strapline">DROID</span>
+      </a>
+    </div>
+    <div class="tna-column tna-header__navigation-button-wrapper">
+      <button class="tna-header__navigation-button tna-header__navigation-button--opened" type="button"
+              aria-controls="tna-header__navigation" aria-expanded="true" title="Close menu">
+        Menu
+        <span class="tna-header__hamburger"></span>
+      </button>
+    </div>
+    <nav class="tna-column tna-column--flex-1 tna-column--full-small tna-column--full-tiny tna-header__navigation tna-header__navigation--open"
+         id="tna-header__navigation" aria-label="Primary" aria-hidden="false">
+      <ul class="tna-header__top-navigation-items">
+        <li class="tna-header__top-navigation-item">
+          <a target="_blank" href="https://github.com/digital-preservation/droid/releases"
+             class="tna-header__top-navigation-item-link"
+             tabindex="0">
+            <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+            DROID Releases
+          </a>
+        </li>
+        <li class="tna-header__top-navigation-item">
+          <a target="_blank" href="https://github.com/digital-preservation/droid/blob/main/license.md"
+             class="tna-header__top-navigation-item-link"
+             tabindex="0">
+            <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+            DROID Licence
+          </a>
+        </li>
+        <li class="tna-header__top-navigation-item">
+          <a href="search.html"
+             class="tna-header__top-navigation-item-link"
+             tabindex="0">
+            <i class="fa-solid fa-brands fa-github" aria-hidden="true"></i>
+            Search
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="tna-main" id="main-content">
+  <nav class="tna-secondary-navigation" aria-label="Sections">
+    <h2 class="tna-secondary-navigation__heading tna-heading-s">
+    </h2>
+    <ul class="tna-secondary-navigation__items">
+      <li class="tna-secondary-navigation__item">
+        <a href="index.html" class="tna-secondary-navigation__link">Home</a>
+      </li>
+      <li class="tna-secondary-navigation__item"><a href="profiles.html" class="tna-secondary-navigation__link">Profiles</a>
+      </li>
+      <li class="tna-secondary-navigation__item">
+        <a href="faq.html" class="tna-secondary-navigation__link">FAQ</a>
+      </li>
+      <li class="tna-secondary-navigation__item">
+        <a href="configuration.html" class="tna-secondary-navigation__link">Configuration</a>
+      </li>
+      <li class="tna-secondary-navigation__item">
+        <a href="export.html" class="tna-secondary-navigation__link">Export</a>
+      </li>
+      <li class="tna-secondary-navigation__item--current">
+        <a href="cli.html" class="tna-secondary-navigation__link">CLI</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="tna-container"><h1 class="tna-heading-l--space-above"></h1></div>
+
+  <div class="tna-container">
+    <div class="tna-column tna-column--width-1-4 tna-column--full-small tna-column--full-tiny tna-section"
+         role="navigation" aria-label="Table of contents">
+      <nav class="tna-sidebar tna-sidebar--contents" aria-label="Sidebar">
+        <h2 class="tna-sidebar__heading tna-heading-m">
+          Contents
+        </h2>
+        <ul class="tna-sidebar__items">
+          <li class="tna-sidebar__item">
+            <a href="#format-identification" class="tna-sidebar__link">Format identification</a>
+            <ul class="tna-sidebar__item-children">
+              <li class="tna-sidebar__item-child">
+                <a href="#file-system-identification" class="tna-sidebar__link">File system identification</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#s3-identification" class="tna-sidebar__link">S3 identification</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#http-identification" class="tna-sidebar__link">HTTP(S) identification</a>
+              </li>
+            </ul>
+          </li>
+          <li class="tna-sidebar__items">
+            <a href="#writing-results" class="tna-sidebar__link">Writing results</a>
+            <ul class="tna-sidebar__item-children">
+              <li class="tna-sidebar__item-child">
+                <a href="#writing-to-a-file" class="tna-sidebar__link">Writing to a file</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#writing-to-a-database" class="tna-sidebar__link">Writing to a database</a>
+              </li>
+            </ul>
+          </li>
+          <li class="tna-sidebar__items">
+            <a href="#filtering-results" class="tna-sidebar__link">Filtering results</a>
+            <ul class="tna-sidebar__item-children">
+              <li class="tna-sidebar__item-child">
+                <a href="#filtering-files" class="tna-sidebar__link">Filtering files</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#filtering-results-once-identified" class="tna-sidebar__link">Filtering results once identified</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#list-filtering-options" class="tna-sidebar__link">List filtering options</a>
+              </li>
+            </ul>
+          </li>
+          <li class="tna-sidebar__items">
+            <a href="#configuring-droid" class="tna-sidebar__link">Configuring DROID</a>
+            <ul class="tna-sidebar__item-children">
+              <li class="tna-sidebar__item-child">
+                <a href="#specifying-signature-files" class="tna-sidebar__link">Specifying the signature files to use</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#specifying-archive-types" class="tna-sidebar__link">Specifying which archive types to process</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#specifying-profile-properties" class="tna-sidebar__link">Specifying profile properties</a>
+              </li>
+            </ul>
+          </li>
+          <li class="tna-sidebar__items">
+            <a href="#no-profile-mode" class="tna-sidebar__link">No profile mode</a>
+          </li>
+          <li class="tna-sidebar__items">
+            <a href="#configuring-output" class="tna-sidebar__link">Configuring output</a>
+            <ul class="tna-sidebar__item-children">
+              <li class="tna-sidebar__item-child">
+                <a href="#row-per-file-or-identification" class="tna-sidebar__link">Writing a row per file or per identification</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#quoting-csv-fields" class="tna-sidebar__link">Quoting CSV fields</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#choosing-which-columns-to-write" class="tna-sidebar__link">Choosing which columns to write</a>
+              </li>
+            </ul>
+          </li>
+          <li class="tna-sidebar__items">
+            <a href="#working-with-saved-profiles" class="tna-sidebar__link">Working with saved profiles</a>
+            <ul class="tna-sidebar__item-children">
+              <li class="tna-sidebar__item-child">
+                <a href="#exporting-profiles" class="tna-sidebar__link">Exporting profiles</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#filtering-exports" class="tna-sidebar__link">Filtering exports</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#reporting-on-saved-profiles" class="tna-sidebar__link">Reporting on saved profiles</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#filtering-reports" class="tna-sidebar__link">Filtering reports</a>
+              </li>
+            </ul>
+          </li>
+          <li class="tna-sidebar__items">
+            <a href="#signature-management" class="tna-sidebar__link">Signature management</a>
+            <ul class="tna-sidebar__item-children">
+              <li class="tna-sidebar__item-child">
+                <a href="#check-for-signature-updates" class="tna-sidebar__link">Check for signature updates</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#download-latest-signatures" class="tna-sidebar__link">Download the latest signatures</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#list-available-signatures" class="tna-sidebar__link">List available signatures</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#configure-the-default-signatures" class="tna-sidebar__link">Configure the default signatures</a>
+              </li>
+            </ul>
+          </li>
+          <li class="tna-sidebar__items">
+            <a href="#reference-tables" class="tna-sidebar__link">Reference tables</a>
+            <ul class="tna-sidebar__item-children">
+              <li class="tna-sidebar__item-child">
+                <a href="#filtering-parameters" class="tna-sidebar__link">Field fields and operators</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#profile-property-table" class="tna-sidebar__link">Profile properties table</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#column-table" class="tna-sidebar__link">Column names</a>
+              </li>
+              <li class="tna-sidebar__item-child">
+                <a href="#options-table" class="tna-sidebar__link">Command options</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="tna-column tna-column--width-3-4 tna-column--full-small tna-column--full-tiny tna-section">
+      <section class="tna-section">
+        <h2 class="tna-heading-m" id="format-identification">Format identification</h2>
+        <h3 class="tna-heading-s" id="file-system-identification">File system identification</h3>
+        <p>To identify files from the command line, run droid with a list of files or folders to process:</p>
+
+        <code>droid "C:\Files\A Folder" "C:\Files\A File"</code>
+        <p>
+          This will output the results of identification as Comma Separated Values (CSV) directly to the console.
+          This is equivalent to using the <b>-a</b> option - add resources for identification.
+          However, you don't need to specify -a unless you want to be explicit.
+        </p>
+        <code>droid -a "C:\Files\A Folder" "C:\Files\A File"</code>
+        <p>If you want to output to JSON instead of CSV, set the <b>--json</b> flag on any command.</p>
+        <code>droid -a "C:\Files\A Folder" "C:\Files\A File" --json</code>
+        <p>If you want to process sub-folders and the files inside them, specify the <b>-R</b> option to recurse into sub-folders:</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R</code>
+
+        <h3 class="tna-heading-s" id="s3-identification">S3 identification</h3>
+        <p>DROID will identify files from an AWS S3 bucket.</p>
+        <p>You will need credentials to the bucket you are trying to access, and you will need a profile set up with a configured region matching the region of your bucket</p>
+        <p>There is AWS documentation on <a target="_blank" href="https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-files.html#cli-configure-files-format-profile">configuring profiles</a></p>
+        <p>Your credentials must have at least the <code>s3:GetObject</code> permission for the bucket you are trying to access. For more information, see <a target="_blank" href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Integrating.Authorizing.IAM.S3CreatePolicy.html">the AWS documentation on S3 permissions.</a></p>
+        <p>S3 doesn't store folder information. Every object in a bucket has a single path, although the S3 UI will split this into folders if the path contains a <code>/</code></p>
+        <p>Given the following objects in S3</p>
+        <code class="line-break">
+          /folder1/object.txt
+          /folder1/object.pdf
+          /folder11/object.csv
+          /folder2/object.docx
+          /folder3/object.xlsx
+        </code>
+        <p>This would be rendered on a traditional file system like this:</p>
+        <code class="line-break">
+          ├── folder1
+          │   ├── object.pdf
+          │   └── object.txt
+          ├── folder11
+          │   └── object.csv
+          ├── folder2
+          │   └── object.docx
+          └── folder3
+          └── object.xlsx
+        </code>
+        <p>S3 works on object prefixes. You make a request using an s3 object url which has the form <code>s3://{bucket}/{path}</code> This command:</p>
+        <code>
+          droid s3://bucket.name/folder
+        </code>
+        <p> will return</p>
+        <code class="line-break">
+          /folder1/object.txt
+          /folder1/object.pdf
+          /folder11/object.csv
+          /folder2/object.docx
+          /folder3/object.xlsx
+        </code>
+        <p>Every object has the prefix <code>/folder</code> This command:</p>
+        <code>droid s3://bucket.name/folder1</code>
+        <p> will return</p>
+        <code class="line-break">
+          /folder1/object.txt
+          /folder1/object.pdf
+          /folder11/object.csv
+        </code>
+        <p>These commands:</p>
+        <code>droid s3://bucket.name/folder1/</code>
+        <code>droid s3://bucket.name/folder1/object</code>
+        <p>will both return</p>
+        <code class="line-break">
+          /folder1/object.txt
+          /folder1/object.pdf
+        </code>
+        <p>All options relating to output format and container expansion will work with the S3 identification</p>
+        <h3 class="tna-heading-s" id="http-identification">HTTP(S) Identification</h3>
+        <p>HTTP format identification is simpler than S3 identification. It is not possible to generically get a list of files from a URL prefix so HTTP identification only works on individual files.</p>
+        <code>droid http://example.com/file1</code><p>
+        <code>droid https://example.com/file1</code>
+        <p>All options relating to output format and container expansion will work with the HTTP identification</p>
+      </section>
+      <section class="tna-section">
+        <h2 class="tna-heading-m" id="writing-results">Writing results</h2>
+
+        <h3 class="tna-heading-s" id="writing-to-a-file">Writing to a file</h3>
+        <p>To output the CSV results to a file rather than the console, you can use the <b>-o</b> option:</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -o "C:\Results\identifications.csv"</code>
+        <p>
+          <em>Note:</em> if you specify "stdout" as the filename for the -o option, it will also write to the console.  But it's easier to simply not specify the -o option.
+        </p>
+        <p>To output results as JSON instead of CSV, you can use the <b>--json</b> option:</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -o "C:\Results\identifications.json" --json</code>
+        <h3 class="tna-heading-s" id="writing-to-a-database">Writing to a database</h3>
+        <p>To output the identification results to a profile database (which can be loaded in the DROID graphical user interface), use the <b>-p</b> option:</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -p "C:\Results\identifications.droid"</code>
+        <p>If you don't want to see DROID log messages to the console, you can use quiet mode: <b>-q</b>:</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -p "C:\Results\identifications.droid" -q</code>
+        <p>If you want to keep exploring the results of identifying files, saving the results to a database is the most flexible, as you can run different queries on it.</p>
+      </section>
+       <section class="tna-section">
+        <h2 class="tna-heading-m" id="filtering-results">Filtering results</h2>
+        <h3 class="tna-heading-s" id="filtering-files">Filtering files to identify</h3>
+        <p>
+          If there are files you don't want to identify, then you can filter them out of identification, based on basic file metadata: file name,
+          file size, file extension or the last modified date.  Use the <b>-ff</b> (must meet all criteria) or <b>-FF</b> (must meet any criteria) options.
+          For example:
+        </p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -ff "file_size > 1000" "file_ext any txt pdf"</code>
+        <p>
+          <em>Note: </em> filtering files does not filter out folders from the output, it only applies filtering criteria to which files to identify.
+          If you want to only include files in the output (after filtering which files to identify), you can also specify a <b>-f</b> results filter as follows:
+        </p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -ff "file_size > 1000" "file_ext any txt pdf" -f "type none folder"</code>
+        <p>
+          The command above would only identify files whose file size was bigger than 1000 bytes, and whose file extensions are .txt or .pdf.
+          Filtering files before they are identified (rather than afterwards) can speed up the process, particularly when processing inside archive files like zip,
+          as DROID doesn't need to read the data inside the files.
+        <p>
+        <p>There is another option to only process files with particular extensions, using the <b>-Nx</b> option:</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -Nx txt pdf</code>
+        <p>
+          The -Nx option was provided in earlier versions of DROID, before the more flexible file filtering options above were added, but it's still available.
+        <p>
+        <h3 class="tna-heading-s" id="filtering-results-once-identified">Filtering results once identified</h3>
+        <p>
+          To filter out results from being written to a file or to the console after they have been identified, you can use the <b>-f</b> (must meet all criteria) or <b>-F</b> (must meet any criteria) options.
+          Results can be filtered out on all available metadata, not just basic file metadata:
+        </p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -f "puid any fmt/111 fmt/121 fmt/132 fmt/145" "format_count > 1"</code>
+        <p>
+          <em>Note: </em> Specifying this option if writing to a database with the -p option will have no effect, as the database requires all identifications made to be written out.
+          This is because the database can be in an inconsistent state otherwise, if folders or archive files are filtered out, but the
+          children in them are still present.  You can still filter a database after it has been saved using these options, but not during the file identification process itself.
+          See <a href="#filtering-exports">Filtering Exports</a> for more details.
+        <p>
+        <h3 class="tna-heading-s" id="list-filtering-options">List filtering options</h3>
+        <p>
+          To obtain a full list of the available filtering fields and operators, use the <b>-k</b> option, or see the <a href="#filtering-parameters">Filtering Parameters Table</a>:
+        </p>
+        <code>droid -d</code>
+      </section>
+      <section class="tna-section">
+        <h2 class="tna-heading-m" id="configuring-droid">Configuring DROID</h2>
+        <h3 class="tna-heading-s" id="specifying-signature-files">Specifying the signature files to use</h3>
+        <p>
+          DROID will use the default binary and container signature files (normally the last ones downloaded) to identify file formats.
+          If you want to specify a different binary signature file, use the <b>-Ns</b> option, the <b>-Nc</b> option to specify
+          a different container signature file, or both:
+        </p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -Ns "C:\Signatures\binarysig.xml" -Nc "C:\Signatures\containersig.xml"</code>
+        <h3 class="tna-heading-s" id="specifying-archive-types">Specifying which archive types to process</h3>
+        <p>
+          DROID can look inside many different types of archive file to identify their contents.  It will use the default settings
+          for which archive types to process.  You can override the defaults at the command line using the following options:
+        </p>
+
+        <ul class="tna-ul">
+          <li><b>-A</b> Open all archive types (zip, gzip, 7zip, bzip2, tar, rar, iso, fat) </li>
+          <li><b>-W</b> Open all web archive types (arc, warc)</li>
+        </ul>
+
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -A -W</code>
+        <p>
+          You can also specify individual archive types you want to process using <b>-At</b> and <b>-Wt</b>, followed by the
+          types you want to process.  Any not specified will not be processed:
+        </p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -At zip 7zip -Wt warc</code>
+        <p>If you don't want to expand any archive types, then just use the -At or -Wt options with no archive types specified.</p>
+
+        <h3 class="tna-heading-s" id="specifying-profile-properties">Specifying profile properties</h3>
+        <p>For full control over the profile properties used when identifying files, you can use the <b>-Pr</b> option:</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -Pr "maxBytesToScan=10000" "matchAllExtensions=true"</code>
+        <p>
+          If you have a common set of properties you want to apply each time, you can place them in a text file,
+          and use the <b>-Pf</b> option to specify the property file to use:
+        </p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -R -Pf "C:\Config\config.properties"</code>
+        <p>
+          <em>Note: </em>  When specifying properties in a property file, each property must have the prefix "<b>profile.</b>".
+          For example:
+        </p>
+        <code>profile.maxBytesToScan=10000</code>
+        <code>profile.matchAllExtensions=true</code>
+        <p>
+          You can also combine the <b>-Pr</b> and <b>-Pf</b> options on the command line.  In this case, properties specified
+          on the command line directly will take precedence over those in the file, if the same property is specified in both.
+        <p>
+          A complete list of profile properties can be found in the <a href="#profile-property-table">profile property table</a>.
+        <p>
+      </section>
+      <section class="tna-section">
+        <h2 class="tna-heading-m" id="no-profile-mode">No profile Mode</h2>
+        <p>
+          This version of DROID allows identification results to be written directly to a file or the console, not only a profile database.
+          In prior versions, "No Profile Mode" gave a more limited capability that wrote only the name and PUID
+          of identifications straight to the console.  It did not identify files in exactly the same way as the other identification modes and had various other limitations.
+        </p>
+        <p>
+          This mode is retained in DROID for backwards compatibility, but it is now re-implemented to use standard
+          identification code.  The output will not be completely identical to the previous mode, but will
+          be more accurate and in-line with all other identification modes. Differences include:
+        <p>
+        <ul class="tna-ul">
+          <li>If a file name contains a comma, it will be quoted with double quotes.</li>
+          <li>Extension filtering with -Nx will also work inside archive files, not only on files in the file system.</li>
+          <li>You do not have to specify signature files - it will use the normal defaults if you do not.</li>
+        </ul>
+        <p>It can be run using the <b>-Nr</b> option:</p>
+        <code>droid -Nr "C:\Files\A Folder" "C:\Files\A File" -R -Ns "C:\Signatures\binarysig.xml" -Nc "C:\Signatures\containersig.xml"</code>
+        <p>
+          In general, there is little reason to use this mode unless it is required for backwards compatibility with existing scripts.
+          The standard identification mode writing to the console or file gives much greater control over the output and configuration.
+        <p>
+
+      </section>
+      <section class="tna-section">
+        <h2 class="tna-heading-m" id="configuring-output">Configuring output</h2>
+        <p>
+          You can configure how DROID will output Comma Separated Values (CSV) or JSON to either the console or a file.
+          These options will work either when outputting during format identification, or when exporting a saved profile.
+        </p>
+        <h3 class="tna-heading-s" id="row-per-file-or-identification">Writing a row per file or per identification</h3>
+        <p>
+          By default, DROID will write out a single row for each file identified.  If there is more than one identification,
+          then additional columns will be added to the row for each identification.  You can write out a row for each
+          identification instead, using the <b>-ri</b> option.  Where more than one identification for a file exists,
+          there will be multiple rows for the same file, with a different identification:
+        </p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -ri</code>
+        <p>To output as JSON, use the <b>--json</b> flag.</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -ri --json</code>
+        <h3 class="tna-heading-s" id="quoting-csv-fields">Quoting CSV fields</h3>
+        <p>
+          By default, all fields written will be quoted inside double quotes.  If you only want quotes when a field value
+          contains a comma, use the <b>-qc</b> option:
+        </p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -qc</code>
+        <h3 class="tna-heading-s" id="choosing-which-columns-to-write">Choosing which columns to write</h3>
+        <p>You can configure which columns are written out using the <b>-co</b> option.  For example:</p>
+        <code>droid "C:\Files\A Folder" "C:\Files\A File" -co FILE_PATH NAME METHOD PUID</code>
+        <p>
+          A list of all valid column headers can be found in the <a href="#column-table">Column Name table</a>
+        </p>
+      </section>
+      <section class="tna-section">
+        <h2 class="tna-heading-m" id="working-with-saved-profiles">Working with saved profiles</h2>
+        <p>
+          If you have a database profile created using the <b>-p</b> option on the command line, or created with the
+          GUI interface of DROID you can export the information in the database as CSV, or create reports on it from the command line.
+          By convention, DROID database profiles have the file extension ".droid".
+        </p>
+        <p>
+          To work with previously saved profiles, we again use the <b>-p</b> option to specify where the profile files are to be
+          loaded from.  You can specify more than one profile when working with saved profiles.
+        </p>
+        <h3 class="tna-heading-s" id="exporting-profiles">Exporting profiles</h3>
+        <p>To export one or more profiles to a file, use the <b>-e</b> or <b>-E</b> options.  To write out one row for
+          each file, use the -e option.  If a file has multiple identifications, they will be added as additional entries
+          in the file.  To write out one row per format identification, use the -E option.  If a file has multiple
+          identifications, then there will be more than one row for that file, with different format identifications.
+          For example:
+        </p>
+        <code>droid -p "C:\Results\myprofile1.droid" "C:\Results\myprofile2.droid" -e "C:\Exports\myprofiles.csv"</code>
+        <p>If you want to output as JSON, pass the <b>--json</b> flag.</p>
+        <code>droid -p "C:\Results\myprofile1.droid" "C:\Results\myprofile2.droid" -e "C:\Exports\myprofiles.json" --json</code>
+        <p>If you want to export directly to the console, not to a file, simply don't specify a file name after the -e or -E options:</p>
+        <code>droid -p "C:\Results\myprofile1.droid" "C:\Results\myprofile2.droid" -e</code>
+        <p>If you want to export a subset of columns, simply specify a space separated list of those columns after the -co option:</p>
+        <code>droid -p "C:\Results\myprofile1.droid" -e "C:\Exports\myprofiles.csv" -co FILE_PATH STATUS HASH PUID</code>
+        <p>If you have defined an export template, simply specify the absolute path to the export template after the -et option:</p>
+        <code>droid -p "C:\Results\myprofile1.droid" -e "C:\Exports\myprofiles.csv" -et "C:\Templates\MyExport.template"</code>
+        <p>
+          A final option for export is to control whether a Byte Order Mark (BOM) is written at the beginning of the file.
+          To write a BOM, use the <b>-B</b> option:
+        </p>
+        <code>droid -p "C:\Results\myprofile1.droid" "C:\Results\myprofile2.droid" -e "C:\Exports\myprofiles.csv" -B</code>
+        <h3 class="tna-heading-s" id="filtering-exports">Filtering exports</h3>
+        <p>
+          If you want to filter what is exported from saved profiles to the CSV file, use the <b>-f</b> option to specify a
+          filter in which all filter criteria must be met, or <b>-F</b> to specify a filter where any of the filter criteria
+          must be met.  For example:
+        </p>
+        <code>droid -p "C:\Results\myprofile1.droid" "C:\Results\myprofile2.droid" -E "C:\Exports\myprofiles.csv" -F "file_size > 100000" "puid any fmt/110 fmt/111 fmt/112"</code>
+        <p>
+          To obtain a full list of the available filtering fields and operators, use the <b>-k</b> option, or see the <a href="#filtering-parameters">Filtering Parameters Table</a>
+        <p>
+        <h3 class="tna-heading-s" id="reporting-on-saved-profiles">Reporting on saved profiles</h3>
+        <p>
+          To generate a report on one or more saved profiles, use the <b>-n</b> option to select the report to run,
+          and the <b>-r</b> option to specify the filename to write the report to:
+        </p>
+        <code>droid –p "C:\Results\result1.droid" –n "File count and sizes" –r "C:\Reports\result1Report.pdf"</code>
+        <p>
+          This command would load the profile from the "<code>C:\Results\result1.droid</code>" file, run the
+          "File count and sizes" report, and save the results to a PDF file:" <code>C:\Reports\result1Report.pdf</code>
+        </p>
+        <p>
+          To obtain a list of available reports on the command line, use the <b>-l</b> option, or see <a href="profiles.html#available-reports">Available reports</a>.
+        </p>
+        <code>droid -l</code>
+        <p>By default, reports are saved as PDF files. You can change the type of the report written using the <b>-t</b> option:</p>
+        <code>droid –p "C:\Results\result1.droid" –n "Comprehensive breakdown" -t "Planets XML" –r "C:\Reports\result1Report.xml"</code>
+        <p>
+          See <a href="profiles.html#exporting-reports">output file formats</a> for a list of report output formats.
+        </p>
+        <p>
+          <em>Note: </em> The "Comprehensive Breakdown" report has a special output type: "Planets XML" which writes out the results of identification in
+          the Planets XML format.
+        </p>
+        <h3 class="tna-heading-s" id="filtering-reports">Filtering reports</h3>
+        <p>
+          To generate a filtered report on one or more saved profiles, use the <b>-f</b> option to filter on all criteria, or the <b>-F</b> option to
+          filter on any criteria:
+        </p>
+        <code>droid –p  C:\Results\result1.droid
+          –n  File count and sizes  -t "DROID Report XML" –r  C:\Reports\result1Report.xml  -F "format_count > 2" "file_ext any pdf txt doc"</code>
+        <p>
+          To obtain a full list of the available filtering fields and operators, use the <b>-k</b> option, or see the <a href="#filtering-parameters">Filtering Parameters Table</a>
+        <p>
+      </section>
+      <section class="tna-section">
+        <h2 class="tna-heading-m" id="signature-management">Signature management</h2>
+        <h3 class="tna-heading-s" id="check-for-signature-updates">Check for signature updates</h3>
+        <p>To check for any signature updates, without downloading them, use the <b>-c</b> option:</p>
+        <code>droid -c</code>
+        <h3 class="tna-heading-s" id="download-latest-signatures">Download the latest signatures</h3>
+        <p>To download any available signature updates, use the <b>-d</b> option:</p>
+        <code>droid -d</code>
+        <h3 class="tna-heading-s" id="list-available-signatures">List available signatures</h3>
+        <p>To list all the signatures registered with DROID, use the <b>-X</b> option:</p>
+        <code>droid -X</code>
+        <p>To list the default signatures a profile will use, unless overridden, use the <b>-x</b> option:</p>
+        <code>droid -x</code>
+        <h3 class="tna-heading-s" id="configure-the-default-signatures">Configure the default signatures</h3>
+        <p>Sets the current default signature file version. For example:</p>
+        <code>droid -s 120</code>
+        <p>
+          This would set the DROID signature file version 120 - a binary signature - as the default.
+          If we instead specified the version number of a container signature, then the container signature default would be set instead.
+          The version numbers of all installed signatures can be obtained using the <a href="#list-available-signatures">list signature command</a>.
+        </p>
+      </section>
+       <section class="tna-section">
+        <h2 class="tna-heading-m" id="reference-tables">Reference tables</h2>
+        <h3 class="tna-heading-s" id="filtering-parameters">Field fields and operators</h3>
+        <p>The fields which can be filtered on, and the operators that can be applied to them, are:</p>
+        <table class="tna-table">
+          <thead class="tna-table__header">
+          <tr class="tna-table__row">
+            <th>Field</th>
+            <th>Description</th>
+            <th>Operators</th>
+            <th>Examples</th>
+          </tr>
+          </thead>
+          <tbody class="tna-table__body">
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">file_name</td>
+            <td class="tna-table__cell">The filename of the file.  The value to compare with must be surrounded with single quotes.</td>
+            <td class="tna-table__cell">=>, starts, ends, contains, not starts, not ends, not contains</td>
+            <td class="tna-table__cell">
+              file_name starts 'Invoice'
+              <p>
+                file_name = 'xxx'
+              <p>
+                file_name not contains 'temp'
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">file_size</td>
+            <td class="tna-table__cell">The size of a file in bytes.</td>
+            <td class="tna-table__cell"><, <=, =, <>, >, >=</td>
+            <td class="tna-table__cell">
+              file_size > 100000
+              <p>
+                file_size <= 99999
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">file_ext</td>
+            <td class="tna-table__cell">The file extension of the file name</td>
+            <td class="tna-table__cell">=, <>, any, none</td>
+            <td class="tna-table__cell">
+              file_ext = bmp
+              <p>
+                file_ext none tmp temp ignore
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">last_modified</td>
+            <td class="tna-table__cell">The date/time on which the file was last modified ( yyyy-MM-dd )</td>
+            <td class="tna-table__cell"><, <=, =, <>, >, >=</td>
+            <td class="tna-table__cell">last_modified < 2020-01-31
+              <p>
+                last_modified >= 2000-01-01
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">format_count</td>
+            <td class="tna-table__cell">The number of format identifications made</td>
+            <td class="tna-table__cell"><, <=, =, <>, >, >=</td>
+            <td class="tna-table__cell">format_count > 2
+              <p>
+                format_count = 1
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">type</td>
+            <td class="tna-table__cell">The type of resource ( file | folder | container )</td>
+            <td class="tna-table__cell">any, none</td>
+            <td class="tna-table__cell">type none folder
+              <p>
+                type any file container
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">status</td>
+            <td class="tna-table__cell">The identification job status ( not_done | done | access_denied | not_found | error )</td>
+            <td class="tna-table__cell">any, none</td>
+            <td class="tna-table__cell">
+              status none done
+              <p>
+                status any access_denied not_found error
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">method</td>
+            <td class="tna-table__cell">How the file was identified ( extension | signature | container )</td>
+            <td class="tna-table__cell">any, none</td>
+            <td class="tna-table__cell">
+              method none extension
+              <p>
+                method any signature container
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">format_name</td>
+            <td class="tna-table__cell">The file format description (text)</td>
+            <td class="tna-table__cell">=, <>, starts, ends, contains, not starts, not ends, not contains</td>
+            <td class="tna-table__cell">
+              format_name contains Microsoft
+              <p>
+                format_name not starts Adobe
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">puid</td>
+            <td class="tna-table__cell">The PUID identified (e.g. x-fmt/101)</td>
+            <td class="tna-table__cell">any, none</td>
+            <td class="tna-table__cell">
+              puid any fmt/111 fmt/112 fmt/113 fmt/114 fmt/115
+              <p>
+                puid none fmt/245 fmt/235 fmt/222
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">mime_type</td>
+            <td class="tna-table__cell">The mime-type of the identification</td>
+            <td class="tna-table__cell">any, none</td>
+            <td class="tna-table__cell">
+              mime_type any text/plain text/html
+              <p>
+                mime_type none image/tiff image/jpeg image/gif
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">extension_mismatch</td>
+            <td class="tna-table__cell">Whether or not there is a mismatch between the PRONOM Unique Identifier and the file extension</td>
+            <td class="tna-table__cell">=, <></td>
+            <td class="tna-table__cell">
+              extension_mismatch=true
+              <p>
+                extension_mismatch=false
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <p>
+          <em>Note: </em> If you want to filter on a list of values using <b>any</b> or <b>none</b>, and a value contains a space,
+          then you can quote the value using single quotes.
+        <p>
+        <h3 class="tna-heading-s" id="profile-property-table">Profile properties table</h3>
+        <p>
+          This table describes the properties which can be set using the <b>-Pr</b> options.  If these properties are
+          recorded in a file to use with the <b>-Pf</b> option, each property must be prefixed by "<b>profile.</b>". For example,
+          "profile.maxBytesToScan=4096".  If specifying directly on the command line with the <b>-Pr</b> option, you don't have
+          to specify .profile in front of each (although you can if you wish).
+        </p>
+        <table class="tna-table">
+          <thead class="tna-table__header">
+          <tr class="tna-table__row">
+            <th>Property</th>
+            <th>Value</th>
+            <th>Description</th>
+            <th>Notes</th>
+          </tr>
+          </thead>
+          <tbody class="tna-table__body">
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">maxBytesToScan</td>
+            <td class="tna-table__cell">Number</td>
+            <td class="tna-table__cell">The maximum number of bytes DROID scans at the start and end of each file it attempts to identify.</td>
+            <td class="tna-table__cell">Set to 65536 by default.  If it is set to a negative number, DROID will scan the entire file.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">matchAllExtensions</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to match extensions even if a better signature-based identification exists.</td>
+            <td class="tna-table__cell">If matches are made on extensions when there are better options, there may be more erroneous identifications.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">defaultBinarySigFileVersion</td>
+            <td class="tna-table__cell">Filename</td>
+            <td class="tna-table__cell">The filename of a binary signature to use to identify formats.</td>
+            <td class="tna-table__cell">The binary signature file already exist in the standard path where binary signatures are stored by DROID.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">defaultContainerSigFileVersion</td>
+            <td class="tna-table__cell">Filename</td>
+            <td class="tna-table__cell">The filename of a container signature to use to identify formats.</td>
+            <td class="tna-table__cell">The container signature file already exist in the standard path where binary signatures are stored by DROID.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">processTar</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside tar files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-At tar</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">processZip</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside zip files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-At zip</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">processGzip</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside gzip files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-At gzip</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">processRar</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside rar files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-At rar</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">process7zip</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside tar files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-At tar</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">processIso</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside iso files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-At iso</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">processBzip2</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside bzip2 files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-At bzip2</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">processArc</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside arc files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-Wt arc</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">processWarc</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to identify files inside warc files.</td>
+            <td class="tna-table__cell">This is similar to the <b>-Wt warc</b> option, but this will only turn on or off processing for this type; not turn off other types of archive processing.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">generateHash</td>
+            <td class="tna-table__cell">true/false</td>
+            <td class="tna-table__cell">Whether to generate a hash for each file processed.</td>
+            <td class="tna-table__cell">Generating hashes forces another scan of each file, so it affects performance.  Only turn this on if you need hash values.</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">hashAlgorithm</td>
+            <td class="tna-table__cell">String</td>
+            <td class="tna-table__cell">The hash algorithm to use if generating hashes.</td>
+            <td class="tna-table__cell">Values can be <b>md5</b>, <b>sha1</b> or <b>sha256</b></td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">defaultThrottle</td>
+            <td class="tna-table__cell">Number</td>
+            <td class="tna-table__cell">A delay in milliseconds between processing each file.</td>
+            <td class="tna-table__cell">This can help to minimise the impact of DROID scanning a large volume of files, although it will make the results take longer to obtain.</td>
+          </tr>
+          </tbody>
+        </table>
+        <h3 class="tna-heading-s" id="column-table">Column names</h3>
+        <p>This table describes the columns which can be written out, configurable using the <b>-co</b> option:</p>
+        <table class="tna-table">
+          <thead class="tna-table__header">
+          <tr class="tna-table__row">
+            <th>Column</th>
+            <th>Description</th>
+          </tr>
+          </thead>
+          <tbody class="tna-table__body">
+          <tr class="tna-table__row"><td class="tna-table__cell">ID</td><td class="tna-table__cell">A unique id for each resource identified.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">PARENT_ID</td><td class="tna-table__cell">The id of the parent resource</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">URI</td><td class="tna-table__cell">A URI for the resource, including locations inside archive files.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">FILE_PATH</td><td class="tna-table__cell">The path to the resource in the file system</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">NAME</td><td class="tna-table__cell">The name of the resource</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">METHOD</td><td class="tna-table__cell">The method used to identify the resource.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">STATUS</td><td class="tna-table__cell">The identification status of the resource.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">SIZE</td><td class="tna-table__cell">The size in bytes of the resource.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">TYPE</td><td class="tna-table__cell">The type of the resource</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">EXT</td><td class="tna-table__cell">The file extension of the resource</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">LAST_MODIFIED</td><td class="tna-table__cell">The last modified date/time of the resource.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">EXTENSION_MISMATCH</td><td class="tna-table__cell">Whether there is a mismatch between the extension of the resource and its identification by signature</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">HASH</td><td class="tna-table__cell">The hash value of the resource.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">FORMAT_COUNT</td><td class="tna-table__cell">The number of identifications made to the resource.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">PUID</td><td class="tna-table__cell">The PRONOM Unique Identifier of the resource, which identifies the format</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">MIME_TYPE</td><td class="tna-table__cell">The mime type of the resource where known.</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">FORMAT_NAME</td><td class="tna-table__cell">The name of the format the resource was identified as</td></tr>
+          <tr class="tna-table__row"><td class="tna-table__cell">FORMAT_VERSION</td><td class="tna-table__cell">The version of the format the resource was identified as</td></tr>
+          </tbody>
+        </table>
+        <h3 class="tna-heading-s" id="options-table">Command options</h3>
+        <p>This table lists all the command line options available:</p>
+        <table class="tna-table">
+          <thead class="tna-table__header">
+          <tr class="tna-table__row">
+            <th>Short name</th>
+            <th>Long name</th>
+            <th>Parameters</th>
+            <th>Description</th>
+            <th>Example</th>
+          </tr>
+          </thead>
+          <tbody class="tna-table__body">
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-h</td>
+            <td class="tna-table__cell">--help</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Prints the command line option help to the console.</td>
+            <td class="tna-table__cell">
+              droid -h
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-v</td>
+            <td class="tna-table__cell">--version</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Prints the version of DROID to the console.</td>
+            <td class="tna-table__cell">
+              droid -v
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-a</td>
+            <td class="tna-table__cell">--profile-resources</td>
+            <td class="tna-table__cell">One or more quoted paths to files and folders</td>
+            <td class="tna-table__cell">Adds the resources listed to a profile for identification and runs identification.  If not specified, DROID assumes any unbound parameters are -a options, so writing -a is optional.</td>
+            <td nowrap>droid -a "C:\Files\" "C:\More\spreadsheet.xls"</td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-R</td>
+            <td class="tna-table__cell">--recurse</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Processes all sub-folders and the files and folders within them, recursively.</td>
+            <td class="tna-table__cell">
+              droid "C:\Files\" "C:\More\spreadsheet.xls" -R
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-q</td>
+            <td class="tna-table__cell">--quiet</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Suppresses log messages and other metadata sent to the console.</td>
+            <td class="tna-table__cell">
+              droid "C:\Files\" "C:\More\spreadsheet.xls" -q
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-o</td>
+            <td class="tna-table__cell">--output-file</td>
+            <td class="tna-table__cell">Quoted path to the CSV file to write to.</td>
+            <td class="tna-table__cell">Writes identification results out to a CSV file, instead of to the console</td>
+            <td class="tna-table__cell">
+              droid "C:\Files\" "C:\More\spreadsheet.xls" -o "C:\Results\myresults.csv"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-p</td>
+            <td class="tna-table__cell">--profile(s)</td>
+            <td class="tna-table__cell">One or more quoted paths to database files (.droid)</td>
+            <td class="tna-table__cell">When used with the -a option, this specifies a single profile .droid file to write to.  When used with exporting and reporting options, it specifies one or more profiles to load.</td>
+            <td class="tna-table__cell">
+              droid "C:\Files\" "C:\More\spreadsheet.xls" -p "C:\Results\myresults.droid"
+              <p>
+                droid -p "C:\Results\myresults.droid" "C:\Results\myresults2.droid" -E "C:\Exports\export.csv"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-ff</td>
+            <td class="tna-table__cell">--filter-all-file</td>
+            <td class="tna-table__cell">One or more quoted <a href="#filtering-parameters">filter criteria.</a></td>
+            <td class="tna-table__cell">Filters out files <i>before</i> any identification is made.  Only file name, file size, file extensions or last modified date can be filtered with this option.
+              All filter criteria specified must be fulfilled to pass the filter.
+              This can increase performance, as opposed to filtering results after identification is made (see -f option).
+              It can be used when writing to CSV or to a profile database.</td>
+            <td class="tna-table__cell">
+              droid "C:\Files\" "C:\More\spreadsheet.xls" -ff "file_size > 1000" "file_ext any jpg bmp txt"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-FF</td>
+            <td class="tna-table__cell">--filter-any-file</td>
+            <td class="tna-table__cell">One or more quoted <a href="#filtering-parameters">filter criteria.</a></td>
+            <td class="tna-table__cell">Filters out files <i>before</i> any identification is made.  Only file name, file size, file extensions or last modified date can be filtered with this option.
+              At least one filter criteria specified must be fulfilled to pass the filter.
+              This can increase performance, as opposed to filtering results after identification is made (see -F option).
+              It can be used when writing to CSV or to a profile database.</td>
+            <td class="tna-table__cell">
+              droid "C:\Files\" "C:\More\spreadsheet.xls" -FF "file_size > 1000" "file_ext any jpg bmp txt"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-Nx</td>
+            <td class="tna-table__cell">--extension-list</td>
+            <td class="tna-table__cell">One or more file extensions.</td>
+            <td class="tna-table__cell">Filters out files to identify based on a list of file extensions.  This is equivalent to using the -ff or -FF options above, which are more flexible.  It is now provided only for backwards compatibility.</td>
+            <td class="tna-table__cell">
+              droid "C:\Files\" "C:\More\spreadsheet.xls" -Nx jpg bmp txt
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-f</td>
+            <td class="tna-table__cell">--filter-all</td>
+            <td class="tna-table__cell">One or more quoted <a href="#filtering-parameters">filter criteria.</a></td>
+            <td class="tna-table__cell">Filters out files from the results when exporting or reporting on previously saved profiles, or outputting to CSV.
+              All filter criteria must be met to pass the filter.
+              <i>Note: </i> it cannot filter out results while writing to a database (-a with -p option) as the database could end up in an inconsistent state.
+            <td class="tna-table__cell">
+              droid -p "C:\Results\myresults.droid" "C:\Results\myresults2.droid" -E "C:\Exports\export.csv" -f "file_size > 1000" "file_ext any jpg bmp txt"
+              <p>
+                droid "C:\Files\" "C:\More\spreadsheet.xls" -f "file_size > 1000" "file_ext any jpg bmp txt"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-F</td>
+            <td class="tna-table__cell">--filter-any</td>
+            <td class="tna-table__cell">One or more quoted <a href="#filtering-parameters">filter criteria.</a></td>
+            <td class="tna-table__cell">Filters out files from the results when exporting or reporting on previously saved profiles, or outputting to CSV.
+              At least one filter criteria must be met to pass the filter.
+              <i>Note: </i> it cannot filter out results while writing to a database (-a with -p option) as the database could end up in an inconsistent state.  </td>
+            <td class="tna-table__cell">
+              droid -p "C:\Results\myresults.droid" "C:\Results\myresults2.droid" -E "C:\Exports\export.csv" -F "file_size > 1000" "file_ext any jpg bmp txt"
+              <p>
+                droid "C:\Files\" "C:\More\spreadsheet.xls" -F "file_size > 1000" "file_ext any jpg bmp txt"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-Nr</td>
+            <td class="tna-table__cell">--no-profile-resource</td>
+            <td class="tna-table__cell">A quoted path to file or folder to scan.</td>
+            <td class="tna-table__cell">Runs a simple profile outputting only the name and PUID to the console.
+              Older versions of DROID also require the signature and container files to be specified using the -Ns and -Nc options.</td>
+            <td class="tna-table__cell">
+              droid -Nr “C:\Files\A Folder” -R
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-Ns</td>
+            <td class="tna-table__cell">--signature-file</td>
+            <td class="tna-table__cell">A quoted path to a binary signature file.</td>
+            <td class="tna-table__cell">Sets the binary signature file to use when identifying files for this profile run only.</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -Ns "C:\Signatures\binarysig.xml"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-Nc</td>
+            <td class="tna-table__cell">--container-file</td>
+            <td class="tna-table__cell">A quoted path to a container signature file.</td>
+            <td class="tna-table__cell">Sets the container signature file to use when identifying files for this profile run only.</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -Nc "C:\Signatures\containersig.xml"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-A</td>
+            <td class="tna-table__cell">--open-all-archives</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Instructs DROID to open all archive types (zip, tar, gzip, rar, 7zip, bzip2, fat and iso)</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -A
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-W</td>
+            <td class="tna-table__cell">--open-all-webarchives</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Instructs DROID to open all web archive types (arc, warc)</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -W
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-At</td>
+            <td class="tna-table__cell">--open-archive-types</td>
+            <td class="tna-table__cell">One or more archive types</td>
+            <td class="tna-table__cell">Instructs DROID to open only the archive types specified (zip, tar, gzip, rar, 7zip, bzip2, fat and iso)</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -At zip gzip 7zip bzip2
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-Wt</td>
+            <td class="tna-table__cell">--open-webarchive-types</td>
+            <td class="tna-table__cell">One or more web archive types</td>
+            <td class="tna-table__cell">Instructs DROID to open only the web archive types specified (arc, warc) (</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -Wt warc
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-Pr</td>
+            <td class="tna-table__cell">--profile-property</td>
+            <td class="tna-table__cell">One or more profile properties.</td>
+            <td class="tna-table__cell">Sets the <a href="#profile-property-table">properties</a> that a profile is run with.
+              These will override the default properties for a profile or those specified with the <b>-Pf</b> option.</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -Pr "maxBytesToScan=100000" "matchAllExtensions=true"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-Pf</td>
+            <td class="tna-table__cell">--property-file</td>
+            <td class="tna-table__cell">A quoted path to a file containing properties.</td>
+            <td class="tna-table__cell">Sets the <a href="#profile-property-table">properties</a> contained in the property file specified for a profile run.
+              Properties recorded in a file must have the prefix <i>.profile</i> before each property.
+              These will override the default properties for a profile.
+              If properties are also specified using the <b>-Pr</b> option, they will override any specified in the file.</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -Pf "C:\Properties\config.properties"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-ri</td>
+            <td class="tna-table__cell">--row-per-id</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Specifies that CSV output should write a row for each identification made.  If a file has more than one identification,
+              then more than one row will be output for that file.  The default for CSV output is to write a row for each file,
+              with multiple identifications being written as additional columns.</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -ri
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-qc</td>
+            <td class="tna-table__cell">--quote-commas</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Specifies that CSV output should only quote fields that contain a comma.  The default is for all fields to be quoted.</td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -qc
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-co</td>
+            <td class="tna-table__cell">--columns</td>
+            <td class="tna-table__cell">One or more column names to output</td>
+            <td class="tna-table__cell">Specifies that CSV output should only write the <a href="#column-table">columns</a> specified. </td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -co FILE_PATH STATUS HASH PUID
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-et</td>
+            <td class="tna-table__cell">--export-template</td>
+            <td class="tna-table__cell">Absolute path to the export template</td>
+            <td class="tna-table__cell">Specifies that CSV output should be written using the customisations defined in the Export Template. </td>
+            <td class="tna-table__cell">
+              droid “C:\Files\A Folder” "C:\Files\A File” -et "C:\Templates\MyExport.template"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-e</td>
+            <td class="tna-table__cell">--export-file</td>
+            <td class="tna-table__cell">A quoted file path to the CSV file to write.</td>
+            <td class="tna-table__cell">Exports one or more profiles (specified with the -p option) to a CSV file, writing one row per file.</td>
+            <td class="tna-table__cell">
+              droid -p "C:\Results\profile1.droid" "C:\Results\profile2.droid" -e "C:\Exports\export.csv"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-E</td>
+            <td class="tna-table__cell">--export-format</td>
+            <td class="tna-table__cell">A quoted file path to the CSV file to write.</td>
+            <td class="tna-table__cell">Exports one or more profiles (specified with the -p option) to a CSV file, writing one row per format identification.</td>
+            <td class="tna-table__cell">
+              droid -p "C:\Results\profile1.droid" "C:\Results\profile2.droid" -E "C:\Exports\export.csv"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-n</td>
+            <td class="tna-table__cell">--report-name</td>
+            <td class="tna-table__cell">A quoted report name</td>
+            <td class="tna-table__cell">Specifies what <a href="profiles.html#available-reports">report</a> to run on profiles selected with the -p option, written to a file specified with the -r option.</td>
+            <td class="tna-table__cell">
+              droid –p “C:\Results\result1.droid” –n “File count and sizes” –r “C:\Reports\result1Report.pdf”
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-r</td>
+            <td class="tna-table__cell">--report</td>
+            <td class="tna-table__cell">A quoted path to a file to write a report to.</td>
+            <td class="tna-table__cell">Specifies the file that a report is written to.</td>
+            <td class="tna-table__cell">
+              droid –p “C:\Results\result1.droid” –n “File count and sizes” –r “C:\Reports\result1Report.pdf”
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-l</td>
+            <td class="tna-table__cell">--list-reports</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Lists the available report names and the output formats which are supported for them.</td>
+            <td class="tna-table__cell">
+              droid -l
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-t</td>
+            <td class="tna-table__cell">--report-type</td>
+            <td class="tna-table__cell">A quoted report type</td>
+            <td class="tna-table__cell">Sets the type of <a href="profiles.html#available-reports">report format</a> to generate.
+              By default, reports will be written as a PDF file.  You can select either "PDF", "Text", "Web page", or "DROID Report XML".
+              Some reports can have additional export options - the Comprehensive Breakdown report also supports the "Planets XML" format.
+            </td>
+            <td class="tna-table__cell">
+              droid –p “C:\Results\result1.droid” –n “File count and sizes” –r “C:\Reports\result1Report.xml” -t "DROID Report XML"
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-c</td>
+            <td class="tna-table__cell">--check-signature-update</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Checks for signature updates, without downloading them.</td>
+            <td class="tna-table__cell">
+              droid -c
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-d</td>
+            <td class="tna-table__cell">--download-signature-update</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Downloads available signature updates.</td>
+            <td class="tna-table__cell">
+              droid -d
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-X</td>
+            <td class="tna-table__cell">--list-signature-files</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Lists all locally available signature files.</td>
+            <td class="tna-table__cell">
+              droid -X
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-x</td>
+            <td class="tna-table__cell">--display-signature-file</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Lists the current default signature files to use for identification.</td>
+            <td class="tna-table__cell">
+              droid -x
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-s</td>
+            <td class="tna-table__cell">--set-signature-file</td>
+            <td class="tna-table__cell">A version number</td>
+            <td class="tna-table__cell">Sets either a binary or container signature to be the default for its type from the locally available signatures, using its version number to identify it.</td>
+            <td class="tna-table__cell">
+              droid -s 97
+              <p>
+                droid
+            </td>
+          </tr>
+          <tr class="tna-table__row">
+            <td class="tna-table__cell">-json</td>
+            <td class="tna-table__cell">--json-output</td>
+            <td class="tna-table__cell">{none}</td>
+            <td class="tna-table__cell">Sets the output to JSON. This will work for any command which outputs to console or to a file</td>
+            <td class="tna-table__cell">
+              droid C:\More\spreadsheet.xls --json
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </div>
+  </div>
+</main>
+</body>
+</html>

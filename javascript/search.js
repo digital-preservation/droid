@@ -13,7 +13,9 @@ function renderResults(query) {
     );
 
     if (results.length === 0) {
-        resultsDiv.innerHTML = "<p>No results found.</p>";
+        const p = document.createElement("p");
+        p.textContent = "No results found"
+        resultsDiv.appendChild(p);
         return;
     }
 
@@ -21,7 +23,17 @@ function renderResults(query) {
     ul.className = "tna-ul"
     for (const item of results) {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="${item.url}"><strong>${item.title}</strong></a><br><small>${item.content.slice(0, 150)}...</small>`;
+        const link = document.createElement('a');
+        link.href = item.url;
+        const strong = document.createElement('strong');
+        strong.textContent = item.title;
+        link.appendChild(strong);
+        const br = document.createElement('br');
+        const small = document.createElement('small');
+        small.textContent = item.content.slice(0, 150) + '...';
+        li.appendChild(link);
+        li.appendChild(br);
+        li.appendChild(small);
         ul.appendChild(li);
     }
 
