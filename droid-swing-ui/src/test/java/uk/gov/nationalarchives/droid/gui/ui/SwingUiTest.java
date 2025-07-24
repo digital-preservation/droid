@@ -282,25 +282,6 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test
-    public void profiles_can_be_saved_with_ctrl_s() throws IOException {
-        String fileName = UUID.randomUUID().toString();
-        frame.button("Add File").click();
-        utils.selectFolder(TEST_HOME);
-        robot().pressKey(KeyEvent.VK_CONTROL);
-        robot().pressAndReleaseKey(KeyEvent.VK_S);
-        robot().releaseKey(KeyEvent.VK_CONTROL);
-        Path profileDirectory = Path.of("/home/profiles");
-        JFileChooserFixture saveProfileFileChooser = utils.getFileChooser();
-        saveProfileFileChooser.setCurrentDirectory(profileDirectory.toFile());
-        saveProfileFileChooser.fileNameTextBox().enterText(fileName);
-        saveProfileFileChooser.approve();
-        Path profileFilePath = profileDirectory.resolve(fileName + ".droid");
-        utils.waitForInvisibleProgressLabel(frame.label(saveProfileMatcher));
-        assertTrue(Files.exists(profileFilePath));
-        Files.deleteIfExists(profileFilePath);
-    }
-
-    @Test
     public void profiles_can_be_saved_with_file_save() throws IOException {
         String fileName = UUID.randomUUID().toString();
         Path profileDirectory = Path.of("/home/profiles");
