@@ -66,11 +66,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
     <scm>
@@ -251,7 +251,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <nexusUrl>https://ossrh-staging-api.central.sonatype.com/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                     <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
                 </configuration>
@@ -847,7 +847,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
     <pluginRepositories>
         <pluginRepository>
             <id>sonatype-releases</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
+            <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/releases</url>
         </pluginRepository>
         <pluginRepository>
             <id>clojars.org</id>
