@@ -83,6 +83,6 @@ public class HttpWindowReaderTest {
         HttpClient httpClient = mock(HttpClient.class);
         HttpUtils.HttpMetadata httpMetadata = new HttpUtils.HttpMetadata(4L, 0L, URI.create("https://example.com"));
         when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenThrow(new IOException("Error contacting server"));
-        assertThrows(RuntimeException.class, () -> new HttpWindowReader(windowCache, httpMetadata, httpClient).getWindow(0));
+        assertThrows(IOException.class, () -> new HttpWindowReader(windowCache, httpMetadata, httpClient).getWindow(0));
     }
 }
