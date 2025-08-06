@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>droid-parent</artifactId>
 		<groupId>uk.gov.nationalarchives</groupId>
-		<version>6.9.3-SNAPSHOT</version>
+		<version>6.9.4-SNAPSHOT</version>
 		<relativePath>../droid-parent</relativePath>
 	</parent>
 
@@ -181,7 +181,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.17.0</version>
+			<version>3.18.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

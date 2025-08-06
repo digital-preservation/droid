@@ -4,7 +4,7 @@
     <parent>
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
-        <version>6.9.3-SNAPSHOT</version>
+        <version>6.9.4-SNAPSHOT</version>
         <relativePath>../droid-parent</relativePath>
     </parent>
   
@@ -142,7 +142,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.18.0</version>
+            <version>1.19.0</version>
         </dependency>
         <dependency>
             <groupId>net.java.truevfs</groupId>

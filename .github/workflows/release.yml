@@ -46,7 +46,7 @@ jobs:
           curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
                       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                       -H "Accept: application/vnd.github+json" \
-                      -d '{"title": "Version bump","head": "$BRANCH_NAME","base": "main"}'
+                      -d "{\"title\": \"Version bump\",\"head\": \"$BRANCH_NAME\",\"base\": \"main\"}"
   github-release:
     runs-on: ubuntu-latest
     steps:
