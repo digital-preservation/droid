@@ -58,7 +58,7 @@ public class HttpWindowReader extends AbstractReader implements SoftWindowRecove
         this.length = httpMetadata.fileSize();
     }
 
-    private HttpResponse<byte[]> responseWithRange(long rangeStart, long rangeEnd) {
+    private HttpResponse<byte[]> responseWithRange(long rangeStart, long rangeEnd) throws IOException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(this.uri)
                 .header("Range", "bytes=" + rangeStart + "-" + rangeEnd)
@@ -67,7 +67,7 @@ public class HttpWindowReader extends AbstractReader implements SoftWindowRecove
 
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -92,6 +92,7 @@ public class HttpWindowReader extends AbstractReader implements SoftWindowRecove
 
     @Override
     public byte[] reloadWindowBytes(Window window) throws IOException {
-        return new byte[0];
+        long windowStart = window.getWindowPosition();
+        return responseWithRange(windowStart, (windowStart + this.windowSize -1)).body();
     }
 }
