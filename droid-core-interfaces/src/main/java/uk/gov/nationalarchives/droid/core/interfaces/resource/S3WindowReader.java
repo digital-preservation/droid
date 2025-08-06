@@ -65,18 +65,8 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
     @Override
     protected Window createWindow(long windowStart) throws IOException {
         if (windowStart >= 0 && windowStart < length) {
-            String key = this.s3ObjectMetadata.key().orElseThrow(() -> new RuntimeException(this.s3ObjectMetadata.key() + " not found"));
-            GetObjectRequest getS3ObjectRequest = GetObjectRequest.builder()
-                    .bucket(this.s3ObjectMetadata.bucket())
-                    .key(key)
-                    .range("bytes=" + windowStart + "-" + (windowStart + this.windowSize -1))
-                    .build();
-
-
-            ResponseInputStream<GetObjectResponse> response = s3Client.getObject(getS3ObjectRequest);
-            byte[] bytes  = toByteArray(response);
+            byte[] bytes = bytesForRange(windowStart);
             int totalRead = bytes.length;
-            response.close();
             if (totalRead > 0) {
                 return new SoftWindow(bytes, windowStart, totalRead, this);
             }
@@ -84,7 +74,20 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
         return null;
     }
 
-    private static byte[] toByteArray(ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
+    private byte[] bytesForRange(long windowStart) throws IOException {
+        String key = this.s3ObjectMetadata.key().orElseThrow(() -> new RuntimeException(this.s3ObjectMetadata.key() + " not found"));
+        GetObjectRequest getS3ObjectRequest = GetObjectRequest.builder()
+                .bucket(this.s3ObjectMetadata.bucket())
+                .key(key)
+                .range("bytes=" + windowStart + "-" + (windowStart + this.windowSize -1))
+                .build();
+
+        try (ResponseInputStream<GetObjectResponse> response = s3Client.getObject(getS3ObjectRequest)) {
+            return toByteArray(response);
+        }
+    }
+
+    private byte[] toByteArray(ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
         try (InputStream in = inputStream; ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[BUFFER_LENGTH];
             int bytesRead;
@@ -102,6 +105,7 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
 
     @Override
     public byte[] reloadWindowBytes(Window window) throws IOException {
-        return new byte[0];
+        long windowStart = window.getWindowPosition();
+        return bytesForRange(windowStart);
     }
 }
