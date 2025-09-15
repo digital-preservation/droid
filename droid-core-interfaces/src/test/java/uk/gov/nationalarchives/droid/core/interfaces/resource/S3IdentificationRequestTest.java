@@ -67,7 +67,7 @@ public class S3IdentificationRequestTest {
         verify(mockS3Client, times(1)).getObject(getObjectRequestCaptor.capture());
 
         GetObjectRequest getRequestValue = getObjectRequestCaptor.getValue();
-        assertEquals(getRequestValue.range(), "bytes=0-4095");
+        assertEquals(getRequestValue.range(), "bytes=0-4194303");
     }
 
     @Test
