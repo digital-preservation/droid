@@ -92,7 +92,8 @@ public class DroidAPITestUtils {
         DroidAPI.DroidAPIBuilder droidAPIBuilder = DroidAPI.builder()
                 .binarySignature(signaturePath)
                 .containerSignature(containerPath)
-                .httpClient(HttpClient.newHttpClient());
+                .httpClient(HttpClient.newHttpClient())
+                .maxBytesToScan(-1);
 
         if (hashAlgorithms != null) {
             droidAPIBuilder = droidAPIBuilder.hashAlgorithms(hashAlgorithms);

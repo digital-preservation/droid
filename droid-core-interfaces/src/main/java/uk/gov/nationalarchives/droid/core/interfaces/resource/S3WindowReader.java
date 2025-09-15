@@ -49,6 +49,8 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
 
     private static final int BUFFER_LENGTH = 8192;
 
+    private static final int WINDOW_SIZE = 4 * 1024 * 1024;
+
     private final S3Utils.S3ObjectMetadata s3ObjectMetadata;
 
     private final S3Client s3Client;
@@ -56,7 +58,7 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
     private final Long length;
 
     public S3WindowReader(WindowCache cache, S3Utils.S3ObjectMetadata s3ObjectMetadata, S3Client s3Client) {
-        super(cache);
+        super(WINDOW_SIZE, cache);
         this.s3Client = s3Client;
         this.length = s3ObjectMetadata.contentLength();
         this.s3ObjectMetadata = s3ObjectMetadata;
@@ -81,7 +83,6 @@ public class S3WindowReader extends AbstractReader implements SoftWindowRecovery
                 .key(key)
                 .range("bytes=" + windowStart + "-" + (windowStart + this.windowSize -1))
                 .build();
-
         try (ResponseInputStream<GetObjectResponse> response = s3Client.getObject(getS3ObjectRequest)) {
             return toByteArray(response);
         }

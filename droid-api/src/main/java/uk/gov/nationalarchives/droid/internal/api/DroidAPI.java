@@ -91,6 +91,7 @@ public final class DroidAPI implements AutoCloseable {
     private static final String OLE2_PUID = "fmt/111";
     private static final String S3_SCHEME = "s3";
     private static final String GZIP_PUID = "x-fmt/266";
+    private static final long DEFAULT_MAX_BYTES_TO_SCAN = -1;
 
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
@@ -181,6 +182,7 @@ public final class DroidAPI implements AutoCloseable {
         private Region s3Region;
         private HttpClient httpClient;
         private List<HashAlgorithm> hashAlgorithms = Collections.emptyList();
+        private long maxBytesToScan = DEFAULT_MAX_BYTES_TO_SCAN;
 
         public DroidAPIBuilder binarySignature(final Path binarySignature) {
             this.binarySignature = binarySignature;
@@ -212,6 +214,11 @@ public final class DroidAPI implements AutoCloseable {
             return this;
         }
 
+        public DroidAPIBuilder maxBytesToScan(final long  maxBytesToScan) {
+            this.maxBytesToScan = maxBytesToScan;
+            return this;
+        }
+
         public DroidAPI build() throws SignatureParseException {
             if (this.binarySignature == null || this.containerSignature == null) {
                 throw new IllegalArgumentException("Container signature and binary signature are mandatory arguments");
@@ -219,7 +226,7 @@ public final class DroidAPI implements AutoCloseable {
             BinarySignatureIdentifier droidCore = new BinarySignatureIdentifier();
             droidCore.setSignatureFile(binarySignature.toAbsolutePath().toString());
             droidCore.init();
-            droidCore.setMaxBytesToScan(Long.MAX_VALUE);
+            droidCore.setMaxBytesToScan(this.maxBytesToScan);
             droidCore.getSigFile().prepareForUse();
             String containerVersion = StringUtils.substringAfterLast(containerSignature.getFileName().toString(), "-").split("\\.")[0];
             String droidVersion = ResourceBundle.getBundle("options").getString("version_no");

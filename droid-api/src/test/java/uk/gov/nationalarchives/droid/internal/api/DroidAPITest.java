@@ -100,9 +100,9 @@ public class DroidAPITest {
     public record ContainerTest(URI uri, ContainerType containerType, Optional<String> path) {}
 
     static Stream<ContainerTest> signatureTests() {
-        ContainerType gzipContainerType = new ContainerType("GZIP", generateId(),"x-fmt/266");
-        ContainerType zipContainerType = new ContainerType("ZIP", generateId(),"x-fmt/263");
-        ContainerType ole2ContainerType = new ContainerType("OLE2", generateId(),"fmt/111");
+        ContainerType gzipContainerType = new ContainerType("GZIP", generateId(), "x-fmt/266");
+        ContainerType zipContainerType = new ContainerType("ZIP", generateId(), "x-fmt/263");
+        ContainerType ole2ContainerType = new ContainerType("OLE2", generateId(), "fmt/111");
         Stream<ContainerTest> gzipStream = getUris(generateGzFile(DATA).toString()).map(uri -> new ContainerTest(uri, gzipContainerType, Optional.empty()));
         Stream<ContainerTest> zipStream = getUris(generateZipFile(DATA, DATA).toString()).map(uri -> new ContainerTest(uri, zipContainerType, Optional.of(DATA)));
         Stream<ContainerTest> ole2Stream = getUris(generateOle2File(DATA, DATA).toString()).map(uri -> new ContainerTest(uri, ole2ContainerType, Optional.of(DATA)));
@@ -127,6 +127,18 @@ public class DroidAPITest {
     @Test
     public void should_throw_an_exception_if_file_cannot_be_read() {
         assertThrows(RuntimeException.class, () -> api.submit(Path.of("/invalidpath").toUri()));
+    }
+
+    @Test
+    public void should_return_no_identification_results_if_max_bytes_is_set_to_one() {
+        try (DroidAPI droidAPI = DroidAPI.builder()
+                .binarySignature(signaturePath)
+                .containerSignature(containerPath)
+                .maxBytesToScan(1)
+                .build()) {
+            List<DroidAPI.APIResult> results = droidAPI.submit(Paths.get("src/test/resources/word97").toUri());
+            assertThat(results.getFirst().identificationResults(), hasSize(0));
+        } catch (SignatureParseException |IOException ignored) {}
     }
 
     @Test
