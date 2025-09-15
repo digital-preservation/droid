@@ -91,7 +91,7 @@ public final class DroidAPI implements AutoCloseable {
     private static final String OLE2_PUID = "fmt/111";
     private static final String S3_SCHEME = "s3";
     private static final String GZIP_PUID = "x-fmt/266";
-    private static final long DEFAULT_MAX_BYTES_TO_SCAN = 65536;
+    private static final long DEFAULT_MAX_BYTES_TO_SCAN = -1;
 
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
