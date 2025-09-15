@@ -78,8 +78,7 @@ public class S3WindowReaderTest {
     @Test
     public void testWindowReaderReturnsExpectedWindowForLargeFile() throws Exception {
         WindowCache windowCache = mock(WindowCache.class);
-        String response = StringUtils.repeat("*", 5 * 1024 * 1024);
-        S3Client s3Client = mockS3Client(response);
+        S3Client s3Client = mockS3Client();
         S3Uri s3Uri = S3Uri.builder().uri(URI.create("s3://bucket/key")).build();
         S3Utils.S3ObjectMetadata s3ObjectMetadata = new S3Utils.S3ObjectMetadata("bucket", Optional.of("key"), s3Uri, 4L, 1L);
         S3WindowReader s3WindowReader = new S3WindowReader(windowCache, s3ObjectMetadata, s3Client);
