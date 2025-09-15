@@ -34,14 +34,12 @@ package uk.gov.nationalarchives.droid.core.interfaces.resource;
 import net.byteseek.io.reader.cache.WindowCache;
 import net.byteseek.io.reader.windows.SoftWindow;
 import net.byteseek.io.reader.windows.Window;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.Invocation;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.net.URI;
