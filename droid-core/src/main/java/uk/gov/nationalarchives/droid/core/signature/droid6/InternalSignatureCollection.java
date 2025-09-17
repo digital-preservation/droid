@@ -103,7 +103,7 @@ public class InternalSignatureCollection extends SimpleElement {
                 }
 
                 if (targetFile.getRequest().isDebug()) {
-                    outputDebugInformation((DebugFileSystemIdentificationRequest)targetFile.getRequest(), sigIndex, internalSig, matches);
+                    outputDebugInformation((DebugFileSystemIdentificationRequest) targetFile.getRequest(), sigIndex, internalSig, matches);
                 }
             }
         }
