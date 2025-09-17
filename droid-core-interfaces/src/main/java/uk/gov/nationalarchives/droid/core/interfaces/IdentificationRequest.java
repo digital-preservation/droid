@@ -109,4 +109,12 @@ public interface IdentificationRequest<T> extends Closeable {
      * @return the identifier
      */
     RequestIdentifier getIdentifier();
+
+    /**
+     * Is this a debug request.
+     * @return if it is a debug request.
+     */
+    default boolean isDebug() {
+        return false;
+    }
 }

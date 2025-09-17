@@ -47,11 +47,12 @@ import uk.gov.nationalarchives.droid.core.signature.FileFormatHit;
  * Adapts an IdentificationRequest to the ByteReader interface.
  * @author rflitcroft
  *
+ * @param <T> The type of the identification request.
  */
-public class IdentificationRequestByteReaderAdapter implements ByteReader {
+public class IdentificationRequestByteReaderAdapter<T> implements ByteReader<T> {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    private IdentificationRequest request;
+    private final IdentificationRequest<T> request;
     private long fileMarker;
     
     private List<FileFormatHit> hits = new ArrayList<FileFormatHit>();
@@ -60,7 +61,7 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
      * 
      * @param request the request to wrap.
      */
-    public IdentificationRequestByteReaderAdapter(IdentificationRequest request) {
+    public IdentificationRequestByteReaderAdapter(IdentificationRequest<T> request) {
         this.request = request;
     }
 
@@ -82,6 +83,11 @@ public class IdentificationRequestByteReaderAdapter implements ByteReader {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public IdentificationRequest<T> getRequest() {
+        return request;
     }
 
     /**

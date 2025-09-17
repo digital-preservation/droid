@@ -177,6 +177,9 @@ public class ProfileInstance {
     @XmlTransient
     private URI proxy;
 
+    @XmlTransient
+    private boolean debug;
+
     /**
      * Constructs a profile instance in a default state.
      * @param state the default state.
@@ -898,5 +901,13 @@ public class ProfileInstance {
      */
     public ExportOutputOptions getExportOutputOptions() {
         return exportOutputOptions;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 }

@@ -468,6 +468,8 @@ public class ProfileContextLocator {
         }
         profileInstance.setExportOutputOptions(ExportOutputOptions.valueOf(mergedConfig.getString(DroidGlobalProperty.EXPORT_OUTPUT_OPTIONS.getName(),
                 ExportOutputOptions.CSV_OUTPUT.name())));
+        boolean debug = mergedConfig.containsKey("profile.debug") && mergedConfig.getBoolean(DroidGlobalProperty.DEBUG.getName());
+        profileInstance.setDebug(debug);
         addProfileContext(profileInstance);
         return profileInstance;
     }
