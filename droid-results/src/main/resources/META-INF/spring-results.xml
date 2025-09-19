@@ -386,4 +386,16 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     </bean>
 
     <context:annotation-config/>
+
+    <beans profile="debug">
+        <bean id="fileEventHandler" class="uk.gov.nationalarchives.droid.submitter.FileEventHandler">
+            <property name="submissionThrottle" ref="submissionThrottle"/>
+            <property name="droidCore" ref="submissionGateway"/>
+            <property name="resultHandler" ref="databaseResultHandler"/>
+            <property name="requestFactory">
+                <bean class="uk.gov.nationalarchives.droid.submitter.DebugFileIdentificationRequestFactory">
+                </bean>
+            </property>
+        </bean>
+    </beans>
 </beans>

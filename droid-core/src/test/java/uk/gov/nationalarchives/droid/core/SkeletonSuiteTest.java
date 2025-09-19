@@ -57,10 +57,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResultCollection;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.FileSystemIdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.HttpIdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -189,9 +186,14 @@ public class SkeletonSuiteTest {
                 s3Identifier.setParentId(1L);
                 RequestIdentifier httpIdentifier = new RequestIdentifier(httpUri);
                 httpIdentifier.setParentId(1L);
+                DebugFileSystemIdentificationRequest debugFileSystemIdentificationRequest = new DebugFileSystemIdentificationRequest(metaData, fileIdentifier);
+                debugFileSystemIdentificationRequest.open(skeletonPath);
+                builder.add(debugFileSystemIdentificationRequest);
+
                 FileSystemIdentificationRequest fileSystemIdentificationRequest = new FileSystemIdentificationRequest(metaData, fileIdentifier);
                 fileSystemIdentificationRequest.open(skeletonPath);
                 builder.add(fileSystemIdentificationRequest);
+
                 S3IdentificationRequest s3IdentificationRequest = new S3IdentificationRequest(metaData, s3Identifier, new TestS3Client());
                 s3IdentificationRequest.open(s3Uri);
                 builder.add(s3IdentificationRequest);

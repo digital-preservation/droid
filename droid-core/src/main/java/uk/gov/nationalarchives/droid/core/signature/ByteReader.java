@@ -70,15 +70,18 @@
 package uk.gov.nationalarchives.droid.core.signature;
 
 import net.byteseek.io.reader.WindowReader;
+import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 
 /**
  * Interface for accessing the bytes from a file, URL or stream.
  *
  * <p>Create an instance with <code>AbstractByteReader.newByteReader()</code>.</p>
  *
+ * @param <T> The type of the identification request
+ *
  * @author linb, boreilly
  */
-public interface ByteReader extends AutoCloseable {
+public interface ByteReader<T> extends AutoCloseable {
 
     /* Setters for identification status */
     /**
@@ -215,4 +218,10 @@ public interface ByteReader extends AutoCloseable {
      * Closes any files associated with the ByteReader.
      */
     void close();
+
+    /**
+     * Gets the request.
+     * @return The identification request.
+     */
+    IdentificationRequest<T> getRequest();
 }
