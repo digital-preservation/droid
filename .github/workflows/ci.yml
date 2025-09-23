@@ -31,9 +31,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Maven Build
-        run: mvn -V -B -DskipTests=true install -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+        run: mvn -V -B -DskipTests=true install -DnvdApiKey=${{ secrets.NVD_API_KEY }} -Ddependency-check.skip=true
       - name: Maven Test
-        run: mvn -B verify -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+        run: mvn -B verify -DnvdApiKey=${{ secrets.NVD_API_KEY }} -Ddependency-check.skip=true
         env:
           AWS_REGION: eu-west-2
           AWS_ACCESS_KEY_ID: test

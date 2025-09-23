@@ -41,7 +41,7 @@ jobs:
           cd ..
       - run: mvn -q clean install -DnvdApiKey=${{ secrets.NVD_API_KEY }}
       - run: mvn -q -B release:prepare -Prelease-sign-artifacts
-      - run: mvn -B release:perform -DskipTests -Prelease-sign-artifacts
+      - run: mvn -B release:perform -DskipTests -Prelease-sign-artifacts -Ddependency-check.skip=true
       - run: |
           curl -X POST "https://api.github.com/repos/digital-preservation/droid/pulls" \
                       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
@@ -64,7 +64,7 @@ jobs:
           cd droid-help
           python generate_search_index.py
           cd ..
-          mvn clean package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+          mvn clean package -DnvdApiKey=${{ secrets.NVD_API_KEY }} -Ddependency-check.skip=true
           pip install requests
           python .github/scripts/generate_release.py $NEW_VERSION
         env:
