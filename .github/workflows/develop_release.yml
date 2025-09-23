@@ -30,7 +30,7 @@ jobs:
           cd droid-help
           python generate_search_index.py
           cd ..
-          mvn -V -B package -DnvdApiKey=${{ secrets.NVD_API_KEY }} -Ddependency-check.skip=true
+          mvn -V -B package -DnvdApiKey=${{ secrets.NVD_API_KEY }}
           python .github/scripts/generate_develop_release.py
 
         env:
