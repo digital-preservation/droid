@@ -64,14 +64,14 @@ setup() {
 
 @test "list signature files" {
   run $DROID_BIN -X
-  assert_output -p "Type: Binary Version:  120  File name: DROID_SignatureFile_V120.xml"
-  assert_output -p "Type: Container Version:  20240715  File name: container-signature-20240715.xml"
+  assert_output -p "Type: Binary Version:  121  File name: DROID_SignatureFile_V121.xml"
+  assert_output -p "Type: Container Version:  20250925  File name: container-signature-20250925.xml"
 }
 
 @test "display signature file" {
   run $DROID_BIN -x
-  assert_output -p "Type: Container Version:  20240715  File name: container-signature-20240715.xml"
-  assert_output -p "Type: Binary Version:  120  File name: DROID_SignatureFile_V120.xml"
+  assert_output -p "Type: Container Version:  20250925  File name: container-signature-20250925.xml"
+  assert_output -p "Type: Binary Version:  121  File name: DROID_SignatureFile_V121.xml"
 }
 
 @test "set signature file" {
