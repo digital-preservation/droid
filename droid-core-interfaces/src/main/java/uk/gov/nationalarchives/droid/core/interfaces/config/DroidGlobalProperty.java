@@ -168,7 +168,10 @@ public enum DroidGlobalProperty {
     FILES_FROM_S3("profile.s3", PropertyType.BOOLEAN, true),
 
     /** The last updated time of the binary signature file .*/
-    BINARY_SIGNATURE_LAST_UPDATED("profile.binarySignatureLastUpdated", PropertyType.LONG, true);
+    BINARY_SIGNATURE_LAST_UPDATED("profile.binarySignatureLastUpdated", PropertyType.LONG, true),
+
+    /** Output CSV which shows the number of bytes read per signature. */
+    DEBUG("profile.debug", PropertyType.BOOLEAN, true);
     
     private static Map<String, DroidGlobalProperty> allValues = new HashMap<String, DroidGlobalProperty>(); 
     

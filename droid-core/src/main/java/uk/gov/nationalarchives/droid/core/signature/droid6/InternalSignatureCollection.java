@@ -53,14 +53,12 @@
  */
 package uk.gov.nationalarchives.droid.core.signature.droid6;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import uk.gov.nationalarchives.droid.core.interfaces.resource.DebugFileReader;
+import uk.gov.nationalarchives.droid.core.interfaces.resource.DebugFileSystemIdentificationRequest;
 import uk.gov.nationalarchives.droid.core.signature.ByteReader;
 import uk.gov.nationalarchives.droid.core.signature.xml.SimpleElement;
 
@@ -81,9 +79,9 @@ public class InternalSignatureCollection extends SimpleElement {
     //BNO there is one instance of this for the entire profile - not each request
     private static final int DEFAULT_COLLECTION_SIZE = 10;
     
-    private List<InternalSignature> intSigs = new ArrayList<InternalSignature>(DEFAULT_COLLECTION_SIZE);
-    private Map<Integer, InternalSignature> sigsByID = new HashMap<Integer, InternalSignature>();
-    
+    private List<InternalSignature> intSigs = new ArrayList<>(DEFAULT_COLLECTION_SIZE);
+    private Map<Integer, InternalSignature> sigsByID = new HashMap<>();
+
     /**
      * Runs all the signatures against the target file,
      * adding a hit for each of them, if any of them match.
@@ -99,15 +97,33 @@ public class InternalSignatureCollection extends SimpleElement {
             final int stop = intSigs.size();
             for (int sigIndex = 0; sigIndex < stop; sigIndex++) {
                 final InternalSignature internalSig = intSigs.get(sigIndex);
-                if (internalSig.matches(targetFile, maxBytesToScan)) {
+                boolean matches = internalSig.matches(targetFile, maxBytesToScan);
+                if (matches) {
                     matchingSigs.add(internalSig);
+                }
+
+                if (targetFile.getRequest().isDebug()) {
+                    outputDebugInformation((DebugFileSystemIdentificationRequest) targetFile.getRequest(), sigIndex, internalSig, matches);
                 }
             }
         }
         return matchingSigs;
     }
-    
-   
+
+    private void outputDebugInformation(DebugFileSystemIdentificationRequest request, int sigIndex, InternalSignature internalSig, boolean matches) {
+        if (sigIndex == 0) {
+            System.out.println("SignatureID,BytesReadFromFile,BytesReadFromCache,Matched");
+        }
+        DebugFileReader debugFileReader = (DebugFileReader) request.getWindowReader();
+
+        String row = Stream.of(internalSig.getID(), debugFileReader.getBytesReadFromFile(), debugFileReader.getBytesReadFromCache(), matches)
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+        System.out.println(row);
+        debugFileReader.resetBytesRead();
+    }
+
+
     /**
      * Prepares the internal signatures in the collection for use.
      */

@@ -74,6 +74,9 @@ public class SpringProfileInstanceFactory implements ProfileInstanceLocator {
 
         if (!profileInstanceManagers.containsKey(profile.getUuid())) {
             GenericApplicationContext ctx = new GenericApplicationContext();
+            if (profile.isDebug()) {
+                ctx.getEnvironment().setActiveProfiles("debug");
+            }
             XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(ctx);
             xmlReader.loadBeanDefinitions(new ClassPathResource[] {
                 new ClassPathResource("META-INF/spring-jpa.xml"),
