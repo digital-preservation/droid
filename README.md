@@ -1,8 +1,8 @@
 # DROID (Digital Record Object Identification)  
 
 [![CI](https://github.com/digital-preservation/droid/workflows/CI/badge.svg)](https://github.com/digital-preservation/droid/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/github/digital-preservation/droid/badge.svg?branch=master)](https://coveralls.io/github/digital-preservation/droid?branch=master)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives/droid/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives)
+[![Coverage Status](https://coveralls.io/repos/github/digital-preservation/droid/badge.svg?branch=main)](https://coveralls.io/github/digital-preservation/droid?branch=main)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives/droid/badge.svg)](https://central.sonatype.com/search?q=g%3Auk.gov.nationalarchives+droid)
 
 ## General Information
 
@@ -17,9 +17,9 @@ DROID is a platform-independent Java application. It can be invoked from two int
 
 DROID allows files and folders to be selected from a file system for identification. This file list can be saved at any point. After the identification process had been run, the results can be output in various report formats, including CSV.
 
-DROID is made available under the [New BSD License](https://raw.github.com/digital-preservation/droid/master/license.md).
+DROID is made available under the [New BSD Licence](https://raw.github.com/digital-preservation/droid/master/license.md).
 
-More information can be found on the [DROID github pages](https://digital-preservation.github.io/droid/).
+More information can be found on the [DROID GitHub pages](https://digital-preservation.github.io/droid/).
 
 ## Installing DROID
 
@@ -42,7 +42,7 @@ $ droid -R directory
 ...
 ~~~
 
-If you don't need every bit of information that DROID outputs by default you can make it print only a limited set of columns using the `-co`, or `--columns` option (note the `-a`, it's required in this case!):
+If you don't need every bit of information that DROID outputs by default, you can make it print only a limited set of columns using the `-co`, or `--columns` option (note the `-a`; it's required in this case!):
 
 ~~~console
 $ droid -co NAME PUID -a file.jpg
@@ -50,7 +50,7 @@ $ droid -co NAME PUID -a file.jpg
 "file.jpg","fmt/1507"
 ~~~
 
-To remove even more noise from the output you can use the `-qc`, or `--quote-commas` switch which tells DROID to use quotes only where necessary:
+To remove even more noise from the output, you can use the `-qc`, or `--quote-commas` switch which tells DROID to use quotes only where necessary:
 
 ~~~console
 $ droid -qc -co NAME PUID -a file.jpg
@@ -58,7 +58,7 @@ NAME,PUID
 file.jpg,fmt/1507
 ~~~
 
-Beyond these basic invocations there are many additional options for advanced tweaking of DROID's operation. To learn about them run:
+Beyond these basic invocations, there are many additional options for advanced tweaking of DROID's operation. To learn about them run:
 
 ~~~console
 $ droid --help
@@ -92,7 +92,7 @@ Type: Container Version:  20230822  File name: container-signature-20230822.xml
 Type: Container Version:  20231127  File name: container-signature-20231127.xml
 ~~~
 
-If for some reason you want to use another, possibly older signature file for identification you can change the default with the `-s`, or `--set-signature-file` option (remember to switch back to the latest version when you are done!):
+If for some reason you want to use another, possibly older signature file for identification, you can change the default with the `-s`, or `--set-signature-file` option (remember to switch back to the latest version when you are done!):
 
 ~~~console
 $ droid -s 114
@@ -104,13 +104,13 @@ Default signature file updated. Version: 20230822  File name: container-signatur
 
 ## Building DROID
 
-DROID can be built from source using Maven. The source code can be obtained from the Github repository at [https://github.com/digital-preservation/droid](https://github.com/digital-preservation/droid)
+DROID can be built from source using Maven. The source code can be obtained from the GitHub repository at [https://github.com/digital-preservation/droid](https://github.com/digital-preservation/droid)
    
 Once the code is cloned into a folder (e.g. `droid`), executing `mvn clean install` inside it will build the code. After a successful build, two archives are provided inside the `droid-binary/target` folder.
 
-### Linux / OSX users
+### Linux / macOS users
 
-You will need JAVA 8 to 17 installed to run DROID.
+You will need JAVA 8 to 21 installed to run DROID.
 
 Unpack the archive `droid-binary-${VERSION}-bin.zip`, then use the `droid.sh` script to run the application.
 
@@ -118,7 +118,7 @@ Unpack the archive `droid-binary-${VERSION}-bin.zip`, then use the `droid.sh` sc
 Archive  `droid-binary-${VERSION}-bin-win64-with-jre.zip`
 
 
-You will need JAVA 8 to 17 installed to run DROID. For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 17.
+You will need JAVA 8 to 21 installed to run DROID. For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 21.
 
 Unpack the archive `droid-binary-${VERSION}-bin-win64-with-jre.zip`, then use the `droid.bat` script to run the application.
 
@@ -166,7 +166,7 @@ DROID can now put a signature directly inside a `Sequence` attribute on the `<By
 
 The full syntax can be used in either binary or container signature files.
 
-## Developer related guidance
+## Developer-related guidance
 
-For any detais about contributing, testing, releasing, please check the [wiki](https://github.com/digital-preservation/droid/wiki)
+For any details about contributing, testing, releasing, please check the [wiki](https://github.com/digital-preservation/droid/wiki)
 
