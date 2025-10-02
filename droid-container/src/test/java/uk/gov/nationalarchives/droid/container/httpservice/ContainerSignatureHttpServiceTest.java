@@ -75,7 +75,7 @@ public class ContainerSignatureHttpServiceTest {
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "text/xml")
                         .withHeader("Last-Modified", "Tue, 22 Aug 2023 12:47:41 GMT")
-                        .withBody(IOUtils.resourceToString("/container-signature-20240715.xml", StandardCharsets.UTF_8))
+                        .withBody(IOUtils.resourceToString("/container-signature-20250925.xml", StandardCharsets.UTF_8))
                 ));
 
 
