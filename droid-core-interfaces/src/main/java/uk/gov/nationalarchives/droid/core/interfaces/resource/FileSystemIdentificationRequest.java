@@ -56,10 +56,10 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
     private String extension;
     private final String fileName;
     private final long size;
-    private WindowReader fileReader;
     private final RequestIdentifier identifier;
     private RequestMetaData requestMetaData;
     private Path file;
+    private WindowReader fileReader;
 
     /**
      * Constructs a new identification request.
@@ -77,7 +77,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
      * {@inheritDoc}
      */
     @Override
-    public final void open(final Path theFile) throws IOException {
+    public void open(final Path theFile) throws IOException {
         // Use a caching strategy that uses soft references, to allow the GC to reclaim
         // cached file bytes in low memory conditions.
         final WindowCache cache = new TopAndTailFixedLengthCache(theFile.toFile().length(), TOP_TAIL_BUFFER_CAPACITY);
@@ -124,7 +124,7 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
      * {@inheritDoc}
      */
     @Override
-    public final void close() throws IOException {
+    public void close() throws IOException {
         file = null;
         fileReader.close();
     }
@@ -175,5 +175,9 @@ public class FileSystemIdentificationRequest implements IdentificationRequest<Pa
      */
     public Path getFile() {
         return file;
+    }
+
+    protected void setFileReader(WindowReader fileReader) {
+        this.fileReader = fileReader;
     }
 }
