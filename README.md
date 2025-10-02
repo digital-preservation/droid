@@ -110,7 +110,7 @@ Once the code is cloned into a folder (e.g. `droid`), executing `mvn clean insta
 
 ### Linux / macOS users
 
-You will need JAVA 8 to 21 installed to run DROID.
+You will need JAVA 21 installed to run DROID.
 
 Unpack the archive `droid-binary-${VERSION}-bin.zip`, then use the `droid.sh` script to run the application.
 
@@ -118,7 +118,7 @@ Unpack the archive `droid-binary-${VERSION}-bin.zip`, then use the `droid.sh` sc
 Archive  `droid-binary-${VERSION}-bin-win64-with-jre.zip`
 
 
-You will need JAVA 8 to 21 installed to run DROID. For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 21.
+You will need JAVA 21 installed to run DROID. For Windows users who might not be able to install JAVA, the provided bundle includes JAVA 21.
 
 Unpack the archive `droid-binary-${VERSION}-bin-win64-with-jre.zip`, then use the `droid.bat` script to run the application.
 
