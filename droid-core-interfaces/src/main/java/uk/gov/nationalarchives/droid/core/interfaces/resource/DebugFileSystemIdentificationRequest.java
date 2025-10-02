@@ -42,6 +42,8 @@ public class DebugFileSystemIdentificationRequest extends FileSystemIdentificati
 
     private static final int TOP_TAIL_BUFFER_CAPACITY = 8 * 1024 * 1024; // buffer 8Mb on the top and tail of files.
 
+    private boolean debug;
+
     /**
      * Constructs a new identification request.
      *
@@ -50,6 +52,7 @@ public class DebugFileSystemIdentificationRequest extends FileSystemIdentificati
      */
     public DebugFileSystemIdentificationRequest(RequestMetaData metaData, RequestIdentifier identifier) {
         super(metaData, identifier);
+        this.debug = true;
     }
 
     @Override
@@ -61,6 +64,10 @@ public class DebugFileSystemIdentificationRequest extends FileSystemIdentificati
 
     @Override
     public boolean isDebug() {
-        return true;
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 }

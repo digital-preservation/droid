@@ -86,7 +86,7 @@ public class SkeletonSuiteTest {
 
     private static final String TEST_FILES_DIR = "test-skeletons/";
     //TODO: Read latest signature file by default where required in this and other tests.
-    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V120.xml";
+    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V121.xml";
     private static final Pattern PuidInFilenamePattern = Pattern.compile("^(x-)?fmt-\\d{1,4}");
     private static final Pattern PuidPattern = Pattern.compile("^(x-)?fmt/\\d{1,4}");
 
@@ -187,6 +187,7 @@ public class SkeletonSuiteTest {
                 RequestIdentifier httpIdentifier = new RequestIdentifier(httpUri);
                 httpIdentifier.setParentId(1L);
                 DebugFileSystemIdentificationRequest debugFileSystemIdentificationRequest = new DebugFileSystemIdentificationRequest(metaData, fileIdentifier);
+                debugFileSystemIdentificationRequest.setDebug(false);
                 debugFileSystemIdentificationRequest.open(skeletonPath);
                 builder.add(debugFileSystemIdentificationRequest);
 
@@ -214,7 +215,7 @@ public class SkeletonSuiteTest {
     public void testBinarySkeletonMatch(IdentificationRequest<?> request) throws Exception {
         int errorCount = 0;
 
-        //Go through all the skeleton files.  Check if the PUID that DROId identifies for the file matches the beginning
+        //Go through all the skeleton files.  Check if the PUID that DROID identifies for the file matches the beginning
         // of the file name. Or if not, that it is expected to return a different PUID, or none at all.
         String filename = request.getRequestMetaData().getName();
 

@@ -71,7 +71,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
  */
 public class Ole2RootFileTest {
 
-    public static final String CONTAINER_SIGNATURE_TEST_FILE = "container-signature-20240715.xml";
+    public static final String CONTAINER_SIGNATURE_TEST_FILE = "container-signature-20250925.xml";
     private Ole2Identifier ole2Identifier;
     
     

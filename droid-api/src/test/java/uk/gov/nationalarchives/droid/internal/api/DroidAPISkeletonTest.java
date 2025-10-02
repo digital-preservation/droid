@@ -70,6 +70,45 @@ public class DroidAPISkeletonTest {
 
     private static DroidAPI api;
 
+    /**
+     * Unlike the skeleton suite test in droid-core, the DROID Api initialises the containers which remove signatures
+     * if they're in the container file with no other signatures. There was a bug that made these work originally which
+     * has now been fixed so we need to ignore these.
+     */
+    private static final List<String> FILES_WITH_REMOVED_PUIDS = List.of("fmt-137-signature-id-204.ods",
+            "fmt-39-signature-id-128.doc",
+            "fmt-292-signature-id-309.odp",
+            "fmt-294-signature-id-312.ods",
+            "fmt-295-signature-id-314.ods",
+            "fmt-296-signature-id-316.odg",
+            "fmt-483-signature-id-905.epub",
+            "fmt-430-signature-id-644.cdr",
+            "fmt-290-signature-id-306.odt",
+            "fmt-2042-signature-id-3408.aab",
+            "fmt-136-signature-id-203.odt",
+            "fmt-291-signature-id-308.odt",
+            "fmt-429-signature-id-642.cdr",
+            "fmt-2043-signature-id-3412.aar",
+            "fmt-126-signature-id-172.ppt",
+            "fmt-294-signature-id-313.ods",
+            "fmt-125-signature-id-171.ppt",
+            "fmt-296-signature-id-315.odg",
+            "fmt-161-signature-id-292.siard",
+            "fmt-140-signature-id-207.odb",
+            "fmt-482-signature-id-906.ibooks",
+            "fmt-292-signature-id-310.odp",
+            "fmt-297-signature-id-317.odg",
+            "fmt-290-signature-id-307.odt",
+            "fmt-61-signature-id-78.xls",
+            "fmt-293-signature-id-311.odp",
+            "fmt-40-signature-id-182.doc",
+            "fmt-139-signature-id-206.odg",
+            "fmt-138-signature-id-205.odp",
+            "x-fmt-412-signature-id-199.jar",
+            "x-fmt-88-signature-id-181.ppt",
+            "x-fmt-430-signature-id-208.msg");
+
+
     @BeforeAll
     static void setup() throws IOException, SignatureParseException {
         s3Server = createS3Server();
@@ -85,7 +124,7 @@ public class DroidAPISkeletonTest {
         return Stream.concat(
                         Files.list(Paths.get("../droid-core/test-skeletons/fmt")),
                         Files.list(Paths.get("../droid-core/test-skeletons/x-fmt"))
-                ).flatMap(path -> {
+                ).filter(path -> !FILES_WITH_REMOVED_PUIDS.contains(path.getFileName().toString())).flatMap(path -> {
                     Matcher matcher = FILENAME.matcher(path.getFileName().toString());
                     if (!matcher.matches()) {
                         return null;
