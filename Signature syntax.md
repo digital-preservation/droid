@@ -14,7 +14,7 @@ The signature syntax compiled into XML by PRONOM is the original syntax defined 
 
 Container signatures support a wider syntax than binary signatures, for example allowing whitespace and ASCII strings. For the most part, this extended syntax just makes the signatures more human readable.  In a few cases some new capabilities are supported that PRONOM can't currently compile for binary signatures.
 
-All of the syntax can be used in either binary or container signatures in DROID itself, but PRONOM won't be able to compile container syntax into XML for binary signatures if you want to submit them to TNA.
+All the syntax can be used in either binary or container signatures in DROID itself, but PRONOM won't be able to compile container syntax into XML for binary signatures if you want to submit them to TNA.
 
 Container specific syntax is marked in the descriptions below.
 
@@ -22,7 +22,7 @@ Container specific syntax is marked in the descriptions below.
 The following syntax can be used to match bytes.
 
 #### Bytes:  00 FF
-Bytes to match are written as two digit, case insensitive hex values.
+Bytes to match are written as two-digit, case-insensitive hex values.
 ```
 ff Fe A1 00
 ```
@@ -42,7 +42,7 @@ A single character enclosed in single quotes can also be used as in place of a b
 _Note:_ due to a bug in the byteseek library, only ASCII characters are currently supported by DROID.  Characters over 127 may cause incorrect compilation, as it attempts to render the characters in the system default character set, which is probably not ISO-8859-1.
 
 #### Byte ranges: \[n:m]
-To match a byte within a range of values, we can use a byte range. This is written as two byte values separated with a colon, all enclosed in square brackets.  Bytes are specified as 2 digit hex values.
+To match a byte within a range of values, we can use a byte range. This is written as two byte values separated with a colon, all enclosed in square brackets.  Bytes are specified as 2-digit hex values.
 ```
 [30:39]
 ```
@@ -82,11 +82,11 @@ This will match all the bytes which have the 8th or 4th bit set (10001000):
 _Note:_ the bitmask is not a standard part of the original PRONOM syntax; it originates in the byteseek matching library used by DROID.  However, it is now being used in both binary and container signatures, although older versions of DROID won't be able to parse it in binary signatures.
 
 ### Alternatives: (00|F0|3C)
-If there is a set of different values that can match, they can be specified inside round brackets, with the alternatives separated by the | character.
+If there is a set of different values that can match, they can be specified inside round brackets, with the alternatives separated by the `|` character.
 ```
 (00|F0|3C)
 ```
-Alternatives can be longer than just a single byte.  In this example, three byte sequences could be matched.  Alternative sequences don't have to be the same length as each other:
+Alternatives can be longer than just a single byte. In this example, three byte sequences could be matched. Alternative sequences don't have to be the same length as each other:
 ```
 (00 01 | B0 B1 B2 | C0 C1 C2 C3)
 ```
@@ -97,13 +97,13 @@ Older binary signatures should only use hex bytes inside alternatives.  Containe
 ```
 
 #### Multi-byte sets: (00|C2|DE) or \[00 C2 DE]
-The standard PRONOM binary syntax only supports multi-byte sets by specifying them as a set of alternative bytes.  For example:
+The standard PRONOM binary syntax only supports multi-byte sets by specifying them as a set of alternative bytes. For example:
 ```
 (00|C2|DE)
 ```
 
 **Container signature syntax**
-Multi byte sets let you specify any set of bytes within square brackets.  For example:
+Multi-byte sets let you specify any set of bytes within square brackets.  For example:
 ```
 [00 C2 DE]
 ```
@@ -115,7 +115,7 @@ It can also include ranges or any other value matching syntax within the set:
 ```
 [00 C2 DE 'A'-'Z' &01]
 ```
-Strings can be used to specify particular byte values.  Note that the string itself doesn't match - the set matches any of the characters in the string:
+Strings can be used to specify particular byte values. Note that the string itself doesn't match - the set matches any of the characters in the string:
 ```
 ['A'-'Z' 'aeiou']
 ```
@@ -130,7 +130,7 @@ To match any byte, we can use two question marks:
 ```
 
 #### Unlimited gaps *
-To specify that there's a unlimited gap between two parts of an expression (subject to how far DROID is configured to actually scan or the end of the data, whichever comes first), we can write an asterisk.
+To specify that there's an unlimited gap between two parts of an expression (subject to how far DROID is configured to actually scan or the end of the data, whichever comes first), we can add an asterisk.
 
 The following expression will first match _30 31 23 33 4E_, and it will then search for _43 2A B1 D4 CC EF_ until the end of the data:
 ```
@@ -138,7 +138,7 @@ The following expression will first match _30 31 23 33 4E_, and it will then sea
 ```
 
 #### Fixed gaps {n}
-To specify that there's a gap of one or more bytes we don't care about, we can write the size of the gap as a decimal number, surrounded by curly brackets:
+To specify that there's a gap of one or more bytes we don't care about, we can write the size of the gap as a decimal number, surrounded by curly braces:
 ```
 01 02 03 {128} FF FE
 ```
@@ -146,7 +146,7 @@ To specify that there's a gap of one or more bytes we don't care about, we can w
 Note that writing _{1}_ is equivalent to writing _??_.
 
 #### Variable gaps {n-m}
-To specify that there's a range of possible bytes we don't care about, we can write the range as two numbers separted by a hyphen, surrounded by curly brackets:
+To specify that there's a range of possible bytes we don't care about, we can write the range as two numbers separated by a hyphen, surrounded by curly braces:
 ```
 01 02 03 {128-256} FF FE
 ```
