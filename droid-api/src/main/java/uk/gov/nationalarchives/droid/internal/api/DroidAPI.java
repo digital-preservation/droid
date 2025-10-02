@@ -227,7 +227,6 @@ public final class DroidAPI implements AutoCloseable {
             droidCore.setSignatureFile(binarySignature.toAbsolutePath().toString());
             droidCore.init();
             droidCore.setMaxBytesToScan(this.maxBytesToScan);
-            droidCore.getSigFile().prepareForUse();
             String containerVersion = StringUtils.substringAfterLast(containerSignature.getFileName().toString(), "-").split("\\.")[0];
             String droidVersion = ResourceBundle.getBundle("options").getString("version_no");
             ContainerApi containerApi = new ContainerApi(droidCore, containerSignature);
