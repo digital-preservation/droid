@@ -54,14 +54,12 @@ setup() {
 
 @test "check for signature updates" {
   run $DROID_BIN -c
-  assert_output -p 'Container signature update Version 20250925 is available'
-  assert_output -p 'Binary signature update Version 121 is available'
+  assert_output 'No signature updates are available'
 }
 
 @test "download signature updates" {
   run $DROID_BIN -d
-  assert_output -p 'Signature update version 20,250,925 has been downloaded'
-  assert_output -p 'Signature update version 121 has been downloaded'
+  assert_output 'No signature updates are available'
 }
 
 @test "list signature files" {

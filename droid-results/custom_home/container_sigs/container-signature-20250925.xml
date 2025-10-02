@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="38">
+<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="39">
   <ContainerSignatures>
     <ContainerSignature Id="1000" ContainerType="OLE2">
       <Description>Microsoft Word 6.0/95 OLE2</Description>
@@ -1679,6 +1679,46 @@
         </File>
       </Files>
     </ContainerSignature>
+	
+	    <ContainerSignature Id="6040" ContainerType="ZIP">
+      <Description>Open Document Text 1.4</Description>
+      <Files>
+        <File>
+          <Path>META-INF/manifest.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="6040">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.text'</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+        <File>
+          <Path>content.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="6041">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                    <Sequence>'office:document-content'</Sequence>
+                  </SubSequence>
+                  <SubSequence Position="2" SubSeqMinOffset="0">
+                    <Sequence>'office:version=' (22|27) '1.4' (22|27)</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+      </Files>
+    </ContainerSignature>
+	
+	
+	
 
     <ContainerSignature Id="7000" ContainerType="ZIP">
       <Description>Open Document Spreadsheet 1.0</Description>
@@ -1879,6 +1919,43 @@
         </File>
       </Files>
     </ContainerSignature>
+	    <ContainerSignature Id="7040" ContainerType="ZIP">
+      <Description>Open Document Spreadsheet 1.4</Description>
+      <Files>
+        <File>
+          <Path>META-INF/manifest.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="7040">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.spreadsheet'</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+        <File>
+          <Path>content.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="7041">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                    <Sequence>'office:document-content'</Sequence>
+                  </SubSequence>
+                  <SubSequence Position="2" SubSeqMinOffset="0">
+                    <Sequence>'office:version=' (22|27) '1.4' (22|27)</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+      </Files>
+    </ContainerSignature>
+
 
     <ContainerSignature Id="8000" ContainerType="ZIP">
       <Description>Open Document Presentation 1.0</Description>
@@ -2041,6 +2118,44 @@
       </Files>
     </ContainerSignature>
 
+    <ContainerSignature Id="8040" ContainerType="ZIP">
+      <Description>Open Document Presentation 1.4</Description>
+      <Files>
+        <File>
+          <Path>META-INF/manifest.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="8040">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.presentation'</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+        <File>
+          <Path>content.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="8041">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                    <Sequence>'office:document-content'</Sequence>
+                  </SubSequence>
+                  <SubSequence Position="2" SubSeqMinOffset="0">
+                    <Sequence>'office:version=' (22|27) '1.4' (22|27)</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+      </Files>
+    </ContainerSignature>
+
+
     <ContainerSignature Id="9000" ContainerType="ZIP">
       <Description>Open Document Database 1.0</Description>
       <Files>
@@ -2201,6 +2316,44 @@
         </File>
       </Files>
     </ContainerSignature>
+	
+	    <ContainerSignature Id="9040" ContainerType="ZIP">
+      <Description>Open Document Database 1.4</Description>
+      <Files>
+        <File>
+          <Path>META-INF/manifest.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="9040">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.base'</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+        <File>
+          <Path>content.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="9041">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                    <Sequence>'office:document-content'</Sequence>
+                  </SubSequence>
+                  <SubSequence Position="2" SubSeqMinOffset="0">
+                    <Sequence>'office:version=' (22|27) '1.4' (22|27)</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+      </Files>
+    </ContainerSignature>
+
 
     <ContainerSignature Id="9500" ContainerType="ZIP">
       <Description>Open Document Graphics 1.0</Description>
@@ -2362,6 +2515,44 @@
         </File>
       </Files>
     </ContainerSignature>
+	
+	 <ContainerSignature Id="9540" ContainerType="ZIP">
+      <Description>Open Document Graphics 1.4</Description>
+      <Files>
+        <File>
+          <Path>META-INF/manifest.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="9540">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="1024">
+                    <Sequence>'manifest:media-type="application/vnd.oasis.opendocument.graphics'</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+        <File>
+          <Path>content.xml</Path>
+          <BinarySignatures>
+            <InternalSignatureCollection>
+              <InternalSignature ID="9541">
+                <ByteSequence Reference="BOFoffset">
+                  <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+                    <Sequence>'office:document-content'</Sequence>
+                  </SubSequence>
+                  <SubSequence Position="2" SubSeqMinOffset="0">
+                    <Sequence>'office:version=' (22|27) '1.4' (22|27)</Sequence>
+                  </SubSequence>
+                </ByteSequence>
+              </InternalSignature>
+            </InternalSignatureCollection>
+          </BinarySignatures>
+        </File>
+      </Files>
+    </ContainerSignature>
+
 
     <ContainerSignature Id="10000" ContainerType="ZIP">
       <Description>Java Archive Format</Description>
@@ -7074,14 +7265,115 @@
                 </File>               
             </Files>
         </ContainerSignature>
-	
-	
+	<ContainerSignature Id="101120" ContainerType="ZIP">
+            <Description>Android Package File</Description>
+            <Files><File>
+<Path>classes.dex</Path>
+</File>
+<File>
+<Path>AndroidManifest.xml</Path>
+<BinarySignatures>
+<InternalSignatureCollection>
+<InternalSignature ID="101120">
+<ByteSequence Reference="BOFoffset">
+<SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="0">
+<Sequence>03 00 08 00</Sequence>
+</SubSequence>
+</ByteSequence>
+</InternalSignature>
+</InternalSignatureCollection>
+</BinarySignatures>
+</File>
+</Files>
+</ContainerSignature>
+<ContainerSignature Id="101130" ContainerType="ZIP">
+            <Description>Android App Bundle File</Description>
+            <Files>
+					 <File>
+                    <Path>base/manifest/AndroidManifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="101120">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="7" SubSeqMaxOffset="0">
+	                                    <Sequence>61 6E 64 72 6F 69 64</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+
+         <ContainerSignature Id="101140" ContainerType="ZIP">
+            <Description>Android Archive File</Description>
+            <Files>
+					 <File>
+                    <Path>AndroidManifest.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="101130">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="4096">
+	                                    <Sequence>'manifest xmlns:android='</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+		
+		<ContainerSignature Id="101150" ContainerType="ZIP">
+            <Description>DaVinci Resolve Timeline</Description>
+            <Files>
+					 <File>
+                    <Path>project.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="101150">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>3C 53 4D 5F 50 72 6F 6A 65 63 74</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
+		
+		   <ContainerSignature Id="101160" ContainerType="ZIP">
+            <Description>DaVinci Resolve Project</Description>
+            <Files>
+                <File>
+                    <Path>Gallery.xml</Path>
+                </File>
+					 <File>
+                    <Path>project.xml</Path>
+                    <BinarySignatures>
+                        <InternalSignatureCollection>                    
+	                        <InternalSignature ID="101160">
+	                            <ByteSequence Reference="BOFoffset">
+	                                <SubSequence Position="1" SubSeqMinOffset="0" SubSeqMaxOffset="128">
+	                                    <Sequence>3C 53 4D 5F 50 72 6F 6A 65 63 74</Sequence>
+	                                </SubSequence>
+	                            </ByteSequence>
+	                        </InternalSignature>
+	                    </InternalSignatureCollection>
+                    </BinarySignatures>
+                </File>              
+            </Files>
+        </ContainerSignature>
   </ContainerSignatures>
 
   <FileFormatMappings>
-    <!-- Microsoft Word Document 6.0/95 (OLE2)-->
+    <!-- Microsoft Word 6.0/95 (OLE2)-->
     <FileFormatMapping signatureId="1000" Puid="fmt/39"/>
-    <!-- Microsoft Word Document 97-2003-->
+    <!-- Microsoft Word 97 (OLE2)-->
     <FileFormatMapping signatureId="1020" Puid="fmt/40"/>
     <!-- Microsoft Word OOXML (ZIP)-->
     <FileFormatMapping signatureId="1030" Puid="fmt/412"/>
@@ -7221,6 +7513,8 @@
     <FileFormatMapping signatureId="6020" Puid="fmt/291"/>
     <!-- Open Document Text 1.3 (ZIP)-->
     <FileFormatMapping signatureId="6030" Puid="fmt/1756"/>
+	    <!-- Open Document Text 1.4 (ZIP)-->
+    <FileFormatMapping signatureId="6040" Puid="fmt/2044"/>
 
     <!-- Open Document Spreadsheet 1.0 (ZIP)-->
     <FileFormatMapping signatureId="7000" Puid="fmt/137"/>
@@ -7232,6 +7526,9 @@
     <FileFormatMapping signatureId="7020" Puid="fmt/295"/>
     <!-- Open Document Spreadsheet 1.3 (ZIP)-->
     <FileFormatMapping signatureId="7030" Puid="fmt/1755"/>
+	    <!-- Open Document Spreadsheet 1.4 (ZIP)-->
+    <FileFormatMapping signatureId="7040" Puid="fmt/2045"/>
+
 
     <!-- Open Document Presentation 1.0 (ZIP)-->
     <FileFormatMapping signatureId="8000" Puid="fmt/138"/>
@@ -7241,7 +7538,8 @@
     <FileFormatMapping signatureId="8020" Puid="fmt/293"/>
     <!-- Open Document Presentation 1.3 (ZIP)-->
     <FileFormatMapping signatureId="8030" Puid="fmt/1754"/>
-
+	    <!-- Open Document Presentation 1.4 (ZIP)-->
+    <FileFormatMapping signatureId="8040" Puid="fmt/2046"/>
     <!-- Open Document Database 1.0 (ZIP)-->
     <FileFormatMapping signatureId="9000" Puid="fmt/140"/>
     <!-- Open Document Database 1.1 (ZIP)-->
@@ -7250,7 +7548,8 @@
     <FileFormatMapping signatureId="9020" Puid="fmt/424"/>
     <!-- Open Document Database 1.3 (ZIP)-->
     <FileFormatMapping signatureId="9030" Puid="fmt/1752"/>
-
+    <!-- Open Document Database 1.4 (ZIP)-->
+    <FileFormatMapping signatureId="9040" Puid="fmt/2047"/>
     <!-- Open Document Graphics 1.0 (ZIP)-->
     <FileFormatMapping signatureId="9500" Puid="fmt/139"/>
     <!-- Open Document Graphics 1.1 (ZIP)-->
@@ -7259,6 +7558,8 @@
     <FileFormatMapping signatureId="9520" Puid="fmt/297"/>
     <!-- Open Document Graphics 1.3 (ZIP)-->
     <FileFormatMapping signatureId="9530" Puid="fmt/1753"/>
+	    <!-- Open Document Graphics 1.4 (ZIP)-->
+    <FileFormatMapping signatureId="9540" Puid="fmt/2048"/>
 
     <!-- Java Archive Format (ZIP)-->
     <FileFormatMapping signatureId="10000" Puid="x-fmt/412"/>
@@ -7765,6 +8066,18 @@
 	
 	<!--   Compressed Music XML -->
 	<FileFormatMapping signatureId="111000" Puid="fmt/2005"/>
+	<!--   Android Package -->
+	<FileFormatMapping signatureId="101120" Puid="fmt/2041"/>
+	<!--   Android App Bundle File -->
+	<FileFormatMapping signatureId="101130" Puid="fmt/2042"/>
+		<!--   Android Archive File -->
+	<FileFormatMapping signatureId="101140" Puid="fmt/2043"/>
+	<!--   Davinci Resolve Timeline File -->
+	<FileFormatMapping signatureId="101150" Puid="fmt/2063"/>
+	<!--   DaVinci Resolve Project File -->
+	<FileFormatMapping signatureId="101160" Puid="fmt/2064"/>
+
+
 
 
   </FileFormatMappings>
