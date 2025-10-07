@@ -357,9 +357,9 @@ public class DroidAPITest {
 
     @Test
     public void should_report_correct_version_for_the_binary_and_container_signature() {
-        assertThat(api.getContainerSignatureVersion(), is("20240715"));
+        assertThat(api.getContainerSignatureVersion(), is("20250925"));
         assertThat(api.getDroidVersion(), is(ResourceBundle.getBundle("options").getString("version_no")));
-        assertThat(api.getBinarySignatureVersion(), is("120"));
+        assertThat(api.getBinarySignatureVersion(), is("121"));
     }
 
     static Stream<URI> emptyFileUris() {
