@@ -1406,12 +1406,17 @@ public class SubSequence extends SimpleElement {
                                     //Add the newly found fragment instance to the top of the stack and reset the loop
                                     // position to resume checking for further fragments from that point.
                                     tempEndPos[numEndPos] = tempFragEnd + searchDirection;
+                                    //CHECKSTYLE:OFF : Quite legitimate to modify control variables here, as we're
+                                    // reverting to an earlier fragment!
+                                    iFragPos = lastGoodFragRef.getFragmentSignaturePosition();
+                                    iAlt = lastGoodFragRef.getAlternativeFragmentNumber();
+                                    //CHECKSTYLE:ON
                                     //Get the offset of this new instance of the current fragment from the previous
                                     //fragment, or main sequence if this is the first fragment.
                                     long newOffSetFoundFromPreviousMatch = tempEndPos[numEndPos]
                                         - lastGoodFragRef.getPositionInFile() + lastGoodFragRef.getOffsetFound();
                                     FragmentHit fragmentHit =
-                                            new FragmentHit(lastGoodFragRef.getFragmentSignaturePosition(), lastGoodFragRef.getAlternativeFragmentNumber(), tempEndPos[numEndPos],
+                                            new FragmentHit(iFragPos, iAlt, tempEndPos[numEndPos],
                                                     newOffSetFoundFromPreviousMatch);
                                     fragmentHits.push(fragmentHit);
                                     numEndPos += 1;
