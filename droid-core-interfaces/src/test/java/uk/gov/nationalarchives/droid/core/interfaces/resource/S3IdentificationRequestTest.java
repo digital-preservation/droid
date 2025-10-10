@@ -67,7 +67,7 @@ public class S3IdentificationRequestTest {
         verify(mockS3Client, times(1)).getObject(getObjectRequestCaptor.capture());
 
         GetObjectRequest getRequestValue = getObjectRequestCaptor.getValue();
-        assertEquals(getRequestValue.range(), "bytes=0-4194303");
+        assertEquals(getRequestValue.range(), "bytes=0-1023");
     }
 
     @Test
@@ -138,6 +138,6 @@ public class S3IdentificationRequestTest {
         URI uri = URI.create("s3://bucket/test");
 
         RequestIdentifier requestIdentifier = new RequestIdentifier(uri);
-        return new S3IdentificationRequest(requestMetaData, requestIdentifier, mockS3Client);
+        return new S3IdentificationRequest(requestMetaData, requestIdentifier, mockS3Client, 1024);
     }
 }

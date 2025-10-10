@@ -92,6 +92,7 @@ public final class DroidAPI implements AutoCloseable {
     private static final String S3_SCHEME = "s3";
     private static final String GZIP_PUID = "x-fmt/266";
     private static final long DEFAULT_MAX_BYTES_TO_SCAN = -1;
+    private static final int DEFAULT_WINDOW_SIZE = 4 * 1024 * 1024;
 
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
@@ -361,7 +362,7 @@ public final class DroidAPI implements AutoCloseable {
 
             final RequestIdentifier id = getRequestIdentifier(s3Uri.uri());
             RequestMetaData metaData = new RequestMetaData(s3Object.size(), s3Object.lastModified().getEpochSecond(), s3Uri.uri().toString());
-            try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, s3Client)) {
+            try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, s3Client, DEFAULT_WINDOW_SIZE)) {
                 request.setExtension(extension);
                 request.open(s3Uri);
                 apiResults.add(new APIResult(getIdentificationResults(request), hashResults));
