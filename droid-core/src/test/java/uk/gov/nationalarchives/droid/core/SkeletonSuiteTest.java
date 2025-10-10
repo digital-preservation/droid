@@ -195,7 +195,7 @@ public class SkeletonSuiteTest {
                 fileSystemIdentificationRequest.open(skeletonPath);
                 builder.add(fileSystemIdentificationRequest);
 
-                S3IdentificationRequest s3IdentificationRequest = new S3IdentificationRequest(metaData, s3Identifier, new TestS3Client());
+                S3IdentificationRequest s3IdentificationRequest = new S3IdentificationRequest(metaData, s3Identifier, new TestS3Client(), 65536);
                 s3IdentificationRequest.open(s3Uri);
                 builder.add(s3IdentificationRequest);
 

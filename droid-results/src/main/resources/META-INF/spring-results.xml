@@ -267,6 +267,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <bean id="globalConfig" class="uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig" init-method="init"/>
 
+    <bean id="s3ClientFactory" class="uk.gov.nationalarchives.droid.core.interfaces.http.S3ClientFactory"/>
+
     <bean id="profileSpecWalker" class="uk.gov.nationalarchives.droid.submitter.ProfileSpecWalkerImpl">
         <property name="fileEventHandler" ref="fileEventHandler"/>
         <property name="s3EventHandler" ref="s3EventHandler"/>
@@ -313,6 +315,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="droidCore" ref="submissionGateway"/>
         <property name="resultHandler" ref="databaseResultHandler"/>
         <property name="config" ref="globalConfig"/>
+        <property name="s3ClientFactory" ref="s3ClientFactory"/>
     </bean>
 
     <bean id="httpEventHandler" class="uk.gov.nationalarchives.droid.submitter.HttpEventHandler">
