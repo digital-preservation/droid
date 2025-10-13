@@ -47,13 +47,13 @@ public class S3ClientFactory implements ProxySubscriber {
 
     private S3Client s3Client;
 
-    private final Region region;
+    private Region region;
 
     public S3ClientFactory() {
-        this.region = DefaultAwsRegionProviderChain.builder().build().getRegion();
     }
 
     public void init(ProxySettings proxySettings) {
+        this.region = DefaultAwsRegionProviderChain.builder().build().getRegion();
         proxySettings.addProxySubscriber(this);
         setS3Client(proxySettings);
     }
