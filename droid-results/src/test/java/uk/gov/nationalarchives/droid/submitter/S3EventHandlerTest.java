@@ -146,7 +146,6 @@ public class S3EventHandlerTest {
         HeadObjectResponse headObjectResponse = HeadObjectResponse.builder().contentLength(1L).lastModified(Instant.EPOCH).build();
         when(s3Client.headObject(any(HeadObjectRequest.class))).thenReturn(headObjectResponse);
         when(s3ClientFactory.getS3Client()).thenReturn(s3Client);
-        S3EventHandler s3EventHandler = new S3EventHandler(droidCore, submissionThrottle, resultHandler, droidGlobalConfig, s3ClientFactory);
-        return s3EventHandler;
+        return new S3EventHandler(droidCore, submissionThrottle, resultHandler, droidGlobalConfig, s3ClientFactory);
     }
 }

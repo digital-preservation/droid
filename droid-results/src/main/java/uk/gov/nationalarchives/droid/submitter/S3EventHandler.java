@@ -50,7 +50,7 @@ import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 
 public class S3EventHandler {
 
-    private static final int THOUSAND = 1000;
+    private static final int MILLIS_TO_SECONDS_FACTOR = 1000;
     private static final int DEFAULT_WINDOW_SIZE = 4 * 1024 * 1024;
 
     private AsynchDroid droidCore;
@@ -71,7 +71,7 @@ public class S3EventHandler {
         S3Client s3Client = getS3Client(resource);
         S3Utils s3Utils = new S3Utils(s3Client);
         S3Utils.S3ObjectMetadata s3ObjectMetadata = s3Utils.getS3ObjectMetadata(resource.getUri());
-        RequestMetaData metaData = new RequestMetaData(s3ObjectMetadata.contentLength(), s3ObjectMetadata.lastModified() * THOUSAND, resource.getName());
+        RequestMetaData metaData = new RequestMetaData(s3ObjectMetadata.contentLength(), s3ObjectMetadata.lastModified() * MILLIS_TO_SECONDS_FACTOR, resource.getName());
 
         // Prepare the identifier
         RequestIdentifier identifier = new RequestIdentifier(resource.getUri());
