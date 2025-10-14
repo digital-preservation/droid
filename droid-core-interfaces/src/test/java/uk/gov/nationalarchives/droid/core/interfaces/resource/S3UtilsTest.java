@@ -57,9 +57,10 @@ public class S3UtilsTest {
         S3Client s3Client = mockS3Client();
         S3Utils s3Utils = new S3Utils(s3Client, Region.EU_WEST_2);
         URI uri = URI.create("s3://bucket/key");
-        S3Utils.S3ObjectMetadata s3ObjectMetadataFromUri = s3Utils.getS3ObjectMetadata(uri);
+        RequestMetaData requestMetaData = new RequestMetaData(1L, 1L, "key");
+        S3Utils.S3ObjectMetadata s3ObjectMetadataFromUri = s3Utils.getS3ObjectMetadata(uri, requestMetaData);
         S3Uri s3Uri = S3Uri.builder().uri(uri).bucket("bucket").key("key").build();
-        S3Utils.S3ObjectMetadata s3ObjectMetadataFromS3Uri = s3Utils.getS3ObjectMetadata(s3Uri);
+        S3Utils.S3ObjectMetadata s3ObjectMetadataFromS3Uri = s3Utils.getS3ObjectMetadata(s3Uri, requestMetaData);
 
         for (S3Utils.S3ObjectMetadata s3ObjectMetadata: List.of(s3ObjectMetadataFromUri, s3ObjectMetadataFromS3Uri)) {
             assertTrue(s3ObjectMetadata.key().isPresent());

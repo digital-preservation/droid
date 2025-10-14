@@ -58,13 +58,6 @@ public class TestS3Client implements S3Client {
     }
 
     @Override
-    public HeadObjectResponse headObject(HeadObjectRequest headObjectRequest) throws NoSuchKeyException, AwsServiceException,
-            SdkClientException {
-        long size = FileUtils.sizeOf(new File(headObjectRequest.key()));
-        return HeadObjectResponse.builder().contentLength(size).lastModified(Instant.EPOCH).build();
-    }
-
-    @Override
     public void close() {}
 
     @Override

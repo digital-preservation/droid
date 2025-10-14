@@ -64,7 +64,7 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
         this.windowSize = windowSize;
         S3Utils s3Utils = new S3Utils(s3Client);
 
-        this.s3ObjectMetadata = s3Utils.getS3ObjectMetadata(identifier.getUri());
+        this.s3ObjectMetadata = s3Utils.getS3ObjectMetadata(identifier.getUri(), requestMetaData);
         this.s3Reader = buildWindowReader();
 
     }
