@@ -37,8 +37,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Uri;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import uk.gov.nationalarchives.droid.core.interfaces.AsynchDroid;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationRequest;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
@@ -51,7 +49,6 @@ import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -143,8 +140,6 @@ public class S3EventHandlerTest {
 
         S3ClientFactory s3ClientFactory = mock(S3ClientFactory.class);
         S3Client s3Client = mock(S3Client.class);
-        HeadObjectResponse headObjectResponse = HeadObjectResponse.builder().contentLength(1L).lastModified(Instant.EPOCH).build();
-        when(s3Client.headObject(any(HeadObjectRequest.class))).thenReturn(headObjectResponse);
         when(s3ClientFactory.getS3Client()).thenReturn(s3Client);
         return new S3EventHandler(droidCore, submissionThrottle, resultHandler, droidGlobalConfig, s3ClientFactory);
     }

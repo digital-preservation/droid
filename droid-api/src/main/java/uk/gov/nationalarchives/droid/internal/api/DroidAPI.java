@@ -361,7 +361,7 @@ public final class DroidAPI implements AutoCloseable {
             Map<HashAlgorithm, String> hashResults = generateHashResults(s3Uri, this::getS3Hash);
 
             final RequestIdentifier id = getRequestIdentifier(s3Uri.uri());
-            RequestMetaData metaData = new RequestMetaData(s3Object.size(), s3Object.lastModified().getEpochSecond(), s3Uri.uri().toString());
+            RequestMetaData metaData = new RequestMetaData(s3Object.size(), s3Object.lastModified().toEpochMilli(), s3Uri.uri().toString());
             try (final S3IdentificationRequest request = new S3IdentificationRequest(metaData, id, s3Client, DEFAULT_WINDOW_SIZE)) {
                 request.setExtension(extension);
                 request.open(s3Uri);

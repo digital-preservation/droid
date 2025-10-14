@@ -44,13 +44,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.http.S3ClientFactory;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.RequestMetaData;
 import uk.gov.nationalarchives.droid.core.interfaces.resource.S3IdentificationRequest;
-import uk.gov.nationalarchives.droid.core.interfaces.resource.S3Utils;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 
 public class S3EventHandler {
 
-    private static final int MILLIS_TO_SECONDS_FACTOR = 1000;
     private static final int DEFAULT_WINDOW_SIZE = 4 * 1024 * 1024;
 
     private AsynchDroid droidCore;
@@ -69,9 +67,7 @@ public class S3EventHandler {
 
     public void onS3Event(AbstractProfileResource resource, ResourceId parentResource) {
         S3Client s3Client = getS3Client(resource);
-        S3Utils s3Utils = new S3Utils(s3Client);
-        S3Utils.S3ObjectMetadata s3ObjectMetadata = s3Utils.getS3ObjectMetadata(resource.getUri());
-        RequestMetaData metaData = new RequestMetaData(s3ObjectMetadata.contentLength(), s3ObjectMetadata.lastModified() * MILLIS_TO_SECONDS_FACTOR, resource.getName());
+        RequestMetaData metaData = new RequestMetaData(resource.getSize(), resource.getLastModifiedDate().getTime(), resource.getName());
 
         // Prepare the identifier
         RequestIdentifier identifier = new RequestIdentifier(resource.getUri());

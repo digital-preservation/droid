@@ -82,6 +82,7 @@ public class S3Walker {
                 progressMonitor.startJob(URI.create(objectInfo.key().replaceAll(" ", "%20")));
                 S3ProfileResource fileProfileResource = new S3ProfileResource(objectInfo.key);
                 fileProfileResource.setLastModifiedDate(objectInfo.lastModified);
+                fileProfileResource.setSize(objectInfo.size);
                 s3EventHandler.onS3Event(fileProfileResource, fileParentNode);
             }
         }
@@ -124,7 +125,7 @@ public class S3Walker {
 
             if (!dirToFileMap.containsKey(parent)) {
                 List<S3ObjectInfo> existingKeys = new ArrayList<>();
-                existingKeys.add(new S3ObjectInfo(keyUri, new Date(s3Object.lastModified().getEpochSecond())));
+                existingKeys.add(new S3ObjectInfo(keyUri, new Date(s3Object.lastModified().toEpochMilli()), s3Object.size()));
                 dirToFileMap.put(parent, existingKeys);
                 if (FORWARD_SLASH.equals(URI.create(parent).getPath())) {
                     totalCount = totalCount + 1;
@@ -134,14 +135,14 @@ public class S3Walker {
 
             } else {
                 List<S3ObjectInfo> existingKeys = dirToFileMap.get(parent);
-                existingKeys.add(new S3ObjectInfo(keyUri, new Date(s3Object.lastModified().getEpochSecond())));
+                existingKeys.add(new S3ObjectInfo(keyUri, new Date(s3Object.lastModified().toEpochMilli()), s3Object.size()));
                 dirToFileMap.put(parent, existingKeys);
                 totalCount++;
             }
         }
         return new S3Result(dirToFileMap, totalCount);
     }
-    private record S3ObjectInfo(String key, Date lastModified) {}
+    private record S3ObjectInfo(String key, Date lastModified, long size) {}
     private record S3Result(Map<String, List<S3ObjectInfo>> dirToObjectInfo, int totalCount) {
     }
 
