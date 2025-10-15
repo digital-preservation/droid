@@ -48,6 +48,21 @@ public class SignatureFileInfo {
     private SignatureServiceException error;
     
     private SignatureType type;
+
+
+    /**
+     *
+     * @param version the version
+     * @param deprecated whether the version id is deprecated
+     * @param type the signature type
+     * @param file the path to the signature file
+     */
+    public SignatureFileInfo(int version, boolean deprecated, SignatureType type,  Path file) {
+        this.version = version;
+        this.deprecated = deprecated;
+        this.type = type;
+        this.file = file;
+    }
     
     /**
      * @param version the version
@@ -55,9 +70,7 @@ public class SignatureFileInfo {
      * @param type the signature type
      */
     public SignatureFileInfo(int version, boolean deprecated, SignatureType type) {
-        this.version = version;
-        this.deprecated = deprecated;
-        this.type = type;
+        this(version, deprecated, type, null);
     }
 
     /**

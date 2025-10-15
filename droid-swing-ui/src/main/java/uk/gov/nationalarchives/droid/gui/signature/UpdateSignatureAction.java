@@ -104,7 +104,7 @@ public class UpdateSignatureAction extends SwingWorker<Map<SignatureType, Signat
         
         for (SignatureFileInfo update : updates) {
             if (!update.hasError()) {
-                downloaded.put(update.getType(), signatureManager.downloadLatest(update.getType()));
+                downloaded.put(update.getType(), signatureManager.downloadLatest(update.getType(), update.getVersion()));
             }
         }
         

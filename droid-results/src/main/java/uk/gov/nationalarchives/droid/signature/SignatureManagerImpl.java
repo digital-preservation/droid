@@ -351,7 +351,7 @@ public class SignatureManagerImpl implements SignatureManager {
      * {@inheritDoc}
      */
     @Override
-    public SignatureFileInfo downloadLatest(final SignatureType type) throws SignatureManagerException {
+    public SignatureFileInfo downloadLatest(final SignatureType type, final int version) throws SignatureManagerException {
         final Path sigFileDir;
         switch (type) {
             case BINARY:
@@ -369,11 +369,11 @@ public class SignatureManagerImpl implements SignatureManager {
         
         
         try {
-            SignatureFileInfo info = signatureUpdateServices.get(type).importSignatureFile(sigFileDir);
+            SignatureFileInfo info = signatureUpdateServices.get(type).importSignatureFile(sigFileDir, version);
             final boolean autoSetDefaultSigFile = config.getBooleanProperty(DroidGlobalProperty.UPDATE_AUTOSET_DEFAULT);
             if (autoSetDefaultSigFile) {
                 PropertiesConfiguration props = config.getProperties();
-                props.setProperty(defaultVersionProperties.get(type).getName(), 
+                props.setProperty(defaultVersionProperties.get(type).getName(),
                         FilenameUtils.getBaseName(FileUtil.fileName(info.getFile())));
                 try {
                     config.getPropertiesFileHandler().save();

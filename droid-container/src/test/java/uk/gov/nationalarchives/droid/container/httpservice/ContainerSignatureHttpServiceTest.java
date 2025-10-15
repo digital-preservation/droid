@@ -34,7 +34,6 @@ package uk.gov.nationalarchives.droid.container.httpservice;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -51,8 +50,6 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author rflitcroft
@@ -69,39 +66,50 @@ public class ContainerSignatureHttpServiceTest {
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
+    @Rule
+    public WireMockRule proxyWireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
+
     @Before
     public void setup() throws IOException {
-        stubFor(get(urlEqualTo("/pronom/container-signature.xml"))
+        proxyWireMockRule.stubFor(any(urlMatching(".*"))
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "text/xml")
-                        .withHeader("Last-Modified", "Tue, 22 Aug 2023 12:47:41 GMT")
-                        .withBody(IOUtils.resourceToString("/container-signature-20250925.xml", StandardCharsets.UTF_8))
-                ));
-
+                        .proxiedFrom("http://localhost:" + wireMockRule.port())));
 
         httpService = new ContainerSignatureHttpService();
         httpService.setEndpointUrl(wireMockRule.url("pronom/container-signature.xml"));
-        proxySettings = mock(ProxySettings.class);
+        proxySettings = new ProxySettings();
+        proxySettings.setEnabled(true);
+        proxySettings.setProxyHost("localhost");
+        proxySettings.setProxyPort(proxyWireMockRule.port());
+        wireMockRule.resetAll();
     }
-    
+
     @Test
-    public void testGetLatestVersion() throws SignatureServiceException {
-        when(proxySettings.isEnabled()).thenReturn(false);
-        httpService.onProxyChange(proxySettings);
+    public void testGetLatestVersion() throws SignatureServiceException, IOException {
+        stubOriginalEndpoint();
+        httpService.onProxyChange(new ProxySettings());
 
         SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
         assertNull(sigFileInfo.getFile());
         assertThat(sigFileInfo.getVersion(), greaterThan(20110114));
         assertEquals(false, sigFileInfo.isDeprecated());
     }
-    
-    //TODO this only works inside of TNA! We need to mock out the proxy call!
-    @Ignore
+
     @Test
-    public void testGetLatestVersionViaProxy() throws SignatureServiceException {
-        when(proxySettings.isEnabled()).thenReturn(true);
-        when(proxySettings.getProxyHost()).thenReturn("wb-cacheclst1.web.local");
-        when(proxySettings.getProxyPort()).thenReturn(8080);
+    public void testGetLatestVersionNewEndpoint() throws SignatureServiceException, IOException {
+        stubNewEndpoint();
+        httpService.onProxyChange(new ProxySettings());
+
+        SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
+        assertNull(sigFileInfo.getFile());
+        assertEquals(sigFileInfo.getVersion(), 20251007);
+        assertEquals(false, sigFileInfo.isDeprecated());
+        wireMockRule.resetAll();
+    }
+    
+    @Test
+    public void testGetLatestVersionViaProxy() throws SignatureServiceException, IOException {
+        stubOriginalEndpoint();
         httpService.onProxyChange(proxySettings);
         
         SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
@@ -111,49 +119,104 @@ public class ContainerSignatureHttpServiceTest {
     }
 
     @Test
-    public void testImportSignatureFile() throws IOException {
-        when(proxySettings.isEnabled()).thenReturn(false);
+    public void testGetLatestVersionViaProxyNewEndpoint() throws SignatureServiceException, IOException {
+        stubNewEndpoint();
         httpService.onProxyChange(proxySettings);
+
+        SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
+        assertNull(sigFileInfo.getFile());
+        assertEquals(sigFileInfo.getVersion(), 20251007);
+        assertEquals(false, sigFileInfo.isDeprecated());
+    }
+
+    @Test
+    public void testImportSignatureFile() throws IOException, SignatureServiceException {
+        stubOriginalEndpoint();
+        httpService.onProxyChange(new ProxySettings());
 
         final File tmpDir = temporaryFolder.newFolder("testImportSignatureFileEmptyFolder");
         tmpDir.mkdir();
 
-        SignatureFileInfo sigFileInfo;
-        try {
-            sigFileInfo = httpService.importSignatureFile(tmpDir.toPath());
-            assertEquals(false, sigFileInfo.isDeprecated());
-            assertThat(sigFileInfo.getVersion(), greaterThan(20110114));
-        } catch (SignatureServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
+        SignatureFileInfo sigFileInfo = httpService.importSignatureFile(tmpDir.toPath(), 20110114);
+        assertEquals(false, sigFileInfo.isDeprecated());
+        assertEquals(sigFileInfo.getVersion(), 20110114);
+
+        assertEquals(1, tmpDir.list().length);
+    }
+
+    @Test
+    public void testImportSignatureFileNewEndpoint() throws IOException, SignatureServiceException {
+        stubOriginalEndpoint();
+        httpService.onProxyChange(new ProxySettings());
+
+        final File tmpDir = temporaryFolder.newFolder("testImportSignatureFileEmptyFolder");
+        tmpDir.mkdir();
+
+        SignatureFileInfo sigFileInfo = httpService.importSignatureFile(tmpDir.toPath(), 20110114);
+        assertEquals(false, sigFileInfo.isDeprecated());
+        assertEquals(sigFileInfo.getVersion(), 20110114);
+
         assertEquals(1, tmpDir.list().length);
     }
     
-    //TODO this only works inside of TNA! We need to mock out the proxy call!
-    @Ignore
     @Test
-    public void testImportSignatureFileViaProxy() throws IOException {
-        when(proxySettings.isEnabled()).thenReturn(true);
-        when(proxySettings.getProxyHost()).thenReturn("wb-cacheclst1.web.local");
-        when(proxySettings.getProxyPort()).thenReturn(8080);
+    public void testImportSignatureFileViaProxy() throws IOException, SignatureServiceException {
+        stubOriginalEndpoint();
         httpService.onProxyChange(proxySettings);
 
         final File tmpDir = temporaryFolder.newFolder("testImportSignatureFileViaProxy");
         tmpDir.mkdir();
 
         assertEquals(0, tmpDir.list().length);
-        SignatureFileInfo sigFileInfo;
-        try {
-            sigFileInfo = httpService.importSignatureFile(tmpDir.toPath());
-            assertEquals(false, sigFileInfo.isDeprecated());
-            assertThat(sigFileInfo.getVersion(), greaterThan(20110114));
-        } catch (SignatureServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
+        SignatureFileInfo sigFileInfo = httpService.importSignatureFile(tmpDir.toPath(), 20110114);
+        assertEquals(false, sigFileInfo.isDeprecated());
+        assertEquals(sigFileInfo.getVersion(), 20110114);
 
         assertEquals(1, tmpDir.list().length);
     }
+
+    @Test
+    public void testImportSignatureFileViaProxyNewEndpoint() throws IOException, SignatureServiceException {
+        stubNewEndpoint();
+        httpService.onProxyChange(proxySettings);
+
+        final File tmpDir = temporaryFolder.newFolder("testImportSignatureFileViaProxy");
+        tmpDir.mkdir();
+
+        assertEquals(0, tmpDir.list().length);
+
+        SignatureFileInfo sigFileInfo = httpService.importSignatureFile(tmpDir.toPath(), 20110114);
+        assertEquals(false, sigFileInfo.isDeprecated());
+        assertEquals(sigFileInfo.getVersion(), 20110114);
+
+        assertEquals(1, tmpDir.list().length);
+    }
+
+    private void stubNewEndpoint() {
+        try {
+            String responseJson = "{\"latest_signature\":{\"name\":\"DROID Signature File V122\",\"location\":\"/signatures/DROID_SignatureFile_V122.xml\",\"version\":\"122\"}," +
+                    "\"latest_container_signature\":{\"name\":\"07 October 2025\",\"location\":\"/container-signatures/container-signature-20251007.xml\",\"version\":\"20251007\"}}\n";
+            wireMockRule.stubFor(get(urlEqualTo("/signatures.json"))
+                    .willReturn(aResponse().withStatus(200).withBody(responseJson)));
+            wireMockRule.stubFor(get(urlEqualTo("/container-signatures/container-signature-20110114.xml"))
+                    .willReturn(aResponse().withStatus(200).withBody(IOUtils.resourceToString("/container-signature-20250925.xml", StandardCharsets.UTF_8))));
+        } catch (IOException ignored) {}
+    }
+
+    private void stubOriginalEndpoint() {
+        try {
+            wireMockRule.stubFor(get(urlEqualTo("/signatures.json"))
+                    .willReturn(aResponse().withStatus(404)));
+            wireMockRule.stubFor(get(urlEqualTo("/container-signatures/container-signature-20110114.xml"))
+                    .willReturn(aResponse().withStatus(404)));
+            wireMockRule.stubFor(get(urlEqualTo("/pronom/container-signature.xml"))
+                    .willReturn(aResponse()
+                            .withHeader("Content-Type", "text/xml")
+                            .withHeader("Last-Modified", "Tue, 22 Aug 2023 12:47:41 GMT")
+                            .withBody(IOUtils.resourceToString("/container-signature-20250925.xml", StandardCharsets.UTF_8))
+                    ));
+        } catch (IOException ignored) {}
+    }
+
 }
