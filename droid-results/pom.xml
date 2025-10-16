@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>droid-parent</artifactId>
 		<groupId>uk.gov.nationalarchives</groupId>
-		<version>6.9.7-SNAPSHOT</version>
+		<version>6.9.8-SNAPSHOT</version>
 		<relativePath>../droid-parent</relativePath>
 	</parent>
 
@@ -122,6 +122,7 @@
 								<ignoredUnusedDeclaredDependency>software.amazon.nio.s3:aws-java-nio-spi-for-s3:jar</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.derby:derby</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.apache.httpcomponents:httpclient:jar</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.eclipse.angus:angus-mail:jar</ignoredUnusedDeclaredDependency>
 							</ignoredUnusedDeclaredDependencies>
 							<ignoredUsedUndeclaredDependencies>
 								<ignoredUsedUndeclaredDependency>org.slf4j:slf4j-api</ignoredUsedUndeclaredDependency>
@@ -203,6 +204,11 @@
 			<artifactId>jakarta.xml.bind-api</artifactId>
 			<version>4.0.4</version>
 		</dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>2.0.3</version>
+        </dependency>
 		<dependency>
 			<groupId>jakarta.xml.ws</groupId>
 			<artifactId>jakarta.xml.ws-api</artifactId>

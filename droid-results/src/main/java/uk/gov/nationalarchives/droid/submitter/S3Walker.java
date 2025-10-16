@@ -65,22 +65,25 @@ public class S3Walker {
     public void walk(AbstractProfileResource resource) {
         S3Result s3Result = getS3Result(resource);
         progressMonitor.setTargetCount(s3Result.totalCount());
-        ArrayList<String> keysList = new ArrayList<>(s3Result.dirToFileMap().keySet());
+        ArrayList<String> keysList = new ArrayList<>(s3Result.dirToObjectInfo().keySet());
         Map<String, ResourceId> pathToResourceId = new HashMap<>();
         keysList.sort(Comparator.comparingInt(String::length));
         for (int i=0; i < keysList.size(); i++) {
             URI dirUri = URI.create(keysList.get(i));
             Path dirPath = getPath(dirUri);
             ResourceId fileParentNode = null;
-            if (dirPath.getParent() != null) {
+            if (dirPath.getParent() != null && s3Result.totalCount() > 2) {
                 progressMonitor.startJob(dirUri);
                 ResourceId parent = dirPath.getParent() == null ? null : pathToResourceId.get(dirPath.getParent().toUri().toString());
                 fileParentNode = handleS3Directory(dirPath, parent, i+1);
                 pathToResourceId.put(dirUri + FORWARD_SLASH, fileParentNode);
             }
-            for (String objectUri: s3Result.dirToFileMap().get(keysList.get(i))) {
-                progressMonitor.startJob(URI.create(objectUri.replaceAll(" ", "%20")));
-                s3EventHandler.onS3Event(new S3ProfileResource(objectUri), fileParentNode);
+            for (S3ObjectInfo objectInfo: s3Result.dirToObjectInfo().get(keysList.get(i))) {
+                progressMonitor.startJob(URI.create(objectInfo.key().replaceAll(" ", "%20")));
+                S3ProfileResource fileProfileResource = new S3ProfileResource(objectInfo.key);
+                fileProfileResource.setLastModifiedDate(objectInfo.lastModified);
+                fileProfileResource.setSize(objectInfo.size);
+                s3EventHandler.onS3Event(fileProfileResource, fileParentNode);
             }
         }
     }
@@ -106,7 +109,7 @@ public class S3Walker {
         Iterable<S3Object> contents = objectList.contents();
         String bucket = objectList.bucket();
 
-        Map<String, List<String>> dirToFileMap = new HashMap<>();
+        Map<String, List<S3ObjectInfo>> dirToFileMap = new HashMap<>();
         int totalCount = 0;
         String uriWithBucket = S3_SCHEME + bucket + FORWARD_SLASH;
 
@@ -121,8 +124,8 @@ public class S3Walker {
             }
 
             if (!dirToFileMap.containsKey(parent)) {
-                List<String> existingKeys = new ArrayList<>();
-                existingKeys.add(keyUri);
+                List<S3ObjectInfo> existingKeys = new ArrayList<>();
+                existingKeys.add(new S3ObjectInfo(keyUri, new Date(s3Object.lastModified().toEpochMilli()), s3Object.size()));
                 dirToFileMap.put(parent, existingKeys);
                 if (FORWARD_SLASH.equals(URI.create(parent).getPath())) {
                     totalCount = totalCount + 1;
@@ -131,16 +134,16 @@ public class S3Walker {
                 }
 
             } else {
-                List<String> existingKeys = dirToFileMap.get(parent);
-                existingKeys.add(keyUri);
+                List<S3ObjectInfo> existingKeys = dirToFileMap.get(parent);
+                existingKeys.add(new S3ObjectInfo(keyUri, new Date(s3Object.lastModified().toEpochMilli()), s3Object.size()));
                 dirToFileMap.put(parent, existingKeys);
                 totalCount++;
             }
         }
         return new S3Result(dirToFileMap, totalCount);
     }
-
-    private record S3Result(Map<String, List<String>> dirToFileMap, int totalCount) {
+    private record S3ObjectInfo(String key, Date lastModified, long size) {}
+    private record S3Result(Map<String, List<S3ObjectInfo>> dirToObjectInfo, int totalCount) {
     }
 
     private Path getPath(URI uri) {

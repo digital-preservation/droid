@@ -51,25 +51,27 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
     private WindowReader s3Reader;
     private final RequestIdentifier identifier;
     private final RequestMetaData requestMetaData;
+    private final int windowSize;
 
     private final S3Client s3client;
     private final S3Utils.S3ObjectMetadata s3ObjectMetadata;
     private String extension;
 
-    public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, final S3Client s3Client) {
+    public S3IdentificationRequest(final RequestMetaData requestMetaData, final RequestIdentifier identifier, final S3Client s3Client, final int windowSize) {
         this.identifier = identifier;
         this.s3client = s3Client;
         this.requestMetaData = requestMetaData;
+        this.windowSize = windowSize;
         S3Utils s3Utils = new S3Utils(s3Client);
 
-        this.s3ObjectMetadata = s3Utils.getS3ObjectMetadata(identifier.getUri());
+        this.s3ObjectMetadata = s3Utils.getS3ObjectMetadata(identifier.getUri(), requestMetaData);
         this.s3Reader = buildWindowReader();
 
     }
 
     private WindowReader buildWindowReader() {
         final WindowCache cache = new TopAndTailFixedLengthCache(this.s3ObjectMetadata.contentLength(), TOP_TAIL_BUFFER_CAPACITY);
-        return new S3WindowReader(cache, s3ObjectMetadata, s3client);
+        return new S3WindowReader(cache, s3ObjectMetadata, s3client, windowSize);
     }
 
     /**
@@ -157,5 +159,13 @@ public class S3IdentificationRequest implements IdentificationRequest<S3Uri> {
     @Override
     public WindowReader getWindowReader() {
         return this.s3Reader;
+    }
+
+    /**
+     * Gets the window size.
+     * @return the window size
+     */
+    public int getWindowSize() {
+        return windowSize;
     }
 }

@@ -33,17 +33,12 @@ package uk.gov.nationalarchives.droid.core.interfaces.resource;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import uk.gov.nationalarchives.droid.core.interfaces.RequestIdentifier;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 
@@ -63,11 +58,10 @@ public class S3IdentificationRequestTest {
         request.open(s3Uri);
 
         ArgumentCaptor<GetObjectRequest> getObjectRequestCaptor = ArgumentCaptor.forClass(GetObjectRequest.class);
-        verify(mockS3Client, times(1)).headObject(any(HeadObjectRequest.class));
         verify(mockS3Client, times(1)).getObject(getObjectRequestCaptor.capture());
 
         GetObjectRequest getRequestValue = getObjectRequestCaptor.getValue();
-        assertEquals(getRequestValue.range(), "bytes=0-4194303");
+        assertEquals(getRequestValue.range(), "bytes=0-1023");
     }
 
     @Test
@@ -78,7 +72,7 @@ public class S3IdentificationRequestTest {
 
         request.open(s3Uri);
 
-        assertEquals(request.size(), 1);
+        assertEquals(request.size(), 2);
         assertEquals(request.getFileName(), "entry.txt");
         assertEquals(request.getExtension(), "txt");
     }
@@ -126,18 +120,11 @@ public class S3IdentificationRequestTest {
         assertThrows(SdkException.class, () -> request.open(s3Uri));
     }
 
-    @Test
-    public void testErrorIfS3HeadObjectCallsFail() {
-        S3Client mockS3Client = mock(S3Client.class);
-        when(mockS3Client.headObject(any(HeadObjectRequest.class))).thenThrow(SdkException.class);
-        assertThrows(SdkException.class, () -> createRequest(mockS3Client));
-    }
-
     private S3IdentificationRequest createRequest(S3Client mockS3Client) {
         RequestMetaData requestMetaData = new RequestMetaData(2L, 1L, "entry.txt");
         URI uri = URI.create("s3://bucket/test");
 
         RequestIdentifier requestIdentifier = new RequestIdentifier(uri);
-        return new S3IdentificationRequest(requestMetaData, requestIdentifier, mockS3Client);
+        return new S3IdentificationRequest(requestMetaData, requestIdentifier, mockS3Client, 1024);
     }
 }

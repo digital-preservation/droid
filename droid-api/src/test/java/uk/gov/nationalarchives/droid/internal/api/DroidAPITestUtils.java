@@ -169,16 +169,6 @@ public class DroidAPITestUtils {
                 OutputStream responseBody = exchange.getResponseBody();
                 responseBody.write(response.getBytes());
                 responseBody.close();
-            } else if (exchange.getRequestMethod().equals("HEAD")) {
-                String fullPath = exchange.getRequestURI().getPath().substring(1);
-                Path filePath = getFilePathFromUriPath(fullPath.substring(fullPath.indexOf("/")));
-                long size = Files.size(filePath);
-                exchange.getResponseHeaders().add("Content-Length", Long.toString(size));
-                exchange.getResponseHeaders().add("Last-Modified", "Mon, 03 Mar 2025 17:29:48 GMT");
-                exchange.sendResponseHeaders(200, -1);
-                OutputStream responseBody = exchange.getResponseBody();
-                responseBody.write("".getBytes());
-                responseBody.close();
             } else if (exchange.getRequestMethod().equals("GET")) {
                 String fullPath = exchange.getRequestURI().getPath().substring(1);
                 Path filePath = getFilePathFromUriPath(fullPath.substring(fullPath.indexOf("/")));

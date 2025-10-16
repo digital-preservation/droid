@@ -63,26 +63,16 @@ public class S3Utils {
 
     public record S3ObjectList(String bucket, Iterable<S3Object> contents) {}
 
-    public S3ObjectMetadata getS3ObjectMetadata(final URI uri) {
+    public S3ObjectMetadata getS3ObjectMetadata(final URI uri, RequestMetaData requestMetaData) {
 
         S3Uri s3Uri = S3Utilities.builder().region(region).build().parseUri(uri);
-        return getS3ObjectMetadata(s3Uri);
+        return getS3ObjectMetadata(s3Uri, requestMetaData);
     }
 
-    public S3ObjectMetadata getS3ObjectMetadata(final S3Uri s3Uri) {
+    public S3ObjectMetadata getS3ObjectMetadata(final S3Uri s3Uri, RequestMetaData requestMetaData) {
         String bucket = s3Uri.bucket().orElseThrow(() -> new RuntimeException(BUCKET_NOT_FOUND + s3Uri));
         Optional<String> key = s3Uri.key();
-        long contentLength = 0L;
-        long lastModified = 0L;
-        if (key.isPresent()) {
-            try {
-                HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket).key(key.get()).build();
-                HeadObjectResponse headObjectResponse = this.s3Client.headObject(headObjectRequest);
-                contentLength = headObjectResponse.contentLength();
-                lastModified = headObjectResponse.lastModified().getEpochSecond();
-            } catch (NoSuchKeyException ignored) {}
-        }
-        return new S3ObjectMetadata(bucket, key, s3Uri, contentLength, lastModified);
+        return new S3ObjectMetadata(bucket, key, s3Uri, requestMetaData.getSize(), requestMetaData.getTime());
     }
 
     public S3ObjectList listObjects(final URI uri) {
