@@ -50,6 +50,7 @@ jobs:
                       -d "{\"title\": \"Version bump\",\"head\": \"$BRANCH_NAME\",\"base\": \"main\"}"
   github-release:
     runs-on: ubuntu-latest
+    if: ${{ github.base_ref == 'main' && github.event.pull_request.merged == true && github.event.pull_request.title != 'Version bump' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
