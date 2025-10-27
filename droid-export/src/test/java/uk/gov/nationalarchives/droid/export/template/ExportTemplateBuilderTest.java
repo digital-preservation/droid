@@ -329,4 +329,43 @@ public class ExportTemplateBuilderTest {
         ExportTemplateParseException ex = assertThrows(ExportTemplateParseException.class, () -> builder.buildExportTemplate(tempFile.getAbsolutePath()));
         assertEquals("Invalid syntax in data modifier expression 'LCASE(PUID)', expecting '$' after '('", ex.getMessage());
     }
+
+    @Test
+    public void should_remove_comment_lines_from_the_template_when_multiple_comment_lines_at_the_beginning() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("comments-at-the-beginning");
+        List<String> data = Arrays.asList(
+                "// This is a comment about the file",
+                "// Which can explain the use of template",
+                "     // and some where the line begins with blank space before the comment prefix",
+                "version 1.0",
+                "Identifier: $ID",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+        ExportTemplate template = builder.buildExportTemplate(tempFile.getAbsolutePath());
+        assertNotNull(template);
+        assertEquals(1, template.getColumnOrderMap().size());
+        assertEquals("Identifier",template.getColumnOrderMap().get(0).getHeaderLabel());
+    }
+
+    @Test
+    public void should_remove_comment_lines_and_blank_from_the_template_when_comment_lines_are_in_between_the_lines() throws IOException {
+        ExportTemplateBuilder builder = new ExportTemplateBuilder();
+        File tempFile = temporaryFolder.newFile("comments-at-the-beginning");
+        List<String> data = Arrays.asList(
+                "// This is a comment about the file",
+                "// Which can explain the use of template and add information such as ",
+                "",
+                "// Created on: 18-MAR-2020 by Dr. O. I. Dean (aka Droidean)",
+                "version 1.0",
+                "// Changing the 'ID' column to be called 'Identifier'",
+                "Identifier: $ID",
+                "",
+                "   // Add a string column in the template",
+                "Language: \"English\"    ",
+                "");
+        Files.write(tempFile.toPath(), data, StandardOpenOption.WRITE);
+        ExportTemplate template = builder.buildExportTemplate(tempFile.getAbsolutePath());
+        assertNotNull(template);
+    }
 }
