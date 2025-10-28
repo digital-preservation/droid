@@ -454,12 +454,10 @@
                 <p>
                     An export template is a simple text file, with a .template extension, which defines customisations of
                     columns to be exported. Using a template, you can customise headers for the data columns, add new
-                    columns
-                    to the export, convert the data in a column to be uppercase / lowercase and change the order in which
-                    columns
-                    appear in the export. You can make an export template available to Droid by copying it into the
-                    <code>.droid6\export_templates</code> folder. You can customise the columns listed in the <a
-                        href="#csv-file-columns">CSV Columns</a> section.
+                    columns to the export, convert the data in a column to be uppercase / lowercase and change the order
+                    in which columns appear in the export. You can make an export template available to Droid by copying
+                    it into the <code>.droid6\export_templates</code> folder. You can customise the columns listed in
+                    the <a href="#csv-file-columns">CSV Columns</a> section.
                 </p>
                 <h3 class="tna-heading-s" id="export-template-features">Features</h3>
                 <p>The current syntax for the export template is referred to as version 1.0. This version of the export
@@ -472,11 +470,16 @@
                 </ul>
                 <h3 class="tna-heading-s" id="export-template-syntax">Syntax</h3>
                 <p>Syntactically, the export template is simple to define. The details for defining various customisations
-                    are explained below.</p>
+                   are explained below.</p>
                 <ul class="tna-ul">
                     <li>
-                        <b>version line</b>: The very first line of the Export Template defines the version number. For now
-                        it simply needs to be version 1.0
+                        <b>comment line</b>: The export template allows for comments to be added in the file. Any line that
+                        begins with <code>//</code> is treated as a comment and it is ignored for column customisations.
+                        Please note, Droid only supports single line comments as of current version
+                    </li>
+                    <li>
+                        <b>version line</b>: The very first non-comment line of the Export Template defines the version
+                        number. For now it simply needs to be <code>version 1.0</code>
                     </li>
                     <li>
                         <b>Modifying a header</b>: If you intend to use a different column header instead of one of the
@@ -514,12 +517,20 @@
                 </ul>
                 <h3 class="tna-heading-s" id="export-template-putting-it-all-together">Putting it all together</h3>
                 <p>Consider the following template</p>
-                <pre class="notranslate"><code>version 1.0
+                <pre class="notranslate"><code>
+// The following customisations are an example of how an export template can be used
+// It defines a template version and customisations
+//
+// Created on: 21-SEP-2024
+
+version 1.0
 Identifier: $ID
 Name: $NAME
 LowerName: LCASE($NAME)
 Language: "Simplified English"
 Submitter: "Government Dept."
+
+// Following column is added to the export but not populated
 Background:
 FormatName: $FORMAT_NAME
 FormatVersion: $FORMAT_VERSION
@@ -527,6 +538,9 @@ Export Tool:
 </code></pre>
                 <p>It indicates the following:</p>
                 <ul class="tna-ul">
+                    <li>
+                        <p>Initial few lines describe the template using comments</p>
+                    </li>
                     <li>
                         <p>The version of the template is 1.0</p>
                     </li>
@@ -631,8 +645,9 @@ Export Tool:
                     to the encoding used on your local machine instead, select 'Platform specific' instead.
                 </p>
                 <p>
-                    When you are happy you want to export your profiles, press the <code>profiles...</code> button. This will bring up a standard file-save
-                    dialog, in which you can specify where you want your CSV file to be saved.
+                    When you are happy you want to export your profiles, press the <code>Export profiles...</code>
+                    button. This will bring up a standard file-save dialog, in which you can specify where you want
+                    your CSV file to be saved.
                 </p>    
             </section>
              <section class="tna-section">
