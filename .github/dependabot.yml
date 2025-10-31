@@ -6,6 +6,9 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
   ignore:
+  - dependency-name: org.glassfish.jaxb:jaxb-runtime
+    versions:
+      - ">=4.0.6"
   - dependency-name: org.owasp:dependency-check-maven
     versions:
     - 6.1.0
