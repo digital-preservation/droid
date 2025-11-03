@@ -195,8 +195,20 @@ public class ContainerSignatureHttpServiceTest {
 
     private void stubNewEndpoint() {
         try {
-            String responseJson = "{\"latest_signature\":{\"name\":\"DROID Signature File V122\",\"location\":\"/signatures/DROID_SignatureFile_V122.xml\",\"version\":\"122\"}," +
-                    "\"latest_container_signature\":{\"name\":\"07 October 2025\",\"location\":\"/container-signatures/container-signature-20251007.xml\",\"version\":\"20251007\"}}\n";
+            String responseJson = """
+                    {
+                      "latest_signature": {
+                        "name": "DROID Signature File V122",
+                        "location": "/signatures/DROID_SignatureFile_V122.xml",
+                        "version": "122"
+                      },
+                      "latest_container_signature": {
+                        "name": "07 October 2025",
+                        "location": "/container-signatures/container-signature-20251007.xml",
+                        "version": "20251007"
+                      }
+                    }
+                    """;
             wireMockRule.stubFor(get(urlEqualTo("/signatures.json"))
                     .willReturn(aResponse().withStatus(200).withBody(responseJson)));
             wireMockRule.stubFor(get(urlEqualTo("/container-signatures/container-signature-20110114.xml"))

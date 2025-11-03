@@ -53,7 +53,7 @@ public class SignatureFileInfo {
     /**
      *
      * @param version the version
-     * @param deprecated whether the version id is deprecated
+     * @param deprecated whether the version is deprecated
      * @param type the signature type
      * @param file the path to the signature file
      */
@@ -66,7 +66,7 @@ public class SignatureFileInfo {
     
     /**
      * @param version the version
-     * @param deprecated whether the version id deprecated 
+     * @param deprecated whether the version is deprecated
      * @param type the signature type
      */
     public SignatureFileInfo(int version, boolean deprecated, SignatureType type) {
