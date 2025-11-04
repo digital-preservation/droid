@@ -194,7 +194,7 @@ public class ExportTemplateBuilder {
             throw new ExportTemplateParseException(String.format(messageFormat, param2));
         }
         String originalColumnName = param2.substring(1);
-        if (!(Arrays.stream(WriterConstants.HEADERS).toList().contains(originalColumnName))) {
+        if (!Arrays.asList(WriterConstants.HEADERS).contains(originalColumnName)) {
             throw new ExportTemplateParseException(String.format(messageFormat, originalColumnName));
         }
         return new ProfileResourceNodeColumnDef(originalColumnName, header);
