@@ -98,7 +98,7 @@
         <derby.version>10.17.1.0</derby.version>
         <cxf.version>4.1.3</cxf.version>
         <java.iso-tools.version>2.1.0</java.iso-tools.version>
-        <jaxb.version>4.0.6</jaxb.version>
+        <jaxb.version>4.0.5</jaxb.version>
         <jakarta.version>4.0.4</jakarta.version>
         <jackson.version>2.19.2</jackson.version>
         <flying-saucer.version>9.7.2</flying-saucer.version>
