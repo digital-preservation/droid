@@ -42,7 +42,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Class to build export template from a file.
@@ -57,6 +56,7 @@ public class ExportTemplateBuilder {
     private static final String OPENING_BRACKET = "(";
     private static final String CLOSING_BRACKET = ")";
     private static final String DATA_COLUMN_PREFIX = "$";
+    private static final String COMMENT_PREFIX = "//";
 
     /**
      * The entry point into building an ExportTemplate object by reading a template file.
@@ -70,7 +70,10 @@ public class ExportTemplateBuilder {
 
         List<String> templateLines;
         try {
-            templateLines = Files.readAllLines(Paths.get(pathToTemplate));
+            templateLines = Files.readAllLines(Paths.get(pathToTemplate)).stream().filter(line -> {
+                String trimmedLine = line.trim();
+                return !trimmedLine.isEmpty() && !trimmedLine.startsWith(COMMENT_PREFIX);
+            }).toList();
             Map<Integer, ExportTemplateColumnDef> columnMap = buildColumnMap(templateLines);
             return new ExportTemplateImpl(columnMap);
         } catch (IOException e) {
@@ -79,23 +82,23 @@ public class ExportTemplateBuilder {
     }
 
     private Map<Integer, ExportTemplateColumnDef> buildColumnMap(List<String> templateLines) {
-        if ((templateLines == null) || (templateLines.size() == 0)) {
+        if ((templateLines == null) || (templateLines.isEmpty())) {
             throw new ExportTemplateParseException("Export template is empty");
         }
-        String versionLine = templateLines.get(0);
+        String versionLine = templateLines.getFirst();
         String version = parseVersionLine(versionLine);
 
         //we have only one version at the moment, but future provision for versioning
         switch (version) {
-            case "1.0":
+            case "1.0" -> {
                 return parseExportTemplateV1(templateLines.subList(1, templateLines.size()));
-            default:
-                throw new ExportTemplateParseException("Unsupported version for the export template");
+            }
+            default -> throw new ExportTemplateParseException("Unsupported version for the export template");
         }
     }
 
     private Map<Integer, ExportTemplateColumnDef> parseExportTemplateV1(List<String> templateLines) {
-        List<String> columnLines = templateLines.stream().filter(line -> line.trim().length() > 0).collect(Collectors.toList());
+        List<String> columnLines = templateLines.stream().filter(line -> !line.trim().isEmpty()).toList();
         Map<Integer, ExportTemplateColumnDef> columnMap = new HashMap<>();
         for (int i = 0; i < columnLines.size(); i++) {
             String line = columnLines.get(i);
@@ -123,11 +126,11 @@ public class ExportTemplateBuilder {
     private boolean isExpressionForDataModification(String expressionParam) {
         List<String> operations = Arrays.stream(
                         ExportTemplateColumnDef.DataModification.values()).map(v -> v.toString() + OPENING_BRACKET).
-                collect(Collectors.toList());
+                toList();
         String expression = expressionParam.trim();
 
-        List<String> possibleOperations = operations.stream().filter(op -> expression.startsWith(op)).collect(Collectors.toList());
-        return possibleOperations.size() > 0;
+        List<String> possibleOperations = operations.stream().filter(expression::startsWith).toList();
+        return !possibleOperations.isEmpty();
     }
 
     private ExportTemplateColumnDef createDataModifierDef(String header, String param2) {
@@ -138,8 +141,7 @@ public class ExportTemplateBuilder {
         String operationName = tokens[0].trim();
 
         List<String> operations = Arrays.stream(
-                ExportTemplateColumnDef.DataModification.values()).map(v -> v.toString()).
-                collect(Collectors.toList());
+                ExportTemplateColumnDef.DataModification.values()).map(Enum::toString).toList();
 
         if (!operations.contains(operationName)) {
             throw new ExportTemplateParseException("Undefined operation '" + operationName + "' encountered in export template");
@@ -192,7 +194,7 @@ public class ExportTemplateBuilder {
             throw new ExportTemplateParseException(String.format(messageFormat, param2));
         }
         String originalColumnName = param2.substring(1);
-        if (!(Arrays.stream(WriterConstants.HEADERS).collect(Collectors.toList()).contains(originalColumnName))) {
+        if (!Arrays.asList(WriterConstants.HEADERS).contains(originalColumnName)) {
             throw new ExportTemplateParseException(String.format(messageFormat, originalColumnName));
         }
         return new ProfileResourceNodeColumnDef(originalColumnName, header);
