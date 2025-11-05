@@ -1,8 +1,8 @@
 name: Release DROID
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types:
+      - closed
 permissions:
   contents: write
   pull-requests: write
