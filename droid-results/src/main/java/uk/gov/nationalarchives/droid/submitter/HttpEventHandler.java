@@ -42,10 +42,10 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.profile.AbstractProfileResource;
 import uk.gov.nationalarchives.droid.profile.throttle.SubmissionThrottle;
 
-import java.net.InetSocketAddress;
-import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
+
+import static uk.gov.nationalarchives.droid.core.interfaces.http.HttpUtil.createHttpClient;
 
 public class HttpEventHandler {
 
@@ -84,15 +84,7 @@ public class HttpEventHandler {
     public HttpClient getHttpClient(AbstractProfileResource resource) {
         ProxyUtils proxyUtils = new ProxyUtils(this.config);
         ProxySettings proxySettings = proxyUtils.getProxySettings(resource);
-        HttpClient.Builder httpBuilder = HttpClient.newBuilder();
-        HttpClient httpClient;
-        if (proxySettings.isEnabled()) {
-            InetSocketAddress inetSocketAddress = new InetSocketAddress(proxySettings.getProxyHost(), proxySettings.getProxyPort());
-            httpClient = httpBuilder.proxy(ProxySelector.of(inetSocketAddress)).build();
-        } else {
-            httpClient = httpBuilder.build();
-        }
-        return httpClient;
+        return createHttpClient(proxySettings);
     }
 
     public void setSubmissionThrottle(SubmissionThrottle submissionThrottle) {

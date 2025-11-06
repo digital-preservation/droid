@@ -47,10 +47,11 @@ public interface SignatureUpdateService extends EventListener<ConfigurationEvent
     /**
      * Imports a signature file.
      * @param targetDir the target directory for the signature file.
+     * @param version the version of the signature file to import.
      * @return the signature file's meta-data.
      * @throws SignatureServiceException if the service call failed
      */
-    SignatureFileInfo importSignatureFile(Path targetDir) throws SignatureServiceException;
+    SignatureFileInfo importSignatureFile(Path targetDir, int version) throws SignatureServiceException;
     
     /**
      * Gets the latest version info from the signature registry via a proxy.
@@ -65,5 +66,4 @@ public interface SignatureUpdateService extends EventListener<ConfigurationEvent
      * @param config the config to initialise from
      */
     void init(DroidGlobalConfig config);
-
 }

@@ -86,8 +86,8 @@ public class DownloadSignatureUpdateCommandTest {
     public void testDownloadSignatureUpdate() throws Exception {
        
         SignatureFileInfo sigFileInfo = new SignatureFileInfo(69, false, SignatureType.BINARY);
-        when(signatureManager.downloadLatest(SignatureType.BINARY)).thenReturn(sigFileInfo);
-        when(signatureManager.downloadLatest(SignatureType.CONTAINER)).thenReturn(sigFileInfo);
+        when(signatureManager.downloadLatest(SignatureType.BINARY, 69)).thenReturn(sigFileInfo);
+        when(signatureManager.downloadLatest(SignatureType.CONTAINER, 69)).thenReturn(sigFileInfo);
         command.execute();
         
         verify(printWriter, times(2)).println("Signature update version 69 has been downloaded");
@@ -100,8 +100,8 @@ public class DownloadSignatureUpdateCommandTest {
         
         SignatureManagerException updateException = new SignatureManagerException(
                 new RuntimeException("Failed", cause));
-        when(signatureManager.downloadLatest(SignatureType.BINARY)).thenThrow(updateException);
-        when(signatureManager.downloadLatest(SignatureType.CONTAINER)).thenThrow(updateException);
+        when(signatureManager.downloadLatest(SignatureType.BINARY, 69)).thenThrow(updateException);
+        when(signatureManager.downloadLatest(SignatureType.CONTAINER, 69)).thenThrow(updateException);
         try {
             command.execute();
             fail("Expected CommandExecutionException");

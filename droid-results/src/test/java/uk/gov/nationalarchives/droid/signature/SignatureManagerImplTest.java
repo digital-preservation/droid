@@ -190,8 +190,8 @@ public class SignatureManagerImplTest {
     @Test
     public void testDownloadLatest() throws Exception {
         
-        signatureManager.downloadLatest(SignatureType.BINARY);
-        verify(signatureService).importSignatureFile(config.getSignatureFileDir());
+        signatureManager.downloadLatest(SignatureType.BINARY, 0);
+        verify(signatureService).importSignatureFile(config.getSignatureFileDir(), 0);
     }
     
     @Test
