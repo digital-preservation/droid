@@ -60,7 +60,7 @@ public class DownloadSignatureUpdateCommand implements DroidCommand {
                 printWriter.println(I18N.getResource(I18N.CHECK_SIGNATURE_UPDATE_UNAVAILABLE));
             } else {
                 for (SignatureFileInfo sigFileInfo : signatureFileInfos.values()) {
-                    signatureManager.downloadLatest(sigFileInfo.getType());
+                    signatureManager.downloadLatest(sigFileInfo.getType(), sigFileInfo.getVersion());
                     printWriter.println(I18N.getResource(I18N.DOWNLOAD_SIGNATURE_UPDATE_SUCCESS, 
                             sigFileInfo.getVersion()));
                 }
