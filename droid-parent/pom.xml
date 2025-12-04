@@ -108,9 +108,9 @@
         <slf4j.version>2.0.17</slf4j.version>
         <log4j2.version>2.25.2</log4j2.version>
         <checkstyle.version>10.21.2</checkstyle.version>
-        <aws.version>2.35.0</aws.version>
-        <junit.version>6.0.0</junit.version>
-        <commons.version>2.20.0</commons.version>
+        <aws.version>2.39.2</aws.version>
+        <junit.version>6.0.1</junit.version>
+        <commons.version>2.21.0</commons.version>
     </properties>
 
     <build>
@@ -166,7 +166,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.13</version>
+                    <version>0.8.14</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -198,7 +198,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
@@ -802,7 +802,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>com.github.junrar</groupId>
                 <artifactId>junrar</artifactId>
-                <version>7.5.5</version>
+                <version>7.5.7</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
