@@ -93,7 +93,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <project.email>pronom@nationalarchives.gov.uk</project.email>
-        <spring.version>7.0.1</spring.version>
+        <spring.version>7.0.2</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.17.1.0</derby.version>
         <cxf.version>4.1.4</cxf.version>
@@ -108,7 +108,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <log4j2.version>2.25.3</log4j2.version>
         <checkstyle.version>10.21.2</checkstyle.version>
-        <aws.version>2.40.1</aws.version>
+        <aws.version>2.41.2</aws.version>
         <junit.version>6.0.1</junit.version>
         <commons.version>2.21.0</commons.version>
     </properties>
@@ -131,7 +131,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.cxf</groupId>
@@ -186,7 +186,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.0</version>
                 </plugin>
 
                 <plugin>
@@ -198,7 +198,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
@@ -220,7 +220,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.7.1</version>
+                    <version>3.8.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -682,7 +682,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                <groupId>org.apache.commons</groupId>
                <artifactId>commons-lang3</artifactId>
-               <version>3.19.0</version>
+               <version>3.20.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -777,7 +777,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>5.20.0</version>
+                <version>5.21.0</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
