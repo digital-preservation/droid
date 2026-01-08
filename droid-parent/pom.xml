@@ -109,7 +109,7 @@
         <log4j2.version>2.25.3</log4j2.version>
         <checkstyle.version>10.21.2</checkstyle.version>
         <aws.version>2.41.2</aws.version>
-        <junit.version>6.0.1</junit.version>
+        <junit.version>6.0.2</junit.version>
         <commons.version>2.21.0</commons.version>
     </properties>
 
