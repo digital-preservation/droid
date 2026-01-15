@@ -93,7 +93,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <project.email>pronom@nationalarchives.gov.uk</project.email>
-        <spring.version>7.0.2</spring.version>
+        <spring.version>7.0.3</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.17.1.0</derby.version>
         <cxf.version>4.1.4</cxf.version>
