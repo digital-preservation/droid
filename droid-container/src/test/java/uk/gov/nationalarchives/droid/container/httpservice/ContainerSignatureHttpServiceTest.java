@@ -204,7 +204,7 @@ public class ContainerSignatureHttpServiceTest {
                       },
                       "latest_container_signature": {
                         "name": "07 October 2025",
-                        "location": "/container-signatures/container-signature-20251007.xml",
+                        "location": "/container-signatures/container-signature-20260119.xml",
                         "version": "20251007"
                       }
                     }
@@ -212,7 +212,7 @@ public class ContainerSignatureHttpServiceTest {
             wireMockRule.stubFor(get(urlEqualTo("/signatures.json"))
                     .willReturn(aResponse().withStatus(200).withBody(responseJson)));
             wireMockRule.stubFor(get(urlEqualTo("/container-signatures/container-signature-20110114.xml"))
-                    .willReturn(aResponse().withStatus(200).withBody(IOUtils.resourceToString("/container-signature-20250925.xml", StandardCharsets.UTF_8))));
+                    .willReturn(aResponse().withStatus(200).withBody(IOUtils.resourceToString("/container-signature-20260119.xml", StandardCharsets.UTF_8))));
         } catch (IOException ignored) {}
     }
 
@@ -226,7 +226,7 @@ public class ContainerSignatureHttpServiceTest {
                     .willReturn(aResponse()
                             .withHeader("Content-Type", "text/xml")
                             .withHeader("Last-Modified", "Tue, 22 Aug 2023 12:47:41 GMT")
-                            .withBody(IOUtils.resourceToString("/container-signature-20250925.xml", StandardCharsets.UTF_8))
+                            .withBody(IOUtils.resourceToString("/container-signature-20260119.xml", StandardCharsets.UTF_8))
                     ));
         } catch (IOException ignored) {}
     }
