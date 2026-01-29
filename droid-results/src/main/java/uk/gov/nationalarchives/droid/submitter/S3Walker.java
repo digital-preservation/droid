@@ -142,7 +142,9 @@ public class S3Walker {
         }
         return new S3Result(dirToFileMap, totalCount);
     }
+
     private record S3ObjectInfo(String key, Date lastModified, long size) {}
+
     private record S3Result(Map<String, List<S3ObjectInfo>> dirToObjectInfo, int totalCount) {
     }
 

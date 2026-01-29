@@ -40,27 +40,27 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.Assert.*;
 
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.util.FileUtil;
+import uk.gov.nationalarchives.pronom.PronomService;
 
 /**
  * @author rflitcroft
@@ -70,16 +70,19 @@ import uk.gov.nationalarchives.droid.util.FileUtil;
 @ContextConfiguration(locations = "classpath*:META-INF/spring-signature.xml")
 public class PronomSignatureServiceTest {
 
-    private static final int PROXY_PORT = 8080;
-    private static final String PROXY_HOST = "wb-cacheclst1.web.local";
-    
+    private static final String PROXY_HOST = "localhost";
+    private static final int CURRENT_VERSION = 104;
+
     @Autowired
-    private PronomSignatureService importer;
-    
+    private ApplicationContext context;
+
     private Path sigFileDir;
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
+
+    @Rule
+    public WireMockRule proxyWireMockRule = new WireMockRule(wireMockConfig().port(34567)); //Doesn't work with a dynamic port. I don't know why.
 
     private String formatEndpointUrl() {
         return String.format("http://localhost:%d/pronom/service.asmx", wireMockRule.port());
@@ -87,7 +90,114 @@ public class PronomSignatureServiceTest {
 
     @Before
     public void setup() throws Exception {
-        stubFor(any(urlEqualTo("/pronom/service.asmx"))
+        proxyWireMockRule.stubFor(any(urlMatching(".*"))
+                .willReturn(aResponse()
+                        .proxiedFrom("http://localhost:" + wireMockRule.port())));
+        sigFileDir = Paths.get("target/tmp_sig_files");
+        FileUtil.deleteQuietly(sigFileDir);
+        FileUtil.mkdirsQuietly(sigFileDir);
+        Files.deleteIfExists(Paths.get("target/tmp_sig_files/DROID_SignatureFile_V26.xml"));
+        wireMockRule.resetAll();
+    }
+
+    @Test
+    public void testGetSigFileFromRemoteWebServiceSavesFileLocallyViaProxy() throws IOException, SignatureServiceException {
+        stubOriginalEndpoint();
+        getSigFileByProxy();
+    }
+
+    @Test
+    public void testGetSigFileFromRemoteWebServiceSavesFileLocallyViaProxyNewEndpoint() throws IOException, SignatureServiceException {
+        stubNewEndpoint();
+        getSigFileByProxy();
+    }
+
+    @Test
+    public void testGetLatestSigFileVersion() throws IOException {
+        stubOriginalEndpoint();
+        getLatestSigFileVersion();
+    }
+
+    @Test
+    public void testGetLatestSigFileVersionNewEndpoint() throws IOException {
+        stubNewEndpoint();
+        getLatestSigFileVersion();
+    }
+
+    @Test
+    public void testGetLatestSigFileVersionViaProxy() throws IOException {
+        stubOriginalEndpoint();
+        getSigFileVersionViaProxy();
+    }
+
+    @Test
+    public void testGetSigFileFromRemoteWebServiceSavesFileLocally() throws SignatureServiceException, IOException {
+        stubOriginalEndpoint();
+        getSigFileWithoutProxy();
+    }
+
+    @Test
+    public void testGetSigFileFromRemoteWebServiceSavesFileLocallyNewEndpoint() throws SignatureServiceException, IOException {
+        stubNewEndpoint();
+        getSigFileWithoutProxy();
+    }
+
+    private void getSigFileVersionViaProxy() {
+        ProxySettings proxySettings = new ProxySettings();
+
+        proxySettings.setProxyHost(PROXY_HOST);
+        proxySettings.setProxyPort(proxyWireMockRule.port());
+        proxySettings.setEnabled(true);
+
+        PronomSignatureService importer = createSignatureService(proxySettings);
+        SignatureFileInfo info = importer.getLatestVersion(1);
+
+        assertEquals(CURRENT_VERSION, info.getVersion());
+        assertEquals(104, info.getVersion());
+        assertFalse(info.isDeprecated());
+        assertEquals(SignatureType.BINARY, info.getType());
+    }
+
+
+    private void getLatestSigFileVersion() {
+        PronomSignatureService importer = createSignatureService(new ProxySettings());
+        SignatureFileInfo info = importer.getLatestVersion(1);
+
+        assertEquals(CURRENT_VERSION, info.getVersion());
+        assertEquals(104, info.getVersion());
+        assertFalse(info.isDeprecated());
+        assertEquals(SignatureType.BINARY, info.getType());
+    }
+
+    private void getSigFileWithoutProxy() throws IOException, SignatureServiceException {
+        List<Path> sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter<Path>)null);
+        assertEquals(0, sigFiles.size());
+
+        PronomSignatureService importer = createSignatureService(new ProxySettings());
+        SignatureFileInfo info = importer.importSignatureFile(sigFileDir, 104);
+        sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter<Path>)null);
+        assertEquals(1, sigFiles.size());
+
+        assertEquals(104, info.getVersion());
+        assertFalse(info.isDeprecated());
+        assertEquals(SignatureType.BINARY, info.getType());
+    }
+
+    public void stubNewEndpoint() throws IOException {
+        String responseJson = "{\"latest_signature\":{\"name\":\"DROID Signature File V104\",\"location\":\"/signatures/DROID_SignatureFile_V104.xml\",\"version\":\"104\"}," +
+                "\"latest_container_signature\":{\"name\":\"07 October 2025\",\"location\":\"/container-signatures/container-signature-20251007.xml\",\"version\":\"20251007\"}}\n";
+        wireMockRule.stubFor(get(urlEqualTo("/signatures.json"))
+                .willReturn(aResponse().withStatus(200).withBody(responseJson)));
+        wireMockRule.stubFor(get(urlEqualTo("/signatures/DROID_SignatureFile_V104.xml"))
+                .willReturn(aResponse().withStatus(200).withBody(IOUtils.resourceToString("/uk/gov/nationalarchives/droid/signature/getSignatureFileResponse.xml", StandardCharsets.UTF_8))));
+    }
+
+    public void stubOriginalEndpoint() throws IOException {
+        wireMockRule.stubFor(get(urlEqualTo("/signatures.json"))
+                .willReturn(aResponse().withStatus(404)));
+        wireMockRule.stubFor(get(urlEqualTo("/signatures/DROID_SignatureFile_V104.xml"))
+                .willReturn(aResponse().withStatus(404)));
+        wireMockRule.stubFor(any(urlEqualTo("/pronom/service.asmx"))
                 .withRequestBody(matchingXPath("//getSignatureFileVersionV1"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "text/xml")
@@ -95,100 +205,40 @@ public class PronomSignatureServiceTest {
 
 
 
-        stubFor(any(urlEqualTo("/pronom/service.asmx"))
+        wireMockRule.stubFor(any(urlEqualTo("/pronom/service.asmx"))
                 .withRequestBody(matchingXPath("//getSignatureFileV1"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "text/xml")
                         .withBody(IOUtils.resourceToString("/uk/gov/nationalarchives/droid/signature/getSignatureFileResponse.xml", StandardCharsets.UTF_8))
                 ));
-
-        sigFileDir = Paths.get("target/tmp_sig_files");
-        FileUtil.deleteQuietly(sigFileDir);
-        FileUtil.mkdirsQuietly(sigFileDir);
-        Files.deleteIfExists(Paths.get("target/tmp_sig_files/DROID_SignatureFile_V26.xml"));
-        importer.setEndpointUrl(formatEndpointUrl());
-        ProxySettings proxySettings = new ProxySettings();
-        proxySettings.setEnabled(false);
-        importer.onProxyChange(proxySettings);
     }
-    
-    //TODO this only works inside of TNA! We need to mock out the proxy call!
-    @Ignore
-    @Test
-    public void testGetSigFileFromRemoteWebServiceSavesFileLocallyViaProxy() throws SignatureServiceException, IOException {
-        
+
+    private PronomSignatureService createSignatureService(ProxySettings proxySettings) {
+        PronomService pronomService = context.getBean(PronomService.class);
+        PronomSignatureService pronomSignatureService = new PronomSignatureService(pronomService, "DROID_SignatureFile_V%s.xml");
+        pronomSignatureService.setEndpointUrl(formatEndpointUrl());
+        pronomSignatureService.onProxyChange(proxySettings);
+        return pronomSignatureService;
+    }
+
+    private void getSigFileByProxy() throws IOException, SignatureServiceException {
         ProxySettings proxySettings = new ProxySettings();
-        
+
         proxySettings.setProxyHost(PROXY_HOST);
-        proxySettings.setProxyPort(PROXY_PORT);
+        proxySettings.setProxyPort(proxyWireMockRule.port());
         proxySettings.setEnabled(true);
-        
-        importer.onProxyChange(proxySettings);
-        
-        List<Path> sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter)null);
+
+        PronomSignatureService importer = createSignatureService(proxySettings);
+
+        List<Path> sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter<Path>)null);
         assertEquals(0, sigFiles.size());
-        
-        SignatureFileInfo info = importer.importSignatureFile(sigFileDir);
-        
-        sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter)null);
+
+        SignatureFileInfo info = importer.importSignatureFile(sigFileDir, 104);
+        sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter<Path>)null);
         assertEquals(1, sigFiles.size());
-        
-//        File file = new File("tmp_sig_files/DROID_SignatureFile_V" + CURRENT_VER + ".xml");
-//        assertTrue(file.exists());
-//        assertEquals(CURRENT_VER, info.getVersion());
-        
-        assertTrue(info.getVersion() > 0);
-        assertEquals(false, info.isDeprecated());
-        assertEquals(SignatureType.BINARY, info.getType());
-    }
 
-    @Test
-    public void testGetLatestSigFileVersion() {
-        
-        SignatureFileInfo info = importer.getLatestVersion(1);
-       
-//        assertEquals(CURRENT_VER, info.getVersion());
-        assertTrue(info.getVersion() > 0);
-        assertEquals(false, info.isDeprecated());
-        assertEquals(SignatureType.BINARY, info.getType());
-    }
-    
-    //TODO this only works inside of TNA! We need to mock out the proxy call!
-    @Ignore
-    @Test
-    public void testGetLatestSigFileVersionViaProxy() {
-        
-        ProxySettings proxySettings = new ProxySettings();
-        
-        proxySettings.setProxyHost(PROXY_HOST);
-        proxySettings.setProxyPort(PROXY_PORT);
-        proxySettings.setEnabled(true);
-        
-        importer.onProxyChange(proxySettings);
-        SignatureFileInfo info = importer.getLatestVersion(1);
-        
-//        assertEquals(CURRENT_VER, info.getVersion());
-        assertTrue(info.getVersion() > 0);
-        assertEquals(false, info.isDeprecated());
-        assertEquals(SignatureType.BINARY, info.getType());
-    }
-
-    @Test
-    public void testGetSigFileFromRemoteWebServiceSavesFileLocally() throws SignatureServiceException, IOException {
-
-        List<Path> sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter)null);
-        assertEquals(0, sigFiles.size());
-        
-        SignatureFileInfo info = importer.importSignatureFile(sigFileDir);
-        sigFiles = FileUtil.listFiles(sigFileDir, false, (DirectoryStream.Filter)null);
-        assertEquals(1, sigFiles.size());
-        
-//        File file = new File("tmp_sig_files/DROID_SignatureFile_V" + CURRENT_VER + ".xml");
-//        assertTrue(file.exists());
-//        assertEquals(CURRENT_VER, info.getVersion());
-        
-        assertTrue(info.getVersion() > 0);
-        assertEquals(false, info.isDeprecated());
+        assertEquals(104, info.getVersion());
+        assertFalse(info.isDeprecated());
         assertEquals(SignatureType.BINARY, info.getType());
     }
 }

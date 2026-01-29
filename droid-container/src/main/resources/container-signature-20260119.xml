@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="39">
+<ContainerSignatureMapping schemaVersion="1.0" signatureVersion="40">
   <ContainerSignatures>
     <ContainerSignature Id="1000" ContainerType="OLE2">
       <Description>Microsoft Word 6.0/95 OLE2</Description>
@@ -7368,6 +7368,21 @@
                 </File>              
             </Files>
         </ContainerSignature>
+		<ContainerSignature Id="101170" ContainerType="ZIP">
+  <Description>FWBackup</Description>
+  <Files>
+    <File>
+      <Path>BackupSettings/BackupSettings.xml</Path>
+    </File>
+    <File>
+      <Path>ConfigurationSettings/Settings.xml</Path>
+    </File>
+    <File>
+      <Path>WritingSystemStore/idchangelog.xml</Path>
+    </File>
+  </Files>
+</ContainerSignature>
+
   </ContainerSignatures>
 
   <FileFormatMappings>
@@ -8076,6 +8091,9 @@
 	<FileFormatMapping signatureId="101150" Puid="fmt/2063"/>
 	<!--   DaVinci Resolve Project File -->
 	<FileFormatMapping signatureId="101160" Puid="fmt/2064"/>
+	<!--    FWBackup  -->
+<FileFormatMapping signatureId="101170" Puid="fmt/2086"/>
+
 
 
 
