@@ -33,6 +33,10 @@ package uk.gov.nationalarchives.droid.signature;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -48,6 +52,7 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
+import org.apache.http.HttpStatus;
 import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
@@ -60,6 +65,7 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureUpdateService;
+import uk.gov.nationalarchives.droid.core.interfaces.http.HttpUtil;
 import uk.gov.nationalarchives.pronom.PronomService;
 import uk.gov.nationalarchives.pronom.Version;
 
@@ -69,8 +75,15 @@ import uk.gov.nationalarchives.pronom.Version;
  */
 public class PronomSignatureService implements SignatureUpdateService {
 
+    private static final String ERROR_MESSAGE_PATTERN = "The web server could not serve the signature file "
+            + "from the address\n[%s]\nThe server gave the response [%s]";
+    private static final String FILE_NOT_FOUND_404 = "The signature file was not found on the signature web"
+            + "server at\n[%s]";
+
     private PronomService pronomService;
     private String filenamePattern;
+    private HttpClient httpClient;
+    private String url;
 
     /**
      * Empty bean constructor.
@@ -89,27 +102,33 @@ public class PronomSignatureService implements SignatureUpdateService {
     }
 
     @Override
-    public SignatureFileInfo importSignatureFile(final Path targetDir) throws SignatureServiceException {
-        final Element sigFile = pronomService.getSignatureFileV1().getElement();
-
-        // get the version number, which needs to be part of the filename...
-        final int version = Integer.valueOf(sigFile.getAttribute("Version"));
-        final boolean deprecated = Boolean
-                .valueOf(sigFile.getAttribute("Deprecated"));
-
-        final SignatureFileInfo sigInfo = new SignatureFileInfo(version, deprecated, SignatureType.BINARY);
+    public SignatureFileInfo importSignatureFile(final Path targetDir, int version) throws SignatureServiceException {
         final String fileName = String.format(filenamePattern, version);
-
         final Path outputFile = targetDir.resolve(fileName);
-        try (final Writer writer = Files.newBufferedWriter(outputFile, UTF_8)) {
-            final XMLSerializer serializer = new XMLSerializer(writer,
-                    new OutputFormat(Method.XML, "UTF-8", true));
-            serializer.serialize(sigFile);
-            sigInfo.setFile(outputFile);
-        } catch (final IOException e) {
-            throw new SignatureServiceException(e);
-        }
+        SignatureFileInfo sigInfo;
 
+        try {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(HttpUtil.getBaseUrl(this.url) + "/signatures/" + fileName)).GET().build();
+            HttpResponse<Path> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofFile(outputFile));
+            checkStatusCode(response.statusCode());
+            sigInfo = new SignatureFileInfo(version, false, SignatureType.BINARY, response.body());
+        } catch (IOException | InterruptedException | SignatureServiceException e) {
+            final Element sigFile = pronomService.getSignatureFileV1().getElement();
+
+            final boolean deprecated = Boolean
+                    .parseBoolean(sigFile.getAttribute("Deprecated"));
+
+            sigInfo = new SignatureFileInfo(version, deprecated, SignatureType.BINARY);
+
+            try (final Writer writer = Files.newBufferedWriter(outputFile, UTF_8)) {
+                final XMLSerializer serializer = new XMLSerializer(writer,
+                        new OutputFormat(Method.XML, "UTF-8", true));
+                serializer.serialize(sigFile);
+                sigInfo.setFile(outputFile);
+            } catch (final IOException ioe) {
+                throw new SignatureServiceException(ioe);
+            }
+        }
         return sigInfo;
     }
 
@@ -137,23 +156,38 @@ public class PronomSignatureService implements SignatureUpdateService {
      */
     @Override
     public SignatureFileInfo getLatestVersion(int currentVersion) {
-        Holder<Version> version = new Holder<Version>();
-        Holder<Boolean> deprecated = new Holder<Boolean>();
+        Holder<Version> version = new Holder<>();
+        Holder<Boolean> deprecated = new Holder<>();
+        SignatureFileInfo info;
 
-        pronomService.getSignatureFileVersionV1(version, deprecated);
-        
-
-        SignatureFileInfo info = new SignatureFileInfo(version.value
-                .getVersion(), deprecated.value.booleanValue(), SignatureType.BINARY);
+        try {
+            HttpUtil.Signatures signaturesJson = new HttpUtil(this.httpClient).getSignaturesJson(this.url);
+            info = new SignatureFileInfo(signaturesJson.latestSignature().version(), false, SignatureType.BINARY);
+        } catch (IOException | InterruptedException e) {
+            pronomService.getSignatureFileVersionV1(version, deprecated);
+            info = new SignatureFileInfo(version.value
+                    .getVersion(), deprecated.value, SignatureType.BINARY);
+        }
         return info;
-
     }
+
+    private void checkStatusCode(int statusCode) throws SignatureServiceException {
+        if (statusCode == HttpStatus.SC_NOT_FOUND) {
+            throw new SignatureServiceException(
+                    String.format(FILE_NOT_FOUND_404, this.url));
+        } else if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_NOT_MODIFIED) {
+            throw new SignatureServiceException(
+                    String.format(ERROR_MESSAGE_PATTERN, this.url, statusCode));
+        }
+    }
+
 
     /**
      * Sets the endpoint URL.
      * @param url the url to set
      */
     void setEndpointUrl(String url) {
+        this.url = url;
         ((BindingProvider) pronomService).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                 url); 
@@ -169,6 +203,7 @@ public class PronomSignatureService implements SignatureUpdateService {
 
     @Override
     public void onProxyChange(ProxySettings proxySettings) {
+        this.httpClient = HttpUtil.createHttpClient(proxySettings);
         HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
         httpClientPolicy.setConnection(ConnectionType.CLOSE);
         httpClientPolicy.setAllowChunking(true);

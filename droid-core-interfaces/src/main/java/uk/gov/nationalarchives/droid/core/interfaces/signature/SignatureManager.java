@@ -58,11 +58,12 @@ public interface SignatureManager {
     
     /**
      * Downloads the latest file to local disk.
-     * @param type the type of signature file to download
+     * @param signatureType the type of signature file to download
+     * @param version the version of the signature file to download
      * @return the signature file info of the downloaded file
      * @throws SignatureManagerException if the signature file could not be downloaded
      */
-    SignatureFileInfo downloadLatest(SignatureType type) throws SignatureManagerException;
+    SignatureFileInfo downloadLatest(SignatureType signatureType, int version) throws SignatureManagerException;
 
     /**
      * @return the default signature info

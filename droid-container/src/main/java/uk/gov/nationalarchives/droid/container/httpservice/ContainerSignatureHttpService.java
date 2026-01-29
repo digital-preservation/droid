@@ -45,6 +45,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty;
+import uk.gov.nationalarchives.droid.core.interfaces.http.HttpUtil;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.ProxySettings;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureFileInfo;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureServiceException;
@@ -52,9 +53,11 @@ import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureType;
 import uk.gov.nationalarchives.droid.core.interfaces.signature.SignatureUpdateService;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.nio.file.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -76,6 +79,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
 
     private String endpointUrl;
     private CloseableHttpClient client = HttpClientBuilder.create().build();
+    private HttpClient httpClient;
 
     /**
      * Empty bean constructor.
@@ -93,30 +97,29 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
 
     @Override
     public SignatureFileInfo getLatestVersion(int currentVersion) throws SignatureServiceException {
-        HttpGet get = new HttpGet(endpointUrl);
         try {
-            Date versionDate = getDateFromVersion(currentVersion);
-            String dateString = DateUtils.formatDate(versionDate);
-            get.addHeader("If-Modified-Since", dateString);
+            HttpUtil.Signatures signaturesJson = new HttpUtil(this.httpClient).getSignaturesJson(endpointUrl);
+            return new SignatureFileInfo(signaturesJson.latestContainerSignature().version(), false, SignatureType.CONTAINER);
+        } catch (IOException | InterruptedException e) {
+            HttpGet get = new HttpGet(endpointUrl);
+            try {
+                Date versionDate = getDateFromVersion(currentVersion);
+                String dateString = DateUtils.formatDate(versionDate);
+                get.addHeader("If-Modified-Since", dateString);
 
-            HttpResponse response = client.execute(get);
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_NOT_FOUND) {
+                HttpResponse response = client.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                checkStatusCode(statusCode);
+                int version = getVersion(response);
+                return new SignatureFileInfo(version, false, SignatureType.CONTAINER);
+            } catch (UnknownHostException uhe) {
                 throw new SignatureServiceException(
-                        String.format(FILE_NOT_FOUND_404, endpointUrl));
-            } else if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_NOT_MODIFIED) {
-                throw new SignatureServiceException(
-                        String.format(ERROR_MESSAGE_PATTERN, endpointUrl, statusCode));
+                        String.format(COULD_NOT_FIND_SERVER, endpointUrl));
+            } catch (IOException | ParseException | DateParseException dpe) {
+                throw new SignatureServiceException(e);
+            } finally {
+                get.releaseConnection();
             }
-            int version = getVersion(response);
-            return new SignatureFileInfo(version, false, SignatureType.CONTAINER);
-        } catch (UnknownHostException e) {
-            throw new SignatureServiceException(
-                    String.format(COULD_NOT_FIND_SERVER, endpointUrl));
-        } catch (IOException | ParseException | DateParseException e) {
-            throw new SignatureServiceException(e);
-        } finally {
-            get.releaseConnection();
         }
     }
     
@@ -142,41 +145,53 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
     }
 
     @Override
-    public SignatureFileInfo importSignatureFile(final Path targetDir) throws SignatureServiceException {
-        final HttpGet get = new HttpGet(endpointUrl);
-        
+    public SignatureFileInfo importSignatureFile(final Path targetDir, int version) throws SignatureServiceException {
+        final String fileName = String.format(FILENAME_PATTERN, version);
+        String baseUrl = HttpUtil.getBaseUrl(this.endpointUrl);
+        HttpRequest request = HttpRequest
+                .newBuilder(URI.create(baseUrl + "/container-signatures/" + fileName)).GET().build();
         try {
-            final HttpResponse response = client.execute(get);
-            final int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_NOT_FOUND) {
-                throw new SignatureServiceException(
-                        String.format(FILE_NOT_FOUND_404, endpointUrl));
-            } else if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_NOT_MODIFIED) {
-                throw new SignatureServiceException(
-                        String.format(ERROR_MESSAGE_PATTERN, endpointUrl, statusCode));
-            }
-            
-            final int version = getVersion(response);
-            
-            final SignatureFileInfo signatureFileInfo = new SignatureFileInfo(version, false, SignatureType.CONTAINER);
-            final String fileName = String.format(FILENAME_PATTERN, version);
+            Path downloadPath = Paths.get(targetDir.toString(), fileName);
+            java.net.http.HttpResponse<Path> response = this.httpClient.send(request, java.net.http.HttpResponse.BodyHandlers.ofFile(downloadPath));
+            checkStatusCode(response.statusCode());
+            return new SignatureFileInfo(version, false, SignatureType.CONTAINER, response.body());
 
-            final Path targetFile = targetDir.resolve(fileName);
-            Files.copy(response.getEntity().getContent(), targetFile);
-            
-            signatureFileInfo.setFile(targetFile);
-            return signatureFileInfo;
-            
-        } catch (final UnknownHostException e) {
-            throw new SignatureServiceException(
-                    String.format(COULD_NOT_FIND_SERVER, endpointUrl));
-        } catch (final IOException | DateParseException e) {
-            throw new SignatureServiceException(e);
-        } finally {
-            get.releaseConnection();
+        } catch (IOException | InterruptedException | SignatureServiceException e) {
+            final HttpGet get = new HttpGet(endpointUrl);
+
+            try {
+                final HttpResponse response = client.execute(get);
+                final int statusCode = response.getStatusLine().getStatusCode();
+                checkStatusCode(statusCode);
+                final SignatureFileInfo signatureFileInfo = new SignatureFileInfo(version, false, SignatureType.CONTAINER);
+
+                final Path targetFile = targetDir.resolve(fileName);
+                Files.copy(response.getEntity().getContent(), targetFile, StandardCopyOption.REPLACE_EXISTING);
+
+                signatureFileInfo.setFile(targetFile);
+                return signatureFileInfo;
+
+            } catch (final UnknownHostException uhe) {
+                throw new SignatureServiceException(
+                        String.format(COULD_NOT_FIND_SERVER, endpointUrl));
+            } catch (final IOException | DateParseException dpe) {
+                throw new SignatureServiceException(e);
+            } finally {
+                get.releaseConnection();
+            }
         }
     }
-    
+
+    private void checkStatusCode(int statusCode) throws SignatureServiceException {
+        if (statusCode == HttpStatus.SC_NOT_FOUND) {
+            throw new SignatureServiceException(
+                    String.format(FILE_NOT_FOUND_404, endpointUrl));
+        } else if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_NOT_MODIFIED) {
+            throw new SignatureServiceException(
+                    String.format(ERROR_MESSAGE_PATTERN, endpointUrl, statusCode));
+        }
+    }
+
     /**
      * Sets the endpoint URL.
      * @param url the URL to set
@@ -195,7 +210,7 @@ public class ContainerSignatureHttpService implements SignatureUpdateService {
 
     @Override
     public void onProxyChange(ProxySettings proxySettings) {
-        
+        this.httpClient = HttpUtil.createHttpClient(proxySettings);
         if (proxySettings.isEnabled()) {
             HttpRoutePlanner proxyRoutePlanner = new DefaultProxyRoutePlanner(
                     new HttpHost(proxySettings.getProxyHost(), proxySettings.getProxyPort()));
