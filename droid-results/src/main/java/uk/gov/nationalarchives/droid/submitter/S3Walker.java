@@ -97,7 +97,11 @@ public class S3Walker {
         RequestIdentifier identifier = new RequestIdentifier(dir.toUri());
         identifier.setParentResourceId(parentId);
         result.setRequestMetaData(metaData);
-        result.setIdentifier(identifier);
+        result.setIdentifier(identifier);<<<<<<< HEAD
+
+    private record S3ObjectInfo(String key, Date lastModified, long size) {}
+
+=======
         return resultHandler.handleDirectory(result, parentId, false);
     }
 
