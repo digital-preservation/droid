@@ -93,10 +93,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <project.email>pronom@nationalarchives.gov.uk</project.email>
-        <spring.version>7.0.1</spring.version>
+        <spring.version>7.0.3</spring.version>
         <hibernate.version>5.4.1.Final</hibernate.version>
         <derby.version>10.17.1.0</derby.version>
-        <cxf.version>4.1.3</cxf.version>
+        <cxf.version>4.1.4</cxf.version>
         <java.iso-tools.version>2.1.0</java.iso-tools.version>
         <jaxb.version>4.0.5</jaxb.version>
         <jakarta.version>4.0.4</jakarta.version>
@@ -106,11 +106,11 @@
         <jwat.version>1.1.3</jwat.version>
         <hamcrest.version>3.0</hamcrest.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <log4j2.version>2.25.2</log4j2.version>
+        <log4j2.version>2.25.3</log4j2.version>
         <checkstyle.version>10.21.2</checkstyle.version>
-        <aws.version>2.35.0</aws.version>
-        <junit.version>6.0.1</junit.version>
-        <commons.version>2.20.0</commons.version>
+        <aws.version>2.41.14</aws.version>
+        <junit.version>6.0.2</junit.version>
+        <commons.version>2.21.0</commons.version>
     </properties>
 
     <build>
@@ -131,7 +131,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.cxf</groupId>
@@ -166,7 +166,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.13</version>
+                    <version>0.8.14</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -181,12 +181,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.4.2</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.0</version>
                 </plugin>
 
                 <plugin>
@@ -198,7 +198,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.3.1</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
@@ -220,7 +220,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.7.1</version>
+                    <version>3.8.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -682,7 +682,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                <groupId>org.apache.commons</groupId>
                <artifactId>commons-lang3</artifactId>
-               <version>3.19.0</version>
+               <version>3.20.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -697,7 +697,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-configuration2</artifactId>
-                <version>2.12.0</version>
+                <version>2.13.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -707,7 +707,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.tukaani</groupId>
                 <artifactId>xz</artifactId>
-                <version>1.10</version>
+                <version>1.11</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -777,7 +777,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>5.20.0</version>
+                <version>5.21.0</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
@@ -802,7 +802,7 @@ Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organ
             <dependency>
                 <groupId>com.github.junrar</groupId>
                 <artifactId>junrar</artifactId>
-                <version>7.5.5</version>
+                <version>7.5.7</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
