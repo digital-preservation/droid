@@ -4,7 +4,7 @@
 
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>droid-parent</artifactId>
-    <version>6.9.11-SNAPSHOT</version>
+    <version>6.9.12-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>droid-parent</name>
@@ -188,6 +188,13 @@
                     <artifactId>maven-source-plugin</artifactId>
                     <version>3.4.0</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.12.0</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
@@ -439,6 +446,67 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>21</source>
+                </configuration>
+            </plugin>
+<!-- N.B. sourceFileExcludes won't work till version 2.11 is released
+            <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-javadoc-plugin</artifactId>
+    <configuration>
+        <links>
+            <link>${project.url}</link>
+            <link>${project.organization.url}</link>
+        </links>
+
+            <sourceFileExcludes>
+                <exclude>**/package-info.java</exclude>
+            </sourceFileExcludes>
+            <packagesheader>DROID Packages</packagesheader>
+        <doctitle>DROID 6.1.5-SNAPSHOT</doctitle>
+        <windowtitle>DROID 6.1.5-SNAPSHOT</windowtitle>
+        <bottom>
+            <![CDATA[
+Copyright &copy; ${project.inceptionYear}-{currentYear} <a href="${project.organization.url}">${project.organization.name}</a>. All Rights Reserved
+]]>
+        </bottom>
+        <archive>
+            <manifest>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+                <Source-Revision>${buildNumber}</Source-Revision>
+                <Build-Timestamp>${timestamp}</Build-Timestamp>
+                <Source-Repository>${project.scm.connection}</Source-Repository>
+                <Description>${project.description}</Description>
+                <Website>${project.url}</Website>
+            </manifestEntries>
+        </archive>
+    </configuration>
+    <executions>
+        <execution>
+            <id>attach-javadocs</id>
+            <goals>
+                <goal>jar</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
