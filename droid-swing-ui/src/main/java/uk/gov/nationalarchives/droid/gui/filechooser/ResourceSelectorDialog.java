@@ -179,8 +179,7 @@ public class ResourceSelectorDialog extends JDialog {
     
     private DefaultTreeModel getTreeModel() {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(new File("File System"), true);
-        final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode, true);
-        return treeModel;
+        return new DefaultTreeModel(rootNode, true);
         
     }
     
@@ -280,7 +279,6 @@ public class ResourceSelectorDialog extends JDialog {
     private String toText(List<File> files) {
         StringBuilder sb = new StringBuilder();
         for (File f : files) {
-            //sb.append(QUOTE + f.getName() + QUOTE + ' ');
             sb.append(QUOTE + fsv.getSystemDisplayName(f) + QUOTE + ' ');
         }
         return sb.toString();
