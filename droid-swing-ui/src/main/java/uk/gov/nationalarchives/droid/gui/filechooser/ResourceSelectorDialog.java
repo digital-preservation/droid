@@ -112,7 +112,7 @@ public class ResourceSelectorDialog extends JDialog {
     private static final Class<?>[] TYPES = new Class [] {
         File.class, Long.class, Date.class, };   
     
-    private FileSystemView fsv = FileSystemView.getFileSystemView();
+    private final FileSystemView fsv = FileSystemView.getFileSystemView();
     
     private List<File> selectedFiles = new ArrayList<File>();
     
@@ -190,19 +190,17 @@ public class ResourceSelectorDialog extends JDialog {
         DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) treeModel.getRoot();
         File[] roots = fsv.getRoots();
-        //File[] roots = File.listRoots();
-        for (int i = 0; i < roots.length; i++) {
-            File rootFile = roots[i];
+        for (File rootFile : roots) {
             boolean rootAllowsChildren = rootFile.isDirectory();
             final DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(rootFile, rootAllowsChildren);
             if (rootAllowsChildren) {
                 rootNode.add(newChild);
             }
-            
+
             File[] children = rootFile.listFiles();
             if (children != null) {
                 List<File> sortedChildren = ResourceDialogUtil.sortFiles(children);
-                
+
                 for (File child : sortedChildren) {
                     if (shouldTraverse.test(child)) {
                         final File[] listFiles = child.listFiles();
