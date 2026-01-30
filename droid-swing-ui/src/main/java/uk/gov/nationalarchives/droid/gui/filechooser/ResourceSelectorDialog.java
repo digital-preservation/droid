@@ -47,6 +47,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -83,6 +84,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.openide.util.NbBundle;
 
 import uk.gov.nationalarchives.droid.util.FileUtil;
@@ -108,14 +110,24 @@ public class ResourceSelectorDialog extends JDialog {
         "Name", "Size", "Last modified", };
         
     private static final Class<?>[] TYPES = new Class [] {
-        File.class, Long.class, Date.class, };    
+        File.class, Long.class, Date.class, };   
     
-    private FileSystemView fsv = FileSystemView.getFileSystemView();
+    private final FileSystemView fsv = FileSystemView.getFileSystemView();
     
     private List<File> selectedFiles = new ArrayList<File>();
     
     private int response = JFileChooser.CANCEL_OPTION;
-    
+
+    private final Predicate<File> shouldTraverse = file -> {
+        if (!file.isDirectory()) {
+            return false;
+        }
+        if (!file.canRead()) {
+            return false;
+        }
+        return !SystemUtils.IS_OS_WINDOWS || fsv.isFileSystem(file);
+    };
+
     /** 
      * Creates new form ResourceSelector.
      * @param parent parent window
@@ -167,8 +179,7 @@ public class ResourceSelectorDialog extends JDialog {
     
     private DefaultTreeModel getTreeModel() {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(new File("File System"), true);
-        final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode, true);
-        return treeModel;
+        return new DefaultTreeModel(rootNode, true);
         
     }
     
@@ -178,22 +189,20 @@ public class ResourceSelectorDialog extends JDialog {
         DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) treeModel.getRoot();
         File[] roots = fsv.getRoots();
-        //File[] roots = File.listRoots();
-        for (int i = 0; i < roots.length; i++) {
-            File rootFile = roots[i];
+        for (File rootFile : roots) {
             boolean rootAllowsChildren = rootFile.isDirectory();
             final DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(rootFile, rootAllowsChildren);
             if (rootAllowsChildren) {
                 rootNode.add(newChild);
             }
-            
+
             File[] children = rootFile.listFiles();
             if (children != null) {
                 List<File> sortedChildren = ResourceDialogUtil.sortFiles(children);
-                
+
                 for (File child : sortedChildren) {
-                    final File[] listFiles = child.listFiles();
-                    if (child.isDirectory()) {
+                    if (shouldTraverse.test(child)) {
+                        final File[] listFiles = child.listFiles();
                         boolean allowsChildren = listFiles != null && listFiles.length > 0;
                         DefaultMutableTreeNode subFolder = new DefaultMutableTreeNode(child, allowsChildren);
                         newChild.add(subFolder);
@@ -210,7 +219,7 @@ public class ResourceSelectorDialog extends JDialog {
         tree.addTreeSelectionListener(new FileTreeSelectionListener());
         
     }
-    
+
     @SuppressWarnings("serial")
     private void initTable() {
         table.setDefaultRenderer(File.class, new DefaultTableCellRenderer() {
@@ -270,7 +279,6 @@ public class ResourceSelectorDialog extends JDialog {
     private String toText(List<File> files) {
         StringBuilder sb = new StringBuilder();
         for (File f : files) {
-            //sb.append(QUOTE + f.getName() + QUOTE + ' ');
             sb.append(QUOTE + fsv.getSystemDisplayName(f) + QUOTE + ' ');
         }
         return sb.toString();
