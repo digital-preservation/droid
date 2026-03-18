@@ -134,6 +134,12 @@ public class ResourceSelectorDialog extends JDialog {
      */
     public ResourceSelectorDialog(Window parent) {
         super(parent);
+    }
+
+    /**
+     * Initialises the ResourceSelector.
+     */
+    public void init() {
         initComponents();
         initTree();
         initTable();
