@@ -169,7 +169,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>RELEASE290</version>
+            <version>RELEASE300</version>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
