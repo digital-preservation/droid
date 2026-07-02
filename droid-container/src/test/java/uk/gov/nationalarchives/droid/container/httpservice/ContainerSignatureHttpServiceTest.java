@@ -199,7 +199,7 @@ public class ContainerSignatureHttpServiceTest {
                     {
                       "latest_signature": {
                         "name": "DROID Signature File V122",
-                        "location": "/signatures/DROID_SignatureFile_V122.xml",
+                        "location": "/signatures/DROID_SignatureFile_V124.xml",
                         "version": "122"
                       },
                       "latest_container_signature": {
