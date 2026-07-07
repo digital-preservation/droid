@@ -311,8 +311,13 @@ public class DroidMainFrame extends JFrame {
         exportFileChooser = new ExportFileChooser();
         filterFileChooser = new FilterFileChooser(globalContext.getGlobalConfig().getFilterDir().toFile());
         signatureInstallDialog = new SignatureInstallDialog(this);
+
         resourceFileChooser = new ResourceSelectorDialog(this);
-        resourceFileChooser.setModal(true);
+
+        EventQueue.invokeLater(() -> {
+            resourceFileChooser.init();
+            resourceFileChooser.setModal(true);
+        });
 
         AboutDialogData data = populateAboutDialogData();
         aboutDialog = new AboutDialog(this, true, data);

@@ -152,7 +152,7 @@ public class WarcArchiveHandler extends WebArchiveHandler implements ArchiveHand
                       InputStream in, ResourceId correlationId, long originatorNodeId) throws IOException {
         WarcHeader header = entry.header;
         long size = header.contentLength;
-        Date time = header.warcDate;
+        Date time = header.warcDate.getDateLocal();
 
         RequestMetaData metaData = new RequestMetaData(
                 size == -1 ? null : size,
