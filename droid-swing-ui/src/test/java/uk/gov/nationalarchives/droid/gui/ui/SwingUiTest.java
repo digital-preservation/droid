@@ -272,6 +272,7 @@ public class SwingUiTest extends AssertJSwingJUnitTestCase {
         saveProfileFileChooser.setCurrentDirectory(profilesDirectory.toFile());
         saveProfileFileChooser.fileNameTextBox().enterText(fileName);
         saveProfileFileChooser.approve();
+        utils.waitForInvisibleProgressLabel(frame.label(saveProfileMatcher));
         frame.button("Open").click();
         JFileChooserFixture openProfileFileChooser = utils.getFileChooser();
         openProfileFileChooser.setCurrentDirectory(profilesDirectory.toFile());
