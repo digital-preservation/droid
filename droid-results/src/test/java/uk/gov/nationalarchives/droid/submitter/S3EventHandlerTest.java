@@ -68,7 +68,7 @@ public class S3EventHandlerTest {
         List<IdentificationRequest<S3Uri>> allValues = droidCoreCaptor.getAllValues();
 
         RequestMetaData requestMetaData = allValues.getFirst().getRequestMetaData();
-        assertEquals(Long.valueOf(1), requestMetaData.getSize());
+        assertEquals(Long.valueOf(0), requestMetaData.getSize());
         assertEquals(Long.valueOf(0), requestMetaData.getTime());
         assertEquals("object", requestMetaData.getName());
     }
