@@ -212,7 +212,7 @@ public class SkeletonSuiteTest {
     @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest
     @MethodSource("identificationRequests")
-    public void testBinarySkeletonMatch(IdentificationRequest<?> request) throws Exception {
+    public void testBinarySkeletonMatch(IdentificationRequest<?> request) {
         int errorCount = 0;
 
         //Go through all the skeleton files.  Check if the PUID that DROID identifies for the file matches the beginning
@@ -226,14 +226,14 @@ public class SkeletonSuiteTest {
 
         assertNotEquals(null, expectedPuid);
 
-        if (!ArrayUtils.contains(this.currentKnownUnidentifiedFiles, filename)) {
+        if (!ArrayUtils.contains(currentKnownUnidentifiedFiles, filename)) {
 
             // Check if we have any results from DROID - we should have as the file is not in the list of known
             // unidentified files.
             try {
                 // Catch assertion failure so we can print an error and continue, checking the total
                 // error count after all files are processed.
-                assertTrue(results.size() >= 1);
+                assertFalse(results.isEmpty());
             } catch (AssertionError e) {
                 System.out.println("No results found for file: " + filename + ". Expected: " + expectedPuid);
                 errorCount++;
@@ -272,7 +272,7 @@ public class SkeletonSuiteTest {
             try {
                 //Catch assertion failure so we can print error and continue, checking the total error count after
                 // all files are processed.
-                assertTrue(results.size() == 0);
+                assertEquals(0, results.size());
             }  catch ( AssertionError e) {
 
                 String[] puidsIdentifiedForFile = getPuidsFromIdentification(results);
