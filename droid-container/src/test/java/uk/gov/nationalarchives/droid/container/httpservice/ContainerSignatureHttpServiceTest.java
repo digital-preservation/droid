@@ -85,25 +85,25 @@ public class ContainerSignatureHttpServiceTest {
     }
 
     @Test
-    public void testGetLatestVersion() throws SignatureServiceException, IOException {
+    public void testGetLatestVersion() throws SignatureServiceException {
         stubOriginalEndpoint();
         httpService.onProxyChange(new ProxySettings());
 
         SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
         assertNull(sigFileInfo.getFile());
         assertThat(sigFileInfo.getVersion(), greaterThan(20110114));
-        assertEquals(false, sigFileInfo.isDeprecated());
+        assertFalse(sigFileInfo.isDeprecated());
     }
 
     @Test
-    public void testGetLatestVersionNewEndpoint() throws SignatureServiceException, IOException {
+    public void testGetLatestVersionNewEndpoint() throws SignatureServiceException {
         stubNewEndpoint();
         httpService.onProxyChange(new ProxySettings());
 
         SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
         assertNull(sigFileInfo.getFile());
-        assertEquals(sigFileInfo.getVersion(), 20251007);
-        assertEquals(false, sigFileInfo.isDeprecated());
+        assertEquals(20251007, sigFileInfo.getVersion());
+        assertFalse(sigFileInfo.isDeprecated());
         wireMockRule.resetAll();
     }
     
@@ -119,14 +119,14 @@ public class ContainerSignatureHttpServiceTest {
     }
 
     @Test
-    public void testGetLatestVersionViaProxyNewEndpoint() throws SignatureServiceException, IOException {
+    public void testGetLatestVersionViaProxyNewEndpoint() throws SignatureServiceException {
         stubNewEndpoint();
         httpService.onProxyChange(proxySettings);
 
         SignatureFileInfo sigFileInfo = httpService.getLatestVersion(20100101);
         assertNull(sigFileInfo.getFile());
-        assertEquals(sigFileInfo.getVersion(), 20251007);
-        assertEquals(false, sigFileInfo.isDeprecated());
+        assertEquals(20251007, sigFileInfo.getVersion());
+        assertFalse(sigFileInfo.isDeprecated());
     }
 
     @Test
@@ -138,8 +138,8 @@ public class ContainerSignatureHttpServiceTest {
         tmpDir.mkdir();
 
         SignatureFileInfo sigFileInfo = httpService.importSignatureFile(tmpDir.toPath(), 20110114);
-        assertEquals(false, sigFileInfo.isDeprecated());
-        assertEquals(sigFileInfo.getVersion(), 20110114);
+        assertFalse(sigFileInfo.isDeprecated());
+        assertEquals(20110114, sigFileInfo.getVersion());
 
         assertEquals(1, tmpDir.list().length);
     }
@@ -153,8 +153,8 @@ public class ContainerSignatureHttpServiceTest {
         tmpDir.mkdir();
 
         SignatureFileInfo sigFileInfo = httpService.importSignatureFile(tmpDir.toPath(), 20110114);
-        assertEquals(false, sigFileInfo.isDeprecated());
-        assertEquals(sigFileInfo.getVersion(), 20110114);
+        assertFalse(sigFileInfo.isDeprecated());
+        assertEquals(20110114, sigFileInfo.getVersion());
 
         assertEquals(1, tmpDir.list().length);
     }
@@ -187,8 +187,8 @@ public class ContainerSignatureHttpServiceTest {
         assertEquals(0, tmpDir.list().length);
 
         SignatureFileInfo sigFileInfo = httpService.importSignatureFile(tmpDir.toPath(), 20110114);
-        assertEquals(false, sigFileInfo.isDeprecated());
-        assertEquals(sigFileInfo.getVersion(), 20110114);
+        assertFalse(sigFileInfo.isDeprecated());
+        assertEquals(20110114, sigFileInfo.getVersion());
 
         assertEquals(1, tmpDir.list().length);
     }
