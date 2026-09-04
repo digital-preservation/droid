@@ -198,9 +198,9 @@ public class ContainerSignatureHttpServiceTest {
             String responseJson = """
                     {
                       "latest_signature": {
-                        "name": "DROID Signature File V122",
-                        "location": "/signatures/DROID_SignatureFile_V124.xml",
-                        "version": "122"
+                        "name": "DROID Signature File V125",
+                        "location": "/signatures/DROID_SignatureFile_V125.xml",
+                        "version": "125"
                       },
                       "latest_container_signature": {
                         "name": "07 October 2025",
