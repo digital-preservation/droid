@@ -90,7 +90,7 @@ public class JpaProfileFilterTest {
         // old approach we would have had to find a way to load the test formats after the class had ben initialised,
         // tricky due to the way the whole fresh vs existing template behaviour works.  See comments in init method
         // of JDBCBatchResultsHandler
-        testData = new FlatXmlDataSetBuilder().build(
+        testData = new FlatXmlDataSetBuilder().setDtdMetadata(false).setColumnSensing(true).build(
                 JpaProfileDaoTest.class.getResource("results-test-data-sans-formats.xml"));
         //System.setProperty("hibernate.generateDdl", "true");
         System.setProperty("maxBytesToScan", "65536");

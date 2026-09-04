@@ -36,6 +36,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,7 +183,7 @@ public class ProfileSpecWalkerImplTest {
 
         for (AbstractProfileResource resource : s3Resources) {
             String key = resource.getName().startsWith("/") ? resource.getName().substring(1) : resource.getName();
-            S3Object s3Object = S3Object.builder().key(key).build();
+            S3Object s3Object = S3Object.builder().key(key).lastModified(Instant.now()).size(1L).build();
             ArgumentMatcher<ListObjectsV2Request> requestArgumentMatcher = argument ->
                     argument != null && resource.getName().equals(argument.prefix());
             ListObjectsV2Response response = ListObjectsV2Response.builder().contents(List.of(s3Object)).build();

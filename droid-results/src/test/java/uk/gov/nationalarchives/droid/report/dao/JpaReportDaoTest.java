@@ -92,7 +92,8 @@ public class JpaReportDaoTest {
 
     @BeforeClass
     public static void getTestData() throws Exception {
-        testData = new FlatXmlDataSetBuilder().build(JpaReportDaoTest.class.getResource("report-test-data-sans-formats.xml"));
+        testData = new FlatXmlDataSetBuilder().setDtdMetadata(false).setColumnSensing(true)
+                .build(JpaReportDaoTest.class.getResource("report-test-data-sans-formats.xml"));
         //System.setProperty("hibernate.generateDdl", "true");
         System.setProperty("matchAllExtensions", "false");
         conn = TestDatabase.getConnection();
