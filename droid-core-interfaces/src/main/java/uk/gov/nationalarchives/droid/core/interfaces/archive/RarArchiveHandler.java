@@ -186,7 +186,7 @@ public final class RarArchiveHandler implements ArchiveHandler {
         }
 
         private void submitFile(FileHeader entry) throws IOException, URISyntaxException, RarException {
-            String fullpath = entry.getFileNameString();
+            String fullpath = entry.getFileName();
             String path = FilenameUtils.getPath(fullpath);
             String name = FilenameUtils.getName(fullpath);
 
@@ -242,22 +242,21 @@ public final class RarArchiveHandler implements ArchiveHandler {
         protected void handleEntry(FileHeader entry) throws IOException {
             try {
                 if (entry.isDirectory()) {
-                    String path = entry.getFileNameString();
+                    String path = entry.getFileName();
                     if (!(path.endsWith(UNIX_PATH_SPLITTER) || path.endsWith(WINDOWS_PATH_SPLITTER))) {
                         path += UNIX_PATH_SPLITTER;
                     }
                     submitDirectory(path, entry.getMTime());
                 } else if (entry.isEncrypted()) {
-                    throw new RuntimeException("Encrypted entry : " + entry.getFileNameString());
+                    throw new RuntimeException("Encrypted entry : " + entry.getFileName());
                 } else {
                     submitFile(entry);
                 }
 
             } catch (URISyntaxException ex) {
-                throw new RuntimeException("Malformed uri for entry : " + entry.getFileNameString(), ex);
+                throw new RuntimeException("Malformed uri for entry : " + entry.getFileName(), ex);
             } catch (RarException rarEx) {
-                throw new RuntimeException("Probem with RAR extraction : " + entry.getFileNameString(), rarEx);
-
+                throw new RuntimeException("Probem with RAR extraction : " + entry.getFileName(), rarEx);
             }
 
         }
