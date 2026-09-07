@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
@@ -84,7 +85,7 @@ import static org.mockito.Mockito.when;
  */
 public class ItemWriterImplTest {
 
-    private static final DateTime testDateTime = new DateTime(12345678L);
+    private static final DateTime testDateTime = new DateTime(12345678L, DateTimeZone.getDefault());
     private static final String LINE_SEPARATOR = "\n";
     private ItemWriterImpl itemWriter;
     private DroidGlobalConfig config;
