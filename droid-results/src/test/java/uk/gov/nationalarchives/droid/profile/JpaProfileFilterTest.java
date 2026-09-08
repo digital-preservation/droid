@@ -56,6 +56,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.FilterValue;
@@ -83,6 +84,7 @@ public class JpaProfileFilterTest {
 
     @BeforeClass
     public static void getTestData() throws Exception {
+        RuntimeConfig.configureRuntimeEnvironment();
        // testData = new FlatXmlDataSetBuilder().build(
          //       JpaProfileFilterTest.class.getResource("results-test-data.xml"));
         //BNO - now using test data without formats as these are pre-populated in the test database and not deleted
