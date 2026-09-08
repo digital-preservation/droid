@@ -61,6 +61,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Criterion;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.expressions.Restrictions;
 
@@ -92,6 +93,7 @@ public class JpaReportDaoTest {
 
     @BeforeClass
     public static void getTestData() throws Exception {
+        RuntimeConfig.configureRuntimeEnvironment();
         testData = new FlatXmlDataSetBuilder().setDtdMetadata(false).setColumnSensing(true)
                 .build(JpaReportDaoTest.class.getResource("report-test-data-sans-formats.xml"));
         //System.setProperty("hibernate.generateDdl", "true");
