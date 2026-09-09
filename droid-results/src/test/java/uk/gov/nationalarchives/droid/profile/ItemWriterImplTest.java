@@ -178,7 +178,6 @@ public class ItemWriterImplTest {
             ProfileResourceNode node = buildProfileResourceNode(1, 1001L, f.toURI());
             node.addFormatIdentification(id);
             nodes.add(node);
-            System.out.println(" **** THE URI is " + node.getUri().toString());
             itemWriter.setOptions(ExportOptions.ONE_ROW_PER_FORMAT);
             itemWriter.open(writer);
             itemWriter.write(nodes);
