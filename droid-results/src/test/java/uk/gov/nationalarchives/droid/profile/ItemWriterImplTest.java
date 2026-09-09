@@ -37,7 +37,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
@@ -61,7 +60,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +84,6 @@ import static org.mockito.Mockito.when;
  */
 public class ItemWriterImplTest {
 
-//    private static final DateTime testDateTime = new DateTime(12345678L, DateTimeZone.getDefault());
     private static final long TEST_LAST_MODIFIED_MILLIS = 12345678L;
     private static final String LINE_SEPARATOR = "\n";
     private ItemWriterImpl itemWriter;
@@ -188,8 +185,8 @@ public class ItemWriterImplTest {
 
             final String expectedEntry = toCsvRow(new String[]{
                     "", "",
-                    isNotWindows() ? "file:/my/file1.txt%20%20" : "file:/C:/my/file1.txt%20%20",
-                    isNotWindows() ? "/my/file1.txt  " : "C:\\my\\file1.txt  ",
+                    isNotWindows() ? "file:/my/file1.txt%20%20" : "file:/C:/my/file1.txt",
+                    isNotWindows() ? "/my/file1.txt  " : "C:\\my\\file1.txt",
                     "file1.txt",
                     "Signature",
                     "Done",
