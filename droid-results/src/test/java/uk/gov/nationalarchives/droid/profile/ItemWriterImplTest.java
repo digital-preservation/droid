@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
@@ -61,7 +61,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +85,6 @@ import static org.mockito.Mockito.when;
  */
 public class ItemWriterImplTest {
 
-//    private static final DateTime testDateTime = new DateTime(12345678L, DateTimeZone.getDefault());
     private static final long TEST_LAST_MODIFIED_MILLIS = 12345678L;
     private static final String LINE_SEPARATOR = "\n";
     private ItemWriterImpl itemWriter;
@@ -173,12 +171,14 @@ public class ItemWriterImplTest {
 
     @Test
     public void should_write_node_file_name_with_space_at_the_end() throws IOException {
+        //Windows cannot have a file with trailing spaces, so this test is not applicable for Windows.
+        Assume.assumeFalse("Test not applicable on Windows", SystemUtils.IS_OS_WINDOWS);
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
 
         try(final Writer writer = new StringWriter()) {
             List<ProfileResourceNode> nodes = new ArrayList<>();
             Format id = buildFormat(1);
-            File f = isNotWindows() ? new File("/my/file1.txt  ") : new File("C:/my/file1.txt  ");
+            File f = new File("/my/file1.txt  ");
             ProfileResourceNode node = buildProfileResourceNode(1, 1001L, f.toURI());
             node.addFormatIdentification(id);
             nodes.add(node);
@@ -188,8 +188,8 @@ public class ItemWriterImplTest {
 
             final String expectedEntry = toCsvRow(new String[]{
                     "", "",
-                    isNotWindows() ? "file:/my/file1.txt%20%20" : "file:/C:/my/file1.txt%20%20",
-                    isNotWindows() ? "/my/file1.txt" : "C:\\my\\file1.txt",
+                    "file:/my/file1.txt%20%20",
+                    "/my/file1.txt  ",
                     "file1.txt",
                     "Signature",
                     "Done",

@@ -185,7 +185,11 @@ public class ProfileSpecWalkerImplTest {
 
         for (AbstractProfileResource resource : s3Resources) {
             String key = resource.getName().startsWith("/") ? resource.getName().substring(1) : resource.getName();
-            S3Object s3Object = S3Object.builder().key(key).lastModified(Instant.now()).size(1L).build();
+            S3Object s3Object = S3Object.builder()
+                    .key(key)
+                    .lastModified(Instant.parse("2024-06-06T00:00:00Z"))
+                    .size(1L)
+                    .build();
             ArgumentMatcher<ListObjectsV2Request> requestArgumentMatcher = argument ->
                     argument != null && resource.getName().equals(argument.prefix());
             ListObjectsV2Response response = ListObjectsV2Response.builder().contents(List.of(s3Object)).build();
