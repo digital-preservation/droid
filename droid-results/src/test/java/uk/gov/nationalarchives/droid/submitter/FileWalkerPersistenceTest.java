@@ -40,6 +40,10 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -47,9 +51,6 @@ import jakarta.xml.bind.JAXBException;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -104,14 +105,14 @@ public class FileWalkerPersistenceTest {
         state.setCurrentResource(new DirectoryProfileResource(root, true));
         
         profileWalkerDao.save(state);
-        
-        DateTime testDateTime = new DateTime(0L);
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
+
+        ZonedDateTime testDateTime = Instant.ofEpochMilli(0L).atZone(ZoneId.systemDefault());
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         String control = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<ProfileWalk Status=\"NOT_STARTED\">\n"
             + "    <Dir Recursive=\"true\">\n"
             + "        <Size>-1</Size>\n"
-            + "        <LastModifiedDate>" + formatter.print(testDateTime) + "</LastModifiedDate>\n"
+            + "        <LastModifiedDate>" + formatter.format(testDateTime) + "</LastModifiedDate>\n"
             + "        <Extension></Extension>\n"
             + "        <Name>root</Name>\n"
             + "        <Uri>" + root.toUri() + "</Uri>\n"
