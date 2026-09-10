@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionFieldEnum;
 import uk.gov.nationalarchives.droid.core.interfaces.filter.CriterionOperator;
 import uk.gov.nationalarchives.droid.profile.FilterCriterionImpl;
@@ -83,8 +84,11 @@ public class JpaPlanetsXMLDaoTest {
 
     @BeforeClass
     public static void getTestData() throws Exception {
-        testData = new FlatXmlDataSetBuilder().build(JpaPlanetsXMLDaoTest.class
+        testData = new FlatXmlDataSetBuilder().setDtdMetadata(false).setColumnSensing(true)
+                .build(JpaPlanetsXMLDaoTest.class
                 .getResource("planets-xml-test-data-sans-formats.xml"));
+        System.setProperty(RuntimeConfig.DROID_USER, "/tmp/droid");
+        System.setProperty(RuntimeConfig.DROID_TEMP_DIR, "/tmp/droid");
     }
 
     @Before

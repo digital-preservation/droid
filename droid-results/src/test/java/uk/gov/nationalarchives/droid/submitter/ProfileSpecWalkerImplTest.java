@@ -56,6 +56,7 @@ import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.profile.*;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
 import uk.gov.nationalarchives.droid.util.FileUtil;
@@ -71,6 +72,7 @@ public class ProfileSpecWalkerImplTest {
 
     @BeforeClass
     public static void setup() throws Exception {
+        RuntimeConfig.configureRuntimeEnvironment();
 
         files = new String[] { 
             "dir1/file11.ext",

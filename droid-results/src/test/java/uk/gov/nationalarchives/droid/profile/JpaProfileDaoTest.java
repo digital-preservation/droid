@@ -55,6 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 
 
 /**
@@ -83,11 +84,13 @@ public class JpaProfileDaoTest {
         // ole approach we would have had to find a way to load the test formats after the class had ben initialised,
         // tricky due to the way the whole fresh vs existing template behaviour works.  See comments in init method
         // of JDBCBatchResultsHandler
-        testData = new FlatXmlDataSetBuilder().build(
-                JpaProfileDaoTest.class.getResource("results-test-data-sans-formats.xml"));
+        testData = new FlatXmlDataSetBuilder().setDtdMetadata(false).setColumnSensing(true)
+                .build(JpaProfileDaoTest.class.getResource("results-test-data-sans-formats.xml"));
         //System.setProperty("hibernate.generateDdl", "true");
         System.setProperty("maxBytesToScan", "65536");
         System.setProperty("matchAllExtensions", "false");
+        System.setProperty(RuntimeConfig.DROID_USER, "/tmp/droid");
+        System.setProperty(RuntimeConfig.DROID_TEMP_DIR, "/tmp/droid");
     }
     
     @AfterClass
