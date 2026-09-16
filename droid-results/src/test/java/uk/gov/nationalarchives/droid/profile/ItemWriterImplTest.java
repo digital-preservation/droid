@@ -37,9 +37,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationMethod;
@@ -59,6 +57,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +85,7 @@ import static org.mockito.Mockito.when;
  */
 public class ItemWriterImplTest {
 
-    private static final DateTime testDateTime = new DateTime(12345678L);
+    private static final long TEST_LAST_MODIFIED_MILLIS = 12345678L;
     private static final String LINE_SEPARATOR = "\n";
     private ItemWriterImpl itemWriter;
     private DroidGlobalConfig config;
@@ -105,8 +106,9 @@ public class ItemWriterImplTest {
 
         config = mock(DroidGlobalConfig.class);
         itemWriter.setConfig(config);
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
-        testDateTimeString = dtf.print(testDateTime);
+        testDateTimeString = Instant.ofEpochMilli(TEST_LAST_MODIFIED_MILLIS)
+                .atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
     }
 
     private static String toCsvRow(final String[] values) {
@@ -169,12 +171,14 @@ public class ItemWriterImplTest {
 
     @Test
     public void should_write_node_file_name_with_space_at_the_end() throws IOException {
+        //Windows cannot have a file with trailing spaces, so this test is not applicable for Windows.
+        Assume.assumeFalse("Test not applicable on Windows", SystemUtils.IS_OS_WINDOWS);
         when(config.getBooleanProperty(DroidGlobalProperty.CSV_EXPORT_ROW_PER_FORMAT)).thenReturn(false);
 
         try(final Writer writer = new StringWriter()) {
             List<ProfileResourceNode> nodes = new ArrayList<>();
             Format id = buildFormat(1);
-            File f = isNotWindows() ? new File("/my/file1.txt  ") : new File("C:/my/file1.txt  ");
+            File f = new File("/my/file1.txt  ");
             ProfileResourceNode node = buildProfileResourceNode(1, 1001L, f.toURI());
             node.addFormatIdentification(id);
             nodes.add(node);
@@ -184,8 +188,8 @@ public class ItemWriterImplTest {
 
             final String expectedEntry = toCsvRow(new String[]{
                     "", "",
-                    isNotWindows() ? "file:/my/file1.txt%20%20" : "file:/C:/my/file1.txt%20%20",
-                    isNotWindows() ? "/my/file1.txt  " : "C:\\my\\file1.txt  ",
+                    "file:/my/file1.txt%20%20",
+                    "/my/file1.txt  ",
                     "file1.txt",
                     "Signature",
                     "Done",
@@ -1572,7 +1576,7 @@ public class ItemWriterImplTest {
         NodeMetaData metaData = new NodeMetaData();
         metaData.setExtension("foo");
         metaData.setIdentificationMethod(IdentificationMethod.BINARY_SIGNATURE);
-        metaData.setLastModified(testDateTime.getMillis());
+        metaData.setLastModified(TEST_LAST_MODIFIED_MILLIS);
         metaData.setName("file" + i + ".txt");
         metaData.setNodeStatus(NodeStatus.DONE);
         metaData.setResourceType(ResourceType.FILE);

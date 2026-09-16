@@ -21,7 +21,7 @@
     </scm>
 
     <properties>
-        <openhtml.version>1.1.61</openhtml.version>
+        <openhtml.version>1.1.83</openhtml.version>
     </properties>
   
     <build>

@@ -184,6 +184,7 @@ public class ItemWriterImpl implements ItemWriter<ProfileResourceNode> {
             this.outputJson = new FormattedDataWriter.OutputJson(outputWriter);
         }
         final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
+        csvWriterSettings.setIgnoreTrailingWhitespaces(false);
         csvWriterSettings.setQuoteAllFields(quoteAllFields);
         CsvFormat format = new CsvFormat();
         // following Unix convention about line separators as previously
