@@ -86,7 +86,7 @@ public class SkeletonSuiteTest {
 
     private static final String TEST_FILES_DIR = "test-skeletons/";
     //TODO: Read latest signature file by default where required in this and other tests.
-    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V124.xml";
+    private static final String SIGFILE = "test_sig_files/DROID_SignatureFile_V125.xml";
     private static final Pattern PuidInFilenamePattern = Pattern.compile("^(x-)?fmt-\\d{1,4}");
     private static final Pattern PuidPattern = Pattern.compile("^(x-)?fmt/\\d{1,4}");
 
@@ -134,22 +134,22 @@ public class SkeletonSuiteTest {
                     System.out.println("Could not get file name for " + skeletonPath);
                 }
 
-                assertNotEquals(filename, null);
+                assertNotEquals(null, filename);
 
-                String expectedPuid = NO_PUID;
+                String actualPuid = NO_PUID;
 
                 //The files are named so that the expected PUID should match the start of the filename after replacing
                 // the - after fmt with /  e.g. fmt-1-signature-id-1032.wav should be identified as fmt/1, and
                 // x-fmt-1-signature-id-485.mcw as x-fmt/1
                 Matcher puidMatcher = PuidInFilenamePattern.matcher(filename);
                 while(puidMatcher.find()) {
-                    expectedPuid = puidMatcher.group().replace("fmt-", "fmt/").toLowerCase();
-                    assertNotEquals(expectedPuid, null);
+                    actualPuid = puidMatcher.group().replace("fmt-", "fmt/").toLowerCase();
+                    assertNotEquals(null, actualPuid);
                 }
                 // If we haven't got a PUID from the filename in the expected format for any file, don't go any further.
-                assertNotEquals(expectedPuid, NO_PUID);
-                assertTrue(expectedPuid.matches(PuidPattern.pattern()));
-                filesWithPuids.put(filename, expectedPuid);
+                assertNotEquals(NO_PUID, actualPuid);
+                assertTrue(actualPuid.matches(PuidPattern.pattern()));
+                filesWithPuids.put(filename, actualPuid);
             }
         }
 
@@ -212,7 +212,7 @@ public class SkeletonSuiteTest {
     @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest
     @MethodSource("identificationRequests")
-    public void testBinarySkeletonMatch(IdentificationRequest<?> request) throws Exception {
+    public void testBinarySkeletonMatch(IdentificationRequest<?> request) {
         int errorCount = 0;
 
         //Go through all the skeleton files.  Check if the PUID that DROID identifies for the file matches the beginning
@@ -224,16 +224,16 @@ public class SkeletonSuiteTest {
         List<IdentificationResult> results = resultsCollection.getResults();
         String expectedPuid = filesWithPuids.get(filename);
 
-        assertNotEquals(expectedPuid, null);
+        assertNotEquals(null, expectedPuid);
 
-        if (!ArrayUtils.contains(this.currentKnownUnidentifiedFiles, filename)) {
+        if (!ArrayUtils.contains(currentKnownUnidentifiedFiles, filename)) {
 
             // Check if we have any results from DROID - we should have as the file is not in the list of known
             // unidentified files.
             try {
                 // Catch assertion failure so we can print an error and continue, checking the total
                 // error count after all files are processed.
-                assertTrue(results.size() >= 1);
+                assertFalse(results.isEmpty());
             } catch (AssertionError e) {
                 System.out.println("No results found for file: " + filename + ". Expected: " + expectedPuid);
                 errorCount++;
@@ -272,7 +272,7 @@ public class SkeletonSuiteTest {
             try {
                 //Catch assertion failure so we can print error and continue, checking the total error count after
                 // all files are processed.
-                assertTrue(results.size() == 0);
+                assertEquals(0, results.size());
             }  catch ( AssertionError e) {
 
                 String[] puidsIdentifiedForFile = getPuidsFromIdentification(results);
@@ -333,14 +333,14 @@ public class SkeletonSuiteTest {
         StringBuilder sb = new StringBuilder("ERROR: ");
 
         if (expectedPuid == NO_PUID) {
-            sb.append("Skeleton file " + filename + " expected to have no identifications, however:");
+            sb.append("Skeleton file ").append(filename).append(" expected to have no identifications, however:");
         } else {
-            sb.append("Couldn't find expected PUID: " + expectedPuid);
-            sb.append(" for skeleton file " + filename);
+            sb.append("Couldn't find expected PUID: ").append(expectedPuid);
+            sb.append(" for skeleton file ").append(filename);
         }
 
         for (String puid:puidsIdentified) {
-            sb.append("\n - DROID Identified " + puid);
+            sb.append("\n - DROID Identified ").append(puid);
         }
         sb.append("\n");
         return sb.toString();

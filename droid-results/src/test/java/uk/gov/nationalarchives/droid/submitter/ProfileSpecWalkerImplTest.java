@@ -36,6 +36,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,7 @@ import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 import uk.gov.nationalarchives.droid.core.interfaces.IdentificationResult;
 import uk.gov.nationalarchives.droid.core.interfaces.ResourceId;
 import uk.gov.nationalarchives.droid.core.interfaces.ResultHandler;
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig;
 import uk.gov.nationalarchives.droid.profile.*;
 import uk.gov.nationalarchives.droid.results.handlers.ProgressMonitor;
 import uk.gov.nationalarchives.droid.util.FileUtil;
@@ -70,6 +72,7 @@ public class ProfileSpecWalkerImplTest {
 
     @BeforeClass
     public static void setup() throws Exception {
+        RuntimeConfig.configureRuntimeEnvironment();
 
         files = new String[] { 
             "dir1/file11.ext",
@@ -182,7 +185,11 @@ public class ProfileSpecWalkerImplTest {
 
         for (AbstractProfileResource resource : s3Resources) {
             String key = resource.getName().startsWith("/") ? resource.getName().substring(1) : resource.getName();
-            S3Object s3Object = S3Object.builder().key(key).build();
+            S3Object s3Object = S3Object.builder()
+                    .key(key)
+                    .lastModified(Instant.parse("2024-06-06T00:00:00Z"))
+                    .size(1L)
+                    .build();
             ArgumentMatcher<ListObjectsV2Request> requestArgumentMatcher = argument ->
                     argument != null && resource.getName().equals(argument.prefix());
             ListObjectsV2Response response = ListObjectsV2Response.builder().contents(List.of(s3Object)).build();
