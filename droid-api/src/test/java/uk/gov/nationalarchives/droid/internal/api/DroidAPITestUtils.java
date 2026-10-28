@@ -78,7 +78,7 @@ import java.util.zip.ZipEntry;
 public class DroidAPITestUtils {
 
     static Path signaturePath = Paths.get("../droid-results/custom_home/signature_files/DROID_SignatureFile_V125.xml");
-    static Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20260119.xml");
+    static Path containerPath = Paths.get("../droid-results/custom_home/container_sigs/container-signature-20261027.xml");
 
     public static DroidAPI createApi(URI endpointOverride) throws SignatureParseException {
         return createApi(endpointOverride, signaturePath, containerPath, null);
