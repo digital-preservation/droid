@@ -5,7 +5,7 @@
         <artifactId>droid-parent</artifactId>
         <groupId>uk.gov.nationalarchives</groupId>
         <version>6.9.15-SNAPSHOT</version>
-  	    <relativePath>../droid-parent</relativePath>
+        <relativePath>../droid-parent</relativePath>
     </parent>
   
     <artifactId>droid-binary</artifactId>
@@ -47,7 +47,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <!-- To update, retrieve link for 64 bit Windows jre from https://adoptium.net -->
+                            <!-- To update, retrieve link for 64-bit Windows jre from https://adoptium.net -->
                             <url>https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5.1%2B2/OpenJDK25U-jmods_x64_windows_hotspot_25.0.5.1_2.zip</url>
                             <unpack>false</unpack>
                             <outputDirectory>${project.build.directory}</outputDirectory>
