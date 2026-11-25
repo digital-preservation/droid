@@ -48,7 +48,7 @@
                         </goals>
                         <configuration>
                             <!-- To update, retrieve link for 64-bit Windows jre from https://adoptium.net -->
-                            <url>https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5.1%2B2/OpenJDK25U-jmods_x64_windows_hotspot_25.0.5.1_2.zip</url>
+                            <url>https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5.1%2B2/OpenJDK25U-jre_x64_windows_hotspot_25.0.5.1_2.zip</url>
                             <unpack>false</unpack>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
@@ -69,9 +69,9 @@
                         <configuration>
                             <target>
                                 <!-- Update binary from https://adoptopenjdk.net/releases.html -->
-                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK25U-jmods_x64_windows_hotspot_25.0.5.1_2.zip" />
+                                <unzip dest="${project.build.directory}/jre_tmp/" src="${project.build.directory}/OpenJDK25U-jre_x64_windows_hotspot_25.0.5.1_2.zip" />
                                 <move todir="${project.build.directory}/jre-windows/">
-                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-25.0.5.1+2-jmods/">
+                                    <fileset dir="${project.build.directory}/jre_tmp/jdk-25.0.5.1+2-jre/">
                                         <include name="**/*" />
                                     </fileset>
                                 </move>
